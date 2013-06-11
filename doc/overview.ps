@@ -1,0 +1,5440 @@
+%!PS-Adobe-2.0
+%%Title: overview/overview.mss
+%%DocumentFonts: (atend)
+%%Creator: Andrew Mickish and Scribe 7(1700)
+%%CreationDate: 12 December 1994 15:24
+%%Pages: (atend)
+%%EndComments
+% PostScript Prelude for Scribe.
+/BS {/SV save def 0.0 792.0 translate .01 -.01 scale} bind def
+/ES {showpage SV restore} bind def
+/SC {setrgbcolor} bind def
+/FMTX matrix def
+/RDF {WFT SLT 0.0 eq 
+  {SSZ 0.0 0.0 SSZ neg 0.0 0.0 FMTX astore}
+  {SSZ 0.0 SLT neg sin SLT cos div SSZ mul SSZ neg 0.0 0.0 FMTX astore}
+  ifelse makefont setfont} bind def
+/SLT 0.0 def
+/SI { /SLT exch cvr def RDF} bind def
+/WFT /Courier findfont def
+/SF { /WFT exch findfont def RDF} bind def
+/SSZ 1000.0 def
+/SS { /SSZ exch 100.0 mul def RDF} bind def
+/AF { /WFT exch findfont def /SSZ exch 100.0 mul def RDF} bind def
+/MT /moveto load def
+/XM {currentpoint exch pop moveto} bind def
+/UL {gsave newpath moveto dup 2.0 div 0.0 exch rmoveto
+   setlinewidth 0.0 rlineto stroke grestore} bind def
+/LH {gsave newpath moveto setlinewidth
+   0.0 rlineto
+   gsave stroke grestore} bind def
+/LV {gsave newpath moveto setlinewidth
+   0.0 exch rlineto
+   gsave stroke grestore} bind def
+/BX {gsave newpath moveto setlinewidth
+   exch
+   dup 0.0 rlineto
+   exch 0.0 exch neg rlineto
+   neg 0.0 rlineto
+   closepath
+   gsave stroke grestore} bind def
+/BX1 {grestore} bind def
+/BX2 {setlinewidth 1 setgray stroke grestore} bind def
+/PB {/PV save def newpath translate
+    100.0 -100.0 scale pop /showpage {} def} bind def
+/PE {PV restore} bind def
+/GB {/PV save def newpath translate rotate
+    div dup scale 100.0 -100.0 scale
+    /showpage {} def
+    /letter {} def
+    /lettersmall {} def
+    /note {} def
+    } bind def
+/GE {PV restore} bind def
+/FB {dict dup /FontMapDict exch def begin} bind def
+/FM {cvn exch cvn exch def} bind def
+/FE {end /original-findfont /findfont load def  /findfont
+   {dup FontMapDict exch known{FontMapDict exch get} if
+   original-findfont} def} bind def
+/BC {gsave moveto dup 0 exch rlineto exch 0 rlineto neg 0 exch rlineto closepath clip} bind def
+/EC /grestore load def
+/SH /show load def
+/MX {exch show 0.0 rmoveto} bind def
+/W {0 32 4 -1 roll widthshow} bind def
+/WX {0 32 5 -1 roll widthshow 0.0 rmoveto} bind def
+/RC {100.0 -100.0 scale
+612.0 0.0 translate
+-90.0 rotate
+.01 -.01 scale} bind def
+/URC {100.0 -100.0 scale
+90.0 rotate
+-612.0 0.0 translate
+.01 -.01 scale} bind def
+/RCC {100.0 -100.0 scale
+0.0 -792.0 translate 90.0 rotate
+.01 -.01 scale} bind def
+/URCC {100.0 -100.0 scale
+-90.0 rotate 0.0 792.0 translate
+.01 -.01 scale} bind def
+%%EndProlog
+%%Page: 0 1
+BS
+0 SI
+11 SS 
+1 1 0 8280 7200 GB 
+%%BeginDocument: single-sided.ps
+%!PS-Adobe-2.0
+%
+%  This PostScript code turns off double-sided printing,
+%  which is desirable since we want to be able to move the
+%  Tables of Contents by hand after the manuals are printed.
+%
+statusdict begin
+   false setduplexmode
+end
+
+%%EndDocument
+ GE 16 /Times-Bold AF
+20971 18976 MT
+(Overview of the Garnet System)SH
+11 SS 
+28182 21368 MT
+(Brad A. Myers)SH
+27753 22564 MT
+(Andrew Mickish)SH
+/Times-Roman SF
+28183 24490 MT
+(December 1994)SH
+/Times-Bold SF
+29634 43676 MT
+(Abstract)SH
+/Times-Roman SF
+8280 46168 MT
+(This article provides an overview of the Garnet system, and a guide to this set of manuals.)SH
+21010 53326 MT
+(Copyright)SH
+/Symbol SF
+25747 XM
+(\323)SH
+/Times-Roman SF
+26891 XM
+(1994 - Carnegie Mellon University)SH
+8280 60109 MT
+(This research)
+208 W( was sponsored by NCCOSC under Contract No.  N66001-94-C-6037, Arpa Order No.)207 W
+8280 61405 MT
+(B326. The)
+379 W( views and conclusions contained in this document)
+52 W( are those of the authors and should not be)53 W
+8280 62701 MT
+(interpreted as representing)
+193 W( the official policies, either expressed or implied, of NCCOSC or the U.S.)192 W
+8280 63997 MT
+(Government.)SH
+ES
+%%Page: 3 2
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(Section 2)
+SH( Garnet)
+1800 W( Bulletin Board)SH
+52386 XM
+(Page 3)SH
+46800 50 8280 4486 UL
+14 /Times-Bold AF
+8280 8138 MT
+(1. Introduction)SH
+11 /Times-Roman AF
+8280 9334 MT
+(The Garnet research)
+26 W( project in the School of Computer Science at Carnegie Mellon University is creating)27 W
+8280 10530 MT
+(a comprehensive)
+21 W( set of tools which make it significantly easier to create graphical, highly-interactive user)20 W
+8280 11726 MT
+(interfaces. The)
+475 W( lower levels of Garnet)
+100 W( are called the ``Garnet Toolkit,'' and these provide mechanisms)101 W
+8280 12922 MT
+(that allow programmers to code user)
+167 W( interfaces much more easily.  The higher level tools allow both)166 W
+8280 14118 MT
+(programmers and non-programmers)
+SH( to create user interfaces by just drawing pictures of what the interface)1 W
+8280 15314 MT
+(should look like.  Garnet stands for Generating an Amalgam of Real-time, Novel Editors and Toolkits.)SH
+794 50 24044 15514 UL
+794 50 30518 15514 UL
+734 50 36322 15514 UL
+794 50 41210 15514 UL
+672 50 44173 15514 UL
+672 50 49489 15514 UL
+8280 17612 MT
+(At the time of this writing, the Garnet toolkit is in use by about 80 projects throughout the world.  This)79 W
+8280 18808 MT
+(document contains an overview, tutorial, and a full set of reference manuals for the Garnet System.)SH
+/Times-Bold SF
+8280 21106 MT
+(This manual describes version 3.0 of Garnet.  It replaces all previous versions and the change)209 W
+8280 22302 MT
+(documents for versions 1.3, 1.4, 2.0, 2.1, and 2.2.)SH
+/Times-Roman SF
+8280 24600 MT
+(Garnet is written in Common Lisp and can be used with either Unix systems running X windows or on)88 W
+8280 25796 MT
+(the Mac.  Therefore, Garnet is quite portable to various environments.  It works in)
+25 W( virtually any Common)26 W
+8280 26992 MT
+(Lisp environment, including Allegro \050Franz\051, Lucid, CMU, Harlequin, CLISP, AKCL,)
+172 W( and Macintosh)171 W
+8280 28188 MT
+(Common Lisps.  The computers we know)
+76 W( about it running on include Sun, DEC, HP, Apollo, IBM RT,)77 W
+8280 29384 MT
+(IBM 6000, TI, SGI, NeXTs running X/11, PC's running Linux, Macs, and)
+326 W( there may be others.)325 W
+8280 30580 MT
+(Currently, Garnet supports X/11 R4 through R6 using the standard CLX interface.  Garnet does)84 W
+/Times-Italic SF
+51849 XM
+(not)SH
+/Times-Roman SF
+53614 XM
+(use)SH
+8280 31776 MT
+(the standard Common Lisp Object System \050CLOS\051 or any X toolkit \050such as Xtk or CLIM\051.)SH
+8280 34074 MT
+(Garnet has also been implemented using the native Macintosh QuickDraw and operating system.  To)
+45 W( run)44 W
+8280 35270 MT
+(the Macintosh version of Garnet, you need to)
+47 W( have System 7.0 or later, Macintosh Common Lisp \050MCL\051)48 W
+8280 36466 MT
+(version 2.0.1 or later, and at)
+11 W( least 8Mb of RAM.  The system takes about 10 megabytes of disk space on a)10 W
+8280 37662 MT
+(Mac, not including)
+405 W( the documentation \050which takes an additional 8 megabytes\051.  We find that)406 W
+8280 38858 MT
+(performance of Garnet on MCL is acceptable on Quadra's, and fine on a Quadra 840 A/V.)
+16 W( It)
+306 W( is really too)15 W
+8280 40054 MT
+(slow on)
+80 W( a Mac II.  To do anything useful, you probably need 12mb of memory.  A PowerPC Mac does)81 W
+8280 41250 MT
+(not work well for Lisp \050see discussion on)SH
+10 /Courier AF
+26732 XM
+(comp.lang.lisp.mcl)SH
+11 /Times-Roman AF
+(\051.)SH
+8280 43548 MT
+(More details about Garnet are available in the Garnet FAQ:)SH
+8 /Courier AF
+10200 44713 MT
+(ftp://a.gp.cs.cmu.edu/usr/garnet/garnet/FAQ)SH
+11 /Times-Roman AF
+8280 46134 MT
+(which is posted periodically.)SH
+8280 48432 MT
+(This document is a technical reference manual for the entire Garnet system.  There have been)
+186 W( many)185 W
+8280 49628 MT
+(conference and journal papers about Garnet)
+220 W( \050see section 17 for a complete bibliography\051.  The best)221 W
+8280 50824 MT
+(overview of Garnet is)
+31 W( [Myers)
+SH( 90].  Section 17 includes instructions for retrieving some Garnet)
+31 W( papers via)30 W
+8280 52020 MT
+(FTP.)SH
+8280 54318 MT
+(A new project named Amulet is actively developing a)
+21 W( system with features similar to those in Garnet, but)22 W
+8280 55514 MT
+(implemented in C++.  Section 16 discusses how to get more information about the Amulet project.)SH
+14 /Times-Bold AF
+8280 59332 MT
+(2. Garnet Bulletin Board)SH
+11 /Times-Roman AF
+8280 60528 MT
+(There is an international bboard for)
+64 W( Garnet users named)63 W
+10 /Courier AF
+33743 XM
+(comp.windows.garnet)SH
+11 /Times-Roman AF
+(. Topics)
+401 W( discussed on)63 W
+8280 61724 MT
+(this bboard include user questions and software releases.  There is also)
+452 W( a mailing list called)453 W
+10 /Courier AF
+8280 62920 MT
+(garnet-users@cs.cmu.edu)SH
+11 /Times-Roman AF
+22507 XM
+(which carries exactly the same messages as)
+152 W( the bboard.  If you cannot)151 W
+8280 64116 MT
+(read the bboard in your area,)
+61 W( please send mail to)62 W
+10 /Courier AF
+30488 XM
+(garnet-users-request@cs.cmu.edu)SH
+11 /Times-Roman AF
+49425 XM
+(to get on the)62 W
+8280 65312 MT
+(mailing list.)SH
+8280 67610 MT
+(You can report bugs to)SH
+10 /Courier AF
+18635 XM
+(garnet-bugs@cs.cmu.edu)SH
+11 /Times-Roman AF
+32110 XM
+(which is read only by the Garnet developers.)SH
+ES
+%%Page: 4 3
+BS
+0 SI
+10 /Times-Roman AF
+6120 4286 MT
+(Page 4)
+SH( Garnet)
+830 W( Toolkit)SH
+46800 50 6120 4486 UL
+14 /Times-Bold AF
+6120 8138 MT
+(3. Important Features of Garnet)SH
+11 /Times-Roman AF
+6120 9334 MT
+(Garnet has been designed as part of a research project,)
+186 W( so it contains a number of novel and unique)185 W
+6120 10530 MT
+(features. Some)
+275 W( of these are:)SH
+/Symbol SF
+8089 12108 MT
+(\267)SH
+/Times-Roman SF
+8870 XM
+(The Lapidary tool is the only interactive)
+142 W( tool that allows application-specific graphics and)143 W
+8870 13304 MT
+(new widgets to be created without programming.)SH
+/Symbol SF
+8089 15198 MT
+(\267)SH
+/Times-Roman SF
+8870 XM
+(The Garnet Toolkit is designed to support the)27 W
+/Times-Italic SF
+29371 XM
+(entire)SH
+/Times-Roman SF
+32238 XM
+(user interface of an application; both the)26 W
+8870 16394 MT
+(contents of the application window and its menus and dialog boxes.  For)
+135 W( example, Garnet)136 W
+8870 17590 MT
+(directly supports selecting graphical objects with the mouse, moving)
+286 W( them around, and)285 W
+8870 18786 MT
+(changing their size.)SH
+/Symbol SF
+8089 20680 MT
+(\267)SH
+/Times-Roman SF
+8870 XM
+(It is)164 W
+/Times-Italic SF
+11155 XM
+(look-and-feel independent)165 W
+/Times-Roman SF
+(. Garnet)
+605 W( allows the programmer to define a new graphical)165 W
+8870 21876 MT
+(style, and use that throughout a system.  Alternatively, a pre-defined or standard)
+37 W( style can be)36 W
+8870 23072 MT
+(used, if desired.)SH
+/Symbol SF
+8089 24966 MT
+(\267)SH
+/Times-Roman SF
+8870 XM
+(It uses a)191 W
+/Times-Italic SF
+13322 XM
+(prototype-instance)SH
+/Times-Roman SF
+22037 XM
+(object model instead of the more conventional class-instance)192 W
+8870 26162 MT
+(model, so that the programmer can create a)165 W
+/Times-Italic SF
+29461 XM
+(prototype)SH
+/Times-Roman SF
+34117 XM
+(of a part of)
+165 W( the interface, and then)164 W
+8870 27358 MT
+(create instances of it.)
+423 W( If)
+1122 W( the prototype is changed, then the instances are updated)424 W
+8870 28554 MT
+(automatically. Garnet's)
+275 W( custom object system is called KR.  Garnet does not use CLOS.)SH
+/Symbol SF
+8089 30448 MT
+(\267)SH
+/Times-Italic SF
+8870 XM
+(Constraints)SH
+/Times-Roman SF
+14530 XM
+(are integrated with the object system, so any slot \050also called an)
+249 W( ``instance)248 W
+8870 31644 MT
+(variable''\051 of any object can contain a)
+115 W( formula rather than a value.  When a value that the)116 W
+8870 32840 MT
+(formula references changes, the formula is re-evaluated automatically.  Constraints can)
+148 W( be)147 W
+8870 34036 MT
+(used to keep lines attached to boxes, labels centered within rectangles,)
+131 W( etc. \050see Figure 1\051.)132 W
+8870 35232 MT
+(Constraints can also be used to keep)
+36 W( application-specific values connected with the values of)35 W
+8870 36428 MT
+(graphical objects, menus, scroll bars or gauges in the user interface.)SH
+/Symbol SF
+8089 38322 MT
+(\267)SH
+/Times-Roman SF
+8870 XM
+(Objects are)140 W
+/Times-Italic SF
+14402 XM
+(automatically refreshed)140 W
+/Times-Roman SF
+25436 XM
+(when they change.)
+140 W( Pictures)
+556 W( are displayed by creating)141 W
+8870 39518 MT
+(graphical objects which are retained.  If a slot of an object is changed, the system)373 W
+8870 40714 MT
+(automatically redraws the object and)
+200 W( any other objects that overlap it.  Also, the system)201 W
+8870 41910 MT
+(handles window refresh requests from X and the Mac.)SH
+/Symbol SF
+8089 43804 MT
+(\267)SH
+/Times-Roman SF
+8870 XM
+(The programmer specifies the handling of input from the user at)
+88 W( a high level using abstract)87 W
+/Times-Italic SF
+8870 45000 MT
+(interactor)SH
+/Times-Roman SF
+13731 XM
+(objects. Typical)
+647 W( user interface)
+186 W( behaviors are encapsulated into a few different)187 W
+8870 46196 MT
+(types of interactors, and the programmer need only supply a few parameters to get objects)
+37 W( to)36 W
+8870 47392 MT
+(respond to the mouse and keyboard in sophisticated ways.)SH
+/Symbol SF
+8089 49286 MT
+(\267)SH
+/Times-Roman SF
+8870 XM
+(There is built-in support for laying out objects in)32 W
+/Times-Italic SF
+30881 XM
+(rows and columns)32 W
+/Times-Roman SF
+(, for example, for menus,)33 W
+8870 50482 MT
+(or in)SH
+/Times-Italic SF
+11192 XM
+(graphs or trees)SH
+/Times-Roman SF
+(, for example, to show a directory structure or a dependency graph.)SH
+/Symbol SF
+8089 52376 MT
+(\267)SH
+/Times-Roman SF
+8870 XM
+(Two complete sets of)55 W
+/Times-Italic SF
+18803 XM
+(gadgets)SH
+/Times-Roman SF
+22554 XM
+(\050also called widgets or interaction techniques\051 are provided to)54 W
+8870 53572 MT
+(help the programmer get started.)
+70 W( These)
+416 W( include menus, buttons, scroll bars, sliders, circular)71 W
+8870 54768 MT
+(gauges, graphic selection, scrollable windows, and arrows.)
+62 W( One)
+397 W( set has the Garnet look and)61 W
+8870 55964 MT
+(feel, and the other has the Motif look and feel.  The Motif set is)
+20 W( implemented entirely in Lisp)21 W
+8870 57160 MT
+(on top of Garnet, to provide maximum)
+79 W( flexibility.  Note: There are no Macintosh look-and-)78 W
+8870 58356 MT
+(feel gadgets.)
+22 W( When)
+320 W( you use Garnet on the Macintosh, the gadgets will not look like standard)23 W
+1406 50 40538 58556 UL
+8870 59552 MT
+(Macintosh widgets.)SH
+/Symbol SF
+8089 61446 MT
+(\267)SH
+/Times-Roman SF
+8870 XM
+(Garnet is designed to be)29 W
+/Times-Italic SF
+19920 XM
+(efficient)SH
+/Times-Roman SF
+(. Even)
+333 W( though Garnet handles many aspects)
+29 W( of the interface)28 W
+8870 62642 MT
+(automatically, an important)
+121 W( goal is that it execute quickly and not take too much memory.)122 W
+8870 63838 MT
+(We are always working to improve the efficiency, but Garnet can currently)
+38 W( handle dozens of)37 W
+8870 65034 MT
+(constraints attached to objects that are being dragged with the mouse.)SH
+/Symbol SF
+8089 66928 MT
+(\267)SH
+/Times-Roman SF
+8870 XM
+(Garnet will automatically produce)
+455 W( PostScript for any picture on the screen, so the)456 W
+8870 68124 MT
+(programmer does not have to worry about printing.)SH
+/Symbol SF
+8089 70018 MT
+(\267)SH
+/Times-Roman SF
+8870 XM
+(Gesture recognition \050such as drawing an "X" over an)
+177 W( object to delete it\051 is supported, so)176 W
+8870 71214 MT
+(designers can explore innovative user interface concepts.)SH
+ES
+%%Page: 5 4
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(Section 6)
+SH( How)
+1800 W( to Retrieve and Install Garnet)SH
+52386 XM
+(Page 5)SH
+46800 50 8280 4486 UL
+14 /Times-Bold AF
+8280 8138 MT
+(4. Coverage)SH
+11 /Times-Roman AF
+8280 9334 MT
+(Garnet is designed to handle interfaces containing a number of graphical objects which the user)
+198 W( can)199 W
+8280 10530 MT
+(manipulate with the mouse and keyboard.)SH
+8280 12828 MT
+(Garnet is suitable for applications of the following kinds:)SH
+/Symbol SF
+10249 14406 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(User interfaces for expert systems and other AI applications.)SH
+/Symbol SF
+10249 16300 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(Box and arrow diagram editors like Apple)
+82 W( Macintosh MacProject \050which helps with project)81 W
+11030 17496 MT
+(management\051.)SH
+/Symbol SF
+10249 19390 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(Graphical Programming Languages where computer)
+6 W( programs can be constructed using icons)7 W
+11030 20586 MT
+(and other pictures \050a common example is a flowchart\051.)SH
+/Symbol SF
+10249 22480 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(Tree and)
+90 W( graph editing programs, including editors for semantic networks, neural networks,)89 W
+11030 23676 MT
+(and state transition diagrams.)SH
+/Symbol SF
+10249 25570 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(Conventional drawing programs such as Apple Macintosh MacDraw.)SH
+/Symbol SF
+10249 27464 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(Simulation and process monitoring programs where the)
+30 W( user interface shows the status of the)31 W
+11030 28660 MT
+(simulation or process being monitored, and allows the user to manipulate it.)SH
+/Symbol SF
+10249 30554 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(User interface construction tools \050Garnet was implemented using itself\051.)SH
+/Symbol SF
+10249 32448 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(Some forms of CAD/CAM programs.)SH
+/Symbol SF
+10249 34342 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(Icon manipulation programs like the Macintosh Finder \050which)
+175 W( allows users to manipulate)174 W
+11030 35538 MT
+(files\051.)SH
+/Symbol SF
+10249 37432 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(Board game user interfaces, such as Chess.)SH
+8280 39730 MT
+(Figure 1 shows a simple Garnet application that was created from start to finish \050including)
+38 W( debugging\051 in)39 W
+8280 40926 MT
+(three hours.  The code)
+28 W( for this application is shown in the sample program manual, which begins on page)27 W
+8280 42122 MT
+(493.)SH
+8280 44420 MT
+(Other examples)
+42 W( of applications created using Garnet appear in the picture section of this manual, starting)41 W
+8280 45616 MT
+(on page 27.)SH
+14 /Times-Bold AF
+8280 49434 MT
+(5. Running Garnet From /afs)SH
+11 /Times-Roman AF
+8280 50630 MT
+(If you are running Garnet in X)
+18 W( windows from CMU, or if you have access to AFS, you can access Garnet)19 W
+8280 51826 MT
+(directly on the)86 W
+10 /Courier AF
+15167 XM
+(/afs)SH
+11 /Times-Roman AF
+17928 XM
+(servers. We)
+447 W( maintain binaries of the official)
+86 W( release version in machine- and lisp-)85 W
+8280 53022 MT
+(specific subdirectories of)171 W
+10 /Courier AF
+20124 XM
+(/afs/cs/project/garnet/)SH
+11 /Times-Roman AF
+(. If)
+617 W( you are at CMU, you can skip section 6)171 W
+8280 54218 MT
+(altogether, and just start lisp and load Garnet with:)SH
+8 /Courier AF
+10200 55383 MT
+(\050load "/afs/cs/project/garnet/garnet-loader.lisp"\051)SH
+11 /Times-Roman AF
+8280 57681 MT
+(The CMU version of)115 W
+10 /Courier AF
+18210 XM
+(garnet-loader.lisp)SH
+11 /Times-Roman AF
+29399 XM
+(will attempt to determine what kind of machine and lisp)114 W
+8280 58877 MT
+(you're using, and load the appropriate binaries)
+108 W( for you.  You will not have to supply or customize any)109 W
+8280 60073 MT
+(pathnames.)SH
+14 /Times-Bold AF
+8280 63891 MT
+(6. How to Retrieve and Install Garnet)SH
+11 /Times-Roman AF
+8280 65087 MT
+(Garnet is available for)
+270 W( free by anonymous FTP.  There are different instructions for obtaining the)269 W
+8280 66283 MT
+(software depending on whether it will be installed)
+59 W( on a Mac or a Unix system \050the code is the same, but)60 W
+8280 67479 MT
+(the packaging is different\051.)SH
+ES
+%%Page: 6 5
+BS
+0 SI
+10 /Times-Roman AF
+6120 4286 MT
+(Page 6)
+SH( Garnet)
+830 W( Toolkit)SH
+46800 50 6120 4486 UL
+46800 50 6120 8155 UL
+11 SS 
+1 1 0 -1080 61952 GB 
+%%BeginDocument: overview/toolkitpic.PS
+%!PS-Adobe-2.0
+%%Title: GARNET Sample Editor
+%%Creator: Make-PS-File -- Garnet Version 2.1
+%%CreationDate: Jun 3, 1992, 10:56 AM
+%%For: 
+%%This file does not use real color
+%%DocumentFonts: (atend)
+%%BoundingBox: 72 263 540 530
+%%%Pages: 1
+%%EndComments
+
+
+/PolylineDict 15 dict def
+/DrawPolyline
+   {    % stack: x1, y1, ..., xn, yn, n, line-halftone, line-red, line-blue,
+        %        line-green, line-join, line-cap, dash-pattern,
+        %        line-thickness, fill-halftone
+        PolylineDict begin
+        /fill-color-p exch def  /fill-blue exch def  /fill-green exch def
+        /fill-red exch def  /fill-halftone exch def  /thickness exch def
+        /dash-pattern exch def  /line-join exch def  /line-cap exch def
+        /line-color-p exch def  /line-blue exch def  /line-green exch def
+        /line-red exch def  /line-halftone exch def  /num-points exch 4 sub def
+        newpath
+          moveto
+          num-points -2 0 {pop lineto} for
+          fill-halftone fill-red fill-green fill-blue fill-color-p FillShape
+          line-halftone line-red line-green line-blue line-color-p
+          line-cap line-join dash-pattern thickness StrokeShape
+        end
+   } def
+
+/DrawLine
+   {    % stack: line-halftone, red, green, blue, color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness
+        %        x2, y2, x1, y1
+        newpath
+          moveto
+          lineto
+          StrokeShape
+   } def
+
+/TextDict 19 dict def
+/DrawText
+   {    % stack: left top base-y opal-width height line-halftone fill-p
+        %        fore-red fore-green fore-blue fore-color-p
+        %        back-red back-green back-blue back-color-p
+        %        string size font-name
+        TextDict begin
+        gsave
+        findfont exch scalefont setfont
+        /s exch def
+        /back-color-p exch def  /back-blue exch def  /back-green exch def
+        /back-red exch def  /fore-color-p exch def  /fore-blue exch def
+        /fore-green exch def  /fore-red exch def  /fill-p exch def
+        /line-halftone exch def /height exch def  /opal-width exch def
+        /base-y exch def  /top exch def  /left exch def
+
+        % Calculate distance to add between each character, based on the width
+        % expected by Opal, the width expected by postscript, and the number
+        % of characters to distribute the change over
+        /x-dist opal-width s stringwidth pop sub s length div def
+
+        % Draw background of text if appropriate
+        fill-p
+        { gsave
+            newpath
+            left top opal-width height RectanglePath
+            1 back-red back-green back-blue back-color-p
+            FillShape
+          grestore } if
+
+        % Draw text in the appropriate color
+        newpath
+          fore-color-p
+          { fore-red fore-green fore-blue setrgbcolor }
+          { line-halftone setgray } ifelse
+          left base-y moveto
+          x-dist 0 s ashow
+        grestore
+        end
+   } def
+
+/RoundtanglePath
+   {    % stack: left, top, width, height, radius
+        /r exch def  /h exch def  /w exch def  /t exch def  /l exch def
+        /right l w add def  /bottom t h sub def
+          l r add t moveto                         % origin
+          right t right t r sub r arcto            % top side
+          right bottom right r sub bottom r arcto  % right side
+          l bottom l bottom r add r arcto          % bottom side
+          l t l r add t r arcto                    % left side
+          16 {pop} repeat  % each arcto accumulates 4 stack parameters
+   } def
+
+/RoundtangleDict 27 dict def
+/DrawRoundtangle
+   {    % stack: left, top, width, height, radius, line-halftone,
+        %        line-red, line-green, line-blue, line-color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness,
+        %        fill-halftone, fill-red, fill-green, fill-blue, fill-color-p
+        
+        RoundtangleDict begin
+        /fill-color-p exch def  /fill-blue exch def  /fill-green exch def
+        /fill-red exch def  /fill-halftone exch def  /thickness exch def
+        /dash-pattern exch def  /line-join exch def  /line-cap exch def
+        /line-color-p exch def  /line-blue exch def  /line-green exch def
+        /line-red exch def  /line-halftone exch def  /radius exch def
+        /height exch def  /width exch def  /top exch def  /left exch def
+        /thickness-by-2 thickness 2 div def
+        % Draw filling
+        newpath
+          left thickness-by-2 add  top thickness-by-2 sub  width thickness sub  height thickness sub
+          radius thickness sub RoundtanglePath
+          fill-halftone fill-red fill-green fill-blue fill-color-p FillShape
+        % Draw border
+        newpath
+          left top width height radius thickness-by-2 sub RoundtanglePath
+          line-halftone line-red line-green line-blue line-color-p
+          line-cap line-join dash-pattern thickness StrokeShape
+        end
+   } def
+
+/RectanglePath
+   {    % stack: left, top, width, height
+        /h exch def  /w exch def
+        moveto                  % Go to the left,top corner
+        w 0 rlineto             % top side
+        0 h neg rlineto         % right side
+        w neg 0 rlineto         % bottom side
+        closepath               % left side
+   } def
+
+/RectangleDict 21 dict def
+/DrawRectangle
+   {    % stack: left, top, width, height, line-halftone, line-red, line-green,
+        %        line-blue, line-color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness,
+        %        fill-halftone, fill-red, fill-green, fill-blue, fill-color-p
+        RectangleDict begin
+        /fill-color-p exch def  /fill-blue exch def  /fill-green exch def
+        /fill-red exch def /fill-halftone exch def  /thickness exch def
+        /dash-pattern exch def  /line-join exch def  /line-cap exch def
+        /line-color-p exch def  /line-blue exch def  /line-green exch def
+        /line-red exch def  /line-halftone exch def  /height exch def
+        /width exch def  /top exch def  /left exch def  /thickness-by-2 thickness 2 div def
+        % Draw filling
+        newpath
+          left thickness-by-2 add  top thickness-by-2 sub   width thickness sub  height thickness sub
+          RectanglePath
+          fill-halftone fill-red fill-green fill-blue fill-color-p FillShape
+        % Draw border
+        newpath
+          left top width height RectanglePath
+          line-halftone line-red line-green line-blue line-color-p
+          line-cap line-join dash-pattern thickness StrokeShape
+        end
+   } def
+
+/ClipDict 2 dict def
+/ClipToRectangle
+   {    % stack: left, top, width, height
+        ClipDict begin
+        /height exch def  /width exch def
+        newpath
+          moveto                % Go to the left,top corner
+          width 0 rlineto       % top side
+          0 height neg rlineto  % right side
+          width neg 0 rlineto   % bottom side
+          closepath             % left side
+        gsave 1 setgray fill grestore
+        clip newpath
+        end
+   } def
+
+/FillShape
+   {    % stack: fill-halftone, red, green, blue, color-p
+        %   Color-p should be true or false - false means ignore the three vals
+        %   Use -1 for fill-halftone to mean NIL, 0 = black, 1 = white
+        %   Use -2 for fill-halftone to indicate there is an arbitrary filling
+        % style on the stack
+        gsave
+        { setrgbcolor fill pop }
+        { pop pop pop 
+          dup 0 ge
+            % if fill-halftone >= 0, then fill the shape with a halftone
+            { setgray fill}
+            % else, if there is an arbitrary filling style, then fill
+            { -2 eq
+              {SetPattern fill} if
+            } ifelse } ifelse
+        grestore
+   } def
+
+/StrokeShape
+   {    % stack: line-halftone, red, green, blue, color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness
+        % If no line is desired, pass -1 for line-thickness
+        % Halftones: 0 = black, 1 = white
+        dup 0 ge
+          % if line-thickness >= 0, then draw the outline
+          {gsave
+           setlinewidth 0 setdash setlinejoin setlinecap
+             { setrgbcolor pop }
+             { pop pop pop setgray } ifelse
+           stroke
+           grestore}
+          {pop pop pop pop pop pop pop pop pop newpath} ifelse
+   } def
+
+
+%%EndProlog
+%%%Page: 1 1
+
+gsave
+72 72 translate
+0.6685714 0.6685714 scale
+
+%
+% Begin new window
+%
+0 -284 translate
+gsave
+0 969 700 400 ClipToRectangle
+0 0 translate
+gsave
+20 949 80 40 15 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRoundtangle
+43 944 933 35 14 0 false 0 0 0 false 0 0 0 false (Label) 12 /Courier DrawText
+20 889 80 40 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+0 0 0 0 false 0 0 [] 1 86 869 22 869 DrawLine
+86 874 96 869 86 864 86 874 8 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawPolyline
+16 893 88 48 0 0 0 0 false 0 0 [] 4 -1 0 0 0 false DrawRectangle
+25 764 61 34 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawRectangle
+20 769 61 34 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+25 764 51 24 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRectangle
+30 759 748 41 14 0 false 0 0 0 false 0 0 0 false (Delete) 12 /Courier DrawText
+25 720 61 34 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawRectangle
+20 725 61 34 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+25 720 51 24 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRectangle
+37 715 704 27 14 0 false 0 0 0 false 0 0 0 false (Quit) 12 /Courier DrawText
+grestore
+
+gsave
+
+%
+% Begin new window
+%
+150 2 translate
+gsave
+0 969 550 400 ClipToRectangle
+0 0 translate
+gsave
+54 943 175 104 15 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRoundtangle
+96 938 927 90 14 0 false 0 0 0 false 0 0 0 false (Brad A. Myers) 12 /Courier DrawText
+15 810 214 49 15 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRoundtangle
+56 805 794 133 14 0 false 0 0 0 false 0 0 0 false (Roger B. Dannenberg) 12 /Courier DrawText
+109 730 119 77 15 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRoundtangle
+130 725 714 76 14 0 false 0 0 0 false 0 0 0 false (Dave Kosbie) 12 /Courier DrawText
+60 618 222 39 15 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRoundtangle
+122 613 602 98 14 0 false 0 0 0 false 0 0 0 false (Andrew Mickish) 12 /Courier DrawText
+321 940 176 44 15 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRoundtangle
+346 935 924 126 14 0 false 0 0 0 false 0 0 0 false (Brad Vander Zanden) 12 /Courier DrawText
+370 856 122 53 15 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRoundtangle
+400 851 840 63 14 0 false 0 0 0 false 0 0 0 false (Ed Pervin) 12 /Courier DrawText
+356 773 140 99 15 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRoundtangle
+388 768 757 76 14 0 false 0 0 0 false 0 0 0 false (Dario Guise) 12 /Courier DrawText
+321 653 171 62 15 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRoundtangle
+350 648 637 112 14 0 false 0 0 0 false 0 0 0 false (Philippe Marchal) 12 /Courier DrawText
+0 0 0 0 false 0 0 [] 1 151 892 409 918 DrawLine
+152 887 141 891 150 897 152 887 8 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawPolyline
+0 0 0 0 false 0 0 [] 1 417 729 141 891 DrawLine
+420 733 426 724 414 725 420 733 8 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawPolyline
+0 0 0 0 false 0 0 [] 1 421 832 141 891 DrawLine
+422 837 431 830 420 827 422 837 8 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawPolyline
+0 0 0 0 false 0 0 [] 1 429 840 409 918 DrawLine
+434 841 431 830 424 839 434 841 8 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawPolyline
+0 0 0 0 false 0 0 [] 1 421 829 122 786 DrawLine
+420 834 431 830 422 824 420 834 8 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawPolyline
+0 0 0 0 false 0 0 [] 1 164 701 122 786 DrawLine
+168 703 168 692 160 699 168 703 8 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawPolyline
+0 0 0 0 false 0 0 [] 1 422 825 168 692 DrawLine
+420 829 431 830 424 821 420 829 8 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawPolyline
+0 0 0 0 false 0 0 [] 1 431 820 426 724 DrawLine
+426 820 431 830 436 820 426 820 8 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawPolyline
+318 636 7 7 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+318 613 7 7 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+318 594 7 7 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+374 594 7 7 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+433 594 7 7 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+489 594 7 7 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+489 613 7 7 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+489 636 7 7 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+489 656 7 7 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+433 656 7 7 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+374 656 7 7 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+318 656 7 7 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+grestore
+
+grestore
+
+0 969 550 400 0 0 0 0 false 0 0 [] 2 -1 0 0 0 false DrawRectangle
+grestore
+
+grestore
+
+0 969 700 400 0 0 0 0 false 0 0 [] 2 -1 0 0 0 false DrawRectangle
+grestore
+
+
+showpage
+%%Trailer
+%%DocumentFonts: /Courier 
+%%BoundingBox: 72 263 540 530
+
+%%EndDocument
+ GE /Times-Bold SF
+6120 37404 MT
+(Figure 1:)SH
+/Times-Roman SF
+10977 XM
+(A sample Garnet application.  The code for this application is listed)
+234 W( the "Sample Garnet)235 W
+10977 38600 MT
+(Program" section of this manual, starting on page 493.)SH
+46800 50 6120 40552 UL
+12 /Times-Bold AF
+6120 44036 MT
+(6.1. Installation on a Mac)SH
+11 SS 
+6120 46680 MT
+(Retrieving the Stuffit Files:)SH
+/Times-Roman SF
+6120 48978 MT
+(Garnet 3.0)
+256 W( is available in)255 W
+10 /Courier AF
+18698 XM
+(Stuffit)SH
+11 /Times-Roman AF
+23428 XM
+(files that include the sources, the library files, the binary files)255 W
+6120 50174 MT
+(compiled for Macintosh Common Lisp 2.0.1, and documentation.)
+8 W( To)
+292 W( download the Garnet collection that)9 W
+6120 51370 MT
+(includes MCL binaries, use FTP or Fetch)
+93 W( \050a Mac file transfer utility\051 to connect to)92 W
+10 /Courier AF
+43920 XM
+(a.gp.cs.cmu.edu)SH
+11 /Times-Roman AF
+6120 52566 MT
+(\050)SH
+10 /Courier AF
+(128.2.242.7)SH
+11 /Times-Roman AF
+(\051 and login as)147 W
+10 /Courier AF
+19906 XM
+(``anonymous'')SH
+11 /Times-Roman AF
+28128 XM
+(with your e-mail address as the password.  Change to)148 W
+6120 53762 MT
+("binary" mode for FTP, or stay in "automatic" mode for Fetch, and download the)SH
+10 /Courier AF
+42070 XM
+(Stuffit)SH
+11 /Times-Roman AF
+46545 XM
+(archive)SH
+8 /Courier AF
+8040 54927 MT
+(/usr/garnet/garnet/mac.sit)SH
+11 /Times-Roman AF
+6120 56348 MT
+(Alternatively, you can get the BinHex version in text mode by retrieving)SH
+8 /Courier AF
+8040 57513 MT
+(/usr/garnet/garnet/mac.sit.hqx)SH
+11 /Times-Roman AF
+6120 58934 MT
+(If you are using Fetch, it will automatically convert the BinHex)
+141 W( file into a binary)140 W
+10 /Courier AF
+44034 XM
+(.sit)SH
+11 /Times-Roman AF
+46849 XM
+(file after it is)140 W
+6120 60130 MT
+(installed on your Mac.  If you used FTP to get the)60 W
+10 /Courier AF
+29051 XM
+(.hqx)SH
+11 /Times-Roman AF
+31786 XM
+(file, you will need to)
+60 W( BinHex4 Decode the file.)61 W
+6120 61326 MT
+(You should also retrieve one version of the documentation file:)SH
+8 /Courier AF
+8040 62491 MT
+(/usr/garnet/garnet/doc.sit)SH
+8040 63356 MT
+(/usr/garnet/garnet/doc.sit.hqx)SH
+11 /Times-Roman AF
+6120 65654 MT
+(If you do not have a version of)37 W
+10 /Courier AF
+20222 XM
+(Stuffit)SH
+11 /Times-Roman AF
+(, you can)
+37 W( also download the copy of)36 W
+10 /Courier AF
+40871 XM
+(Stuffit_Expander)SH
+11 /Times-Roman AF
+50782 XM
+(from)SH
+6120 66850 MT
+(the same directory to uncompress the Garnet)
+119 W( archive.  The)120 W
+10 /Courier AF
+33305 XM
+(Stuffit)SH
+11 /Times-Roman AF
+37900 XM
+(utility is a self-extracting archive)120 W
+6120 68046 MT
+(that you only need to double-click on to install on your Mac.  Be sure to use binary transfer mode in)
+29 W( FTP)28 W
+6120 69242 MT
+(if you are retrieving)SH
+10 /Courier AF
+15160 XM
+(StuffIt_Expander_.sea)SH
+11 /Times-Roman AF
+(.)SH
+ES
+%%Page: 7 6
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(Section 6)
+SH( How)
+1800 W( to Retrieve and Install Garnet)SH
+52386 XM
+(Page 7)SH
+46800 50 8280 4486 UL
+11 /Times-Bold AF
+8280 7937 MT
+(Unpacking the Stuffit Files:)SH
+/Times-Roman SF
+8280 10235 MT
+(Once you have downloaded the)85 W
+10 /Courier AF
+22846 XM
+(.sit)SH
+11 /Times-Roman AF
+25606 XM
+(or)SH
+10 /Courier AF
+26882 XM
+(.sit.hqx)SH
+11 /Times-Roman AF
+32042 XM
+(archives \050and installed the)85 W
+10 /Courier AF
+44172 XM
+(Stuffit_Expander)SH
+11 /Times-Roman AF
+(, if)86 W
+8280 11431 MT
+(necessary\051, launch the)34 W
+10 /Courier AF
+18398 XM
+(Stuffit)SH
+11 /Times-Roman AF
+22907 XM
+(utility. Next,)
+343 W( "Expand...")
+34 W( or "Open" the)33 W
+10 /Courier AF
+41007 XM
+(mac.sit)SH
+11 /Times-Roman AF
+45515 XM
+(archive, and choose a)33 W
+8280 12627 MT
+(folder into which the uncompressed Garnet folder will be expanded.  The instructions below assume)
+49 W( you)50 W
+8280 13823 MT
+(have installed the uncompressed folder at the top-level of)
+141 W( your hard drive, and that your hard drive is)140 W
+8280 15019 MT
+(named "Macintosh HD" \050i.e., the uncompressed folder will become "Macintosh HD:Garnet:"\051.  It is a)160 W
+8280 16215 MT
+(good idea to expand)
+60 W( the)59 W
+10 /Courier AF
+19361 XM
+(doc.sit)SH
+11 /Times-Roman AF
+23895 XM
+(archive in the Garnet folder that was created by the first archive.  For)59 W
+8280 17411 MT
+(further instructions about printing the documentation, consult the README file in the doc folder.)SH
+/Times-Bold SF
+8280 20044 MT
+(Preparing MCL Before Loading Garnet:)SH
+/Times-Roman SF
+8280 22342 MT
+(When using Garnet, you may need to)
+251 W( increase the amount of memory that is claimed by the Lisp)252 W
+8280 23538 MT
+(application. You)
+639 W( can change the)
+182 W( memory claimed by MCL by selecting the MCL application in the)181 W
+8280 24734 MT
+(Macintosh Finder and choosing)
+34 W( "Get Info" from the Finder's "File" menu.  Most Garnet applications will)35 W
+8280 25930 MT
+(require that MCL use at least 6Mb of RAM, and using at least 12Mb is recommended.)
+180 W( The)
+634 W( default)179 W
+8280 27126 MT
+("Preferred size" for MCL is 3072K, so you will need)
+31 W( to edit that value to be upwards of 6000K.  You are)32 W
+8280 28322 MT
+(only allowed)
+163 W( to change this information when the application is NOT running, and it should be done)162 W
+8280 29518 MT
+(before proceeding with the rest of these instructions.  Note: All Lisp)
+246 W( images saved from the MCL)247 W
+8280 30714 MT
+(application will retain the new "Preferred size" value.)SH
+8280 33012 MT
+(Before loading Garnet, you will need to compile several MCL library files that are used by Garnet.)
+109 W( A)491 W
+8280 34208 MT
+(compiler script for this procedure is provided in the Garnet collection.  In)
+10 W( the fresh MCL listener, load the)11 W
+8280 35404 MT
+(file "Macintosh HD:Garnet:compile-mcl-libraries.lisp" \050replacing)
+110 W( the hard drive prefix with whatever is)109 W
+8280 36600 MT
+(appropriate for your machine\051.  After the script is finished, quit MCL and then launch MCL again.)SH
+/Times-Bold SF
+8280 38898 MT
+(Loading Garnet:)SH
+/Times-Roman SF
+8280 41196 MT
+(Using the)
+177 W( MCL text editor, edit the file)178 W
+10 /Courier AF
+27210 XM
+(garnet-loader.lisp)SH
+11 /Times-Roman AF
+38463 XM
+(from the new Garnet folder \050choose)178 W
+8280 42392 MT
+("File...", "Open..." from the MCL menubar to edit a)
+396 W( file\051.  Find the definition of the variable)395 W
+10 /Courier AF
+8280 43588 MT
+(Your-Garnet-Pathname)SH
+11 /Times-Roman AF
+20812 XM
+(and set its value to the path of the new Garnet)
+257 W( folder you created with)258 W
+10 /Courier AF
+8280 44784 MT
+(Stuffit)SH
+11 /Times-Roman AF
+(. All)
+605 W( other subfolders of Garnet will be computed)
+165 W( relative to this pathname.  Save the new)164 W
+8280 45980 MT
+(version of the)SH
+10 /Courier AF
+14603 XM
+(garnet-loader.lisp)SH
+11 /Times-Roman AF
+25678 XM
+(file.)SH
+8280 48278 MT
+(In the fresh lisp listener, load "Macintosh HD:Garnet:garnet-loader.lisp" \050using whatever prefix)
+338 W( is)339 W
+8280 49474 MT
+(appropriate instead of "Macintosh HD:Garnet:"\051.  Garnet will inform you as)
+126 W( it loads each module, and)125 W
+8280 50670 MT
+(will finally return with a prompt.  At this point, Garnet is fully loaded and you are)
+8 W( ready to try the Tour or)9 W
+8280 51866 MT
+(some demos as discussed later in this manual.)SH
+12 /Times-Bold AF
+8280 55550 MT
+(6.2. Installation on a Unix System)SH
+11 /Times-Roman AF
+8280 56746 MT
+(When running on X windows, Garnet uses)
+4 W( the CLX interface from Lisp to X/11.  CLX should be supplied)3 W
+8280 57942 MT
+(with every Lisp, and the following)
+154 W( instructions assume that CLX has been installed correctly on your)155 W
+8280 59138 MT
+(system. If)
+337 W( you need help with CLX, you need to contact your Lisp vendor.)
+31 W( We)
+335 W( cannot help you acquire,)30 W
+8280 60334 MT
+(compile, or install CLX, sorry.)SH
+/Times-Bold SF
+8280 62632 MT
+(Retrieving the TAR Files:)SH
+/Times-Roman SF
+8280 64930 MT
+(The Garnet software is about 9 megabytes.  In order to make it easy to)
+162 W( copy the files over, we have)163 W
+8280 66126 MT
+(created TAR files, so to use the mechanism below requires double the)
+62 W( storage area.  Therefore, you first)61 W
+8280 67322 MT
+(need to find a machine with enough room, and then create a directory called)44 W
+10 /Courier AF
+42645 XM
+(garnet)SH
+11 /Times-Roman AF
+46564 XM
+(wherever you want)44 W
+8280 68518 MT
+(the system to be:)SH
+8 /Courier AF
+14040 69683 MT
+(% mkdir garnet)SH
+ES
+%%Page: 8 7
+BS
+0 SI
+10 /Times-Roman AF
+6120 4286 MT
+(Page 8)
+SH( Garnet)
+830 W( Toolkit)SH
+46800 50 6120 4486 UL
+11 SS 
+6120 7955 MT
+(Then, cd to the)SH
+10 /Courier AF
+12993 XM
+(garnet)SH
+11 /Times-Roman AF
+16868 XM
+(directory.)SH
+8 /Courier AF
+11880 9120 MT
+(% cd garnet)SH
+11 /Times-Roman AF
+6120 10541 MT
+(Now, ftp to)128 W
+10 /Courier AF
+11820 XM
+(a.gp.cs.cmu.edu \050128.2.242.7\051)128 W
+11 /Times-Roman AF
+(. When)
+531 W( asked to log in, use)128 W
+10 /Courier AF
+42836 XM
+(anonymous)SH
+11 /Times-Roman AF
+(, and)
+128 W( your)127 W
+6120 11737 MT
+(name as the password.)SH
+8 /Courier AF
+9480 12902 MT
+(% ftp a.gp.cs.cmu.edu)SH
+9480 13767 MT
+(Connected to A.GP.CS.CMU.EDU.)SH
+9480 14632 MT
+(220 A.GP.CS.CMU.EDU FTP server \050Version 4.105 of 10-Jul-90 12:07\051 ready.)SH
+9480 15497 MT
+(Name \050a.gp.cs.cmu.edu:bam\051: anonymous)SH
+9480 16362 MT
+(331 Guest login ok, send username@node as password.)SH
+9480 17227 MT
+(Password:)SH
+9480 18092 MT
+(230 Filenames can not have '/..' in them.)SH
+11 /Times-Roman AF
+6120 20390 MT
+(Then change to the)SH
+10 /Courier AF
+14794 XM
+(garnet)SH
+11 /Times-Roman AF
+18669 XM
+(directory \050note the double)SH
+10 /Courier AF
+30337 XM
+(garnet)SH
+11 /Times-Roman AF
+('s\051 and use binary transfer mode:)SH
+8 /Courier AF
+11880 21555 MT
+(ftp> cd /usr/garnet/garnet/)SH
+11880 22420 MT
+(ftp> bin)SH
+11 /Times-Roman AF
+6120 24718 MT
+(The files have all been)
+165 W( combined into TAR format files for your convenience.  These will create the)166 W
+6120 25914 MT
+(appropriate sub-directories automatically.  We have both compressed and uncompressed versions.)
+133 W( For)539 W
+6120 27110 MT
+(the regular versions, do the following:)SH
+8 /Courier AF
+11880 28275 MT
+(ftp> get src.tar)SH
+11880 29140 MT
+(ftp> get lib.tar)SH
+11880 30005 MT
+(ftp> get doc.tar)SH
+11 /Times-Roman AF
+6120 32303 MT
+(To get the compressed version, do the following:)SH
+8 /Courier AF
+11880 33468 MT
+(ftp> get src.tar.Z)SH
+11880 34333 MT
+(ftp> get lib.tar.Z)SH
+11880 35198 MT
+(ftp> get doc.tar.Z)SH
+11 /Times-Roman AF
+6120 37496 MT
+(Now you can quit FTP:)SH
+8 /Courier AF
+11880 38661 MT
+(ftp> quit)SH
+11 /Times-Bold AF
+6120 40959 MT
+(Installing the Source Files:)SH
+/Times-Roman SF
+6120 43257 MT
+(If you got the compressed versions, you will need to uncompress them:)SH
+8 /Courier AF
+11880 44422 MT
+(% uncompress src.tar.Z)SH
+11880 45287 MT
+(% uncompress lib.tar.Z)SH
+11880 46152 MT
+(% uncompress doc.tar.Z)SH
+11 /Times-Roman AF
+6120 48450 MT
+(Now, for each tar file, you will need to "untar" it, to get all the original files:)SH
+8 /Courier AF
+11880 49615 MT
+(% tar -xvf src.tar)SH
+11880 50480 MT
+(% tar -xvf lib.tar)SH
+11880 51345 MT
+(% tar -xvf doc.tar)SH
+11 /Times-Roman AF
+6120 53643 MT
+(This will create subdirectories will all)
+86 W( the sources in them.  At this point you can delete the original tar)87 W
+6120 54839 MT
+(files, which will free up a lot of space:)SH
+8 /Courier AF
+11880 56004 MT
+(% rm *.tar)SH
+11 /Times-Roman AF
+6120 58302 MT
+(Now, copy the files)619 W
+10 /Courier AF
+17484 XM
+(garnet-loader.lisp, garnet-compiler.lisp, garnet-prepare-)618 W
+6120 59498 MT
+(compile.lisp)SH
+11 /Times-Roman AF
+(, and)SH
+10 /Courier AF
+15733 XM
+(garnet-after-compile)SH
+11 /Times-Roman AF
+28008 XM
+(from the src directory into the)SH
+10 /Courier AF
+41448 XM
+(garnet)SH
+11 /Times-Roman AF
+45323 XM
+(directory:)SH
+8 /Courier AF
+11880 60663 MT
+(% cp src/garnet-*  .)SH
+11 /Times-Bold AF
+6120 62961 MT
+(Customizing the PathNames:)SH
+/Times-Roman SF
+6120 65259 MT
+(The file)40 W
+10 /Courier AF
+9926 XM
+(garnet-loader.lisp)SH
+11 /Times-Roman AF
+21041 XM
+(contains variables that should be set)
+40 W( with the pathnames of your Garnet)41 W
+6120 66455 MT
+(directory and the location of CLX for your)
+20 W( lisp.  You will now need to edit)19 W
+10 /Courier AF
+39638 XM
+(garnet-loader.lisp)SH
+11 /Times-Roman AF
+50732 XM
+(in an)19 W
+6120 67651 MT
+(editor, and set these variables.  Comments in the)
+31 W( file will direct you how to do this.  At the top of the file)32 W
+6120 68847 MT
+(are the two variables you will need to set:)276 W
+10 /Courier AF
+27757 XM
+(Your-Garnet-Pathname)SH
+11 /Times-Roman AF
+40307 XM
+(and)SH
+10 /Courier AF
+42445 XM
+(Your-CLX-Pathname)SH
+11 /Times-Roman AF
+(.)SH
+6120 70043 MT
+(NOTE: If CLX is already loaded in your lisp image, you do not need to set the CLX variable.)SH
+ES
+%%Page: 9 8
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(Section 7)
+SH( Directory)
+1800 W( Organization)SH
+52386 XM
+(Page 9)SH
+46800 50 8280 4486 UL
+11 /Times-Bold AF
+8280 7937 MT
+(Compiling Garnet to Make Binary Files:)SH
+/Times-Roman SF
+8280 10235 MT
+(Lisp requires very large address spaces.)
+37 W( We)
+350 W( have found on many Unix systems, that you need to expand)38 W
+8280 11431 MT
+(the area that it is willing to give to a process.  The)
+101 W( following commands work in many systems.  Type)100 W
+8280 12627 MT
+(these commands to the C shell \050csh\051.  You might want to also put these commands into your)SH
+10 /Courier AF
+49129 XM
+(.login)SH
+11 /Times-Roman AF
+53004 XM
+(file.)SH
+8 /Courier AF
+14040 13792 MT
+(% unlimit datasize)SH
+14040 14657 MT
+(% unlimit stacksize)SH
+11 /Times-Roman AF
+8280 16955 MT
+(Now, you will need to compile the Garnet source to make your own binaries.)
+11 W( This)
+299 W( is achieved by loading)12 W
+8280 18151 MT
+(the compiler scripts.)
+353 W( There)
+980 W( is more information on compiling in section 10 below, and special)352 W
+8280 19347 MT
+(instructions for compiling Garnet in CLISP are in section 8.8.)SH
+8 /Times-Italic AF
+14040 20560 MT
+(;; Only LispWorks users need to do the next two commands.  See section 8.7.)SH
+/Courier SF
+14040 21425 MT
+(lisp> #+lispworks \050load "src/utils/lispworks-processes.lisp"\051)SH
+14040 22290 MT
+(lisp> #+lispworks \050guarantee-processes\051)SH
+14040 24020 MT
+(lisp> \050load "garnet-prepare-compile"\051)SH
+14040 24885 MT
+(lisp> \050load "garnet-loader"\051)SH
+14040 25750 MT
+(lisp> \050load "garnet-compiler"\051)SH
+11 /Times-Roman AF
+8280 28048 MT
+(Now Garnet is all compiled and)
+38 W( loaded, but a shell script still needs to be executed to separate the binary)39 W
+8280 29244 MT
+(files from the source files.  To set up for the next time, it is best)
+282 W( to quit lisp now, and run the)281 W
+10 /Courier AF
+8280 30440 MT
+(garnet-after-compile)SH
+11 /Times-Roman AF
+20711 XM
+(shell script.  If your sources are not in a directory named)157 W
+10 /Courier AF
+47732 XM
+(garnet/src)SH
+11 /Times-Roman AF
+54164 XM
+(or)SH
+8280 31636 MT
+(your binaries should not be in a directory named)496 W
+10 /Courier AF
+34341 XM
+(garnet/bin)SH
+11 /Times-Roman AF
+(, then you will need to edit)496 W
+10 /Courier AF
+8280 32832 MT
+(garnet-after-compile)SH
+11 /Times-Roman AF
+20592 XM
+(to set the directories.  Also, if your compiler produces binary files that do not)37 W
+8280 34028 MT
+(have one of the following extensions, then you need to)
+269 W( edit the variable)268 W
+10 /Courier AF
+43481 XM
+(CompilerExtension)SH
+11 /Times-Roman AF
+54224 XM
+(in)SH
+10 /Courier AF
+8280 35224 MT
+(garnet-after-compile)SH
+11 /Times-Roman AF
+(: ".fasl", ".lbin", ".sbin", ".hbin", ".sparcf", ".afasl", or ".fas".)
+76 W( Otherwise,)
+428 W( you)77 W
+8280 36420 MT
+(can just execute the file as it is supplied \050NOTE: this is run from the shell, not from Lisp\051.  You)
+11 W( should be)10 W
+8280 37616 MT
+(in the)SH
+10 /Courier AF
+11030 XM
+(garnet)SH
+11 /Times-Roman AF
+14905 XM
+(directory.)SH
+8 /Courier AF
+14040 38781 MT
+(% csh garnet-after-compile)SH
+11 /Times-Roman AF
+8280 41079 MT
+(Now you can start lisp again, and load Garnet:)SH
+8 /Courier AF
+14040 42244 MT
+(lisp> \050load "garnet-loader"\051)SH
+11 /Times-Roman AF
+8280 44542 MT
+(Details about how to customize the loading of Garnet are provided in section 11.)SH
+14 /Times-Bold AF
+8280 48360 MT
+(7. Directory Organization)SH
+11 /Times-Roman AF
+8280 49556 MT
+(All of the information about where)
+747 W( various files of Garnet are stored is in the file)748 W
+10 /Courier AF
+8280 50752 MT
+(garnet-loader.lisp)SH
+11 /Times-Roman AF
+(. This)
+275 W( file also defines the Garnet version number:)SH
+8 /Courier AF
+10200 51917 MT
+(* user::Garnet-Version-Number)SH
+10200 52782 MT
+("3.0")SH
+11 /Times-Roman AF
+8280 55080 MT
+(You may need to edit the)16 W
+10 /Courier AF
+19740 XM
+(garnet-loader)SH
+11 /Times-Roman AF
+27831 XM
+(file to tell Garnet where all the files)
+16 W( are.  Normally, there will)15 W
+8280 56276 MT
+(be a directory)
+252 W( called)253 W
+10 /Courier AF
+18512 XM
+(garnet)SH
+11 /Times-Roman AF
+22640 XM
+(with sub-directories called)253 W
+10 /Courier AF
+35342 XM
+(src)SH
+11 /Times-Roman AF
+(,)SH
+10 /Courier AF
+37945 XM
+(lib)SH
+11 /Times-Roman AF
+40273 XM
+(and)SH
+10 /Courier AF
+42389 XM
+(bin)SH
+11 /Times-Roman AF
+(. In)
+781 W( the)253 W
+10 /Courier AF
+48836 XM
+(src)SH
+11 /Times-Roman AF
+51164 XM
+(and)SH
+10 /Courier AF
+53280 XM
+(bin)SH
+11 /Times-Roman AF
+8280 57472 MT
+(directions will be sub-directories for all the parts of the Garnet system:)SH
+/Symbol SF
+10249 59050 MT
+(\267)SH
+10 /Courier AF
+11030 XM
+(utils)SH
+11 /Times-Roman AF
+14305 XM
+(- Utility files and functions.)SH
+/Symbol SF
+10249 60246 MT
+(\267)SH
+10 /Courier AF
+11030 XM
+(kr)SH
+11 /Times-Roman AF
+12505 XM
+(- KR object system.)SH
+/Symbol SF
+10249 61442 MT
+(\267)SH
+10 /Courier AF
+11030 XM
+(gworld)SH
+11 /Times-Roman AF
+14905 XM
+(- Mac routines for off-screen drawing \050only used on the Mac\051)SH
+/Symbol SF
+10249 62638 MT
+(\267)SH
+10 /Courier AF
+11030 XM
+(gem)SH
+11 /Times-Roman AF
+13105 XM
+(- Garnet's interface to machine-specific graphics routines \050X and Mac\051)SH
+/Symbol SF
+10249 63834 MT
+(\267)SH
+10 /Courier AF
+11030 XM
+(opal)SH
+11 /Times-Roman AF
+13705 XM
+(- Opal Graphics management system.)SH
+/Symbol SF
+10249 65030 MT
+(\267)SH
+10 /Courier AF
+11030 XM
+(inter)SH
+11 /Times-Roman AF
+14305 XM
+(- Interactors input handling.)SH
+/Symbol SF
+10249 66226 MT
+(\267)SH
+10 /Courier AF
+11030 XM
+(aggregadgets)SH
+11 /Times-Roman AF
+18505 XM
+(- Files to handle aggregates and lists.)SH
+/Symbol SF
+10249 67422 MT
+(\267)SH
+10 /Courier AF
+11030 XM
+(gadgets)SH
+11 /Times-Roman AF
+15505 XM
+(- Pre-defined gadgets, such as menus and scroll bars.)SH
+/Symbol SF
+10249 68618 MT
+(\267)SH
+10 /Courier AF
+11030 XM
+(gesture)SH
+11 /Times-Roman AF
+15505 XM
+(- Tools for handling gestures as input.)SH
+/Symbol SF
+10249 69814 MT
+(\267)SH
+10 /Courier AF
+11030 XM
+(ps)SH
+11 /Times-Roman AF
+12505 XM
+(- Functions for printing Garnet windows with PostScript.)SH
+/Symbol SF
+10249 71010 MT
+(\267)SH
+10 /Courier AF
+11030 XM
+(debug)SH
+11 /Times-Roman AF
+14305 XM
+(- Debugging tools.)SH
+ES
+%%Page: 10 9
+BS
+0 SI
+10 /Times-Roman AF
+6120 4286 MT
+(Page 10)
+SH( Garnet)
+830 W( Toolkit)SH
+46800 50 6120 4486 UL
+11 /Symbol AF
+8089 8080 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(demos)SH
+11 /Times-Roman AF
+12145 XM
+(- Demonstration programs written using Garnet.)SH
+/Symbol SF
+8089 9276 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(gilt)SH
+11 /Times-Roman AF
+11545 XM
+(- The Gilt interface builder.)SH
+/Symbol SF
+8089 10472 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(c32)SH
+11 /Times-Roman AF
+10945 XM
+(- A spreadsheet for editing constraints among objects.)SH
+/Symbol SF
+8089 11668 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(lapidary)SH
+11 /Times-Roman AF
+13945 XM
+(- The Lapidary interactive tool.)SH
+/Symbol SF
+8089 12864 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(contrib)SH
+11 /Times-Roman AF
+13391 XM
+(- Files contributed by Garnet users that are not supported by the Garnet)
+46 W( group, but)45 W
+8870 14060 MT
+(just provided for your use.)SH
+14 /Times-Bold AF
+6120 17878 MT
+(8. Site-Specific Changes)SH
+11 /Times-Roman AF
+6120 19074 MT
+(If you are transferring Garnet to your site,)
+84 W( you will need to make a number of edits to files in order for)85 W
+6120 20270 MT
+(Garnet to load, compile)
+215 W( and operate correctly.  All users will need to edit the Garnet pathnames as)214 W
+6120 21466 MT
+(discussed in section 8.1, but)
+9 W( relatively few users should need the other sections 8.2 - 8.8.  Garnet has been)10 W
+6120 22662 MT
+(adjusted to load)
+441 W( on the widest possible variety of lisps and operating systems with minimum)440 W
+6120 23858 MT
+(modification.)SH
+6120 26156 MT
+(Of course, if you change any)747 W
+10 /Courier AF
+23581 XM
+(.lisp)SH
+11 /Times-Roman AF
+27603 XM
+(files in the Garnet subdirectories \050not)
+747 W( including)748 W
+10 /Courier AF
+6120 27352 MT
+(garnet-loader.lisp)SH
+11 /Times-Roman AF
+(\051, you will need to recompile them \050section 12\051, even if you do not)
+219 W( need to)218 W
+6120 28548 MT
+(recompile other parts of Garnet.)SH
+12 /Times-Bold AF
+6120 32232 MT
+(8.1. Pathnames)SH
+11 /Times-Roman AF
+6120 33428 MT
+(After you have copied Garnet to your machine and untar'ed the source files, the)
+4 W( top level Garnet directory)5 W
+6120 34624 MT
+(will contain the file)131 W
+10 /Courier AF
+15504 XM
+(garnet-loader.lisp)SH
+11 /Times-Roman AF
+(. This)
+535 W( one file contains the file names for all the parts of)130 W
+6120 35820 MT
+(Garnet. You)
+507 W( should edit)
+116 W( this file to put in your own file names.  The best way to do this is to set the)117 W
+10 /Courier AF
+6120 37016 MT
+(Garnet-Version)SH
+11 /Times-Roman AF
+15529 XM
+(to be)734 W
+10 /Courier AF
+19441 XM
+(:external)SH
+11 /Times-Roman AF
+25850 XM
+(and edit the string at the top)
+734 W( of the file called)733 W
+10 /Courier AF
+6120 38212 MT
+(Your-Garnet-Pathname)SH
+11 /Times-Roman AF
+18470 XM
+(to say)
+75 W( where the files are.  This change is normally done during the compile)76 W
+6120 39408 MT
+(procedure, already described in section 6.)SH
+12 /Times-Bold AF
+6120 43092 MT
+(8.2. Compiler Optimization Settings)SH
+11 /Times-Roman AF
+6120 44288 MT
+(The variable)129 W
+10 /Courier AF
+12180 XM
+(user::*default-garnet-proclaim*)SH
+11 /Times-Roman AF
+(, defined in)128 W
+10 /Courier AF
+36418 XM
+(garnet-loader.lisp)SH
+11 /Times-Roman AF
+(, holds a list)128 W
+6120 45484 MT
+(of compiler optimization flags and default values.  These flags determine things like the size and)
+18 W( speed of)19 W
+6120 46680 MT
+(your resulting Garnet binaries.  For example, the default value of this variable in Allegro is:)SH
+8 /Courier AF
+8040 47845 MT
+('\050optimize \050speed 3\051 \050safety 1\051 \050space 0\051 \050debug 3\051\051)SH
+11 /Times-Roman AF
+6120 49115 MT
+(This optimization causes Allegro to generate compiled binaries that)
+15 W( are as fast and small as possible.  The)14 W
+/Times-Italic SF
+6120 50311 MT
+(safety)SH
+/Times-Roman SF
+8964 XM
+(setting of 1 means that the compiled code will allow keyboard interrupts if you)
+3 W( somehow go into an)4 W
+6120 51507 MT
+(infinite loop, and the)56 W
+/Times-Italic SF
+15785 XM
+(debug)SH
+/Times-Roman SF
+18804 XM
+(setting of 3 means you will get the most helpful error)
+56 W( messages that Allegro)55 W
+6120 52703 MT
+(can give you when you are thrown into the debugger.)SH
+6120 55001 MT
+(Different implementations of)
+727 W( lisp require different values for the optimization flags, and)728 W
+10 /Courier AF
+6120 56197 MT
+(garnet-loader.lisp)SH
+11 /Times-Roman AF
+17197 XM
+(provides values)
+2 W( for Allegro, Lucid, CMUCL, LispWorks, and MCL that we have)1 W
+6120 57393 MT
+(found work)
+582 W( particularly well.  You can override the default optimizations by defining the)583 W
+10 /Courier AF
+6120 58589 MT
+(*default-garnet-proclaim*)SH
+11 /Times-Roman AF
+21507 XM
+(variable before loading)112 W
+10 /Courier AF
+32318 XM
+(garnet-loader.lisp)SH
+11 /Times-Roman AF
+(. A)
+499 W( value of NIL)
+112 W( for)111 W
+6120 59785 MT
+(this variable means that you want to maintain the declarations that are already in effect for your lisp.)SH
+12 /Times-Bold AF
+6120 63469 MT
+(8.3. Fonts in X/11)SH
+11 /Times-Roman AF
+6120 64665 MT
+(In X/11 R4 through R6, there are)
+30 W( almost always a full set of fonts available with standard names.  Garnet)31 W
+6120 65861 MT
+(relies on these fonts being available on the standard font paths set up by X/11.  You can try loading)164 W
+6120 67057 MT
+(Garnet and see if it finds the standard fonts.)SH
+6120 69355 MT
+(If not, look)
+343 W( in the file)344 W
+10 /Courier AF
+17867 XM
+(garnet/src/opal/text-fonts.lisp)SH
+11 /Times-Roman AF
+(. This)
+963 W( file constructs font names)344 W
+6120 70551 MT
+(according to)
+41 W( the standard X/11 format \050with lots of "-*-*-*"'s\051.  You will have to substitute the names of)40 W
+6120 71747 MT
+(fonts that are available at your installation.)SH
+ES
+%%Page: 11 10
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(Section 8)
+SH( Site-Specific)
+1800 W( Changes)SH
+51886 XM
+(Page 11)SH
+46800 50 8280 4486 UL
+12 /Times-Bold AF
+8280 8004 MT
+(8.4. Keyboard Keys)SH
+11 /Times-Roman AF
+8280 9200 MT
+(If your keyboard has some specially-labeled keys on it, Garnet)
+64 W( will allow you to use these as part of the)65 W
+8280 10396 MT
+(user interface.  The file)SH
+8 /Courier AF
+10200 11561 MT
+(define-keys.lisp)SH
+11 /Times-Roman AF
+8280 12982 MT
+(which is in the)50 W
+10 /Courier AF
+15202 XM
+(garnet/src/inter)SH
+11 /Times-Roman AF
+25127 XM
+(sub-directory, defines the mappings from the codes)
+50 W( that come back)49 W
+8280 14178 MT
+(from X/11 and the Mac to the special Lisp characters or atoms that define the keys in Garnet.)SH
+8280 16476 MT
+(For many machines, such as Suns, HP's, DECStations,)
+11 W( and Macs, we have built in mappings for all of the)12 W
+8280 17672 MT
+(keyboard keys.  Since there are)
+111 W( no Lisp characters for the special keys, they are named with keywords)110 W
+8280 18868 MT
+(such as)SH
+10 /Courier AF
+11762 XM
+(:uparrow)SH
+11 /Times-Roman AF
+16837 XM
+(and)SH
+10 /Courier AF
+18700 XM
+(:F1)SH
+11 /Times-Roman AF
+(. If)
+275 W( some keys on your keyboard are not mapped to keywords,)
+SH( you can use the)1 W
+8280 20064 MT
+(following mechanism to set this up.)SH
+8280 22362 MT
+(To find the correct codes to use for each undefined key, load the Find-Key-Symbols utility with)SH
+8 /Courier AF
+10200 23527 MT
+(\050garnet-load "inter-src:find-key-symbols.lisp"\051)SH
+11 /Times-Roman AF
+8280 24948 MT
+(After loading this file, simply type the keys you need to find mappings for while input is)
+61 W( focused on the)60 W
+8280 26144 MT
+(Find-Key-Symbols window)
+56 W( \050you may have to click on the window's title-bar to change the input focus\051.)57 W
+8280 27340 MT
+(Garnet will print out the code number of the keys you type.)SH
+8280 29638 MT
+(Then, you can go into the file)15 W
+10 /Courier AF
+21643 XM
+(define-keys.lisp)SH
+11 /Times-Roman AF
+31533 XM
+(and edit it so the codes you found)
+15 W( map to appropriate)14 W
+8280 30834 MT
+(keywords.)SH
+8280 33132 MT
+(Next, you might want to bind these keys to keyboard editing operations.  If you want these to be)
+15 W( global to)16 W
+8280 34328 MT
+(all Garnet applications, then you can edit the files)SH
+8 /Courier AF
+10200 35493 MT
+(textkeyhandling.lisp)SH
+11 /Times-Roman AF
+8280 36914 MT
+(and)SH
+8 /Courier AF
+10200 38079 MT
+(multifont-textinter.lisp)SH
+11 /Times-Roman AF
+8280 39500 MT
+(which contain the default)
+58 W( mappings of keyboard keys to text editing operations.  The Interactors Manual)57 W
+8280 40696 MT
+(contains full more information on how this works.)SH
+/Times-Bold SF
+8280 42994 MT
+(If you surround your changes to all these files with)105 W
+10 /Courier AF
+33348 XM
+(#+<your-switch>)SH
+11 /Times-Bold AF
+42728 XM
+(and mail them back to us)105 W
+8280 44190 MT
+(\050)SH
+10 /Courier AF
+(garnet@cs.cmu.edu)SH
+11 /Times-Bold AF
+(\051, then we will incorporate them into)
+151 W( future versions so you won't need to)150 W
+8280 45386 MT
+(continually edit the files.)SH
+12 SS 
+8280 49070 MT
+(8.5. Multiple Screens)SH
+11 /Times-Roman AF
+8280 50266 MT
+(If you are)
+230 W( working on a machine with only one screen, you need not pay attention to this section.)231 W
+8280 51462 MT
+(However, certain machines, such as the color Sun 3/60,)
+62 W( have more than one screen.  The color Sun 3/60)61 W
+8280 52658 MT
+(has both a black-and-white)
+62 W( screen \050whose display name is "unix:0.0"\051 and a color screen \050whose display)63 W
+8280 53854 MT
+(name is "unix:0.1"\051.  If you type "echo $DISPLAY" in a Unix shell, you will get the display)
+40 W( name of the)39 W
+8280 55050 MT
+(screen you are working on; that name should look like "unix:0.*" where * is some integer.)SH
+8280 57348 MT
+(Garnet assumes that the DISPLAY environment variable has this)
+1454 W( form of)1455 W
+8280 58544 MT
+("displayname:displaynumber.screennumber", and extracts the)
+114 W( display and screen numbers from that.  If)113 W
+8280 59740 MT
+(any fields are missing, then the missing display or screen number defaults to zero.)SH
+12 /Times-Bold AF
+8280 63424 MT
+(8.6. OpenWindows Window Manager)SH
+11 /Times-Roman AF
+8280 64620 MT
+(If you are running OpenWindows from Sun, you will)
+13 W( need to add the following line to your)14 W
+10 /Courier AF
+49080 XM
+(.Xdefaults)SH
+11 /Times-Roman AF
+8280 65816 MT
+(file to make text input work correctly:)SH
+8 /Courier AF
+14040 66981 MT
+(OpenWindows.FocusLenience: True)6240 W
+ES
+%%Page: 12 11
+BS
+0 SI
+10 /Times-Roman AF
+6120 4286 MT
+(Page 12)
+SH( Garnet)
+830 W( Toolkit)SH
+46800 50 6120 4486 UL
+12 /Times-Bold AF
+6120 8004 MT
+(8.7. LispWorks)SH
+11 /Times-Roman AF
+6120 9200 MT
+(LispWorks is the common lisp sold by Harlequin Ltd.  There is one peculiarity about LispWorks)
+143 W( that)142 W
+6120 10396 MT
+(requires an additional)
+107 W( step before executing the main-event-loop background process of Garnet \050Garnet)108 W
+6120 11592 MT
+(uses multiprocessing by default in LispWorks -- see the)
+154 W( Interactors Manual, section "The Main Event)153 W
+6120 12788 MT
+(Loop" for details\051.  You need to)
+294 W( perform this step both when compiling and loading Garnet \050the)295 W
+4462 50 36588 12988 UL
+3300 50 43778 12988 UL
+6120 13984 MT
+(appropriate steps are mentioned during the standard compile procedure in section 6\051.)SH
+6120 16282 MT
+(LispWorks has)
+61 W( an unconventional "initialization phaze" to multiprocessing, which requires that a special)60 W
+6120 17478 MT
+(function be called before launching a background process.)
+478 W( There)
+1233 W( are two ways to initialize)479 W
+6120 18674 MT
+(multiprocessing in LispWorks.  One way is to start the big window-oriented)
+190 W( LispWorks interface by)189 W
+6120 19870 MT
+(executing)SH
+10 /Courier AF
+10820 XM
+(\050tools:start-lispworks\051)SH
+11 /Times-Roman AF
+(. This)
+573 W( will cause a menu to appear,)
+149 W( and you can open a lisp)150 W
+6120 21066 MT
+(listener as a)
+181 W( selection from the menu.  From this listener, you can load)180 W
+10 /Courier AF
+39802 XM
+(garnet-loader.lisp)SH
+11 /Times-Roman AF
+(, and)180 W
+6120 22262 MT
+(Garnet's main-event-loop process will be launched by default.)SH
+6120 24560 MT
+(If you do not need all)
+5 W( the functionality of the LispWorks interface, you can initialize multiprocessing with)6 W
+6120 25756 MT
+(much less overhead.  Before loading Garnet, load the)
+99 W( file)98 W
+10 /Courier AF
+32520 XM
+("src/utils/lispworks-process.lisp")SH
+11 /Times-Roman AF
+6120 26952 MT
+(and execute the function)368 W
+10 /Courier AF
+18648 XM
+(guarantee-processes)SH
+11 /Times-Roman AF
+30692 XM
+(to start multiprocessing.  For example, at the)369 W
+6120 28148 MT
+(LispWorks prompt you could type:)SH
+8 /Times-Bold AF
+8040 29350 MT
+(>)SH
+/Courier SF
+8976 XM
+(\050garnet-load "utils-src:lispworks-process.lisp"\051)SH
+/Times-Bold SF
+8040 30215 MT
+(>)SH
+/Courier SF
+8976 XM
+(\050guarantee-processes\051)SH
+/Times-Italic SF
+8040 31945 MT
+(;; At this point, a new lisp listener has been spawned)SH
+/Times-Bold SF
+8040 32810 MT
+(>)SH
+/Courier SF
+8976 XM
+(\050load "garnet/garnet-loader"\051)SH
+11 /Times-Roman AF
+6120 35108 MT
+(It is important to realize that when you call)25 W
+10 /Courier AF
+25559 XM
+(guarantee-processes)SH
+11 /Times-Roman AF
+(, a new lisp listener is spawned, and)24 W
+4278 50 8126 35308 UL
+1832 50 38320 35308 UL
+6120 36304 MT
+(all subsequent commands will be typed into the second listener.  Putting the)133 W
+10 /Courier AF
+41520 XM
+(guarantee-processes)SH
+11 /Times-Roman AF
+6120 37500 MT
+(call at the top of the)1 W
+10 /Courier AF
+15168 XM
+(garnet-loader.lisp)SH
+11 /Times-Roman AF
+26244 XM
+(file will not work, because the first listener)
+1 W( will remain hung)SH
+6120 38696 MT
+(at the)SH
+10 /Courier AF
+8808 XM
+(guarantee-processes)SH
+11 /Times-Roman AF
+20483 XM
+(call, while the second process is waiting for user input.)SH
+6120 40994 MT
+(On the other hand, it has been reported that putting the special steps for LispWorks in a)18 W
+10 /Courier AF
+45160 XM
+(.lispworks)SH
+11 /Times-Roman AF
+51454 XM
+(file)SH
+6120 42190 MT
+(may serve to automate)
+3 W( the process a bit.  To automatically initialize multiprocessing whenever LispWorks)2 W
+6120 43386 MT
+(is started, put the following lines in your)SH
+10 /Courier AF
+24239 XM
+(.lispworks)SH
+11 /Times-Roman AF
+30514 XM
+(file:)SH
+8 /Courier AF
+8040 44551 MT
+(\050progn)SH
+9000 45416 MT
+(\050load "<your-garnet-pathname>/src/utils/lispworks-process.lisp"\051)SH
+9000 46281 MT
+(\050guarantee-processes\051\051)SH
+11 /Times-Roman AF
+6120 47702 MT
+(You will not be able to call)140 W
+10 /Courier AF
+19351 XM
+(garnet-load)SH
+11 /Times-Roman AF
+26366 XM
+(from your)140 W
+10 /Courier AF
+31350 XM
+(.lispworks)SH
+11 /Times-Roman AF
+37766 XM
+(file because the function will not)141 W
+6120 48898 MT
+(have been defined when the file is read.)SH
+6120 51196 MT
+(Whenever you enter the debugger of the new listener spawned by)35 W
+10 /Courier AF
+35610 XM
+(guarantee-processes)SH
+11 /Times-Roman AF
+(, you will)
+35 W( get)34 W
+6120 52392 MT
+(restart options that include:)SH
+8 /Courier AF
+8040 53557 MT
+(...)SH
+8040 54422 MT
+(5 \050abort\051 return to level 0.)SH
+8040 55287 MT
+(6 Return to top level)SH
+8040 56152 MT
+(7 Return from multiprocessing)SH
+11 /Times-Roman AF
+6120 58450 MT
+(When you want to)
+84 W( exit the debugger, you should choose either "\050abort\051 return to level 0," or "Return to)85 W
+6120 59646 MT
+(top level", since both of these)
+125 W( options will return you to the top-level LispWorks prompt.  If you ever)124 W
+6120 60842 MT
+(choose "Return)
+142 W( from multiprocessing", then you will kill both the second listener and the main-event-)143 W
+6120 62038 MT
+(loop-process, and you will)
+242 W( have to call)241 W
+10 /Courier AF
+25100 XM
+(guarantee-processes)SH
+11 /Times-Roman AF
+37016 XM
+(and)SH
+10 /Courier AF
+39120 XM
+(opal:launch-main-event-)SH
+6120 63234 MT
+(loop-process)SH
+11 /Times-Roman AF
+13595 XM
+(to restart Garnet's main-event-loop process.)SH
+6120 65532 MT
+(It is not necessary to load)140 W
+10 /Courier AF
+18446 XM
+("lispworks-process.lisp")SH
+11 /Times-Roman AF
+33261 XM
+(or execute)140 W
+10 /Courier AF
+38366 XM
+(guarantee-processes)SH
+11 /Times-Roman AF
+50182 XM
+(if you)141 W
+6120 66728 MT
+(instead choose to execute)SH
+10 /Courier AF
+17604 XM
+(tools:start-lispworks)SH
+11 /Times-Roman AF
+(.)SH
+ES
+%%Page: 13 12
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(Section 9)
+SH( Mac-Specific)
+1800 W( Issues)SH
+51886 XM
+(Page 13)SH
+46800 50 8280 4486 UL
+12 /Times-Bold AF
+8280 8004 MT
+(8.8. CLISP)SH
+11 /Times-Roman AF
+8280 9200 MT
+(CLISP is a Common Lisp \050CLtL1\051 implementation by Bruno Haible of Karlsruhe University and Michael)17 W
+8280 10396 MT
+(Stoll of Munich University, both in Germany.  There are a couple of)
+14 W( additional steps you must take to run)15 W
+8280 11592 MT
+(Garnet in CLISP that are not required in other lisps.)SH
+/Times-Bold SF
+8280 13890 MT
+(Renaming .lisp files to .lsp)SH
+/Times-Roman SF
+8280 16188 MT
+(If you have an older version of CLISP, you)
+136 W( will have to rename all of the source files from ".lisp" to)135 W
+8280 17384 MT
+(".lsp" before starting the procedure)
+162 W( to compile Garnet.  A)163 W
+10 /Courier AF
+35422 XM
+(/bin/sh)SH
+11 /Times-Roman AF
+40060 XM
+(shell script has been provided to)163 W
+8280 18580 MT
+(automate this process in the file)24 W
+10 /Courier AF
+22660 XM
+(src/utils/rename-for-clisp)SH
+11 /Times-Roman AF
+(. This)
+323 W( script requires that you)24 W
+10 /Courier AF
+51870 XM
+(cd)SH
+11 /Times-Roman AF
+53368 XM
+(into)SH
+8280 19776 MT
+(the)SH
+10 /Courier AF
+9899 XM
+(src)SH
+11 /Times-Roman AF
+11974 XM
+(directory and execute)SH
+8 /Courier AF
+10200 20941 MT
+(% sh utils/rename-for-clisp)SH
+11 /Times-Roman AF
+8280 23239 MT
+(The script will rename all of the)SH
+10 /Courier AF
+22667 XM
+("src/*/*.lisp")SH
+11 /Times-Roman AF
+31342 XM
+(files to)SH
+10 /Courier AF
+34642 XM
+(".lsp")SH
+11 /Times-Roman AF
+(, so that they can be read by CLISP.)SH
+/Times-Bold SF
+8280 25537 MT
+(Obtaining CLX)SH
+/Times-Roman SF
+8280 27835 MT
+(If you are already using CLISP, you may need to additionally)
+30 W( retrieve the CLX module.  CLX for CLISP)31 W
+8280 29031 MT
+(can be)
+982 W( retrieved via)981 W
+10 /Courier AF
+21121 XM
+(ftp)SH
+11 /Times-Roman AF
+24177 XM
+(from)SH
+10 /Courier AF
+27571 XM
+(ma2s2.mathematik.uni-karlsruhe.de)SH
+11 /Times-Roman AF
+(, in the file)981 W
+10 /Courier AF
+8280 30227 MT
+(/pub/lisp/clisp/packages/pcl+clx.clisp.tar.z)SH
+11 /Times-Roman AF
+(.)SH
+/Times-Bold SF
+8280 32525 MT
+(Making a Garnet image)SH
+/Times-Roman SF
+8280 34823 MT
+(Once you have installed the CLX module, you can make a)
+25 W( restartable image of Garnet with the following)26 W
+8280 36019 MT
+(procedure \050NOTE: this)
+5 W( is different from other lisps\051.  This is the standard procedure for compiling Garnet,)4 W
+8280 37215 MT
+(followed by a dump of the lisp image.)SH
+8 /Courier AF
+10200 38380 MT
+(clisp -M somewhere/clx.mem)SH
+10200 39245 MT
+(> \050load "garnet-prepare-compile.lsp"\051)SH
+10200 40110 MT
+(> \050load "garnet-loader.lsp"\051)SH
+10200 40975 MT
+(> \050load "garnet-compiler.lsp"\051)SH
+10200 41840 MT
+(> \050opal:make-image "garnet.mem" :quit t\051)SH
+11 /Times-Roman AF
+8280 44138 MT
+(The saved image can then be restarted with the command:)SH
+8 /Courier AF
+10200 45303 MT
+(clisp -M garnet.mem)SH
+12 /Times-Bold AF
+8280 48987 MT
+(8.9. AKCL)SH
+11 /Times-Roman AF
+8280 50183 MT
+(Some of the default)
+8 W( parameters for the AKCL lisp image are insufficient for running Garnet.  You may be)9 W
+8280 51379 MT
+(able to change some of these parameters in)
+20 W( the active lisp listener, but it is probably better to rebuild your)19 W
+8280 52575 MT
+(AKCL image from scratch with the following parameter values:)SH
+8 /Courier AF
+10200 53740 MT
+(MAXPAGES for AKCL should be at least 10240, and)SH
+10200 55470 MT
+(\050SYSTEM:ALLOCATE-RELOCATABLE-PAGES 800\051)SH
+10200 56335 MT
+(\050SYSTEM:ALLOCATE-CONTIGUOUS-PAGES 45 T\051)SH
+10200 57200 MT
+(\050SYSTEM:ALLOCATE 'CONS)
+SH( 3500)
+960 W( t\051)SH
+10200 58065 MT
+(\050SYSTEM:ALLOCATE 'SYMBOL  450 t\051)SH
+10200 58930 MT
+(\050SYSTEM:ALLOCATE 'VECTOR  150 t\051)SH
+10200 59795 MT
+(\050SYSTEM:ALLOCATE 'SPICE)
+SH( 300)
+960 W( t\051)SH
+10200 60660 MT
+(\050SYSTEM:ALLOCATE 'STRING  200 t\051)SH
+11 /Times-Roman AF
+8280 62958 MT
+(Garnet runs about half as fast in AKCL as on other Common)
+6 W( Lisps.  Increasing the RAM in your machine)7 W
+8280 64154 MT
+(may help.  Users have reported that 16MB on a Linux-Box 486 yields unacceptable performance.)SH
+ES
+%%Page: 14 13
+BS
+0 SI
+10 /Times-Roman AF
+6120 4286 MT
+(Page 14)
+SH( Garnet)
+830 W( Toolkit)SH
+46800 50 6120 4486 UL
+14 /Times-Bold AF
+6120 8138 MT
+(9. Mac-Specific Issues)SH
+12 SS 
+6120 11822 MT
+(9.1. Compensating for 31-Character Filenames:)SH
+11 /Times-Roman AF
+6120 13018 MT
+(There are several gadgets files)
+95 W( that normally have names that are longer than 31 characters.  Mac users)94 W
+6120 14214 MT
+(may continue to specify the full-length names of these files by using)24 W
+10 /Courier AF
+36775 XM
+(user::garnet-load)SH
+11 /Times-Roman AF
+(, described in)25 W
+6120 15410 MT
+(section 12, which)
+91 W( translates the regular names of the gadgets into their truncated 31-character names so)90 W
+6120 16606 MT
+(they can be loaded.  It is recommended that)SH
+10 /Courier AF
+25546 XM
+(garnet-load)SH
+11 /Times-Roman AF
+32421 XM
+(be used whenever)
+SH( any Garnet file is loaded, so)1 W
+6120 17802 MT
+(that typically long and cumbersome pathnames can be abbreviated by a short prefix.)SH
+12 /Times-Bold AF
+6120 21486 MT
+(9.2. Directories:)SH
+11 /Times-Roman AF
+6120 22682 MT
+(Unlike the Unix version, the Macintosh version stores all the binary and)
+197 W( source files together in the)196 W
+6120 23878 MT
+(various subdirectories under "src".  This difference will not matter when)
+99 W( a Garnet application is moved)100 W
+6120 25074 MT
+(between Unix and Mac platforms as long as)371 W
+10 /Courier AF
+28698 XM
+(garnet-load)SH
+11 /Times-Roman AF
+35944 XM
+(is being)
+371 W( used to load Garnet files.)370 W
+10 /Courier AF
+6120 26270 MT
+(Garnet-load)SH
+11 /Times-Roman AF
+12995 XM
+(will always knows where to find the files.)SH
+12 /Times-Bold AF
+6120 29954 MT
+(9.3. Binding Keys:)SH
+11 /Times-Roman AF
+6120 31150 MT
+(We have assigned Lisp keywords for most of the keys on the Macintosh keyboard.)
+156 W( Thus,)
+588 W( to start an)157 W
+6120 32346 MT
+(interactor when the "F1" key is hit, use)126 W
+10 /Courier AF
+24553 XM
+(:F1)SH
+11 /Times-Roman AF
+26754 XM
+(as the interactor's)126 W
+10 /Courier AF
+35225 XM
+(:start-event)SH
+11 /Times-Roman AF
+(. If)
+525 W( you want to know)125 W
+6120 33542 MT
+(what a)
+119 W( key generates, you can use the small utility)120 W
+10 /Courier AF
+29710 XM
+(Find-Key-Symbols)SH
+11 /Times-Roman AF
+39705 XM
+(which has been ported to the)120 W
+6120 34738 MT
+(Mac. Execute)275 W
+8 /Courier AF
+8040 35903 MT
+(\050garnet-load "inter-src:find-key-symbols"\051)SH
+11 /Times-Roman AF
+6120 37324 MT
+(to bring up a window)
+109 W( which can perceive keyboard events and prints out the resulting characters.  The)108 W
+6120 38520 MT
+(data you collect from this utility can)
+52 W( be used in the)53 W
+10 /Courier AF
+29274 XM
+(:start-where)SH
+11 /Times-Roman AF
+36802 XM
+(slot of interactors to describe events)53 W
+6120 39716 MT
+(that will)
+71 W( start the interactor, and can be used to modify the characters generated by the keyboard key by)70 W
+6120 40912 MT
+(editing the file)SH
+10 /Courier AF
+12811 XM
+(src:inter:mac-define-keys.lisp)SH
+11 /Times-Roman AF
+(.)SH
+12 /Times-Bold AF
+6120 44596 MT
+(9.4. Simulating Multiple Mouse Buttons With the Keyboard:)SH
+11 /Times-Roman AF
+6120 45792 MT
+(Most of the Garnet demos)
+162 W( assume a three button mouse.  To simulate this on the Macintosh, we use)163 W
+6120 46988 MT
+(keyboard keys to replace a three-button mouse.  By default,)
+64 W( the keys are)63 W
+10 /Courier AF
+38987 XM
+(F13)SH
+11 /Times-Roman AF
+(,)SH
+10 /Courier AF
+41400 XM
+(F14)SH
+11 /Times-Roman AF
+(, and)63 W
+10 /Courier AF
+45739 XM
+(F15)SH
+11 /Times-Roman AF
+47877 XM
+(for the left,)63 W
+6120 48184 MT
+(middle, and right mouse buttons, respectively.  The real mouse button is also mapped to)SH
+10 /Courier AF
+45104 XM
+(:leftdown)SH
+11 /Times-Roman AF
+(.)SH
+6120 50482 MT
+(You can redefine the keys to be any three keys you want)
+298 W( by setting)299 W
+10 /Courier AF
+40045 XM
+(inter::*leftdown-key*)SH
+11 /Times-Roman AF
+(,)SH
+10 /Courier AF
+6120 51678 MT
+(inter::*middledown-key*)SH
+11 /Times-Roman AF
+(, and)83 W
+10 /Courier AF
+22499 XM
+(inter::*rightdown-key*)SH
+11 /Times-Roman AF
+36056 XM
+(after loading Garnet or by editing the)82 W
+6120 52874 MT
+(file)SH
+10 /Courier AF
+8094 XM
+(src:inter:mac-define-keys.lisp)SH
+11 /Times-Roman AF
+26602 XM
+(directly. These)
+743 W( variables should contain numerical key-)234 W
+6120 54070 MT
+(codes corresponding to your desired keys.  Some key-codes are shown on p.)
+96 W( I-251 of Inside Macintosh)95 W
+2688 50 45218 54270 UL
+4644 50 48276 54270 UL
+6120 55266 MT
+(Volume I, but you can)
+324 W( also do)325 W
+10 /Courier AF
+21955 XM
+(\050garnet-load "inter:find-key-symbols"\051)325 W
+11 /Times-Roman AF
+45680 XM
+(to run a utility)325 W
+3544 50 6120 55466 UL
+366 50 10263 55466 UL
+6120 56462 MT
+(program that tells you the key-code)
+57 W( for any keyboard key.  The utility will generate numbers that can be)56 W
+6120 57658 MT
+(used directly in)SH
+10 /Courier AF
+13177 XM
+(src:inter:mac-define-keys.lisp)SH
+11 /Times-Roman AF
+(.)SH
+6120 59956 MT
+(To facilitate Garnet's use with keyboards)
+19 W( not equipped with function keys, Garnet supplies another utility)20 W
+6120 61152 MT
+(program called)32 W
+10 /Courier AF
+13086 XM
+(mouse-keys.lisp)SH
+11 /Times-Roman AF
+(, which is in the top-level Garnet directory)
+32 W( in the Mac version \050and is)31 W
+6120 62348 MT
+(in)SH
+10 /Courier AF
+7554 XM
+(src/utils/mouse-keys.lisp)SH
+11 /Times-Roman AF
+23132 XM
+(if you acquired the Unix-packaged version of)
+303 W( Garnet\051.  When)304 W
+6120 63544 MT
+(loaded, this utility creates a window that allows you to toggle between using the function keys)
+36 W( and arrow)35 W
+6120 64740 MT
+(keys for the simulated mouse buttons.  If you are frequently switching between using Garnet on)
+212 W( an)213 W
+6120 65936 MT
+(Extended Keyboard)
+6 W( and a smaller laptop keyboard, you may use this utility a lot to tell Garnet which keys)5 W
+6120 67132 MT
+(should be used for middle-down and right-down.)SH
+ES
+%%Page: 15 14
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(Section 10)
+SH( Compiling)
+1800 W( Garnet)SH
+51886 XM
+(Page 15)SH
+46800 50 8280 4486 UL
+12 /Times-Bold AF
+8280 8004 MT
+(9.5. Modifier Keys:)SH
+11 /Times-Roman AF
+8280 9200 MT
+(Like MCL itself, Garnet treats the)40 W
+10 /Courier AF
+23763 XM
+(Option)SH
+11 /Times-Roman AF
+27678 XM
+(key as the "Meta" key.  Also, you currently cannot get access)41 W
+8280 10396 MT
+(to the)SH
+10 /Courier AF
+11030 XM
+(Command)SH
+11 /Times-Roman AF
+15505 XM
+(\050Open-Apple\051 key from Garnet.)SH
+12 /Times-Bold AF
+8280 14080 MT
+(9.6. Things to Keep in Mind When You Want Your Garnet Programs to Run on Both X)SH
+10380 15276 MT
+(Windows and the Mac:)SH
+11 /Symbol AF
+10249 16854 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(Use)SH
+10 /Courier AF
+13015 XM
+(user::garnet-load)SH
+11 /Times-Roman AF
+23490 XM
+(instead of)SH
+10 /Courier AF
+28072 XM
+(load)SH
+11 /Times-Roman AF
+30747 XM
+(when loading gadget files)SH
+/Symbol SF
+10249 18748 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(Only supply)42 W
+10 /Courier AF
+16798 XM
+(:face)SH
+11 /Times-Roman AF
+20114 XM
+(values for fonts that run on both systems -- this typically restricts you to)41 W
+11030 19944 MT
+(using only the standard faces available in Garnet 2.2 and earlier versions.)SH
+/Symbol SF
+10249 21838 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(The)SH
+10 /Courier AF
+13076 XM
+(#+apple)SH
+11 /Times-Roman AF
+17612 XM
+(and)SH
+10 /Courier AF
+19536 XM
+(#-apple)SH
+11 /Times-Roman AF
+24072 XM
+(reader macros can be)
+61 W( used to indicate code that should be used)62 W
+11030 23034 MT
+(only for Macs and only for non-Macs,)
+75 W( respectively.  When defining fonts, for example, you)74 W
+11030 24230 MT
+(may want to provide the slot)
+350 W( description)351 W
+10 /Courier AF
+31477 XM
+(\050:face #+apple :underline #-apple)351 W
+11030 25426 MT
+(:bold\051)SH
+11 /Times-Roman AF
+14905 XM
+(to indicate that the font will be underlined on the Mac but bold in X.)SH
+/Symbol SF
+10249 27320 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(The default place for windows is at \0500,0\051 which unfortunately puts their)
+90 W( title bars under the)89 W
+11030 28516 MT
+(Macintosh menubar, so you cannot even)
+285 W( move them using the mouse!  \050You can still)286 W
+10 /Courier AF
+11030 29712 MT
+(s-value)SH
+11 /Times-Roman AF
+15525 XM
+(the position from the Lisp Listener.\051  Therefore, never create a window)
+20 W( on the Mac)19 W
+11030 30908 MT
+(with a)SH
+10 /Courier AF
+14024 XM
+(:top)SH
+11 /Times-Roman AF
+16699 XM
+(less than 45 or it will not be movable.)SH
+/Symbol SF
+10249 32802 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(Remember that many Mac screens are much smaller than most workstations' screens.)328 W
+11030 33998 MT
+(Positioning windows perfectly may not be possible, and a)
+49 W( better goal may be to simply keep)48 W
+11030 35194 MT
+(the window title-bars within reach of the mouse so that the windows can be moved.)SH
+14 /Times-Bold AF
+8280 39012 MT
+(10. Compiling Garnet)SH
+11 /Times-Roman AF
+8280 40208 MT
+(After executing the compile procedure in section 6, the result should be that all)
+22 W( the files are compiled and)23 W
+8280 41404 MT
+(loaded. \050If)
+438 W( there was a problem and you need to restart the compile procedure, please see below.\051  The)81 W
+8280 42600 MT
+(compiler scripts)
+112 W( do)113 W
+/Times-Italic SF
+17325 XM
+(not)SH
+/Times-Roman SF
+19119 XM
+(check for compile errors.  We have attempted to make Garnet compile without)113 W
+8280 43796 MT
+(errors on all common lisps, but some lisps generate more warnings than others.)SH
+8280 46094 MT
+(The compiler scripts compile the binaries into the same directories as the source files.  For example, all)81 W
+8280 47290 MT
+(the interactor binaries will be in)70 W
+10 /Courier AF
+22996 XM
+(garnet/src/inter/)SH
+11 /Times-Roman AF
+33541 XM
+(along with the source \050)70 W
+10 /Courier AF
+(.lisp)SH
+11 /Times-Roman AF
+(\051 files.  Therefore,)70 W
+8280 48486 MT
+(after the compilation is completed, you will need to move the)
+176 W( binaries into their own directory \050e.g.,)175 W
+10 /Courier AF
+8280 49682 MT
+(garnet/bin/inter)SH
+11 /Times-Roman AF
+(\051. To)
+275 W( do this, use the c-shell script)SH
+8 /Courier AF
+10200 50847 MT
+(csh garnet-after-compile)SH
+11 /Times-Roman AF
+8280 52268 MT
+(The)SH
+10 /Courier AF
+10368 XM
+(garnet-after-compile)SH
+11 /Times-Roman AF
+22746 XM
+(file will normally be in the top level garnet directory.)
+103 W( Note)
+483 W( that this is)104 W
+8280 53464 MT
+(typed to the shell, not to Lisp.  Even)
+143 W( if you normally run the "regular" \050Bourne\051 shell \050sh\051, the above)142 W
+8280 54660 MT
+(command should work.)SH
+8280 56958 MT
+(To prevent certain parts of Garnet from being compiled, set)2 W
+10 /Courier AF
+34781 XM
+(user::compile-)SH
+11 /Times-Italic AF
+(xxx)SH
+10 /Courier AF
+(-p)SH
+11 /Times-Roman AF
+46122 XM
+(to NIL,)
+2 W( where)3 W
+/Times-Italic SF
+52604 XM
+(xxx)SH
+/Times-Roman SF
+54346 XM
+(is)SH
+8280 58154 MT
+(replaced with the part you)
+377 W( do not want to compile.  See the comments at the top of the file)376 W
+10 /Courier AF
+8280 59350 MT
+(garnet-prepare-compile)SH
+11 /Times-Roman AF
+21755 XM
+(for more information.)SH
+8280 61648 MT
+(If you ever have to restart the compile process, you do not have to start from scratch.  If you have)
+28 W( not yet)29 W
+8280 62844 MT
+(moved the binary files out of the)69 W
+10 /Courier AF
+23396 XM
+(src/)SH
+11 /Times-Roman AF
+26140 XM
+(directory \050i.e.,)
+69 W( you have not yet run)68 W
+10 /Courier AF
+42439 XM
+(garnet-after-compile)SH
+11 /Times-Roman AF
+(\051,)SH
+8280 64040 MT
+(then you can use the files that have been compiled already instead of compiling them again.  Restart lisp,)34 W
+8280 65236 MT
+(and for each Garnet module that has been)
+82 W( compiled, set the variable)81 W
+10 /Courier AF
+39404 XM
+(user::compile-)SH
+11 /Times-Italic AF
+(xxx)SH
+10 /Courier AF
+(-p)SH
+11 /Times-Roman AF
+50824 XM
+(to NIL to)81 W
+8280 66432 MT
+(indicate that it should not be compiled again.  Then load the three script files again in)
+114 W( the usual order.)115 W
+8280 67628 MT
+(Note: if)
+275 W( a module has been only partially compiled, then you must recompile the whole module.)SH
+ES
+%%Page: 16 15
+BS
+0 SI
+10 /Times-Roman AF
+6120 4286 MT
+(Page 16)
+SH( Garnet)
+830 W( Toolkit)SH
+46800 50 6120 4486 UL
+14 /Times-Bold AF
+6120 8138 MT
+(11. Loading Garnet)SH
+11 /Times-Roman AF
+6120 9334 MT
+(To load Garnet, it is only necessary to load the file:)SH
+8 /Courier AF
+8040 10499 MT
+(\050load "garnet-loader"\051)SH
+11 /Times-Roman AF
+6120 12797 MT
+(\050Of course, you may have to)
+119 W( preface the file name with the directory path of where it is located.  It is)118 W
+6120 13993 MT
+(usually in the top level)SH
+10 /Courier AF
+16417 XM
+(garnet)SH
+11 /Times-Roman AF
+20292 XM
+(directory.\051)SH
+6120 16291 MT
+(To prevent)
+3 W( any of the Garnet sub-systems from being loaded, simply set the variable)4 W
+10 /Courier AF
+43656 XM
+(user::load-)SH
+11 /Times-Italic AF
+(xxx)SH
+10 /Courier AF
+(-p)SH
+11 /Times-Roman AF
+6120 17487 MT
+(to NIL, where)139 W
+/Times-Italic SF
+13011 XM
+(xxx)SH
+/Times-Roman SF
+14889 XM
+(is replaced by whatever part you do not want)
+139 W( to load. Normally, some parts of the)138 W
+6120 18683 MT
+(system are not loaded, such as the gadgets and)
+36 W( demos.  This is because you normally do not want to load)37 W
+6120 19879 MT
+(or use all of these in a session.  Files that use gadgets will load the appropriate ones automatically, and the)3 W
+10 /Courier AF
+6120 21075 MT
+(demos-controller)SH
+11 /Times-Roman AF
+15995 XM
+(program loads the demos as requested.)SH
+6120 23373 MT
+(It is)
+155 W( possible to save an image of lisp after loading Garnet, so that when you restart lisp, Garnet will)156 W
+6120 24569 MT
+(already be loaded and)
+76 W( you will not have to load)75 W
+10 /Courier AF
+28011 XM
+(garnet-loader.lisp)SH
+11 /Times-Roman AF
+(. For)
+425 W( details about making lisp)75 W
+6120 25765 MT
+(images, see the function)SH
+10 /Courier AF
+17025 XM
+(opal:make-image)SH
+11 /Times-Roman AF
+26300 XM
+(in the Opal manual.)SH
+14 /Times-Bold AF
+6120 29583 MT
+(12. Loader and Compiler Functions)SH
+12 SS 
+6120 33267 MT
+(12.1. Garnet-Load and Garnet-Compile)SH
+11 /Times-Roman AF
+6120 34463 MT
+(There are two functions that allow you to save a lot of typing when you load)
+93 W( and compile files.  When)94 W
+6120 35659 MT
+(you supply)9 W
+10 /Courier AF
+11271 XM
+(garnet-load)SH
+11 /Times-Roman AF
+18154 XM
+(and)SH
+10 /Courier AF
+20025 XM
+(garnet-compile)SH
+11 /Times-Roman AF
+28708 XM
+(with the Garnet subdirectory that you want to get a file)8 W
+6120 36855 MT
+(from \050e.g., "gadgets"\051,)
+80 W( the functions will automatically append your Garnet pathname to the front of the)81 W
+6120 38051 MT
+(specified file.)SH
+8 /Courier AF
+8040 39264 MT
+(user::Garnet-Load ")SH
+/Times-Italic SF
+(prefix)SH
+/Courier SF
+(:)SH
+/Times-Italic SF
+(filename)SH
+/Courier SF
+(")SH
+47152 XM
+([)SH
+/Times-Italic SF
+(Function)SH
+/Courier SF
+(])SH
+8040 40994 MT
+(user::Garnet-Compile ")SH
+/Times-Italic SF
+(prefix)SH
+/Courier SF
+(:)SH
+/Times-Italic SF
+(filename)SH
+/Courier SF
+(")SH
+47152 XM
+([)SH
+/Times-Italic SF
+(Function)SH
+/Courier SF
+(])SH
+11 /Times-Roman AF
+6120 43292 MT
+(These functions are defined in)SH
+10 /Courier AF
+19711 XM
+(garnet-loader.lisp)SH
+11 /Times-Roman AF
+30786 XM
+(and are internal to the)SH
+10 /Courier AF
+40651 XM
+(user)SH
+11 /Times-Roman AF
+43326 XM
+(package.)SH
+6120 45925 MT
+(The)SH
+/Times-Italic SF
+8228 XM
+(prefix)SH
+/Times-Roman SF
+11192 XM
+(parameter corresponds to one of the Garnet subdirectories, and)
+123 W( the)122 W
+/Times-Italic SF
+41953 XM
+(filename)SH
+/Times-Roman SF
+46138 XM
+(is a file in that)122 W
+6120 47121 MT
+(directory. A)
+735 W( list of the)
+230 W( most useful prefixes appear in section 12.2, and a full list can be seen by)231 W
+6120 48317 MT
+(evaluating the variable)SH
+10 /Courier AF
+16413 XM
+(user::Garnet-Load-Alist)SH
+11 /Times-Roman AF
+30488 XM
+(in your lisp \050after loading Garnet\051.  Examples:)SH
+8 /Courier AF
+8040 49482 MT
+(* \050garnet-load "gadgets:v-scroll-loader"\051)SH
+8040 50347 MT
+(Loading #p"/afs/cs/project/garnet/bin/gadgets/v-scroll-loader")SH
+8040 51212 MT
+(Loading V-Scroll-Bar...)SH
+8040 52077 MT
+(...Done V-Scroll-Bar.)SH
+8040 53807 MT
+(T)SH
+8040 54672 MT
+(* \050garnet-compile "opal:aggregates"\051)SH
+8040 55537 MT
+(Compiling #p"/afs/cs/project/garnet/src/opal/aggregates.lisp")SH
+8040 56402 MT
+(for output to #p"/afs/cs/project/garnet/bin/opal/aggregates.fasl")SH
+8040 57267 MT
+(...)SH
+8040 58132 MT
+(; Writing fasl file "/afs/cs/project/garnet/bin/opal/aggregates.fasl")SH
+8040 58997 MT
+(; Fasl write complete)SH
+8040 60727 MT
+(NIL)SH
+8040 61592 MT
+(*)SH
+11 /Times-Roman AF
+6120 64650 MT
+(There are two groups of prefixes that)66 W
+10 /Courier AF
+23165 XM
+(garnet-load)SH
+11 /Times-Roman AF
+30106 XM
+(accepts -- the "bin" prefixes and the "src")
+66 W( prefixes.)65 W
+10 /Courier AF
+6120 65846 MT
+(Garnet-load)SH
+11 /Times-Roman AF
+13015 XM
+(assumes that when you load files, you will want to load the compiled binaries.  Therefore,)21 W
+6120 67042 MT
+(when you use prefixes)
+51 W( like "gadgets",)50 W
+10 /Courier AF
+23296 XM
+(garnet-load)SH
+11 /Times-Roman AF
+30221 XM
+(uses the Garnet-Gadgets-Pathname variable to find)50 W
+6120 68238 MT
+(the file you want.)
+201 W( If)
+678 W( you really want to load a file from your source directory, you should use the)202 W
+6120 69434 MT
+(subdirectory name with "-src" tacked on.  For example,)SH
+ES
+%%Page: 17 16
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(Section 13)
+SH( Overview)
+1800 W( of the Parts of Garnet)SH
+51886 XM
+(Page 17)SH
+46800 50 8280 4486 UL
+8 /Courier AF
+10200 7699 MT
+(* \050garnet-load "gadgets-src:motif-parts"\051)SH
+10200 8564 MT
+(Loading #p"/afs/cs/project/garnet/src/gadgets/motif-parts")SH
+10200 9429 MT
+(...)SH
+10200 11159 MT
+(T)SH
+10200 12024 MT
+(*)SH
+10 SS 
+8280 14322 MT
+(Garnet-compile)SH
+11 /Times-Roman AF
+16980 XM
+(does not accept "-src" prefixes, because it)
+25 W( always assumes that you want to take a lisp)24 W
+8280 15518 MT
+(file from)
+167 W( your source directory, compile it, and output it to your bin directory.  Note: do not specify)168 W
+8280 16714 MT
+(".lisp" or)
+732 W( ".fasl" with your filename --)731 W
+10 /Courier AF
+30315 XM
+(garnet-compile)SH
+11 /Times-Roman AF
+39721 XM
+(will supply suffixes for you.)731 W
+10 /Courier AF
+8280 17910 MT
+(Garnet-compile)SH
+11 /Times-Roman AF
+17126 XM
+(attempts to determine your correct binary extension)
+171 W( \050".fasl", ".lbin", etc.\051 from the)172 W
+8280 19106 MT
+(kind of Lisp that)
+1 W( you are using.  If)SH
+10 /Courier AF
+23619 XM
+(garnet-compile)SH
+11 /Times-Roman AF
+32294 XM
+(ever gets the extension wrong, you can change it by)SH
+8280 20302 MT
+(setting the variable)SH
+10 /Courier AF
+16925 XM
+(*compiler-extension*)SH
+11 /Times-Roman AF
+(, which is defined in the)SH
+10 /Courier AF
+39770 XM
+(user)SH
+11 /Times-Roman AF
+42445 XM
+(package.)SH
+12 /Times-Bold AF
+8280 23986 MT
+(12.2. Adding Your Own Pathnames)SH
+11 /Times-Roman AF
+8280 25182 MT
+(The functions)108 W
+10 /Courier AF
+14850 XM
+(user::garnet-load)SH
+11 /Times-Roman AF
+25433 XM
+(and)SH
+10 /Courier AF
+27404 XM
+(user::garnet-compile)SH
+11 /Times-Roman AF
+39787 XM
+(look up their prefix parameters in)108 W
+8280 26378 MT
+(an association list called)SH
+10 /Courier AF
+19278 XM
+(user::Garnet-Load-Alist)SH
+11 /Times-Roman AF
+(. Its)
+275 W( structure looks like:)SH
+8 /Courier AF
+10200 27543 MT
+(\050defparameter Garnet-Load-Alist)SH
+11160 28408 MT
+(`\050\050"opal" . Garnet-Opal-Pathname\051)SH
+/Times-Italic SF
+31800 XM
+(; For loading the)SH
+/Courier SF
+37967 XM
+(multifont-loader)SH
+12120 29273 MT
+(\050"gg" . Garnet-Gadgets-PathName\051)SH
+/Times-Italic SF
+31800 XM
+(; For loading gadgets)SH
+/Courier SF
+12120 30138 MT
+(\050"gestures" . Garnet-Gestures-PathName\051)SH
+/Times-Italic SF
+31800 XM
+(; For loading)SH
+/Courier SF
+36790 XM
+(agate)SH
+12120 31003 MT
+(\050"debug" . Garnet-Debug-PathName\051)SH
+/Times-Italic SF
+31800 XM
+(; For loading the)SH
+/Courier SF
+37967 XM
+(Inspector)SH
+12120 31868 MT
+(\050"demos" . Garnet-Demos-PathName\051)SH
+/Times-Italic SF
+31800 XM
+(; For loading demos)SH
+/Courier SF
+12120 32733 MT
+(\050"gilt" . Garnet-Gilt-PathName\051)SH
+/Times-Italic SF
+31800 XM
+(; For loading high-level tools...)SH
+/Courier SF
+12120 33598 MT
+(\050"c32" . Garnet-C32-PathName\051)SH
+12120 34463 MT
+(\050"lapidary" . Garnet-Lapidary-PathName\051)SH
+12120 35328 MT
+(...\051\051)SH
+11 /Times-Roman AF
+8280 37626 MT
+(This alist is expandable so that you can include your own prefixes and pathnames.)
+26 W( Prefixes)
+325 W( can be added)25 W
+8280 38822 MT
+(with the following function:)SH
+8 /Courier AF
+10200 40035 MT
+(user::Add-Garnet-Load-Prefix)SH
+/Times-Italic SF
+24120 XM
+(prefix pathname)SH
+/Courier SF
+49312 XM
+([)SH
+/Times-Italic SF
+(Function)SH
+/Courier SF
+(])SH
+11 /Times-Roman AF
+8280 42333 MT
+(For example, after executing)411 W
+10 /Courier AF
+22844 XM
+(\050add-garnet-load-prefix "home" "/usr/amickish/"\051)412 W
+11 /Times-Roman AF
+(, you)412 W
+8280 43529 MT
+(would be able to do)SH
+10 /Courier AF
+17231 XM
+(\050garnet-load "home:my-file"\051)SH
+11 /Times-Roman AF
+(.)SH
+14 /Times-Bold AF
+8280 47347 MT
+(13. Overview of the Parts of Garnet)SH
+11 /Times-Roman AF
+8280 48543 MT
+(Garnet is composed of a number of sub-systems, some of which can be loaded and used)
+58 W( separately from)57 W
+8280 49739 MT
+(the others.)
+50 W( Most)
+376 W( of the subsystems also have their own separate packages.  The following list shows the)51 W
+8280 50935 MT
+(components of)
+93 W( Garnet, the package used by that component, and the page number of the corresponding)92 W
+8280 52131 MT
+(section in this manual.)SH
+/Symbol SF
+10249 53709 MT
+(\267)SH
+10 /Courier AF
+11030 XM
+(KR)SH
+11 /Times-Roman AF
+12505 XM
+(- Package)SH
+10 /Courier AF
+17085 XM
+(kr)SH
+11 /Times-Roman AF
+(. The)
+550 W( object and constraint system.  Page 101.)SH
+/Symbol SF
+10249 55603 MT
+(\267)SH
+10 /Courier AF
+11030 XM
+(Gem)SH
+11 /Times-Roman AF
+13118 XM
+(- Package)13 W
+10 /Courier AF
+17724 XM
+(gem)SH
+11 /Times-Roman AF
+(. Low-level)
+877 W( graphics routines that allow the system to run on)
+13 W( the Mac or)14 W
+11030 56799 MT
+(on X/11.  We do)
+55 W( not support user code directly calling Gem, so it is not described further in)54 W
+11030 57995 MT
+(this manual.)SH
+/Symbol SF
+10249 59889 MT
+(\267)SH
+10 /Courier AF
+11030 XM
+(Opal)SH
+11 /Times-Roman AF
+13705 XM
+(- Package)SH
+10 /Courier AF
+18285 XM
+(opal)SH
+11 /Times-Roman AF
+(. The graphical object system.  Page 151.)SH
+/Symbol SF
+10249 61783 MT
+(\267)SH
+10 /Courier AF
+11030 XM
+(Interactors)SH
+11 /Times-Roman AF
+17905 XM
+(- Package)SH
+10 /Courier AF
+22485 XM
+(inter)SH
+11 /Times-Roman AF
+(. Handling)
+275 W( of mouse and keyboard input.  Page 219.)SH
+/Symbol SF
+10249 63677 MT
+(\267)SH
+10 /Courier AF
+11030 XM
+(Gestures)SH
+11 /Times-Roman AF
+16137 XM
+(- Package)32 W
+10 /Courier AF
+20781 XM
+(inter)SH
+11 /Times-Roman AF
+(. Code)
+339 W( to handle gesture recognition and training.)
+32 W( Described)
+340 W( in)33 W
+11030 64873 MT
+(the interactors manual, page 219.)SH
+/Symbol SF
+10249 66767 MT
+(\267)SH
+10 /Courier AF
+11030 XM
+(Aggregadgets)SH
+11 /Times-Roman AF
+18653 XM
+(- Package)148 W
+10 /Courier AF
+23528 XM
+(opal)SH
+11 /Times-Roman AF
+(. Support)
+569 W( for creating instances of collections of objects,)147 W
+11030 67963 MT
+(and for rows or columns of objects.  Page 295.)SH
+/Symbol SF
+10249 69857 MT
+(\267)SH
+10 /Courier AF
+11030 XM
+(AggreGraphs)SH
+11 /Times-Roman AF
+18109 XM
+(- Package)204 W
+10 /Courier AF
+23097 XM
+(opal)SH
+11 /Times-Roman AF
+(. Support)
+683 W( for creating graphs and trees of objects.  Also)204 W
+11030 71053 MT
+(described in the aggregadgets manual, page 295.)SH
+ES
+%%Page: 18 17
+BS
+0 SI
+10 /Times-Roman AF
+6120 4286 MT
+(Page 18)
+SH( Garnet)
+830 W( Toolkit)SH
+46800 50 6120 4486 UL
+11 /Symbol AF
+8089 8080 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(Gadgets)SH
+11 /Times-Roman AF
+13349 XM
+(- Package)4 W
+10 /Courier AF
+17937 XM
+(garnet-gadgets)SH
+11 /Times-Roman AF
+(, nicknamed)4 W
+10 /Courier AF
+31996 XM
+(gg)SH
+11 /Times-Roman AF
+(. A)
+561 W( collection of pre-defined gadgets,)3 W
+8870 9276 MT
+(including menus, buttons, scroll bars, circular gauges, graphics selection, etc.  Page 345.)SH
+/Symbol SF
+8089 11170 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(Debugging tools)141 W
+11 /Times-Roman AF
+18427 XM
+(- Package)141 W
+10 /Courier AF
+23289 XM
+(garnet-debug)SH
+11 /Times-Roman AF
+(, nicknamed)141 W
+10 /Courier AF
+36422 XM
+(gd)SH
+11 /Times-Roman AF
+(. Useful)
+973 W( functions to)
+141 W( help)142 W
+8870 12366 MT
+(debug Garnet programs, including the Inspector.  Page 461.)SH
+/Symbol SF
+8089 14260 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(Demonstration programs)163 W
+11 /Times-Roman AF
+22671 XM
+(- Each demonstration program is in its)
+163 W( own package.  Page)162 W
+8870 15456 MT
+(481.)SH
+/Symbol SF
+8089 17350 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(Gilt)SH
+11 /Times-Roman AF
+11545 XM
+(- Package)SH
+10 /Courier AF
+16125 XM
+(gilt)SH
+11 /Times-Roman AF
+(. The)
+275 W( Garnet interface builder.  Page 505.)SH
+/Symbol SF
+8089 19244 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(C32)SH
+11 /Times-Roman AF
+10945 XM
+(- Package)SH
+10 /Courier AF
+15525 XM
+(c32)SH
+11 /Times-Roman AF
+(. A)
+275 W( spreadsheet interface for editing constraints.  Page 525.)SH
+/Symbol SF
+8089 21138 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(Lapidary)SH
+11 /Times-Roman AF
+13945 XM
+(- Package)SH
+10 /Courier AF
+18525 XM
+(Lapidary)SH
+11 /Times-Roman AF
+(. A)
+275 W( sophisticated interactive design tool.  Page 537.)SH
+/Symbol SF
+8089 23032 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(Contrib)SH
+11 /Times-Roman AF
+13511 XM
+(- A set of file contributed by Garnet users.)
+166 W( These)
+609 W( have not been tested by the)167 W
+8870 24228 MT
+(Garnet group, and are not supported.  Each file should have a comment at the top describing)46 W
+8870 25424 MT
+(how it works and who to contact for help and more information.)SH
+14 /Times-Bold AF
+6120 29242 MT
+(14. Overview of this Technical Report)SH
+11 /Times-Roman AF
+6120 30438 MT
+(In addition to the reference manuals for all the)
+165 W( parts of the Garnet toolkit listed above, this technical)166 W
+6120 31634 MT
+(report also contains:)SH
+/Symbol SF
+8089 33212 MT
+(\267)SH
+/Times-Roman SF
+8870 XM
+(A guided on-line tour of the Garnet system that will)
+49 W( help you become familiar with a few of)48 W
+8870 34408 MT
+(the features of the Garnet toolkit.  Page 41.)SH
+/Symbol SF
+8089 36302 MT
+(\267)SH
+/Times-Roman SF
+8870 XM
+(A tutorial to teach you the basic things you need to know to use Garnet.  Page 61.)SH
+/Symbol SF
+8089 38196 MT
+(\267)SH
+/Times-Roman SF
+8870 XM
+(The code for a simple graphical editor, as a sample of code written for Garnet.  Page 491.)SH
+/Symbol SF
+8089 40090 MT
+(\267)SH
+/Times-Roman SF
+8870 XM
+(The Hints manual starting on page)
+105 W( 573 includes some suggestions that have been collected)106 W
+8870 41286 MT
+(from the experience of Garnet users for making Garnet programs)
+160 W( run faster.  If you have)159 W
+8870 42482 MT
+(ideas for things to add to this section, let us know.)SH
+14 /Times-Bold AF
+6120 46300 MT
+(15. What You Need To Know)SH
+11 /Times-Roman AF
+6120 47496 MT
+(Although this is)
+20 W( a large technical report, you certainly do not need to know everything in it to use Garnet.)21 W
+6120 48692 MT
+(Garnet is designed to support many different)
+89 W( styles of interface.  Therefore, there are many options and)88 W
+6120 49888 MT
+(functions that you will probably not need to use.)SH
+6120 52186 MT
+(In fact, to run the Tour \050page 41\051, it is not necessary)
+93 W( to read any of the reference manuals.  The tour is)94 W
+2138 50 14465 52386 UL
+6120 53382 MT
+(self-explanatory.)SH
+6120 55680 MT
+(Next, you should probably read the Tutorial \050page 61\051, since it tries to provide enough information about)42 W
+3544 50 22165 55880 UL
+6120 56876 MT
+(most of Garnet so that you don't need the other manuals right away.)SH
+6120 59174 MT
+(To run the Gilt Interface Builder, you do not need to know)
+65 W( about the rest of the system either.  The Gilt)66 W
+6120 60370 MT
+(manual should be sufficient.  When you are ready to set some properties of the gadgets,)
+47 W( you will need to)46 W
+6120 61566 MT
+(look up the particular gadget in the Gadgets manual to see what the properties do.)SH
+6120 63864 MT
+(Even when you are ready to start programming, you will still not need most of the information)
+43 W( described)44 W
+6120 65060 MT
+(here. To)
+275 W( start, you should probably do the following:)SH
+8320 66513 MT
+(1.)SH
+9420 XM
+(Read this overview.)SH
+8320 68407 MT
+(2.)SH
+9420 XM
+(Run the tour, to get a feel for Garnet programming.)SH
+8320 70301 MT
+(3.)SH
+9420 XM
+(Read the tutorial.)SH
+ES
+%%Page: 19 18
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(Section 16)
+SH( Planned)
+1800 W( Future Extensions)SH
+51886 XM
+(Page 19)SH
+46800 50 8280 4486 UL
+11 SS 
+10480 7955 MT
+(4.)SH
+11580 XM
+(You might try creating a few dialog boxes using Gilt.  This will familiarize you with)
+120 W( the)119 W
+11580 9151 MT
+(Gadgets. See)
+275 W( the Gilt manual \050Page 505\051.)SH
+10480 11045 MT
+(5.)SH
+11580 XM
+(After that, you can look at the sample program)
+138 W( at the end of this technical report, to see)139 W
+11580 12241 MT
+(what you need more information about.)SH
+10480 14135 MT
+(6.)SH
+11580 XM
+(You could now)
+51 W( try to start writing your own programs, and just use the rest of the manuals)50 W
+11580 15331 MT
+(as reference when you need information.)SH
+10480 17225 MT
+(7.)SH
+11580 XM
+(Next, look at the introduction and the following functions in the KR document:)58 W
+10 /Courier AF
+47471 XM
+(gv, gvl,)59 W
+11580 18421 MT
+(s-value, formula,)
+621 W( o-formula,)620 W
+11 /Times-Roman AF
+30516 XM
+(and)SH
+10 /Courier AF
+32999 XM
+(create-instance)SH
+11 /Times-Roman AF
+(. The)
+1515 W( KR manual)620 W
+11580 19617 MT
+(documents the entire KR module, but Garnet does not use every feature that KR provides.)83 W
+11580 20813 MT
+(Some concepts \050like demons\051, will never be used by the typical Garnet user.  Once)
+8 W( you have)7 W
+11580 22009 MT
+(gained some familiarity with the system, you may)
+5 W( want to return to the KR Manual and read)6 W
+11580 23205 MT
+(about object-oriented programming, type-checking, and constants.)SH
+10480 25099 MT
+(8.)SH
+11580 XM
+(Next, skim the first five)
+178 W( chapters of the Opal manual, and look at the various graphical)177 W
+11580 26295 MT
+(objects, so you know what kinds are provided.  The primary functions you will use)
+124 W( from)125 W
+11580 27491 MT
+(Opal are:)261 W
+10 /Courier AF
+16438 XM
+(add-component, update,)261 W
+11 /Times-Roman AF
+30435 XM
+(and)SH
+10 /Courier AF
+32559 XM
+(destroy)SH
+11 /Times-Roman AF
+(, as well as the various)
+261 W( types of)260 W
+11580 28687 MT
+(graphical objects \050)347 W
+10 /Courier AF
+(rectangle, line, circle)347 W
+11 /Times-Roman AF
+(, etc.\051, drawing styles)
+347 W( \050)348 W
+10 /Courier AF
+(thin-line,)SH
+11580 29883 MT
+(dotted-line, light-gray-fill)SH
+11 /Times-Roman AF
+(, etc.\051 and fonts.)SH
+10480 31777 MT
+(9.)SH
+11580 XM
+(Next, in the)
+146 W( Interactors manual, you will need to skim the first four chapters to see how)145 W
+11580 32973 MT
+(interactors work, and then see which interactors there are in)
+165 W( the next chapter.  You will)166 W
+11580 34169 MT
+(probably not need to take advantage of the full power provided by the interactors system.)SH
+9930 36063 MT
+(10.)SH
+11580 XM
+(Aggregadgets and Aggrelists are)
+202 W( very useful for handling collections of objects, so you)201 W
+11580 37259 MT
+(should read their manual.  They support creating instances of groups of objects.)SH
+9930 39153 MT
+(11.)SH
+11580 XM
+(You should then look at the)
+24 W( gadget manual to see all the built-in components, so you do not)25 W
+11580 40349 MT
+(have to re-invent what is already supplied.)SH
+9930 42243 MT
+(12.)SH
+11580 XM
+(User interface code is often difficult to debug, so we have provided a number of)
+143 W( helpful)142 W
+11580 43439 MT
+(tools. The)
+441 W( Inspector is mentioned briefly in the Tutorial, and it is discussed thoroughly in)83 W
+11580 44635 MT
+(the debugging manual.  You will probably find many debugging features very useful.)SH
+9930 46529 MT
+(13.)SH
+11580 XM
+(The demo programs can be)
+229 W( a good source of ideas and coding style, so the document)228 W
+11580 47725 MT
+(describing them might be useful.)SH
+8280 50023 MT
+(If all)
+129 W( you want Garnet for is to display menus and gauges that are supplied in the gadget set, you can)130 W
+8280 51219 MT
+(probably just read the KR, Gadgets and Gilt manuals, and skip the rest.)SH
+14 /Times-Bold AF
+8280 55037 MT
+(16. Planned Future Extensions)SH
+11 /Times-Roman AF
+8280 56233 MT
+(We expect 3.0 to be the last release of the lisp version of Garnet.)
+8 W( No)
+290 W( enhancements of the lisp version are)7 W
+8280 57429 MT
+(planned. However,)
+975 W( if you need something and would like to sponsor its development,)
+350 W( write to)351 W
+10 /Courier AF
+8280 58625 MT
+(garnet@cs.cmu.edu)SH
+11 /Times-Roman AF
+(.)SH
+8280 60923 MT
+(The group is now working on a C++ system called Amulet,)
+143 W( which will have many features similar to)142 W
+8280 62119 MT
+(those found in Garnet.  Watch for announcements)
+44 W( about the Amulet project on)45 W
+10 /Courier AF
+43680 XM
+(comp.windows.garnet)SH
+11 /Times-Roman AF
+8280 63315 MT
+(and)SH
+10 /Courier AF
+10713 XM
+(comp.lang.c++)SH
+11 /Times-Roman AF
+(. To)
+1415 W( sign)
+570 W( up for the new Amulet mailing list, please send mail to)569 W
+10 /Courier AF
+8280 64511 MT
+(amulet-users-request@cs.cmu.edu)SH
+11 /Times-Roman AF
+(.)SH
+ES
+%%Page: 20 19
+BS
+0 SI
+10 /Times-Roman AF
+6120 4286 MT
+(Page 20)
+SH( Garnet)
+830 W( Toolkit)SH
+46800 50 6120 4486 UL
+14 /Times-Bold AF
+6120 8138 MT
+(17. Garnet Articles)SH
+11 /Times-Roman AF
+6120 9334 MT
+(A number of articles about Garnet have been made available for FTP from the directory)581 W
+10 /Courier AF
+6120 10530 MT
+(/usr/garnet/garnet/doc/papers/)SH
+11 /Times-Roman AF
+24723 XM
+(on)SH
+10 /Courier AF
+26426 XM
+(a.gp.cs.cmu.edu)SH
+11 /Times-Roman AF
+(. There)
+930 W( is a README file in that)327 W
+6120 11726 MT
+(directory, indicating which)SH
+10 /Courier AF
+18278 XM
+(.ps)SH
+11 /Times-Roman AF
+20353 XM
+(files correspond to the Garnet bibliography citations.)SH
+6120 14024 MT
+(The following is a complete list of articles written about)
+64 W( Garnet, as of September 4, 1994.  There are 40)65 W
+6120 15220 MT
+(refereed journal articles, 4 book chapters, 17 tech reports, and 3 articles submitted for publication.)SH
+/Times-Bold SF
+6120 18955 MT
+(Refereed Journal Articles)SH
+/Times-Roman SF
+6120 21253 MT
+(Brad A. Myers. ``User Interface)
+57 W( Software Tools.'')56 W
+/Times-Italic SF
+29261 XM
+(ACM Transactions on Computer-Human Interaction)56 W
+/Times-Roman SF
+(.)SH
+6120 22449 MT
+(To appear.)SH
+6120 24747 MT
+(Brad Vander Zanden, Brad A. Myers, Dario Giuse and Pedro Szekely.  ``Integrating)
+127 W( Pointer Variables)128 W
+6120 25943 MT
+(into One-Way Constraint Models,'')82 W
+/Times-Italic SF
+22425 XM
+(ACM Transactions on Computer-Human Interaction)82 W
+/Times-Roman SF
+(. Vol.)
+439 W( 1, no. 2,)81 W
+6120 27139 MT
+(To appear.)SH
+6120 29437 MT
+(Brad A. Myers.  ``Challenges of HCI)
+133 W( Design and Implementation,'')134 W
+/Times-Italic SF
+37603 XM
+(ACM Interactions)134 W
+/Times-Roman SF
+(. Vol.)
+543 W( 1, no. 1.)134 W
+6120 30633 MT
+(January, 1994.  pp. 73-83.)SH
+6120 32931 MT
+(Robert J.K. Jacob, John J. Leggett, Brad A. Myers, and Randy Pausch.)
+320 W( ``Interaction)
+914 W( Styles and)319 W
+6120 34127 MT
+(Input/Output Devices,'')45 W
+/Times-Italic SF
+16993 XM
+(Behaviour and Information Technology)45 W
+/Times-Roman SF
+(. March-April,)
+367 W( 1993. Vol. 12, no. 2.  pp.)46 W
+6120 35323 MT
+(69-79.)SH
+6120 37621 MT
+(Dan R. Olsen, Jr., James)
+291 W( D. Foley, Scott E. Hudson, James Miller, and Brad Myers.  ``Research)290 W
+6120 38817 MT
+(Directions for User Interface Software Tools,'')156 W
+/Times-Italic SF
+28035 XM
+(Behaviour and Information Technology)156 W
+/Times-Roman SF
+(. March-April,)589 W
+6120 40013 MT
+(1993. Vol. 12, no. 2. pp. 80-97.)SH
+6120 42311 MT
+(Brad A. Myers and Brad)
+250 W( Vander Zanden.  ``Environment for Rapid Creation of Interactive Design)249 W
+6120 43507 MT
+(Tools,'')SH
+/Times-Italic SF
+10097 XM
+(The Visual Computer;)
+189 W( International Journal of Computer Graphics)190 W
+/Times-Roman SF
+(. Vol 8, No. 2, February,)190 W
+6120 44703 MT
+(1992. pp.)
+275 W( 94-116.)SH
+6120 47001 MT
+(Brad A. Myers,)
+5 W( Dario A. Giuse, Roger B. Dannenberg, Brad Vander Zanden, David S. Kosbie, Ed Pervin,)4 W
+6120 48197 MT
+(Andrew Mickish, and Philippe Marchal.  ``Garnet; Comprehensive Support)
+311 W( for Graphical, Highly-)312 W
+6120 49393 MT
+(Interactive User Interfaces,'')64 W
+/Times-Italic SF
+19256 XM
+(IEEE Computer)64 W
+/Times-Roman SF
+(. Vol. 23, No.  11. November,)
+64 W( 1990. pp. 71-85.  Translated)63 W
+6120 50589 MT
+(into Japanese and reprinted in)SH
+/Times-Italic SF
+19529 XM
+(Nikkei Electronics)SH
+/Times-Roman SF
+(, No. 522, March 18, 1991, pp. 187-205.)SH
+6120 52887 MT
+(Brad A. Myers. ``A New Model for Handling Input,'')73 W
+/Times-Italic SF
+30723 XM
+(ACM Transactions on Information)
+73 W( Systems)74 W
+/Times-Roman SF
+(. Vol.)423 W
+6120 54083 MT
+(8, No. 3. July, 1990.  pp. 289-320.)SH
+6120 56381 MT
+(Brad Vander Zanden,)
+128 W( Brad A. Myers, Dario Giuse and Pedro Szekely.  ``Integrating Pointer Variables)127 W
+6120 57577 MT
+(into One-Way Constraint Models,'')56 W
+/Times-Italic SF
+22321 XM
+(ACM Transactions on Computer-Human Interaction)56 W
+/Times-Roman SF
+(. Vol.)
+387 W( 1, no.  2,)57 W
+6120 58773 MT
+(June, 1994. pp. 161-213.)SH
+/Times-Bold SF
+6120 62508 MT
+(Refereed Conference Articles)SH
+/Times-Roman SF
+6120 64806 MT
+(Brad A. Myers. ``The Garnet)
+257 W( User Interface Development Environment:  Demonstration Abstract.'')256 W
+/Times-Italic SF
+6120 66002 MT
+(CHI'94 Conference Companion)SH
+/Times-Roman SF
+(. Boston,)
+275 W( MA, Apr. 24-28, 1994. pp. 25-26.)SH
+6120 68300 MT
+(Brad A. Myers)
+87 W( and Dan R. Olsen, Jr. ``User Interface Tools: Tutorial Description'')88 W
+/Times-Italic SF
+44127 XM
+(CHI'94 Conference)88 W
+6120 69496 MT
+(Companion)SH
+/Times-Roman SF
+(. Boston,)
+275 W( MA, Apr. 24-28, 1994. pp. 421-422.)SH
+6120 71794 MT
+(Brad A. Myers, Dario Giuse, Andrew Mickish, Brad Vander Zanden,)
+76 W( David Kosbie, Richard McDaniel,)75 W
+ES
+%%Page: 21 20
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(Section 17)
+SH( Garnet)
+1800 W( Articles)SH
+51886 XM
+(Page 21)SH
+46800 50 8280 4486 UL
+11 SS 
+8280 7955 MT
+(James Landay,)
+128 W( Matthew Goldberg, and Rajan Parthasarathy. ``The Garnet User Interface Development)129 W
+8280 9151 MT
+(Environment: Video)
+493 W( Abstract,'')109 W
+/Times-Italic SF
+23287 XM
+(CHI'94 Conference Companion)109 W
+/Times-Roman SF
+(. Boston,)
+493 W( MA, Apr.  24-28,)
+109 W( 1994. pp.)108 W
+8280 10347 MT
+(455-456.)SH
+8280 12645 MT
+(Gurminder Singh, Mark Linton, Brad A. Myers, and Marti)
+4 W( Szczur. ``From Research Prototypes to Usable,)5 W
+8280 13841 MT
+(Useful Systems:)
+182 W( Lessons Learned in the Trenches,'')181 W
+/Times-Italic SF
+32762 XM
+(Proceedings ACM Symposium on User Interface)181 W
+8280 15037 MT
+(Software and Technology: UIST'93)SH
+/Times-Roman SF
+(. Atlanta, GA, Nov 3-5, 1993.  pp. 139-143.)SH
+8280 17335 MT
+(Brad A. Myers, Richard G. McDaniel, and David S. Kosbie.  ``Marquise:  Creating Complete)
+218 W( User)219 W
+8280 18531 MT
+(Interfaces by Demonstration,'')323 W
+/Times-Italic SF
+23053 XM
+(Proceedings INTERCHI'93: Human)
+323 W( Factors in Computing Systems)322 W
+/Times-Roman SF
+(.)SH
+8280 19727 MT
+(Amsterdam, The Netherlands, April 24-29, 1993.  pp. 293-300.)SH
+8280 22025 MT
+(Brad A. Myers, Richard Wolf, Kathy Potosnak,)
+6 W( and Chris Graham.  ``Heuristics in Real User Interfaces,'')7 W
+/Times-Italic SF
+8280 23221 MT
+(Proceedings INTERCHI'93: Human Factors in Computing Systems)28 W
+/Times-Roman SF
+(. Amsterdam,)
+330 W( The Netherlands, April)27 W
+8280 24417 MT
+(24-29, 1993.  pp. 304-307.)SH
+8280 26715 MT
+(James A. Landay and Brad A. Myers. ``Extending an Existing User Interface Toolkit)
+53 W( to Support Gesture)54 W
+8280 27911 MT
+(Recognition.'')SH
+/Times-Italic SF
+15026 XM
+(Adjunct Proceedings of INTERCHI'93)86 W
+/Times-Roman SF
+(. Amsterdam, The Netherlands, April 24-29, 1993.)85 W
+8280 29107 MT
+(pp. 91-92.)SH
+8280 31405 MT
+(Brad A. Myers. ``The Garnet Gilt Interface Builder: Graphical Styles and)
+236 W( Tabs and Techniques for)237 W
+8280 32601 MT
+(Reducing Call-Back Procedures,'' Application Builder Session,)40 W
+/Times-Italic SF
+36870 XM
+(Seventh Annual)
+40 W( X Technical Conference)39 W
+/Times-Roman SF
+(,)SH
+8280 33797 MT
+(Boston, Massachusetts, January 18, 1993.)SH
+8280 36095 MT
+(Osamu Hashimoto and Brad A.)
+585 W( Myers. ``Graphical Styles For Building User Interfaces by)586 W
+8280 37291 MT
+(Demonstration,'')SH
+/Times-Italic SF
+16300 XM
+(ACM Symposium on User Interface Software and Technology)200 W
+/Times-Roman SF
+(, Monterey,)
+200 W( CA, Nov.)199 W
+8280 38487 MT
+(16-18, 1992. pp. 117-124.)SH
+8280 40785 MT
+(Brad A. Myers, Dario A. Giuse,)
+133 W( and Brad Vander Zanden. ``Declarative Programming in a Prototype-)134 W
+8280 41981 MT
+(Instance System: Object-Oriented Programming Without Writing)
+111 W( Methods,'')110 W
+/Times-Italic SF
+43271 XM
+(Proceedings OOPSLA'92:)110 W
+8280 43177 MT
+(ACM Conference)
+228 W( on Object-Oriented Programming Systems, Languages, and Applications)229 W
+/Times-Roman SF
+(. October)733 W
+8280 44373 MT
+(18-22, 1992.  Vancouver, BC, Canada.)SH
+/Times-Italic SF
+25936 XM
+(SIGPLAN Notices,)SH
+/Times-Roman SF
+34461 XM
+(vol. 27, no. 10. pp. 184-200.)SH
+8280 46671 MT
+(Brad A. Myers and Mary Beth Rosson.  ``Survey on User Interface Programming,'')320 W
+/Times-Italic SF
+49582 XM
+(Proceedings)SH
+8280 47867 MT
+(SIGCHI'92: Human Factors in Computing Systems)SH
+/Times-Roman SF
+(. Monterey,)
+275 W( CA, May 3-7, 1992.  195-202.)SH
+8280 50165 MT
+(Brad A. Myers.)
+27 W( ``Separating Application Code from Toolkits:  Eliminating the Spaghetti of Call-Backs,'')28 W
+/Times-Italic SF
+8280 51361 MT
+(ACM Symposium on User)
+86 W( Interface Software and Technology)85 W
+/Times-Roman SF
+(, Hilton Head, SC, Nov. 11-13, 1991.  pp.)85 W
+8280 52557 MT
+(211-220.)SH
+8280 54855 MT
+(Brad Vander)
+177 W( Zanden, Brad A. Myers, Dario Giuse and Pedro Szekely.  ``The Importance of Indirect)178 W
+8280 56051 MT
+(References in Constraint Models,'')46 W
+/Times-Italic SF
+24195 XM
+(ACM Symposium on User Interface)
+46 W( Software and Technology)45 W
+/Times-Roman SF
+(, Hilton)45 W
+8280 57247 MT
+(Head, SC, Nov. 11-13, 1991. pp. 155-164.)SH
+8280 59545 MT
+(Brad A. Myers.  ``Graphical Techniques in a Spreadsheet for)
+90 W( Specifying User Interfaces,'')91 W
+/Times-Italic SF
+49582 XM
+(Proceedings)SH
+8280 60741 MT
+(SIGCHI'91: Human Factors in Computing Systems)176 W
+/Times-Roman SF
+(. New)
+627 W( Orleans, LA.)
+176 W( April)
+626 W( 28-May 2, 1991.  pp.)175 W
+8280 61937 MT
+(243-249.)SH
+8280 64235 MT
+(Brad Vander Zanden and Brad A. Myers, ``Automatic, Look-and-Feel Independent Dialog Creation)
+105 W( for)106 W
+8280 65431 MT
+(Graphical User)
+116 W( Interfaces,'')115 W
+/Times-Italic SF
+21204 XM
+(Proceedings SIGCHI '90: Human Factors in Computing Systems)115 W
+/Times-Roman SF
+(. Seattle,)505 W
+8280 66627 MT
+(WA, April 1-5, 1990. pp. 27-34.)SH
+8280 68925 MT
+(Brad A. Myers.  ``Making it Easy to)
+317 W( Create Highly-Interactive, Graphical Applications in Lisp,'')318 W
+/Times-Italic SF
+8280 70121 MT
+(XNextEvent: The Official Newsletter of XUG, The X User's Group)SH
+/Times-Roman SF
+(. Vol.)
+275 W( 3., No. 1. April, 1990.)SH
+ES
+%%Page: 22 21
+BS
+0 SI
+10 /Times-Roman AF
+6120 4286 MT
+(Page 22)
+SH( Garnet)
+830 W( Toolkit)SH
+46800 50 6120 4486 UL
+11 SS 
+6120 7955 MT
+(Brad A. Myers. ``An Object-Oriented,)
+32 W( Constraint-Based, User Interface Development Environment for X)31 W
+6120 9151 MT
+(in CommonLisp,'')SH
+/Times-Italic SF
+14585 XM
+(Fourth Annual X Technical Conference)SH
+/Times-Roman SF
+(, Boston, Massachusetts, January 15-17, 1990.)SH
+6120 11449 MT
+(Dario Giuse. ``Efficient)
+47 W( Frame Systems,'')48 W
+/Times-Italic SF
+25143 XM
+(Lecture Notes in Artificial Intelligence, EPIA 1989)48 W
+/Times-Roman SF
+(. Vol.)
+371 W( 390.)48 W
+6120 12645 MT
+(J.P. Martins and E.M.  Morgado, eds.  Springer-Verlag, Sep, 1989.)SH
+6120 14943 MT
+(Brad A.)
+315 W( Myers, Brad Vander Zanden, and Roger B. Dannenberg. ``Creating Graphical Interactive)314 W
+6120 16139 MT
+(Application Objects by Demonstration,'')97 W
+/Times-Italic SF
+24807 XM
+(ACM Symposium on User Interface Software and Technology)97 W
+/Times-Roman SF
+(,)SH
+6120 17335 MT
+(Williamsburg, VA, Nov. 13-15, 1989. pp. 95-104.)SH
+6120 19633 MT
+(Charles Wiecha, Stephen Boies, Mark Green,)
+86 W( Scott Hudson, and Brad Myers.  ``Direct Manipulation or)85 W
+6120 20829 MT
+(Programming: How Should We Design Interfaces?'')101 W
+/Times-Italic SF
+30560 XM
+(ACM Symposium on User Interface)
+101 W( Software and)102 W
+6120 22025 MT
+(Technology)SH
+/Times-Roman SF
+(, Williamsburg, VA, Nov. 13-15, 1989. pp. 124-126.)SH
+6120 24323 MT
+(Brad A. Myers. ``AI In Demonstrational User Interfaces,'')123 W
+/Times-Italic SF
+33153 XM
+(A New Generation)
+123 W( of Intelligent Interfaces:)122 W
+6120 25519 MT
+(IJCAI-89 Workshop)SH
+/Times-Roman SF
+(, Detroit, MI.  August 22, 1989, pp. 84-91.)SH
+6120 27817 MT
+(Dario Giuse.  ``Efficient Knowledge Representation Systems,'')33 W
+/Times-Italic SF
+34545 XM
+(The Knowledge Engineering Review)34 W
+/Times-Roman SF
+(, Vol)34 W
+6120 29013 MT
+(4, no. 4, 1990.)SH
+6120 31311 MT
+(Brad A. Myers. ``Encapsulating Interactive Behaviors,'')173 W
+/Times-Italic SF
+32233 XM
+(Proceedings SIGCHI '89:)
+173 W( Human Factors in)172 W
+6120 32507 MT
+(Computing Systems)SH
+/Times-Roman SF
+(. Austin,)
+275 W( Texas, April 30 - May 4, 1989, pp. 319-324.)SH
+6120 34805 MT
+(Brad A. Myers. ``User Interface Tools: Introduction and Survey,'')163 W
+/Times-Italic SF
+37029 XM
+(IEEE Software)163 W
+/Times-Roman SF
+(, Vol. 6,)
+163 W( no. 1, Jan,)164 W
+6120 36001 MT
+(1989. pp. 15-23. To be reprinted)
+58 W( in)57 W
+/Times-Italic SF
+22226 XM
+(Milestones in Software Evolution)57 W
+/Times-Roman SF
+(, Paul W. Oman and Ted G. Lewis,)57 W
+6120 37197 MT
+(ed. IEEE)
+275 W( Computer Society Press.)SH
+6120 39495 MT
+(Pedro Szekely and Brad Myers. ``A User Interface Toolkit Based on Graphical Objects and Constraints,'')18 W
+/Times-Italic SF
+6120 40691 MT
+(OOPSLA '88: Conference on Object-Oriented Programming: Systems,)
+49 W( Languages and Applications)48 W
+/Times-Roman SF
+(, San)48 W
+6120 41887 MT
+(Diego, CA, September 25-30, 1988.)SH
+/Times-Italic SF
+22556 XM
+(Sigplan Notices)SH
+/Times-Roman SF
+(, Vol 23, no. 11, November, 1988. pp. 36 - 45.)SH
+6120 44185 MT
+(Daniel Kuokka and Dario Giuse.)
+228 W( ``The Dante Application Interface,'')229 W
+/Times-Italic SF
+39174 XM
+(Proceedings of the 2nd IEEE)229 W
+6120 45381 MT
+(International Conference on Computer Workstations)SH
+/Times-Roman SF
+(, Clara, California, March 7-10, 1988.)SH
+6120 47679 MT
+(Dario Giuse.)
+119 W( ``Lisp)
+512 W( as a Rapid Prototyping Environment: The Chinese Tutor.''  In)118 W
+/Times-Italic SF
+44556 XM
+(Lisp and Symbolic)118 W
+6120 48875 MT
+(Computation - An International Journal)SH
+/Times-Roman SF
+(, Kluwer Academic Publishers, May 1987.)SH
+/Times-Bold SF
+6120 52610 MT
+(Refereed Published Videotapes)SH
+/Times-Roman SF
+6120 54908 MT
+(Brad A. Myers, Dario Giuse,)
+75 W( Andrew Mickish, Brad Vander Zanden, David Kosbie, Richard McDaniel,)76 W
+6120 56104 MT
+(James Landay, Matthew Goldberg, and Rajan)
+190 W( Parthasarathy.)189 W
+/Times-Italic SF
+34388 XM
+(The Garnet User Interface Development)189 W
+6120 57300 MT
+(Environment)SH
+/Times-Roman SF
+(. Technical)
+345 W( Video Program of the)
+35 W( CHI'94 conference.)36 W
+/Times-Italic SF
+36710 XM
+(SIGGRAPH Video Review)36 W
+/Times-Roman SF
+(, Issue 97,)36 W
+6120 58496 MT
+(no. 13.)SH
+6120 60794 MT
+(Brad A. Myers, Andrew Mickish and Osamu Hashimoto.  ``The)
+51 W( Garnet Gilt Interface Builder: Graphical)50 W
+6120 61990 MT
+(Styles and Tabs and Techniques for Reducing)
+333 W( Call-Back Procedures,'' Application Builder Video)334 W
+6120 63186 MT
+(Session,)SH
+/Times-Italic SF
+10032 XM
+(Seventh Annual X Technical Conference)SH
+/Times-Roman SF
+(, Boston, Massachusetts, January 18, 1993.  10 minutes.)SH
+6120 65484 MT
+(Brad Vander Zanden and Brad A. Myers.)352 W
+/Times-Italic SF
+27060 XM
+(Creating Graphical Interactive Application Objects by)351 W
+6120 66680 MT
+(Demonstration: The Lapidary Interface Design Tool.)58 W
+/Times-Roman SF
+30147 XM
+(12 minute videotape.  Technical Video Program of)59 W
+6120 67876 MT
+(the SIGCHI'91 conference, New Orleans, LA.  April 28-May 2, 1991.)60 W
+/Times-Italic SF
+38327 XM
+(SIGGRAPH Video Review)59 W
+/Times-Roman SF
+(, Issue)59 W
+6120 69072 MT
+(64, no. 1.)SH
+6120 71370 MT
+(Brad A. Myers.)135 W
+/Times-Italic SF
+13642 XM
+(Some of the Widgets)136 W
+/Times-Roman SF
+(. 17)
+547 W( minute videotape.  Technical Video Program of Interact'90.)136 W
+ES
+%%Page: 23 22
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(Section 17)
+SH( Garnet)
+1800 W( Articles)SH
+51886 XM
+(Page 23)SH
+46800 50 8280 4486 UL
+11 SS 
+8280 7955 MT
+(Cambridge, England. August 27-31, 1990.)SH
+8280 10253 MT
+(Brad A. Myers.)272 W
+/Times-Italic SF
+16213 XM
+(All the)
+272 W( Widgets)271 W
+/Times-Roman SF
+(. 2)
+817 W( hour videotape.  Technical Video Program of the SIGCHI'90)271 W
+8280 11449 MT
+(conference, Seattle, WA.  April 1-4, 1990.)SH
+/Times-Italic SF
+27491 XM
+(SIGGRAPH Video Review)SH
+/Times-Roman SF
+(, Issue 57.)SH
+/Times-Bold SF
+8280 15184 MT
+(Chapters in Books)SH
+/Times-Roman SF
+8280 17482 MT
+(Brad A. Myers. ``User)
+87 W( Interface Software,'')88 W
+/Times-Italic SF
+28438 XM
+(Encyclopedia of Computer Science and Technology)88 W
+/Times-Roman SF
+(. Allen)451 W
+8280 18678 MT
+(Kent and James G. Williams, editors.  New York: Marcel Dekker, Inc., 1994. To appear.)SH
+8280 20976 MT
+(Brad A.)
+187 W( Myers. ``State of the Art in User Interface Software Tools,'')186 W
+/Times-Italic SF
+41084 XM
+(Advances in Human-Computer)186 W
+8280 22172 MT
+(Interaction, Volume 4)114 W
+/Times-Roman SF
+(. Edited)
+503 W( by H. Rex Hartson and Deborah)
+114 W( Hix.  Norwood, NJ: Ablex Publishing,)115 W
+8280 23368 MT
+(1993. pp.)
+275 W( 110-150.)SH
+8280 25666 MT
+(Brad A. Myers.  ``Garnet: Uses of Demonstrational Techniques,'')125 W
+/Times-Italic SF
+38665 XM
+(Watch What I)
+125 W( Do: Programming by)124 W
+8280 26862 MT
+(Demonstration)SH
+/Times-Roman SF
+(, Allen Cypher, et. al., eds.  Cambridge, MA: The MIT Press, 1993.  pp. 219-236.)SH
+8280 29160 MT
+(Brad A. Myers.  ``Ideas from Garnet for Future User Interface Programming Languages,'')29 W
+/Times-Italic SF
+48663 XM
+(Languages for)30 W
+8280 30356 MT
+(Developing User Interfaces)SH
+/Times-Roman SF
+(. Boston: Jones and Bartlett, 1992.  pp. 147-157.)SH
+/Times-Bold SF
+8280 34091 MT
+(Technical Reports:)SH
+/Times-Roman SF
+8280 36389 MT
+(Brad A. Myers.)24 W
+/Times-Italic SF
+15768 XM
+(User Interface Software Tools)24 W
+/Times-Roman SF
+(. Carnegie Mellon University School)
+24 W( of Computer Science)23 W
+8280 37585 MT
+(Technical Report, no. CMU-CS-94-182 and Human Computer)
+244 W( Interaction Institute Technical Report)245 W
+8280 38781 MT
+(CMU-HCII-94-107. August)
+275 W( 1994.)SH
+8280 41079 MT
+(James A. Landay and Brad A. Myers.)220 W
+/Times-Italic SF
+27175 XM
+(Interactive Sketching for the Early Stages)
+220 W( of User Interface)219 W
+8280 42275 MT
+(Design)SH
+/Times-Roman SF
+(. Carnegie)
+1053 W( Mellon University School of Computer)
+389 W( Science Technical Report, no. CMU-)390 W
+8280 43471 MT
+(CS-94-176 and Human Computer Interaction Institute Technical Report CMU-HCII-94-104.  July 1994.)SH
+8280 45769 MT
+(Brad A. Myers, Dario A.)
+127 W( Giuse, Andrew Mickish, and David S. Kosbie.)126 W
+/Times-Italic SF
+42180 XM
+(Making Structured Graphics)126 W
+8280 46965 MT
+(and Constraints Practical for Large-Scale Applications)421 W
+/Times-Roman SF
+(. Carnegie)
+1117 W( Mellon)
+421 W( University School of)422 W
+8280 48161 MT
+(Computer Science Technical Report, no.)
+196 W( CMU-CS-94-109 and Human Computer Interaction Institute)195 W
+8280 49357 MT
+(Technical Report CMU-HCII-94-100.  May 1994.)SH
+8280 51655 MT
+(Brad A. Myers.)170 W
+/Times-Italic SF
+16352 XM
+(Why are Human-Computer Interfaces Difficult to Design)
+170 W( and Implement?)171 W
+/Times-Roman SF
+51110 XM
+(Carnegie)SH
+8280 52851 MT
+(Mellon University School of Computer Science Technical Report, no. CMU-CS-93-183.  July 1993.)SH
+8280 55149 MT
+(Brad A.)
+217 W( Myers, editor.)216 W
+/Times-Italic SF
+19869 XM
+(The Second Garnet Compendium:  Collected Papers, 1990-1992)216 W
+/Times-Roman SF
+(. Carnegie)707 W
+8280 56345 MT
+(Mellon University School of Computer Science Technical Report, no. CMU-CS-93-108, February, 1993.)SH
+8280 58643 MT
+(Brad A. Myers, Dario Giuse, Andrew Mickish,)
+109 W( Brad Vander Zanden, David Kosbie, James A. Landay,)110 W
+8280 59839 MT
+(Richard McDaniel, Rajan Parthasarathy, Matthew)
+26 W( Goldberg, Roger B. Dannenberg, Philippe Marchal, Ed)25 W
+8280 61035 MT
+(Pervin.)SH
+/Times-Italic SF
+12353 XM
+(The Garnet Reference Manuals)188 W
+/Times-Roman SF
+(. Carnegie)
+652 W( Mellon University Computer Science Department)189 W
+8280 62231 MT
+(Technical Report, no. CMU-CS-90-117-R5,)
+103 W( Sep. 1994.  Revised from CMU-CS-90-117-R4, Oct. 1993,)102 W
+8280 63427 MT
+(CMU-CS-90-117-R3, Nov. 1992, CMU-CS-90-117-R2, May 1992, CMU-CS-90-117-R, June)
+331 W( 1991,)332 W
+8280 64623 MT
+(CMU-CS-90-117, March, 1990, and CMU-CS-89-196, Nov. 1989.)SH
+8280 66921 MT
+(Bonnie E. John, Philip L. Miller, Brad A.)
+174 W( Myers, Christine M. Neuwirth, and Steven A. Shafer, eds.)173 W
+/Times-Italic SF
+8280 68117 MT
+(Human-Computer Interaction in the School of Computer Science)37 W
+/Times-Roman SF
+(. Carnegie)
+350 W( Mellon University School of)38 W
+8280 69313 MT
+(Computer Science Technical Report, no. CMU-CS-92-193, October, 1992.)SH
+8280 71611 MT
+(Brad A. Myers.)40 W
+/Times-Italic SF
+15517 XM
+(State of the Art in User Interface Software Tools)39 W
+/Times-Roman SF
+(. Carnegie)
+353 W( Mellon University School of)39 W
+ES
+%%Page: 24 23
+BS
+0 SI
+10 /Times-Roman AF
+6120 4286 MT
+(Page 24)
+SH( Garnet)
+830 W( Toolkit)SH
+46800 50 6120 4486 UL
+11 SS 
+6120 7955 MT
+(Computer Science Technical Report, no. CMU-CS-92-114, February, 1992.)SH
+6120 10253 MT
+(Brad A. Myers and Mary Beth Rosson.)220 W
+/Times-Italic SF
+25660 XM
+(Survey on User Interface Programming)220 W
+/Times-Roman SF
+(. Carnegie)
+715 W( Mellon)220 W
+6120 11449 MT
+(University School of Computer)
+110 W( Science Technical Report, no. CMU-CS-92-113, February, 1992.  Also)109 W
+6120 12645 MT
+(published as IBM Research Report RC17624.)SH
+6120 14943 MT
+(Brad A. Myers, editor.)253 W
+/Times-Italic SF
+17894 XM
+(The Garnet Compendium: Collected Papers, 1989-1990)254 W
+/Times-Roman SF
+(. Carnegie)
+783 W( Mellon)254 W
+6120 16139 MT
+(University School of Computer Science Technical Report, no. CMU-CS-90-154, August, 1990.)SH
+6120 18437 MT
+(David Kosbie, Brad Vander Zanden, Brad A. Myers, and Dario Giuse.  ``Automatic Graphical)
+138 W( Output)137 W
+6120 19633 MT
+(Management,'')SH
+/Times-Italic SF
+13330 XM
+(The Garnet Compendium:  Collected Papers, 1989-1990)186 W
+/Times-Roman SF
+(, Carnegie Mellon University)187 W
+6120 20829 MT
+(School of Computer Science Technical Report, no. CMU-CS-90-154, August, 1990, pp. 29-43.)SH
+6120 23127 MT
+(Roger B. Dannenberg, Brad A.)
+359 W( Myers, Dario Giuse, and David Kosbie.  ``Using Aggregates as)358 W
+6120 24323 MT
+(Prototypes,'')SH
+/Times-Italic SF
+12397 XM
+(The Garnet Compendium:  Collected Papers, 1989-1990)290 W
+/Times-Roman SF
+(, Carnegie Mellon University)290 W
+6120 25519 MT
+(School of Computer Science Technical Report, no. CMU-CS-90-154, August, 1990, pp. 79-93.)SH
+6120 27817 MT
+(Dario Giuse.)110 W
+/Times-Italic SF
+12235 XM
+(KR: Constraint-Based Knowledge)
+110 W( Representation)109 W
+/Times-Roman SF
+(. Carnegie)
+493 W( Mellon University Computer)109 W
+6120 29013 MT
+(Science Department Technical Report, no. CMU-CS-89-142, Apr, 1989.)SH
+6120 31311 MT
+(Brad A. Myers.)160 W
+/Times-Italic SF
+13717 XM
+(The Garnet User Interface Development Environment; A Proposal)160 W
+/Times-Roman SF
+(. Carnegie)
+595 W( Mellon)160 W
+6120 32507 MT
+(University Computer Science Department Technical Report, no. CMU-CS-88-153, Sept, 1988.)SH
+6120 34805 MT
+(Brad A.)
+278 W( Myers.)277 W
+/Times-Italic SF
+14069 XM
+(Tools for Creating User Interfaces: An Introduction and Survey,)277 W
+/Times-Roman SF
+45220 XM
+(Carnegie Mellon)277 W
+6120 36001 MT
+(University Computer Science Department Technical Report, no. CMU-CS-88-107, Jan, 1988.)SH
+6120 38299 MT
+(Dario Giuse.)76 W
+/Times-Italic SF
+12167 XM
+(KR: an Efficient Knowledge Representation System)76 W
+/Times-Roman SF
+(. Carnegie)
+427 W( Mellon University Robotics)76 W
+6120 39495 MT
+(Institute Technical Report, no.  CMU-RI-TR-87-23, Oct, 1987.)SH
+/Times-Bold SF
+6120 43230 MT
+(Submitted for Publication)SH
+/Times-Roman SF
+6120 45528 MT
+(James Landay and Brad A. Myers.  ``Interactive Sketching for the Early Stages)
+280 W( of User Interface)279 W
+6120 46724 MT
+(Design.'')SH
+6120 49022 MT
+(Nobuhisa Yoda and Brad A. Myers.)
+279 W( ``A)
+834 W( High Level Architecture with Reusable Components for)280 W
+6120 50218 MT
+(Synchronous Groupware Applications.'')SH
+6120 52516 MT
+(Brad Vander Zanden and Brad A. Myers.  ``The Lapidary Graphical Interface Design Tool.'')SH
+ES
+%%Page: 25 24
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(Section 17)
+SH( Garnet)
+1800 W( Articles)SH
+51886 XM
+(Page 25)SH
+46800 50 8280 4486 UL
+14 /Times-Bold AF
+28414 8138 MT
+(References)SH
+11 /Times-Roman AF
+8280 10695 MT
+([Myers 90])SH
+16530 XM
+(Brad A. Myers, Dario A. Giuse, Roger B. Dannenberg, Brad Vander Zanden, David)SH
+16530 11891 MT
+(S. Kosbie, Edward Pervin, Andrew Mickish, and Philippe Marchal.)SH
+16530 13087 MT
+(Garnet: Comprehensive Support for Graphical, Highly-Interactive User Interfaces.)SH
+/Times-Italic SF
+16530 14283 MT
+(IEEE Computer)SH
+/Times-Roman SF
+23862 XM
+(23\05011\051:71-85, November, 1990.)SH
+ES
+%%Page: 26 25
+BS
+0 SI
+10 /Times-Roman AF
+6120 4286 MT
+(Page 26)
+SH( Garnet)
+830 W( Toolkit)SH
+50643 XM
+(Index)SH
+46800 50 6120 4486 UL
+16 /Times-Bold AF
+6120 8272 MT
+(Index)SH
+8 /Times-Roman AF
+6120 11525 MT
+(Add-garnet-load-prefix 17)400 W
+21720 XM
+(Papers 20)400 W
+6120 12449 MT
+(Address 5)400 W
+21720 XM
+(Parts of Garnet)
+SH( 17)400 W
+6120 13373 MT
+(Amulet 3,)
+400 W( 19)SH
+21720 XM
+(Pathnames 10)400 W
+6120 14297 MT
+(Articles 20)400 W
+21720 15221 MT
+(Retrieving Garnet)
+SH( 5)400 W
+6120 16145 MT
+(Bboard 3)400 W
+6120 17069 MT
+(Bugs \050reporting\051)
+SH( 3)400 W
+21720 XM
+(Screens 11)400 W
+21720 17993 MT
+(Site specific changes)
+SH( 10)400 W
+6120 18917 MT
+(Clisp 13)400 W
+21720 XM
+(Src 9)400 W
+6120 19841 MT
+(Compiling 16)400 W
+6120 20765 MT
+(Compiling Garnet)
+SH( 5,)
+400 W( 15)SH
+21720 XM
+(Text-fonts.lisp 10)400 W
+6120 21689 MT
+(Coverage 4)400 W
+21720 XM
+(Textkeyhandling.lisp 11)400 W
+6120 23537 MT
+(Define-keys 11)400 W
+6120 24461 MT
+(Directories 9)400 W
+6120 25385 MT
+(Doc 9)400 W
+6120 27233 MT
+(Features 4)400 W
+6120 28157 MT
+(File names)
+SH( 10)400 W
+6120 29081 MT
+(Find-key-symbols 11)400 W
+6120 30005 MT
+(FocusLenience 11)400 W
+6120 30929 MT
+(Fonts 10)400 W
+6120 31853 MT
+(FTP Instructions)
+SH( 5)400 W
+6120 32777 MT
+(Future work)
+SH( 19)400 W
+6120 34625 MT
+(Garnet-)SH
+/Times-Italic SF
+(xxx)SH
+/Times-Roman SF
+(-Pathname 16)400 W
+6120 35549 MT
+(Garnet-)SH
+/Times-Italic SF
+(xxx)SH
+/Times-Roman SF
+(-Src 16)400 W
+6120 36473 MT
+(Garnet-compile 16)400 W
+6120 37397 MT
+(Garnet-compiler 15)400 W
+6120 38321 MT
+(Garnet-debug \050package\051)
+SH( 18)400 W
+6120 39245 MT
+(Garnet-gadgets \050package\051)
+SH( 17)400 W
+6120 40169 MT
+(Garnet-load 16)400 W
+6120 41093 MT
+(Garnet-loader 9,)
+400 W( 10, 16)SH
+6120 42017 MT
+(Garnet-Screen-Number 11)400 W
+6120 42941 MT
+(Garnet-users 3)400 W
+6120 43865 MT
+(Garnet-version 10)400 W
+6120 44789 MT
+(Garnet-version-number 9)400 W
+6120 45713 MT
+(Gem \050package\051)
+SH( 17)400 W
+6120 46637 MT
+(Getting Garnet)
+SH( 5)400 W
+6120 47561 MT
+(Gilt \050package\051)
+SH( 18)400 W
+6120 48485 MT
+(Guarantee-processes 12)400 W
+6120 50333 MT
+(Harlequin 12)400 W
+6120 52181 MT
+(Installing Garnet)
+SH( 5)400 W
+6120 53105 MT
+(Inter \050package\051)
+SH( 17)400 W
+6120 54953 MT
+(Key Caps)
+SH( 11)400 W
+6120 55877 MT
+(Keyboard Keys)
+SH( 11)400 W
+6120 56801 MT
+(Kr \050package\051)
+SH( 17)400 W
+6120 58649 MT
+(Lapidary \050package\051)
+SH( 18)400 W
+6120 59573 MT
+(License 5)400 W
+6120 60497 MT
+(Lispworks 12)400 W
+6120 61421 MT
+(Load-)SH
+/Times-Italic SF
+(xxx)SH
+/Times-Roman SF
+(-p 16)400 W
+6120 62345 MT
+(Loading 16)400 W
+6120 63269 MT
+(Loading Garnet)
+SH( 16)400 W
+6120 65117 MT
+(Machine-specific features)
+SH( 10)400 W
+6120 66041 MT
+(Mouse-keys.lisp 14)400 W
+6120 66965 MT
+(Multiple Screens)
+SH( 11)400 W
+6120 68813 MT
+(Opal \050package\051)
+SH( 17)400 W
+6120 69737 MT
+(OpenWindows 11)400 W
+6120 71585 MT
+(Packages in Garnet)
+SH( 17)400 W
+ES
+%%Page: i 26
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(Garnet Toolkit)SH
+47914 XM
+(Table of Contents)SH
+46800 50 8280 4486 UL
+16 /Times-Bold AF
+25591 8272 MT
+(Table of Contents)SH
+10 SS 
+9780 9352 MT
+(1. Introduction)SH
+54580 XM
+(3)SH
+9780 10432 MT
+(2. Garnet Bulletin Board)SH
+54580 XM
+(3)SH
+9780 11512 MT
+(3. Important Features of Garnet)SH
+54580 XM
+(4)SH
+9780 12592 MT
+(4. Coverage)SH
+54580 XM
+(5)SH
+9780 13672 MT
+(5. Running Garnet From /afs)SH
+54580 XM
+(5)SH
+9780 14752 MT
+(6. How to Retrieve and Install Garnet)SH
+54580 XM
+(5)SH
+11780 15832 MT
+(6.1. Installation on a Mac)SH
+54580 XM
+(6)SH
+11780 16912 MT
+(6.2. Installation on a Unix System)SH
+54580 XM
+(7)SH
+9780 17992 MT
+(7. Directory Organization)SH
+54580 XM
+(9)SH
+9780 19072 MT
+(8. Site-Specific Changes)SH
+54080 XM
+(10)SH
+11780 20152 MT
+(8.1. Pathnames)SH
+54080 XM
+(10)SH
+11780 21232 MT
+(8.2. Compiler Optimization Settings)SH
+54080 XM
+(10)SH
+11780 22312 MT
+(8.3. Fonts in X/11)SH
+54080 XM
+(10)SH
+11780 23392 MT
+(8.4. Keyboard Keys)SH
+54080 XM
+(11)SH
+11780 24472 MT
+(8.5. Multiple Screens)SH
+54080 XM
+(11)SH
+11780 25552 MT
+(8.6. OpenWindows Window Manager)SH
+54080 XM
+(11)SH
+11780 26632 MT
+(8.7. LispWorks)SH
+54080 XM
+(12)SH
+11780 27712 MT
+(8.8. CLISP)SH
+54080 XM
+(13)SH
+11780 28792 MT
+(8.9. AKCL)SH
+54080 XM
+(13)SH
+9780 29872 MT
+(9. Mac-Specific Issues)SH
+54080 XM
+(14)SH
+11780 30952 MT
+(9.1. Compensating for 31-Character Filenames:)SH
+54080 XM
+(14)SH
+11780 32032 MT
+(9.2. Directories:)SH
+54080 XM
+(14)SH
+11780 33112 MT
+(9.3. Binding Keys:)SH
+54080 XM
+(14)SH
+11780 34192 MT
+(9.4. Simulating Multiple Mouse Buttons With the Keyboard:)SH
+54080 XM
+(14)SH
+11780 35272 MT
+(9.5. Modifier Keys:)SH
+54080 XM
+(15)SH
+11780 36352 MT
+(9.6. Things to Keep in Mind When You Want Your Garnet Programs to Run on Both X)SH
+54080 XM
+(15)SH
+13530 37432 MT
+(Windows and the Mac:)SH
+9780 38512 MT
+(10. Compiling Garnet)SH
+54080 XM
+(15)SH
+9780 39592 MT
+(11. Loading Garnet)SH
+54080 XM
+(16)SH
+9780 40672 MT
+(12. Loader and Compiler Functions)SH
+54080 XM
+(16)SH
+11780 41752 MT
+(12.1. Garnet-Load and Garnet-Compile)SH
+54080 XM
+(16)SH
+11780 42832 MT
+(12.2. Adding Your Own Pathnames)SH
+54080 XM
+(17)SH
+9780 43912 MT
+(13. Overview of the Parts of Garnet)SH
+54080 XM
+(17)SH
+9780 44992 MT
+(14. Overview of this Technical Report)SH
+54080 XM
+(18)SH
+9780 46072 MT
+(15. What You Need To Know)SH
+54080 XM
+(18)SH
+9780 47152 MT
+(16. Planned Future Extensions)SH
+54080 XM
+(19)SH
+9780 48232 MT
+(17. Garnet Articles)SH
+54080 XM
+(20)SH
+12 SS 
+8280 49756 MT
+(Index)SH
+53880 XM
+(26)SH
+ES
+%%Trailer
+%%Pages: 26
+%%DocumentFonts: Times-Roman Times-Bold Symbol Times-Italic Courier

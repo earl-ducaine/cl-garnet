@@ -1,0 +1,1175 @@
+%!PS-Adobe-2.0 EPSF 2.0
+%%Title: 
+%%Creator: Make-PS-File -- Garnet Version 2.1beta
+%%CreationDate: Oct 14, 1992, 7:56 PM
+%%For: 
+%%This file does not use real color
+%%DocumentFonts: (atend)
+%%BoundingBox: 72 124 720 487
+%%Pages: 1
+%%EndComments
+
+
+/PolylineDict 15 dict def
+/DrawPolyline
+   {	% stack: x1, y1, ..., xn, yn, n, line-halftone, line-red, line-blue,
+        %        line-green, line-join, line-cap, dash-pattern,
+        %        line-thickness, fill-halftone
+        PolylineDict begin
+        /fill-color-p exch def  /fill-blue exch def  /fill-green exch def
+        /fill-red exch def  /fill-halftone exch def  /thickness exch def
+        /dash-pattern exch def  /line-join exch def  /line-cap exch def
+        /line-color-p exch def  /line-blue exch def  /line-green exch def
+        /line-red exch def  /line-halftone exch def  /num-points exch 4 sub def
+	newpath
+	  moveto
+	  num-points -2 0 {pop lineto} for
+	  fill-halftone fill-red fill-green fill-blue fill-color-p FillShape
+          line-halftone line-red line-green line-blue line-color-p
+          line-cap line-join dash-pattern thickness StrokeShape
+        end
+   } def
+
+/BitmapDict 9 dict def
+/DrawBitmap
+   {    % stack: left top width height pattern transparent-p
+        %        red green blue color-p
+        BitmapDict begin
+        /picstr 256 string def
+	/color-p exch def  /blue exch def  /green exch def /red exch def
+        /transparent-p exch def
+        /pattern exch def  /height exch def  /width exch def
+        gsave
+          translate
+          width height scale
+	  color-p {red green blue setrgbcolor} if
+          transparent-p
+	  % The case where the background is not drawn
+	  { width height false
+            [ width 0 0 height 0 height ]
+            {pattern} imagemask }
+	  % The case where the background is drawn
+          { width height 1
+            [ width 0 0 height 0 height ]
+            {pattern} image } ifelse
+        grestore
+        end
+   } def
+
+/DrawLine
+   {    % stack: line-halftone, red, green, blue, color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness
+        %        x2, y2, x1, y1
+        newpath
+          moveto
+          lineto
+          StrokeShape
+   } def
+
+/TextDict 19 dict def
+/DrawText
+   {	% stack: left top base-y opal-width height line-halftone fill-p
+        %        fore-red fore-green fore-blue fore-color-p
+        %        back-red back-green back-blue back-color-p
+        %        string size font-name
+        TextDict begin
+        gsave
+	findfont exch scalefont setfont
+	/s exch def
+        /back-color-p exch def  /back-blue exch def  /back-green exch def
+        /back-red exch def  /fore-color-p exch def  /fore-blue exch def
+        /fore-green exch def  /fore-red exch def  /fill-p exch def
+        /line-halftone exch def /height exch def  /opal-width exch def
+        /base-y exch def  /top exch def  /left exch def
+
+        % Calculate distance to add between each character, based on the width
+        % expected by Opal, the width expected by postscript, and the number
+        % of characters to distribute the change over
+	/x-dist opal-width s stringwidth pop sub s length div def
+
+        % Draw background of text if appropriate
+        fill-p
+        { gsave
+            newpath
+            left top opal-width height RectanglePath
+            1 back-red back-green back-blue back-color-p
+            FillShape
+          grestore } if
+
+        % Draw text in the appropriate color
+	newpath
+          fore-color-p
+          { fore-red fore-green fore-blue setrgbcolor }
+          { line-halftone setgray } ifelse
+	  left base-y moveto
+	  x-dist 0 s ashow
+        grestore
+        end
+   } def
+
+/RectanglePath
+   {    % stack: left, top, width, height
+        /h exch def  /w exch def
+	moveto		        % Go to the left,top corner
+	w 0 rlineto	        % top side
+	0 h neg rlineto		% right side
+	w neg 0 rlineto		% bottom side
+	closepath		% left side
+   } def
+
+/RectangleDict 21 dict def
+/DrawRectangle
+   {	% stack: left, top, width, height, line-halftone, line-red, line-green,
+        %        line-blue, line-color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness,
+        %        fill-halftone, fill-red, fill-green, fill-blue, fill-color-p
+        RectangleDict begin
+        /fill-color-p exch def  /fill-blue exch def  /fill-green exch def
+        /fill-red exch def /fill-halftone exch def  /thickness exch def
+        /dash-pattern exch def  /line-join exch def  /line-cap exch def
+        /line-color-p exch def  /line-blue exch def  /line-green exch def
+        /line-red exch def  /line-halftone exch def  /height exch def
+        /width exch def  /top exch def  /left exch def
+        /thickness-by-2 thickness 2 div def
+        % Draw filling
+        newpath
+          left thickness-by-2 add  top thickness-by-2 sub
+          width thickness sub  height thickness sub
+          RectanglePath
+	  fill-halftone fill-red fill-green fill-blue fill-color-p FillShape
+        % Draw border
+        newpath
+          left top width height RectanglePath
+          line-halftone line-red line-green line-blue line-color-p
+          line-cap line-join dash-pattern thickness StrokeShape
+        end
+   } def
+
+/ClipDict 2 dict def
+/ClipToRectangle
+   {    % stack: left, top, width, height
+        ClipDict begin
+	/height exch def  /width exch def
+        newpath
+	  moveto		% Go to the left,top corner
+	  width 0 rlineto	% top side
+	  0 height neg rlineto	% right side
+	  width neg 0 rlineto	% bottom side
+	  closepath		% left side
+	gsave 1 setgray fill grestore
+	clip newpath
+        end
+   } def
+
+/FillShape
+   {	% stack: fill-halftone, red, green, blue, color-p
+        %   Color-p should be true or false - false means ignore the three vals
+        %   Use -1 for fill-halftone to mean NIL, 0 = black, 1 = white
+        %   Use -2 for fill-halftone to indicate there is an arbitrary filling
+        % style on the stack
+        gsave
+        { setrgbcolor fill pop }
+	{ pop pop pop 
+	  dup 0 ge
+	    % if fill-halftone >= 0, then fill the shape with a halftone
+	    { setgray fill}
+            % else, if there is an arbitrary filling style, then fill
+            { -2 eq
+              {SetPattern fill} if
+            } ifelse } ifelse
+        grestore
+   } def
+
+/StrokeShape
+   {	% stack: line-halftone, red, green, blue, color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness
+	% If no line is desired, pass -1 for line-thickness
+        % Halftones: 0 = black, 1 = white
+	dup 0 ge
+	  % if line-thickness >= 0, then draw the outline
+	  {gsave
+	   setlinewidth 0 setdash setlinejoin setlinecap
+             { setrgbcolor pop }
+             { pop pop pop setgray } ifelse
+	   stroke
+	   grestore}
+	  {pop pop pop pop pop pop pop pop pop newpath} ifelse
+   } def
+
+/image-1
+<0003 7ffb 601b 7ffb 601b 7ffb 601b 7ffb 601b 7ffb 0003>
+def
+
+
+%%EndProlog
+%%Page: 1 1
+
+gsave
+612 0 translate
+90 rotate
+72 72 translate
+0.5346535 0.5346535 scale
+
+%
+% Begin new window
+%
+0 -98 translate
+gsave
+0 875 1212 680 ClipToRectangle
+0 0 translate
+gsave
+0 875 1212 680 0 0 0 0 false 0 0 [] -1 0 1.00 1.00 1.00 true DrawRectangle
+grestore
+
+gsave
+
+%
+% Begin new window
+%
+402 0 translate
+gsave
+0 875 300 393 ClipToRectangle
+0 0 translate
+gsave
+0 875 300 393 0 0 0 0 false 0 0 [] -1 0 0.83 0.83 0.83 true DrawRectangle
+32 847 300 312 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+255 871 38 20 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+257 869 36 18 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+257 869 34 16 0 0 0 0 false 0 0 [] -1 1 0 0 0 false DrawRectangle
+260 868 856 28 15 0 false 0 0 0 false 0 0 0 false (Done) 12 /Helvetica DrawText
+2 847 836 26 13 0 false 0 0 0 false 0 0 0 false (oct14) 10 /Helvetica DrawText
+2 834 823 26 13 0 false 0 0 0 false 0 0 0 false (08:00) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 834 34 834 DrawLine
+2 821 810 26 13 0 false 0 0 0 false 0 0 0 false (08:30) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 814 34 814 DrawLine
+2 808 797 26 13 0 false 0 0 0 false 0 0 0 false (09:00) 10 /Helvetica-Bold DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 801 34 801 DrawLine
+2 795 784 26 13 0 false 0 0 0 false 0 0 0 false (09:30) 10 /Helvetica-Bold DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 788 34 788 DrawLine
+2 782 771 26 13 0 false 0 0 0 false 0 0 0 false (10:00) 10 /Helvetica-Bold DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 775 34 775 DrawLine
+2 769 758 26 13 0 false 0 0 0 false 0 0 0 false (10:30) 10 /Helvetica-Bold DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 762 34 762 DrawLine
+2 756 745 26 13 0 false 0 0 0 false 0 0 0 false (11:00) 10 /Helvetica-Bold DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 749 34 749 DrawLine
+2 743 732 26 13 0 false 0 0 0 false 0 0 0 false (11:30) 10 /Helvetica-Bold DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 736 34 736 DrawLine
+2 730 719 26 13 0 false 0 0 0 false 0 0 0 false (12:00) 10 /Helvetica-Bold DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 723 34 723 DrawLine
+34 721 264 43 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRectangle
+38 719 708 110 13 0 false 0 0 0 false 0 0 0 false (meeting: COSMA Demo) 10 /Helvetica DrawText
+38 706 695 73 13 0 false 0 0 0 false 0 0 0 false (stephen, eliz, oe) 10 /Helvetica DrawText
+38 693 682 67 13 0 false 0 0 0 false 0 0 0 false (@ DFKI +1.14) 10 /Helvetica DrawText
+2 684 673 26 13 0 false 0 0 0 false 0 0 0 false (13:30) 10 /Helvetica-Bold DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 677 34 677 DrawLine
+2 671 660 26 13 0 false 0 0 0 false 0 0 0 false (14:00) 10 /Helvetica-Bold DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 664 34 664 DrawLine
+2 658 647 26 13 0 false 0 0 0 false 0 0 0 false (14:30) 10 /Helvetica-Bold DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 651 34 651 DrawLine
+2 645 634 26 13 0 false 0 0 0 false 0 0 0 false (15:00) 10 /Helvetica-Bold DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 638 34 638 DrawLine
+2 632 621 26 13 0 false 0 0 0 false 0 0 0 false (15:30) 10 /Helvetica-Bold DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 625 34 625 DrawLine
+2 619 608 26 13 0 false 0 0 0 false 0 0 0 false (16:00) 10 /Helvetica-Bold DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 612 34 612 DrawLine
+2 606 595 26 13 0 false 0 0 0 false 0 0 0 false (16:30) 10 /Helvetica-Bold DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 599 34 599 DrawLine
+2 593 582 26 13 0 false 0 0 0 false 0 0 0 false (17:00) 10 /Helvetica-Bold DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 586 34 586 DrawLine
+2 580 569 25 13 0 false 0 0 0 false 0 0 0 false (17:30) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 573 34 573 DrawLine
+2 567 556 25 13 0 false 0 0 0 false 0 0 0 false (18:00) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 560 34 560 DrawLine
+2 554 543 25 13 0 false 0 0 0 false 0 0 0 false (18:30) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 547 34 547 DrawLine
+2 541 530 25 13 0 false 0 0 0 false 0 0 0 false (19:00) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 534 34 534 DrawLine
+2 528 517 25 13 0 false 0 0 0 false 0 0 0 false (19:30) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 521 34 521 DrawLine
+34 519 264 30 0 0 0 0 false 0 0 [] 1 0.75 0 0 0 false DrawRectangle
+38 517 506 24 13 0 false 0 0 0 false 0 0 0 false (social) 10 /Helvetica DrawText
+38 504 493 34 13 0 false 0 0 0 false 0 0 0 false (guenter) 10 /Helvetica DrawText
+2 495 484 26 13 0 false 0 0 0 false 0 0 0 false (20:30) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 488 34 488 DrawLine
+2 482 471 26 13 0 false 0 0 0 false 0 0 0 false (21:00) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 475 34 475 DrawLine
+2 469 458 26 13 0 false 0 0 0 false 0 0 0 false (21:30) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 462 34 462 DrawLine
+2 456 445 26 13 0 false 0 0 0 false 0 0 0 false (22:00) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 449 34 449 DrawLine
+2 443 432 26 13 0 false 0 0 0 false 0 0 0 false (22:30) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 436 34 436 DrawLine
+2 430 419 26 13 0 false 0 0 0 false 0 0 0 false (23:00) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 423 34 423 DrawLine
+2 417 406 26 13 0 false 0 0 0 false 0 0 0 false (23:30) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 410 34 410 DrawLine
+2 404 393 26 13 0 false 0 0 0 false 0 0 0 false (oct15) 10 /Helvetica DrawText
+2 391 380 26 13 0 false 0 0 0 false 0 0 0 false (00:00) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [] 1 300 391 34 391 DrawLine
+2 378 367 26 13 0 false 0 0 0 false 0 0 0 false (00:30) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 371 34 371 DrawLine
+2 365 354 26 13 0 false 0 0 0 false 0 0 0 false (01:00) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 358 34 358 DrawLine
+2 352 341 26 13 0 false 0 0 0 false 0 0 0 false (01:30) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 345 34 345 DrawLine
+2 339 328 26 13 0 false 0 0 0 false 0 0 0 false (02:00) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 332 34 332 DrawLine
+2 326 315 26 13 0 false 0 0 0 false 0 0 0 false (02:30) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 319 34 319 DrawLine
+2 313 302 26 13 0 false 0 0 0 false 0 0 0 false (03:00) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 306 34 306 DrawLine
+2 300 289 26 13 0 false 0 0 0 false 0 0 0 false (03:30) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 293 34 293 DrawLine
+2 287 276 26 13 0 false 0 0 0 false 0 0 0 false (04:00) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 280 34 280 DrawLine
+2 274 263 26 13 0 false 0 0 0 false 0 0 0 false (04:30) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 267 34 267 DrawLine
+2 261 250 26 13 0 false 0 0 0 false 0 0 0 false (05:00) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 254 34 254 DrawLine
+2 248 237 26 13 0 false 0 0 0 false 0 0 0 false (05:30) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 241 34 241 DrawLine
+2 235 224 26 13 0 false 0 0 0 false 0 0 0 false (06:00) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 228 34 228 DrawLine
+2 222 211 26 13 0 false 0 0 0 false 0 0 0 false (06:30) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 215 34 215 DrawLine
+2 209 198 26 13 0 false 0 0 0 false 0 0 0 false (07:00) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 202 34 202 DrawLine
+2 196 185 26 13 0 false 0 0 0 false 0 0 0 false (07:30) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 189 34 189 DrawLine
+2 183 172 26 13 0 false 0 0 0 false 0 0 0 false (08:00) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 176 34 176 DrawLine
+2 170 159 26 13 0 false 0 0 0 false 0 0 0 false (08:30) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 163 34 163 DrawLine
+2 157 146 26 13 0 false 0 0 0 false 0 0 0 false (09:00) 10 /Helvetica-Bold DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 150 34 150 DrawLine
+2 144 133 26 13 0 false 0 0 0 false 0 0 0 false (09:30) 10 /Helvetica-Bold DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 137 34 137 DrawLine
+2 131 120 26 13 0 false 0 0 0 false 0 0 0 false (10:00) 10 /Helvetica-Bold DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 124 34 124 DrawLine
+2 118 107 26 13 0 false 0 0 0 false 0 0 0 false (10:30) 10 /Helvetica-Bold DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 111 34 111 DrawLine
+2 105 94 26 13 0 false 0 0 0 false 0 0 0 false (11:00) 10 /Helvetica-Bold DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 98 34 98 DrawLine
+2 92 81 26 13 0 false 0 0 0 false 0 0 0 false (11:30) 10 /Helvetica-Bold DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 85 34 85 DrawLine
+2 79 68 26 13 0 false 0 0 0 false 0 0 0 false (12:00) 10 /Helvetica-Bold DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 72 34 72 DrawLine
+2 66 55 26 13 0 false 0 0 0 false 0 0 0 false (12:30) 10 /Helvetica-Bold DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 59 34 59 DrawLine
+2 53 42 26 13 0 false 0 0 0 false 0 0 0 false (13:00) 10 /Helvetica-Bold DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 46 34 46 DrawLine
+2 40 29 26 13 0 false 0 0 0 false 0 0 0 false (13:30) 10 /Helvetica-Bold DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 33 34 33 DrawLine
+2 27 16 26 13 0 false 0 0 0 false 0 0 0 false (14:00) 10 /Helvetica-Bold DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 20 34 20 DrawLine
+2 14 3 26 13 0 false 0 0 0 false 0 0 0 false (14:30) 10 /Helvetica-Bold DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 7 34 7 DrawLine
+2 1 -10 26 13 0 false 0 0 0 false 0 0 0 false (15:00) 10 /Helvetica-Bold DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 -6 34 -6 DrawLine
+2 -12 -23 26 13 0 false 0 0 0 false 0 0 0 false (15:30) 10 /Helvetica-Bold DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 -19 34 -19 DrawLine
+2 -25 -36 26 13 0 false 0 0 0 false 0 0 0 false (16:00) 10 /Helvetica-Bold DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 -32 34 -32 DrawLine
+2 -38 -49 26 13 0 false 0 0 0 false 0 0 0 false (16:30) 10 /Helvetica-Bold DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 -45 34 -45 DrawLine
+2 -51 -62 26 13 0 false 0 0 0 false 0 0 0 false (17:00) 10 /Helvetica-Bold DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 -58 34 -58 DrawLine
+2 -64 -75 25 13 0 false 0 0 0 false 0 0 0 false (17:30) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 -71 34 -71 DrawLine
+2 -77 -88 25 13 0 false 0 0 0 false 0 0 0 false (18:00) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 -84 34 -84 DrawLine
+2 -90 -101 25 13 0 false 0 0 0 false 0 0 0 false (18:30) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 -97 34 -97 DrawLine
+2 -103 -114 25 13 0 false 0 0 0 false 0 0 0 false (19:00) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 -110 34 -110 DrawLine
+2 -116 -127 25 13 0 false 0 0 0 false 0 0 0 false (19:30) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 -123 34 -123 DrawLine
+2 -129 -140 26 13 0 false 0 0 0 false 0 0 0 false (20:00) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 -136 34 -136 DrawLine
+2 -142 -153 26 13 0 false 0 0 0 false 0 0 0 false (20:30) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 -149 34 -149 DrawLine
+2 -155 -166 26 13 0 false 0 0 0 false 0 0 0 false (21:00) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 -162 34 -162 DrawLine
+2 -168 -179 26 13 0 false 0 0 0 false 0 0 0 false (21:30) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 -175 34 -175 DrawLine
+2 -181 -192 26 13 0 false 0 0 0 false 0 0 0 false (22:00) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 -188 34 -188 DrawLine
+2 -194 -205 26 13 0 false 0 0 0 false 0 0 0 false (22:30) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 -201 34 -201 DrawLine
+2 -207 -218 26 13 0 false 0 0 0 false 0 0 0 false (23:00) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 -214 34 -214 DrawLine
+2 -220 -231 26 13 0 false 0 0 0 false 0 0 0 false (23:30) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 -227 34 -227 DrawLine
+2 -233 -244 26 13 0 false 0 0 0 false 0 0 0 false (oct16) 10 /Helvetica DrawText
+2 -246 -257 26 13 0 false 0 0 0 false 0 0 0 false (00:00) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [] 1 300 -246 34 -246 DrawLine
+2 -259 -270 26 13 0 false 0 0 0 false 0 0 0 false (00:30) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 -266 34 -266 DrawLine
+2 -272 -283 26 13 0 false 0 0 0 false 0 0 0 false (01:00) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 -279 34 -279 DrawLine
+2 -285 -296 26 13 0 false 0 0 0 false 0 0 0 false (01:30) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 -292 34 -292 DrawLine
+2 -298 -309 26 13 0 false 0 0 0 false 0 0 0 false (02:00) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 -305 34 -305 DrawLine
+2 -311 -322 26 13 0 false 0 0 0 false 0 0 0 false (02:30) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 -318 34 -318 DrawLine
+2 -324 -335 26 13 0 false 0 0 0 false 0 0 0 false (03:00) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 -331 34 -331 DrawLine
+2 -337 -348 26 13 0 false 0 0 0 false 0 0 0 false (03:30) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 -344 34 -344 DrawLine
+2 -350 -361 26 13 0 false 0 0 0 false 0 0 0 false (04:00) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 -357 34 -357 DrawLine
+2 -363 -374 26 13 0 false 0 0 0 false 0 0 0 false (04:30) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 -370 34 -370 DrawLine
+2 -376 -387 26 13 0 false 0 0 0 false 0 0 0 false (05:00) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 -383 34 -383 DrawLine
+2 -389 -400 26 13 0 false 0 0 0 false 0 0 0 false (05:30) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 -396 34 -396 DrawLine
+2 -402 -413 26 13 0 false 0 0 0 false 0 0 0 false (06:00) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 -409 34 -409 DrawLine
+2 -415 -426 26 13 0 false 0 0 0 false 0 0 0 false (06:30) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 -422 34 -422 DrawLine
+2 -428 -439 26 13 0 false 0 0 0 false 0 0 0 false (07:00) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 -435 34 -435 DrawLine
+2 -441 -452 26 13 0 false 0 0 0 false 0 0 0 false (07:30) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 -448 34 -448 DrawLine
+2 -454 -465 26 13 0 false 0 0 0 false 0 0 0 false (08:00) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 -461 34 -461 DrawLine
+2 -467 -478 26 13 0 false 0 0 0 false 0 0 0 false (08:30) 10 /Helvetica DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 -474 34 -474 DrawLine
+2 -480 -491 26 13 0 false 0 0 0 false 0 0 0 false (09:00) 10 /Helvetica-Bold DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 -487 34 -487 DrawLine
+2 -493 -504 26 13 0 false 0 0 0 false 0 0 0 false (09:30) 10 /Helvetica-Bold DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 -500 34 -500 DrawLine
+2 -506 -517 26 13 0 false 0 0 0 false 0 0 0 false (10:00) 10 /Helvetica-Bold DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 -513 34 -513 DrawLine
+2 -519 -530 26 13 0 false 0 0 0 false 0 0 0 false (10:30) 10 /Helvetica-Bold DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 -526 34 -526 DrawLine
+2 -532 -543 26 13 0 false 0 0 0 false 0 0 0 false (11:00) 10 /Helvetica-Bold DrawText
+0 0 0 0 false 0 0 [4 4] 1 300 -539 34 -539 DrawLine
+grestore
+
+grestore
+
+0 875 300 393 0 0 0 0 false 0 0 [] 2 -1 0 0 0 false DrawRectangle
+grestore
+
+gsave
+
+%
+% Begin new window
+%
+706 0 translate
+gsave
+0 875 506 250 ClipToRectangle
+0 0 translate
+gsave
+0 875 506 250 0 0 0 0 false 0 0 [] 1 0 0.83 0.83 0.83 true DrawRectangle
+10 865 853 33 15 0 false 0 0 0 false 0 0 0 false (Type:) 12 /Helvetica-Bold DrawText
+54 867 160 18 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+56 865 158 16 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+56 865 156 14 0 0 0 0 false 0 0 [] -1 1 0 0 0 false DrawRectangle
+58 865 854 49 14 0 false 0 0 0 false 0 0 0 false (meeting) 12 /Courier DrawText
+220 863 14 11 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+218 865 14 11 image-1 false 0 0 0 false DrawBitmap
+0 0 0 0 false 0 0 [] 1 506 841 0 841 DrawLine
+10 827 815 34 15 0 false 0 0 0 false 0 0 0 false (When:) 12 /Helvetica-Bold DrawText
+54 829 316 18 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+56 827 314 16 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+56 827 312 14 0 0 0 0 false 0 0 [] -1 1 0 0 0 false DrawRectangle
+58 827 816 145 14 0 false 0 0 0 false 0 0 0 false (on 1992oct14 at 12:00) 12 /Courier DrawText
+376 825 14 11 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+374 827 14 11 image-1 false 0 0 0 false DrawBitmap
+10 801 789 39 15 0 false 0 0 0 false 0 0 0 false (Where:) 12 /Helvetica-Bold DrawText
+54 803 442 18 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+56 801 440 16 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+56 801 438 14 0 0 0 0 false 0 0 [] -1 1 0 0 0 false DrawRectangle
+58 801 790 69 14 0 false 0 0 0 false 0 0 0 false (DFKI +1.14) 12 /Courier DrawText
+10 775 763 27 15 0 false 0 0 0 false 0 0 0 false (Who:) 12 /Helvetica-Bold DrawText
+54 777 442 18 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+56 775 440 16 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+56 775 438 14 0 0 0 0 false 0 0 [] -1 1 0 0 0 false DrawRectangle
+58 775 764 117 14 0 false 0 0 0 false 0 0 0 false (stephen, eliz, oe) 12 /Courier DrawText
+10 749 737 35 15 0 false 0 0 0 false 0 0 0 false (Topic:) 12 /Helvetica-Bold DrawText
+54 751 442 18 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+56 749 440 16 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+56 749 438 14 0 0 0 0 false 0 0 [] -1 1 0 0 0 false DrawRectangle
+58 749 738 68 14 0 false 0 0 0 false 0 0 0 false (COSMA Demo) 12 /Courier DrawText
+391 655 48 21 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+393 653 46 19 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+393 653 44 17 0 0 0 0 false 0 0 [] -1 1 0 0 0 false DrawRectangle
+396 652 640 17 15 0 false 0 0 0 false 0 0 0 false (OK) 12 /Helvetica DrawText
+448 655 48 21 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+450 653 46 19 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+450 653 44 17 0 0 0 0 false 0 0 [] -1 1 0 0 0 false DrawRectangle
+453 652 640 38 15 0 false 0 0 0 false 0 0 0 false (Cancel) 12 /Helvetica DrawText
+53 654 12 12 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+55 652 10 10 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+55 652 8 8 0 0 0 0 false 0 0 [] -1 1 0 0 0 false DrawRectangle
+70 655 643 92 15 0 false 0 0 0 false 0 0 0 false (Delete this entry) 12 /Helvetica DrawText
+396 827 815 42 15 0 false 0 0 0 false 0 0 0 false (Length:) 12 /Helvetica-Bold DrawText
+440 829 38 18 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+442 827 36 16 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+442 827 34 14 0 0 0 0 false 0 0 [] -1 1 0 0 0 false DrawRectangle
+444 827 816 26 14 0 false 0 0 0 false 0 0 0 false (1:30) 12 /Courier DrawText
+484 825 14 11 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+482 827 14 11 image-1 false 0 0 0 false DrawBitmap
+10 725 713 37 15 0 false 0 0 0 false 0 0 0 false (Notes:) 12 /Helvetica-Bold DrawText
+54 727 442 38 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+56 725 440 36 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+56 725 438 34 0 0 0 0 false 0 0 [] -1 1 0 0 0 false DrawRectangle
+375 681 669 51 15 0 false 0 0 0 false 0 0 0 false (Repeats:) 12 /Helvetica-Bold DrawText
+428 683 50 18 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+430 681 48 16 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+430 681 46 14 0 0 0 0 false 0 0 [] -1 1 0 0 0 false DrawRectangle
+484 679 14 11 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+482 681 14 11 image-1 false 0 0 0 false DrawBitmap
+grestore
+
+grestore
+
+0 875 506 250 0 0 0 0 false 0 0 [] 2 -1 0 0 0 false DrawRectangle
+grestore
+
+gsave
+
+%
+% Begin new window
+%
+0 0 translate
+gsave
+0 875 398 393 ClipToRectangle
+0 0 translate
+gsave
+0 875 398 393 0 0 0 0 false 0 0 [] -1 0 0.83 0.83 0.83 true DrawRectangle
+36 871 853 79 22 0 false 0 0 0 false 0 0 0 false (spackman) 18 /Helvetica DrawText
+164 871 853 42 22 0 false 0 0 0 false 0 0 0 false (18:56) 18 /Helvetica DrawText
+214 871 31 21 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+216 869 29 19 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+216 869 27 17 0 0 0 0 false 0 0 [] -1 1 0 0 0 false DrawRectangle
+219 868 856 21 15 0 false 0 0 0 false 0 0 0 false (Add) 12 /Helvetica DrawText
+254 871 54 21 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+256 869 52 19 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+256 869 50 17 0 0 0 0 false 0 0 [] -1 1 0 0 0 false DrawRectangle
+259 868 856 44 15 0.50 false 0 0 0 false 0 0 0 false (What If?) 12 /Helvetica DrawText
+317 871 33 21 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+319 869 31 19 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+319 869 29 17 0 0 0 0 false 0 0 [] -1 1 0 0 0 false DrawRectangle
+322 868 856 23 15 0.50 false 0 0 0 false 0 0 0 false (Find) 12 /Helvetica DrawText
+359 871 32 21 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+361 869 30 19 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+361 869 28 17 0 0 0 0 false 0 0 [] -1 1 0 0 0 false DrawRectangle
+364 868 856 22 15 0 false 0 0 0 false 0 0 0 false (Quit) 12 /Helvetica DrawText
+4 846 834 26 15 0 false 0 0 0 false 0 0 0 false (1992) 12 /Helvetica DrawText
+4 831 819 16 15 0 false 0 0 0 false 0 0 0 false (oct) 12 /Helvetica DrawText
+34 846 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+35 845 48 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+38 846 828 9 22 0 false 0 0 0 false 0 0 0 false (4) 18 /Helvetica DrawText
+34 846 28 22 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+86 846 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+87 845 48 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+90 846 828 8 22 0 false 0 0 0 false 0 0 0 false (5) 18 /Helvetica DrawText
+138 846 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+139 845 48 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+142 846 828 8 22 0 false 0 0 0 false 0 0 0 false (6) 18 /Helvetica DrawText
+190 846 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+191 845 48 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+194 846 828 8 22 0 false 0 0 0 false 0 0 0 false (7) 18 /Helvetica DrawText
+242 846 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+243 845 48 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+246 846 828 8 22 0 false 0 0 0 false 0 0 0 false (8) 18 /Helvetica DrawText
+294 846 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+295 845 48 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+298 846 828 8 22 0 false 0 0 0 false 0 0 0 false (9) 18 /Helvetica DrawText
+346 846 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+347 845 48 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+350 846 828 17 22 0 false 0 0 0 false 0 0 0 false (10) 18 /Helvetica DrawText
+346 846 28 22 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+34 794 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+35 793 48 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+38 794 776 15 22 0 false 0 0 0 false 0 0 0 false (11) 18 /Helvetica DrawText
+34 794 28 22 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+86 794 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+87 793 48 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+90 794 776 17 22 0 false 0 0 0 false 0 0 0 false (12) 18 /Helvetica DrawText
+138 794 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+139 793 48 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+142 794 776 17 22 0 false 0 0 0 false 0 0 0 false (13) 18 /Helvetica DrawText
+190 794 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+191 793 37 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+194 794 776 18 22 0 false 0 0 0 false 0 0 0 false (14) 18 /Helvetica DrawText
+242 794 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+243 793 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+246 794 776 17 22 0 false 0 0 0 false 0 0 0 false (15) 18 /Helvetica DrawText
+294 794 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+295 793 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+298 794 776 17 22 0 false 0 0 0 false 0 0 0 false (16) 18 /Helvetica DrawText
+346 794 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+347 793 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+350 794 776 17 22 0 false 0 0 0 false 0 0 0 false (17) 18 /Helvetica DrawText
+346 794 28 22 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+34 742 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+35 741 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+38 742 724 17 22 0 false 0 0 0 false 0 0 0 false (18) 18 /Helvetica DrawText
+34 742 28 22 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+86 742 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+87 741 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+90 742 724 17 22 0 false 0 0 0 false 0 0 0 false (19) 18 /Helvetica DrawText
+138 742 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+139 741 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+142 742 724 18 22 0 false 0 0 0 false 0 0 0 false (20) 18 /Helvetica DrawText
+190 742 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+191 741 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+194 742 724 16 22 0 false 0 0 0 false 0 0 0 false (21) 18 /Helvetica DrawText
+242 742 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+243 741 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+246 742 724 18 22 0 false 0 0 0 false 0 0 0 false (22) 18 /Helvetica DrawText
+294 742 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+295 741 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+298 742 724 18 22 0 false 0 0 0 false 0 0 0 false (23) 18 /Helvetica DrawText
+346 742 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+347 741 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+350 742 724 19 22 0 false 0 0 0 false 0 0 0 false (24) 18 /Helvetica DrawText
+346 742 28 22 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+34 690 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+35 689 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+38 690 672 18 22 0 false 0 0 0 false 0 0 0 false (25) 18 /Helvetica DrawText
+34 690 28 22 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+86 690 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+87 689 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+90 690 672 18 22 0 false 0 0 0 false 0 0 0 false (26) 18 /Helvetica DrawText
+138 690 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+139 689 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+142 690 672 18 22 0 false 0 0 0 false 0 0 0 false (27) 18 /Helvetica DrawText
+190 690 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+191 689 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+194 690 672 18 22 0 false 0 0 0 false 0 0 0 false (28) 18 /Helvetica DrawText
+242 690 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+243 689 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+246 690 672 18 22 0 false 0 0 0 false 0 0 0 false (29) 18 /Helvetica DrawText
+294 690 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+295 689 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+298 690 672 18 22 0 false 0 0 0 false 0 0 0 false (30) 18 /Helvetica DrawText
+346 690 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+347 689 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+350 690 672 16 22 0 false 0 0 0 false 0 0 0 false (31) 18 /Helvetica DrawText
+346 690 28 22 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+4 638 626 19 15 0 false 0 0 0 false 0 0 0 false (nov) 12 /Helvetica DrawText
+34 640 50 2 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+34 638 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+35 637 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+38 638 620 5 22 0 false 0 0 0 false 0 0 0 false (1) 18 /Helvetica DrawText
+34 638 28 22 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+86 640 50 2 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+86 638 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+87 637 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+90 638 620 8 22 0 false 0 0 0 false 0 0 0 false (2) 18 /Helvetica DrawText
+138 640 50 2 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+138 638 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+139 637 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+142 638 620 8 22 0 false 0 0 0 false 0 0 0 false (3) 18 /Helvetica DrawText
+190 640 50 2 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+190 638 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+191 637 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+194 638 620 9 22 0 false 0 0 0 false 0 0 0 false (4) 18 /Helvetica DrawText
+242 640 50 2 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+242 638 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+243 637 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+246 638 620 8 22 0 false 0 0 0 false 0 0 0 false (5) 18 /Helvetica DrawText
+294 640 50 2 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+294 638 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+295 637 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+298 638 620 8 22 0 false 0 0 0 false 0 0 0 false (6) 18 /Helvetica DrawText
+346 640 50 2 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+346 638 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+347 637 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+350 638 620 8 22 0 false 0 0 0 false 0 0 0 false (7) 18 /Helvetica DrawText
+346 638 28 22 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+34 586 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+35 585 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+38 586 568 8 22 0 false 0 0 0 false 0 0 0 false (8) 18 /Helvetica DrawText
+34 586 28 22 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+86 586 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+87 585 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+90 586 568 8 22 0 false 0 0 0 false 0 0 0 false (9) 18 /Helvetica DrawText
+138 586 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+139 585 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+142 586 568 17 22 0 false 0 0 0 false 0 0 0 false (10) 18 /Helvetica DrawText
+190 586 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+191 585 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+194 586 568 15 22 0 false 0 0 0 false 0 0 0 false (11) 18 /Helvetica DrawText
+242 586 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+243 585 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+246 586 568 17 22 0 false 0 0 0 false 0 0 0 false (12) 18 /Helvetica DrawText
+294 586 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+295 585 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+298 586 568 17 22 0 false 0 0 0 false 0 0 0 false (13) 18 /Helvetica DrawText
+346 586 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+347 585 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+350 586 568 18 22 0 false 0 0 0 false 0 0 0 false (14) 18 /Helvetica DrawText
+346 586 28 22 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+34 534 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+35 533 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+38 534 516 17 22 0 false 0 0 0 false 0 0 0 false (15) 18 /Helvetica DrawText
+34 534 28 22 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+86 534 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+87 533 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+90 534 516 17 22 0 false 0 0 0 false 0 0 0 false (16) 18 /Helvetica DrawText
+138 534 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+139 533 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+142 534 516 17 22 0 false 0 0 0 false 0 0 0 false (17) 18 /Helvetica DrawText
+190 534 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+191 533 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+194 534 516 17 22 0 false 0 0 0 false 0 0 0 false (18) 18 /Helvetica DrawText
+242 534 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+243 533 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+246 534 516 17 22 0 false 0 0 0 false 0 0 0 false (19) 18 /Helvetica DrawText
+294 534 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+295 533 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+298 534 516 18 22 0 false 0 0 0 false 0 0 0 false (20) 18 /Helvetica DrawText
+346 534 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+347 533 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+350 534 516 16 22 0 false 0 0 0 false 0 0 0 false (21) 18 /Helvetica DrawText
+346 534 28 22 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+34 482 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+35 481 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+38 482 464 18 22 0 false 0 0 0 false 0 0 0 false (22) 18 /Helvetica DrawText
+34 482 28 22 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+86 482 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+87 481 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+90 482 464 18 22 0 false 0 0 0 false 0 0 0 false (23) 18 /Helvetica DrawText
+138 482 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+139 481 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+142 482 464 19 22 0 false 0 0 0 false 0 0 0 false (24) 18 /Helvetica DrawText
+190 482 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+191 481 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+194 482 464 18 22 0 false 0 0 0 false 0 0 0 false (25) 18 /Helvetica DrawText
+242 482 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+243 481 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+246 482 464 18 22 0 false 0 0 0 false 0 0 0 false (26) 18 /Helvetica DrawText
+294 482 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+295 481 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+298 482 464 18 22 0 false 0 0 0 false 0 0 0 false (27) 18 /Helvetica DrawText
+346 482 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+347 481 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+350 482 464 18 22 0 false 0 0 0 false 0 0 0 false (28) 18 /Helvetica DrawText
+346 482 28 22 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+34 430 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+35 429 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+38 430 412 18 22 0 false 0 0 0 false 0 0 0 false (29) 18 /Helvetica DrawText
+34 430 28 22 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+86 430 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+87 429 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+90 430 412 18 22 0 false 0 0 0 false 0 0 0 false (30) 18 /Helvetica DrawText
+136 430 2 50 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+138 432 50 2 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+138 430 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+139 429 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+142 430 412 5 22 0 false 0 0 0 false 0 0 0 false (1) 18 /Helvetica DrawText
+190 432 50 2 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+190 430 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+191 429 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+194 430 412 8 22 0 false 0 0 0 false 0 0 0 false (2) 18 /Helvetica DrawText
+242 432 50 2 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+242 430 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+243 429 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+246 430 412 8 22 0 false 0 0 0 false 0 0 0 false (3) 18 /Helvetica DrawText
+294 432 50 2 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+294 430 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+295 429 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+298 430 412 9 22 0 false 0 0 0 false 0 0 0 false (4) 18 /Helvetica DrawText
+346 432 50 2 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+346 430 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+347 429 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+350 430 412 8 22 0 false 0 0 0 false 0 0 0 false (5) 18 /Helvetica DrawText
+346 430 28 22 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+4 378 366 19 15 0 false 0 0 0 false 0 0 0 false (dec) 12 /Helvetica DrawText
+34 380 50 2 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+34 378 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+35 377 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+38 378 360 8 22 0 false 0 0 0 false 0 0 0 false (6) 18 /Helvetica DrawText
+34 378 28 22 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+86 380 50 2 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+86 378 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+87 377 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+90 378 360 8 22 0 false 0 0 0 false 0 0 0 false (7) 18 /Helvetica DrawText
+138 378 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+139 377 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+142 378 360 8 22 0 false 0 0 0 false 0 0 0 false (8) 18 /Helvetica DrawText
+190 378 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+191 377 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+194 378 360 8 22 0 false 0 0 0 false 0 0 0 false (9) 18 /Helvetica DrawText
+242 378 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+243 377 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+246 378 360 17 22 0 false 0 0 0 false 0 0 0 false (10) 18 /Helvetica DrawText
+294 378 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+295 377 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+298 378 360 15 22 0 false 0 0 0 false 0 0 0 false (11) 18 /Helvetica DrawText
+346 378 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+347 377 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+350 378 360 17 22 0 false 0 0 0 false 0 0 0 false (12) 18 /Helvetica DrawText
+346 378 28 22 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+34 326 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+35 325 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+38 326 308 17 22 0 false 0 0 0 false 0 0 0 false (13) 18 /Helvetica DrawText
+34 326 28 22 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+86 326 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+87 325 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+90 326 308 18 22 0 false 0 0 0 false 0 0 0 false (14) 18 /Helvetica DrawText
+138 326 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+139 325 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+142 326 308 17 22 0 false 0 0 0 false 0 0 0 false (15) 18 /Helvetica DrawText
+190 326 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+191 325 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+194 326 308 17 22 0 false 0 0 0 false 0 0 0 false (16) 18 /Helvetica DrawText
+242 326 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+243 325 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+246 326 308 17 22 0 false 0 0 0 false 0 0 0 false (17) 18 /Helvetica DrawText
+294 326 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+295 325 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+298 326 308 17 22 0 false 0 0 0 false 0 0 0 false (18) 18 /Helvetica DrawText
+346 326 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+347 325 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+350 326 308 17 22 0 false 0 0 0 false 0 0 0 false (19) 18 /Helvetica DrawText
+346 326 28 22 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+34 274 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+35 273 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+38 274 256 18 22 0 false 0 0 0 false 0 0 0 false (20) 18 /Helvetica DrawText
+34 274 28 22 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+86 274 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+87 273 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+90 274 256 16 22 0 false 0 0 0 false 0 0 0 false (21) 18 /Helvetica DrawText
+138 274 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+139 273 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+142 274 256 18 22 0 false 0 0 0 false 0 0 0 false (22) 18 /Helvetica DrawText
+190 274 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+191 273 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+194 274 256 18 22 0 false 0 0 0 false 0 0 0 false (23) 18 /Helvetica DrawText
+242 274 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+243 273 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+246 274 256 19 22 0 false 0 0 0 false 0 0 0 false (24) 18 /Helvetica DrawText
+294 274 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+295 273 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+298 274 256 18 22 0 false 0 0 0 false 0 0 0 false (25) 18 /Helvetica DrawText
+346 274 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+347 273 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+350 274 256 18 22 0 false 0 0 0 false 0 0 0 false (26) 18 /Helvetica DrawText
+346 274 28 22 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+34 222 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+35 221 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+38 222 204 18 22 0 false 0 0 0 false 0 0 0 false (27) 18 /Helvetica DrawText
+34 222 28 22 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+86 222 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+87 221 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+90 222 204 18 22 0 false 0 0 0 false 0 0 0 false (28) 18 /Helvetica DrawText
+138 222 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+139 221 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+142 222 204 18 22 0 false 0 0 0 false 0 0 0 false (29) 18 /Helvetica DrawText
+190 222 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+191 221 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+194 222 204 18 22 0 false 0 0 0 false 0 0 0 false (30) 18 /Helvetica DrawText
+242 222 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+243 221 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+246 222 204 16 22 0 false 0 0 0 false 0 0 0 false (31) 18 /Helvetica DrawText
+292 222 2 50 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+294 224 50 2 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+294 222 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+295 221 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+298 222 204 5 22 0 false 0 0 0 false 0 0 0 false (1) 18 /Helvetica DrawText
+346 224 50 2 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+346 222 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+347 221 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+350 222 204 8 22 0 false 0 0 0 false 0 0 0 false (2) 18 /Helvetica DrawText
+346 222 28 22 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+4 170 158 26 15 0 false 0 0 0 false 0 0 0 false (1993) 12 /Helvetica DrawText
+4 155 143 16 15 0 false 0 0 0 false 0 0 0 false (jan) 12 /Helvetica DrawText
+34 172 50 2 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+34 170 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+35 169 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+38 170 152 8 22 0 false 0 0 0 false 0 0 0 false (3) 18 /Helvetica DrawText
+34 170 28 22 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+86 172 50 2 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+86 170 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+87 169 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+90 170 152 9 22 0 false 0 0 0 false 0 0 0 false (4) 18 /Helvetica DrawText
+138 172 50 2 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+138 170 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+139 169 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+142 170 152 8 22 0 false 0 0 0 false 0 0 0 false (5) 18 /Helvetica DrawText
+190 172 50 2 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+190 170 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+191 169 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+194 170 152 8 22 0 false 0 0 0 false 0 0 0 false (6) 18 /Helvetica DrawText
+242 172 50 2 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+242 170 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+243 169 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+246 170 152 8 22 0 false 0 0 0 false 0 0 0 false (7) 18 /Helvetica DrawText
+294 170 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+295 169 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+298 170 152 8 22 0 false 0 0 0 false 0 0 0 false (8) 18 /Helvetica DrawText
+346 170 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+347 169 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+350 170 152 8 22 0 false 0 0 0 false 0 0 0 false (9) 18 /Helvetica DrawText
+346 170 28 22 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+34 118 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+35 117 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+38 118 100 17 22 0 false 0 0 0 false 0 0 0 false (10) 18 /Helvetica DrawText
+34 118 28 22 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+86 118 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+87 117 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+90 118 100 15 22 0 false 0 0 0 false 0 0 0 false (11) 18 /Helvetica DrawText
+138 118 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+139 117 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+142 118 100 17 22 0 false 0 0 0 false 0 0 0 false (12) 18 /Helvetica DrawText
+190 118 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+191 117 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+194 118 100 17 22 0 false 0 0 0 false 0 0 0 false (13) 18 /Helvetica DrawText
+242 118 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+243 117 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+246 118 100 18 22 0 false 0 0 0 false 0 0 0 false (14) 18 /Helvetica DrawText
+294 118 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+295 117 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+298 118 100 17 22 0 false 0 0 0 false 0 0 0 false (15) 18 /Helvetica DrawText
+346 118 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+347 117 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+350 118 100 17 22 0 false 0 0 0 false 0 0 0 false (16) 18 /Helvetica DrawText
+346 118 28 22 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+34 66 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+35 65 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+38 66 48 17 22 0 false 0 0 0 false 0 0 0 false (17) 18 /Helvetica DrawText
+34 66 28 22 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+86 66 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+87 65 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+90 66 48 17 22 0 false 0 0 0 false 0 0 0 false (18) 18 /Helvetica DrawText
+138 66 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+139 65 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+142 66 48 17 22 0 false 0 0 0 false 0 0 0 false (19) 18 /Helvetica DrawText
+190 66 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+191 65 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+194 66 48 18 22 0 false 0 0 0 false 0 0 0 false (20) 18 /Helvetica DrawText
+242 66 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+243 65 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+246 66 48 16 22 0 false 0 0 0 false 0 0 0 false (21) 18 /Helvetica DrawText
+294 66 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+295 65 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+298 66 48 18 22 0 false 0 0 0 false 0 0 0 false (22) 18 /Helvetica DrawText
+346 66 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+347 65 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+350 66 48 18 22 0 false 0 0 0 false 0 0 0 false (23) 18 /Helvetica DrawText
+346 66 28 22 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+34 14 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+35 13 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+38 14 -4 19 22 0 false 0 0 0 false 0 0 0 false (24) 18 /Helvetica DrawText
+34 14 28 22 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+86 14 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+87 13 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+90 14 -4 18 22 0 false 0 0 0 false 0 0 0 false (25) 18 /Helvetica DrawText
+138 14 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+139 13 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+142 14 -4 18 22 0 false 0 0 0 false 0 0 0 false (26) 18 /Helvetica DrawText
+190 14 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+191 13 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+194 14 -4 18 22 0 false 0 0 0 false 0 0 0 false (27) 18 /Helvetica DrawText
+242 14 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+243 13 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+246 14 -4 18 22 0 false 0 0 0 false 0 0 0 false (28) 18 /Helvetica DrawText
+294 14 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+295 13 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+298 14 -4 18 22 0 false 0 0 0 false 0 0 0 false (29) 18 /Helvetica DrawText
+346 14 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+347 13 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+350 14 -4 18 22 0 false 0 0 0 false 0 0 0 false (30) 18 /Helvetica DrawText
+346 14 28 22 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+34 -38 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+35 -39 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+38 -38 -56 16 22 0 false 0 0 0 false 0 0 0 false (31) 18 /Helvetica DrawText
+34 -38 28 22 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+84 -38 2 50 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+86 -36 50 2 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+86 -38 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+87 -39 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+90 -38 -56 5 22 0 false 0 0 0 false 0 0 0 false (1) 18 /Helvetica DrawText
+138 -36 50 2 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+138 -38 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+139 -39 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+142 -38 -56 8 22 0 false 0 0 0 false 0 0 0 false (2) 18 /Helvetica DrawText
+190 -36 50 2 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+190 -38 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+191 -39 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+194 -38 -56 8 22 0 false 0 0 0 false 0 0 0 false (3) 18 /Helvetica DrawText
+242 -36 50 2 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+242 -38 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+243 -39 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+246 -38 -56 9 22 0 false 0 0 0 false 0 0 0 false (4) 18 /Helvetica DrawText
+294 -36 50 2 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+294 -38 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+295 -39 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+298 -38 -56 8 22 0 false 0 0 0 false 0 0 0 false (5) 18 /Helvetica DrawText
+346 -36 50 2 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+346 -38 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+347 -39 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+350 -38 -56 8 22 0 false 0 0 0 false 0 0 0 false (6) 18 /Helvetica DrawText
+346 -38 28 22 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+4 -90 -102 16 15 0 false 0 0 0 false 0 0 0 false (feb) 12 /Helvetica DrawText
+34 -88 50 2 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+34 -90 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+35 -91 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+38 -90 -108 8 22 0 false 0 0 0 false 0 0 0 false (7) 18 /Helvetica DrawText
+34 -90 28 22 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+86 -90 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+87 -91 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+90 -90 -108 8 22 0 false 0 0 0 false 0 0 0 false (8) 18 /Helvetica DrawText
+138 -90 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+139 -91 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+142 -90 -108 8 22 0 false 0 0 0 false 0 0 0 false (9) 18 /Helvetica DrawText
+190 -90 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+191 -91 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+194 -90 -108 17 22 0 false 0 0 0 false 0 0 0 false (10) 18 /Helvetica DrawText
+242 -90 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+243 -91 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+246 -90 -108 15 22 0 false 0 0 0 false 0 0 0 false (11) 18 /Helvetica DrawText
+294 -90 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+295 -91 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+298 -90 -108 17 22 0 false 0 0 0 false 0 0 0 false (12) 18 /Helvetica DrawText
+346 -90 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+347 -91 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+350 -90 -108 17 22 0 false 0 0 0 false 0 0 0 false (13) 18 /Helvetica DrawText
+346 -90 28 22 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+34 -142 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+35 -143 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+38 -142 -160 18 22 0 false 0 0 0 false 0 0 0 false (14) 18 /Helvetica DrawText
+34 -142 28 22 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+86 -142 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+87 -143 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+90 -142 -160 17 22 0 false 0 0 0 false 0 0 0 false (15) 18 /Helvetica DrawText
+138 -142 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+139 -143 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+142 -142 -160 17 22 0 false 0 0 0 false 0 0 0 false (16) 18 /Helvetica DrawText
+190 -142 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+191 -143 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+194 -142 -160 17 22 0 false 0 0 0 false 0 0 0 false (17) 18 /Helvetica DrawText
+242 -142 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+243 -143 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+246 -142 -160 17 22 0 false 0 0 0 false 0 0 0 false (18) 18 /Helvetica DrawText
+294 -142 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+295 -143 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+298 -142 -160 17 22 0 false 0 0 0 false 0 0 0 false (19) 18 /Helvetica DrawText
+346 -142 50 50 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+347 -143 0 48 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+350 -142 -160 18 22 0 false 0 0 0 false 0 0 0 false (20) 18 /Helvetica DrawText
+346 -142 28 22 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+grestore
+
+grestore
+
+0 875 398 393 0 0 0 0 false 0 0 [] 2 -1 0 0 0 false DrawRectangle
+grestore
+
+gsave
+
+%
+% Begin new window
+%
+424 -430 translate
+gsave
+0 875 506 250 ClipToRectangle
+0 0 translate
+gsave
+0 875 506 250 0 0 0 0 false 0 0 [] 1 0 0.83 0.83 0.83 true DrawRectangle
+10 865 853 33 15 0 false 0 0 0 false 0 0 0 false (Type:) 12 /Helvetica-Bold DrawText
+54 867 160 18 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+56 865 158 16 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+56 865 156 14 0 0 0 0 false 0 0 [] -1 1 0 0 0 false DrawRectangle
+58 865 854 41 14 0 false 0 0 0 false 0 0 0 false (social) 12 /Courier DrawText
+220 863 14 11 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+218 865 14 11 image-1 false 0 0 0 false DrawBitmap
+244 867 855 34 15 0 false 0 0 0 false 0 0 0 false (Mode:) 12 /Helvetica-Bold DrawText
+287 860 293 866 299 860 6 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+287 860 293 854 299 860 6 0 0 0 0 false 0 0 [] 2 1 0 0 0 false DrawPolyline
+304 867 855 29 15 0 false 0 0 0 false 0 0 0 false (Local) 12 /Helvetica DrawText
+346 860 352 866 358 860 6 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+346 860 352 854 358 860 6 0 0 0 0 false 0 0 [] 2 1 0 0 0 false DrawPolyline
+363 867 855 48 15 0 false 0 0 0 false 0 0 0 false (Cautious) 12 /Helvetica DrawText
+424 860 430 866 436 860 6 0 0 0 0 false 0 0 [] 2 0 0 0 0 false DrawPolyline
+424 860 430 854 436 860 6 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawPolyline
+441 867 855 55 15 0 false 0 0 0 false 0 0 0 false (Automatic) 12 /Helvetica DrawText
+0 0 0 0 false 0 0 [] 1 506 841 0 841 DrawLine
+10 827 815 34 15 0 false 0 0 0 false 0 0 0 false (When:) 12 /Helvetica-Bold DrawText
+54 829 316 18 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+56 827 314 16 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+56 827 312 14 0 0 0 0 false 0 0 [] -1 1 0 0 0 false DrawRectangle
+58 827 816 103 14 0 false 0 0 0 false 0 0 0 false (today, at 19:30) 12 /Courier DrawText
+376 825 14 11 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+374 827 14 11 image-1 false 0 0 0 false DrawBitmap
+10 801 789 39 15 0 false 0 0 0 false 0 0 0 false (Where:) 12 /Helvetica-Bold DrawText
+54 803 442 18 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+56 801 440 16 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+56 801 438 14 0 0 0 0 false 0 0 [] -1 1 0 0 0 false DrawRectangle
+10 775 763 27 15 0 false 0 0 0 false 0 0 0 false (Who:) 12 /Helvetica-Bold DrawText
+54 777 442 18 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+56 775 440 16 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+56 775 438 14 0 0 0 0 false 0 0 [] -1 1 0 0 0 false DrawRectangle
+58 775 764 47 14 0 false 0 0 0 false 0 0 0 false (guenter) 12 /Courier DrawText
+391 655 48 21 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+393 653 46 19 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+393 653 44 17 0 0 0 0 false 0 0 [] -1 1 0 0 0 false DrawRectangle
+396 652 640 17 15 0 false 0 0 0 false 0 0 0 false (OK) 12 /Helvetica DrawText
+448 655 48 21 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+450 653 46 19 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+450 653 44 17 0 0 0 0 false 0 0 [] -1 1 0 0 0 false DrawRectangle
+453 652 640 38 15 0 false 0 0 0 false 0 0 0 false (Cancel) 12 /Helvetica DrawText
+396 827 815 42 15 0 false 0 0 0 false 0 0 0 false (Length:) 12 /Helvetica-Bold DrawText
+440 829 38 18 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+442 827 36 16 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+442 827 34 14 0 0 0 0 false 0 0 [] -1 1 0 0 0 false DrawRectangle
+444 827 816 26 14 0 false 0 0 0 false 0 0 0 false (1:00) 12 /Courier DrawText
+484 825 14 11 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+482 827 14 11 image-1 false 0 0 0 false DrawBitmap
+10 751 739 37 15 0 false 0 0 0 false 0 0 0 false (Notes:) 12 /Helvetica-Bold DrawText
+54 753 442 64 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+56 751 440 62 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+56 751 438 60 0 0 0 0 false 0 0 [] -1 1 0 0 0 false DrawRectangle
+375 681 669 51 15 0 false 0 0 0 false 0 0 0 false (Repeats:) 12 /Helvetica-Bold DrawText
+428 683 50 18 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+430 681 48 16 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+430 681 46 14 0 0 0 0 false 0 0 [] -1 1 0 0 0 false DrawRectangle
+484 679 14 11 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+482 681 14 11 image-1 false 0 0 0 false DrawBitmap
+374 881 123 256 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+376 879 121 254 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+376 879 119 252 0 0 0 0 false 0 0 [] -1 1 0 0 0 false DrawRectangle
+386 876 864 5 15 0 false 0 0 0 false 0 0 0 false (-) 12 /Helvetica DrawText
+386 855 843 97 15 0 false 0 0 0 false 0 0 0 false (between ... and ...) 12 /Helvetica DrawText
+386 834 822 31 15 0 false 0 0 0 false 0 0 0 false (today) 12 /Helvetica DrawText
+386 813 801 51 15 0 false 0 0 0 false 0 0 0 false (tomorrow) 12 /Helvetica DrawText
+386 792 780 25 15 0 false 0 0 0 false 0 0 0 false (on ...) 12 /Helvetica DrawText
+386 771 759 44 15 0 false 0 0 0 false 0 0 0 false (any day) 12 /Helvetica DrawText
+386 750 738 42 15 0 false 0 0 0 false 0 0 0 false (morning) 12 /Helvetica DrawText
+386 729 717 38 15 0 false 0 0 0 false 0 0 0 false (midday) 12 /Helvetica DrawText
+386 708 696 51 15 0 false 0 0 0 false 0 0 0 false (afternoon) 12 /Helvetica DrawText
+386 687 675 43 15 0 false 0 0 0 false 0 0 0 false (evening) 12 /Helvetica DrawText
+386 666 654 22 15 0 false 0 0 0 false 0 0 0 false (at ...) 12 /Helvetica DrawText
+386 645 633 42 15 0 false 0 0 0 false 0 0 0 false (anytime) 12 /Helvetica DrawText
+0 0 0 0 false 0 0 [] 1 493 837 378 837 DrawLine
+0.50 0 0 0 false 0 0 [] 1 493 836 378 836 DrawLine
+0 0 0 0 false 0 0 [] 1 493 753 378 753 DrawLine
+0.50 0 0 0 false 0 0 [] 1 493 752 378 752 DrawLine
+379 798 379 813 492 813 6 0.50 0 0 0 false 0 0 [] 2 -1 0 0 0 false DrawPolyline
+492 813 492 798 379 798 6 0 0 0 0 false 0 0 [] 2 -1 0 0 0 false DrawPolyline
+grestore
+
+grestore
+
+0 875 506 250 0 0 0 0 false 0 0 [] 2 -1 0 0 0 false DrawRectangle
+grestore
+
+grestore
+
+0 875 1212 680 0 0 0 0 false 0 0 [] 2 -1 0 0 0 false DrawRectangle
+grestore
+
+
+showpage
+%%Trailer
+%%DocumentFonts: /Courier /Helvetica-Bold /Helvetica 
+%%BoundingBox: 72 124 720 487

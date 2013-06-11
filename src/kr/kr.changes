@@ -1,0 +1,2356 @@
+Made SCHEMA-P faster.
+
+Modified g-value-body so that even if GARNET-DEBUG is on, g-value and friends
+run a lot faster.  This adds back most of the improvements for the case
+where GARNET-DEBUG is off.
+[10-29-1993	David Kosbie, Dario Giuse]
+
+
+
+Added David Kosbie's fix to APPLY-PROTOTYPE-METHOD, which had failed to be
+updated when call-prototype-method was fixed.
+[10-26-1993	Dario Giuse]
+
+
+Modified the conditional definition of REALP, as per the following message:
+The small change is to just add ALLEGRO-V3.1 to the switch before the code
+in kr.lisp:
+
+#+(or LUCID ALLEGRO-V3.1)
+;;; REALP seems to be undefined on these lisps.
+;;;
+(let ((realp-symbol (find-symbol "REALP" 'lisp)))
+[10-19-1993	Dario Giuse]
+
+
+Added Pedro's fix to DESTROY-SLOT to make sure the schema was properly
+deleted.
+[10-11-1993	Dario Giuse]
+
+
+
+Fixed a bug in ADD-NEW-TYPE which caused declarations such as
+(def-kr-type ACCELERATORS-TYPE () 'list
+  "[list of lists: ((#\r \"Alt-r\" #\meta-r)...)]")
+which used a type body (i.e., 'list) already defined to actually lose the
+type definition.
+
+Exported kr:get-type-definition
+[10-8-1993	Dario Giuse]
+
+
+
+Added a new &key argument to PS, :stream.  This argument (default value
+*standard-output*) allows a stream to be specified, thus redirecting
+all of PS's output to a stream other than the terminal.
+[9-22-1993	Dario Giuse]
+
+
+Added a SETF form for GV, which works as follows:
+- at the top level, (setf (gv object slots) value) is identical to
+  (s-value object slots value);
+- if embedded in a formula, it is identical to the above, except that it
+  also sets up a dependency, just like GV would.
+
+
+Added a new, non-exported function, kr::get-type-definition.  Given
+the symbol which names a KR type (e.g., 'KR-BOOLEAN), this function
+returns the type expression that was used to define the type.
+Syntax:   (kr::get-type-definition type-symbol)
+Example:
+ (get-type-definition 'bitmap-or-nil) ==>
+ (OR NULL (IS-A-P OPAL:BITMAP))
+[9-21-1993	Dario Giuse]
+
+
+Eliminated code which caused a value change in a formula in a
+prototype to physically delete all formulas which were inherited from
+that formula.  This caused such an operation to delete and recreate
+formulas in the instances.
+This bug was reported by Andy Mickish.
+[9-14-1993	Dario Giuse]
+
+
+Eliminated BREAK in GV; replaced with CERROR.  The error message is
+now cleaner and indicates whether the GV occurred inside a formula or
+at the top level.
+
+Eliminated BREAK in CREATE-INSTANCE for the case when NIL is used
+instead of a slot specifier.  Also, gave better error message.
+
+Fixed "illegal instruction" error caused by a slot specification in
+CREATE-INSTANCE which was a symbol instead of a correct specifier.
+This situation now gives a meaningful error message.
+[9-13-1993	Dario Giuse]
+
+
+Exported the functions GET-DECLARATIONS and GET-SLOT-DECLARATIONS from the KR
+package.
+[8-19-1993	Dario Giuse]
+
+
+
+Added the non-exported function kr::SELF-OLD-VALUE, which can be used
+within formulas to access the currently cached value of the formula.
+This allows formulas to do destructive modifications in the case where
+their value is a list, an array, or some other structured object.  The
+syntax is:
+(kr::self-old-value)
+If there is no currently cached value, the function returns NIL.
+[8-9-1993	Dario Giuse]
+
+
+------------  last change log update
+
+
+;;; Version 2.3.2
+
+
+Better error checking for ill-structured :local-only-slots
+declarations.
+
+
+Fixed DESTROY-CONSTRAINT to keep the update-slot bit of the slot.  The
+old version incorrectly used to reset the bit.
+[6-28-1993	Dario Giuse]
+
+
+
+Moved the macro DEF-KR-TYPE to kr-macros.lisp, from kr.lisp.  Added the
+documentation string David Kosbie suggested.
+
+Exported DEF-KR-TYPE from the KR package.
+
+Added David Kosbie's change to add-new-type, with modification to get a
+symbol name (rather than a string) for things like KR-BOOLEAN.
+
+Added fix from BVZ to COPY-FORMULA, to make sure that meta-information is
+copied properly from the formula being copied.
+
+Fixed problem with S-TYPE on slots that had no value (used to cause a
+warning about no-value not being a valid object of the type).
+[6-25-1993	Dario Giuse]
+
+
+
+Better checking for destroyed objects in destroy-slot.
+[6-24-1993	Dario Giuse]
+
+
+
+Bound *print-length* in the function used by PS, so large arrays which
+are values in slots are truncated after 10 elements.  This is the same
+as what the printer does when it prints such arrays at the top level.
+[6-22-1993	Dario Giuse]
+
+
+
+Changed the KR-SEND macro so it no longer traps the binding of the symbol
+SCHEMA.
+[6-17-1993	Dario Giuse]
+
+
+
+Fixed problem with macroexpansion of a multi-level GV (or GVL), which caused
+things to fail if one of the slot names was not a keyword but a variable
+containing a keyword.
+[6-10-1993	Dario Giuse]
+
+
+A multi-level S-VALUE now gives a better error message when one of the
+intermediate slots contains a value which is not a schema.
+
+Giving a non-schema object or a null object to S-VALUE (through a multi-level
+S-VALUE) now produces a better error message.
+
+Giving a non-schema object to G-VALUE and GET-VALUE (either directly or in a
+multi-level G-VALUE) now gives a better error message.
+[6-9-1993	Dario Giuse]
+
+
+
+Created the new function KR::ADD-UPDATE-SLOT, which allows slots to be
+declared (or undeclared) as update-slots dynamically, after create-instance.
+In addition to setting (resetting) the internal bit, the function also
+modifies the :update-slots slot accordingly.   Syntax:
+(kr::add-update-slot object slot &optional (turn-off nil))
+The default is to make <slot> be an update slot.  If <turn-off> is non-nil,
+however, the slot is changed to no longer be an update slot.
+[6-7-1993	Dario Giuse]
+
+
+Fixed a problem with destroyed formulas being kept around in their parent
+formula's list of children.  This was causing formulas to disappear
+mysteriously under certain conditions.  The bug was reported by Francesmary
+Modugno.
+
+Added the non-exported function I-DEPEND-ON, which returns a list of dotted
+pairs (schema . slot) for all slots upon which a certain formula depends.
+
+Merged in David Kosbie's changes for speedup.
+[5-26-1993	Dario Giuse]
+
+
+Fixed iterate-slot-value, which was broken for the case T nil nil.  Changed
+(and extended) the regression test suite correspondingly.
+
+Added conditionally compiled code for the HP, where the function REALP seems
+to be undefined.
+[5-25-1993	Dario Giuse]
+
+
+First version with the new optimized internal representation.  The distinction
+between special and non-special slots has been removed.  All slots are stored
+in a certain number (currently 8) of bins in a schema.  Each bin contains
+a list of slot structures.  The bin for each slot is determined from the
+first character of the slot's printname, looking up an array that tells what
+bin to use.
+This change is user-invisible, except for the considerable speedups.
+[5-24-1993	Dario Giuse, David Kosbie]
+
+
+;;; Version 2.2.2
+
+
+Fixed meta-slot creation for formulas so that if a formula supplies some
+meta slots at creation time, and it also has a parent which supplies other
+meta slots, the final meta schema correctly inherits the parent's slots
+when needed.
+[4-23-1993	Dario Giuse]
+
+
+Added BVZ's fix to destroy-slot for the case where a formula that depends
+on the slot being destroyed is not attached to a schema.
+[4-20-1993	Dario Giuse]
+
+
+Fixed a problem with destroy-slot that could cause dependencies to destroyed
+formulas to be kept around after the slot was destroyed.  This bug was
+reported by Brad Vander Zanded.
+[4-19-1993	Dario Giuse]
+
+
+Made MAKE-INTO-O-FORMULA return the formula it is given as argument.
+[4-6-1993	Dario Giuse]
+
+
+
+Added error message for improper schema in GV and GVL.
+
+Better error message when GV is given a non-schema.
+[3-29-93	Dario Giuse]
+
+
+Fixed storage leakage problems and time problems in IS-A-P type declarations.
+Merged the SCHEMA-P check with the SATISFIES check, which eliminates
+unnecessary consing.
+[3-29-93	David Kosbie]
+
+
+
+Fixed bug in CALL-ON-PS-SLOTS: the supplied function was being called with one
+argument too few when the object was a formula.
+
+
+Remember to modify KR documentation about "create-instance copies the
+formula down into the instances".  This should be clarified; at the very least,
+there should be a pointer to some place that explains that in reality, formulas
+are only copied when requested, and in any case setting a value locally forces
+the formula never to be inherited.
+[3-23-1993	Dario Giuse]
+
+
+The function PS now returns the object it was given.  This allows the
+interactive expression * to be used after an object is printed.
+
+
+The new, non-exported macro WITH-DEPENDENCIES-DISABLED can be used to prevent
+the evaluation of GV and GVL inside formulas from setting up dependencies.
+Inside its body, GV and GVL effectively behave (temporarily) like G-VALUE.
+
+
+The variable kr::*slot-setter-debug* may now be bound to a function, to be
+called every time the value of a slot is set.  This occurs because of S-VALUE,
+formula evaluation, inheritance changes, or slot destruction.  If the value
+has a non-nil value, the value should be a function of four arguments:
+  #'(lambda (schema slot new-value reason)
+	...)
+The <reason> is a keyword that describes what event triggered the function.
+
+Note that there may be only one such function at a time, and it is not possible
+for an object to use a different function.  Therefore, this is an inefficient
+mechanism which should be used ONLY for debugging purposes.
+[3-22-1993	Dario Giuse]
+
+
+Modified S-TYPE to return the type it was given, rather than NIL.  This is
+more compatible with S-VALUE.
+[3-18-1993	Dario Giuse]
+
+
+Created a new non-exported function, CALL-ON-ONE-SLOT, which works like
+CALL-ON-PS-SLOTS but for a single slot in a schema.  Syntax:
+(call-on-one-slot  object  slot  #'function)
+The parameters to the <function> are the same as in CALL-ON-PS-SLOTS.
+
+This function returns T if the slot exists and the <function> was called, and
+NIL otherwise.
+[3-16-1993	Dario Giuse]
+
+
+Added the new reader macro #f(), which is read as (o-formula ...).
+For example, this allows you to write
+   (s-value a :left #f(gvl :top))
+instead of
+   (s-value a :left (o-formula (gvl :top)))
+
+Added one more built-in name to G-FORMULA-VALUE.  Specifying :META as the
+slot name retrieves the meta-schema for the formula, is one exists, or NIL.
+Note that this does not attempt to inherit a meta-schema.
+[3-11-93	Dario Giuse]
+
+
+Added printing of meta-information when PS is given a formula.
+[3-10-93	Dario Giuse]
+
+
+Added a SETF form for G-LOCAL-VALUE, which simply expands into S-VALUE.
+
+Fixed new bug in CALL-ON-PS-SLOTS that was crashing when printing formulas.
+
+Change documentation for invalidate demon - need to clarify.
+[3-8-93		Dario Giuse]
+
+
+S-VALUE may now have more than one slot in its argument list.  This is similar
+to G-VALUE: all slots but the last one are used to access objects, and then
+the value of the last slot specified is set in the resulting object.
+For example:
+  (s-value item :parent :parent :left 100)
+sets the :left slot of the item's parent's parent to 100.  An appropriate
+error message is given if any of the intervening objects is found to be NIL.
+[3-5-93		Dario Giuse]
+
+
+
+Made GV behave exactly like G-VALUE when used outside formulas.  In other words,
+if there is no current formula, GV just calls G-VALUE and does not attempt to set
+up a dependency.
+
+Replaced kr-call-initialize-method in BEGIN-CREATE-INSTANCE with the more modern
+kr-init-method
+[3-4-93		Dario Giuse]
+
+
+Removed the definition of KR-BOOLEAN, which is now defined in the types file.
+[2-25-93	Dario Giuse]
+
+
+Rearranged things and used DEFVARs so it should now be possible to reload the
+file kr.fasl without having the type system choke when types are already
+defined.
+[2-24-93	Dario Giuse]
+
+
+Fixed the new version of PS to work properly with inheritable formulas that
+are invalid.  Formulas are copied down, but their value is not recomputed.
+[2-23-93	Dario Giuse]
+
+
+Added a new function, CALL-ON-PS-SLOTS, which can be used to call a function
+on each slot that would be printed by PS.  The arguments are as follows:
+(call-on-ps-slots schema function &key (control t) inherit (indent NIL)
+				types-p all-p)
+The keyword arguments have the same meaning as in PS.  The <function> should
+be a function of 9 arguments, as follows:
+(lambda (schema slot formula is-inherited valid real-value
+	types-p bits indent limits))
+
+The <slot> is bound to each slot in turn.  The <formula> is nil, for
+non-formula values, or the original formula in the slot.  <is-inherited> is T
+if the value in the <slot> was inherited.  <valid> is nil if the <slot> contains
+a formula whose cached value is invalid.  The <real-value> is what g-value
+would return.  If <types-p> is T, the <function> should process type information
+for the <slot>.  The <bits> are the internal representation of the slot's
+features.  <indent> is the level of indentation; <limits> is a number (the
+maximum number of values from the <slot> to process), or NIL if all values
+should be processed.
+[2-20-93	Dario Giuse]
+
+
+Generating an error message for type declarations that do not contain any slot
+names at all.  Most often, this results from misplaced parentheses in the
+type declaration.
+
+
+Added support for the same syntax that is used for :CONSTANT slots to all other
+declaration slots (i.e., :IGNORED-SLOTS, :LOCAL-ONLY-SLOTS, :MAYBE-CONSTANT,
+:PARAMETERS, :OUTPUT, :SORTED-SLOTS, :UPDATE-SLOTS).  This allows things
+such as:
+  (create-schema 'a
+    :declare (:parameters :left :top :width) (:update-slots :left :top))
+  (create-instance 'b a
+    :declare (:parameters T :except :width) (:update-slots T :height))
+which behave the same as :CONSTANT declarations (except they do not use the
+:MAYBE-CONSTANT slot, of course).  So, the following would happen:
+  (get-declarations a :parameters) ==> (:left :top :width)
+  (get-declarations b :parameters) ==> (:left :top)
+  (get-declarations b :update-slots) ==> (:height :left :top)
+[2-19-93	Dario Giuse]
+
+
+Fixed problem with setting a value (with S-VALUE) in a slot which had
+a type declaration, but no value.  This used to destroy the type
+declaration, because GET-VALUE was incorrectly used by
+CHECK-SLOT-TYPE.
+[2-8-93		Dario Giuse]
+
+
+
+Fixed check-slot-type to actually ignore the new value if the user decides
+to continue after the error message is given.
+[2-4-93		Dario Giuse]
+
+
+Added better error checking for cases like
+  (create-instance nil 'PROTO)
+where the prototype name is quoted.
+
+Fixed GET-TYPE-DOCUMENTATION, which had gotten mangled and gave an array index
+error.
+[1-21-93	Dario Giuse]
+
+
+Fixed the bug with (create-schema 'A nil (:left 10)), which used to create
+a slot named NIL with value NIL.  This is true of any slot specifier: NIL is
+not allowed in any position.
+[1-19-1993	Dario Giuse]
+
+
+Enabled the #k<...> macro reader by default.  To turn it off, push the
+keyword :NO-K-READER onto the *features* list.
+[1-15-1993	Dario Giuse]
+
+
+Added :OUTPUT as a valid slot declarations.  This is similar to the
+:PARAMETERS declaration, and is meant to allow users to declare slots that
+are computed by formulas and provide useful output values in an object.
+
+Created a reader macro for the #k<...> notation, which is produced when
+*print-as-structure* is non-nil.  This macro allows the thing to be read
+back in as a KR object.
+
+Eliminated the new version of CHECK-SLOT-TYPE, which allowed multiple
+restarts.  This version used some CLTL-II functions that turned out to be
+extremely expensive.
+[1-12-1993	Dario Giuse]
+
+
+Added support for meta-slots, i.e., slots attached to a formula.  This works
+by using a KR schema, which is stored in the formula if needed.  The
+following supports meta-slots:
+
+G-FORMULA-VALUE  formula  slot
+This function returns the value of meta-slot <slot> for the <formula>.
+If the latter is not a formula, or the meta-slot is not present, the
+function returns NIL.  If the <formula> inherits from some other
+formula, inheritance is used to find the meta-slot.
+As a convenience, the <slot> can be the name of an internal formula
+slot, i.e., one of the structure slots used by KR in handling
+formulas.  Such slots should be treated as read-only and should never
+be modified by application programs.  The built-in slot names are:
+ :DEPENDS-ON (object, or list of objects, on which the formula depends)
+ :SCHEMA (object on which the formula is installed)
+ :SLOT (slot on which the formula is installed)
+ :CACHED-VALUE (current cached value of the formula)
+ :VALID (whether the formula is valid)
+ :PATH (path accessor, if any)
+ :IS-A (parent formula, or NIL)
+ :FUNCTION (compiled formula expression)
+ :LAMBDA (original formula expression)
+ :IS-A-INV (child formula, or list of children formulas)
+ :NUMBER (valid/invalid bit, and cycle counter; internal use only)
+
+
+S-FORMULA-VALUE  formula  slot  value
+Sets the value of a meta-slot in a formula.  Creates a meta-schema if
+needed.
+
+
+FORMULA and O-FORMULA now take, as additional parameters, slot
+specifications in the style of CREATE-INSTANCE.  The slot
+specifications are used to create meta-information for the formula.
+Note that to do so, one has to specify the default initial value for
+the formula, which is also an optional parameter.  For example:
+  (o-formula (get-value a :top) NIL
+	   (:creator 'GILT) (:date "today"))
+creates a formula with two meta-slots, :creator and :date.
+[1-8-1993	Dario Giuse]
+
+
+Added the (non-exported) function MAKE-INTO-O-FORMULA, which modifies a
+formula created using FORMULA to look like it was created using O-FORMULA.
+This allows the formula to be dumped properly with save-gadget.  It is possible
+to specify that the expression be compiled first.
+The syntax is:
+(make-into-o-formula formula &optional compile-p)
+[1-4-1993	Dario Giuse]
+
+
+Check-slot-type now allows the user to redefine the value in the slot,
+if desired.  This means that the function now returns multiple values
+if error-p is non-nil, as follows:
+
+- if error-p is non-nil, returns multiple values:
+  - a replacement value, if the user chose to continue and supply a
+    replacement;  T if no error;  NIL otherwise;
+  - one of the following:
+    - T (if type error and the user did not supply a value), or
+    - NIL (if there was no type error), or
+    - :REPLACE, if a replacement value was supplied by the user.
+- if error-p is nil, returns a string describing what error condition
+  was found.
+[12-21-1992	Dario Giuse]
+
+
+Added a new type, KR-BOOLEAN, which is equivalent to T.  It allows a
+slot to contain NIL or anything else, but it can be used by editors to
+display a yes/no button for setting the value of slots of this type.
+[12-15-1992	Dario Giuse]
+
+
+Fixed S-TYPE to NOT give an error when the value in the slot is a
+formula.
+
+Added string documentations, i.e., human-readable messages, for types.
+These can be added using the new function SET-TYPE-DOCUMENTATION:
+  SET-TYPE-DOCUMENTATION  type  string
+This function associates the <string> to the type.  When an error
+message which concerns the type is printed, the documentation string
+is printed in addition to the raw type.
+For example:
+  (set-type-documentation '(integer 0) "non-negative integer")
+
+The documentation can be retrieved with GET-TYPE-DOCUMENTATION:
+  (get-type-documentation '(integer 0))
+     ==> "non-negative integer"
+
+
+The error message for bad KR types now tells whether the bad type was
+found as a consequence of evaluating a formula.
+[12-14-1992	Dario Giuse]
+
+
+
+Modified PS to print out type information.  Also, modified to print
+out slots that have been declared but have no value.  The function PS
+now takes two more &key parameters:
+- :types-p    if non-nil, type information for slots is printed out
+- :all-p      if non-nil, even slots that have no value (but which
+              have some attribute bits) are printed out.
+[12-8-1992	Dario Giuse]
+
+
+
+Changed macroexpansion of type declarations.  The old expansion, which
+was incorrect, would replace types with their encoded number.
+However, this could not work, because encoded numbers may change for
+each session.  The new macroexpansion leaves type specifiers alone, so
+the encoding will happen at load time rather than at compile time.
+
+Renamed the new type specifier from IS-A to IS-A-P.  This does not create
+a conflict, and avoids exporting a different name from the KR package.
+It is also more mnemonic.
+
+Changes :declare syntax to use keywords, rather than symbols.  This
+makes it unnecessary to export more symbols (such as TYPE and
+UPDATE-SLOTS) from the KR package.  The new syntax, therefore, is:
+ ... :declare ((:type (integer :left :top)) (:update-slots))
+[12-4-1992	Dario Giuse]
+
+
+Added an error-p parameter to CHECK-SLOT-TYPE.  This allows the
+function to return a string containing the error message, rather than
+raising an error.  The default value of error-p is T, which causes an
+error.
+
+Modified things so declarations, in particular CONSTANT declarations,
+that appear in prototypes can be eliminated in instances by specifying
+an empty clause.  For example, use the expression
+  :declare ((TYPE) (CONSTANT))
+in a create-instance to turn off all constants declared by the
+prototype and eliminate all type declarations.
+[12-2-1992	Dario Giuse]
+
+
+
+Added support for slot types and type checking.  Slots can be declared to be
+of a certain type; if typechecking is enabled (i.e., if kr::*TYPES-ENABLED*
+is non-nil), KR checks the type when a slot is first created using
+CREATE-INSTANCE, set with S-VALUE, or reevaluated by a formula.
+Type declarations are normally inherited at create-instance time, so
+there is no need to specify them in every instance.  To override a
+declaration from a prototype, specify a new type in the instance (the
+type specifier T, which means any type, can be used if you want to
+unrestrict the possible type of a slot).  Note that the symbol NULL
+(not the symbol NIL!) should be used to specify that a slot may
+contain NIL.
+
+
+The syntax of type declarations in create-instance is as follows:
+(create-instance instance prototype
+  :DECLARE (type type1 type2 ...)
+  :DECLARE ((type type1 type2 ...)
+	    (type type1 type2 ...)
+	    (other-declaration decl1 decl2 ...))
+  slot-specifiers ...)
+The keyword :DECLARE introduces a declaration group (currently, only type
+declarations are supported).  Each declaration group consists of a list of
+declarations; if only one is present, the outside parentheses may be
+omitted, as shown in the second line of the example.
+Each declaration, in turns, consists of a symbol (currently, only TYPE
+is supported), followed by one or more list.  In the case of TYPE,
+each list is of the form
+(type-specifier list-of-slots)
+This declares that each slot in the list-of-slots is of the given
+type-specifier.  For example:
+
+(create-instance 'rec opal:rectangle
+  :declare ((type (vector :BOX)
+		  (integer :LEFT :TOP)
+		  ((satisfies plusp) :WIDTH :HEIGHT)
+		  ((or (satisfies schema-p) null) :PARENT)
+		  ((or integer null) :COUNT)
+		  ((member :yes :no) :VALUE)
+		  (list :IS-A))
+	    (type ((or (is-a a-window) null) :WINDOW))
+	    ;; equivalent of :update-slots mechanism
+	    (update-slots :LEFT :TOP :WIDTH :HEIGHT :VALUE))
+  :declare (type (list :IS-A-INV))
+  (:left (o-formula (+ (gvl :parent :left) (floor (gvl :width) 2))))
+  (:top 10))
+
+
+The main (exported) functions that manipulate declarations are as follows:
+
+G-TYPE  schema  slot
+Returns the type information associated with the <slot> of the <schema>.
+
+S-TYPE  schema  slot  type  &optional (check-old T)
+Adds a type declaration to the <slot> in the <schema>.  The <type> should
+be a valid Lisp type declaration, such as INTEGER or (OR LIST SYMBOL).
+Normally, this function checks that the existing value in the <slot> meets
+the new type specification, and gives an error if this is not the case.
+The <check-old> parameter may be set to nil to suppress this behavior;
+this should be used with caution, because it may leave the <slot> with
+a value that does not typecheck.
+
+CHECK-SLOT-TYPE  schema  slot  value
+Checks whether the given <value> is of the valid type for the <slot> in
+the <schema>.  If not, raises a continuable error.  This function is called
+automatically by KR when a slot is modified, so you shouldn't have to
+call it explicitly.
+
+
+GET-DECLARATIONS  schema  selector
+Returns a list of all the slots in the <schema> that have associated
+declarations of the type given by <selector>, which should be one of:
+:TYPE :CONSTANT :UPDATE-SLOTS :LOCAL-ONLY-SLOTS.  If <selector> is
+:TYPE, the return value is a list of lists; for example,
+((:LEFT (OR INTEGER NULL)) (:TOP (OR INTEGER NULL)) (:NUMBER FLOAT)) 
+If <selector> is any other value, the return value is a list of the
+slots that have the corresponding declaration.
+
+
+GET-SLOT-DECLARATIONS  schema  slot
+Returns a list of all the declarations associated with the <slot> in
+the <schema>.  The list consists of keywords, such as :CONSTANT and
+:UPDATE-SLOT, and (in the case of type declarations) a list of the
+form (:TYPE ...).  For example,
+(get-slot-declarations a :left) ==>
+ (:CONSTANT (:TYPE (OR INTEGER NULL))) 
+
+
+IS-A  object
+This is a new type declarations, NOT a function or macro.  It can only
+be used within Lisp type specifiers.  The <object> can be any Garnet
+object.  The type declaration is true of all objects that satisfy
+(is-a-p object), i.e., of all instances (direct or indirect) of the
+<object>.  The following, for example, might be the type specification
+for a :WINDOW slot:
+(s-type foo :window '(or (is-a opal:window) null))
+
+[11-24-1992	Dario Giuse]
+
+
+;;; Version 2.1.14
+
+Changed CALL-PROTOTYPE-FUNCTION to use APPLY instead of FUNCALL, which
+was not correct.  Thanks to Dave Kosbie for the bug report.
+[10-9-1992	Dario Giuse]
+
+
+Fixed problem with GV refusing :SELF as a valid first argument.
+[9-17-1992	Dario Giuse]
+
+
+Eliminated compilation warnings from unused SLOT variable in kr.lisp.
+This was caused by the macroexpansion of iterate-slot-value.
+
+Added increment of kr::*sweep-mark* to RECOMPUTE-FORMULA, a non-exported
+function that is used by some system code in Garnet.  This ensures that
+formulas affected by this function are invalidated properly.
+
+Replaced BREAK with CERROR in all the G-VALUE related functions.  This
+generates a true continuable error, and can be handled
+programmatically if so desired.
+
+Exported the symbol KR:SCHEMA, which may be used for type declarations and
+such.
+[9-14-1992	Dario Giuse]
+
+Split up all the macros in a separate file, named kr-macros.lisp.  This file
+should be compiled and loaded before kr.lisp and constraints.lisp.
+[8-20-1992	Dario Giuse]
+
+
+
+---- last change log update
+
+
+;;; Version 2.0.11
+
+Added checks for NIL objects in G-VALUE and related functions.
+[8-5-1992	Dario Giuse]
+
+
+
+Fixed bug in DESTROY-SLOT which prevented the inverse relation from being
+eliminated when a relation slot was destroyed.
+[7-29-1992	Dario Giuse]
+
+
+Added the new exported macro WITH-DEMON-ENABLED, which is similar to
+with-demon-disabled.  It works identically, except of course that the
+demon is re-enabled if it had been disabled (either selectively or with
+with-demons-disabled).
+[7-28-1992	Dario Giuse]
+
+
+Fixed bug which caused the "...array is nil..." message in Lapidary.  This
+used to happen when a never-evaluated formula referenced a slot though a
+link, and the schema involved in the link was destroyed.  This is fixed by
+adding checks to the GV family of functions.
+
+Calling S-VALUE of a relation slot with a single value which is a valid
+schema still gives a warning, but then continues and sets the relation slot
+with a list of the one schema.
+[7-24-1992	Dario Giuse]
+
+
+Fixed bug in eliminate-formula which caused update to be invoked recursively.
+This bug, introduced in 2.0.1, caused the demon to be invoked when a formula
+was found constant and eliminated.
+[7-15-1992	Dario Giuse]
+
+
+DECLARE-CONSTANT does nothing if *constants-disabled* is set to T.
+This means that this function is a no-operation inside WITH-CONSTANTS-DISABLED.
+[7-14-1992	Dario Giuse]
+
+
+
+Creating a schema with the :override keyword makes sure that formulas that
+depend on the OLD values are properly invalidated.  In the old code, they
+were not.
+
+
+Modified DECLARE for functions FORMULA and DESTROY-CONSTRAINT in kr.lisp,
+hoping to eliminate warnings from some compilers.
+[7-10-1992	Dario Giuse]
+
+
+GV now gives an error message if its first argument is a keyword.  This is
+most likely the result of using GV instead of GVL.
+
+
+DESTROY-SLOT now runs the invalidate demon before deleting the slot.  This
+ensures that the Update algorithm sees the change.
+
+Fixed :override in CREATE-INSTANCE so that the contents of the
+:IS-A-INV slot of the parent are not duplicated.
+[7-9-1992	Dario Giuse]
+
+
+
+;;; Version 2.0.10
+
+Fixed PS to work with formulas (they used to be skipped, after the change
+to SCHEMA-P).
+
+Made it possible for the is-a-inv slot of formulas (i.e., a-formula-is-a-inv)
+to contain single formulas, as well as lists of formulas.  This reduces the
+storage for all formulas which have exactly one child.
+[6-23-1992	Dario Giuse]
+
+
+
+Added an optional parameter, INHERITED, to DOSLOTS.  The parameter controls
+whether inherited slots should be cycled through, in addition to local slots.
+The default is NIL, meaning that only local slots are used.
+
+Fixed bug in DESTROY-SCHEMA which had been introduced in 2.0.8.
+[6-18-1992	Dario Giuse]
+
+
+Made SCHEMA-P return NIL when given a formula.
+[6-17-1992	Dario Giuse]
+
+
+Eliminate potential problem with shared formulas (which should never occur
+anyway).
+[6-3-1992	Dario Giuse]
+
+
+Added a call to MARK-AS-CHANGED inside DESTROY-CONSTRAINT.  This means that
+dependents are notified even if the actual value remains the same.  This
+feature is primarily needed by applications such as C32 and Lapidary, which
+need to know the difference between slots with values and slots with formulas.
+[6-10-1992	Dario Giuse]
+
+
+
+;;; Version 2.0.8
+
+
+Changed DO-SCHEMA-BODY to take a parameter for :override.  This fixes the
+problem with :override in CREATE-SCHEMA actually causing two slots by
+the same name.
+
+
+Incorporate BVZ's changes for CHANGE-FORMULA, so the lambda slot is
+set properly.
+
+Fixed FIND-DEPENDENTS, and consequently GET-DEPENDENTS.  The former
+was still using some obsolete code.
+[5-27-1992	Dario Giuse]
+
+
+Modified kr::GET-DEPENDENTS to always return a list, even if there is
+only one dependent.  Note that the list is reused and should not be
+modified.
+[4-27-1992	Dario Giuse]
+
+
+Link constants are now disabled by default.  They may be enabled by
+setting kr::*link-constants-disabled* to NIL.
+[4-22-1992	Dario Giuse]
+
+
+The function PS now makes sure that all inheritable values are
+actually inherited before printing out an object when the :inherit
+option is set.  This means that the user always sees ALL inheritable
+values from all possible prototypes, no matter whether the values had
+actually been inherited already.
+[4-21-1992	Dario Giuse]
+
+---- last change doc update
+
+
+Added a new mechanism, link constants.  This is somewhat similar to the
+existing :CONSTANT slot, in that it allows the user to specify a list
+of slots.  These slots are considered constant, however, only if they
+appear in a GV or GVL expression, and only if they are not the very
+last slot in the expression.
+The idea is that link constants can be used to declare certain paths
+that involve system-defined slots constant.  For example, inside
+aggregates one can use this to specify that a formula be eliminated if
+it depends on a constant value which is reached via a path that
+consists entirely of :LINK-CONSTANT slots.  This mechanism makes it
+unnecessary to declare all slots in the path constant, and therefore
+allows the user to change intervening slots (in a benign way,
+naturally) if needed.
+
+Added the new exported function DECLARE-LINK-CONSTANT, which takes an
+object and a slot.  This is similar to declare-constant, except that
+it works for link constants.  The only legal value for the second
+argument is a single slot name; T or other values are not allowed.
+[4-20-1992	Dario Giuse]
+
+
+Attempting to call DESTROY-SLOT on a constant slot now gives a continuable
+error, just like S-VALUE.
+[4-16-1992	Dario Giuse]
+
+
+The function PS now prints lists of values properly.  Before, parentheses
+were not printed, which made it impossible to distinguish between single
+values and lists of one element.
+
+Added check in PS for the case when :IGNORED-SLOTS contains a single value
+rather than a list.
+[4-15-1992	Dario Giuse]
+
+
+
+Formulas that are evaluated and found constant are no longer eliminated if
+*constants-disabled* is true, i.e., if inside WITH-CONSTANTS-DISABLED.
+
+
+Fixed bug in copy-to-all-instances (formula pointers were not being set
+properly).
+[4-14-1992	Dario Giuse]
+
+
+Fixed bug in kr-send for objects with a locally-defined NIL method.  This
+used to incorrectly invoke the prototype method.
+
+Fixed bug in PS (for :sorted option on a slot that is not present).
+[4-10-1992	Dario Giuse]
+
+
+Made KR code reentrant, eliminated global variables *slot-position* and
+*slot-array*.
+[4-9-1992	Dario Giuse]
+
+
+
+;;; Version 2.0.7
+
+
+Added non-exported function copy-to-all-instances, which is similar to a
+recursive s-value that works on a schema and ALL its instances, no matter
+whether local values are already set.  This was requested by BVZ.
+[4-6-1992	Dario Giuse]
+
+
+Fixed bug in KR-SEND.
+[4-2-1992	Dario Giuse]
+
+
+
+Fixed call-prototype-method.  The latest version would go into an infinite
+loop if A had no method, B (is-a A) had a method which used
+call-prototype, and C (is-a B) also had a method using
+call-prototype-method.
+[4-1-1992	Dario Giuse]
+
+
+Added the variable kr::*REDEFINE-OK* which can be used to turn off
+errors caused by create-instance redefining slots that were declared constant
+in a prototype.
+[3-20-1992	Dario Giuse]
+
+
+It is now illegal for create-instance to set the value of a slot that was
+declared constant in the prototype.  Currently, this causes a continuable
+error.
+[3-19-1992	Dario Giuse]
+
+
+Reduced consing for CREATE-INSTANCE.
+[3-18-1992	Dario Giuse]
+
+
+Changed the :CONSTANT slot such that it is now possible to specify its contents
+using a formula, rather than a hard-wired list.  Of course, the value of the
+formula is only used at instance creation time.
+[3-17-1992	Dario Giuse]
+
+
+Modified KR-SEND and CALL-PROTOTYPE-METHOD to handle the latter much faster.
+This is done by keeping track of the last place from which a method was
+inherited, allowing the search for the next method to start from the middle
+of the hierarchy rather than from the bottom.
+[3-16-1992	Dario Giuse]
+
+
+Rewrote create-schema and create-instance almost completely.  The mechanism
+avoids consing for slot creation, using a reusable set of arrays instead.
+[3-11-1992	Dario Giuse]
+
+
+
+;;; Version 2.0.6
+
+Made recursive destroy of objects (which occurs when creating a named schema
+more than once) considerably faster.  This is done by having the
+low-level code know that it is not necessary to maintain relations and
+their inverses in such cases, since everything will be destroyed
+anyway.
+[3-10-1992	Dario Giuse]
+
+
+Fixed bug with :NAME-PREFIX in create-instance.  The syntax was broken, and
+made it impossible to specify the name prefix properly.
+The syntax is now the same as in create-schema:
+(create-instance nil prototype :name-prefix "MY-NAME" (...slots))
+[3-9-1992	Dario Giuse]
+
+
+Better error checking for DESTROY-CONSTRAINT.  If any of the children of the
+formula have already been destroyed, nothing bad happens.  Other children are
+still destroyed as usual.
+[3-2-1992	Dario Giuse]
+
+
+
+Better diagnostics for the case where there is an extra ' in front of
+a constant list.
+
+Attempting to set a constant slot now results in a continuable error,
+i.e. a call to BREAK.  Previously, there was no way to continue from
+the error.
+[2-20-1992	Dario Giuse]
+
+
+
+;;; Version 2.0.5
+
+Added check for null schema in S-VALUE.  Modified the macroexpansion
+to generate less inline code and allow better checking.
+
+
+Created the non-exported function kr::GET-LAMBDA.  Given a formula, it
+returns the expression that was used to create the formula (as a
+list).  Given anything else, it returns NIL.
+
+
+Added BVZ's fixes to satisfy the Lucid compiler.  Among others,
+changed the initial size of *reuse-formulas* and *reuse-slots* to 1,
+but kept the fill pointer to 0.
+
+
+Modified IS-A-P to handle formulas as well as schemata.
+
+
+Fixed bug in S-VALUE for the case when a formula was being installed
+on a slot that had dependents.  This happened when the slot contained
+another unevaluated formula which caused a broken link throw (thanks
+to BVZ for the fix).
+[2-19-1992	Dario Giuse]
+
+
+The function PATH is now named KR-PATH.  Actually, this is an old
+change, but the original description managed to disappear from the
+change log.
+
+
+Added some error checking in PROPAGATE-CHANGE.  This code checks for
+formulas that are installed on destroyed schemata.
+
+
+Exported the function DECLARE-CONSTANT.
+
+It is now possible to use T as the second argument to
+DECLARE-CONSTANT.  This means that all slots that were defined in
+:MAYBE-CONSTANT (if any) are declared constant for the schema.
+The syntax is (declare-constant schema T).
+
+
+Modified SCHEMA-P to do a better job of checking for destroyed
+objects.  The function now returns T if the object is a schema AND it
+was not destroyed.
+
+
+Changed the way destroyed schemata (and formulas) are handled.  Destroyed
+objects are now marked by setting their "slots" structure slot to nil.  The
+advantage is that the old name remains around.  Consequently, destroyed
+objects are now printed in a more informative way.  For example,
+  (create-schema 'a (:left 10))
+  (setf p a)		; store pointer to schema
+  (destroy-schema a)
+  (ps p)    prints out:
+  *DESTROYED*(was A)
+
+
+Also, reused storage in formula structures.  The "a-formula-slots"
+structure slot, which was shared with the "schema" structure, was
+unused for formulas.  It is now used to store "a-formula-number",
+through a macro definition.  Destroying the formula sets this slot to
+NIL, which is fine.
+[2-13-1992	Dario Giuse]
+
+
+
+;;; Version 2.0.4
+
+
+Eliminated the setting of dependencies for constant slots (one case was
+not handled properly).
+
+Fixed a bug in DECLARE-CONSTANT.
+
+Fixed a bug in constant evaluation which caused formulas that had not been
+inherited always to be considered non-constant, even though they would, in
+fact, eventually become constant.
+[2-12-1992	Dario Giuse]
+
+
+Changed formula inheritance so that when a formula is inherited, it is made
+an instance of the prototype's formula.  This saves some storage.
+[2-11-1992	Dario Giuse]
+
+
+
+Created a new, non-exported function named MOVE-FORMULA.  It takes a formula
+from a slot in a schema and moves it to another slot in another schema.  This
+function is needed because simply using something like
+  (s-value new-schema new-slot (get-value old-schema old-slot))
+creates a deadly situation, i.e., a formula which is stored in two slots
+at once.
+Syntax:
+  (MOVE-FORMULA from-schema from-slot to-schema to-slot)
+[2-6-1992	Dario Giuse]
+
+
+Created a new function named DECLARE-CONSTANT.  This
+function may be used to declare that a slot is constant AFTER instance
+creation time.  The behavior is the same as if the slot had been
+declared in the :CONSTANT slot at instance creation time, although of
+course the change does not affect other formulas which might have been
+evaluated previously.
+The :CONSTANT slot is modified accordingly: the new slot is added, and
+it is removed from the :EXCEPT portion if it was originally declared there.
+Syntax:
+  (DECLARE-CONSTANT schema slot)
+[2-6-1992	Dario Giuse]
+
+
+
+
+Modified s-value and create-instance to check for formulas that are
+already installed on another slot.  This is an error, since a formula
+should only be installed on one slot at a time.
+[2-6-1992	Dario Giuse]
+
+
+;;; Version 2.0.3
+
+Fixed a bug in run-invalidate-demons which caused the incorrect demon
+(i.e., the demon from the original schema rather than the schema whose
+formula was becoming invalid) to be called.
+[2-5-1992	Dario Giuse]
+
+
+Modified the dependents portion of slots so that a single value
+(rather than a list) is stored if the slot is depended on by only one
+formula.
+[2-3-1992	Dario Giuse]
+
+
+Created a new function, kr::SLOT-CONSTANT-P, which tells whether a slot
+was declared constant or has been made constant through formula evaluation.
+Note that the function returns NIL for unevaluated formulas, even
+though they might become constant upon evaluation.
+SYNTAX:   (kr::slot-constant-p schema slot)
+RETURNS:  T if slot is constant, NIL otherwise
+[2-3-1992	Dario Giuse]
+
+
+Added the new macro WITH-DEMON-DISABLED, which is rather similar to
+WITH-DEMONS-DISABLED.  While the latter disables all demons, however,
+the former takes a specific demon which is disabled; other demons are
+executed normally.
+Syntax: (with-demon-disabled demon &body body)
+Examples:
+  (with-demon-disabled 'opal::rectangle-invalidate-demon
+    ...)
+  (with-demon-disabled (g-value foo :invalidate-demon)
+    ...)
+[1-31-1992	Dario Giuse]
+
+
+Removed the obsolete variable *ALLOW-CHANGE-TO-CACHED-VALUE*
+[1-30-1992	Dario Giuse]
+
+
+The variable *debug-switch*, which controls the printing of debugging
+information, is now exported from the KR package.
+[1-30-1992	Dario Giuse]
+
+
+Created two new functions (actually, a macro and a function) to split the
+work of CREATE-INSTANCE.  This can be used (by developers) to create
+complex objects that need special constant-slot processing.  The
+following sequence demonstrates a possible application:
+  (begin-create-instance 'inst complex-part
+  	(:left 13) (:top (o-formula ...)))
+  (s-value inst :foo "BAR")
+  (s-value inst :width 100)
+  (s-value inst :constant (if ... '(:left :top :width) T))
+  (end-create-instance inst)
+
+The first half (i.e., the call to BEGIN-CREATE-INSTANCE) sets up the
+schema and the initial value of the slots.  In the example, nothing is
+declared constant.  Some slots are then set, including the :CONSTANT
+slot.  The second half (i.e., the call to END-CREATE-INSTANCE)
+processes the constant declarations and then calls the :INITIALIZE
+method for the instanec.
+[1-30-1992	Dario Giuse]
+
+
+Trying to set a constant slot now generates an actual error.  If the variable
+kr::*constants-disabled* is non-nil, however, nothing happens.  This is the
+same variable that cab be used to turn off constant processing in
+CREATE-INSTANCE.
+[1-30-1992	Dario Giuse]
+
+
+Changed the mechanism for demon invocation.  NOTE: this applies only
+to the invalidate demon; the pre-set-demon, which is unused in Garnet, is not
+affected.
+The demon is now stored in objects (typically, it is inherited),
+rather than stored in the local variable kr::*invalidate-demon*.  If a
+demon is present in the :INVALIDATE-DEMON slot of an object, the demon is
+invoked.  The check for invocation is as before, i.e., the demon is invoked
+only if the name of the slot that is being invalidated is present in the
+:UPDATE-SLOTS slot of the object.
+[1-30-1992      Dario Giuse]
+
+
+;;; Version 2.0.2
+
+The switch to control whether constant declarations are used is now called
+kr::*constants-disabled* .  It may be bound to T to cause all constant
+declarations to be ignored.  This includes turning off error checking
+for setting slots that are declared constant.
+[1-29-1992	Dario Giuse]
+
+
+
+;;; Version 2.0.1
+
+Added a new (non-exported) function, GET-DEPENDENTS.  Given a schema and a
+slot, it returns the list of formulas which depend on the slot.
+Syntax:
+(GET-DEPENDENTS SCHEMA SLOT)
+
+
+The depends-on slot of formulas may now contain either a single schema or
+a list of schemata.  This saves storage in the common case.
+[1-13-1992	Dario Giuse]
+
+
+
+
+Changed the syntax for constant slot declarations.  Things are now as
+follows:
+
+- the :MAYBE-CONSTANT slot is used in prototypes to declare a list
+  of slots which instances may want to declare constant.  This should
+  correspond to the user-settable "parameters" of a gadget, for example.
+  This declaration, per se, has no effect.
+
+- the :CONSTANT slot is used at instance creation time to control
+  which slots are actually marked constant.  The syntax is:
+  ( :constant [T] [ADD-SLOTS] [:except DELETE-SLOTS] )
+  - T, if specified, declares that all slots contained in the :MAYBE-CONSTANT
+    slot (which is typically inherited from a prototype) should be declared
+    constant.
+  - ADD-SLOTS, if specified, is a list of slots which should be declared
+    constant.  If T was also specified, the two lists are merged.
+  - if :EXCEPT is specified, all slot names which follow it are taken out
+    of the list of constant slot.  This mechanism allows the user to eliminate
+    certain slots from the list which was specified in :MAYBE-CONSTANT.
+
+The following examples illustrate the use of the new syntax.
+
+
+(create-instance 'prototype NIL (:MAYBE-CONSTANT :left :top)
+  (:width (o-formula (+ (gvl :left) 40))))
+
+(create-instance 'inst-1 prototype
+  (:CONSTANT T)
+  (:left 12) (:top 100))
+
+The first time (g-value inst-1 :width) is evaluated, the system will notice
+that the formula depends only on the constant slot inst-1.left, and will
+eliminate the formula.  Afterwards, inst-1.width will contain the number 42,
+rather than a formula.
+
+
+(create-instance 'inst-2 prototype
+  (:CONSTANT :slot-1 :slot-2 T :EXCEPT :left)
+  (:slot-1 12))
+
+
+Slots :top, :slot-1, and :slot-2 are declared constant.  Slot :left is not,
+even though it appears in the prototype's :MAYBE-CONSTANT, because it is
+explicitly excluded via the :EXCEPT keyword.
+
+
+(create-instance 'example nil
+  (:MAYBE-CONSTANT :left :top :width :height)
+  (:CONSTANT T)
+  (:left 12))
+
+
+This example declares the :maybe-constant slot, which will be used by
+future instances, and also declares that the four slots should be constant
+in the EXAMPLE schema.
+
+[1-8-1992	Dario Giuse]
+
+
+
+;; Version 2.0
+
+
+Changed G-LOCAL-VALUE to work properly with the new formula inheritance
+scheme.  When a formula is inherited from a prototype, it is now marked
+as inherited.  However, G-LOCAL-VALUE used to fail on this, and returned
+nil.  The fixes version evaluates the formula and returns its value.
+[1-6-1992	Dario Giuse]
+
+
+
+Changed create-instance to avoid copying formulas down at instance creation
+time.
+
+Fixed s-value.  Setting a prototype slot now correctly changes the values of
+all the slots which inherited a value, even though the prototype slot contained
+a formula.
+[1-3-1992	Dario Giuse]
+
+
+Inherited formulas which are declared constant in the prototype are now
+destroyed after their are evaluated the first time.
+[12-12-1991	Dario Giuse]
+
+
+
+Significantly reduced the size of the code generated by CREATE-INSTANCE and
+GVL.  The former now produces a function call; the latter produces more
+efficient, iterative code when all slots in a GV link are special slots.
+[12-10-1991	Dario Giuse]
+
+
+Fixed a problem with DOVALUES which caused a compilation error if the
+body of dovalues contained a (RETURN) statement.  This was not working
+because of the special branch taken if the slot ended up containing a
+single value instead of a list.
+
+
+Made PS print the expression (i.e., the lambda slot) of formulas.
+
+
+
+Fixed the problem with gv-local.  This happened because G-LOCAL-VALUE (which
+is used by gv-local) does NOT create an empty slot, and therefore the
+function SETUP-DEPENDENCY did not have any place to record the dependency.
+[12-3-1991	Dario Giuse]
+
+
+Eliminated the problem with IS-A-P which forced the file KR.LISP to have to
+be compiled twice.  Simply moved that function to CONSTRAINTS.LISP.
+[12-2-1991	Dario Giuse]
+
+
+Added code for constant formulas.  This code is, for now, conditionally
+compiled (on a #+SUICIDE switch).
+This supports the following extensions to the syntax:
+- a slot in create-schema or create-instance may be specified as, e.g.,
+  (:CONST :left 14)
+  This declares the :left slot to be a constant.  Formulas which only
+  depend on constant slots are eliminated.
+	(*** note - the name of this slot is now :CONSTANT)
+- the slot :MAYBE-CONSTANTS may be specified in prototypes.  When this
+  is done, the contents of the slot (which must be a list of slot names)
+  are used to determined what slots in the INSTANCES of the prototype will
+  be marked constant at instance-creation time.
+- the slot :NOT-CONSTANT-SLOTS may be specified in instances.  If it is
+  specified (its contents must be a list of slots), all slots mentioned in
+  it are NOT marked constant, even if the prototype declares them as
+  constant.  This slot is NOT inherited - it must be present locally.
+	(*** note - this last point is now obsolete)
+[11-25-1991	Dario Giuse]
+
+
+Fixed problem in demo-arith by eliminating the setting of a KR slot in a
+formula.  This is no longer allowed in KR 1.5.1
+[11-14-1991	Dario Giuse]
+
+
+
+Fixed the problem with leftbutton not working in demo-grow.  This required
+setting the window formula to be invalid in the select-it interactor.  Change
+is in interactors.lisp (in function Check-Required-Slots)
+[11-12-1991	Dario Giuse]
+
+
+Fixed FULL and PS to work properly when a value is a dotted pair.
+[11-8-1991	Dario Giuse]
+
+
+
+Sped up propagate-change and setup-dependency, by using a new function
+named find-dependents.
+
+
+;; new version (from opal/update-basics.lisp):
+(defun update-slot-invalidated (gob slot save)
+  (declare (ignore save))
+  (let* ((gob-update-info (g-local-value gob :update-info))
+	 (the-window (if gob-update-info
+			 (update-info-window gob-update-info))))
+  (if the-window
+    (if (eq the-window gob)			;; is this a window?
+      (pushnew slot (win-update-info-invalid-slots
+			(g-local-value the-window :win-update-info)))
+      (and (not (update-info-invalid-p gob-update-info))
+	   (make-object-invalid gob gob-update-info the-window))))))
+[10-29-1991	Dario Giuse]
+
+
+Modified GV to work properly when a relation slot is used inside a path.
+For example, (gv :parent :components :left) works, even though the second
+slot returns a list of components.  The fist component in the list is simply
+used.  This provides backward compatibility.
+[10-20-1991	Dario Giuse]
+
+
+Added a switch, tentatively named *debug-switch*, which can be used to improve
+error checking in KR.  Currently, this can be set to T to generate meaningful
+error messages within GV if a non-schema value is found in the middle of a
+path.
+[10-16-1991	Dario Giuse]
+
+
+Fixed the following problem:
+When a slot has a formula which evaluates to NIL, and when the slot
+is valid, it still shows the display as:
+  :FOO =  #k<KR-DEBUG:F590>(nil . NIL)
+whereas it should be (NIL . T)
+[10-15-1991	Dario Giuse]
+
+
+Merged the two versions of G-VALUE-FN, improved generated code when schema
+is simply a symbol.
+[10-14-1991	Dario Giuse]
+
+
+Added a DEFVAR variable, kr::*store-lambdas*, which allows formulas to be
+stored without the lambda expression.  The default, T, means to store the
+expression.  This is a compile-time switch.
+[10-10-1991	Dario Giuse]
+
+
+Optimized propagate-change by using dependent-position instead of a full
+slot-accessor.
+[10-9-1991	Dario Giuse]
+
+
+
+;;; Version 1.5.0
+
+
+[Group of changes from Brad Vander Zanden follows:]
+
+1. Changed code that handled cycles. Cycles are now detected using
+	the strong connectivity algorithm given in Aho, Hopcroft, and
+	Ullman on pp 189-195. Any strongly connected component of size
+	greater than 1 is a cycle. Cycles of size 1 (i.e., a slot that
+	depends on itself) are not labeled as cycles, but the dependencies
+	are labeled as being part of a cycle, so everything works out. 
+	
+	The code changes involved replacing check-priority and reorder,
+	deleting validate-cycle, renumber-cycle, and invalidate, and
+	adding a new function called reorder-formulas.
+
+2. Changed the set-cycle-bit and set-valid-bit macros. They used to assume
+	that the value parameter was either t or nil. They were changed so
+	that the value parameter can be an expression that is computed at
+	run time.
+
+3. Changed the last parameter in a call to add-to-reeval from 
+	(cycle-p *current-formula*) to t. The call was in re-evaluate-formula.
+
+4. Replaced a call to invalidate with a call to reorder-formulas in
+	propagate.
+
+5. Changed the last line of mark-as-changed from a call to propagate to
+	a call to add-to-reeval. The add-to-reeval call adds the slot's
+	dependents to the evaluation queue, ensuring that they will be
+	evaluated the next time propagate is called. The original code did
+	not add the dependents to the evaluation queue, so the change was
+	never noticed.
+
+6. Added a statement to g-value-inherit-values that add a formula to
+	the evaluation queue if necessary.
+
+7. Added a progn statement to destroy-slot that in the case of eager
+	evaluation, resets a formula's fixed bit to nil and places the
+	formula on the evaluation queue. This has the same effect as
+	setting the formula's cache value bit to nil in lazy evaluation.
+	Added a second statement earlier in destroy-slot that saves the 
+	eval-bit for a formula before it is s-valued with a value.
+
+8. In update-inherited-values, I changed the behavior of the function if
+	the inherited value is a formula. Instead of calling propagate and
+	then extracting the value of the formula, I create an instance of
+	the formula and store the instance in the inherited slot. This
+	change occurred in two different blocks of code in update-inherited-
+	values. In both cases, the statements:
+
+	  (progn
+	    (propagate)
+	    (setf value (cached-value value)))))
+
+	were replaced by the statements:
+
+	      (progn
+		(setf value (formula value))
+		(setf (a-formula-schema value) schema)
+		(setf (a-formula-slot value) a-slot)
+		(setf *eval-queue* (insert-pq value *eval-queue*)))))
+
+	This is not completely correct, because it doesn't take the old
+	value of the slot and store it in the new formula.
+[4-2-1991]
+
+
+
+Renamed to version 1.5.0, since 1.4 is being released.
+[3-26-1991	Dario Giuse]
+
+
+
+; Version 1.4.2
+
+
+Improved the error message when GV or GVL are mistakenly used without a
+formula wrapped around them.  The message now explains what might have
+happened and shows the name of the last slot in the GV expression.
+[1-18-1991	Dario Giuse]
+
+
+First working version of 1.4.2 (without eager evaluation).  The following
+are the main highlights:
+
+Storage for KR schemata is greatly reduced.  Slots are represented in a
+completely new fashion.
+
+Multiple values are no longer supported (although some old functions are
+provided for backward-compatibility).  All slots now store a single value,
+which of course may be a list of values.  All relation slots store a list
+of schemata (i.e., the single value in the slot is a list).
+
+Local-only-slots is also handled as a list of lists.
+
+inheriting values from a slot with a formula now creates a copy of the
+formula.
+
+[1-15-1991	Dario Giuse]
+
+
+
+; Version 1.4.1
+
+
+Fixed METHOD-TRACE, which was hopelessly broken and had been so for a long time.
+[10-24-1990	Dario Giuse]
+
+
+;;; version 1.3.24
+
+
+Added the non-exported function INHERITED-P
+[9-12-1990	Dario Giuse]
+
+
+Fixed bug with (CREATE-INSTANCE NIL).
+[9-11-1990	Dario Giuse]
+
+
+Fixed DELETE-SCHEMA to do nothing if given a schema that was already destroyed.
+[9-11-1990	Dario Giuse]
+
+
+Fixed bug with setting formulas which depend on relation slots (this was a
+bug in REMOVE-FORMULAS, and was reported by Brad Vander Zanden).
+[9-7-1990	Dario Giuse]
+
+
+Modified KR-SEND to avoid infinite loops (when looking for a method) if there
+are loops in the inheritance hierarchy.  This was causing problems in
+degenerate cases.
+[9-4-1990	Dario Giuse]
+
+
+Modified DESTROY-SCHEMA to call the :DESTROY method on the schema just before
+it gets rid of it.  This was previously disabled because of the problems with
+infinite loops looking for a method, as described above.
+[9-4-1990	Dario Giuse]
+
+
+Fixed CREATE-SCHEMA so that the following would behave properly:
+(create-schema 'foo :override)
+in the case where foo was NOT a previously created schema.  This code used
+to do nothing, i.e., the schema would not be created at all.
+[9-4-1990	Dario Giuse]
+
+
+
+;;; version 1.3.23
+
+
+Eliminated problem with the *debug-names* array (reported by Paul Werkowski).
+The array is now initialized to NIL elements.
+[9-4-1990	Dario Giuse]
+
+
+
+Added a new exported function, RECOMPUTE-FORMULA.  This function takes a schema
+and a slot, and forces the formula in the slot to be recomputed.  The change is
+then propagated and demons are fired as usual, exactly as if the formula had
+been recomputed because of a change in its depended values.
+The syntax is:
+  (RECOMPUTE-FORMULA SCHEMA SLOT)
+If the <schema> does not contain a formula in the <slot>, nothing happens.
+[9-3-1990	Dario Giuse]
+
+
+
+Eliminated the change to MARK-AS-CHANGED (see 8-29-90), which apparently
+caused some compatibility problems.
+[9-3-1990	Dario Giuse]
+
+
+
+Modified MARK-AS-CHANGED so that when it is called on a slot which contains
+a formula, it immediately reevaluates the formula.  This behavior is different
+from the previous one, which always left the slot itself unchanged.
+--- NOTE - this change was eliminated - see 9-3-1990)
+[8-29-1990	Dario Giuse]
+
+
+
+Fixed a couple of bugs in MARK-AS-CHANGED, including the one reported by
+Roger a while back.  This bug meant that slots which had formulas depending
+on inherited values which should have been invalidated were not.
+[8-20-1990	Dario Giuse]
+
+
+
+Fixed CREATE-INSTANCE so that local overriding of slots which might be
+inherited but are declared as :local-only-slots does the right thing, i.e.,
+the overriding value takes precedence.
+
+
+The macros GET-VALUE and GET-VALUES no longer retrieve values in :is-a-inv
+slots which are not local.  This is equivalent to making the slot :IS-A-INV
+a :local-only-slots slot.  Other functions may have to do the same thing, for
+consistency.
+[8-1-1990	Dario Giuse]
+
+
+
+Create-INSTANCE now uses a special slot in a prototype to control whether
+values should be inherited normally, or whether certain slots in the
+prototype are considered local only and therefore should NOT be inherited.
+
+The slot is called :LOCAL-ONLY-SLOTS; it should contain any number of
+lists, where each list consists of a slot name and T or NIL.
+
+If the second element of the list is T, the value of the slot in the
+prototype is copied into the instance, and inheritance is never used
+thereafter.  Note that if the value in the prototype contains a formula,
+the formula is copied down.
+
+If, on the other hand, the second element of the list is NIL, the slot is never
+inherited, and it is created in the instance with the value NIL.
+
+The following example explains the different behaviors:
+  (create-schema 'a (:left 15) (:top 21) (:width 32)
+	            (:local-only-slots '(:top T) '(:width NIL)))
+  (create-instance 'b a)
+  (g-value b :left)  ==> 15	; inherited
+  (g-value b :top)   ==> 21     ; instance slot was set to prototype value
+  (g-value b :width) ==> NIL    ; instance slot was set to NIL
+
+  (s-value a :left 100)
+  (s-value a :top 100)
+  (s-value a :width 100)
+
+  (g-value b :left)  ==> 100	; new value is inherited as usual
+  (g-value b :top)   ==> 21	; value is unaffected
+  (g-value b :width) ==> NIL    ; value is unaffected
+[7-30-1990	Dario Giuse]
+
+
+
+CREATE-SCHEMA (and thus CREATE-INSTANCE) now destroy all old instances of a
+schema, in addition to the old schema itself, when they create the schema.
+For example, the code
+  (create-schema 'a (:left 10))
+  (create-instance 'b a)
+  (create-schema 'a (:width 43))
+will destroy the instance B, as well as the old value of A.
+[7-30-1990	Dario Giuse]
+
+
+Added a (non-exported) function named KR-SEND-FUNCTION.  This behaves the same as KR-SEND, but it is a function which can be funcall-ed.  The syntax is the same as KR-SEND:
+(KR-SEND-FUNCTION schema slot &rest arguments)
+[7-30-1990	Dario Giuse]
+
+
+Exported the new function COPY-FORMULA, which may be used to create a copy
+of a formula which shares the same parent (if there is one) and the same
+initial value.  This function is primarily intended for advanced users.
+[7-27-1990	Dario Giuse]
+
+
+Changed IS-A-P to return T if the two objects it is given are EQ.  This means
+that (IS-A-P a a) now returns T; the old code used to return NIL.
+[7-23-1990	Dario Giuse]
+
+
+
+;;; version 1.3.22
+
+Fixed CHANGE-FORMULA to get rid of the second value in the :KR-FUNCTION
+slot.  Since the function always makes formulas be like the result of
+FORMULA, rather than O-FORMULA, it would be incorrect to keep the second
+value around.
+
+Fixed EXPAND-ACCESSOR to eliminate program self-modification.  The argument
+list of macros such as G-VALUE used to be self-modifying if it ended with a
+non-keyword argument, i.e., a position argument.  This has been fixed.
+[6-27-1990	Dario Giuse]
+
+
+
+Fixed a bug in SET-VALUES.  This caused (SET-VALUES ... NIL) to incorrectly
+eliminate the information that a slot was depended on by some formulas, and
+as a result formulas would not be reevaluated correctly afterwards.
+
+Added the internal function COPY-FORMULA, originally provided by Roger
+Dannenberg.  This function is not exported.  It copies a formula and keeps
+the same parent (if there is one) and the same initial value.
+[6-26-1990	Dario Giuse]
+
+
+Fixed the bug in G-VALUE-NO-COPY-DOWN which caused local :INITIALIZE
+methods to be ignored at instance creation time.  This would cause
+incorrect behavior, since the parent method was always invoked first.
+[6-25-1990	Dario Giuse]
+
+
+;;; version 1.3.21
+
+
+DESTROY-SCHEMA now physically destroys formulas that used to be attached
+to slots of the schema.  This didn't use to be case, but is by now
+perfectly safe.  This means that old formulas can be garbage-collected.
+[6-15-1990	Dario Giuse]
+
+
+Modified CREATE-SCHEMA to work properly with variables whose value is NIL.
+This resulted in smaller code being generated for both CREATE-SCHEMA and
+CREATE-INSTANCE.
+[6-10-1990	Dario Giuse]
+
+
+;;; version 1.3.20
+
+Eliminated internal slot names from formulas.  This means that internal
+slots (such as the schema slot) are accessed directly through structure
+accessors, and the corresponding "reserved slot names" (such as :KR-SCHEMA)
+have been eliminated.
+[6-6-1990	Dario Giuse]
+
+
+Trying to initialize a relation slot to a non-schema value produces a
+warning and the value is ignored.  This used to go unnoticed, and would
+happen, for example, in the erroneous call
+  (create-schema nil (:left 12) (:parent NIL))
+[6-4-1990	Dario Giuse]
+
+
+
+;;; version 1.3.1
+
+The :INITIALIZE method is no longer copied down into every object.
+Inherited slots are normally copied down the first time they are inherited,
+and the same was happening to the :INITIALIZE slot.  This, however, was
+creating unnecessary garbage, since the method is typically only used once.
+The method is now inherited, but not copied down.
+[5-7-1990	Dario Giuse]
+
+
+Started version 1.3.1, which optimizes storage.
+[5-1-1990	Dario Giuse]
+
+
+
+;;; version 1.1.27
+
+Added #+allegro (gc t) at the end of kr-compiler.lisp
+[4/12/90 Mitchell]
+
+
+In low-level-set-value, changed #'formula-p to #'a-formula-p
+because Lucid complains about formula-p being a macro.
+Removed :is-a and :update-slots from *formula-slots*.
+In fixed-path-accessor, added test that "current" exists and
+is large enough before doing elt on it.
+[4/3/90 Ed Pervin]
+
+
+Define the package "KR" for the TI Explorer in kr-loader.lisp
+and kr-compiler.lisp.
+New and improved mode lines at the top of each file.
+Changed copyright to 1989, 1990.
+[4/2/90 Ed Pervin and Robert Cook]
+
+
+Added a new, non-advertised function named PATH which implements immutable
+paths.  The syntax is as follows:
+(path number list-of-slots)
+
+The easiest way to use PATH is as follows:
+  (gvl :parent :parent :previous-item :left)
+should be replaced by
+  (gv (path :parent :parent :previous-item) :left)
+All of the slots but the last one are moved inside PATH.  This makes performance
+significantly better.
+
+The <number> should be unique for the same path within each formula.  For
+example, replace the formula
+  (o-formula (+ (gvl :parent :parent :previous-item :left)
+		(gvl :parent :parent :width)))
+with the formula
+  (o-formula (+ (gv (path 0 :parent :parent :previous-item) :left)
+		(gv (path 1 :parent :parent) :width)))
+
+Note that it is admissible to use the same number for identical paths
+within the same formula.  So, for instance, replace
+  (o-formula (+ (gv (path 0 :parent :parent :previous-item) :left)
+		(gv (path 1 :parent :parent :previous-item) :width)))
+with:
+  (o-formula (+ (gv (path 0 :parent :parent :previous-item) :left)
+		(gv (path 0 :parent :parent :previous-item) :width)))
+(note that number 0 is used for both paths).
+[3-23-90  Dario Giuse]
+
+
+
+
+Rewrote the low-level structure accessors to correct a portability problem
+uncovered by the Lucid compiler.  All accesses are now through actual
+structure accessors, rather than the previous (array-based) scheme.
+Regular access is unaffected; iterate-accessors is slightly slower for
+slots whose name is unknown at compile time.
+[3-21-90  Dario Giuse]
+
+
+Fixed the compilation problem (reported by ecp) caused by SETF not being
+defined for LOGBITP in certain Lisp compilers.
+[3-19-90  Dario Giuse]
+
+
+
+;;; version 1.1.26
+
+Fixed compilation problem with PATH in constraints.lisp
+[3-16-90  Dario Giuse]
+
+
+Added an exported function, DO-PRINTABLE-SLOTS, which is somewhat of a cross
+between DOSLOTS and PS.  It takes a schema and a function, and applies the
+function to all the slots in the schema that would be printed by PS.  Unlike
+DOSLOTS, then, DO-PRINTABLE-SLOTS knows about ignored slots, sorted slots, and
+all the other print-control options used by PS.
+
+The syntax is:
+(do-printable-slots schema function &key (control t) (inherit nil))
+
+The <function> is called with three parameters: the <schema> itself, the name
+of the slot, and either T (if the slot is inherited) or NIL (if the slot is
+local).  The meaning of <control> and <inherit> is the same as for the function
+PS.
+
+Example:
+(create-instance 'r opal:rectangle)
+
+(do-printable-slots
+ r
+ #'(lambda (schema slot is-inherited)
+     (format t ": ~S ~S ~S (~s)~%"
+	     schema slot (g-value schema slot) is-inherited)))
+
+prints out the four slots :IS-A, :VISIBLE, :FAST-REDRAW-P, and :UPDATE-INFO
+and ignores the slots :DEPENDED-SLOTS and :UPDATE-SLOTS.
+[3-14-90  Dario Giuse]
+
+
+
+More work on improving performance of formula evaluation
+[2-13-90  Dario Giuse]
+
+
+Fixed the bug in CREATE-SCHEMA which prevented the following code from working:
+(let ((the-name 'FOO))
+  (create-schema the-name))
+[2-12-90  Dario Giuse]
+
+
+;;; version 1.1.25
+
+Fixed CREATE-SCHEMA to eliminate the compiler warning about schema
+variables being undefined.
+[1/31/90  Dario Giuse]
+
+
+Modified DESTROY-SLOT to not destroy formulas that depend on the slot being
+destroyed.  The old version used to indiscriminately destroy dependent
+formulas; the new version simply invalidates them.  This ensures that
+inheritance (or setting a new value) will correctly recompute the formulas.
+[1/30/90  Dario Giuse]
+
+
+Fixed CREATE-INSTANCE to give a warning when the :IS-A slot is specified in
+the slot list.  The :IS-A slot specification is simply ignored.
+[1/30/90  Dario Giuse]
+
+
+Changed DESTROY-SCHEMA so that deleted schemata are now printed out as
+#k<*DESTROYED*>
+[1/30/90  Dario Giuse]
+
+
+Fixed DESTROY-SLOT to handle inherited values (including ones which are
+depended on by some formula) to be modified properly.  Values are simply
+inherited again when needed.
+[1/30/90  Dario Giuse]
+
+
+Changed the default value of the :CONTROL option in PS.  The default value
+is now T, which means that ignored slots are not printed by default (and, in
+general, all print control options inherited from the schema itself).
+[1/30/90  Dario Giuse]
+
+
+Fixed check-relation-slot so that relation slots are no longer inherited
+when their value is set.
+[1/29/90  Dario Giuse]
+
+
+Created and exported a new function, NAME-FOR-SCHEMA.  Given a schema, this
+function returns its printable name as a string.  Note that the returned
+string SHOULD NOT be modified by the caller.
+The string name does not use the #k<> notation, i.e., the pure name is
+returned.
+[1/28/90  Dario Giuse]
+
+
+Eliminated the interface definition for the obsolete function LINK-VALID-P,
+which was effectively removed several months ago.
+[1/3/90 Dario Giuse]
+
+
+Added a variable, KR::*WARNING-ON-EVALUATION*, which may be set to T to
+give a warning whenever a formula is evaluated.  This may be useful for
+debugging.  The default setting is NIL.
+[12/1/89 Dario Giuse]
+
+
+Added a variable, KR::*WARNING-ON-CIRCULARITY*, which may be set to T to
+give a warning whenever a circularity is detected.  The default is NIL.
+[11/28/89 Dario Giuse]
+
+
+Modified GV and GVL so that the last parameter is only taken to be a
+value position if it is a number.  Everything else is assumed to be an
+expression which computes a slot.  This allows, for example, the following:
+(gvl :parent (gvl :which-slot))
+which computes the value of the parent's slot whose name is contained in
+the local slot :which-slot
+[11/28/89 Dario Giuse]
+
+
+---- last documentation update
+
+
+
+10-23-1989
+----------
+
+1.
+Modified CREATE-SCHEMA to only print out the message about a schema being
+created during compilation.
+
+
+
+10-9-1989
+---------
+
+1.
+Fixed bug in PS (actually, in printing names of schemata whose parent
+was a formula).
+
+2.
+(IS-A-P thing T) now returns true if <thing> is a schema.  I.e., T acts as
+the top-level superclass.
+
+
+
+10-2-1989
+---------
+
+
+1.
+Unnamed schemata are now given names that have as a prefix the name of the
+schema's parent, rather than the string "S".  This is intended to make
+it easier to understand what type of object an unnamed schema is.
+
+2.
+The formula which caused a null link is now stored in a variable internal
+to the KR package (named *last-formula*).  This variable is useful for
+debugging and, in particular, is used by Roger's debugging code.
+
+3.
+The function PS has a different interface, which is based on keywords
+rather than optional parameters.  The new syntax is:
+
+(PS schema &key control (inherit nil) (indent 0))
+
+:control has exactly the same meaning as the old, optional parameter.
+:inherit may be set to T to cause PS to print out not only local slots,
+  but also slots whose value has been inherited.  Such slots are printed
+  out in a distinctive format.
+:indent may be used to set an indentation level.  This is only used by some
+  of the debugging code and does not concern ordinary users.
+
+
+4.
+CREATE-SCHEMA has an additional feature.  It is now possible to create
+"unnamed" schemata with a name prefix.  This causes the creation
+of automatic names where the prefix part of the name is given explicitly as
+a symbol or a string.  The new syntax is
+  (create-schema name [:OVERRIDE] [:NAME-PREFIX prefix] {slot-descriptor}*)
+
+For example,
+(create-schema nil :name-prefix 'AGGREGATE (:left 45) (:top 3))
+  ==>  #k<AGGREGATE-264>
+
+Note that these are not "unnamed" schemata in the true sense of the word.
+A name for such schemata is created immediately; this includes a symbol in
+the KR-DEBUG package, which is exported.  Compare this with "true" unnamed
+schemata, which are created with (create-schema NIL); such schemata are
+never given any symbol name unless they are printed out.  True unnamed
+schemata, therefore, are significantly cheaper than name-prefix schemata.
+
+
+5.
+Fixed the problem with CREATE-INSTANCE which made it impossible to use a
+variable as the schema name.  This bug prevented CREATE-INSTANCE from being
+used inside a function, for example, when the name of the schema to be
+created was supplied as a function argument.
+
+
+
+8-22-1989
+---------
+
+1.
+Fixed APPEND-VALUE, which had been broken in the conversion to 2.3
+
+2.
+Fixed CREATE-INSTANCE to give an error when called with the same name for
+object and class.
+
+3.
+kr::*print-as-structure* is now T by default; this causes all schema names to
+be printed with the #k<> notation.  Setting kr::*print-as-structure* to NIL
+causes the pure symbol name to be printed instead.
+
+
+
+
+8-2-1989  (Version 2.3)
+
+1.
+SET-VALUES is now supposed to work properly with formulas (and thus it
+should be renamed to S-VALUES, really).
+
+SET-VALUES on the :IS-A slot, for example, is still known not to work
+properly.
+
+
+2.
+It is now consider illegal to use (RETURN) to exit DOVALUES.
+
+DOVALUES has more options, including one that can be used inside formulas
+to cause the formula to be invalidated when the ENTIRE list of values which
+is iterated upon by DOVALUES is modified in any way.
+
+The new, complete syntax is as follows:
+(DOVALUES (variable schema slot &key (local nil) (result nil)
+	     (formulas T) (in-formula nil))
+          &body)
+
+The meaning of the options is:
+- :LOCAL  : if non-nil, DOVALUES only examines local slots, and ignores
+  values that might be inherited.  The default is to access the slot
+  no matter whether it is local or inherited.
+- :RESULT  : specifies the value which is to be returned by DOVALUES.
+  Normally, DOVALUES simply returns NIL.
+- :FORMULAS  : the default is to obtain the value of each formula which
+  appears in the slot.  If :FORMULAS is nil, however, the formulas
+  themselves are returns (this behavior is similar to that of GET-VALUE).
+- :IN-FORMULA  : if this is non-nil, the DOVALUES may be used inside a
+  formula and the formula is invalidated when the slot is modified in any
+  way.  This allows the proper behavior when a formulas needs to examine
+  all values in a slot.  Note that in this case the special keyword :SELF
+  may be used as the name of the schema; this works exactly as in GV.
+
+An example of the latter usage of DOVALUES:
+
+(formula '(let ((is-odd nil))
+	    (dovalues (value :SELF :components :in-formula T)
+	      (if (odd value) (setf is-odd T)))
+	    is-odd))
+
+Note that it is possible to use DOVALUES inside a formula without
+specifying the :in-formula option, but in this case the formula would NOT
+be invalidated when the slot changes:  for example, the code
+(formula '(let ((is-odd nil))
+	    (dovalues (value :SELF :components)
+	      (if (odd value) (setf is-odd T)))
+	    is-odd))
+would correctly compute the answer the first time the formula is evaluated,
+but would never be evaluated again.
+
+
+
+3.
+
+G-VALUE may now be called with no slot names at all.  This simply
+returns the schema itself:
+(g-value a)    ==>   a
+
+More interestingly, GV may also be called without any slot names (in which
+case it also returns the schema).  The special name :self may be used, of
+course; this gives a standard idiom for a formula to obtain at runtime the
+name of the schema on which it is installed:
+(gv :SELF).
+
+
+
+4.
+
+The special variable KR::*WARNING-ON-CREATE-SCHEMA* may be bound to NIL in
+order to prevent the usual warning when CREATE-SCHEMA is redefining an
+extant schema.
+This variable is mostly for internal use and is not exported.
+
+
+
+5.
+
+GET-VALUES should be avoided and is superseded by DOVALUES.  In KR 2.3 and
+following, GET-VALUES may be inefficient because it conses when called on
+single-valued slots.
+
+DOVALUES, on the other hand, never creates any garbage storage.  The
+old idiom:
+	(dolist (item (get-values schema slot)) ...)
+should be replaced by
+	(dovalues (item schema slot) ...)
+
+
+
+
+
+
+-------------------
+
+
+
+Changes required for the conversion to the new version of KR (i.e., KR 2.0)
+from old, keyword-based versions:
+
+
+1.
+No schema name can be a keyword.  Symbols can be used instead, and
+NIL can be used to create nameless schemata.
+Also, quoted symbols cannot be used as schema names.  Therefore, write
+(create-instance foo ...) instead of (create-instance 'foo ...)
+
+Note that (create-instance foo some-class ...) automatically assigns the
+schema as the value of the variable FOO.  This variable is also
+automatically proclaimed SPECIAL.
+
+Unnamed schemata, i.e., the result of (create-schema nil ...), are not
+given any name by default.  If they are ever printed out, a name is created
+for them in the KR-DEBUG package and exported.  After being printed,
+unnamed schemata become the same as regular schemata, i.e., the symbol in
+the KR-DEBUG package has the schema itself as its value.
+
+
+2.
+All class names should be symbols, and they should be EXPORTED by the
+package where they are created.  It is recommended that programs refer to
+class names through the package name, since this enhances readability.  For
+example, all programs that use Opal should use
+  opal:rectangle  
+as the name of the class.  This should be done even if the program actually
+does (use-package "OPAL").
+
+
+3.
+It is possible to create top-level classes by simply specifying NIL as the
+second argument to create-instance:
+(create-schema object nil ...)
+
+This makes OBJECT a new schema, and its :is-a slot will contain NIL.
+
+
+4.
+It is no longer possible to use and reference schemata that have not been
+previously created.  Try to access a non-existent schema will cause an
+error message.  If you need top-level schemata, use create-instance with
+NIL, as described above.
+
+
+5.
+The old version of KR used to be very casual about using NIL as a schema.
+The current version of KR still allows retrieving values from a NIL schema
+(for instance, when you do something like 
+  (g-value (g-value a :slot1) :slot2)
+and :slot1 contains NIL), but I am considering turning this "feature" off
+in the future for better error checking.  In the meanwhile, all old code will
+still work.
+
+Setting values of a NIL schema, on the other hand, causes an error.
+
+
+6.
+Some KR functions have been renamed.  Here is a list of the renaming
+scheme:
+
+the-formula			--> formula
+create-fresh-schema		--> create-schema (default behavior)
+create-schema			--> (create-schema :OVERRIDE ...)
+is-formula			--> formula-p
+do-slots			--> doslots
+remove-constraint		--> destroy-constraint
+check-link			--> link-valid-p
+schema-call			--> kr-send
+call-parent-method		--> call-prototype-method
+defmeth				--> define-method
+meth-trace			--> method-trace
+
+The following functions have been eliminated:
+delete-schema
+delete-slot
+create-slot
+get-slots
+get-all-slots
+do-all-values
+print-schema (its functionality is now part of PS)
+
+
+7.
+Since schemata are now structures, it is no longer possible to use CASE
+(for instance) to discriminate among different schema types.  The old code
+(case (get-value schema :IS-A)
+  (opal:rectangle ...)
+  (opal:window ...))
+, for example, will no longer work.  It MUST be replaced by something like
+(let ((type (get-value schema :IS-A)))
+  (cond ((eq type opal:rectangle) ...)
+        ((eq type opal:window) ...))
+
+I am thinking about writing a little macro that does this, but for the time
+being, beware.
+
+
+8.
+Local variables CANNOT have the same name as a class schema created by the
+same package.  This is because the schema name is a special variable and
+thus it conflicts with local variable names.
+Note that there is no problem with class schemata created by other
+packages.
+
+
+
+9.
+Unnamed schemata have an internally generated name which is an integer.
+If the variable kr::*intern-unnamed-schemata* is set to T (the default), a
+symbol by the proper name is automatically created as soon as an unnamed
+schema is printed (by PS, or otherwise).  This means that:
+- unnamed schemata may be referenced just like any other schema;
+- unnamed schemata that have been printed will NOT be garbage collected,
+  unless of course someone does an explicit DESTROY-SCHEMA on them.
+
+Symbols thus created are automatically interned and exported by the KR
+package.
+
+
+It is possible to have the system NOT create symbols this way.  This makes
+referring to unnamed schemata a little more awkward, but it allows them to
+be garbage collected as needed.  This can be achieved by setting
+kr::*intern-unnamed-schemata* to NIL.  If this is the case, the following
+applies:
+
+Unnamed schemata are printed as S1234, for example, but their name IS NOT the
+symbol S1234.  One can refer to schemata by number, but only when the
+reference is rather recent (since only recently printed unnamed schemata
+are kept in a cache).
+
+An internal function named S is available for this purpose: this function
+takes an integer and returns the corresponding unnamed schema, if the
+reference is recent enough, or NIL.
+
+
+10.
+CREATE-RELATION has a slightly different syntax: the inverses are now a
+simple &rest list.  Therefore,
+(create-relation :components nil '(:parent)) should now be written as
+(create-relation :components nil :parent)
+
+
+11.
+Define-method now takes a KEYWORD, rather than a symbol, as the method
+name.  For instance,
+(define-method :draw opal-rectangle ...)
+
+Also, define-method no longer creates an automatic macro with the same name
+as the method name.  The method is created just as before.
+
+
+12.
+Change-formula has a different syntax.  It no longer takes a formula and an
+expression; instead, it takes a schema, slot, and an expression.  For example,
+(change-formula box-12 :right '(+ (gvl :left) 10))
+
+
+
+---------------------------- Changes for version 2.1
+
+
+1.
+A new macro, named O-FORMULA, is exported by KR.  This is similar to
+FORMULA, except that:
+- the formula expression does not need to be quoted;
+- O-FORMULA arranges for the expression to be immediately compilable.  This
+  means that O-FORMULA in a compiled file causes the formula to be
+  installed as a compiled formula.  This makes formula evaluation
+  significantly faster in many cases.  Executing O-FORMULA in an
+  interpretive environment, on the other hand, creates an interpreted formula.
+
+
+
+2.
+The function COPY-SCHEMA has been eliminated altogether.
+
+
+3.
+If the print-control schema passed to PS (or inherited from the object
+being printed) contains a non-nil :PRINT-AS-STRUCTURE slot, schemata which
+are values in some slot are printed with a structure syntax, which shows
+some of their slots.  Exactly which slots are printed can be selected by
+setting the slot :PRINT-SLOTS in the print-control schema.

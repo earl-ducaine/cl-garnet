@@ -1,0 +1,4 @@
+@anchor{Package xft}
+@defvr {Package} {xft}
+Package contains @code{api} for TrueType text rendering using @code{clx}, XRender. Glyphs information is obtained by @code{zpb-ttf}. Font rasterization is made by @code{cl-vectors}.
+@end defvr

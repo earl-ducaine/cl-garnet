@@ -1,0 +1,13 @@
+@Comment{ERRLOG of opal/opal-manual.mss by Scribe 7(1700) on 1 December 1994 at 00:23}
+
+Error in LIBRARYFILE command found while processing the manuscript.
+opal/opal-manual.mss, line 5:  @LibraryFile(Stable)
+The command LIBRARYFILE is allowed only at the beginning of a manuscript.
+
+Error in END command.
+opal/opal-manual.mss, line 1820:  @end(itemize)
+Unmatched names: DESCRIPTION [at opal/opal-manual.mss, line 1812] closed with @END(ITEMIZE).
+
+Error in END command.
+opal/opal-manual.mss, line 1836:  @end(itemize)
+Unmatched names: DESCRIPTION [at opal/opal-manual.mss, line 1824] closed with @END(ITEMIZE).

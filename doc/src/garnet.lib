@@ -1,0 +1,150 @@
+@Comment[
+	This is a Scribe Library File that defines style parameters for
+Garnet manuals.  To use it, you should put the following at the top of
+your manual's .mss file:
+   @Make(manual)
+   @LibraryFile(Garnet)
+   @String(TitleString = "-- Short Version of Title For Headers --")
+   @Use(Bibliography = "garnet.bib")
+   @begin(TitlePage)
+   @begin(TitleBox)
+   @blankspace(0.6 inch)
+   @Bg(--- Your Title Here ---)
+
+   @b(--- Authors Here ---)
+   @BlankSpace(0.3 line)
+   @value(date)
+   @end(TitleBox)
+   @BlankSpace(0.5 inch)
+   @center[@b(Abstract)]
+   @begin(Text, spacing=1.1)
+   --- the abstract here ---
+
+   @blankspace(0.5 inch)
+   @include(creditetc.mss)
+   @end(TitlePage)
+
+   @Chapter(Introduction)
+   ...
+   --- be sure to put an explicit References heading: ---
+   @UnNumbered(References)
+   @bibliography
+
+Put a symbolic link to garnet.lib in your directory.  You should also
+put a link to creditetc.mss, which fills in the Darpa credit and the
+CMU copyright notice.
+]
+
+@disable(FigureContents)
+@Marker(Library, Garnet)
+@style(references = STDalphabetic)
+@style(spacing 1.1)
+@style(font = TimesRoman, size = 11)
+@style(indent 0)
+@style(Date = "March 1952")
+@style(DoubleSided yes)  @comment[ allow even/odd page headers ]
+@libraryfile(Multilevelindex)
+@Modify(HD1, PageBreak Before)
+
+
+@Modify(PrefaceSection, TitleForm
+{@Begin(HD1A)@parm(Title)@End(HD1A)
+@PageHeading(Odd, Immediate, left "@ux[@Value(TitleString) @>Table of Contents]")
+@PageHeading(Even, Immediate, left " ")
+})
+
+@Modify(UnNumbered, TitleForm
+{@Begin(HD1)@parm(Title)@End(HD1)
+@blankspace(0.1 inch)
+@string(ChapterTitle @parm(Title))
+@PageHeading(Even,Immediate, left "@ux[Page @value(page)@hsp(0.15 in)@Value(TitleString) @>@parm(Title)]")
+@PageHeading(Odd,Immediate, Left "@ux[@Parm(Title) @> Page @value(page)]")})
+
+@Modify(Chapter, TitleForm
+{@Begin(HD1)@parm(Numbered) @parm(Title)@End(HD1)
+@blankspace(0.1 inch)
+@string(ChapterNumber @parm(Referenced))
+@string(ChapterTitle @parm(Title))
+@PageHeading(Even,Immediate, left "@ux[Page @value(page)@hsp(0.15 in)@Value(TitleString) @>@parm(Title)@hsp(0.25 in)Chapter @parm(Referenced)]")
+@PageHeading(Odd,Immediate, Left "@ux[Chapter @parm(Referenced)@hsp(0.25 in)@Parm(Title) @> Page @value(page)]")})
+
+@Comment(ArtSection, for "Article Section" is for when sections are at the
+	top level.  It's like a chapter, but without page breaks. Use
+	ArtHD1 instead of HD1 to turn off page breaks.)
+
+@Define(ArtHD1 = HD1, Pagebreak off)
+
+@Counter(ArtSection, ContentsEnv tc1,Numbered [@1.],
+	IncrementedBy Use,Referenced [@1],Announced,
+TitleForm
+{@Begin(ArtHD1)@parm(Numbered) @parm(Title)@End(ArtHD1)
+@blankspace(0.1 inch)
+@string(ChapterNumber @parm(Referenced))
+@string(ChapterTitle @parm(Title))
+@PageHeading(Even,Immediate, left "@ux[Page @value(page)@hsp(0.15 in)@Value(TitleString) @>@parm(Title)@hsp(0.25 in)Section @parm(Referenced)]")
+@PageHeading(Odd,Immediate, Left "@ux[Section @parm(Referenced)@hsp(0.25 in)@Parm(Title) @> Page @value(page)]")})
+
+@Counter(SubArtSection, within ArtSection,TitleEnv HD2,ContentsEnv tc2,
+	Numbered [@#@:.@1.],IncrementedBy Use,Referenced [@#:.@1])
+
+@Modify(Section, TitleForm
+{@Begin(HD2)@parm(Numbered) @parm(Title)@End(HD2)
+@string(SectionNumber @parm(Referenced))
+@string(SectionTitle @parm(Title))
+@PageHeading(Odd,Immediate,Left "@ux[Section @parm(Referenced)@hsp(0.25 in) @Parm(Title) @> Page @value(page)]")})
+
+@Comment{Sources are in /usr/misc/.scribe/lib/database.v6/postsc.dev }
+@Modify(indexenv, above=2 lines, leftmargin 8, columns=3, boxed)
+
+
+@Comment{@commandstring(pr @T)  @Comment(For program examples in the text)}
+@Comment{@Modify(chapter, Pagebreak off)}
+@Comment{@Modify(description, leftmargin +0.5inch)}
+@Comment{@Define(pr, FaceCode F, TabExport)}
+@Comment{@commandstring(pr @T)  @Comment(For program examples in the text)}
+
+@Modify(captionenv, fill, Spaces=Compact)
+
+@Define(pr, FaceCode T, Size 10, TabExport)
+@Define(prexample = programexample, FaceCode T, Size 10, TabExport)
+@Define(J, FaceCode J, TabExport)
+@Modify(description, indent -0.5inch, leftmargin +0.5inch)
+@Define(Sm, Size 9, TabExport)
+@Define(Bg, Size 16, FaceCode B, Spacing 17pt, TabExport)
+@Comment{@Modify(Hd1, PageBreak Off)}
+@Comment{@Modify(Hd2 , PageBreak UntilOdd)}
+@Modify(programexample, size 8, FaceCode T) @Comment(not "free" any more)
+@Modify(Text, spread +1line)
+
+@string(macro = "@>[@i(Macro)]")
+@string(class = "@>[@i(Class)]")
+@string(slot =  "@>[@i(Slot)]")
+@string(slots = "@>[@i(Slots)]")
+@string(function = "@>[@i(Function)]")
+@string(variable = "@>[@i(Variable)]")
+@string(keyword = "@>[@i(Keyword)]")
+@string(method = "@>[@i(Method)]")
+@string(dash = "@Y[M]")
+@string(shortdash = "@Y[N]")
+@string(bullet = "@Y[M]")
+
+@commandstring(dash @Y[M])
+@commandstring(bullet @Y[B])
+@commandstring(shortdash @Y[N])
+
+
+
+@comment[ 
+        *** Clear page headings, to be set by @Chapter and @Section commands.
+        *** Without this, the blank page after the title page will be numbered.
+        ]
+@PageHeading(Immediate)
+
+
+
+@comment[ 
+        *** Include PostScript code that turns off double-sided printing
+        *** in case this is printed to a full-duplex printer.  We have to
+        *** print single-sided in order to move the TOC's around.
+        ]
+@graphic(PostScript="single-sided.ps", Height 0, Width 0)

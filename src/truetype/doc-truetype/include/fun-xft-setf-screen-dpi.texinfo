@@ -1,0 +1,5 @@
+@findex @setf{screen-dpi}
+@anchor{Function (setf screen-dpi)}
+@deffn {Function} {@setf{screen-dpi}} value screen
+Sets current dpi for @var{screen}.
+@end deffn

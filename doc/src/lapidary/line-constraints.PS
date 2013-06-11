@@ -1,0 +1,305 @@
+%!PS-Adobe-2.0
+%%Title: line constraints
+%%Creator: Make-PS-File -- Garnet Version 2.0
+%%CreationDate: May 15, 1992, 10:39 AM
+%%For: 
+%%This file does not use real color
+%%DocumentFonts: (atend)
+%%BoundingBox: 144 143 467 648
+%%Pages: 1
+%%EndComments
+
+
+/DrawLine
+   {    % stack: line-halftone, red, green, blue, color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness
+        %        x2, y2, x1, y1
+        newpath
+          moveto
+          lineto
+          StrokeShape
+   } def
+
+/TextDict 19 dict def
+/DrawText
+   {	% stack: left top base-y opal-width height line-halftone fill-p
+        %        fore-red fore-green fore-blue fore-color-p
+        %        back-red back-green back-blue back-color-p
+        %        string size font-name
+        TextDict begin
+        gsave
+	findfont exch scalefont setfont
+	/s exch def
+        /back-color-p exch def  /back-blue exch def  /back-green exch def
+        /back-red exch def  /fore-color-p exch def  /fore-blue exch def
+        /fore-green exch def  /fore-red exch def  /fill-p exch def
+        /line-halftone exch def /height exch def  /opal-width exch def
+        /base-y exch def  /top exch def  /left exch def
+
+        % Calculate distance to add between each character, based on the width
+        % expected by Opal, the width expected by postscript, and the number
+        % of characters to distribute the change over
+	/x-dist opal-width s stringwidth pop sub s length div def
+
+        % Draw background of text if appropriate
+        fill-p
+        { gsave
+            newpath
+            left top opal-width height RectanglePath
+            1 back-red back-green back-blue back-color-p
+            FillShape
+          grestore } if
+
+        % Draw text in the appropriate color
+	newpath
+          fore-color-p
+          { fore-red fore-green fore-blue setrgbcolor }
+          { line-halftone setgray } ifelse
+	  left base-y moveto
+	  x-dist 0 s ashow
+        grestore
+        end
+   } def
+
+/RectanglePath
+   {    % stack: left, top, width, height
+        /h exch def  /w exch def
+	moveto		        % Go to the left,top corner
+	w 0 rlineto	        % top side
+	0 h neg rlineto		% right side
+	w neg 0 rlineto		% bottom side
+	closepath		% left side
+   } def
+
+/RectangleDict 21 dict def
+/DrawRectangle
+   {	% stack: left, top, width, height, line-halftone, line-red, line-green,
+        %        line-blue, line-color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness,
+        %        fill-halftone, fill-red, fill-green, fill-blue, fill-color-p
+        RectangleDict begin
+        /fill-color-p exch def  /fill-blue exch def  /fill-green exch def
+        /fill-red exch def /fill-halftone exch def  /thickness exch def
+        /dash-pattern exch def  /line-join exch def  /line-cap exch def
+        /line-color-p exch def  /line-blue exch def  /line-green exch def
+        /line-red exch def  /line-halftone exch def  /height exch def
+        /width exch def  /top exch def  /left exch def  /thickness-by-2 thickness 2 div def
+        % Draw filling
+        newpath
+          left thickness-by-2 add  top thickness-by-2 sub   width thickness sub  height thickness sub
+          RectanglePath
+	  fill-halftone fill-red fill-green fill-blue fill-color-p FillShape
+        % Draw border
+        newpath
+          left top width height RectanglePath
+          line-halftone line-red line-green line-blue line-color-p
+          line-cap line-join dash-pattern thickness StrokeShape
+        end
+   } def
+
+/ClipDict 2 dict def
+/ClipToRectangle
+   {    % stack: left, top, width, height
+        ClipDict begin
+	/height exch def  /width exch def
+        newpath
+	  moveto		% Go to the left,top corner
+	  width 0 rlineto	% top side
+	  0 height neg rlineto	% right side
+	  width neg 0 rlineto	% bottom side
+	  closepath		% left side
+	gsave 1 setgray fill grestore
+	clip newpath
+        end
+   } def
+
+/FillShape
+   {	% stack: fill-halftone, red, green, blue, color-p
+        %   Color-p should be true or false - false means ignore the three vals
+        %   Use -1 for fill-halftone to mean NIL, 0 = black, 1 = white
+        %   Use -2 for fill-halftone to indicate there is an arbitrary filling
+        % style on the stack
+        gsave
+        { setrgbcolor fill pop }
+	{ pop pop pop 
+	  dup 0 ge
+	    % if fill-halftone >= 0, then fill the shape with a halftone
+	    { setgray fill}
+            % else, if there is an arbitrary filling style, then fill
+            { -2 eq
+              {SetPattern fill} if
+            } ifelse } ifelse
+        grestore
+   } def
+
+/StrokeShape
+   {	% stack: line-halftone, red, green, blue, color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness
+	% If no line is desired, pass -1 for line-thickness
+        % Halftones: 0 = black, 1 = white
+	dup 0 ge
+	  % if line-thickness >= 0, then draw the outline
+	  {gsave
+	   setlinewidth 0 setdash setlinejoin setlinecap
+             { setrgbcolor pop }
+             { pop pop pop setgray } ifelse
+	   stroke
+	   grestore}
+	  {pop pop pop pop pop pop pop pop pop newpath} ifelse
+   } def
+
+
+%%EndProlog
+%%Page: 1 1
+
+gsave
+72 72 translate
+1 1 scale
+
+%
+% Begin new window
+%
+72 -72 translate
+gsave
+0 648 323 505 ClipToRectangle
+0 0 translate
+gsave
+10 638 621 172 21 0 false 0 0 0 false 0 0 0 false (Line Constraint Menu) 18 /Times-BoldItalic DrawText
+10 591 294 142 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+20 598 129 14 0 0 0 0 false 0 0 [] -1 1 1.00 1.00 1.00 true DrawRectangle
+25 598 587 119 14 0 false 0 0 0 false 0 0 0 false (primary-selection) 12 /Courier-Bold DrawText
+0 0 0 0 false 0 0 [] 1 102 470 70 570 DrawLine
+63 577 19 19 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+59 581 19 19 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+63 577 11 11 0 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawRectangle
+66 574 5 5 1.00 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawRectangle
+95 477 19 19 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+91 481 19 19 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+95 477 11 11 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawRectangle
+178 570 100 100 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+171 577 19 19 0.50 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+167 581 19 19 0.50 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+171 577 11 11 0 0 0 0 false 0 0 [] -1 1 1.00 1.00 1.00 true DrawRectangle
+174 574 5 5 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+171 527 19 19 0.50 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+167 531 19 19 0.50 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+171 527 11 11 0.50 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawRectangle
+174 524 5 5 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+171 477 19 19 0.50 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+167 481 19 19 0.50 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+171 477 11 11 0.50 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawRectangle
+174 474 5 5 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+221 577 19 19 0.50 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+217 581 19 19 0.50 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+221 577 11 11 0.50 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawRectangle
+224 574 5 5 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+221 527 19 19 0.50 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+217 531 19 19 0.50 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+221 527 11 11 0.50 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawRectangle
+224 524 5 5 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+221 477 19 19 0.50 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+217 481 19 19 0.50 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+221 477 11 11 0.50 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawRectangle
+224 474 5 5 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+271 577 19 19 0.50 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+267 581 19 19 0.50 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+271 577 11 11 0.50 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawRectangle
+274 574 5 5 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+271 527 19 19 0.50 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+267 531 19 19 0.50 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+271 527 11 11 0.50 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawRectangle
+274 524 5 5 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+271 477 19 19 0.50 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+267 481 19 19 0.50 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+271 477 11 11 0.50 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawRectangle
+274 474 5 5 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+10 423 294 142 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+20 430 142 14 0 0 0 0 false 0 0 [] -1 1 1.00 1.00 1.00 true DrawRectangle
+25 430 419 132 14 0 false 0 0 0 false 0 0 0 false (secondary-selection) 12 /Courier-Bold DrawText
+0 0 0 0 false 0 0 [] 1 136 302 36 402 DrawLine
+29 409 19 19 0.50 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+25 413 19 19 0.50 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+29 409 11 11 0.50 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawRectangle
+32 406 5 5 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+129 309 19 19 0.50 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+125 313 19 19 0.50 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+129 309 11 11 0.50 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawRectangle
+132 306 5 5 0 0 0 0 false 0 0 [] -1 0.50 0 0 0 false DrawRectangle
+178 402 100 100 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+171 409 19 19 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+167 413 19 19 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+171 409 11 11 0 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawRectangle
+174 406 5 5 0 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawRectangle
+171 359 19 19 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+167 363 19 19 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+171 359 11 11 0 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawRectangle
+174 356 5 5 0 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawRectangle
+171 309 19 19 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+167 313 19 19 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+171 309 11 11 0 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawRectangle
+174 306 5 5 0 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawRectangle
+221 409 19 19 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+217 413 19 19 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+221 409 11 11 0 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawRectangle
+224 406 5 5 0 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawRectangle
+221 359 19 19 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+217 363 19 19 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+221 359 11 11 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawRectangle
+221 309 19 19 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+217 313 19 19 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+221 309 11 11 0 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawRectangle
+224 306 5 5 0 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawRectangle
+271 409 19 19 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+267 413 19 19 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+271 409 11 11 0 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawRectangle
+274 406 5 5 0 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawRectangle
+271 359 19 19 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+267 363 19 19 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+271 359 11 11 0 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawRectangle
+274 356 5 5 0 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawRectangle
+271 309 19 19 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+267 313 19 19 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+271 309 11 11 0 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawRectangle
+274 306 5 5 0 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawRectangle
+15 257 89 26 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawRectangle
+10 262 89 26 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+13 259 83 20 0 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawRectangle
+16 256 245 77 14 0 false 0 0 0 false 0 0 0 false (unconstrain) 12 /Courier DrawText
+15 221 89 26 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawRectangle
+10 226 89 26 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+13 223 83 20 0 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawRectangle
+24 220 209 61 14 0 false 0 0 0 false 0 0 0 false (customize) 12 /Courier DrawText
+259 633 44 24 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawRectangle
+254 638 44 24 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+257 635 38 18 0 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawRectangle
+270 633 622 13 14 0 false 0 0 0 false 0 0 0 false (OK) 12 /Courier DrawText
+123 260 249 55 14 0 false 0 0 0 false 0 0 0 false (x-offset) 12 /Courier-Bold DrawText
+189 260 249 5 14 0 false 0 0 0 false 0 0 0 false (0) 12 /Courier DrawText
+183 262 17 18 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+123 233 222 56 14 0 false 0 0 0 false 0 0 0 false (y-offset) 12 /Courier-Bold DrawText
+190 233 222 5 14 0 false 0 0 0 false 0 0 0 false (0) 12 /Courier DrawText
+184 235 17 18 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+233 260 249 13 14 0 false 0 0 0 false 0 0 0 false (x1) 12 /Courier-Bold DrawText
+257 260 249 5 14 0 false 0 0 0 false 0 0 0 false (0) 12 /Courier DrawText
+251 262 17 18 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+233 233 222 14 14 0 false 0 0 0 false 0 0 0 false (y1) 12 /Courier-Bold DrawText
+258 233 222 5 14 0 false 0 0 0 false 0 0 0 false (0) 12 /Courier DrawText
+252 235 17 18 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+233 196 185 13 14 0 false 0 0 0 false 0 0 0 false (x2) 12 /Courier-Bold DrawText
+257 196 185 5 14 0 false 0 0 0 false 0 0 0 false (0) 12 /Courier DrawText
+251 198 17 18 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+233 169 158 14 14 0 false 0 0 0 false 0 0 0 false (y2) 12 /Courier-Bold DrawText
+258 169 158 5 14 0 false 0 0 0 false 0 0 0 false (0) 12 /Courier DrawText
+252 171 17 18 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+grestore
+
+grestore
+
+0 648 323 505 0 0 0 0 false 0 0 [] 2 -1 0 0 0 false DrawRectangle
+grestore
+
+
+showpage
+%%Trailer
+%%DocumentFonts: /Courier /Courier-Bold /Times-BoldItalic 
+%%BoundingBox: 144 143 467 648

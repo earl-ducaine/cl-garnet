@@ -1,0 +1,554 @@
+%!PS-Adobe-2.0
+%%Title: refman/refman.mss
+%%DocumentFonts: (atend)
+%%Creator: Andrew Mickish and Scribe 7(1700)
+%%CreationDate: 12 December 1994 15:27
+%%Pages: (atend)
+%%EndComments
+% PostScript Prelude for Scribe.
+/BS {/SV save def 0.0 792.0 translate .01 -.01 scale} bind def
+/ES {showpage SV restore} bind def
+/SC {setrgbcolor} bind def
+/FMTX matrix def
+/RDF {WFT SLT 0.0 eq 
+  {SSZ 0.0 0.0 SSZ neg 0.0 0.0 FMTX astore}
+  {SSZ 0.0 SLT neg sin SLT cos div SSZ mul SSZ neg 0.0 0.0 FMTX astore}
+  ifelse makefont setfont} bind def
+/SLT 0.0 def
+/SI { /SLT exch cvr def RDF} bind def
+/WFT /Courier findfont def
+/SF { /WFT exch findfont def RDF} bind def
+/SSZ 1000.0 def
+/SS { /SSZ exch 100.0 mul def RDF} bind def
+/AF { /WFT exch findfont def /SSZ exch 100.0 mul def RDF} bind def
+/MT /moveto load def
+/XM {currentpoint exch pop moveto} bind def
+/UL {gsave newpath moveto dup 2.0 div 0.0 exch rmoveto
+   setlinewidth 0.0 rlineto stroke grestore} bind def
+/LH {gsave newpath moveto setlinewidth
+   0.0 rlineto
+   gsave stroke grestore} bind def
+/LV {gsave newpath moveto setlinewidth
+   0.0 exch rlineto
+   gsave stroke grestore} bind def
+/BX {gsave newpath moveto setlinewidth
+   exch
+   dup 0.0 rlineto
+   exch 0.0 exch neg rlineto
+   neg 0.0 rlineto
+   closepath
+   gsave stroke grestore} bind def
+/BX1 {grestore} bind def
+/BX2 {setlinewidth 1 setgray stroke grestore} bind def
+/PB {/PV save def newpath translate
+    100.0 -100.0 scale pop /showpage {} def} bind def
+/PE {PV restore} bind def
+/GB {/PV save def newpath translate rotate
+    div dup scale 100.0 -100.0 scale
+    /showpage {} def
+    /letter {} def
+    /lettersmall {} def
+    /note {} def
+    } bind def
+/GE {PV restore} bind def
+/FB {dict dup /FontMapDict exch def begin} bind def
+/FM {cvn exch cvn exch def} bind def
+/FE {end /original-findfont /findfont load def  /findfont
+   {dup FontMapDict exch known{FontMapDict exch get} if
+   original-findfont} def} bind def
+/BC {gsave moveto dup 0 exch rlineto exch 0 rlineto neg 0 exch rlineto closepath clip} bind def
+/EC /grestore load def
+/SH /show load def
+/MX {exch show 0.0 rmoveto} bind def
+/W {0 32 4 -1 roll widthshow} bind def
+/WX {0 32 5 -1 roll widthshow 0.0 rmoveto} bind def
+/RC {100.0 -100.0 scale
+612.0 0.0 translate
+-90.0 rotate
+.01 -.01 scale} bind def
+/URC {100.0 -100.0 scale
+90.0 rotate
+-612.0 0.0 translate
+.01 -.01 scale} bind def
+/RCC {100.0 -100.0 scale
+0.0 -792.0 translate 90.0 rotate
+.01 -.01 scale} bind def
+/URCC {100.0 -100.0 scale
+-90.0 rotate 0.0 792.0 translate
+.01 -.01 scale} bind def
+%%EndProlog
+%%Page: i 1
+BS
+0 SI
+11 SS 
+1 1 0 8280 5400 GB 
+%%BeginDocument: single-sided.ps
+%!PS-Adobe-2.0
+%
+%  This PostScript code turns off double-sided printing,
+%  which is desirable since we want to be able to move the
+%  Tables of Contents by hand after the manuals are printed.
+%
+statusdict begin
+   false setduplexmode
+end
+
+%%EndDocument
+ GE 75 100 0 8730 40350 GB 
+%%BeginDocument: refman/logo.ps
+%!PS-Adobe-2.0
+%%Title: Garnet Logo
+%%Creator: Make-PS-File -- Garnet Version 2.0.alpha
+%%CreationDate: Apr 13, 1992, 4:34 PM
+%%For: 
+%%This file does not use real color
+%%DocumentFonts: (atend)
+%%BoundingBox: 171 279 441 514
+%%%Pages: 1
+%%EndComments
+
+
+/TextDict 19 dict def
+/DrawText
+   {    % stack: left top base-y opal-width height line-halftone fill-p
+        %        fore-red fore-green fore-blue fore-color-p
+        %        back-red back-green back-blue back-color-p
+        %        string size font-name
+        TextDict begin
+        gsave
+        findfont exch scalefont setfont
+        /s exch def
+        /back-color-p exch def  /back-blue exch def  /back-green exch def
+        /back-red exch def  /fore-color-p exch def  /fore-blue exch def
+        /fore-green exch def  /fore-red exch def  /fill-p exch def
+        /line-halftone exch def /height exch def  /opal-width exch def
+        /base-y exch def  /top exch def  /left exch def
+
+        % Calculate distance to add between each character, based on the width
+        % expected by Opal, the width expected by postscript, and the number
+        % of characters to distribute the change over
+        /x-dist opal-width s stringwidth pop sub s length div def
+
+        % Draw background of text if appropriate
+        fill-p
+        { gsave
+            newpath
+            left top opal-width height RectanglePath
+            1 back-red back-green back-blue back-color-p
+            FillShape
+          grestore } if
+
+        % Draw text in the appropriate color
+        newpath
+          fore-color-p
+          { fore-red fore-green fore-blue setrgbcolor }
+          { line-halftone setgray } ifelse
+          left base-y moveto
+          x-dist 0 s ashow
+        grestore
+        end
+   } def
+
+/PolylineDict 15 dict def
+/DrawPolyline
+   {    % stack: x1, y1, ..., xn, yn, n, line-halftone, line-red, line-blue,
+        %        line-green, line-join, line-cap, dash-pattern,
+        %        line-thickness, fill-halftone
+        PolylineDict begin
+        /fill-color-p exch def  /fill-blue exch def  /fill-green exch def
+        /fill-red exch def  /fill-halftone exch def  /thickness exch def
+        /dash-pattern exch def  /line-join exch def  /line-cap exch def
+        /line-color-p exch def  /line-blue exch def  /line-green exch def
+        /line-red exch def  /line-halftone exch def  /num-points exch 4 sub def
+        newpath
+          moveto
+          num-points -2 0 {pop lineto} for
+          fill-halftone fill-red fill-green fill-blue fill-color-p FillShape
+          line-halftone line-red line-green line-blue line-color-p
+          line-cap line-join dash-pattern thickness StrokeShape
+        end
+   } def
+
+/ClipDict 2 dict def
+/ClipToRectangle
+   {    % stack: left, top, width, height
+        ClipDict begin
+        /height exch def  /width exch def
+        newpath
+          moveto                % Go to the left,top corner
+          width 0 rlineto       % top side
+          0 height neg rlineto  % right side
+          width neg 0 rlineto   % bottom side
+          closepath             % left side
+        gsave 1 setgray fill grestore
+        clip newpath
+        end
+   } def
+
+/FillShape
+   {    % stack: fill-halftone, red, green, blue, color-p
+        %   Color-p should be true or false - false means ignore the three vals
+        %   Use -1 for fill-halftone to mean NIL, 0 = black, 1 = white
+        %   Use -2 for fill-halftone to indicate there is an arbitrary filling
+        % style on the stack
+        gsave
+        { setrgbcolor fill pop }
+        { pop pop pop 
+          dup 0 ge
+            % if fill-halftone >= 0, then fill the shape with a halftone
+            { setgray fill}
+            % else, if there is an arbitrary filling style, then fill
+            { -2 eq
+              {SetPattern fill} if
+            } ifelse } ifelse
+        grestore
+   } def
+
+/StrokeShape
+   {    % stack: line-halftone, red, green, blue, color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness
+        % If no line is desired, pass -1 for line-thickness
+        % Halftones: 0 = black, 1 = white
+        dup 0 ge
+          % if line-thickness >= 0, then draw the outline
+          {gsave
+           setlinewidth 0 setdash setlinejoin setlinecap
+             { setrgbcolor pop }
+             { pop pop pop setgray } ifelse
+           stroke
+           grestore}
+          {pop pop pop pop pop pop pop pop pop newpath} ifelse
+   } def
+
+
+%%EndProlog
+%%%Page: 1 1
+
+gsave
+72 72 translate
+1 1 scale
+
+%
+% Begin new window
+%
+99 -206 translate
+gsave
+0 648 270 235 ClipToRectangle
+0 0 translate
+gsave
+83 607 104 593 139 454 126 431 56 414 34 428 0 567 13 589 83 607 18 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawPolyline
+104 593 93 580 85 578 83 586 83 607 104 593 12 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawPolyline
+0 567 17 560 24 562 22 571 13 589 0 567 12 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawPolyline
+34 428 46 441 53 443 56 435 56 414 34 428 12 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawPolyline
+58 452 53 443 24 562 32 557 58 452 10 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawPolyline
+139 454 122 461 115 459 116 450 126 431 139 454 12 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawPolyline
+107 464 115 459 85 578 81 569 107 464 10 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawPolyline
+104 593 139 454 122 461 93 580 104 593 10 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawPolyline
+0 567 34 428 46 441 17 560 0 567 10 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawPolyline
+83 607 83 586 22 571 13 589 83 607 10 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawPolyline
+126 431 116 450 56 435 56 414 126 431 10 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawPolyline
+85 578 24 562 32 557 81 569 85 578 10 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawPolyline
+115 459 53 443 58 452 107 464 115 459 10 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawPolyline
+115 459 122 461 93 580 85 578 115 459 10 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawPolyline
+93 580 83 586 85 578 93 580 8 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawPolyline
+84 606 55 616 82 610 73 617 82 612 78 648 86 610 92 624 88 608 114 604 88 606 92 580 84 606 26 0 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawPolyline
+53 443 115 459 116 450 56 435 53 443 10 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawPolyline
+46 441 53 443 24 562 17 560 46 441 10 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawPolyline
+24 562 22 571 83 586 85 578 24 562 10 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawPolyline
+60 512 490 148 56 0 false 0 0 0 false 0 0 0 false (Garnet) 48 /Times-Bold DrawText
+grestore
+
+grestore
+
+grestore
+
+
+showpage
+%%Trailer
+%%DocumentFonts: /Times-Bold 
+%%BoundingBox: 171 279 441 514
+
+%%EndDocument
+ GE 16 /Times-Bold AF
+20905 24001 MT
+(The Garnet Reference Manuals)SH
+23726 25697 MT
+(Revised for Version 3.0)SH
+11 SS 
+20742 27628 MT
+(Brad A. Myers, Dario Giuse, Andrew Mickish,)SH
+18706 28824 MT
+(Brad Vander Zanden, David Kosbie, James A. Landay,)SH
+17199 30020 MT
+(Richard McDaniel, Rajan Parthasarathy, Matthew Goldberg,)SH
+19533 31216 MT
+(Roger B. Dannenberg, Philippe Marchal, Ed Pervin)SH
+/Times-Roman SF
+28183 33042 MT
+(December 1994)SH
+27005 34238 MT
+(CMU-CS-90-117-R5)SH
+25371 40632 MT
+(School of Computer Science)SH
+25509 41828 MT
+(Carnegie Mellon University)SH
+26927 43024 MT
+(Pittsburgh, PA 15213)SH
+19033 49849 MT
+(This is a revision which supercedes all previous versions:)SH
+14343 51045 MT
+(CMU-CS-90-117-R4 \050October 1993\051, CMU-CS-90-117-R3 \050November 1992\051,)SH
+16694 52241 MT
+(CMU-CS-90-117-R2 \050May 1992\051, CMU-CS-90-117-R \050June 1991\051,)SH
+16054 53437 MT
+(CMU-CS-90-117 \050March, 1990\051, CMU-CS-89-196 \050November, 1989\051,)SH
+25846 54633 MT
+(and all change documents.)SH
+21010 60387 MT
+(Copyright)SH
+/Symbol SF
+25747 XM
+(\323)SH
+/Times-Roman SF
+26891 XM
+(1994 - Carnegie Mellon University)SH
+8280 67170 MT
+(This research)
+208 W( was sponsored by NCCOSC under Contract No.  N66001-94-C-6037, Arpa Order No.)207 W
+8280 68466 MT
+(B326. The)
+379 W( views and conclusions contained in this document)
+52 W( are those of the authors and should not be)53 W
+8280 69762 MT
+(interpreted as representing)
+193 W( the official policies, either expressed or implied, of NCCOSC or the U.S.)192 W
+8280 71058 MT
+(Government.)SH
+ES
+%%Page: ii 2
+BS
+0 SI
+10 /Times-Roman AF
+54524 4286 MT
+(ii)SH
+16 /Times-Bold AF
+28703 29069 MT
+(Abstract)SH
+11 /Times-Roman AF
+8280 30821 MT
+(The Garnet User Interface Development Environment contains)
+61 W( a comprehensive set of tools that make it)62 W
+8280 32117 MT
+(significantly easier to design and implement highly-interactive, graphical, direct manipulation user)336 W
+8280 33413 MT
+(interfaces. Garnet)
+633 W( provides a high level of support, while still being Look-and-Feel)
+179 W( independent and)180 W
+8280 34709 MT
+(providing the applications with tremendous flexibility.  The Garnet tools are organized into two layers.)109 W
+8280 36005 MT
+(The toolkit)
+63 W( layer provides an object-oriented, constraint-based graphical system that allows properties of)64 W
+8280 37301 MT
+(graphical objects to be specified in a simple, declarative manner, and then maintained automatically by)105 W
+8280 38597 MT
+(the system.  The dynamic, interactive behavior of the objects can be specified separately)
+149 W( by attaching)150 W
+8280 39893 MT
+(high-level ``interactor'' objects to the graphics.  This layer includes two)
+84 W( complete widget sets, one with)83 W
+8280 41189 MT
+(the Garnet look and feel,)
+79 W( and the other with a Motif look and feel.  The higher layer of Garnet includes)80 W
+8280 42485 MT
+(three tools at this time.  The first is an interface builder tool,)
+71 W( called Gilt, which allows dialog boxes and)70 W
+8280 43781 MT
+(other windows to be created.  The second is C32, which is a spreadsheet interface for editing)
+56 W( constraints)57 W
+8280 45077 MT
+(among objects.  Last is Lapidary, which allows the user interface designer to)
+264 W( draw pictures of)263 W
+/Times-Italic SF
+53918 XM
+(all)SH
+/Times-Roman SF
+8280 46373 MT
+(graphical aspects of the user interface.  Other tools are currently)
+195 W( in production, such as Jade \050which)196 W
+8280 47669 MT
+(creates dialog boxes from a specification\051.)SH
+8280 51263 MT
+(The Garnet toolkit layer software is available for unlimited)
+41 W( distribution by anonymous FTP.  Garnet uses)40 W
+8280 52559 MT
+(Common Lisp and the X window manager, and is)
+80 W( therefore portable across a wide variety of platforms.)81 W
+8280 53855 MT
+(This document contains an overview, tutorial and a full set of reference manuals for the Garnet System.)SH
+/Times-Bold SF
+8280 62492 MT
+(Keywords:)SH
+/Times-Roman SF
+15112 XM
+(User Interface Development Environments,)
+575 W( User Interface Management Systems,)574 W
+8280 63688 MT
+(Constraints, Interface Builders, Object-Oriented Programming, Direct Manipulation,)
+471 W( Input/Output,)472 W
+8280 64884 MT
+(Garnet.)SH
+ES
+%%Page: dlxxxi 3
+BS
+0 SI
+10 /Times-Roman AF
+6120 4286 MT
+(iii)SH
+14 /Times-Bold AF
+21762 6338 MT
+(Overall Table of Contents)SH
+11 SS 
+6120 11674 MT
+(Overview of the Garnet System)SH
+52370 XM
+(1)SH
+/Times-Italic SF
+7920 12870 MT
+(Introduction to the toolkit and overview of this technical report.)SH
+/Times-Bold SF
+6120 15262 MT
+(Pictures of Applications Using Garnet)SH
+51820 XM
+(27)SH
+/Times-Italic SF
+7920 16458 MT
+(Some flashy color pictures sent in by Garnet users.)SH
+/Times-Bold SF
+6120 18850 MT
+(An On-line Tour through Garnet)SH
+51820 XM
+(41)SH
+/Times-Italic SF
+7920 20046 MT
+(A guided tour of some of Garnet's features.)SH
+/Times-Bold SF
+6120 22438 MT
+(The Garnet Tutorial)SH
+51820 XM
+(61)SH
+/Times-Italic SF
+7920 23634 MT
+(A tutorial to introduce the basic Garnet features.)SH
+/Times-Bold SF
+6120 26026 MT
+(KR Reference Manual; Constraint-Based Knowledge Representation)SH
+51270 XM
+(101)SH
+/Times-Italic SF
+7920 27222 MT
+(The object and constraint system in Garnet.)SH
+/Times-Bold SF
+6120 29614 MT
+(Opal Reference Manual; The Garnet Graphical Object System)SH
+51270 XM
+(151)SH
+/Times-Italic SF
+7920 30810 MT
+(Support for graphical output.)SH
+/Times-Bold SF
+6120 33202 MT
+(Interactors Reference Manual; Encapsulating Mouse and Keyboard Behaviors)SH
+51270 XM
+(219)SH
+/Times-Italic SF
+7920 34398 MT
+(Support for input from the user.)SH
+/Times-Bold SF
+6120 36790 MT
+(Aggregadgets, Aggrelists, & Aggregraphs Reference Manual)SH
+51270 XM
+(295)SH
+/Times-Italic SF
+7920 37986 MT
+(Convenient way to create composite objects.  AggreLists and)SH
+7920 39182 MT
+(Aggregraphs lay out elements automatically.)SH
+/Times-Bold SF
+6120 41574 MT
+(Garnet Gadgets Reference Manual)SH
+51270 XM
+(347)SH
+/Times-Italic SF
+7920 42770 MT
+(A set of pre-defined interaction techniques.)SH
+/Times-Bold SF
+6120 45162 MT
+(Debugging Tools for Garnet; Reference Manual)SH
+51270 XM
+(461)SH
+/Times-Italic SF
+7920 46358 MT
+(Tools to help debug Garnet code.)SH
+/Times-Bold SF
+6120 48750 MT
+(Garnet Demos)SH
+51270 XM
+(481)SH
+/Times-Italic SF
+7920 49946 MT
+(Descriptions of the demonstration programs provided with Garnet.)SH
+/Times-Bold SF
+6120 52338 MT
+(A Sample Garnet Program)SH
+51270 XM
+(491)SH
+/Times-Italic SF
+7920 53534 MT
+(Actual code for a simple graphical editor.)SH
+/Times-Bold SF
+6120 55926 MT
+(Gilt Reference Manual: A Simple Interface Builder for Garnet)SH
+51270 XM
+(505)SH
+/Times-Italic SF
+7920 57122 MT
+(A high-level tool for laying out gadgets using the mouse.)SH
+/Times-Bold SF
+6120 59514 MT
+(C32 Reference Manual: A Spreadsheet Interface to Constraints)SH
+51270 XM
+(525)SH
+/Times-Italic SF
+7920 60710 MT
+(C32 displays the slots of an object in a scrolling menu, allowing the)SH
+7920 61906 MT
+(user to type in values directly or define constraints among objects.)SH
+/Times-Bold SF
+6120 64298 MT
+(Lapidary Reference Manual)SH
+51270 XM
+(537)SH
+/Times-Italic SF
+7920 65494 MT
+(Lapidary allows application-specific graphical objects to be created interactively.)SH
+/Times-Bold SF
+6120 67886 MT
+(How to Make Garnet Programs Run Faster)SH
+51270 XM
+(573)SH
+/Times-Italic SF
+7920 69082 MT
+(Some hints on making Garnet applications run faster.)SH
+/Times-Bold SF
+6120 71474 MT
+(Global Index)SH
+51270 XM
+(580)SH
+/Times-Italic SF
+7920 72670 MT
+(An index to all the names and procedures in the entire Garnet Toolkit.)SH
+ES
+%%Trailer
+%%Pages: 3
+%%DocumentFonts: Times-Roman Times-Bold Symbol Times-Italic

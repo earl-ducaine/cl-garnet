@@ -1,0 +1,3125 @@
+%!PS-Adobe-2.0
+%%Title: tour/tour.mss
+%%DocumentFonts: (atend)
+%%Creator: Andrew Mickish and Scribe 7(1700)
+%%CreationDate: 12 December 1994 15:25
+%%Pages: (atend)
+%%EndComments
+% PostScript Prelude for Scribe.
+/BS {/SV save def 0.0 792.0 translate .01 -.01 scale} bind def
+/ES {showpage SV restore} bind def
+/SC {setrgbcolor} bind def
+/FMTX matrix def
+/RDF {WFT SLT 0.0 eq 
+  {SSZ 0.0 0.0 SSZ neg 0.0 0.0 FMTX astore}
+  {SSZ 0.0 SLT neg sin SLT cos div SSZ mul SSZ neg 0.0 0.0 FMTX astore}
+  ifelse makefont setfont} bind def
+/SLT 0.0 def
+/SI { /SLT exch cvr def RDF} bind def
+/WFT /Courier findfont def
+/SF { /WFT exch findfont def RDF} bind def
+/SSZ 1000.0 def
+/SS { /SSZ exch 100.0 mul def RDF} bind def
+/AF { /WFT exch findfont def /SSZ exch 100.0 mul def RDF} bind def
+/MT /moveto load def
+/XM {currentpoint exch pop moveto} bind def
+/UL {gsave newpath moveto dup 2.0 div 0.0 exch rmoveto
+   setlinewidth 0.0 rlineto stroke grestore} bind def
+/LH {gsave newpath moveto setlinewidth
+   0.0 rlineto
+   gsave stroke grestore} bind def
+/LV {gsave newpath moveto setlinewidth
+   0.0 exch rlineto
+   gsave stroke grestore} bind def
+/BX {gsave newpath moveto setlinewidth
+   exch
+   dup 0.0 rlineto
+   exch 0.0 exch neg rlineto
+   neg 0.0 rlineto
+   closepath
+   gsave stroke grestore} bind def
+/BX1 {grestore} bind def
+/BX2 {setlinewidth 1 setgray stroke grestore} bind def
+/PB {/PV save def newpath translate
+    100.0 -100.0 scale pop /showpage {} def} bind def
+/PE {PV restore} bind def
+/GB {/PV save def newpath translate rotate
+    div dup scale 100.0 -100.0 scale
+    /showpage {} def
+    /letter {} def
+    /lettersmall {} def
+    /note {} def
+    } bind def
+/GE {PV restore} bind def
+/FB {dict dup /FontMapDict exch def begin} bind def
+/FM {cvn exch cvn exch def} bind def
+/FE {end /original-findfont /findfont load def  /findfont
+   {dup FontMapDict exch known{FontMapDict exch get} if
+   original-findfont} def} bind def
+/BC {gsave moveto dup 0 exch rlineto exch 0 rlineto neg 0 exch rlineto closepath clip} bind def
+/EC /grestore load def
+/SH /show load def
+/MX {exch show 0.0 rmoveto} bind def
+/W {0 32 4 -1 roll widthshow} bind def
+/WX {0 32 5 -1 roll widthshow 0.0 rmoveto} bind def
+/RC {100.0 -100.0 scale
+612.0 0.0 translate
+-90.0 rotate
+.01 -.01 scale} bind def
+/URC {100.0 -100.0 scale
+90.0 rotate
+-612.0 0.0 translate
+.01 -.01 scale} bind def
+/RCC {100.0 -100.0 scale
+0.0 -792.0 translate 90.0 rotate
+.01 -.01 scale} bind def
+/URCC {100.0 -100.0 scale
+-90.0 rotate 0.0 792.0 translate
+.01 -.01 scale} bind def
+%%EndProlog
+%%Page: 0 1
+BS
+0 SI
+11 SS 
+1 1 0 8280 7200 GB 
+%%BeginDocument: single-sided.ps
+%!PS-Adobe-2.0
+%
+%  This PostScript code turns off double-sided printing,
+%  which is desirable since we want to be able to move the
+%  Tables of Contents by hand after the manuals are printed.
+%
+statusdict begin
+   false setduplexmode
+end
+
+%%EndDocument
+ GE 16 /Times-Bold AF
+21834 18976 MT
+(On-line tour through Garnet)SH
+11 SS 
+28182 21368 MT
+(Brad A. Myers)SH
+/Times-Roman SF
+28183 23294 MT
+(December 1994)SH
+/Times-Bold SF
+29634 44214 MT
+(Abstract)SH
+/Times-Roman SF
+8280 45966 MT
+(This document provides an on-line)
+17 W( tour through some of the features of the Garnet toolkit.  It serves as an)16 W
+8280 47262 MT
+(introduction to the toolkit and how to program with it.  This document and tour do)96 W
+/Times-Italic SF
+46329 XM
+(not)SH
+/Times-Roman SF
+48106 XM
+(assume that the)96 W
+8280 48558 MT
+(reader has read the)
+370 W( reference manuals.  The tour only assumes that the reader is familiar with)369 W
+8280 49854 MT
+(CommonLisp and has loaded the Garnet software.)SH
+21010 55572 MT
+(Copyright)SH
+/Symbol SF
+25747 XM
+(\323)SH
+/Times-Roman SF
+26891 XM
+(1994 - Carnegie Mellon University)SH
+8280 62355 MT
+(This research was sponsored by NCCOSC under Contract No.  N66001-94-C-6037, Arpa Order)
+207 W( No.)208 W
+8280 63651 MT
+(B326. The)
+381 W( views and conclusions contained in this document)
+53 W( are those of the authors and should not be)52 W
+8280 64947 MT
+(interpreted as representing the official policies, either expressed or implied, of NCCOSC or)
+192 W( the U.S.)193 W
+8280 66243 MT
+(Government.)SH
+ES
+%%Page: 43 2
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(Chapter 1)
+SH( Introduction)1550 W
+51886 XM
+(Page 43)SH
+46800 50 8280 4486 UL
+16 /Times-Bold AF
+8280 8272 MT
+(1. Introduction)SH
+11 /Times-Roman AF
+8280 10524 MT
+(The Garnet User Interface Development Environment contains a comprehensive)
+62 W( set of tools that make it)61 W
+8280 11720 MT
+(significantly easier to design and implement highly-interactive, graphical, direct manipulation user)336 W
+8280 12916 MT
+(interfaces. The)
+367 W( lower layers of Garnet)
+46 W( provide an object-oriented, constraint-based graphical system that)45 W
+8280 14112 MT
+(allows properties of graphical)
+24 W( objects to be specified in a simple, declarative manner and then maintained)25 W
+8280 15308 MT
+(automatically by the system.  The dynamic, interactive behavior of the objects)
+19 W( can be specified separately)18 W
+8280 16504 MT
+(by attaching high-level ``interactor'' objects to the graphics.)
+220 W( The)
+717 W( higher layers of Garnet include a)221 W
+8280 17700 MT
+(number of tools to allow various parts of the)
+15 W( interface to be specified without programming.  The primary)14 W
+8280 18896 MT
+(tools are Gilt, an interface builder, and Lapidary, a tool which helps you build gadgets and dialog boxes.)SH
+8280 21194 MT
+(This document will help users get acquainted with the Garnet software)
+15 W( by leading them through a number)16 W
+8280 22390 MT
+(of exercises on line.  This entire exercise should take about an hour.  This)
+89 W( tour assumes that the user is)88 W
+8280 23586 MT
+(familiar with Lisp, although even non-Lispers might be able to type in)
+74 W( the expressions verbatim and get)75 W
+8280 24782 MT
+(the correct results.)SH
+8280 27080 MT
+(Clearly, in this short tour, a great many parts of Garnet)
+65 W( will not be covered, so the interested reader will)64 W
+8280 28276 MT
+(need to refer to other parts of this manual for details.)SH
+ES
+%%Page: 44 3
+BS
+0 SI
+10 /Times-Roman AF
+6120 4286 MT
+(Page 44)
+SH( Garnet)
+830 W( Tour)SH
+41121 XM
+(Getting Started)
+SH( Chapter)
+1550 W( 2)SH
+46800 50 6120 4486 UL
+16 /Times-Bold AF
+6120 8272 MT
+(2. Getting Started)SH
+11 /Times-Roman AF
+6120 10524 MT
+(Garnet is a software package written in CommonLisp for X/11 and the)
+56 W( Mac, so the first thing to do is to)57 W
+6120 11720 MT
+(run X/11 and lisp)
+20 W( on your Unix machine, or start MCL on your Mac.  At Carnegie Mellon University, the)19 W
+6120 12916 MT
+(Garnet software is available on the AFS file server.  Elsewhere,)
+61 W( you will have to copy the software onto)62 W
+6120 14112 MT
+(your machine, and load it into your Lisp.)
+315 W( See)
+903 W( the discussion in the Overview document for an)314 W
+6120 15308 MT
+(explanation of loading Garnet and special considerations for particular machines.)SH
+14 /Times-Bold AF
+6120 19126 MT
+(2.1. Typing)SH
+11 /Times-Roman AF
+6120 20322 MT
+(Many of the names in Garnet contain colons ``:'' and hyphens ``-''.  These are part of the names and)
+5 W( must)6 W
+6120 21518 MT
+(be typed as shown.  For example,)SH
+10 /Courier AF
+21119 XM
+(:filling-style)SH
+11 /Times-Roman AF
+29794 XM
+(is a single name, and must be typed exactly.)SH
+6120 23816 MT
+(In this document, the)
+57 W( text that the user types \050e.g, you\051 is shown underlined in the code examples.  Most)56 W
+6120 25012 MT
+(of the code looks like the following:)SH
+8 /Courier AF
+8040 26177 MT
+(* \050+ 3 4\051)SH
+3360 50 9000 26377 UL
+8040 27042 MT
+(7)SH
+11 /Times-Roman AF
+6120 28463 MT
+(The "*" is the prompt from Lisp to tell you it is ready to accept input \050your Lisp may use a different)139 W
+6120 29659 MT
+(prompt\051. Do)
+625 W( not type the "*".  Type "\050+ 3)
+175 W( 4\051".  The next line \050here)174 W
+10 /Courier AF
+38690 XM
+(7)SH
+11 /Times-Roman AF
+(\051 shows what Lisp types as a)174 W
+6120 30855 MT
+(response.)SH
+6120 33153 MT
+(If you don't like to type, you might have the Appendix of this document displayed in an editor)
+80 W( and just)81 W
+6120 34349 MT
+(copy the commands into the Lisp window.  In X, you can use)
+25 W( the X cut buffer \050copy the lines one-by-one)24 W
+6120 35545 MT
+(into the X cut buffer, then paste them into the Lisp window\051; on the Mac,)
+100 W( you can edit a file using the)101 W
+6120 36741 MT
+(MCL editor and do the usual)
+289 W( copy-and-paste operations.  The Appendix contains a list of all the)288 W
+6120 37937 MT
+(commands you need to type, to make it easier to copy them.  The appendix code by itself is)
+42 W( stored in the)43 W
+6120 39133 MT
+(file)SH
+10 /Courier AF
+8930 XM
+(tourcommands.lisp)SH
+11 /Times-Roman AF
+20474 XM
+(which is stored in the)1069 W
+10 /Courier AF
+35504 XM
+(demos)SH
+11 /Times-Roman AF
+39848 XM
+(source directory \050usually)1069 W
+10 /Courier AF
+6120 40329 MT
+(garnet/src/demos/tourcommands.lisp)SH
+11 /Times-Roman AF
+(\051.)SH
+/Times-Italic SF
+27839 XM
+(Note: do not)
+64 W( just load)65 W
+10 /Courier AF
+38033 XM
+(tourcommands)SH
+11 /Times-Italic AF
+(, since it will run)65 W
+6120 41525 MT
+(all the demos and quickly quit; just copy-and-paste the commands one-by-one from the file)SH
+/Times-Roman SF
+(.)SH
+14 /Times-Bold AF
+6120 45343 MT
+(2.2. Garbage Collection)SH
+11 /Times-Roman AF
+6120 46539 MT
+(Most CommonLisp)
+81 W( implementations use a garbage collection mechanism that occasionally interrupts all)80 W
+6120 47735 MT
+(activity until it is completed.  At various times)
+70 W( during your tour, Lisp will stop and print something like)71 W
+6120 48931 MT
+(the following message:)SH
+8 /Courier AF
+8040 50096 MT
+([GC threshold exceeded with 2,593,860 bytes in use.  Commencing GC.])SH
+11 /Times-Roman AF
+6120 51517 MT
+(You will then have to wait until it finishes and types something like:)SH
+8 /Courier AF
+8040 52682 MT
+([GC completed with 538,556 bytes retained and 2,055,356 bytes freed.])SH
+8040 53547 MT
+([GC will next occur when at least 2,538,556 bytes are in use.])SH
+11 /Times-Roman AF
+6120 54968 MT
+(This can happen at any time, and it causes)
+49 W( the entire system to freeze \050although the cursor will still track)48 W
+6120 56164 MT
+(the mouse\051.  Therefore, if nothing is)
+166 W( responding, Lisp and Garnet may not have crashed.  Wait for a)167 W
+6120 57360 MT
+(minute and see if they come back.)SH
+14 /Times-Bold AF
+6120 61178 MT
+(2.3. Errors, etc.)SH
+11 /Times-Roman AF
+6120 62374 MT
+(It is quite common)
+55 W( to end up in the Lisp debugger.  This might be caused by a bug in Garnet or because)54 W
+6120 63570 MT
+(you made a small typing error.  To get out of the debugger, you will need to)
+64 W( type the specific command)65 W
+6120 64766 MT
+(for that version of CommonLisp \050)266 W
+10 /Courier AF
+(q)SH
+11 /Times-Roman AF
+23470 XM
+(on CMU CommonLisp,)266 W
+10 /Courier AF
+35026 XM
+(:reset)SH
+11 /Times-Roman AF
+39167 XM
+(in Allegro CommonLisp,)
+266 W( and)265 W
+6120 65962 MT
+(Command-period in MCL\051.)
+227 W( For)
+730 W( special instructions about the LispWorks debugger, see the section)228 W
+6120 67158 MT
+("LispWorks" in the Overview manual.)SH
+6120 69456 MT
+(Often, you can just try whatever you were doing again.)
+134 W( However,)
+541 W( some errors might cause Garnet or)133 W
+6120 70652 MT
+(even Lisp to get messed up.  In order of severity, you can try the following recovery)
+170 W( strategies after)171 W
+6120 71848 MT
+(leaving the debugger:)SH
+ES
+%%Page: 45 4
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(Section 2.3)
+SH( Errors,)
+1800 W( etc.)SH
+51886 XM
+(Page 45)SH
+46800 50 8280 4486 UL
+11 /Symbol AF
+10249 8080 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(If Lisp does not seem)
+39 W( to be responding, try typing ^C \050or whatever your break character is --)38 W
+11030 9276 MT
+(Command-comma in MCL\051)69 W
+/Times-Italic SF
+23856 XM
+(to the lisp window)69 W
+/Times-Roman SF
+32446 XM
+(\050move the mouse cursor to the)
+69 W( Lisp window)70 W
+11030 10472 MT
+(first\051.)SH
+/Symbol SF
+10249 12366 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(If you typed a line incorrectly, try typing it again the correct way.)SH
+/Symbol SF
+10249 14260 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(If that does not work, try)
+176 W( destroying the object you were creating and starting over from)175 W
+11030 15456 MT
+(where you first started creating the object.  To destroy an object that you)
+216 W( created using)217 W
+10 /Courier AF
+11030 16652 MT
+(\050create-instance 'xxx ...\051)222 W
+11 /Times-Roman AF
+(, just)
+222 W( type)221 W
+10 /Courier AF
+32322 XM
+(\050opal:destroy xxx\051)221 W
+11 /Times-Roman AF
+(. Note)
+717 W( that on the)221 W
+10 /Courier AF
+11030 17848 MT
+(create-instance)SH
+11 /Times-Roman AF
+20305 XM
+(there is a quote mark, but not on the destroy call.)SH
+/Symbol SF
+10249 19742 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(If you were in the first part of the tour)
+59 W( \050section 3\051, then if that does not work, try destroying)60 W
+11030 20938 MT
+(the window and starting over from the top:)97 W
+10 /Courier AF
+30930 XM
+(\050opal:destroy MYWINDOW\051)96 W
+11 /Times-Roman AF
+(. If)
+467 W( you were in)96 W
+11030 22134 MT
+(the Othello part, try typing)SH
+10 /Courier AF
+23068 XM
+(\050stop-othello\051)SH
+11 /Times-Roman AF
+(.)SH
+/Symbol SF
+10249 24028 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(If that does not work, try quitting Lisp and restarting.  For CMU CommonLisp,)
+24 W( type)25 W
+10 /Courier AF
+48730 XM
+(\050quit\051)SH
+11 /Times-Roman AF
+11030 25224 MT
+(to get out of Lisp;)
+300 W( for Lucid, type)299 W
+10 /Courier AF
+28427 XM
+(\050system:quit\051)SH
+11 /Times-Roman AF
+(; for LispWorks, type)299 W
+10 /Courier AF
+47168 XM
+(\050bye\051)SH
+11 /Times-Roman AF
+(; for)299 W
+11030 26420 MT
+(Allegro, type)106 W
+10 /Courier AF
+17321 XM
+(:ex)SH
+11 /Times-Roman AF
+(; and for MCL type)106 W
+10 /Courier AF
+28480 XM
+(\050quit\051)SH
+11 /Times-Roman AF
+(. See)
+487 W( section 2 about how)
+106 W( to start Lisp, and)107 W
+11030 27616 MT
+(section 7 about quitting.)SH
+/Symbol SF
+10249 29510 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(Finally, you can always logout and log back in.)SH
+8280 31808 MT
+(In the Appendix of this document is a list of all the commands you are supposed to type)
+43 W( in.  This will be)42 W
+8280 33004 MT
+(useful if you need to start over and don't want to have to read through everything to)
+113 W( get to where you)114 W
+8280 34200 MT
+(were. If)
+343 W( you are starting at the Othello part \050section 4\051, you do not have to)
+34 W( execute any of the commands)33 W
+8280 35396 MT
+(before that \050except to load Garnet and the tour\051.)SH
+8280 37694 MT
+(If Lisp seems to be stuck in an infinite loop, you can break out by typing the)
+19 W( break character \050often ^C \320)20 W
+8280 38890 MT
+(control-C\051 or the abort command in MCL \050Command-comma\051.  It will throw you into the debugger.)SH
+8280 41188 MT
+(If you start something over, or retype a command, you may see messages like:)SH
+8 /Courier AF
+10200 42353 MT
+(Warning - create-schema is destroying the old #k<MGE::TRILL>.)SH
+11 /Times-Roman AF
+8280 43774 MT
+(This is a debugging statement is you can just ignore it.)SH
+8280 46072 MT
+(There are a large)
+26 W( number of debugging functions and techniques provided to help fix Garnet toolkit code,)25 W
+8280 47268 MT
+(but these are not explained in this tour.  See the debugging manual.)SH
+ES
+%%Page: 46 5
+BS
+0 SI
+10 /Times-Roman AF
+6120 4286 MT
+(Page 46)
+SH( Garnet)
+830 W( Tour)SH
+40623 XM
+(Learning Garnet)
+SH( Chapter)
+1550 W( 3)SH
+46800 50 6120 4486 UL
+16 /Times-Bold AF
+6120 8272 MT
+(3. Learning Garnet)SH
+14 SS 
+6120 13146 MT
+(3.1. A Note on Packages)SH
+11 /Times-Roman AF
+6120 14342 MT
+(The Garnet software is divided into)
+170 W( a number of Lisp packages.  A)171 W
+/Times-Italic SF
+37966 XM
+(package)SH
+/Times-Roman SF
+42076 XM
+(may be thought of as a)171 W
+6120 15538 MT
+(module containing procedures)
+407 W( and variables that are all associated in some way.  Usually, the)406 W
+6120 16734 MT
+(programmer works in the)20 W
+10 /Courier AF
+17624 XM
+(user)SH
+11 /Times-Roman AF
+20319 XM
+(package, and is not aware of other packages in Lisp.  In Garnet, however,)20 W
+6120 17930 MT
+(function calls are frequently accompanied by the name of the package in which the function was defined.)SH
+6120 20228 MT
+(For example, one)
+214 W( of the packages in Garnet is)213 W
+10 /Courier AF
+28503 XM
+(opal)SH
+11 /Times-Roman AF
+(, which contains all the objects and procedures)213 W
+6120 21424 MT
+(dealing with graphics.  To reference the)127 W
+10 /Courier AF
+24783 XM
+(rectangle)SH
+11 /Times-Roman AF
+30585 XM
+(object, which is defined in)127 W
+10 /Courier AF
+43135 XM
+(opal)SH
+11 /Times-Roman AF
+(, the user has to)128 W
+6120 22620 MT
+(explicitly mention the package name, as in)SH
+10 /Courier AF
+25182 XM
+(opal:rectangle)SH
+11 /Times-Roman AF
+(.)SH
+6120 24918 MT
+(On the other hand, the package)
+40 W( name may be omitted if the user calls)39 W
+10 /Courier AF
+37368 XM
+(use-package)SH
+11 /Times-Roman AF
+44282 XM
+(on the package that)39 W
+6120 26114 MT
+(is to be referenced.  That)
+83 W( is, if the command)84 W
+10 /Courier AF
+26625 XM
+(\050use-package :OPAL\051)84 W
+11 /Times-Roman AF
+38468 XM
+(or)SH
+10 /Courier AF
+39743 XM
+(\050use-package "OPAL"\051)84 W
+11 /Times-Roman AF
+52186 XM
+(is)SH
+6120 27310 MT
+(issued, then the)SH
+10 /Courier AF
+13208 XM
+(rectangle)SH
+11 /Times-Roman AF
+18883 XM
+(object may be referenced without naming the)SH
+10 /Courier AF
+39072 XM
+(opal)SH
+11 /Times-Roman AF
+41747 XM
+(package.)SH
+6120 29608 MT
+(The recommended "Garnet)
+124 W( Style" is to)123 W
+10 /Courier AF
+24192 XM
+(use-package)SH
+11 /Times-Roman AF
+31190 XM
+(only one Garnet package --)123 W
+10 /Courier AF
+44050 XM
+(KR)SH
+11 /Times-Roman AF
+45648 XM
+(-- and explicitly)123 W
+6120 30804 MT
+(reference objects in)
+84 W( other packages.  This convention is followed in the code examples below.  The file)85 W
+10 /Courier AF
+6120 32000 MT
+(tour.lisp)SH
+11 /Times-Roman AF
+11832 XM
+(that you loaded contains the line)36 W
+10 /Courier AF
+26590 XM
+(\050use-package :KR\051)36 W
+11 /Times-Roman AF
+(, which implements this convention.)36 W
+6120 33196 MT
+(You will probably want to put this line at the top of all your future Garnet programs as well.)SH
+6120 35494 MT
+(The packages in Garnet include:)SH
+/Symbol SF
+8089 37072 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(KR)SH
+11 /Times-Roman AF
+10414 XM
+(- contains the procedures for creating and)
+69 W( accessing objects.  This contains the functions)70 W
+10 /Courier AF
+8870 38268 MT
+(create-instance)SH
+11 /Times-Roman AF
+(,)SH
+10 /Courier AF
+18420 XM
+(gv)SH
+11 /Times-Roman AF
+(,)SH
+10 /Courier AF
+20170 XM
+(gvl)SH
+11 /Times-Roman AF
+(,)SH
+10 /Courier AF
+22520 XM
+(s-value)SH
+11 /Times-Roman AF
+(, and)SH
+10 /Courier AF
+29133 XM
+(o-formula)SH
+11 /Times-Roman AF
+(.)SH
+/Symbol SF
+8089 40162 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(Opal)SH
+11 /Times-Roman AF
+11545 XM
+(- contains the graphical objects and some functions for them.)SH
+/Symbol SF
+8089 42056 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(Inter)SH
+11 /Times-Roman AF
+12145 XM
+(- contains the interactor objects for handling the mouse.)SH
+/Symbol SF
+8089 43950 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(Garnet-Gadgets)SH
+11 /Times-Roman AF
+17846 XM
+(- \050nicknamed)301 W
+10 /Courier AF
+24556 XM
+(gg)SH
+11 /Times-Roman AF
+(\051 contains a collection of predefined)
+301 W( "gadgets" like)300 W
+8870 45146 MT
+(menus and scroll bars.)SH
+/Symbol SF
+8089 47040 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(Garnet-Debug)SH
+11 /Times-Roman AF
+16389 XM
+(- \050nicknamed)45 W
+10 /Courier AF
+22587 XM
+(gd)SH
+11 /Times-Roman AF
+(\051 contains a number of debugging functions.  These are not)45 W
+8870 48236 MT
+(discussed in this tour, however.)SH
+14 /Times-Bold AF
+6120 52054 MT
+(3.2. A Note on Refresh)SH
+11 /Times-Roman AF
+6120 53250 MT
+(In X/11 and Mac QuickDraw, pictures drawn to windows need)
+98 W( to be redrawn if the window is covered)97 W
+6120 54446 MT
+(and then uncovered.)
+85 W( Garnet)
+447 W( handles this automatically for you by through a background process which)86 W
+6120 55642 MT
+(detects this situation and redraws windows when)
+341 W( necessary.  In most lisps, Garnet launches this)340 W
+10 /Courier AF
+6120 56838 MT
+(main-event-loop)SH
+11 /Times-Roman AF
+15518 XM
+(process itself.  On the Mac, MCL)
+123 W( runs a background process anyway, and Garnet)124 W
+6120 58034 MT
+(supplies the)
+156 W( necessary functions that handle graphics redrawing.  This function is also responsible for)155 W
+6120 59230 MT
+(processing mouse and keyboard input to Garnet windows.)SH
+6120 61528 MT
+(The)SH
+10 /Courier AF
+8161 XM
+(main-event-loop)SH
+11 /Times-Roman AF
+17492 XM
+(background process starts without)
+56 W( any special attention in most lisps, including)57 W
+6120 62724 MT
+(Allegro, Lucid, CMUCL, and MCL.  If you are running LispWorks,)
+269 W( then there is an initialization)268 W
+6120 63920 MT
+(procedure for multiprocessing that you must perform)
+371 W( before loading Garnet.  Please consult the)372 W
+6120 65116 MT
+("LispWorks" section of the Overview Manual, the first section in this Garnet Reference Manual.)SH
+6120 67414 MT
+(Unfortunately, if you are not)
+68 W( running a recent version of Allegro, Lucid, CMUCL, MCL, or LispWorks,)67 W
+6120 68610 MT
+(your Lisp may not)
+221 W( support background processes. In this case, you must explicitly run the function)222 W
+6120 69806 MT
+(yourself. If)
+749 W( you notice that windows are not refreshing properly after becoming uncovered \050or)
+237 W( de-)236 W
+6120 71002 MT
+(iconified\051, or that Garnet is completely ignoring)
+258 W( all your keyboard and mouse input, then type the)259 W
+ES
+%%Page: 47 6
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(Section 3.4)
+SH( Basic)
+1800 W( Objects)SH
+51886 XM
+(Page 47)SH
+46800 50 8280 4486 UL
+11 SS 
+8280 7955 MT
+(following into Lisp:)SH
+8 /Courier AF
+10200 9120 MT
+(* \050inter:main-event-loop\051)SH
+11040 50 11160 9320 UL
+11 /Times-Roman AF
+8280 10541 MT
+(This function loops forever, so you then have to hit the)39 W
+10 /Courier AF
+33149 XM
+(F1)SH
+11 /Times-Roman AF
+34663 XM
+(key while the cursor is in a)
+39 W( Garnet window to)38 W
+8280 11737 MT
+(exit)SH
+10 /Courier AF
+10560 XM
+(main-event-loop)SH
+11 /Times-Roman AF
+(. Alternatively,)
+985 W( you can type ^C or Command-period,)
+355 W( or whatever your)356 W
+8280 12933 MT
+(operating system break character)
+60 W( is, in the Lisp window.  Also, it is permissible \050though unnecessary\051 to)59 W
+8280 14129 MT
+(call)SH
+10 /Courier AF
+10270 XM
+(main-event-loop)SH
+11 /Times-Roman AF
+19673 XM
+(within a version of Lisp which supports background processes -- the function)128 W
+8280 15325 MT
+(first checks if another)181 W
+10 /Courier AF
+18837 XM
+(main-event-loop)SH
+11 /Times-Roman AF
+28292 XM
+(is already running in the background, and if so, it returns)180 W
+8280 16521 MT
+(immediately.)SH
+14 /Times-Bold AF
+8280 20339 MT
+(3.3. Loading Garnet and the Tour)SH
+11 /Times-Roman AF
+8280 21535 MT
+(The Overview document discusses)
+73 W( how to load the Garnet software.  In summary, you will load the file)74 W
+10 /Courier AF
+8280 22731 MT
+(Garnet-Loader)SH
+11 /Times-Roman AF
+16380 XM
+(and this will load all the standard software.  After that, you need to load the special file)25 W
+10 /Courier AF
+8280 23927 MT
+(tour.lisp)SH
+11 /Times-Roman AF
+(, which is in the)224 W
+10 /Courier AF
+22072 XM
+(src/demos)SH
+11 /Times-Roman AF
+27971 XM
+(sub-directory. For)
+723 W( example,)
+224 W( if the Garnet files are in the)225 W
+8280 25123 MT
+(directory)SH
+10 /Courier AF
+12525 XM
+(/usr/xxx/garnet/)SH
+11 /Times-Roman AF
+(, then type the following:)SH
+8 /Courier AF
+10200 26288 MT
+(* \050load "/usr/xxx/garnet/garnet-loader"\051)SH
+18240 50 11160 26488 UL
+11 /Times-Roman AF
+8280 27709 MT
+(Which will print out lots of stuff.  Then type:)SH
+8 /Courier AF
+10200 28874 MT
+(* \050garnet-load "demos:tour"\051)SH
+12480 50 11160 29074 UL
+11 /Times-Roman AF
+8280 30295 MT
+(Note that)128 W
+10 /Courier AF
+12874 XM
+(garnet-load)SH
+11 /Times-Roman AF
+19877 XM
+(is a useful procedure provided by Garnet to simplify loading Garnet files.)
+128 W( It)530 W
+8280 31491 MT
+(takes one argument \050in this case)391 W
+10 /Courier AF
+24982 XM
+("demos:tour")SH
+11 /Times-Roman AF
+(\051, a)
+391 W( two-part string consisting of the a Garnet)392 W
+8280 32687 MT
+(subdirectory reference \050eg,)174 W
+10 /Courier AF
+20892 XM
+("demos")SH
+11 /Times-Roman AF
+(\051 and the name of a file \050eg,)
+174 W( "tour"\051, separated by a colon.  The)173 W
+8280 33883 MT
+(procedure searches the)
+336 W( directory associated with that package for a Lisp file \050either compiled or)337 W
+8280 35079 MT
+(uncompiled\051 of that name.)SH
+14 /Times-Bold AF
+8280 38897 MT
+(3.4. Basic Objects)SH
+11 /Times-Roman AF
+8280 40093 MT
+(Now you are going to start creating some Garnet Toolkit objects.)SH
+8280 42391 MT
+(Garnet is an object-oriented system, and you create)
+11 W( objects using the function)10 W
+10 /Courier AF
+42832 XM
+(create-instance)SH
+11 /Times-Roman AF
+(, which)10 W
+8280 43587 MT
+(takes a quoted name for the new object, the type of object to)
+224 W( create, and then some other optional)225 W
+8280 44783 MT
+(parameters. First,)
+275 W( you will create a window object.)SH
+8280 47081 MT
+(Type the text shown underlined to Lisp.  Be sure to start with an open parenthesis and be careful)
+87 W( about)86 W
+8280 48277 MT
+(where the quotes and colons go.)SH
+8 /Courier AF
+10200 49442 MT
+(* \050create-instance 'MYWINDOW inter:interactor-window\051)SH
+24480 50 11160 49642 UL
+10200 50307 MT
+(#k<MYWINDOW>)SH
+11 /Times-Roman AF
+8280 52605 MT
+(You won't)
+77 W( see anything yet, because Garnet waits for an)78 W
+10 /Courier AF
+34256 XM
+(update)SH
+11 /Times-Roman AF
+38209 XM
+(call before showing the results.  Now)78 W
+8280 53801 MT
+(type:)SH
+8 /Courier AF
+10200 54966 MT
+(* \050opal:update MYWINDOW\051)SH
+10560 50 11160 55166 UL
+11 /Times-Roman AF
+8280 56387 MT
+(and the window should appear.)SH
+8280 58685 MT
+(You can move the window around)
+46 W( and change its size just like any other X or Mac window, in whatever)45 W
+8280 59881 MT
+(way you have your X window manager set up to do this.)SH
+8280 62179 MT
+(Now, you are going to create an ``aggregate'' object to hold all the)
+248 W( other objects you create.  An)249 W
+8280 63375 MT
+(aggregate holds a collection of other objects; it does not have any graphic appearance itself.)SH
+8 /Courier AF
+10200 64540 MT
+(* \050create-instance 'MYAGG opal:aggregate\051)SH
+18720 50 11160 64740 UL
+10200 65405 MT
+(#k<MYAGG>)SH
+11 /Times-Roman AF
+8280 66826 MT
+(This aggregate will be the special top level aggregate in the window,)
+84 W( that will hold all the objects to be)83 W
+8280 68022 MT
+(displayed in the window.  You will use the function)148 W
+10 /Courier AF
+32828 XM
+(s-value)SH
+11 /Times-Roman AF
+37452 XM
+(which sets the value of a ``slot'' \050also)149 W
+8280 69218 MT
+(called an instance variable\051 of the)
+34 W( object.)33 W
+10 /Courier AF
+27148 XM
+(S-value)SH
+11 /Times-Roman AF
+31656 XM
+(takes the object, the slot and the new value.  To read)33 W
+8280 70414 MT
+(the value of the slot, use the function)100 W
+10 /Courier AF
+25607 XM
+(gv)SH
+11 /Times-Roman AF
+(, which stants for)
+100 W( ``get value''.  All slot names in Garnet start)101 W
+8280 71610 MT
+(with a colon.)SH
+ES
+%%Page: 48 7
+BS
+0 SI
+10 /Times-Roman AF
+6120 4286 MT
+(Page 48)
+SH( Garnet)
+830 W( Tour)SH
+40623 XM
+(Learning Garnet)
+SH( Chapter)
+1550 W( 3)SH
+46800 50 6120 4486 UL
+8 /Courier AF
+8040 7699 MT
+(* \050s-value MYWINDOW :aggregate MYAGG\051)SH
+16800 50 9000 7899 UL
+8040 8564 MT
+(#k<MYAGG>)SH
+8040 9429 MT
+(* \050gv MYWINDOW :aggregate\051)SH
+11520 50 9000 9629 UL
+8040 10294 MT
+(#k<MYAGG>)SH
+11 /Times-Roman AF
+6120 12592 MT
+(Now, you will create a rectangle.)SH
+8 /Courier AF
+8040 13757 MT
+(* \050create-instance 'MYRECT MOVING-RECTANGLE\051)SH
+20160 50 9000 13957 UL
+8040 14622 MT
+(#k<MYRECT>)SH
+9 /Times-Roman AF
+6120 15912 MT
+([Note: MOVING-RECTANGLE is defined in the)295 W
+10 /Courier AF
+25990 XM
+(user)SH
+9 /Times-Roman AF
+28910 XM
+(package by)295 W
+10 /Courier AF
+33800 XM
+(tour.lisp)SH
+9 /Times-Roman AF
+39720 XM
+(as a specialization of the general)295 W
+10 /Courier AF
+6120 17108 MT
+(opal:rectangle)SH
+9 /Times-Roman AF
+14745 XM
+(prototype.])SH
+11 SS 
+6120 19406 MT
+(Again, this is not visible yet.)
+123 W( First,)
+523 W( the rectangle must be added to the aggregate, and then the update)124 W
+6120 20602 MT
+(procedure must be called.  Adding)
+201 W( the rectangle uses the function)200 W
+10 /Courier AF
+37403 XM
+(add-component)SH
+11 /Times-Roman AF
+45678 XM
+(which takes the)200 W
+6120 21798 MT
+(aggregate and the new object to add to it.)SH
+8 /Courier AF
+8040 22963 MT
+(* \050opal:add-component MYAGG MYRECT\051)SH
+15840 50 9000 23163 UL
+8040 23828 MT
+(#k<MYRECT>)SH
+8040 24693 MT
+(* \050opal:update MYWINDOW\051)SH
+10560 50 9000 24893 UL
+8040 25558 MT
+(NIL)SH
+11 /Times-Roman AF
+6120 27856 MT
+(The rectangle should now appear in the window.)SH
+6120 30154 MT
+(All objects have a number of properties, such as their position,)
+18 W( size and color.  So far, all the objects have)19 W
+6120 31350 MT
+(used the default values for properties.  You will now change the)
+172 W( color of the rectangle by setting its)171 W
+10 /Courier AF
+6120 32546 MT
+(:filling-style)SH
+11 /Times-Roman AF
+14908 XM
+(slot. Remember)
+501 W( that slot)
+113 W( names begin with a colon, and that nothing happens until)114 W
+6120 33742 MT
+(you do the)SH
+10 /Courier AF
+11039 XM
+(update)SH
+11 /Times-Roman AF
+(.)SH
+8 /Courier AF
+8040 34907 MT
+(* \050s-value MYRECT :filling-style opal:gray-fill\051)SH
+22080 50 9000 35107 UL
+8040 35772 MT
+(#k<GRAY-FILL>)SH
+8040 36637 MT
+(* \050opal:update MYWINDOW\051)SH
+10560 50 9000 36837 UL
+8040 37502 MT
+(NIL)SH
+11 /Times-Roman AF
+6120 39800 MT
+(The other filling styles that are available include)4 W
+10 /Courier AF
+27717 XM
+(opal:light-gray-fill, opal:dark-gray-fill,)3 W
+6120 40996 MT
+(opal:black-fill, opal:white-fill)400 W
+11 /Times-Roman AF
+(, and)400 W
+10 /Courier AF
+28933 XM
+(opal:diamond-fill)SH
+11 /Times-Roman AF
+(. These)
+1075 W( are all)
+400 W( ``halftone'')401 W
+6120 42192 MT
+(shades, which means that they are created by turning)
+59 W( some pixels on and others off.  If you have a color)58 W
+6120 43388 MT
+(screen, you might also try)990 W
+10 /Courier AF
+22740 XM
+(opal:red-fill, opal:blue-fill, opal:green-fill,)990 W
+6120 44584 MT
+(opal:yellow-fill, opal:purple-fill)SH
+11 /Times-Roman AF
+(, etc.)SH
+6120 46882 MT
+(Now, you will create a text object.  Here, for the first time, you will)
+92 W( supply some extra values for slots)91 W
+6120 48078 MT
+(when the object is created, rather than just using)118 W
+10 /Courier AF
+28686 XM
+(s-value)SH
+11 /Times-Roman AF
+33279 XM
+(afterward. Objects)
+511 W( have a large number of)119 W
+6120 49274 MT
+(slots and the ones that are not specified use the default values.  To specify a slot at creation time, each)98 W
+6120 50470 MT
+(name and value is enclosed in a separate parenthesis pair.  Note)
+53 W( that you can type carriage return where-)54 W
+6120 51666 MT
+(ever you want.  After the text is created, add it to the aggregate and update the window.)SH
+8 /Courier AF
+8040 52831 MT
+(* \050create-instance 'MYTEXT opal:text \050:left 200\051\050:top 80\051)SH
+26400 50 9000 53031 UL
+10920 53696 MT
+(\050:string "Hello World"\051\051)SH
+14400 50 8040 53896 UL
+8040 54561 MT
+(#k<MYTEXT>)SH
+8040 55426 MT
+(* \050opal:add-component MYAGG MYTEXT\051)SH
+15840 50 9000 55626 UL
+8040 56291 MT
+(#k<MYTEXT>)SH
+8040 57156 MT
+(* \050opal:update MYWINDOW\051)SH
+10560 50 9000 57356 UL
+8040 58021 MT
+(NIL)SH
+11 /Times-Roman AF
+6120 59442 MT
+(The)SH
+10 /Courier AF
+8253 XM
+(:top)SH
+11 /Times-Roman AF
+11076 XM
+(of the string is just its)147 W
+10 /Courier AF
+21738 XM
+(Y)SH
+11 /Times-Roman AF
+22760 XM
+(value, and the)147 W
+10 /Courier AF
+29615 XM
+(:left)SH
+11 /Times-Roman AF
+33037 XM
+(is just the)147 W
+10 /Courier AF
+37971 XM
+(X)SH
+11 /Times-Roman AF
+38993 XM
+(value, and they are, of course,)147 W
+6120 60638 MT
+(independent.)SH
+6120 62936 MT
+(You can change the position \050)24 W
+10 /Courier AF
+(:left)SH
+11 /Times-Roman AF
+22705 XM
+(and)SH
+10 /Courier AF
+24593 XM
+(:top)SH
+11 /Times-Roman AF
+(\051 and string of MYTEXT using)25 W
+10 /Courier AF
+41135 XM
+(s-value)SH
+11 /Times-Roman AF
+45635 XM
+(if you want, like)25 W
+6120 64132 MT
+(the following:)SH
+8 /Courier AF
+8040 65297 MT
+(* \050s-value MYTEXT :top 40\051)SH
+11520 50 9000 65497 UL
+8040 66162 MT
+(40)SH
+8040 67027 MT
+(* \050opal:update MYWINDOW\051)SH
+10560 50 9000 67227 UL
+8040 67892 MT
+(NIL)SH
+ES
+%%Page: 49 8
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(Section 3.6)
+SH( Interaction)1800 W
+51886 XM
+(Page 49)SH
+46800 50 8280 4486 UL
+14 /Times-Bold AF
+8280 8138 MT
+(3.5. Formulas)SH
+11 /Times-Roman AF
+8280 9334 MT
+(An important property of Garnet is)
+186 W( that properties of objects can be connected using)185 W
+/Times-Italic SF
+48201 XM
+(constraints)SH
+/Times-Roman SF
+(. A)645 W
+8280 10530 MT
+(constraint is a relationship that is)
+127 W( defined once and maintained automatically by the system.  You will)128 W
+8280 11726 MT
+(constrain the string to stay at)
+42 W( the top of the rectangle.  Then, when the rectangle is moved, the string will)41 W
+8280 12922 MT
+(move automatically.)SH
+8280 15220 MT
+(Constraints in Garnet are expressed as)147 W
+/Times-Italic SF
+26266 XM
+(formulas)SH
+/Times-Roman SF
+30600 XM
+(which are put into the slots of objects.  Any slot can)148 W
+8280 16416 MT
+(either have a value in it \050like a number or a string\051 or a formula which computes the value.)
+47 W( The)
+367 W( formula)46 W
+8280 17612 MT
+(can be an arbitrary Lisp expression which must)
+8 W( be passed to the Garnet function)9 W
+10 /Courier AF
+43953 XM
+(o-formula)SH
+11 /Times-Roman AF
+(. References)293 W
+8280 18808 MT
+(to other objects in)
+215 W( formulas must take a special form.  To get the slot)214 W
+10 /Courier AF
+42043 XM
+(slot-name)SH
+11 /Times-Roman AF
+47932 XM
+(from the object)214 W
+10 /Courier AF
+8280 20004 MT
+(other-object)SH
+11 /Times-Roman AF
+(, use the form)33 W
+10 /Courier AF
+21936 XM
+(\050gv other-object slot-name\051)34 W
+11 /Times-Roman AF
+(, where ``gv'' stands for ``get value.'')34 W
+8280 21200 MT
+(The)SH
+10 /Courier AF
+10331 XM
+(gv)SH
+11 /Times-Roman AF
+11872 XM
+(function can be)
+66 W( used either inside or outside of formulas.  When used from inside a formula,)65 W
+10 /Courier AF
+53880 XM
+(gv)SH
+11 /Times-Roman AF
+8280 22396 MT
+(will establish a dependency on the referenced slot, causing the formula to reevaluate if the value in)
+101 W( the)102 W
+8280 23592 MT
+(referenced slot ever changes.)SH
+8280 25890 MT
+(Now, set the top of the string to be a formula that depends on the top of the rectangle.)SH
+8280 28188 MT
+(Note that the particular number returned by the)SH
+10 /Courier AF
+29294 XM
+(s-value)SH
+11 /Times-Roman AF
+33769 XM
+(call will not be the same as shown below.)SH
+8 /Courier AF
+10200 29353 MT
+(* \050s-value MYTEXT :top \050o-formula \050gv MYRECT :top\051\051\051)SH
+24000 50 11160 29553 UL
+10200 30218 MT
+(#k<F3875>)SH
+/Times-Italic SF
+15960 XM
+(the number will be different)SH
+/Courier SF
+10200 31083 MT
+(* \050opal:update MYWINDOW\051)SH
+10560 50 11160 31283 UL
+10200 31948 MT
+(NIL)SH
+11 /Times-Roman AF
+8280 34246 MT
+(After the update, the string should move to be)
+98 W( at the top of the rectangle.  If you change the top of the)97 W
+8280 35442 MT
+(rectangle,)SH
+/Times-Italic SF
+12860 XM
+(both)SH
+/Times-Roman SF
+15091 XM
+(the rectangle and the string will now move:)SH
+8 /Courier AF
+10200 36607 MT
+(* \050s-value MYRECT :top 50\051)SH
+11520 50 11160 36807 UL
+10200 37472 MT
+(50)SH
+10200 38337 MT
+(* \050opal:update MYWINDOW\051)SH
+10560 50 11160 38537 UL
+10200 39202 MT
+(NIL)SH
+11 /Times-Roman AF
+8280 41500 MT
+(If you want to experiment with writing your own)
+64 W( formulas, the Lisp arithmetic operators include)65 W
+10 /Courier AF
+52015 XM
+(+, -,)65 W
+8280 42696 MT
+(floor)SH
+11 /Times-Roman AF
+11781 XM
+(\050for divide\051, and)226 W
+10 /Courier AF
+19911 XM
+(*)SH
+11 /Times-Roman AF
+21012 XM
+(\050for multiply\051 and they must be)
+226 W( in fully parenthesized expressions, as in)225 W
+10 /Courier AF
+8280 43892 MT
+(\050o-formula \050+ \050gv MYRECT :top\051 7\051\051)105 W
+11 /Times-Roman AF
+(. To)
+485 W( get)
+105 W( the width and height of an object from inside a)106 W
+8280 45088 MT
+(formula, use)46 W
+10 /Courier AF
+14145 XM
+(\050gv)SH
+/Times-Italic SF
+16591 XM
+(obj)SH
+/Courier SF
+18515 XM
+(:width\051)SH
+11 /Times-Roman AF
+23036 XM
+(and)SH
+10 /Courier AF
+24945 XM
+(\050gv)SH
+/Times-Italic SF
+27391 XM
+(obj)SH
+/Courier SF
+29315 XM
+(:height\051)SH
+11 /Times-Roman AF
+(. You)
+367 W( could try, for example, to get the text to)45 W
+8280 46284 MT
+(stay centered in X \050)SH
+10 /Courier AF
+(:left)SH
+11 /Times-Roman AF
+(\051 and Y \050)SH
+10 /Courier AF
+(:top)SH
+11 /Times-Roman AF
+(\051 inside the rectangle.)SH
+14 /Times-Bold AF
+8280 50102 MT
+(3.6. Interaction)SH
+11 /Times-Roman AF
+8280 51298 MT
+(Now, you will get the objects to respond to input.  To do this, you)
+146 W( attach an)147 W
+/Times-Italic SF
+44251 XM
+(interactor)SH
+/Times-Roman SF
+49073 XM
+(to the object.)147 W
+8280 52494 MT
+(Interactors handle the mouse and keyboard and update graphical objects.)SH
+8280 54792 MT
+(First, you will have the rectangle move with the mouse.  To do this, you create)
+716 W( a)715 W
+10 /Courier AF
+8280 55988 MT
+(move-grow-interactor)SH
+11 /Times-Roman AF
+20708 XM
+(and tell it to operate on MYRECT.  The interactor will)
+153 W( start whenever the)154 W
+8280 57184 MT
+(mouse is pressed)53 W
+10 /Courier AF
+16168 XM
+(:in MYRECT)53 W
+11 /Times-Roman AF
+(, and the)
+53 W( interactor works in MYWINDOW.  The interactor will continue)52 W
+8280 58380 MT
+(to run no matter where the mouse is moved while the button is held down.)SH
+8280 60678 MT
+(It is not necessary to call)11 W
+10 /Courier AF
+19526 XM
+(update)SH
+11 /Times-Roman AF
+23412 XM
+(to get interactors to start working; they start as soon as)
+11 W( they are created.)12 W
+8280 61874 MT
+(However, if you are)
+392 W( not using a recent version of CMU, Allegro, LispWorks, Lucid, or MCL)391 W
+8280 63070 MT
+(CommonLisp, interactors only run while the)843 W
+10 /Courier AF
+33167 XM
+(main-event-loop)SH
+11 /Times-Roman AF
+43285 XM
+(procedure is operating.)843 W
+10 /Courier AF
+8280 64266 MT
+(Main-Event-Loop)SH
+11 /Times-Roman AF
+17671 XM
+(does not exit, so you will have to hit the)116 W
+10 /Courier AF
+36706 XM
+(F1)SH
+11 /Times-Roman AF
+38297 XM
+(key while the cursor)
+116 W( is in the Garnet)115 W
+8280 65462 MT
+(window, or type ^C \050or whatever your operating system break character is\051 while the)
+24 W( cursor is in the Lisp)25 W
+8280 66658 MT
+(window, to be able to type further Lisp expressions.)SH
+8 /Courier AF
+10200 67823 MT
+(* \050create-instance 'MYMOVER inter:move-grow-interactor)SH
+24960 50 11160 68023 UL
+14040 68688 MT
+(\050:start-where \050list :in MYRECT\051\051)SH
+19200 50 10200 68888 UL
+14040 69553 MT
+(\050:window MYWINDOW\051\051)SH
+12960 50 10200 69753 UL
+10200 70418 MT
+(#k<MYMOVER>)SH
+11 /Times-Roman AF
+8280 71839 MT
+(If your Lisp requires it, then type:)SH
+ES
+%%Page: 50 9
+BS
+0 SI
+10 /Times-Roman AF
+6120 4286 MT
+(Page 50)
+SH( Garnet)
+830 W( Tour)SH
+40623 XM
+(Learning Garnet)
+SH( Chapter)
+1550 W( 3)SH
+46800 50 6120 4486 UL
+8 /Courier AF
+8040 7699 MT
+(* \050inter:main-event-loop\051)SH
+11040 50 9000 7899 UL
+11 /Times-Roman AF
+6120 9997 MT
+(Now you can press with the left button over the rectangle, and while the button is)
+79 W( held down, move the)78 W
+6120 11193 MT
+(rectangle around.  \050The first time you press)
+108 W( on the rectangle, it may take a while, as Lisp swaps in the)109 W
+6120 12389 MT
+(appropriate code.\051  Notice that)
+13 W( the text string moves up and down also.  The text string does not move left)12 W
+6120 13585 MT
+(and right,)
+46 W( however, since there is no constraint on the)47 W
+10 /Courier AF
+30415 XM
+(:left)SH
+11 /Times-Roman AF
+33737 XM
+(of the string, only on the)47 W
+10 /Courier AF
+45110 XM
+(:top)SH
+11 /Times-Roman AF
+47832 XM
+(\050unless you)47 W
+6120 14781 MT
+(have written some extra formulas other than the one described above\051.)SH
+6120 17079 MT
+(A different interactor allows you to type)
+20 W( into text strings.  This is called a)19 W
+10 /Courier AF
+38977 XM
+(text-interactor)SH
+11 /Times-Roman AF
+(. The)
+313 W( code)19 W
+6120 18275 MT
+(below will cause the)
+106 W( text interactor to start when you press the right mouse button, and stop when you)107 W
+6120 19471 MT
+(press the right mouse button again.  This will)
+129 W( allow you to type carriage returns into the string and to)128 W
+6120 20667 MT
+(move the cursor point by hitting the left button inside the string.)
+40 W( \050Before)
+356 W( typing these commands, hit the)41 W
+6120 21863 MT
+(F1 key to exit)SH
+10 /Courier AF
+12476 XM
+(main-event-loop)SH
+11 /Times-Roman AF
+21751 XM
+(if necessary\051.)SH
+8 /Courier AF
+8040 23028 MT
+(* \050create-instance 'MYTYPER inter:text-interactor)SH
+22560 50 9000 23228 UL
+11880 23893 MT
+(\050:start-where \050list :in MYTEXT\051\051)SH
+19200 50 8040 24093 UL
+11880 24758 MT
+(\050:window MYWINDOW\051)SH
+12480 50 8040 24958 UL
+11880 25623 MT
+(\050:start-event :rightdown\051)SH
+15840 50 8040 25823 UL
+11880 26488 MT
+(\050:stop-event :rightdown\051\051)SH
+15840 50 8040 26688 UL
+8040 27353 MT
+(#k<MYTYPER>)SH
+11 /Times-Roman AF
+6120 28774 MT
+(If your Lisp requires it, then type:)SH
+8 /Courier AF
+8040 29939 MT
+(* \050inter:main-event-loop\051)SH
+11040 50 9000 30139 UL
+11 /Times-Roman AF
+6120 32237 MT
+(Now, if)
+100 W( you press with the right mouse button on the string, you can change the string by typing.  The)99 W
+6120 33433 MT
+(available editing commands include:)SH
+10 /Courier AF
+8620 35384 MT
+(^h, delete, backspace)SH
+11 /Times-Roman AF
+(: delete previous character.)SH
+10 /Courier AF
+8620 36580 MT
+(^w, ^backspace, ^delete)SH
+11 /Times-Roman AF
+(: delete previous word.)SH
+10 /Courier AF
+8620 37776 MT
+(^d)SH
+11 /Times-Roman AF
+(: delete next character.)SH
+10 /Courier AF
+8620 38972 MT
+(^u)SH
+11 /Times-Roman AF
+(: delete entire string.)SH
+10 /Courier AF
+8620 40168 MT
+(^b, left-arrow)SH
+11 /Times-Roman AF
+(: go back one character.)SH
+10 /Courier AF
+8620 41364 MT
+(^f, right-arrow)SH
+11 /Times-Roman AF
+(: go forward one character.)SH
+10 /Courier AF
+8620 42560 MT
+(^n, down-arrow)SH
+11 /Times-Roman AF
+(: go vertically down one line.)SH
+10 /Courier AF
+8620 43756 MT
+(^p, up-arrow)SH
+11 /Times-Roman AF
+(: go vertically up one line.)SH
+10 /Courier AF
+8620 44952 MT
+(^<, ^comma, home)SH
+11 /Times-Roman AF
+(: go to the beginning of the string.)SH
+10 /Courier AF
+8620 46148 MT
+(^>, ^period, end)SH
+11 /Times-Roman AF
+(: go to the end of the string.)SH
+10 /Courier AF
+8620 47344 MT
+(^a)SH
+11 /Times-Roman AF
+(: go to beginning of the current line.)SH
+10 /Courier AF
+8620 48540 MT
+(^e)SH
+11 /Times-Roman AF
+(: go to end of the current line.)SH
+10 /Courier AF
+8620 49736 MT
+(^y, insert)SH
+11 /Times-Roman AF
+(: insert the contents of the X or Mac cut buffer into the string at the current point.)SH
+10 /Courier AF
+8620 50932 MT
+(^c)SH
+11 /Times-Roman AF
+(: copy the current string to the X or Mac cut buffer.)SH
+10 /Courier AF
+8620 52128 MT
+(enter, return, ^j, ^J)SH
+11 /Times-Roman AF
+(: Go to new line.)SH
+10 /Courier AF
+8620 53324 MT
+(left button down inside the string)SH
+11 /Times-Roman AF
+(: move the cursor to the specified point.)SH
+10 /Courier AF
+8620 54520 MT
+(^G)SH
+11 /Times-Roman AF
+(: Abort the edits and return the string to the way it was before editing started.)SH
+6120 56471 MT
+(All other characters go into the string \050except other control)
+72 W( characters which beep\051.  You can also move)73 W
+6120 57667 MT
+(the cursor with the mouse by clicking in the string.)SH
+6120 59965 MT
+(\050In X, to type to a window, the mouse cursor must be inside the window,)
+9 W( so to type to the ``Hello World'')8 W
+6120 61161 MT
+(string, the mouse cursor must be inside the Garnet window,)
+147 W( and to type to Lisp, the cursor should be)148 W
+6120 62357 MT
+(inside the Lisp window.  On the Mac, you have to click the mouse on the title-bar of the window you)116 W
+6120 63553 MT
+(want to type into, so you will have to click alternately on the Garnet window and the lisp listener.\051)SH
+6120 65851 MT
+(If you make the text string be)
+152 W( multiple lines, by typing a carriage return into it, then you can control)153 W
+6120 67047 MT
+(whether the lines are centered, left or right justified.  This)
+58 W( is controlled by the)57 W
+10 /Courier AF
+41350 XM
+(:justification)SH
+11 /Times-Roman AF
+50082 XM
+(slot of)57 W
+6120 68243 MT
+(MYTEXT, which can be)23 W
+10 /Courier AF
+17421 XM
+(:left, :center)23 W
+11 /Times-Roman AF
+(, or)23 W
+10 /Courier AF
+27631 XM
+(:right)SH
+11 /Times-Roman AF
+(. \050Before)
+321 W( typing these)
+23 W( commands, hit the F1 key)24 W
+6120 69439 MT
+(to exit)SH
+10 /Courier AF
+9176 XM
+(main-event-loop)SH
+11 /Times-Roman AF
+18451 XM
+(if necessary\051.)SH
+ES
+%%Page: 51 10
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(Section 3.7)
+SH( Higher-level)
+1800 W( Objects)SH
+51886 XM
+(Page 51)SH
+46800 50 8280 4486 UL
+8 /Courier AF
+10200 7699 MT
+(* \050s-value MYTEXT :justification :right\051)SH
+18240 50 11160 7899 UL
+10200 8564 MT
+(:RIGHT)SH
+10200 9429 MT
+(* \050opal:update MYWINDOW\051)SH
+10560 50 11160 9629 UL
+10200 10294 MT
+(NIL)SH
+10200 11159 MT
+(* \050s-value MYTEXT :justification :center\051)SH
+18720 50 11160 11359 UL
+10200 12024 MT
+(:CENTER)SH
+10200 12889 MT
+(* \050opal:update MYWINDOW\051)SH
+10560 50 11160 13089 UL
+10200 13754 MT
+(NIL)SH
+11 /Times-Roman AF
+8280 16052 MT
+(Of course, you can type to the string while it is centered or)
+60 W( right-justified, and you can move around the)59 W
+8280 17248 MT
+(rectangle with the mouse and the string will still follow.)SH
+14 /Times-Bold AF
+8280 21066 MT
+(3.7. Higher-level Objects)SH
+11 /Times-Roman AF
+8280 22262 MT
+(Now, you are going to create instances)
+2 W( of pre-created objects from the ``Garnet Gadget Set.''  The Gadget)3 W
+8280 23458 MT
+(Set contains a large collection of menus, buttons, scroll bars, sliders, and other useful)301 W
+/Times-Italic SF
+50252 XM
+(interaction)SH
+8280 24654 MT
+(techniques)SH
+/Times-Roman SF
+13259 XM
+(\050also called ``widgets''\051.  You will be using a set of ``radio buttons'' and a slider.)SH
+8280 26952 MT
+(First, however, you should make the window bigger \050in whatever way)
+221 W( you do this in your window)222 W
+8280 28148 MT
+(manager\051.)SH
+12 /Times-Bold AF
+8280 31832 MT
+(3.7.1. Buttons)SH
+11 /Times-Roman AF
+8280 33028 MT
+(First, you will create a set of 3)
+78 W( ``radio'' buttons that will determine whether the text is centered, left, or)77 W
+8280 34224 MT
+(right justified.  The parameter that)
+33 W( tells the buttons what the labels should be is called)34 W
+10 /Courier AF
+46732 XM
+(:Items)SH
+11 /Times-Roman AF
+(. This)
+343 W( slot)34 W
+8280 35420 MT
+(is passed a quoted list.  The radio buttons will appear at the right of the string.)SH
+8 /Courier AF
+10200 36585 MT
+(* \050create-instance 'MYBUTTONS gg:radio-button-panel)SH
+23520 50 11160 36785 UL
+14040 37450 MT
+(\050:items '\050:center :left :right\051\051)SH
+19200 50 10200 37650 UL
+14040 38315 MT
+(\050:left 350\051\050:top 20\051\051)SH
+13920 50 10200 38515 UL
+10200 39180 MT
+(#k<MYBUTTONS>)SH
+10200 40045 MT
+(* \050opal:add-component MYAGG MYBUTTONS\051)SH
+17280 50 11160 40245 UL
+10200 40910 MT
+(#k<MYBUTTONS>)SH
+10200 41775 MT
+(* \050opal:update MYWINDOW\051)SH
+10560 50 11160 41975 UL
+10200 42640 MT
+(NIL)SH
+11 /Times-Roman AF
+8280 44938 MT
+(If your Lisp requires it, then type:)SH
+8 /Courier AF
+10200 46103 MT
+(* \050inter:main-event-loop\051)SH
+11040 50 11160 46303 UL
+11 /Times-Roman AF
+8280 48401 MT
+(Now, you can click on the radio buttons with the left mouse button, and the)
+66 W( dot will move to whichever)65 W
+8280 49597 MT
+(one you click on.)SH
+8280 51895 MT
+(Next, you will use a)
+123 W( constraint to tie the value of the)124 W
+10 /Courier AF
+33073 XM
+(:justification)SH
+11 /Times-Roman AF
+41872 XM
+(field of the text object to the)124 W
+8280 53091 MT
+(value of the radio buttons.  The current value of the radio buttons is conveniently kept in the)131 W
+10 /Courier AF
+51480 XM
+(:value)SH
+11 /Times-Roman AF
+8280 54287 MT
+(field. \050Before)
+275 W( typing these commands, hit the F1 key to exit)SH
+10 /Courier AF
+35104 XM
+(main-event-loop)SH
+11 /Times-Roman AF
+44379 XM
+(if necessary\051.)SH
+8 /Courier AF
+10200 55452 MT
+(* \050s-value MYTEXT :justification \050o-formula \050gv MYBUTTONS :value\051\051\051)SH
+31200 50 11160 55652 UL
+10200 56317 MT
+(#k<F2312>)SH
+/Times-Italic SF
+15960 XM
+(the number will be different)SH
+/Courier SF
+10200 57182 MT
+(* \050opal:update MYWINDOW\051)SH
+10560 50 11160 57382 UL
+10200 58047 MT
+(NIL)SH
+11 /Times-Roman AF
+8280 59468 MT
+(If your Lisp requires it, then type:)SH
+8 /Courier AF
+10200 60633 MT
+(* \050inter:main-event-loop\051)SH
+11040 50 11160 60833 UL
+11 /Times-Roman AF
+8280 62931 MT
+(Now, whenever you press on one of the buttons, the text will re-adjust itself.)SH
+8280 65229 MT
+(All of the built-in toolkit items have a large number of parameters to allow users)
+54 W( to customize their look)55 W
+8280 66425 MT
+(and feel.  For example, you can change)
+41 W( the radio buttons to be horizontal instead of vertical:  \050From now)40 W
+8280 67621 MT
+(on, you will have to remember)
+106 W( to hit the F1 key to exit)107 W
+10 /Courier AF
+33986 XM
+(main-event-loop)SH
+11 /Times-Roman AF
+43368 XM
+(if necessary before typing)107 W
+8280 68817 MT
+(commands without these reminders\051.)SH
+ES
+%%Page: 52 11
+BS
+0 SI
+10 /Times-Roman AF
+6120 4286 MT
+(Page 52)
+SH( Garnet)
+830 W( Tour)SH
+40623 XM
+(Learning Garnet)
+SH( Chapter)
+1550 W( 3)SH
+46800 50 6120 4486 UL
+8 /Courier AF
+8040 7699 MT
+(* \050s-value MYBUTTONS :direction :horizontal\051)SH
+20160 50 9000 7899 UL
+8040 8564 MT
+(:HORIZONTAL)SH
+8040 9429 MT
+(* \050opal:update MYWINDOW\051)SH
+10560 50 9000 9629 UL
+8040 10294 MT
+(NIL)SH
+11 /Times-Roman AF
+6120 12592 MT
+(Now, change it back to be vertical:)SH
+8 /Courier AF
+8040 13757 MT
+(* \050s-value MYBUTTONS :direction :vertical\051)SH
+19200 50 9000 13957 UL
+8040 14622 MT
+(:VERTICAL)SH
+8040 15487 MT
+(* \050opal:update MYWINDOW\051)SH
+10560 50 9000 15687 UL
+8040 16352 MT
+(NIL)SH
+12 /Times-Bold AF
+6120 20036 MT
+(3.7.2. Slider)SH
+11 /Times-Roman AF
+6120 21232 MT
+(Next, you)
+131 W( will do a similar thing to get the gray shade of the rectangle to be attached to an on-screen)130 W
+6120 22428 MT
+(slider. First,)
+275 W( create a Garnet vertical slider object:)SH
+8 /Courier AF
+8040 23593 MT
+(* \050create-instance 'MYSLIDER gg:v-slider)SH
+18240 50 9000 23793 UL
+11880 24458 MT
+(\050:left 10\051\050:top 20\051\051)SH
+13440 50 8040 24658 UL
+8040 25323 MT
+(#k<MYSLIDER>)SH
+8040 26188 MT
+(* \050opal:add-component MYAGG MYSLIDER\051)SH
+16800 50 9000 26388 UL
+8040 27053 MT
+(#k<MYSLIDER>)SH
+8040 27918 MT
+(* \050opal:update MYWINDOW\051)SH
+10560 50 9000 28118 UL
+8040 28783 MT
+(NIL)SH
+11 /Times-Roman AF
+6120 30204 MT
+(If your Lisp requires it, then type:)SH
+8 /Courier AF
+8040 31369 MT
+(* \050inter:main-event-loop\051)SH
+11040 50 9000 31569 UL
+11 /Times-Roman AF
+6120 33667 MT
+(This slider can be operated in a number of ways, all using the left mouse button.  Press on the top arrow to)SH
+6120 34863 MT
+(move up one unit, and the down arrow to move down)
+28 W( one.  The double arrow buttons move up and down)27 W
+6120 36059 MT
+(by five \050the increment amount can be changed by using)74 W
+10 /Courier AF
+31540 XM
+(s-value)SH
+11 /Times-Roman AF
+36089 XM
+(on the)74 W
+10 /Courier AF
+39232 XM
+(:scr-incr)SH
+11 /Times-Roman AF
+44982 XM
+(and)SH
+10 /Courier AF
+46920 XM
+(:page-incr)SH
+11 /Times-Roman AF
+6120 37255 MT
+(slots of MYSLIDER\051.  You can)
+131 W( also press on the black indicator arrow and drag it to a new position.)130 W
+6120 38451 MT
+(Finally. you can press in the top number area, then type a new number value, and then hit carriage return.)SH
+6120 40749 MT
+(Of course the value returned by the slider does not affect anything yet.)
+193 W( To)
+663 W( change the color of the)194 W
+6120 41945 MT
+(rectangle, you will use the Garnet function)29 W
+10 /Courier AF
+25383 XM
+(Halftone)SH
+11 /Times-Roman AF
+(, which takes a number from 0 to 100 and)
+29 W( returns a)28 W
+10 /Courier AF
+6120 43141 MT
+(:filling-style)SH
+11 /Times-Roman AF
+14913 XM
+(that is that percentage black.  Connect)
+118 W( the filling style of the rectangle to the value)119 W
+6120 44337 MT
+(returned by the slider:)SH
+8 /Courier AF
+8040 45502 MT
+(* \050s-value MYRECT :filling-style)SH
+14400 50 9000 45702 UL
+15720 46367 MT
+(\050o-formula \050opal:halftone \050gv MYSLIDER :value\051\051\051\051)SH
+31200 50 8040 46567 UL
+8040 47232 MT
+(#k<F5940>)SH
+/Times-Italic SF
+13800 XM
+(the number will be different)SH
+/Courier SF
+8040 48097 MT
+(* \050opal:update MYWINDOW\051)SH
+10560 50 9000 48297 UL
+8040 48962 MT
+(NIL)SH
+11 /Times-Roman AF
+6120 50383 MT
+(If your Lisp requires it, then type:)SH
+8 /Courier AF
+8040 51548 MT
+(* \050inter:main-event-loop\051)SH
+11040 50 9000 51748 UL
+11 /Times-Roman AF
+6120 53846 MT
+(Now when you)
+64 W( change the value of the slider, the color of the rectangle will change.  Note that halftone)63 W
+6120 55042 MT
+(only can generate 17 different gray)
+117 W( colors, so a range of numbers for the slider will generate the same)118 W
+6120 56238 MT
+(color.)SH
+ES
+%%Page: 53 12
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(Chapter 4)
+SH( Playing)
+1550 W( Othello)SH
+51886 XM
+(Page 53)SH
+46800 50 8280 4486 UL
+16 /Times-Bold AF
+8280 8272 MT
+(4. Playing Othello)SH
+11 /Times-Roman AF
+8280 10524 MT
+(Now you can play the Othello game we created using the Garnet Toolkit.)SH
+8280 12822 MT
+(To bring up the game, type:)SH
+8 /Courier AF
+10200 13987 MT
+(* \050start-othello\051)SH
+7200 50 11160 14187 UL
+10200 14852 MT
+(T)SH
+11 /Times-Roman AF
+8280 16273 MT
+(The game board will appear on the screen.  There are various things you can control in the game.)
+83 W( You)439 W
+8280 17469 MT
+(can put new pieces down on the board by just pressing with the)
+82 W( left mouse button.  In Othello, you can)83 W
+8280 18665 MT
+(put a piece in a position where you are next)
+44 W( to the other player's marker, and one of your markers is in a)43 W
+8280 19861 MT
+(straight line from where you are going to play.  If you try)
+106 W( to place your marker in an illegal place, the)107 W
+8280 21057 MT
+(game will beep.  This game does not try)
+203 W( to play against you; you must handle both players \050or get)202 W
+8280 22253 MT
+(someone else to play with you\051.  If a player does not want to)
+135 W( move \050or has no legal moves\051, then the)136 W
+8280 23449 MT
+(``Pass'' menu item can be selected.  This implementation does not detect when the game)
+109 W( is over.  The)108 W
+8280 24645 MT
+(current score \050which is the number of squares that the player controls\051 is shown in the top left box.)SH
+8280 26943 MT
+(To start over, press on the menu button marked ``Start.''  This will start a new game with)
+13 W( a board that has)14 W
+8280 28139 MT
+(the number of squares shown by the scroll bar.  The default is 8)
+102 W( by 8.  To change the scroll bar value,)101 W
+8280 29335 MT
+(press on the arrows.  \050Changing the scroll bar does not change the current board; it takes)
+71 W( affect the next)72 W
+8280 30531 MT
+(time you hit ``Start'' from the menu.\051)SH
+8280 32829 MT
+(``Stop'' just erases the board, and ``Quit'' exits the game.  \050You don't)
+25 W( have to quit before going on to the)24 W
+8280 34025 MT
+(next section.\051)SH
+ES
+%%Page: 54 13
+BS
+0 SI
+10 /Times-Roman AF
+6120 4286 MT
+(Page 54)
+SH( Garnet)
+830 W( Tour)SH
+39676 XM
+(Modifying Othello)
+SH( Chapter)
+1550 W( 5)SH
+46800 50 6120 4486 UL
+16 /Times-Bold AF
+6120 8272 MT
+(5. Modifying Othello)SH
+11 /Times-Roman AF
+6120 10524 MT
+(We created an editor that allows you to)
+7 W( change what the Othello playing pieces look like.  This is editor is)8 W
+6120 11720 MT
+(just a small toy program)
+28 W( that was created quickly by David Kosbie in the Garnet group especially for this)27 W
+6120 12916 MT
+(tour.)SH
+6120 15214 MT
+(If you quit out of the Othello game, bring it back up using)SH
+10 /Courier AF
+31906 XM
+(\050start-othello\051)SH
+11 /Times-Roman AF
+(.)SH
+6120 17512 MT
+(Othello has a tall window on the left side of)
+43 W( the screen containing the current 2 Othello playing pieces at)44 W
+6120 18708 MT
+(the top: a white and a black circle.)
+59 W( Underneath)
+392 W( is a command button \050``Delete''\051 and 3 menus.  The top)58 W
+6120 19904 MT
+(left menu is for different types of objects: rectangles, rounded rectangles, circles and ovals.)
+67 W( The)
+411 W( bottom)68 W
+6120 21100 MT
+(left menu is for line styles \050the way the outlines of objects are drawn\051: no outline, dotted outline,)
+117 W( thin,)116 W
+6120 22296 MT
+(thicker or very thick outline.)
+138 W( The)
+552 W( menu on the right is for how the inside of objects looks: no filling)139 W
+6120 23492 MT
+(inside, white, grey, black or various patterns.)SH
+6120 25790 MT
+(Press with the left mouse button over any of the menus to change the current mode.)SH
+6120 28088 MT
+(To draw a new object in either playing piece, just use the)58 W
+/Times-Italic SF
+32199 XM
+(right)SH
+/Times-Roman SF
+34672 XM
+(mouse button to drag out the dimensions)57 W
+6120 29284 MT
+(for the new object.)
+96 W( Press)
+469 W( down the right button inside whichever piece you want to modify where you)97 W
+6120 30480 MT
+(want one corner of the new object to be, move the cursor while holding down, and release at)
+105 W( the other)104 W
+6120 31676 MT
+(corner. The)
+275 W( type, line styles, and inside of the new object come from the current values of the menus.)SH
+6120 33974 MT
+(Objects can be selected by pressing over them with the)22 W
+/Times-Italic SF
+30776 XM
+(left)SH
+/Times-Roman SF
+32479 XM
+(mouse button.  \050Some objects require that)
+22 W( you)23 W
+6120 35170 MT
+(press on the edge \050border\051 of the object, and others allow you to press anywhere inside.\051  When an object)31 W
+6120 36366 MT
+(is selected, 12 small boxes are shown on the)
+27 W( borders of the object.  \050The small boxes are on the bounding)28 W
+6120 37562 MT
+(rectangle of the object, which may be a)
+157 W( little confusing for circles.\051  The black boxes can be used to)156 W
+6120 38758 MT
+(change the object's)
+45 W( size, and the white boxes are used to move the object.  Just press with the left button)46 W
+6120 39954 MT
+(over one of the)
+5 W( boxes, and then adjust the size or position while holding down.  The editor will not let you)4 W
+6120 41150 MT
+(move or grow an object so that it goes outside the game piece area.)SH
+6120 43448 MT
+(The selected object can)
+13 W( also be deleted or changed.  Delete it by just hitting the Delete button in the menu)14 W
+6120 44644 MT
+(when the object is selected.)
+12 W( If)
+297 W( you press on a new line style or filling style while an object is selected, the)11 W
+6120 45840 MT
+(object's outline and)
+159 W( color will change.  \050You can't change an object's type.\051  Note that as you select)160 W
+6120 47036 MT
+(objects, the menus change to show the object's current styles.)SH
+6120 49334 MT
+(Every time you edit one of the playing pieces, the Othello game display also changes to reflect the edits.)51 W
+6120 50530 MT
+(This is handled automatically by Garnet using inheritance.)SH
+ES
+%%Page: 55 14
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(Chapter 6)
+SH( Using)
+1550 W( GarnetDraw)SH
+51886 XM
+(Page 55)SH
+46800 50 8280 4486 UL
+16 /Times-Bold AF
+8280 8272 MT
+(6. Using GarnetDraw)SH
+11 /Times-Roman AF
+8280 10524 MT
+(There a useful)
+151 W( utility called)152 W
+10 /Courier AF
+21409 XM
+(GarnetDraw)SH
+11 /Times-Roman AF
+27836 XM
+(which is a relatively simple drawing program written using)152 W
+8280 11720 MT
+(Garnet. Using)
+327 W( this application, you can draw)
+26 W( pictures with many of the basic Garnet objects \050like circles,)25 W
+8280 12916 MT
+(rectangles, and lines\051, and then save the picture to a file.)
+135 W( Since)
+547 W( the file format for storing the created)136 W
+8280 14112 MT
+(objects is simply a Lisp file which creates aggregadgets, you might be able to use GarnetDraw)
+258 W( to)257 W
+8280 15308 MT
+(prototype application objects \050but Lapidary is probably better for this\051.)SH
+8280 17606 MT
+(GarnetDraw uses many sophisticated features of Garnet including gridding, PostScript)
+47 W( printing, selection)48 W
+8280 18802 MT
+(of all)
+37 W( objects in a region, moving and growing of multiple objects, menubars, and the)36 W
+10 /Courier AF
+46581 XM
+(save-gadget)SH
+11 /Times-Roman AF
+53492 XM
+(and)SH
+10 /Courier AF
+8280 19998 MT
+(load-gadget)SH
+11 /Times-Roman AF
+15155 XM
+(dialog boxes.)SH
+8280 22296 MT
+(To load and start GarnetDraw, type:)SH
+8 /Courier AF
+10200 23461 MT
+(* \050garnet-load "demos:garnetdraw"\051)SH
+15360 50 11160 23661 UL
+10200 25191 MT
+(* \050garnetdraw:do-go\051)SH
+8640 50 11160 25391 UL
+11 /Times-Roman AF
+8280 27489 MT
+(GarnetDraw works like most Garnet programs:)
+135 W( select in the palette with any button, draw in the main)136 W
+8280 28685 MT
+(window with the right button, and select objects with the left button.  Select)
+77 W( multiple objects with shift-)76 W
+8280 29881 MT
+(left or the middle)
+28 W( mouse button.  Change the size of objects by pressing on black handles and move them)29 W
+8280 31077 MT
+(by pressing on white handles.)
+75 W( The)
+423 W( line style and color and filling color can be changed for the selected)74 W
+8280 32273 MT
+(object and for further drawing by clicking on the icons at the bottom of the palette.)SH
+8280 34571 MT
+(You might want to save a picture to a file, and then bring the file up in your editor to see the)
+19 W( kind of code)20 W
+8280 35767 MT
+(that GarnetDraw generates.  There)
+197 W( should be a top-level aggregadget that has your drawn objects as)196 W
+8280 36963 MT
+(components.)SH
+8280 39261 MT
+(To quit GarnetDraw, either select "Quit" from the menubar, or type:)SH
+8 /Courier AF
+10200 40426 MT
+(* \050garnetdraw:do-stop\051)SH
+9600 50 11160 40626 UL
+ES
+%%Page: 56 15
+BS
+0 SI
+10 /Times-Roman AF
+6120 4286 MT
+(Page 56)
+SH( Garnet)
+830 W( Tour)SH
+43871 XM
+(Cleanup Chapter)
+1550 W( 7)SH
+46800 50 6120 4486 UL
+16 /Times-Bold AF
+6120 8272 MT
+(7. Cleanup)SH
+11 /Times-Roman AF
+6120 10524 MT
+(If you are not in a Lisp which supports background processes, and you)
+52 W( are running something in Garnet,)53 W
+6120 11720 MT
+(then you need)
+222 W( to type F1 in a Garnet window or ^C in your Lisp window to get back to the Lisp)221 W
+6120 12916 MT
+(read-eval-print loop.)SH
+6120 15214 MT
+(To get rid everything at once \050MYWINDOW, the Othello)
+43 W( game, and the editor for the game pieces\051, just)44 W
+6120 16410 MT
+(type:)SH
+8 /Courier AF
+8040 17575 MT
+(* \050stop-tour\051)SH
+5280 50 9000 17775 UL
+8040 18440 MT
+("Thank you for your interest in the Garnet Project")SH
+11 /Times-Roman AF
+6120 20738 MT
+(Otherwise, to just get rid of Othello and the editor, you can hit on the ``Quit'')
+185 W( menu button or type)184 W
+10 /Courier AF
+6120 21934 MT
+(\050stop-othello\051)SH
+11 /Times-Roman AF
+14795 XM
+(to Lisp.  To just get rid of MYWINDOW, type)SH
+10 /Courier AF
+35691 XM
+(\050opal:destroy MYWINDOW\051)SH
+11 /Times-Roman AF
+(.)SH
+6120 24232 MT
+(The command that exits Lisp is different for different implementations.  For CMU CommonLisp, type:)SH
+8 /Courier AF
+8040 25397 MT
+(* \050quit\051)SH
+2880 50 9000 25597 UL
+11 /Times-Roman AF
+6120 27695 MT
+(for Lucid CommonLisp, type:)SH
+8 /Courier AF
+8040 28860 MT
+(* \050system:quit\051)SH
+6240 50 9000 29060 UL
+11 /Times-Roman AF
+6120 31158 MT
+(for LispWorks, type:)SH
+8 /Courier AF
+8040 32323 MT
+(* \050bye\051)SH
+2400 50 9000 32523 UL
+11 /Times-Roman AF
+6120 34621 MT
+(for Allegro CommonLisp, type:)SH
+8 /Courier AF
+8040 35786 MT
+(* :ex)SH
+1440 50 9000 35986 UL
+11 /Times-Roman AF
+6120 38084 MT
+(and for MCL, type:)SH
+8 /Courier AF
+8040 39249 MT
+(* \050quit\051)SH
+2880 50 9000 39449 UL
+11 /Times-Roman AF
+6120 41547 MT
+(This returns you to the shell \050or to the)
+35 W( finder on the Mac\051, and you can log out.  It is not necessary to run)36 W
+10 /Courier AF
+6120 42743 MT
+(\050stop-othello\051)SH
+11 /Times-Roman AF
+14795 XM
+(or)SH
+10 /Courier AF
+15986 XM
+(\050stop-tour\051)SH
+11 /Times-Roman AF
+22861 XM
+(before quitting Lisp.)SH
+6120 45041 MT
+(If the quit command doesn't work)
+7 W( for any reason, you can probably quit by typing ^Z to pause to the shell)6 W
+6120 46237 MT
+(and then kill the lisp process \050or just log out\051.)SH
+ES
+%%Page: 57 16
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(Chapter 8)
+SH( Conclusion)1550 W
+51886 XM
+(Page 57)SH
+46800 50 8280 4486 UL
+16 /Times-Bold AF
+8280 8272 MT
+(8. Conclusion)SH
+11 /Times-Roman AF
+8280 10524 MT
+(We hope you have enjoyed your)
+SH( tour through Garnet.  There are, of course, many features and capabilities)1 W
+8280 11720 MT
+(that have)
+66 W( not been demonstrated.  These are described fully in the various manuals and papers about the)65 W
+8280 12916 MT
+(Garnet project and its parts.  The next step might be to run the Gilt interface builder, since it)
+116 W( does not)117 W
+8280 14112 MT
+(require that you learn much about how Garnet works.  See the Gilt manual.)SH
+ES
+%%Page: 58 17
+BS
+0 SI
+10 /Times-Roman AF
+6120 4286 MT
+(Page 58)
+SH( Garnet)
+830 W( Tour)SH
+41226 XM
+(Appendix: List of commands)SH
+46800 50 6120 4486 UL
+16 /Times-Bold AF
+6120 8272 MT
+(Appendix: List of commands)SH
+11 /Times-Roman AF
+6120 10524 MT
+(This appendix lists all the commands that the tour has)
+18 W( you type.  This is useful as a quick reference if you)17 W
+6120 11720 MT
+(need to restart due to an error.  These commands are stored)
+108 W( in the file)109 W
+10 /Courier AF
+38530 XM
+(tourcommands.lisp)SH
+11 /Times-Roman AF
+49114 XM
+(which is)109 W
+6120 12916 MT
+(stored in the)1 W
+10 /Courier AF
+11836 XM
+(demos)SH
+11 /Times-Roman AF
+15112 XM
+(source directory \050usually)SH
+10 /Courier AF
+26321 XM
+(garnet/src/demos/tourcommands.lisp)SH
+11 /Times-Roman AF
+(\051. If)
+275 W( you have)SH
+6120 14112 MT
+(this document in a window on the screen, you can)
+8 W( copy-and-paste to move text from below into your Lisp)9 W
+6120 15308 MT
+(window.)SH
+/Times-Italic SF
+10735 XM
+(Note: do not just load)122 W
+10 /Courier AF
+21216 XM
+(tourcommands)SH
+11 /Times-Italic AF
+(, since it will run all the demos and quickly quit; just)122 W
+6120 16504 MT
+(copy the commands one-by-one from the file)SH
+/Times-Roman SF
+(.)SH
+6120 18802 MT
+(This listing does not show the prompts or Lisp's responses to these commands.)SH
+/Times-Bold SF
+6120 21100 MT
+(First, load the Garnet software.  You will have to replace)SH
+10 /Courier AF
+33033 XM
+(xxx)SH
+11 /Times-Bold AF
+35108 XM
+(with your directory path to Garnet:)SH
+8 /Courier AF
+8040 22265 MT
+(\050load "/xxx/garnet/garnet-loader"\051)SH
+8040 23130 MT
+(\050garnet-load "demos:tour"\051)SH
+11 /Times-Bold AF
+6120 25428 MT
+(Start here after Garnet and the tour software is loaded:)SH
+8 /Courier AF
+8040 26593 MT
+(\050create-instance 'MYWINDOW inter:interactor-window\051)SH
+8040 27458 MT
+(\050opal:update MYWINDOW\051)SH
+8040 29188 MT
+(\050create-instance 'MYAGG opal:aggregate\051)SH
+8040 30053 MT
+(\050s-value MYWINDOW :aggregate MYAGG\051)SH
+8040 30918 MT
+(\050gv MYWINDOW :aggregate\051)SH
+8040 31783 MT
+(\050create-instance 'MYRECT MOVING-RECTANGLE\051)SH
+/Times-Italic SF
+28680 XM
+(; In the USER package)SH
+/Courier SF
+8040 32648 MT
+(\050opal:add-component MYAGG MYRECT\051)SH
+8040 33513 MT
+(\050opal:update MYWINDOW\051)SH
+8040 35243 MT
+(\050s-value MYRECT :filling-style opal:gray-fill\051)SH
+8040 36108 MT
+(\050opal:update MYWINDOW\051)SH
+8040 37838 MT
+(\050create-instance 'MYTEXT opal:text \050:left 200\051\050:top 80\051)SH
+11880 38703 MT
+(\050:string "Hello World"\051\051)SH
+8040 39568 MT
+(\050opal:add-component MYAGG MYTEXT\051)SH
+8040 40433 MT
+(\050opal:update MYWINDOW\051)SH
+8040 42163 MT
+(\050s-value MYTEXT :top 40\051)SH
+8040 43028 MT
+(\050opal:update MYWINDOW\051)SH
+8040 44758 MT
+(\050s-value MYTEXT :top \050o-formula \050gv MYRECT :top\051\051\051)SH
+8040 45623 MT
+(\050opal:update MYWINDOW\051)SH
+8040 47353 MT
+(\050s-value MYRECT :top 50\051)SH
+8040 48218 MT
+(\050opal:update MYWINDOW\051)SH
+8040 49948 MT
+(\050create-instance 'MYMOVER inter:move-grow-interactor)SH
+9000 50813 MT
+(\050:start-where \050list :in MYRECT\051\051)SH
+9000 51678 MT
+(\050:window MYWINDOW\051\051)SH
+8040 52543 MT
+(#-\050or cmu allegro lucid lispworks apple\051)SH
+/Times-Italic SF
+28200 XM
+(;only do this if your Lisp is NOT a recent)SH
+/Courier SF
+8040 53408 MT
+(\050inter:main-event-loop\051)SH
+/Times-Italic SF
+28200 XM
+(;version of CMU, Allegro, Lucid, or LispWorks)SH
+28200 54273 MT
+(;type F1 or ^C to exit when finished.)SH
+/Courier SF
+8040 56003 MT
+(\050create-instance 'MYTYPER inter:text-interactor)SH
+9000 56868 MT
+(\050:start-where \050list :in MYTEXT\051\051)SH
+9000 57733 MT
+(\050:window MYWINDOW\051)SH
+9000 58598 MT
+(\050:start-event :rightdown\051)SH
+9000 59463 MT
+(\050:stop-event :rightdown\051\051)SH
+8040 60328 MT
+(#-\050or cmu allegro lucid lispworks apple\051)SH
+/Times-Italic SF
+28200 XM
+(;only do this if your Lisp is NOT a recent)SH
+/Courier SF
+8040 61193 MT
+(\050inter:main-event-loop\051)SH
+/Times-Italic SF
+28200 XM
+(;version of CMU, Allegro, Lucid, or LispWorks)SH
+28200 62058 MT
+(;type F1 or ^C to exit when finished.)SH
+/Courier SF
+8040 63788 MT
+(\050s-value MYTEXT :justification :right\051)SH
+8040 64653 MT
+(\050opal:update MYWINDOW\051)SH
+8040 66383 MT
+(\050s-value MYTEXT :justification :center\051)SH
+8040 67248 MT
+(\050opal:update MYWINDOW\051)SH
+8040 68978 MT
+(\050create-instance 'MYBUTTONS gg:radio-button-panel)SH
+9000 69843 MT
+(\050:items '\050:center :left :right\051\051)SH
+9000 70708 MT
+(\050:left 350\051\050:top 20\051\051)SH
+8040 71573 MT
+(\050opal:add-component MYAGG MYBUTTONS\051)SH
+ES
+%%Page: 59 18
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(Appendix: List of commands)SH
+51886 XM
+(Page 59)SH
+46800 50 8280 4486 UL
+8 /Courier AF
+10200 7699 MT
+(\050opal:update MYWINDOW\051)SH
+10200 8564 MT
+(#-\050or cmu allegro lucid lispworks apple\051)SH
+/Times-Italic SF
+30360 XM
+(;only do this if your Lisp is NOT a recent)SH
+/Courier SF
+10200 9429 MT
+(\050inter:main-event-loop\051)SH
+/Times-Italic SF
+30360 XM
+(;version of CMU, Allegro, Lucid, or LispWorks)SH
+30360 10294 MT
+(;type F1 or ^C to exit when finished.)SH
+/Courier SF
+10200 12024 MT
+(\050s-value MYTEXT :justification \050o-formula \050gv MYBUTTONS :value\051\051\051)SH
+10200 12889 MT
+(\050opal:update MYWINDOW\051)SH
+10200 13754 MT
+(#-\050or cmu allegro lucid lispworks apple\051)SH
+/Times-Italic SF
+30360 XM
+(;only do this if your Lisp is NOT a recent)SH
+/Courier SF
+10200 14619 MT
+(\050inter:main-event-loop\051)SH
+/Times-Italic SF
+30360 XM
+(;version of CMU, Allegro, Lucid, or LispWorks)SH
+30360 15484 MT
+(;type F1 or ^C to exit when finished.)SH
+/Courier SF
+10200 17214 MT
+(\050s-value MYBUTTONS :direction :horizontal\051)SH
+10200 18079 MT
+(\050opal:update MYWINDOW\051)SH
+10200 19809 MT
+(\050s-value MYBUTTONS :direction :vertical\051)SH
+10200 20674 MT
+(\050opal:update MYWINDOW\051)SH
+10200 22404 MT
+(\050create-instance 'MYSLIDER gg:v-slider)SH
+11160 23269 MT
+(\050:left 10\051\050:top 20\051\051)SH
+10200 24134 MT
+(\050opal:add-component MYAGG MYSLIDER\051)SH
+10200 24999 MT
+(\050opal:update MYWINDOW\051)SH
+10200 25864 MT
+(#-\050or cmu allegro lucid lispworks apple\051)SH
+/Times-Italic SF
+30360 XM
+(;only do this if your Lisp is NOT a recent)SH
+/Courier SF
+10200 26729 MT
+(\050inter:main-event-loop\051)SH
+/Times-Italic SF
+30360 XM
+(;version of CMU, Allegro, Lucid, or LispWorks)SH
+30360 27594 MT
+(;type F1 or ^C to exit when finished.)SH
+/Courier SF
+10200 29324 MT
+(\050s-value MYRECT :filling-style \050o-formula)SH
+25560 30189 MT
+(\050opal:halftone \050gv MYSLIDER :value\051\051\051\051)SH
+10200 31054 MT
+(\050opal:update MYWINDOW\051)SH
+10200 31919 MT
+(#-\050or cmu allegro lucid lispworks apple\051)SH
+/Times-Italic SF
+30360 XM
+(;only do this if your Lisp is NOT a recent)SH
+/Courier SF
+10200 32784 MT
+(\050inter:main-event-loop\051)SH
+/Times-Italic SF
+30360 XM
+(;version of CMU, Allegro, Lucid, or LispWorks)SH
+30360 33649 MT
+(;type F1 or ^C to exit when finished.)SH
+11 /Times-Bold AF
+8280 35947 MT
+(To just get Othello to run, execute the following line.  You do)
+42 W( not have to enter any of the previous)43 W
+8280 37143 MT
+(code to run Othello and the editior \050except for the software loading, of course\051.)SH
+8 /Courier AF
+10200 38873 MT
+(\050start-othello\051)SH
+11 /Times-Bold AF
+8280 42036 MT
+(To just load and run GarnetDraw, execute the following lines.)SH
+8 /Courier AF
+10200 43766 MT
+(\050garnet-load "demos:garnetdraw"\051)SH
+10200 44631 MT
+(\050garnetdraw:do-go\051)SH
+11 /Times-Bold AF
+8280 47794 MT
+(Cleaning up and quitting:)SH
+8 /Times-Italic AF
+10200 49007 MT
+(;;; * To quit all editors and demos and destroy all windows)SH
+/Courier SF
+10200 50737 MT
+(\050stop-tour\051)SH
+10200 51602 MT
+(\050garnetdraw:do-stop\051)SH
+/Times-Italic SF
+21240 XM
+(; if running)SH
+10200 53332 MT
+(;;; * To leave lisp)SH
+/Courier SF
+10200 55062 MT
+(#+cmu \050quit\051)960 W
+/Times-Italic SF
+21240 XM
+(; in CMU CommonLisp)SH
+/Courier SF
+10200 55927 MT
+(#+lucid \050system:quit\051)SH
+/Times-Italic SF
+21240 XM
+(; in Lucid CommonLisp)SH
+/Courier SF
+10200 56792 MT
+(#+allegro :ex)SH
+/Times-Italic SF
+21240 XM
+(; in Allegro CommonLisp)SH
+/Courier SF
+10200 57657 MT
+(#+lispworks \050bye\051)SH
+/Times-Italic SF
+21240 XM
+(; in LispWorks CommonLisp)SH
+/Courier SF
+10200 58522 MT
+(#+apple \050quit\051)SH
+/Times-Italic SF
+21240 XM
+(; in MCL)SH
+ES
+%%Page: 60 19
+BS
+0 SI
+10 /Times-Roman AF
+6120 4286 MT
+(Page 60)
+SH( Garnet)
+830 W( Tour)SH
+50643 XM
+(Index)SH
+46800 50 6120 4486 UL
+16 /Times-Bold AF
+6120 8272 MT
+(Index)SH
+8 /Times-Roman AF
+6120 11525 MT
+(Add-component 48)400 W
+6120 12449 MT
+(Aggregate 47)400 W
+6120 14297 MT
+(Create-instance 47)400 W
+6120 15221 MT
+(Cursor-Multi-Text 48)400 W
+6120 17069 MT
+(Filling-style 48)400 W
+6120 17993 MT
+(Formula 49)400 W
+6120 19841 MT
+(Garnet-Debug \050Package\051)
+SH( 46)400 W
+6120 20765 MT
+(Garnet-Gadgets \050Package\051)
+SH( 46)400 W
+6120 21689 MT
+(Garnet-Load 47)400 W
+6120 22613 MT
+(Garnetdraw 55)400 W
+6120 23537 MT
+(Gray-fill 48)400 W
+6120 24461 MT
+(Gv 49)400 W
+6120 26309 MT
+(Hello World)
+SH( 48)400 W
+6120 28157 MT
+(Inter \050Package\051)
+SH( 46)400 W
+6120 29081 MT
+(Interactor-window 47)400 W
+6120 30929 MT
+(Justification 50)400 W
+6120 32777 MT
+(KR \050Package\051)
+SH( 46)400 W
+6120 34625 MT
+(Main-Event-Loop 46)400 W
+6120 35549 MT
+(Move-Grow-Interactor 49)400 W
+6120 36473 MT
+(Moving-rectangle 48)400 W
+6120 38321 MT
+(O-formula 49)400 W
+6120 39245 MT
+(Opal \050Package\051)
+SH( 46)400 W
+6120 40169 MT
+(Othello 53)400 W
+6120 42017 MT
+(Packages 46)400 W
+6120 43865 MT
+(Radio-Button-Panel 51)400 W
+6120 44789 MT
+(Rectangle 48)400 W
+6120 45713 MT
+(Refreshing windows)
+SH( 46)400 W
+6120 47561 MT
+(S-value 47)400 W
+6120 48485 MT
+(Start-othello 53)400 W
+6120 49409 MT
+(Stop-othello 56)400 W
+6120 50333 MT
+(Stop-tour 56)400 W
+6120 52181 MT
+(Text-Interactor 50)400 W
+6120 54029 MT
+(Update 47)400 W
+6120 55877 MT
+(V-Slider 52)400 W
+6120 56801 MT
+(Value Slot)
+SH( 51)400 W
+ES
+%%Page: i 20
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(Garnet Tour)SH
+47914 XM
+(Table of Contents)SH
+46800 50 8280 4486 UL
+16 /Times-Bold AF
+25591 8272 MT
+(Table of Contents)SH
+12 SS 
+8280 9796 MT
+(1. Introduction)SH
+53880 XM
+(43)SH
+8280 11320 MT
+(2. Getting Started)SH
+53880 XM
+(44)SH
+10 SS 
+9780 12710 MT
+(2.1. Typing)SH
+54080 XM
+(44)SH
+9780 13790 MT
+(2.2. Garbage Collection)SH
+54080 XM
+(44)SH
+9780 14870 MT
+(2.3. Errors, etc.)SH
+54080 XM
+(44)SH
+12 SS 
+8280 16394 MT
+(3. Learning Garnet)SH
+53880 XM
+(46)SH
+10 SS 
+9780 17784 MT
+(3.1. A Note on Packages)SH
+54080 XM
+(46)SH
+9780 18864 MT
+(3.2. A Note on Refresh)SH
+54080 XM
+(46)SH
+9780 19944 MT
+(3.3. Loading Garnet and the Tour)SH
+54080 XM
+(47)SH
+9780 21024 MT
+(3.4. Basic Objects)SH
+54080 XM
+(47)SH
+9780 22104 MT
+(3.5. Formulas)SH
+54080 XM
+(49)SH
+9780 23184 MT
+(3.6. Interaction)SH
+54080 XM
+(49)SH
+9780 24264 MT
+(3.7. Higher-level Objects)SH
+54080 XM
+(51)SH
+11780 25344 MT
+(3.7.1. Buttons)SH
+54080 XM
+(51)SH
+11780 26424 MT
+(3.7.2. Slider)SH
+54080 XM
+(52)SH
+12 SS 
+8280 27948 MT
+(4. Playing Othello)SH
+53880 XM
+(53)SH
+8280 29472 MT
+(5. Modifying Othello)SH
+53880 XM
+(54)SH
+8280 30996 MT
+(6. Using GarnetDraw)SH
+53880 XM
+(55)SH
+8280 32520 MT
+(7. Cleanup)SH
+53880 XM
+(56)SH
+8280 34044 MT
+(8. Conclusion)SH
+53880 XM
+(57)SH
+8280 35568 MT
+(Appendix: List of commands)SH
+53880 XM
+(58)SH
+8280 37092 MT
+(Index)SH
+53880 XM
+(60)SH
+ES
+%%Trailer
+%%Pages: 20
+%%DocumentFonts: Times-Roman Times-Bold Times-Italic Symbol Courier

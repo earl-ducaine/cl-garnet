@@ -1,0 +1,120 @@
+1)  Components of aggregates should always be inside the bounding boxes
+    of the aggregates.  That is, you should not make the :left of an
+    aggregate be 40, and then the left of its only component be
+    (+ 40 offset).  This will make the bounding box of the aggregate too
+    far to the left (because its left ignored the offset), and the component
+    will be too far right.
+
+    The solution here is to make the left of the aggregate the value that
+    you want, like (+ parent-left offset), and then make the component
+    inherit that left.  Of course, if you have several components which all
+    have different lefts, then this concern applies only to the leftmost
+    component.
+
+2)  An aggrelist will set the :left and :top slots of the item-prototypes
+    with appropriate formulas if you specify the :direction as :vertical
+    or :horizontal.  In fact, it will even override the formulas that you
+    put in the :left and :top slots.  So if you want your own :left and
+    :top formulas in your item-prototype, you have to set the :direction
+    of the aggrelist to NIL.
+
+3)  It is usually not necessary to specify the :width and :height
+    of an aggregate.  There are default formulas in these slots that
+    look at all the components of the aggregate and compute the appropriate
+    dimensions.  The only time you would want to calculate them by hand is
+    if you were doing centering or something that required circular
+    constraints on the dimensions of an aggregate and its components.
+
+    However, it is often useful to specify the :height and :width of an
+    aggrelist and its :item-prototypes if these values are known.  For
+    example, if you had an aggrelist and frequently changed the first
+    item (component), then when its height and width changes, the rest of
+    the components have to be re-layed out because the first item changed
+    dimensions (suposedly), and thus the positions of the items after it
+    will change.  If you are only changing the string of the first item,
+    then its height will not change, so you should make it a constant or
+    some formula that does not depend on the text's :height slot.
+    (opal:string-height font "Random String") will return the same value as
+    a text's :height slot, but it will not be reevaluated every time the
+    string changes.
+
+4)  You have to put formulas in the components of an aggregadget.  Even
+    though you computed the :left and :top correctly for the aggregadget,
+    the default left and top for the component is still 0,0.
+
+5)  Don't set the :window slot of a graphical object (or a gadget)
+
+6)  G-value the :value slot of a gadget before s-valuing it (in order to
+    initialize the default formula).  You may not set an initial value for
+    the :value slot at create-instance time because you will override the
+    default formula.
+
+7)  Don't set the :aggregate slot of a window at create-instance time.
+    Instead, s-value it after the window has been created.
+
+8)  When you want to remove all the components from an aggregate, this
+    will NOT work:
+      (dolist (comp (get-values agg :components))
+        (opal:remove-component agg comp))
+    This does not work because remove-components is destructive, and after
+    the first component is removed, your pointer is no longer pointing to
+    the front of the components list.  You have to use copy-list when getting
+    the list of components from the aggregate.  (Believe it or not, I have
+    run into this problem 3 times!)
+
+
+To: Andrew.Mickish@spice.cs.cmu.edu
+Subject: Re: Tutorial 
+Date: Wed, 14 Aug 91 11:15:36 EDT
+Message-Id: <10829.682182936@cs.utk.edu>
+From: bvz@cs.utk.edu
+
+I agree that emphasizing explanations and philosophy is the best way
+to go. In teaching my graphical interfaces class last fall, I found that
+the students struggled with many of the concepts, and they have to
+master the concepts before they can worry about the code. Students
+seemed particularly confused by the distinction between inheritance
+and aggregate hierarchies, and were quite confused by aggregate hierarchies
+in general. They also needed to be led slowly through constraints.
+I think that object systems and constraints are new ways of programming
+that most people just aren't familiar with (constraints involve declarative
+rather than imperative programming and two types of object hierarchies
+get people confused). It would also be a good idea to discuss the 
+prototype-instance system and describe how it differs from the class-instance
+system. I think that if people understand the high-level concepts embodied
+by garnet before they start using it, they will have an easier time learning 
+the syntax and how to use it. I definitely wouldn't dive into details because
+there is so much minute detail in Garnet that people will probably just
+get lost. It is best that they acquire the detail bit by bit, and that they
+have a general framework they can use to organize the detail. The high-level
+concepts that I would hit are: 
+
+1) prototype-instance systems: describe inheritance, message-passing,
+	and the differences between class-instance and prototype-instance
+	systems.
+
+2) aggregate vs. inheritance hierarchies: the students in my class had 
+trouble with what
+information flows down the inheritance hierarchy and what information
+flows down the aggregate hierarchy--I told them that relationships (defined
+by constraints), color, filling-style, line-style, draw-function, and width
+and height attributes often flowed down the inheritance hierarchy, and
+that position and visibility attributes typically flowed down the aggregate
+hierarchy. An important notion that I tried to get across was that
+relationships could be inherited (e.g., I am offset 5 pixels from the top
+of my parent), but that the data that was plugged into these relationships
+often came down the aggregate hierarchy;
+
+3) constraints: what they are and uses for them. Give lots of examples of
+	 when they should and shouldn't be used);
+
+4) the interactors model: you should describe the logic between the
+separation of behavior and graphics. Most people are accustomed to widgets
+in which the behavior and graphics are tightly intertwined, and thus
+inseparable); and 
+
+5) the retained object model: this can be brief, but people
+	should understand the notion of "registering" objects with the window
+	manager.
+
+	Brad

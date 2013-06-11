@@ -1,0 +1,46 @@
+Changes I've made to the Garnet base.
+
+1) Automatic loading configuration using truenames and (require :clx).
+Affects loaders.  
+
+2) Allowed last (Help) menu item in motif menu bar to be right
+justified (Motif style guidelines).
+Files affected
+
+aggregadgets/agg-fix-slots.lisp:	
+aggregadgets/aggrelists.lisp:	    
+gadgets/motif-menu.lisp:   
+gadgets/motif-menubar.lisp: 
+
+3)
+contrib/protected-eval.lisp:05/06/97  RGA Having a lot of problems with modal dialogs in MCL, so changed 
+
+4)
+gadgets/motif-option-button.lisp:      
+;; RGA modified this list because we don't want string to be constant.
+
+5)
+gadgets/save-load-functions.lisp:;;; 10/26/95 RGA --- Added ignore errors on (truename Prev-Dir).  This
+
+6) Added some checks for valid windows which seemed to prevent errors
+based on race conditions.  (Somebody else had made similar checks, I
+think the two bits of code are compatable).
+inter/i-windows.lisp:  10/27/95 RGA --- Add check for valid window is many handlers.
+
+7) Cleaned up movegrowinter
+inter/movegrowinter.lisp:        
+
+8) Added a second value return to kr:g-value and kr:s-value which is
+an error flag.
+kr/kr.lisp
+
+9) Some changes to track new versions of MCL
+opal/mac.lisp
+
+10) I commented out some redundant code in update-basics which
+    seemed to be generating a problem
+    (setf kr::*pre-set-deamon* NIL)
+opal/update-basics.lisp:;;; RGA  --- This is reduntant and actually screws us up.
+
+
+

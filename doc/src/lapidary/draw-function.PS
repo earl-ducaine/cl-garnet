@@ -1,0 +1,279 @@
+%!PS-Adobe-2.0
+%%Title: draw-function
+%%Creator: Make-PS-File -- Garnet Version 2.0
+%%CreationDate: May 14, 1992, 12:53 PM
+%%For: 
+%%This file does not use real color
+%%DocumentFonts: (atend)
+%%BoundingBox: 88 246 523 546
+%%Pages: 1
+%%EndComments
+
+
+/TextDict 19 dict def
+/DrawText
+   {	% stack: left top base-y opal-width height line-halftone fill-p
+        %        fore-red fore-green fore-blue fore-color-p
+        %        back-red back-green back-blue back-color-p
+        %        string size font-name
+        TextDict begin
+        gsave
+	findfont exch scalefont setfont
+	/s exch def
+        /back-color-p exch def  /back-blue exch def  /back-green exch def
+        /back-red exch def  /fore-color-p exch def  /fore-blue exch def
+        /fore-green exch def  /fore-red exch def  /fill-p exch def
+        /line-halftone exch def /height exch def  /opal-width exch def
+        /base-y exch def  /top exch def  /left exch def
+
+        % Calculate distance to add between each character, based on the width
+        % expected by Opal, the width expected by postscript, and the number
+        % of characters to distribute the change over
+	/x-dist opal-width s stringwidth pop sub s length div def
+
+        % Draw background of text if appropriate
+        fill-p
+        { gsave
+            newpath
+            left top opal-width height RectanglePath
+            1 back-red back-green back-blue back-color-p
+            FillShape
+          grestore } if
+
+        % Draw text in the appropriate color
+	newpath
+          fore-color-p
+          { fore-red fore-green fore-blue setrgbcolor }
+          { line-halftone setgray } ifelse
+	  left base-y moveto
+	  x-dist 0 s ashow
+        grestore
+        end
+   } def
+
+/EllipseDict 23 dict def
+EllipseDict /mtrx matrix put
+/DrawEllipse
+   {    EllipseDict begin
+        /fill-color-p exch def  /fill-blue exch def  /fill-green exch def
+        /fill-red exch def  /fill-halftone exch def  /thickness exch def
+        /dash-pattern exch def  /line-join exch def  /line-cap exch def
+        /line-color-p exch def  /line-blue exch def  /line-green exch def
+        /line-red exch def  /line-halftone exch def  /endangle exch def
+        /startangle exch def  /yrad exch def  /xrad exch def  /y exch def
+        /x exch def  /savematrix mtrx currentmatrix def  /thickness-by-2 thickness 2 div def
+        % Draw the filling
+        newpath
+	  x y translate
+          gsave
+	    xrad thickness-by-2 sub  yrad thickness-by-2 sub scale
+            0 0 1 startangle endangle arc
+            savematrix setmatrix
+	    fill-halftone fill-red fill-green fill-blue fill-color-p FillShape
+          grestore
+        % Draw the border
+        newpath
+          xrad yrad scale
+          0 0 1 startangle endangle arc
+	  savematrix setmatrix
+          line-halftone line-red line-green line-blue line-color-p
+          line-cap line-join dash-pattern thickness StrokeShape
+        end
+   } def
+
+/RectanglePath
+   {    % stack: left, top, width, height
+        /h exch def  /w exch def
+	moveto		        % Go to the left,top corner
+	w 0 rlineto	        % top side
+	0 h neg rlineto		% right side
+	w neg 0 rlineto		% bottom side
+	closepath		% left side
+   } def
+
+/RectangleDict 21 dict def
+/DrawRectangle
+   {	% stack: left, top, width, height, line-halftone, line-red, line-green,
+        %        line-blue, line-color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness,
+        %        fill-halftone, fill-red, fill-green, fill-blue, fill-color-p
+        RectangleDict begin
+        /fill-color-p exch def  /fill-blue exch def  /fill-green exch def
+        /fill-red exch def /fill-halftone exch def  /thickness exch def
+        /dash-pattern exch def  /line-join exch def  /line-cap exch def
+        /line-color-p exch def  /line-blue exch def  /line-green exch def
+        /line-red exch def  /line-halftone exch def  /height exch def
+        /width exch def  /top exch def  /left exch def  /thickness-by-2 thickness 2 div def
+        % Draw filling
+        newpath
+          left thickness-by-2 add  top thickness-by-2 sub   width thickness sub  height thickness sub
+          RectanglePath
+	  fill-halftone fill-red fill-green fill-blue fill-color-p FillShape
+        % Draw border
+        newpath
+          left top width height RectanglePath
+          line-halftone line-red line-green line-blue line-color-p
+          line-cap line-join dash-pattern thickness StrokeShape
+        end
+   } def
+
+/ClipDict 2 dict def
+/ClipToRectangle
+   {    % stack: left, top, width, height
+        ClipDict begin
+	/height exch def  /width exch def
+        newpath
+	  moveto		% Go to the left,top corner
+	  width 0 rlineto	% top side
+	  0 height neg rlineto	% right side
+	  width neg 0 rlineto	% bottom side
+	  closepath		% left side
+	gsave 1 setgray fill grestore
+	clip newpath
+        end
+   } def
+
+/FillShape
+   {	% stack: fill-halftone, red, green, blue, color-p
+        %   Color-p should be true or false - false means ignore the three vals
+        %   Use -1 for fill-halftone to mean NIL, 0 = black, 1 = white
+        %   Use -2 for fill-halftone to indicate there is an arbitrary filling
+        % style on the stack
+        gsave
+        { setrgbcolor fill pop }
+	{ pop pop pop 
+	  dup 0 ge
+	    % if fill-halftone >= 0, then fill the shape with a halftone
+	    { setgray fill}
+            % else, if there is an arbitrary filling style, then fill
+            { -2 eq
+              {SetPattern fill} if
+            } ifelse } ifelse
+        grestore
+   } def
+
+/StrokeShape
+   {	% stack: line-halftone, red, green, blue, color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness
+	% If no line is desired, pass -1 for line-thickness
+        % Halftones: 0 = black, 1 = white
+	dup 0 ge
+	  % if line-thickness >= 0, then draw the outline
+	  {gsave
+	   setlinewidth 0 setdash setlinejoin setlinecap
+             { setrgbcolor pop }
+             { pop pop pop setgray } ifelse
+	   stroke
+	   grestore}
+	  {pop pop pop pop pop pop pop pop pop newpath} ifelse
+   } def
+
+
+%%EndProlog
+%%Page: 1 1
+
+gsave
+72 72 translate
+1 1 scale
+
+%
+% Begin new window
+%
+16 -174 translate
+gsave
+0 648 435 300 ClipToRectangle
+0 0 translate
+gsave
+13 538 409 169 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+58.5 570.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawEllipse
+53.5 575.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawEllipse
+53.5 575.5 8.5 8.5 0 360 0 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawEllipse
+10 580 569 27 14 0 false 0 0 0 false 0 0 0 false (Copy) 12 /Courier DrawText
+123.5 570.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawEllipse
+118.5 575.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawEllipse
+118.5 575.5 8.5 8.5 0 360 0 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawEllipse
+82 580 569 20 14 0 false 0 0 0 false 0 0 0 false (Xor) 12 /Courier DrawText
+188.5 570.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawEllipse
+183.5 575.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawEllipse
+183.5 575.5 8.5 8.5 0 360 0 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawEllipse
+146 580 569 21 14 0 false 0 0 0 false 0 0 0 false (And) 12 /Courier DrawText
+253.5 570.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawEllipse
+248.5 575.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawEllipse
+248.5 575.5 8.5 8.5 0 360 0 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawEllipse
+220 580 569 12 14 0 false 0 0 0 false 0 0 0 false (Or) 12 /Courier DrawText
+53.5 575.5 5.5 5.5 0 360 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawEllipse
+131.5 501.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawEllipse
+126.5 506.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawEllipse
+126.5 506.5 8.5 8.5 0 360 0 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawEllipse
+77 511 500 33 14 0 false 0 0 0 false 0 0 0 false (Clear) 12 /Courier DrawText
+259.5 501.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawEllipse
+254.5 506.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawEllipse
+254.5 506.5 8.5 8.5 0 360 0 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawEllipse
+218 511 500 20 14 0 false 0 0 0 false 0 0 0 false (Set) 12 /Courier DrawText
+387.5 501.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawEllipse
+382.5 506.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawEllipse
+382.5 506.5 8.5 8.5 0 360 0 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawEllipse
+332 511 500 34 14 0 false 0 0 0 false 0 0 0 false (No-Op) 12 /Courier DrawText
+131.5 468.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawEllipse
+126.5 473.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawEllipse
+126.5 473.5 8.5 8.5 0 360 0 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawEllipse
+20 478 467 90 14 0 false 0 0 0 false 0 0 0 false (Copy-Inverted) 12 /Courier DrawText
+259.5 468.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawEllipse
+254.5 473.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawEllipse
+254.5 473.5 8.5 8.5 0 360 0 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawEllipse
+197 478 467 41 14 0 false 0 0 0 false 0 0 0 false (Invert) 12 /Courier DrawText
+387.5 468.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawEllipse
+382.5 473.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawEllipse
+382.5 473.5 8.5 8.5 0 360 0 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawEllipse
+331 478 467 35 14 0 false 0 0 0 false 0 0 0 false (Equiv) 12 /Courier DrawText
+131.5 435.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawEllipse
+126.5 440.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawEllipse
+126.5 440.5 8.5 8.5 0 360 0 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawEllipse
+82 445 434 28 14 0 false 0 0 0 false 0 0 0 false (Nand) 12 /Courier DrawText
+259.5 435.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawEllipse
+254.5 440.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawEllipse
+254.5 440.5 8.5 8.5 0 360 0 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawEllipse
+218 445 434 20 14 0 false 0 0 0 false 0 0 0 false (Nor) 12 /Courier DrawText
+387.5 435.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawEllipse
+382.5 440.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawEllipse
+382.5 440.5 8.5 8.5 0 360 0 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawEllipse
+282 445 434 84 14 0 false 0 0 0 false 0 0 0 false (And-Inverted) 12 /Courier DrawText
+131.5 402.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawEllipse
+126.5 407.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawEllipse
+126.5 407.5 8.5 8.5 0 360 0 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawEllipse
+34 412 401 76 14 0 false 0 0 0 false 0 0 0 false (And-Reverse) 12 /Courier DrawText
+259.5 402.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawEllipse
+254.5 407.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawEllipse
+254.5 407.5 8.5 8.5 0 360 0 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawEllipse
+162 412 401 76 14 0 false 0 0 0 false 0 0 0 false (Or-Inverted) 12 /Courier DrawText
+387.5 402.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawEllipse
+382.5 407.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawEllipse
+382.5 407.5 8.5 8.5 0 360 0 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawEllipse
+298 412 401 68 14 0 false 0 0 0 false 0 0 0 false (Or-Reverse) 12 /Courier DrawText
+10 633 611 155 28 0 false 0 0 0 false 0 0 0 false (Draw Function) 24 /Times-BoldItalic DrawText
+45 550 52 24 0 0 0 0 false 0 0 [] -1 1 1.00 1.00 1.00 true DrawRectangle
+50 546 535 40 14 0 false 0 0 0 false 0 0 0 false (Others) 12 /Courier DrawText
+202 630 51 24 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawRectangle
+197 635 51 24 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+200 632 45 18 0 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawRectangle
+216 630 619 13 14 0 false 0 0 0 false 0 0 0 false (OK) 12 /Courier DrawText
+263 630 51 24 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawRectangle
+258 635 51 24 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+261 632 45 18 0 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawRectangle
+266 630 619 35 14 0 false 0 0 0 false 0 0 0 false (Apply) 12 /Courier DrawText
+324 630 51 24 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawRectangle
+319 635 51 24 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+322 632 45 18 0 0 0 0 false 0 0 [] 1 1 1.00 1.00 1.00 true DrawRectangle
+324 630 619 41 14 0 false 0 0 0 false 0 0 0 false (Cancel) 12 /Courier DrawText
+grestore
+
+grestore
+
+0 648 435 300 0 0 0 0 false 0 0 [] 2 -1 0 0 0 false DrawRectangle
+grestore
+
+
+showpage
+%%Trailer
+%%DocumentFonts: /Times-BoldItalic /Courier 
+%%BoundingBox: 88 246 523 546

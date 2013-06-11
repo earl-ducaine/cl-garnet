@@ -1,0 +1,86 @@
+#|
+garnet/src/utils/README
+
+This file describes the Lisp utilities available in the "GARNET-UTILS" package.
+These utilities are supposed to be general-purpose (ie, Garnet-independent).
+While we hope that they are efficient and bug-free, we cannot make any
+guarantees -- USE AT YOUR OWN RISK!  Finally, if you find any improvements
+or reasonable additions to these utilities, we very much welcome your input.
+Please send mail to "garnet-bugs@CS.CMU.EDU".
+
+The rest of this file first lists and then  describes all of the exported
+functions in the "GARNET-UTILS" package, listed in alphabetical order.
+If you add new entries, please follow the established format.
+
+                       ;;;;;;;;;;;;;;;;;;
+                       ;;  Utils List  ;;
+                       ;;;;;;;;;;;;;;;;;;
+
+add-to-list  (element list &optional where locator)
+do2lists     ((var1 list1 var2 list2) &rest body)
+dolist2      ((var1 var2 list) &rest body)
+m            (s-expr)
+m1           (s-expr)
+string+      (&rest args)
+until        (test &rest body)
+while        (test &rest body)
+
+                   ;;;;;;;;;;;;;;;;;;;;;;;;;;
+                   ;;  Utils Descriptions  ;;
+                   ;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+add-to-list (element list &optional where locator)
+
+          This adds <element> to <list> according to the <where>/<locator>
+          specification according to the rules described in Garnet's
+          Opal manual for "add-component".  This can modify destructively.
+          Ex: (add-to-list element list)
+              (add-to-list element list :head) ; or use :front instead of :head
+              (add-to-list element list :tail) ; or use :back  instead of :tail
+              (add-to-list element list :before other-element)
+              (add-to-list element list :after other-element)
+
+do2lists ((var1 list1 var2 list2 &key either?) &rest body)
+
+          This is identical to "dolist", except that it iterates over TWO
+          lists, on each iteration binding <var1> to the first element of
+          <list1> and <var2> to the first element of <list2>.  The default
+          behavior is to exit when *BOTH* lists are empty, but if you specify
+          "either?" as T, then it exits when EITHER list is empty.
+          Ex:  (do2lists (parent parents child children)
+                  (s-value child :parent parent))
+
+dolist2 ((var1 var2 list) &rest body)
+
+          This is identical to "dolist", except that it iterates TWO
+          variables over the list, on each iteration binding <var1> to
+          the first element and <var2> to the second element.
+          Ex:  (dolist2 (slot value '(:left 20 :top 30))
+                 (s-value object slot value))
+
+m (s-expr)
+
+          This is identical to "macroexpand", except that it does not require
+          you to quote the expression, and it pretty-prints the output.
+          Ex: (m (while my-test my-body))
+
+m1 (s-expr)
+
+          This is to "macroexpand-1" as "m" is to "macroexpand".
+          Ex: (m1 (while my-test my-body))
+
+string+ (&rest args)
+
+          String summation -- that is, concatenate the strings together.
+          Ex: (string+ "This" " is " "neat!")
+
+until (test &rest body)
+
+          Execute <body> repeatedly until <test> returns non-NIL.
+          Ex:  (let ((x 0)) (until (< x 10) (princ (incf x))))
+
+while (test &rest body)
+
+          While <test> returns non-NIL, repeatedly execute <body>.
+          Ex:  (let ((x 0)) (while (< x 10) (princ (incf x))))
+|#

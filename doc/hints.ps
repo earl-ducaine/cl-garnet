@@ -1,0 +1,1170 @@
+%!PS-Adobe-2.0
+%%Title: hints/hints.mss
+%%DocumentFonts: (atend)
+%%Creator: Andrew Mickish and Scribe 7(1700)
+%%CreationDate: 12 December 1994 15:24
+%%Pages: (atend)
+%%EndComments
+% PostScript Prelude for Scribe.
+/BS {/SV save def 0.0 792.0 translate .01 -.01 scale} bind def
+/ES {showpage SV restore} bind def
+/SC {setrgbcolor} bind def
+/FMTX matrix def
+/RDF {WFT SLT 0.0 eq 
+  {SSZ 0.0 0.0 SSZ neg 0.0 0.0 FMTX astore}
+  {SSZ 0.0 SLT neg sin SLT cos div SSZ mul SSZ neg 0.0 0.0 FMTX astore}
+  ifelse makefont setfont} bind def
+/SLT 0.0 def
+/SI { /SLT exch cvr def RDF} bind def
+/WFT /Courier findfont def
+/SF { /WFT exch findfont def RDF} bind def
+/SSZ 1000.0 def
+/SS { /SSZ exch 100.0 mul def RDF} bind def
+/AF { /WFT exch findfont def /SSZ exch 100.0 mul def RDF} bind def
+/MT /moveto load def
+/XM {currentpoint exch pop moveto} bind def
+/UL {gsave newpath moveto dup 2.0 div 0.0 exch rmoveto
+   setlinewidth 0.0 rlineto stroke grestore} bind def
+/LH {gsave newpath moveto setlinewidth
+   0.0 rlineto
+   gsave stroke grestore} bind def
+/LV {gsave newpath moveto setlinewidth
+   0.0 exch rlineto
+   gsave stroke grestore} bind def
+/BX {gsave newpath moveto setlinewidth
+   exch
+   dup 0.0 rlineto
+   exch 0.0 exch neg rlineto
+   neg 0.0 rlineto
+   closepath
+   gsave stroke grestore} bind def
+/BX1 {grestore} bind def
+/BX2 {setlinewidth 1 setgray stroke grestore} bind def
+/PB {/PV save def newpath translate
+    100.0 -100.0 scale pop /showpage {} def} bind def
+/PE {PV restore} bind def
+/GB {/PV save def newpath translate rotate
+    div dup scale 100.0 -100.0 scale
+    /showpage {} def
+    /letter {} def
+    /lettersmall {} def
+    /note {} def
+    } bind def
+/GE {PV restore} bind def
+/FB {dict dup /FontMapDict exch def begin} bind def
+/FM {cvn exch cvn exch def} bind def
+/FE {end /original-findfont /findfont load def  /findfont
+   {dup FontMapDict exch known{FontMapDict exch get} if
+   original-findfont} def} bind def
+/BC {gsave moveto dup 0 exch rlineto exch 0 rlineto neg 0 exch rlineto closepath clip} bind def
+/EC /grestore load def
+/SH /show load def
+/MX {exch show 0.0 rmoveto} bind def
+/W {0 32 4 -1 roll widthshow} bind def
+/WX {0 32 5 -1 roll widthshow 0.0 rmoveto} bind def
+/RC {100.0 -100.0 scale
+612.0 0.0 translate
+-90.0 rotate
+.01 -.01 scale} bind def
+/URC {100.0 -100.0 scale
+90.0 rotate
+-612.0 0.0 translate
+.01 -.01 scale} bind def
+/RCC {100.0 -100.0 scale
+0.0 -792.0 translate 90.0 rotate
+.01 -.01 scale} bind def
+/URCC {100.0 -100.0 scale
+-90.0 rotate 0.0 792.0 translate
+.01 -.01 scale} bind def
+%%EndProlog
+%%Page: 0 1
+BS
+0 SI
+11 SS 
+1 1 0 8280 7200 GB 
+%%BeginDocument: single-sided.ps
+%!PS-Adobe-2.0
+%
+%  This PostScript code turns off double-sided printing,
+%  which is desirable since we want to be able to move the
+%  Tables of Contents by hand after the manuals are printed.
+%
+statusdict begin
+   false setduplexmode
+end
+
+%%EndDocument
+ GE 16 /Times-Bold AF
+15635 18976 MT
+(Hints on Making Garnet Programs Run Faster)SH
+11 SS 
+28182 21368 MT
+(Brad A. Myers)SH
+/Times-Roman SF
+28183 23294 MT
+(December 1994)SH
+/Times-Bold SF
+29634 43676 MT
+(Abstract)SH
+/Times-Roman SF
+8280 46168 MT
+(This chapter discusses some hints about)
+270 W( how to make Garnet programs run faster.  Most of these)269 W
+8280 47464 MT
+(techniques should not be used until your programs are fully debugged and ready to be shipped.)SH
+21010 54622 MT
+(Copyright)SH
+/Symbol SF
+25747 XM
+(\323)SH
+/Times-Roman SF
+26891 XM
+(1994 - Carnegie Mellon University)SH
+8280 61405 MT
+(This research was sponsored by NCCOSC under Contract No.  N66001-94-C-6037, Arpa Order)
+207 W( No.)208 W
+8280 62701 MT
+(B326. The)
+381 W( views and conclusions contained in this document)
+53 W( are those of the authors and should not be)52 W
+8280 63997 MT
+(interpreted as representing the official policies, either expressed or implied, of NCCOSC or)
+192 W( the U.S.)193 W
+8280 65293 MT
+(Government.)SH
+ES
+%%Page: 575 2
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(Section 2)
+SH( General)1550 W
+51386 XM
+(Page 575)SH
+46800 50 8280 4486 UL
+16 /Times-Bold AF
+8280 8272 MT
+(1. Introduction)SH
+11 /Times-Roman AF
+8280 10524 MT
+(An important goal of Garnet has been to create a system that is as efficient as)
+121 W( possible.  For example,)120 W
+8280 11720 MT
+(users should notice that)
+160 W( version 2.2 is about two or three times faster than 2.1.  Now that people are)161 W
+8280 12916 MT
+(writing large-scale systems)
+213 W( using Garnet, a number of things have been learned about how to make)212 W
+8280 14112 MT
+(Garnet programs run faster.  This chapter collects a number of hints)
+72 W( about how to write efficient Garnet)73 W
+8280 15308 MT
+(code. If)
+375 W( you have ideas about how to make the underlying Garnet system run faster, or new hints to add)49 W
+8280 16504 MT
+(to this section, please let us know.)SH
+8280 18802 MT
+(The ideas in this chapter are aimed at producing the final production version of your system.)
+56 W( Therefore,)388 W
+8280 19998 MT
+(we feel that you should not worry about the comments here during early development.)
+153 W( For)
+580 W( example,)152 W
+8280 21194 MT
+(turning off the debugging)
+180 W( and testing information is likely to make your development more difficult.)181 W
+8280 22390 MT
+(Also, declaring constants makes changing code more difficult.  Generally, you should get)
+45 W( your system to)44 W
+8280 23586 MT
+(a fairly well-debugged state before applying these ideas.)SH
+8280 25884 MT
+(Of course, the easiest way to make Garnet run faster is to get a faster machine)
+165 W( and/or more physical)166 W
+8280 27080 MT
+(memory. With)
+581 W( SPARC IIs and HP Snakes becoming)
+153 W( more prevalent, and 100 mip machines like the)152 W
+8280 28276 MT
+(DEC Alpha around the corner, we)
+32 W( see expect that the next generation of applications will have much less)33 W
+8280 29472 MT
+(of a problem with achieving adequate performance.)SH
+16 /Times-Bold AF
+8280 34144 MT
+(2. General)SH
+11 /Times-Roman AF
+8280 36396 MT
+(Ideas in this section are relevant to any code written in Lisp, not just Garnet code.)
+95 W( Some)
+464 W( of these may)94 W
+8280 37592 MT
+(seem obvious, but we have seen code that violates many of them.)SH
+/Symbol SF
+10249 39170 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(Be sure to compile all your files.)SH
+/Symbol SF
+10249 41064 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(The variable)1324 W
+10 /Courier AF
+19480 XM
+(user::*default-garnet-proclaim*)SH
+11 /Times-Roman AF
+(, which)
+1324 W( is defined in)1325 W
+10 /Courier AF
+11030 42260 MT
+(garnet-loader.lisp)SH
+11 /Times-Roman AF
+(, provides some default compiler optimization values)
+208 W( for Allegro,)207 W
+11030 43456 MT
+(Lucid, CMU, LispWorks, and MCL lisp implementations.  The default gives you fast)310 W
+11030 44652 MT
+(compiled code with verbose debugging help.  You)
+6 W( can)5 W
+10 /Courier AF
+35336 XM
+(setf)SH
+11 /Times-Roman AF
+38016 XM
+(this variable before loading \050and)5 W
+11030 45848 MT
+(compiling\051 Garnet to override the default proclamations, if you want)
+89 W( to sacrifice debugging)90 W
+11030 47044 MT
+(help for speed:)SH
+8 /Courier AF
+12950 48209 MT
+(\050PROCLAIM '\050OPTIMIZE \050SPEED 3\051 \050SAFETY 0\051 \050SPACE 0\051)SH
+23030 49074 MT
+(\050COMPILATION-SPEED 0\051\051\051)SH
+11 /Symbol AF
+10249 50968 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(Fundamental changes in underlying algorithms will often overcome)
+153 W( any local tweaking of)152 W
+11030 52164 MT
+(code. For)
+611 W( example, changing an algorithm that searches all the objects to one that)
+168 W( has a)169 W
+11030 53360 MT
+(pointer or a hash)
+207 W( table to the specific object can make an application practical for large)206 W
+11030 54556 MT
+(numbers of objects.)SH
+/Symbol SF
+10249 56450 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(Use a fast Lisp)
+37 W( system.  We have found that Allegro Version 4.2 is much faster than Allegro)38 W
+11030 57646 MT
+(V3.x. Also,)
+275 W( Allegro and Lucid are much faster than KCL and AKCL on Unix machines.)SH
+/Symbol SF
+10249 59540 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(Most systems have specialized commands and features for making smaller and faster)353 W
+11030 60736 MT
+(systems. For)
+327 W( example, if you are using Allegro,)
+26 W( check out PRESTO, which tries to make the)27 W
+11030 61932 MT
+(run-time image smaller.)
+127 W( One)
+528 W( user reported that the "reorganizer" supplied with Lucid, the)126 W
+11030 63128 MT
+(CPU time used decreased about 10-20%, and the overall time for execution dropped by)
+11 W( about)12 W
+11030 64324 MT
+(30%. We)
+753 W( have found that the tracing tools supplied by vendors)
+239 W( to find where code is)238 W
+11030 65520 MT
+(spending its time are mostly worthless, however.)SH
+/Symbol SF
+10249 67414 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(Beware of Lisp code which causes CONS'ing.  Quite often, the)
+124 W( most natural way to write)125 W
+11030 68610 MT
+(Lisp code is the one)
+39 W( that creates a lot of intermediate storage.  Unfortunately, this may result)38 W
+11030 69806 MT
+(in severe performance problems, as allocating and garbage-collecting)
+128 W( storage is among the)129 W
+11030 71002 MT
+(slowest operations in Lisp.)
+15 W( The)
+303 W( recommendations below apply to all of your code in general,)14 W
+ES
+%%Page: 576 3
+BS
+0 SI
+10 /Times-Roman AF
+6120 4286 MT
+(Page 576)
+SH( Garnet)
+830 W( Toolkit)SH
+34150 XM
+(Making your Garnet Code Faster)
+SH( Section)
+1550 W( 3)SH
+46800 50 6120 4486 UL
+11 SS 
+8870 7955 MT
+(but in particular to code that may)
+141 W( be executed often \050such as the code in certain formulas)142 W
+8870 9151 MT
+(which need to be recomputed many times\051.)SH
+/Symbol SF
+8089 11045 MT
+(\267)SH
+/Times-Roman SF
+8870 XM
+(As a rule, mapping operations \050like)11 W
+10 /Courier AF
+24729 XM
+(mapcar)SH
+11 /Times-Roman AF
+(\051 generate garbage in most Lisp implementations,)10 W
+8870 12241 MT
+(because they create temporary \050or permanent\051 lists of results.  Most mapping)
+66 W( operations can)67 W
+8870 13437 MT
+(be rewritten easily in terms of DO, DOLIST, or DOTIMES.)SH
+/Symbol SF
+8089 15331 MT
+(\267)SH
+/Times-Roman SF
+8870 XM
+(Handling large numbers of objects with lists is)
+10 W( generally expensive.  If you have lists of more)9 W
+8870 16527 MT
+(than a few tens of)
+198 W( objects, you should consider using arrays instead.  Arrays are just as)199 W
+8870 17723 MT
+(convenient as lists,)
+132 W( and they require much less storage.  If your application needs variable)131 W
+8870 18919 MT
+(numbers of objects, consider using variable-length arrays \050possibly with fill pointers\051.)SH
+/Symbol SF
+8089 20813 MT
+(\267)SH
+/Times-Roman SF
+8870 XM
+(Declare the types of your variables and functions \050using DECLARE and PROCLAIM\051.)SH
+/Symbol SF
+8089 22707 MT
+(\267)SH
+/Times-Roman SF
+8870 XM
+(Some Lisp applications will give you warnings)
+274 W( or notes about Lisp constructs that are)275 W
+8870 23903 MT
+(potentially inefficient.)
+301 W( In)
+876 W( CMU Common Lisp, for example, setting SPEED to 3 and)300 W
+8870 25099 MT
+(COMPILATION-SPEED to 0 generates a number of messages about potentially inefficient)110 W
+8870 26295 MT
+(constructs. Many)
+877 W( such inefficiencies can be eliminated easily,)
+301 W( for example by adding)300 W
+8870 27491 MT
+(declarations to your code.)SH
+/Symbol SF
+8089 29385 MT
+(\267)SH
+/Times-Roman SF
+8870 XM
+(Wrap all lambdas in #' rather than just ' \050in CLtL2 the # is no)
+51 W( longer optional\051.  This comes)52 W
+8870 30581 MT
+(up in Garnet a lot in final-functions for interactors and selection-functions for gadgets.  Note,)22 W
+8870 31777 MT
+(in the)215 W
+10 /Courier AF
+12050 XM
+(:parts)SH
+11 /Times-Roman AF
+16140 XM
+(or)SH
+10 /Courier AF
+17546 XM
+(:interactors)SH
+11 /Times-Roman AF
+25236 XM
+(parts of aggregadgets)
+215 W( or aggrelists, use)216 W
+10 /Courier AF
+43909 XM
+(,#')SH
+11 /Times-Roman AF
+46200 XM
+(\050comma-)SH
+8870 32973 MT
+(number-quote\051 before lambdas and functions.)SH
+/Symbol SF
+8089 34867 MT
+(\267)SH
+/Times-Roman SF
+8870 XM
+(You can save)
+39 W( an enormous amount of time loading software if you make images of lisp with)38 W
+8870 36063 MT
+(the software already loaded.  For example, if you start lisp and load Garnet, you can save)
+47 W( an)48 W
+8870 37259 MT
+(image of lisp that)
+45 W( can be restarted later with Garnet already loaded.  We have simplified this)44 W
+8870 38455 MT
+(procedure by providing the function)130 W
+10 /Courier AF
+25679 XM
+(opal:make-image)SH
+11 /Times-Roman AF
+(. If)
+535 W( you want to make)
+130 W( images by)131 W
+8870 39651 MT
+(hand, you will have)
+46 W( to use)45 W
+10 /Courier AF
+20966 XM
+(opal:disconnect-garnet)SH
+11 /Times-Roman AF
+34486 XM
+(and)SH
+10 /Courier AF
+36394 XM
+(opal:reconnect-garnet)SH
+11 /Times-Roman AF
+49314 XM
+(to)SH
+8870 40847 MT
+(sever and restore lisp's connection with the X server.  All of these functions are)
+41 W( documented)42 W
+8870 42043 MT
+(in the Opal manual.)SH
+/Symbol SF
+8089 43937 MT
+(\267)SH
+/Times-Roman SF
+8870 XM
+(It may help to reboot your workstation every now and then.  This will)
+63 W( reset the swap file so)62 W
+8870 45133 MT
+(that large applications \050like Garnet\051 run faster.)SH
+16 /Times-Bold AF
+6120 49805 MT
+(3. Making your Garnet Code Faster)SH
+11 /Times-Roman AF
+6120 52057 MT
+(This section contains hints specifically about how to make Garnet code faster.)SH
+/Symbol SF
+8089 53635 MT
+(\267)SH
+/Times-Roman SF
+8870 XM
+(The global switch)73 W
+10 /Courier AF
+17246 XM
+(:garnet-debug)SH
+11 /Times-Roman AF
+25394 XM
+(can be removed from)
+73 W( the)74 W
+10 /Courier AF
+37030 XM
+(*features*)SH
+11 /Times-Roman AF
+43379 XM
+(list to cause all)74 W
+8870 54831 MT
+(the debugging and demo code in Garnet to be ignored)
+102 W( during compiling and loading.  This)101 W
+8870 56027 MT
+(will make Garnet slightly smaller and faster.)
+48 W( The)372 W
+10 /Courier AF
+31420 XM
+(:garnet-debug)SH
+11 /Times-Roman AF
+39544 XM
+(keyword is pushed onto)49 W
+8870 57223 MT
+(the)SH
+10 /Courier AF
+10711 XM
+(*features*)SH
+11 /Times-Roman AF
+17208 XM
+(list by)
+222 W( default in)221 W
+10 /Courier AF
+25549 XM
+(garnet-loader.lisp)SH
+11 /Times-Roman AF
+(, but you can prevent this by)221 W
+8870 58419 MT
+(setting)SH
+10 /Courier AF
+12460 XM
+(user::Garnet-Garnet-Debug)SH
+11 /Times-Roman AF
+28116 XM
+(to NIL)
+381 W( before compiling and loading Garnet.)382 W
+8870 59615 MT
+(Garnet will need to be recompiled with the)
+36 W( new)35 W
+10 /Courier AF
+30421 XM
+(*features*)SH
+11 /Times-Roman AF
+36731 XM
+(list, so that the extra code will)35 W
+8870 60811 MT
+(not even get into the)
+466 W( compiled binaries.  Of course, you will lose functions like)467 W
+10 /Courier AF
+8870 62007 MT
+(inter:trace-inter)SH
+11 /Times-Roman AF
+(.)SH
+/Symbol SF
+8089 63901 MT
+(\267)SH
+/Times-Roman SF
+8870 XM
+(Turn off)
+26 W( KR's type-checking by setting the variable)25 W
+10 /Courier AF
+32163 XM
+(kr::*types-enabled*)SH
+11 /Times-Roman AF
+43863 XM
+(to NIL.  Note:)25 W
+8870 65097 MT
+(the speed difference may be imperceptible,)
+28 W( since the type system has been implemented very)29 W
+8870 66293 MT
+(efficiently \050operations are only about 2% slower with type-checking\051.)SH
+/Symbol SF
+8089 68187 MT
+(\267)SH
+/Times-Roman SF
+8870 XM
+(If you have many objects in a window, and an interactor only)
+70 W( works on a small set of those)69 W
+8870 69383 MT
+(objects, then the small set of objects)
+87 W( should be in their own aggregate or subwindow.  This)88 W
+8870 70579 MT
+(will cause Opal's)197 W
+10 /Courier AF
+17372 XM
+(point-in-gob)SH
+11 /Times-Roman AF
+25044 XM
+(methods run faster, which identify the)
+197 W( object that you)196 W
+8870 71775 MT
+(clicked on.  When objects)
+402 W( are arranged in an orderly aggregate hierarchy, then the)403 W
+ES
+%%Page: 577 4
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(Section 3)
+SH( Making)
+1550 W( your Garnet Code Faster)SH
+51386 XM
+(Page 577)SH
+46800 50 8280 4486 UL
+/Courier SF
+11030 7955 MT
+(point-in-gob)SH
+11 /Times-Roman AF
+18745 XM
+(methods can reject entire groups of objects, without checking each one)240 W
+11030 9151 MT
+(separately, by checking whether a)
+260 W( point is inside their)261 W
+/Times-Italic SF
+37323 XM
+(aggregate)SH
+/Times-Roman SF
+('s bounding box.  For)261 W
+11030 10347 MT
+(example, in)161 W
+10 /Courier AF
+16758 XM
+(demo-motif)SH
+11 /Times-Roman AF
+23193 XM
+(the scroll bars are in their own aggregate.  Putting objects in a)160 W
+11030 11543 MT
+(seperate subwindow is even faster, since the coordinates)
+133 W( of the click will only be checked)134 W
+11030 12739 MT
+(against objects in the same window as the click.)SH
+/Symbol SF
+10249 14633 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(Use)SH
+10 /Courier AF
+13078 XM
+(o-formula)SH
+11 /Times-Roman AF
+(s instead of)63 W
+10 /Courier AF
+23952 XM
+(formula)SH
+11 /Times-Roman AF
+(s. O-formulas)
+401 W( are compiled along with the)
+63 W( rest of the)62 W
+11030 15829 MT
+(file, whereas formulas are compiled at load- or run-time, which is much slower.)SH
+/Symbol SF
+10249 17723 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(Try not to use formulas where not)
+133 W( really needed.  For example, if the positions of objects)134 W
+11030 18919 MT
+(won't change, use expressions or numbers instead of formulas to calculate them.)SH
+/Symbol SF
+10249 20813 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(Try to eliminate as many interactors as possible.  Garnet)
+164 W( must linearly search through all)163 W
+11030 22009 MT
+(interactors in each window.  To see how many interactors are on your)
+65 W( window, you can use)66 W
+10 /Courier AF
+11030 23205 MT
+(\050inter:print-inter-levels\051)SH
+11 /Times-Roman AF
+(. If)
+343 W( this is a long list, then try to use one global interactor)33 W
+11030 24401 MT
+(with a start-where)
+93 W( that includes lots of objects, rather than having each object have its own)94 W
+11030 25597 MT
+(interactor. This)
+463 W( can even work if you have a lot of)
+94 W( scattered gadgets.  For example, if you)93 W
+11030 26793 MT
+(have a lot of buttons, you can use a button-panel and override the default)
+338 W( layout to)339 W
+11030 27989 MT
+(individually place each button.)SH
+/Symbol SF
+10249 29883 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(The)SH
+10 /Courier AF
+13081 XM
+(fast-redraw)SH
+11 /Times-Roman AF
+20022 XM
+(property of graphical objects can be set to make)
+66 W( objects move and draw)65 W
+11030 31079 MT
+(faster. This)
+471 W( can be used in more cases than with previous versions)
+98 W( of Garnet, but it is still)99 W
+11030 32275 MT
+(restricted. See)
+275 W( the fast-redraw section of the Opal manual.)SH
+/Symbol SF
+10249 34169 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(Aggrelists are quite general, and have a lot)
+94 W( of flexibility.  If you don't need this flexibility,)93 W
+11030 35365 MT
+(for example, if your objects will always be in)
+91 W( a simple left-aligned column, it will be more)92 W
+11030 36561 MT
+(efficient to place the objects yourself, or create custom formulas.)SH
+/Symbol SF
+10249 38455 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(If you are frequently destroying and creating new objects of the same type, it is)
+261 W( more)260 W
+11030 39651 MT
+(efficient to just keep a list of)
+45 W( objects around, and re-using them.  Allocating memory in Lisp)46 W
+11030 40847 MT
+(is fairly expensive.)SH
+/Symbol SF
+10249 42741 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(If you are deleting a number of objects at the same time, first set the window's)28 W
+10 /Courier AF
+46330 XM
+(:aggregate)SH
+11 /Times-Roman AF
+11030 43937 MT
+(slot to NIL and)
+70 W( update the window.  Then, when you are done destroying, set the aggregate)71 W
+11030 45133 MT
+(back and update again.  For example, to destroy 220 rectangles on a Sparc, removing)
+151 W( the)150 W
+11030 46329 MT
+(aggregate reduced the time from 11.8 to 2.4 seconds \05080%\051!  So your new code should be:)SH
+8 /Courier AF
+12950 47542 MT
+(;;)SH
+/Times-Italic SF
+14390 XM
+(Code fragment to quickly destroy all the objects within an aggregate.)SH
+/Courier SF
+12950 48407 MT
+(\050let \050\050temp-agg \050kr:gv my-window :aggregate\051\051\051)SH
+13910 49272 MT
+(\050when temp-agg)SH
+14870 50137 MT
+(;; First, temporarily remove the aggregate:)SH
+14870 51002 MT
+(\050kr:s-value my-window :aggregate NIL\051)SH
+14870 51867 MT
+(\050opal:update my-window\051)SH
+14870 52732 MT
+(;; Now do the actual destroying:)SH
+14870 53597 MT
+(\050dolist \050object \050kr:get-values temp-agg :components\051\051)SH
+15830 54462 MT
+(\050opal:destroy object\051\051)SH
+14870 55327 MT
+(;; Finally, restore the aggregate:)SH
+14870 56192 MT
+(\050kr:s-value my-window :aggregate temp-agg\051)SH
+14870 57057 MT
+(\050opal:update my-window\051\051\051)SH
+11 /Symbol AF
+10249 58951 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(If you have objects in different parts of the same window)
+129 W( changing at the same time, it is)130 W
+11030 60147 MT
+(often faster to call update explicitly after one is changed and before the other.  \050This is)
+65 W( only)64 W
+11030 61343 MT
+(true if neither of the objects is a fast-redraw object.  Many of)
+133 W( the built-in gadgets are fast)134 W
+11030 62539 MT
+(redraw objects for)
+174 W( this reason, so this usually is not necessary for built-in gadgets.\051  The)173 W
+11030 63735 MT
+(reason for this problem is that Garnet will redraw everything in a bounding box which)240 W
+11030 64931 MT
+(includes all the changed objects.  If the changed objects are in different parts of)
+96 W( a window,)95 W
+11030 66127 MT
+(then everything in between will be redrawn also.  Ways)
+63 W( around this problem include calling)64 W
+11030 67323 MT
+(update explicitly after one of the objects changes, making one of the)
+37 W( objects be a fast redraw)36 W
+11030 68519 MT
+(object if possible, moving the objects)
+128 W( closer together if possible \050so there aren't objects in)129 W
+11030 69715 MT
+(between\051, or putting the objects in separate subwindows if possible \050subwindows are)
+23 W( updated)22 W
+11030 70911 MT
+(independently\051.)SH
+ES
+%%Page: 578 5
+BS
+0 SI
+10 /Times-Roman AF
+6120 4286 MT
+(Page 578)
+SH( Garnet)
+830 W( Toolkit)SH
+35232 XM
+(Making your Binaries Smaller)
+SH( Section)
+1550 W( 4)SH
+46800 50 6120 4486 UL
+11 /Symbol AF
+8089 8080 MT
+(\267)SH
+/Times-Roman SF
+8870 XM
+(Conventional object-oriented programming relies heavily on message sending.  In Garnet,)165 W
+8870 9276 MT
+(however, this technique)
+98 W( is often less efficient than the preferred Garnet programming style,)97 W
+8870 10472 MT
+(which relies on slots and constraints.  Rather than writing)
+32 W( methods to get values from certain)33 W
+8870 11668 MT
+(slots in an object, for example, consider accessing those)
+79 W( slots directly and having a formula)78 W
+8870 12864 MT
+(compute their value.  The)
+78 W( Garnet style is more efficient, since it avoid the message-sending)79 W
+8870 14060 MT
+(overhead. Because)
+427 W( Garnet provides)
+76 W( a powerful constraint mechanism, the functionality that)75 W
+8870 15256 MT
+(would normally be associated with a method can typically be implemented in a formula.)SH
+/Symbol SF
+8089 17150 MT
+(\267)SH
+/Times-Roman SF
+8870 XM
+(If you use the)
+196 W( same formula in multiple places, it is more efficient to declare a formula)197 W
+8870 18346 MT
+(prototype, and create instances of it.  For example:)SH
+8 /Courier AF
+10790 19511 MT
+(\050defparameter leftform \050o-formula \050+ 10 \050first \050gvl :box\051\051\051\051\051)SH
+10790 20376 MT
+(;;)SH
+/Times-Italic SF
+(for every object)SH
+/Courier SF
+10790 21241 MT
+(\050create-instance NIL)SH
+/Times-Italic SF
+20870 XM
+(<whatever>)SH
+/Courier SF
+18950 22106 MT
+(...)SH
+18950 22971 MT
+(\050:left \050formula leftform\051\051\051)SH
+11 /Symbol AF
+8089 24865 MT
+(\267)SH
+/Times-Roman SF
+8870 XM
+(If many objects in your scene have their)
+46 W( own feedback objects, maybe you can replace these)45 W
+8870 26061 MT
+(with one global feedback object instead.  The)
+290 W( button and menu interactors can take a)291 W
+10 /Courier AF
+8870 27257 MT
+(:final-feedback-obj)SH
+11 /Times-Roman AF
+20545 XM
+(parameter and will duplicate the feedback object if necessary.)SH
+/Symbol SF
+8089 29151 MT
+(\267)SH
+/Times-Roman SF
+8870 XM
+(If you have a lot of objects that become invisible and stay)
+31 W( invisible for a reasonable period if)30 W
+8870 30347 MT
+(time, it might be)
+162 W( better to remove them from their aggregate rather than just setting their)163 W
+10 /Courier AF
+8870 31543 MT
+(:visible)SH
+11 /Times-Roman AF
+14147 XM
+(slot. There)
+679 W( are many linear searches in Garnet that process)
+202 W( all objects in an)201 W
+8870 32739 MT
+(aggregate, and each time it must check to see if the objects are invisible.)SH
+/Symbol SF
+8089 34633 MT
+(\267)SH
+/Times-Roman SF
+8870 XM
+(It is slightly more efficient when you are)
+154 W( creating a window at startup, if you add all the)155 W
+8870 35829 MT
+(objects to the top level aggregate)SH
+/Times-Italic SF
+23654 XM
+(before)SH
+/Times-Roman SF
+26739 XM
+(you add the aggregate to the window.)SH
+/Symbol SF
+8089 37723 MT
+(\267)SH
+/Times-Roman SF
+8870 XM
+(The use of double-buffering doesn't make your applications run faster \050they actually run a)125 W
+8870 38919 MT
+(little slower\051, but it usually)91 W
+/Times-Italic SF
+21487 XM
+(appears)SH
+/Times-Roman SF
+25397 XM
+(faster due to)
+91 W( the lack of flicker.  See the section in the)92 W
+8870 40115 MT
+(Opal manual on how to make a window be double-buffered.)SH
+16 /Times-Bold AF
+6120 44787 MT
+(4. Making your Binaries Smaller)SH
+11 /Times-Roman AF
+6120 47039 MT
+(This section)
+163 W( discusses ways to make the run-time size of your application smaller.  This is important)162 W
+6120 48235 MT
+(because when your system gets big, it can start to swap, which significantly degrades performance.)
+71 W( We)418 W
+6120 49431 MT
+(have found that many applications would be fast enough if)
+136 W( they all fit into physical memory, whereas)135 W
+6120 50627 MT
+(when they begin swapping virtual memory, they are not fast enough.)SH
+/Symbol SF
+8089 52205 MT
+(\267)SH
+/Times-Roman SF
+8870 XM
+(Don't load the PostScript module or)
+52 W( debugging code unless you need to.  Change the values)53 W
+8870 53401 MT
+(of the appropriate variables in)84 W
+10 /Courier AF
+22759 XM
+(garnet-loader)SH
+11 /Times-Roman AF
+(, or set the)
+84 W( variables before loading Garnet.)83 W
+8870 54597 MT
+(The values will not be overridden, since they are defined with)SH
+10 /Courier AF
+36360 XM
+(defvar)SH
+11 /Times-Roman AF
+40235 XM
+(in)SH
+10 /Courier AF
+41366 XM
+(garnet-loader)SH
+11 /Times-Roman AF
+(.)SH
+/Symbol SF
+8089 56491 MT
+(\267)SH
+/Times-Roman SF
+8870 XM
+(Declare constants where possible.)
+4 W( This)
+284 W( allows Garnet to throw away formulas, which saves a)5 W
+8870 57687 MT
+(lot of run-time)
+8 W( space.  All the built-in objects and gadgets provide a)7 W
+10 /Courier AF
+39023 XM
+(:maybe-constant)SH
+11 /Times-Roman AF
+48305 XM
+(slot,)SH
+8870 58883 MT
+(which means that you can use)300 W
+10 /Courier AF
+24110 XM
+(\050:constant T\051)301 W
+11 /Times-Roman AF
+32787 XM
+(to make all the slots constant.  The)301 W
+10 /Courier AF
+8870 60079 MT
+(:maybe-constant)SH
+11 /Times-Roman AF
+18183 XM
+(will contain all of the slots discussed in the manual)
+38 W( as parameters to the)37 W
+8870 61275 MT
+(object or gadget.  Of course, the slots)
+35 W( that allow the widget to operate \050e.g., the buttons to be)36 W
+8870 62471 MT
+(pressed or the scroll-bar-indicator to move\051 are not declared constant.)
+90 W( Remember)
+453 W( that only)89 W
+8870 63667 MT
+(slots that don't change can be declared constant.  Therefore, if your gadget)
+57 W( changes position)58 W
+8870 64863 MT
+(or items or active or font after creation, then you should)43 W
+10 /Courier AF
+34207 XM
+(:except)SH
+11 /Times-Roman AF
+38725 XM
+(the appropriate slots.  For)43 W
+8870 66059 MT
+(example:)SH
+8 /Courier AF
+10790 67224 MT
+(\050create-instance NIL gg:motif-radio-button-panel)SH
+11750 68089 MT
+(;;)SH
+/Times-Italic SF
+13190 XM
+(only the :active slot will change)SH
+/Courier SF
+11750 68954 MT
+(\050:constant '\050T :except :active\051\051)SH
+11750 69819 MT
+(\050:left 10\051\050:top 30\051)SH
+11750 70684 MT
+(\050:items '\050"Start" "Pause" "Quit"\051\051\051)SH
+ES
+%%Page: 579 6
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(Section 4)
+SH( Making)
+1550 W( your Binaries Smaller)SH
+51386 XM
+(Page 579)SH
+46800 50 8280 4486 UL
+11 SS 
+11030 7955 MT
+(Several functions are discussed in)
+17 W( the Debugging Manual \050starting on page 461\051 that are very)18 W
+11030 9151 MT
+(helpful in determining which slots should be declared constant.  The KR Manual describes)108 W
+11030 10347 MT
+(the fundamentals of constant declarations in detail.)SH
+/Symbol SF
+10249 12241 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(Don't load gadget files you don't need.  Most Garnet applications \050like the)
+18 W( demos\051, load only)19 W
+11030 13437 MT
+(the gadgets they need, if they haven't been loaded)
+39 W( already.  This approach means that lots of)38 W
+11030 14633 MT
+(gadgets you never use won't take up memory.)SH
+/Symbol SF
+10249 16527 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(Consider using)109 W
+10 /Courier AF
+18154 XM
+(virtual-aggregates)SH
+11 /Times-Roman AF
+29338 XM
+(if you have a lot of similar objects in an)
+109 W( interface,)110 W
+11030 17723 MT
+(such as lines in a map or dots on a graph.  This will)
+323 W( decrease storage requirements)322 W
+11030 18919 MT
+(significantly.)SH
+/Symbol SF
+10249 20813 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(The variable)96 W
+10 /Courier AF
+17024 XM
+(kr::store-lambdas)SH
+11 /Times-Roman AF
+27595 XM
+(can be set to)
+96 W( NIL to remove the storage of the lambda)97 W
+11030 22009 MT
+(expressions for compiled formulas.  This will save some storage, but it prevents objects from)26 W
+11030 23205 MT
+(being stored to files.)SH
+ES
+%%Page: 580 7
+BS
+0 SI
+10 /Times-Roman AF
+6120 4286 MT
+(Page 580)
+SH( Garnet)
+830 W( Toolkit)SH
+35232 XM
+(Making your Binaries Smaller)
+SH( Section)
+1550 W( 4)SH
+46800 50 6120 4486 UL
+ES
+%%Page: i 8
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(Garnet Toolkit)SH
+47914 XM
+(Table of Contents)SH
+46800 50 8280 4486 UL
+16 /Times-Bold AF
+25591 8272 MT
+(Table of Contents)SH
+12 SS 
+8280 9796 MT
+(1. Introduction)SH
+53280 XM
+(575)SH
+8280 11320 MT
+(2. General)SH
+53280 XM
+(575)SH
+8280 12844 MT
+(3. Making your Garnet Code Faster)SH
+53280 XM
+(576)SH
+8280 14368 MT
+(4. Making your Binaries Smaller)SH
+53280 XM
+(578)SH
+ES
+%%Trailer
+%%Pages: 8
+%%DocumentFonts: Times-Roman Times-Bold Symbol Courier Times-Italic

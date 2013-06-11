@@ -1,0 +1,436 @@
+%!PS-Adobe-2.0
+%%Title: Opal 15
+%%Creator: Make-PS-File -- Garnet Version 2.1
+%%CreationDate: Jun 4, 1992, 1:21 PM
+%%For: 
+%%This file does not use real color
+%%DocumentFonts: (atend)
+%%BoundingBox: 72 295 539 497
+%%Pages: 1
+%%EndComments
+
+
+/BitmapDict 9 dict def
+/DrawBitmap
+   {    % stack: left top width height pattern transparent-p
+        %        red green blue color-p
+        BitmapDict begin
+        /picstr 256 string def
+	/color-p exch def  /blue exch def  /green exch def /red exch def
+        /transparent-p exch def
+        /pattern exch def  /height exch def  /width exch def
+        gsave
+          translate
+          width height scale
+	  color-p {red green blue setrgbcolor} if
+          transparent-p
+	  % The case where the background is not drawn
+	  { width height false
+            [ width 0 0 height 0 height ]
+            {pattern} imagemask }
+	  % The case where the background is drawn
+          { width height 1
+            [ width 0 0 height 0 height ]
+            {pattern} image } ifelse
+        grestore
+        end
+   } def
+
+/ArcDict 22 dict def
+ArcDict /mtrx matrix put
+/DrawArc
+   {
+        ArcDict begin
+        /fill-color-p exch def  /fill-blue exch def  /fill-green exch def
+        /fill-red exch def  /fill-halftone exch def  /thickness exch def
+        /dash-pattern exch def  /line-join exch def  /line-cap exch def
+        /line-color-p exch def  /line-blue exch def  /line-green exch def
+        /line-red exch def  /line-halftone exch def  /endangle exch def
+        /startangle exch def  /yrad exch def  /xrad exch def  /y exch def
+        /x exch def  /savematrix mtrx currentmatrix def
+        newpath
+	  x y translate
+	  xrad yrad scale
+          % Fill the arc
+          newpath
+            0 0 moveto  0 0 1 startangle endangle arc  closepath
+            fill-halftone fill-red fill-green fill-blue fill-color-p FillShape
+          % Draw the border
+          newpath
+            0 0 1 startangle endangle arc
+            savematrix setmatrix
+            line-halftone line-red line-green line-blue line-color-p
+            line-cap line-join dash-pattern thickness StrokeShape
+        end
+   } def
+
+/PolylineDict 15 dict def
+/DrawPolyline
+   {	% stack: x1, y1, ..., xn, yn, n, line-halftone, line-red, line-blue,
+        %        line-green, line-join, line-cap, dash-pattern,
+        %        line-thickness, fill-halftone
+        PolylineDict begin
+        /fill-color-p exch def  /fill-blue exch def  /fill-green exch def
+        /fill-red exch def  /fill-halftone exch def  /thickness exch def
+        /dash-pattern exch def  /line-join exch def  /line-cap exch def
+        /line-color-p exch def  /line-blue exch def  /line-green exch def
+        /line-red exch def  /line-halftone exch def  /num-points exch 4 sub def
+	newpath
+	  moveto
+	  num-points -2 0 {pop lineto} for
+	  fill-halftone fill-red fill-green fill-blue fill-color-p FillShape
+          line-halftone line-red line-green line-blue line-color-p
+          line-cap line-join dash-pattern thickness StrokeShape
+        end
+   } def
+
+/EllipseDict 23 dict def
+EllipseDict /mtrx matrix put
+/DrawEllipse
+   {    EllipseDict begin
+        /fill-color-p exch def  /fill-blue exch def  /fill-green exch def
+        /fill-red exch def  /fill-halftone exch def  /thickness exch def
+        /dash-pattern exch def  /line-join exch def  /line-cap exch def
+        /line-color-p exch def  /line-blue exch def  /line-green exch def
+        /line-red exch def  /line-halftone exch def  /endangle exch def
+        /startangle exch def  /yrad exch def  /xrad exch def  /y exch def
+        /x exch def  /savematrix mtrx currentmatrix def  /thickness-by-2 thickness 2 div def
+        % Draw the filling
+        newpath
+	  x y translate
+          gsave
+	    xrad thickness-by-2 sub  yrad thickness-by-2 sub scale
+            0 0 1 startangle endangle arc
+            savematrix setmatrix
+	    fill-halftone fill-red fill-green fill-blue fill-color-p FillShape
+          grestore
+        % Draw the border
+        newpath
+          xrad yrad scale
+          0 0 1 startangle endangle arc
+	  savematrix setmatrix
+          line-halftone line-red line-green line-blue line-color-p
+          line-cap line-join dash-pattern thickness StrokeShape
+        end
+   } def
+
+/TextDict 19 dict def
+/DrawText
+   {	% stack: left top base-y opal-width height line-halftone fill-p
+        %        fore-red fore-green fore-blue fore-color-p
+        %        back-red back-green back-blue back-color-p
+        %        string size font-name
+        TextDict begin
+        gsave
+	findfont exch scalefont setfont
+	/s exch def
+        /back-color-p exch def  /back-blue exch def  /back-green exch def
+        /back-red exch def  /fore-color-p exch def  /fore-blue exch def
+        /fore-green exch def  /fore-red exch def  /fill-p exch def
+        /line-halftone exch def /height exch def  /opal-width exch def
+        /base-y exch def  /top exch def  /left exch def
+
+        % Calculate distance to add between each character, based on the width
+        % expected by Opal, the width expected by postscript, and the number
+        % of characters to distribute the change over
+	/x-dist opal-width s stringwidth pop sub s length div def
+
+        % Draw background of text if appropriate
+        fill-p
+        { gsave
+            newpath
+            left top opal-width height RectanglePath
+            1 back-red back-green back-blue back-color-p
+            FillShape
+          grestore } if
+
+        % Draw text in the appropriate color
+	newpath
+          fore-color-p
+          { fore-red fore-green fore-blue setrgbcolor }
+          { line-halftone setgray } ifelse
+	  left base-y moveto
+	  x-dist 0 s ashow
+        grestore
+        end
+   } def
+
+/SetUserScreenDict 22 dict def
+SetUserScreenDict begin
+  /tempctm matrix def
+  /temprot matrix def
+  /tempscale matrix def
+  /ConcatProcs
+   {/proc2 exch cvlit def
+    /proc1 exch cvlit def
+    /newproc proc1 length proc2 length add
+      array def
+    newproc 0 proc1 putinterval
+    newproc proc1 length proc2 putinterval
+    newproc cvx
+   } def
+  /resmatrix matrix def
+  /findresolution
+   { 72 0 resmatrix defaultmatrix dtransform
+     /yres exch def /xres exch def
+     xres dup mul yres dup mul add sqrt
+   } def
+end
+
+/SetUserScreen
+  { SetUserScreenDict begin
+    /spotfunction exch def
+    /cellsize exch def
+    /m tempctm currentmatrix def
+    /rm 0 temprot rotate def
+    /sm cellsize dup tempscale scale def
+    sm rm m m concatmatrix m concatmatrix pop
+    1 0 m dtransform /y1 exch def /x1 exch def
+    /veclength x1 dup mul y1 dup mul add sqrt def
+    /frequency findresolution veclength div def
+    /newscreenangle y1 x1 atan def
+    m 2 get m 1 get mul m 0 get m 3 get mul sub
+     0 gt
+     { { neg } /spotfunction load ConcatProcs
+         /spotfunction exch def
+     } if
+    frequency newscreenangle /spotfunction load setscreen
+  end
+} def
+
+/SetPatternDict 18 dict def
+SetPatternDict begin
+  /bitison
+   { /ybit exch def /xbit exch def
+     /bytevalue bstring ybit bwidth mul xbit 8 idiv
+       add get def
+     /mask 1 7 xbit 8 mod sub bitshift def
+     bytevalue mask and 0 ne
+    } def
+end
+
+/BitPatternSpotFunction
+  { SetPatternDict begin
+     /y exch def /x exch def
+     /xindex x 1 add 2 div bpside mul cvi def
+     /yindex y 1 add 2 div bpside mul cvi def
+     xindex yindex bitison
+      { /onbits onbits 1 add def 1 }
+      { /offbits offbits 1 add def 0 }
+      ifelse
+    end
+  } def
+
+/SetPattern
+  { SetPatternDict begin
+    /cellsz exch def
+    /bwidth exch def
+    /bpside exch def
+    /bstring exch def
+    /onbits 0 def /offbits 0 def
+    cellsz /BitPatternSpotFunction load
+     SetUserScreen
+    {} settransfer
+    offbits offbits onbits add div setgray
+    end
+  } def
+
+/RoundtanglePath
+   {    % stack: left, top, width, height, radius
+        /r exch def  /h exch def  /w exch def  /t exch def  /l exch def
+        /right l w add def  /bottom t h sub def
+          l r add t moveto                         % origin
+          right t right t r sub r arcto            % top side
+          right bottom right r sub bottom r arcto  % right side
+          l bottom l bottom r add r arcto          % bottom side
+          l t l r add t r arcto                    % left side
+          16 {pop} repeat  % each arcto accumulates 4 stack parameters
+   } def
+
+/RoundtangleDict 27 dict def
+/DrawRoundtangle
+   {    % stack: left, top, width, height, radius, line-halftone,
+        %        line-red, line-green, line-blue, line-color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness,
+        %        fill-halftone, fill-red, fill-green, fill-blue, fill-color-p
+        
+        RoundtangleDict begin
+        /fill-color-p exch def  /fill-blue exch def  /fill-green exch def
+        /fill-red exch def  /fill-halftone exch def  /thickness exch def
+        /dash-pattern exch def  /line-join exch def  /line-cap exch def
+        /line-color-p exch def  /line-blue exch def  /line-green exch def
+        /line-red exch def  /line-halftone exch def  /radius exch def
+        /height exch def  /width exch def  /top exch def  /left exch def
+        /thickness-by-2 thickness 2 div def
+        % Draw filling
+        newpath
+          left thickness-by-2 add  top thickness-by-2 sub  width thickness sub  height thickness sub
+          radius thickness sub RoundtanglePath
+          fill-halftone fill-red fill-green fill-blue fill-color-p FillShape
+        % Draw border
+        newpath
+          left top width height radius thickness-by-2 sub RoundtanglePath
+          line-halftone line-red line-green line-blue line-color-p
+          line-cap line-join dash-pattern thickness StrokeShape
+        end
+   } def
+
+/DrawLine
+   {    % stack: line-halftone, red, green, blue, color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness
+        %        x2, y2, x1, y1
+        newpath
+          moveto
+          lineto
+          StrokeShape
+   } def
+
+/RectanglePath
+   {    % stack: left, top, width, height
+        /h exch def  /w exch def
+	moveto		        % Go to the left,top corner
+	w 0 rlineto	        % top side
+	0 h neg rlineto		% right side
+	w neg 0 rlineto		% bottom side
+	closepath		% left side
+   } def
+
+/RectangleDict 21 dict def
+/DrawRectangle
+   {	% stack: left, top, width, height, line-halftone, line-red, line-green,
+        %        line-blue, line-color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness,
+        %        fill-halftone, fill-red, fill-green, fill-blue, fill-color-p
+        RectangleDict begin
+        /fill-color-p exch def  /fill-blue exch def  /fill-green exch def
+        /fill-red exch def /fill-halftone exch def  /thickness exch def
+        /dash-pattern exch def  /line-join exch def  /line-cap exch def
+        /line-color-p exch def  /line-blue exch def  /line-green exch def
+        /line-red exch def  /line-halftone exch def  /height exch def
+        /width exch def  /top exch def  /left exch def  /thickness-by-2 thickness 2 div def
+        % Draw filling
+        newpath
+          left thickness-by-2 add  top thickness-by-2 sub   width thickness sub  height thickness sub
+          RectanglePath
+	  fill-halftone fill-red fill-green fill-blue fill-color-p FillShape
+        % Draw border
+        newpath
+          left top width height RectanglePath
+          line-halftone line-red line-green line-blue line-color-p
+          line-cap line-join dash-pattern thickness StrokeShape
+        end
+   } def
+
+/ClipDict 2 dict def
+/ClipToRectangle
+   {    % stack: left, top, width, height
+        ClipDict begin
+	/height exch def  /width exch def
+        newpath
+	  moveto		% Go to the left,top corner
+	  width 0 rlineto	% top side
+	  0 height neg rlineto	% right side
+	  width neg 0 rlineto	% bottom side
+	  closepath		% left side
+	gsave 1 setgray fill grestore
+	clip newpath
+        end
+   } def
+
+/FillShape
+   {	% stack: fill-halftone, red, green, blue, color-p
+        %   Color-p should be true or false - false means ignore the three vals
+        %   Use -1 for fill-halftone to mean NIL, 0 = black, 1 = white
+        %   Use -2 for fill-halftone to indicate there is an arbitrary filling
+        % style on the stack
+        gsave
+        { setrgbcolor fill pop }
+	{ pop pop pop 
+	  dup 0 ge
+	    % if fill-halftone >= 0, then fill the shape with a halftone
+	    { setgray fill}
+            % else, if there is an arbitrary filling style, then fill
+            { -2 eq
+              {SetPattern fill} if
+            } ifelse } ifelse
+        grestore
+   } def
+
+/StrokeShape
+   {	% stack: line-halftone, red, green, blue, color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness
+	% If no line is desired, pass -1 for line-thickness
+        % Halftones: 0 = black, 1 = white
+	dup 0 ge
+	  % if line-thickness >= 0, then draw the outline
+	  {gsave
+	   setlinewidth 0 setdash setlinejoin setlinecap
+             { setrgbcolor pop }
+             { pop pop pop setgray } ifelse
+	   stroke
+	   grestore}
+	  {pop pop pop pop pop pop pop pop pop newpath} ifelse
+   } def
+
+/image-2
+<ffff80ffffff fffc7f1fffff fff3ffe7ffff ffef80fbffff ffde7f3dffff ffb9ffceffff
+ff7780f77fff feee7f3bbfff feddffddbfff ffffffffe1ff fffffffff3ff fffffffff3ff
+030388ac007f 99cf34a9933f 99cf3ca9933f 99cf3cac133f 99cf3c0f933f 830e015c247f
+9fff3fffffff 9fff3fffffff 1fcfffffffff ffffffffffff feddffddbfff feee7f3bbfff
+ff7780f77fff ffb9ffceffff ffde7f3dffff ffef80fbffff fff3ffe7ffff fffc7f1fffff
+ffff80ffffff>
+def
+
+/image-1
+<ff80 f780 e380 c180 8080 c180 e380 f780 ff80>
+def
+
+
+%%EndProlog
+%%Page: 1 1
+
+gsave
+72 72 translate
+1 1 scale
+
+%
+% Begin new window
+%
+0 -223 translate
+gsave
+0 648 467 202 ClipToRectangle
+0 0 translate
+gsave
+0 0 0 0 false 0 0 [] 1 10 598 50 638 DrawLine
+60 638 60 30 0 0 0 0 false 0 0 [] 1 0.75 0 0 0 false DrawRectangle
+image-1 9 2 15.36
+141 637 78 58 12 0 0 0 0 false 0 0 [] 2 -2 0 0 0 false DrawRoundtangle
+250 618 603 200 20 0 false 0 0 0 false 0 0 0 false (Hello World) 35 /Courier-BoldOblique DrawText
+31.5 566.5 1.5 1.5 0 360 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawEllipse
+51.5 546.5 1.5 1.5 0 360 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawEllipse
+51.5 526.5 1.5 1.5 0 360 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawEllipse
+31.5 506.5 1.5 1.5 0 360 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawEllipse
+11.5 526.5 1.5 1.5 0 360 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawEllipse
+11.5 546.5 1.5 1.5 0 360 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawEllipse
+90 568 110 548 110 528 90 508 70 528 70 548 90 568 14 0 0 0 0 false 0 0 [] -1 0.88 0 0 0 false DrawPolyline
+130 528 150 538 146 516 6 0 0 0 0 false 0 0 [] 2 -1 0 0 0 false DrawPolyline
+210.0 538.0 39.5 29.5 0 360 0 0 0 0 false 0 0 [1 1] 1 -1 0 0 0 false DrawEllipse
+295.0 543.0 25.0 25.0 0 360 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawEllipse
+350 568 557 103 14 0 false 0 0 0 false 0 0 0 false (Garnet supports) 12 /Courier DrawText
+367 554 543 69 14 0 false 0 0 0 false 0 0 0 false (multi-line) 12 /Courier DrawText
+388 540 529 27 14 0 false 0 0 0 false 0 0 0 false (text) 12 /Courier DrawText
+375 526 515 52 14 0 false 0 0 0 false 0 0 0 false (strings!) 12 /Courier DrawText
+60.0 463.0 50.0 25.0 0 180 0 0 0 0 false 0 0 [4 4] 1 -1 0 0 0 false DrawArc
+130 488 42 31 image-2 false 0 0 0 false DrawBitmap
+grestore
+
+grestore
+
+0 648 467 202 0 0 0 0 false 0 0 [] 2 -1 0 0 0 false DrawRectangle
+grestore
+
+
+showpage
+%%Trailer
+%%DocumentFonts: /Courier /Courier-BoldOblique 
+%%BoundingBox: 72 295 539 497

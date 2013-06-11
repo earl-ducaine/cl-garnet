@@ -1,0 +1,722 @@
+%!PS-Adobe-2.0 EPSF-2.0
+%%Title: Move/Grow Interactor
+%%Creator: Make-PS-File -- Garnet Version 2.2
+%%CreationDate: Aug 14, 1993, 7:51 PM
+%%For: 
+%%This file does not use real color
+%%DocumentFonts: (atend)
+%%BoundingBox: 133 72 478 720
+%%Pages: 1
+%%EndComments
+
+
+/EllipseDict 23 dict def
+EllipseDict /mtrx matrix put
+/DrawEllipse { % x y xrad yrad startangle endangle line-color
+	       % cap join dash thickness fill-color => -
+    EllipseDict begin
+	/fill-color exch def /thickness exch def
+	/dash-pattern exch def  /line-join exch def  /line-cap exch def
+	/line-color exch def  /endangle exch def /startangle exch def
+	/yrad exch def  /xrad exch def /y exch def /x exch def
+	/savematrix mtrx currentmatrix def
+	% Draw the filling
+	gsave
+	    newpath
+	    x y translate
+	    xrad thickness sub yrad thickness sub scale
+	    0 0 1 startangle endangle arc
+	    savematrix setmatrix
+	    fill-color FillShape
+	    newpath
+	    x y translate
+	    xrad thickness 2 div sub yrad thickness 2 div sub scale
+	    0 0 1 startangle endangle arc
+	    savematrix setmatrix
+	    line-color
+	    0 % line-cap
+	    line-join dash-pattern thickness
+	    StrokeShape
+	grestore
+    end
+} def
+
+/AdjustLineDict 20 dict def
+/AdjustLine { % x1 y1 x2 y2 width => x1 y1 x2 y2
+  AdjustLineDict begin
+    /width exch cvi def
+    /hw width 2 div def
+    /oddwidth? width 1 and 1 eq def
+    /y2 exch def /x2 exch def /y1 exch def /x1 exch def
+    /dx x2 x1 sub def /dy y2 y1 sub def
+    dy 0 eq {
+      dx 0 eq {
+	% point
+	oddwidth? {
+	  /x1 x1 .5 add def /y1 y1 .5 sub def
+	  /x2 x2 .5 add def /y2 y2 .5 sub def
+	} if
+      } {
+	% horizontal
+	oddwidth? {
+	  /y1 y1 .5 sub def
+	  /y2 y2 .5 sub def
+	} if
+      } ifelse
+    } {
+      dx 0 eq {
+	% vertical
+	oddwidth? {
+	  /x1 x1 .5 add def
+	  /x2 x2 .5 add def
+	} if
+      } {
+	% diagonal
+	oddwidth? {
+	  /x1 x1 .5 add def /y1 y1 .5 sub def
+	  /x2 x2 .5 add def /y2 y2 .5 sub def
+	} if
+      } ifelse
+    } ifelse
+    x1 y1 x2 y2
+  end
+} def
+
+/DrawLineDict 20 dict def
+/DrawLine { % line-color cap join dash thickness x2 y2 x1 y1 => -
+    gsave DrawLineDict begin
+	4 index AdjustLine
+	moveto lineto
+	StrokeShape
+    end grestore
+} def
+
+/TextDict 40 dict def
+/DrawText { % left top base-y opal-width height fill-p
+	    % fore-color back-color string size font-name => -
+    TextDict begin
+	gsave
+	    findfont exch scalefont setfont
+	    /s exch def
+	    /back-color exch def /fore-color exch def /fill-p exch def
+	    /height exch def  /opal-width exch def
+	    /base-y exch def  /top exch def
+	    /left exch 1 sub def % XXX: I don't know why!
+
+	    % Calculate distance to add between each character, based on the 
+	    % width expected by Opal, the width expected by postscript, and 
+	    % the number of characters to distribute the change over.
+	    /x-dist opal-width s stringwidth pop sub s length div def
+
+	    % Draw background of text if appropriate
+	    fill-p {
+		gsave
+		    newpath
+		    left top opal-width height RectanglePath
+		    back-color FillShape
+		grestore
+	    } if
+
+	    % Draw text in the appropriate color
+	    newpath
+	    s length 0 ne {
+		left base-y moveto
+		fore-color aload length 3 eq {
+		    setrgbcolor
+		    x-dist 0 s ashow
+		} { % Halftone pattern:
+		    %   fgR fgG fgB bgR bgG bgB top pattern
+		    %   fgR fgG fgB false top pattern
+		    /pattern exch def /top exch def /opaque? exch def
+		    opaque? not { .5 .5 .5 } if
+		    /bgB exch def /bgG exch def /bgR exch def
+		    /fgB exch def /fgG exch def /fgR exch def
+
+		    fgR bgR add 2 div
+		    fgG bgG add 2 div
+		    fgB bgB add 2 div
+		    setrgbcolor
+
+		    opaque? {
+			x-dist 0 s ashow
+		    } {
+			mark
+			/ch 1 string def
+			/space { /space { x-dist 0 rmoveto } def } def
+%			/jt statusdict begin jobtimeout end def
+			gsave { % try really hard to do it right
+			    s {
+				% don't take more than 2 seconds a character
+%				statusdict begin 2 setjobtimeout end
+				space
+				ch 0 3 -1 roll put
+				ch true charpath
+				currentpoint /yy exch def /xx exch def
+				fgR fgG fgB false top pattern FillPattern
+				newpath xx yy moveto
+			    } forall
+			} stopped grestore { % fall back in case we fail
+			    x-dist 0 s ashow
+			} if
+%			statusdict begin jt setjobtimeout end
+			cleartomark
+		    } ifelse
+		} ifelse
+	    } if
+	grestore
+    end
+} def
+
+/DefImage { % image-name font-name w h string => -
+  20 dict begin
+    /ImageString exch def /ImageHeight exch def /ImageWidth exch def
+    /FontName exch def
+    /ImageName exch def
+    /FontType 3 def
+    /FontMatrix [1 0 0 1 0 0] def
+    /FontBBox [0 0 1 1] def
+    /Encoding [
+      /image 255 { /.notdef } repeat
+    ] def
+    /BuildChar { % font char => -
+      pop begin
+        1 0
+	0 0 1 1 setcachedevice
+	gsave
+	  ImageWidth ImageHeight false
+	  [ ImageWidth 0 0 ImageHeight 0 0 ]
+          {ImageString} imagemask
+	grestore
+      end
+    } def
+    ImageName currentdict definefont
+    FontName exch
+    ImageName ImageString
+  end
+  def def
+} def
+
+
+/FillPattern { % fgR fgG fgB [bgR bgG bgB] opaque? top font => -
+  50 dict begin gsave
+    /font exch def
+    /top exch def
+    /opaque? exch def
+    /w font /ImageWidth get def
+    /h font /ImageHeight get def
+    font [w 0 0 h 0 0] makefont setfont
+    pathbbox
+    /y1 exch def /x1 exch def
+    /y0 exch def /x0 exch def
+    clip
+    opaque? {
+      gsave
+	setrgbcolor
+	fill
+      grestore
+    } if
+    newpath
+    setrgbcolor
+    /y0 y0 top sub h div floor h mul top add cvi def
+    /x0 x0 w div floor w mul cvi def
+    x0 y0 translate
+    /W x1 x0 sub w div ceiling cvi 1 add def
+    /H y1 y0 sub h div ceiling cvi def
+    /s W string def
+    H {
+      0 0 moveto
+      s show
+      0 h translate
+    } repeat
+  grestore end
+  newpath
+} def
+
+
+/PolylineDict 20 dict def
+/DrawPolyline { % x1 y1 {{x y ...} ...} line-color
+		% join cap dash thickness fill-color => -
+    gsave PolylineDict begin
+	/fill-color exch def  /thickness exch def  /dash-pattern exch def
+	/line-join exch def  /line-cap exch def  /line-color exch def
+	% Don't draw the path of the fill if the filling-style is null.
+	fill-color null eq not {
+		3 copy
+		newpath
+		3 1 roll moveto
+		{ aload length 2 idiv { lineto } repeat } forall
+		fill-color FillShape
+		} if
+
+	newpath
+	.5 -.5 translate
+
+	% Stroke after every sub-array to avoid a limitcheck error
+	2 index 2 index moveto
+	{ aload length 2 sub 2 idiv { lineto } repeat
+	2 copy lineto
+	line-color line-cap line-join dash-pattern thickness StrokeShape
+	moveto
+	} forall
+
+	currentpoint
+	3 -1 roll sub abs .01 lt
+	3 1 roll sub abs .01 lt and {
+	  0 0 rlineto closepath
+	} if
+
+	line-color line-cap line-join dash-pattern
+	thickness
+%	dup -1 ne { .5 add } if % fudge outline width thicker
+	StrokeShape
+
+    end grestore
+} def
+
+/RectanglePath { % left top width height => -
+    /h exch def  /w exch def
+    moveto			% Go to the left,top corner
+    w 0 rlineto			% top side
+    0 h neg rlineto		% right side
+    w neg 0 rlineto		% bottom side
+    closepath			% left side
+} def
+
+/RectangleDict 21 dict def
+/DrawRectangle { % left top width height line-color
+		 % cap join dash thickness fill-color => -
+    RectangleDict begin
+	/fill-color exch def  /thickness exch def /dash-pattern exch def
+	/line-join exch def  /line-cap exch def /line-color exch def
+	/height exch def /width exch def  /top exch def  /left exch def
+        /thickness-for-fill thickness 0 lt {0} {thickness} ifelse def
+	% Draw filling
+	newpath
+	left thickness-for-fill add top thickness-for-fill sub
+        width thickness-for-fill 2 mul sub height thickness-for-fill 2 mul sub
+	RectanglePath
+	fill-color FillShape
+	% Draw border
+	newpath
+	left thickness 2 div add  top thickness 2 div sub
+	width thickness sub  height thickness sub
+	RectanglePath
+	line-color line-cap line-join dash-pattern thickness StrokeShape
+    end
+} def
+
+/DrawGenericWindowFrame { % label left top w h
+			  % leftmargin topmargin rightmargin bottommargin => -
+  30 dict begin
+
+  { % setup
+    /bottommargin exch def /rightmargin exch def
+    /topmargin exch def /leftmargin exch def
+    /h exch def /w exch def /y exch h sub def /x exch def
+    /label exch def
+    /pointsize
+      topmargin 1 sub
+      dup 1 lt { pop 1 } if
+      dup 12 gt { 12 sub 3 div 12 add } if
+    def
+
+    /bottom y def /top y h add def
+    /left x def /right  x w add def
+    1 setlinewidth
+    0 setlinecap
+  } exec
+
+  { % background
+    newpath
+    left leftmargin sub bottom bottommargin sub moveto
+    left leftmargin sub top topmargin add lineto
+    right rightmargin add top topmargin add lineto
+    right rightmargin add bottom bottommargin sub lineto
+    closepath
+    0 setgray fill
+
+    left bottom moveto
+    left top lineto
+    right top lineto
+    right bottom lineto
+    closepath
+    1 setgray fill
+  } exec
+
+  topmargin 8 ge {
+    /Helvetica-Bold findfont pointsize scalefont setfont
+    label stringwidth pop
+    left right add 2 div
+    exch 2 div sub
+    top topmargin 2 div add pointsize 2 div sub 2 add moveto
+    1 setgray
+    label show
+  } if
+
+  end
+} def
+
+/FillShape { % [halftone] | [r g b] | null => -
+    gsave
+        dup null eq { pop } {
+	  aload length 3 eq { setrgbcolor fill } {
+	      FillPattern
+	  } ifelse
+        } ifelse
+    grestore
+    newpath
+} def
+
+/StrokeShape { % line-color cap join dash thickness => -
+    % If no line is desired, pass -1 for line-thickness
+    dup 0 ge 5 index null ne and {
+	% if line-thickness >= 0, then draw the outline
+	gsave
+	    setlinewidth 0 setdash setlinejoin setlinecap
+	    aload length 3 eq { setrgbcolor stroke } {
+		strokepath FillPattern
+	    } ifelse
+	grestore
+    } {
+	pop pop pop pop pop
+    } ifelse
+    newpath
+} def
+
+/ClipDict 2 dict def
+/ClipToRectangle { % left top width height => -
+    ClipDict begin
+	/height exch def  /width exch def
+        newpath
+	    moveto			% Go to the left,top corner
+	    width 0 rlineto		% top side
+	    0 height neg rlineto	% right side
+	    width neg 0 rlineto		% bottom side
+	    closepath			% left side
+	gsave 1 setgray fill grestore
+	clip newpath
+    end
+} def
+
+/image-1 /image-1-font 4 4 <
+00 00 00 00>
+DefImage
+
+
+%%EndProlog
+%%Page: 1 1
+
+gsave
+72 72 translate
+0.61 0.61 scale
+100 1059 translate
+
+%
+% Begin new window
+%
+gsave
+0 0 564 1059 ClipToRectangle
+gsave
+0 0 564 1059 [0 0 0] 0 0 [] -1 [1 1 1] DrawRectangle
+grestore
+
+
+%
+% Begin new window
+%
+gsave
+2 -23 translate
+(Move/Grow Interactor) 0 0 560 1034 2 23 2 2 DrawGenericWindowFrame
+0 0 560 1034 ClipToRectangle
+gsave
+540 -40 20 954 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+540 0 20 20 [0 0 0] 0 0 [] 1 null DrawRectangle
+550 -3 {
+  { 550 -3 557 -10 553 -10 553 -17 547 -17 547 -10 543 -10 }
+} [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawPolyline
+540 -1014 20 20 [0 0 0] 0 0 [] 1 null DrawRectangle
+550 -1031 {
+  { 550 -1031 557 -1024 553 -1024 553 -1017 547 -1017 547 -1024 543 -1024 }
+} [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawPolyline
+540 -20 20 20 [0 0 0] 0 0 [] 1 null DrawRectangle
+550 -24 {
+  { 550 -24 557 -31 543 -31 }
+} [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawPolyline
+550 -28 {
+  { 550 -28 557 -35 543 -35 }
+} [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawPolyline
+540 -994 20 20 [0 0 0] 0 0 [] 1 null DrawRectangle
+550 -1010 {
+  { 550 -1010 557 -1003 543 -1003 }
+} [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawPolyline
+550 -1006 {
+  { 550 -1006 557 -999 543 -999 }
+} [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawPolyline
+541 -40 18 18 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawRectangle
+grestore
+
+
+%
+% Begin new window
+%
+gsave
+0 0 translate
+() 0 0 540 1034 0 0 0 0 DrawGenericWindowFrame
+0 0 540 1034 ClipToRectangle
+gsave
+grestore
+
+
+%
+% Begin new window
+%
+gsave
+0 0 translate
+() 0 0 539 1039 0 0 0 0 DrawGenericWindowFrame
+0 0 539 1039 ClipToRectangle
+gsave
+10 -10 -32 229 28 false [0 0 0] [1 1 1] (Move/Grow Interactor) 24 /Times-BoldItalic DrawText
+20 -49 -60 109 14 false [0 0 0] [1 1 1] (Interactor Name:) 12 /Courier-Bold DrawText
+140 -49 -60 77 14 false [0 0 0] [1 1 1] (MYMOVEINTER) 12 /Courier DrawText
+134 -47 150 18 [0 0 0] 0 0 [] 1 null DrawRectangle
+20 -81 368 137 [0 0 0] 0 0 [] 1 null DrawRectangle
+30 -74 91 14 [0 0 0] 0 0 [] -1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawRectangle
+35 -74 -85 81 14 false [0 0 0] [1 1 1] (:start-where) 12 /Courier-Bold DrawText
+194.5 -110.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0 0 0] DrawEllipse
+189.5 -105.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawEllipse
+189.5 -105.5 8.5 8.5 0 360 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawEllipse
+35 -101 -112 138 14 false [0 0 0] [1 1 1] (Object to Press Over) 12 /Courier DrawText
+215 -98 160 20 [0 0 0] 0 0 [] 1 null DrawRectangle
+201.5 -152.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0 0 0] DrawEllipse
+196.5 -147.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawEllipse
+196.5 -147.5 8.5 8.5 0 360 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawEllipse
+35 -143 -154 145 14 false [0 0 0] [1 1 1] (One of This Aggregate) 12 /Courier DrawText
+196.5 -147.5 5.5 5.5 0 360 [0 0 0] 0 0 [] -1 [0 0 0] DrawEllipse
+222 -140 160 20 [0 0 0] 0 0 [] 1 null DrawRectangle
+225 -142 -153 146 14 false [0 0 0] [1 1 1] (BOX-SELECTION-HANDLES) 12 /Courier DrawText
+50 -121 -132 12 14 false [0 0 0] [1 1 1] (or) 12 /Courier DrawText
+50 -163 -174 12 14 false [0 0 0] [1 1 1] (or) 12 /Courier DrawText
+40 -186 45 26 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+35 -181 45 26 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+38 -184 39 20 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawRectangle
+41 -187 -198 33 14 false [0 0 0] [1 1 1] (Other) 12 /Courier DrawText
+94 -186 125 20 [0 0 0] 0 0 [] 1 null DrawRectangle
+354 -189 20 20 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+349 -184 20 20 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+352 -187 14 14 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawRectangle
+228 -189 -200 116 14 false [0 0 0] [1 1 1] (Type restriction:) 12 /Courier DrawText
+412 -15 117 28 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+407 -10 117 28 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+411 -14 109 20 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawRectangle
+414 -17 -28 103 14 false [0 0 0] [1 1 1] (CREATE INSTANCE) 12 /Courier DrawText
+412 -53 117 28 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+407 -48 117 28 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+411 -52 109 20 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawRectangle
+444 -55 -66 42 14 false [0 0 0] [1 1 1] (MODIFY) 12 /Courier DrawText
+412 -91 117 28 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+407 -86 117 28 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+411 -90 109 20 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawRectangle
+441 -93 -104 49 14 false [0 0 0] [1 1 1] (DESTROY) 12 /Courier DrawText
+412 -129 117 28 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+407 -124 117 28 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+411 -128 109 20 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawRectangle
+452 -131 -142 26 14 false [0 0 0] [1 1 1] (SAVE) 12 /Courier DrawText
+412 -167 117 28 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+407 -162 117 28 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+411 -166 109 20 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawRectangle
+456 -169 -180 19 14 false [0 0 0] [1 1 1] (C32) 12 /Courier DrawText
+412 -205 117 28 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+407 -200 117 28 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+411 -204 109 20 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawRectangle
+445 -207 -218 40 14 false [0 0 0] [1 1 1] (CANCEL) 12 /Courier DrawText
+78.5 -243.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0 0 0] DrawEllipse
+73.5 -238.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawEllipse
+73.5 -238.5 8.5 8.5 0 360 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawEllipse
+30 -234 -245 27 14 false [0 0 0] [1 1 1] (Line) 12 /Courier DrawText
+137.5 -243.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0 0 0] DrawEllipse
+132.5 -238.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawEllipse
+132.5 -238.5 8.5 8.5 0 360 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawEllipse
+95 -234 -245 21 14 false [0 0 0] [1 1 1] (Box) 12 /Courier DrawText
+236.5 -243.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0 0 0] DrawEllipse
+231.5 -238.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawEllipse
+231.5 -238.5 8.5 8.5 0 360 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawEllipse
+154 -234 -245 61 14 false [0 0 0] [1 1 1] (<Formula>) 12 /Courier DrawText
+132.5 -238.5 5.5 5.5 0 360 [0 0 0] 0 0 [] -1 [0 0 0] DrawEllipse
+78.5 -280.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0 0 0] DrawEllipse
+73.5 -275.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawEllipse
+73.5 -275.5 8.5 8.5 0 360 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawEllipse
+30 -271 -282 27 14 false [0 0 0] [1 1 1] (Grow) 12 /Courier DrawText
+143.5 -280.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0 0 0] DrawEllipse
+138.5 -275.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawEllipse
+138.5 -275.5 8.5 8.5 0 360 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawEllipse
+95 -271 -282 27 14 false [0 0 0] [1 1 1] (Move) 12 /Courier DrawText
+242.5 -280.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0 0 0] DrawEllipse
+237.5 -275.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawEllipse
+237.5 -275.5 8.5 8.5 0 360 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawEllipse
+160 -271 -282 61 14 false [0 0 0] [1 1 1] (<Formula>) 12 /Courier DrawText
+138.5 -275.5 5.5 5.5 0 360 [0 0 0] 0 0 [] -1 [0 0 0] DrawEllipse
+%20 -301 213 327 [0 0 0] 0 0 [] 1 [.5 dup dup] DrawRectangle
+20 -301 213 327 [0 0 0] 0 0 [] 1 null DrawRectangle
+30 -311 -322 104 14 false [0 0 0] [1 1 1] (Grow Parameters) 12 /Courier-Bold DrawText
+211.5 -360.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0 0 0] DrawEllipse
+206.5 -355.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawEllipse
+206.5 -355.5 8.5 8.5 0 360 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawEllipse
+107 -351 -362 83 14 false [0 0 0] [1 1 1] (Change Width) 12 /Courier DrawText
+211.5 -393.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0 0 0] DrawEllipse
+206.5 -388.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawEllipse
+206.5 -388.5 8.5 8.5 0 360 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawEllipse
+100 -384 -395 90 14 false [0 0 0] [1 1 1] (Change Height) 12 /Courier DrawText
+211.5 -426.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0 0 0] DrawEllipse
+206.5 -421.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawEllipse
+206.5 -421.5 8.5 8.5 0 360 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawEllipse
+30 -417 -428 160 14 false [0 0 0] [1 1 1] (Change Width and Height) 12 /Courier DrawText
+211.5 -459.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0 0 0] DrawEllipse
+206.5 -454.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawEllipse
+206.5 -454.5 8.5 8.5 0 360 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawEllipse
+129 -450 -461 61 14 false [0 0 0] [1 1 1] (<Formula>) 12 /Courier DrawText
+206.5 -421.5 5.5 5.5 0 360 [0 0 0] 0 0 [] -1 [0 0 0] DrawEllipse
+30 -490 -501 82 14 false [0 0 0] [1 1 1] (Growing Line) 12 /Courier DrawText
+50 -515 -526 70 14 false [0 0 0] [1 1 1] (Min-Length) 12 /Courier DrawText
+125 -513 50 18 [0 0 0] 0 0 [] 1 null DrawRectangle
+30 -550 -561 110 14 false [0 0 0] [1 1 1] (Growing Non-Line) 12 /Courier DrawText
+50 -575 -586 77 14 false [0 0 0] [1 1 1] (Min-Width  ) 12 /Courier DrawText
+138 -575 -586 5 14 false [0 0 0] [1 1 1] (0) 12 /Courier DrawText
+132 -573 50 18 [0 0 0] 0 0 [] 1 null DrawRectangle
+50 -602 -613 70 14 false [0 0 0] [1 1 1] (Min-Height) 12 /Courier DrawText
+131 -602 -613 5 14 false [0 0 0] [1 1 1] (0) 12 /Courier DrawText
+125 -600 50 18 [0 0 0] 0 0 [] 1 null DrawRectangle
+20 -301 213 327 [0 0 0] 0 0 [] 1 null DrawRectangle
+262 -311 -322 105 14 false [0 0 0] [1 1 1] (Move Parameters) 12 /Courier-Bold DrawText
+414.5 -360.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0 0 0] DrawEllipse
+409.5 -355.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawEllipse
+409.5 -355.5 8.5 8.5 0 360 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawEllipse
+317 -351 -362 76 14 false [0 0 0] [1 1 1] (Change Left) 12 /Courier DrawText
+414.5 -393.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0 0 0] DrawEllipse
+409.5 -388.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawEllipse
+409.5 -388.5 8.5 8.5 0 360 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawEllipse
+325 -384 -395 68 14 false [0 0 0] [1 1 1] (Change Top) 12 /Courier DrawText
+414.5 -426.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0 0 0] DrawEllipse
+409.5 -421.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawEllipse
+409.5 -421.5 8.5 8.5 0 360 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawEllipse
+262 -417 -428 131 14 false [0 0 0] [1 1 1] (Change Left and Top) 12 /Courier DrawText
+414.5 -459.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0 0 0] DrawEllipse
+409.5 -454.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawEllipse
+409.5 -454.5 8.5 8.5 0 360 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawEllipse
+332 -450 -461 61 14 false [0 0 0] [1 1 1] (<Formula>) 12 /Courier DrawText
+409.5 -421.5 5.5 5.5 0 360 [0 0 0] 0 0 [] -1 [0 0 0] DrawEllipse
+252 -301 184 180 [0 0 0] 0 0 [] 1 null DrawRectangle
+252 -497 216 114 [0 0 0] 0 0 [] 1 null DrawRectangle
+262 -490 105 14 [0 0 0] 0 0 [] -1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawRectangle
+267 -490 -501 95 14 false [0 0 0] [1 1 1] (:obj-to-change) 12 /Courier-Bold DrawText
+441.5 -526.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0 0 0] DrawEllipse
+436.5 -521.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawEllipse
+436.5 -521.5 8.5 8.5 0 360 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawEllipse
+267 -517 -528 153 14 false [0 0 0] [1 1 1] (Result of :start-where) 12 /Courier DrawText
+441.5 -559.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0 0 0] DrawEllipse
+436.5 -554.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawEllipse
+436.5 -554.5 8.5 8.5 0 360 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawEllipse
+295 -550 -561 125 14 false [0 0 0] [1 1 1] (Change this object) 12 /Courier DrawText
+441.5 -592.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0 0 0] DrawEllipse
+436.5 -587.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawEllipse
+436.5 -587.5 8.5 8.5 0 360 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawEllipse
+359 -583 -594 61 14 false [0 0 0] [1 1 1] (<Formula>) 12 /Courier DrawText
+436.5 -554.5 5.5 5.5 0 360 [0 0 0] 0 0 [] -1 [0 0 0] DrawEllipse
+30 -639 -650 102 14 false [0 0 0] [1 1 1] (Final Function:) 12 /Courier-Bold DrawText
+137 -637 150 18 [0 0 0] 0 0 [] 1 null DrawRectangle
+20 -671 456 81 [0 0 0] 0 0 [] 1 null DrawRectangle
+30 -664 96 14 [0 0 0] 0 0 [] -1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawRectangle
+35 -664 -675 86 14 false [0 0 0] [1 1 1] (:feedback-obj) 12 /Courier-Bold DrawText
+167.5 -700.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0 0 0] DrawEllipse
+162.5 -695.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawEllipse
+162.5 -695.5 8.5 8.5 0 360 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawEllipse
+35 -691 -702 111 14 false [0 0 0] [1 1 1] (Interim Feedback) 12 /Courier DrawText
+162.5 -695.5 5.5 5.5 0 360 [0 0 0] 0 0 [] -1 [0 0 0] DrawEllipse
+188 -688 125 20 [0 0 0] 0 0 [] 1 null DrawRectangle
+191 -690 -701 112 14 false [0 0 0] [1 1 1] (DASHED-LINE-RECT) 12 /Courier DrawText
+448.5 -700.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0 0 0] DrawEllipse
+443.5 -695.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawEllipse
+443.5 -695.5 8.5 8.5 0 360 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawEllipse
+323 -691 -702 104 14 false [0 0 0] [1 1 1] (Change Original) 12 /Courier DrawText
+448.5 -733.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0 0 0] DrawEllipse
+443.5 -728.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawEllipse
+443.5 -728.5 8.5 8.5 0 360 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawEllipse
+366 -724 -735 61 14 false [0 0 0] [1 1 1] (<Formula>) 12 /Courier DrawText
+20 -768 341 208 [0 0 0] 0 0 [] 1 null DrawRectangle
+30 -761 98 14 [0 0 0] 0 0 [] -1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawRectangle
+35 -761 -772 88 14 false [0 0 0] [1 1 1] (:attach-point) 12 /Courier-Bold DrawText
+51 -797 112 112 [0 0 0] 0 0 [] 1 null DrawRectangle
+51.5 -797.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0 0 0] DrawEllipse
+46.5 -792.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawEllipse
+46.5 -792.5 8.5 8.5 0 360 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawEllipse
+105.5 -797.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0 0 0] DrawEllipse
+100.5 -792.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawEllipse
+100.5 -792.5 8.5 8.5 0 360 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawEllipse
+159.5 -797.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0 0 0] DrawEllipse
+154.5 -792.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawEllipse
+154.5 -792.5 8.5 8.5 0 360 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawEllipse
+51.5 -851.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0 0 0] DrawEllipse
+46.5 -846.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawEllipse
+46.5 -846.5 8.5 8.5 0 360 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawEllipse
+105.5 -851.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0 0 0] DrawEllipse
+100.5 -846.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawEllipse
+100.5 -846.5 8.5 8.5 0 360 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawEllipse
+159.5 -851.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0 0 0] DrawEllipse
+154.5 -846.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawEllipse
+154.5 -846.5 8.5 8.5 0 360 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawEllipse
+51.5 -905.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0 0 0] DrawEllipse
+46.5 -900.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawEllipse
+46.5 -900.5 8.5 8.5 0 360 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawEllipse
+105.5 -905.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0 0 0] DrawEllipse
+100.5 -900.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawEllipse
+100.5 -900.5 8.5 8.5 0 360 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawEllipse
+159.5 -905.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0 0 0] DrawEllipse
+154.5 -900.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawEllipse
+154.5 -900.5 8.5 8.5 0 360 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawEllipse
+[0 0 0] 0 0 [] 1 332 -894 232 -794 DrawLine
+235.5 -797.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0 0 0] DrawEllipse
+230.5 -792.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawEllipse
+230.5 -792.5 8.5 8.5 0 360 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawEllipse
+285.5 -847.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0 0 0] DrawEllipse
+280.5 -842.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawEllipse
+280.5 -842.5 8.5 8.5 0 360 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawEllipse
+335.5 -897.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0 0 0] DrawEllipse
+330.5 -892.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawEllipse
+330.5 -892.5 8.5 8.5 0 360 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawEllipse
+66.5 -958.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0 0 0] DrawEllipse
+61.5 -953.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawEllipse
+61.5 -953.5 8.5 8.5 0 360 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawEllipse
+87 -951 -962 91 14 false [0 0 0] [1 1 1] (Nearest Point) 12 /Courier DrawText
+232.5 -958.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0 0 0] DrawEllipse
+227.5 -953.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawEllipse
+227.5 -953.5 8.5 8.5 0 360 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawEllipse
+253 -951 -962 61 14 false [0 0 0] [1 1 1] (<Formula>) 12 /Courier DrawText
+61.5 -953.5 5.5 5.5 0 360 [0 0 0] 0 0 [] -1 [0 0 0] DrawEllipse
+40 -995 97 34 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+30 -985 97 34 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+35 -990 87 24 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawRectangle
+40 -995 -1006 76 14 false [0 0 0] [1 1 1] (Start-Event) 12 /Courier DrawText
+152 -995 97 34 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+142 -985 97 34 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+147 -990 87 24 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawRectangle
+156 -995 -1006 69 14 false [0 0 0] [1 1 1] (Stop-Event) 12 /Courier DrawText
+264 -995 97 34 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+254 -985 97 34 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+259 -990 87 24 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawRectangle
+264 -995 -1006 77 14 false [0 0 0] [1 1 1] (Abort-Event) 12 /Courier DrawText
+grestore
+
+grestore
+
+grestore
+
+grestore
+
+grestore
+
+grestore
+
+
+showpage
+%%Trailer
+%%DocumentFonts: /Courier /Courier-Bold /Times-BoldItalic Helvetica-Bold 
+%%BoundingBox: 133 72 478 720

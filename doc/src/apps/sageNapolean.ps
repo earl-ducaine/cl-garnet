@@ -1,0 +1,1223 @@
+%!PS-Adobe-2.0
+%%Title: Opal 15
+%%Creator: Make-PS-File -- Garnet Version 1.4
+%%CreationDate: Feb 11, 1993, 3:27 PM
+%%For: 
+%%DocumentFonts: (atend)
+%%BoundingBox: 30 83 762 529
+%%Pages: 1
+%%EndComments
+
+
+/TextDict 19 dict def
+/DrawText
+   {	% stack: left top base-y opal-width height line-halftone fill-p
+        %        fore-red fore-green fore-blue fore-color-p
+        %        back-red back-green back-blue back-color-p
+        %        string size font-name
+        TextDict begin
+        gsave
+	findfont exch scalefont setfont
+	/s exch def
+        /back-color-p exch def  /back-blue exch def  /back-green exch def
+        /back-red exch def  /fore-color-p exch def  /fore-blue exch def
+        /fore-green exch def  /fore-red exch def  /fill-p exch def
+        /line-halftone exch def /height exch def  /opal-width exch def
+        /base-y exch def  /top exch def  /left exch def
+
+        % Calculate distance to add between each character, based on the width
+        % expected by Opal, the width expected by postscript, and the number
+        % of characters to distribute the change over
+	/x-dist opal-width s stringwidth pop sub s length div def
+
+        % Draw background of text if appropriate
+        fill-p
+        { gsave
+            newpath
+            left top opal-width height RectanglePath
+            1 back-red back-green back-blue back-color-p
+            FillShape
+          grestore } if
+
+        % Draw text in the appropriate color
+	newpath
+          fore-color-p
+          { fore-red fore-green fore-blue setrgbcolor }
+          { line-halftone setgray } ifelse
+	  left base-y moveto
+	  x-dist 0 s ashow
+        grestore
+        end
+   } def
+
+/DrawLine
+   {    % stack: line-halftone, red, green, blue, color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness
+        %        x2, y2, x1, y1
+        newpath
+          moveto
+          lineto
+          StrokeShape
+   } def
+
+/EllipseDict 23 dict def
+EllipseDict /mtrx matrix put
+/DrawEllipse
+   {    EllipseDict begin
+        /fill-color-p exch def  /fill-blue exch def  /fill-green exch def
+        /fill-red exch def  /fill-halftone exch def  /lt exch def
+        /dash-pattern exch def  /line-join exch def  /line-cap exch def
+        /line-color-p exch def  /line-blue exch def  /line-green exch def
+        /line-red exch def  /line-halftone exch def  /endangle exch def
+        /startangle exch def  /yrad exch def  /xrad exch def  /y exch def
+        /x exch def  /savematrix mtrx currentmatrix def  /lt-by-2 lt 2 div def
+        % Draw the filling
+        newpath
+	  x y translate
+          gsave
+	    xrad lt-by-2 sub  yrad lt-by-2 sub scale
+            0 0 1 startangle endangle arc
+            savematrix setmatrix
+	    fill-halftone fill-red fill-green fill-blue fill-color-p FillShape
+          grestore
+        % Draw the border
+        newpath
+          xrad yrad scale
+          0 0 1 startangle endangle arc
+	  savematrix setmatrix
+          line-halftone line-red line-green line-blue line-color-p
+          line-cap line-join dash-pattern lt StrokeShape
+        end
+   } def
+
+/RectanglePath
+   {    % stack: left, top, width, height
+        /h exch def  /w exch def
+	moveto		        % Go to the left,top corner
+	w 0 rlineto	        % top side
+	0 h neg rlineto		% right side
+	w neg 0 rlineto		% bottom side
+	closepath		% left side
+   } def
+
+/RectangleDict 21 dict def
+/DrawRectangle
+   {	% stack: left, top, width, height, line-halftone, line-red, line-green,
+        %        line-blue, line-color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness,
+        %        fill-halftone, fill-red, fill-green, fill-blue, fill-color-p
+        RectangleDict begin
+        /fill-color-p exch def  /fill-blue exch def  /fill-green exch def
+        /fill-red exch def /fill-halftone exch def  /lt exch def
+        /dash-pattern exch def  /line-join exch def  /line-cap exch def
+        /line-color-p exch def  /line-blue exch def  /line-green exch def
+        /line-red exch def  /line-halftone exch def  /height exch def
+        /width exch def  /top exch def  /left exch def  /lt-by-2 lt 2 div def
+        % Draw filling
+        newpath
+          left lt-by-2 add  top lt-by-2 sub   width lt sub  height lt sub
+          RectanglePath
+	  fill-halftone fill-red fill-green fill-blue fill-color-p FillShape
+        % Draw border
+        newpath
+          left top width height RectanglePath
+          line-halftone line-red line-green line-blue line-color-p
+          line-cap line-join dash-pattern lt StrokeShape
+        end
+   } def
+
+/FillShape
+   {	% stack: fill-halftone, red, green, blue, color-p
+        %   Color-p should be true or false - false means ignore the three vals
+        %   Use -1 for fill-halftone to mean NIL, 0 = black, 1 = white
+        %   Use -2 for fill-halftone to indicate there is an arbitrary filling
+        % style on the stack
+        gsave
+        { setrgbcolor fill pop }
+	{ pop pop pop 
+	  dup 0 ge
+	    % if fill-halftone >= 0, then fill the shape with a halftone
+	    { setgray fill}
+            % else, if there is an arbitrary filling style, then fill
+            { -2 eq
+              {SetPattern fill} if
+            } ifelse } ifelse
+        grestore
+   } def
+
+/StrokeShape
+   {	% stack: line-halftone, red, green, blue, color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness
+	% If no line is desired, pass -1 for line-thickness
+        % Halftones: 0 = black, 1 = white
+	dup 0 ge
+	  % if line-thickness >= 0, then draw the outline
+	  {gsave
+	   setlinewidth 0 setdash setlinejoin setlinecap
+             { setrgbcolor pop }
+             { pop pop pop setgray } ifelse
+	   stroke
+	   grestore}
+	  {pop pop pop pop pop pop pop pop pop newpath} ifelse
+   } def
+
+
+%%EndProlog
+%%Page: 1 1
+
+gsave
+612 0 translate
+90 rotate
+30 30 translate
+0.6847521 0.6847521 scale
+
+%
+% Begin new window
+%
+0 -77 translate
+gsave
+0 0 translate
+gsave
+0 806 1069 652 0 1.00 1.00 1.00 true 0 0 [] 1 -1 0 0 0 false DrawRectangle
+126.0 609.0 23.5 23.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+101.5 605.0 24.0 23.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+77.0 601.0 23.5 23.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+183.0 601.0 22.5 22.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+164.0 604.0 22.5 22.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+145.0 606.5 22.5 22.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 609.0 22.5 22.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+183.5 601.0 20.0 19.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+200.5 605.5 19.0 19.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+218.0 610.0 18.5 18.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+235.0 614.5 18.5 18.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+252.5 619.5 18.0 18.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+270.0 624.0 17.5 17.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+287.0 628.5 16.5 17.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+304.5 633.0 16.0 16.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+321.5 637.5 16.0 16.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+339.0 642.0 15.5 15.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+351.5 645.0 15.0 14.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+363.5 648.0 14.0 14.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+375.5 650.5 14.0 14.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+388.0 653.0 13.5 13.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+400.5 656.0 13.0 13.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+412.5 659.0 13.0 12.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+425.0 661.5 12.5 12.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+437.5 664.5 12.0 12.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+449.5 667.0 11.0 11.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+461.5 669.5 11.0 11.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+474.0 672.5 10.5 11.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+486.5 675.5 10.0 10.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+494.5 670.5 10.0 10.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+502.5 666.5 10.0 10.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+511.0 662.0 9.5 9.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+519.0 657.5 9.5 10.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+527.0 653.0 9.5 9.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+535.5 649.0 9.0 9.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+543.5 644.0 9.0 9.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+552.0 639.5 9.5 9.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+560.5 635.5 9.0 9.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+568.5 630.5 9.0 9.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+576.5 626.5 9.0 9.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+585.0 622.0 8.5 8.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+593.0 617.5 8.5 9.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+600.0 620.0 8.5 8.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+608.0 623.0 8.5 8.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+615.0 626.0 8.5 8.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+623.0 628.5 8.5 8.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+630.5 631.0 8.0 8.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+638.0 634.0 8.5 8.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+645.5 636.5 8.0 8.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+653.0 639.5 8.5 8.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+660.5 642.5 8.0 8.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+668.0 645.0 8.5 8.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+675.5 647.5 8.0 8.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+682.5 650.5 8.0 8.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+688.5 655.5 8.0 8.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+694.5 660.5 8.0 8.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+699.5 666.0 8.0 7.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+705.5 671.5 8.0 8.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+711.0 676.5 7.5 8.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+716.5 681.5 8.0 8.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+722.5 686.5 8.0 8.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+728.0 692.0 7.5 7.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+733.5 697.0 8.0 7.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+739.0 702.0 7.5 7.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+745.0 707.5 7.5 8.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+750.5 712.5 8.0 8.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+756.0 718.0 7.5 7.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+762.0 723.0 7.5 7.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+767.0 728.0 7.5 7.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+773.0 733.0 7.5 7.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+780.0 731.0 7.5 7.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+788.0 729.0 7.5 7.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+795.0 728.0 7.5 7.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+802.0 726.0 7.5 7.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+809.0 724.0 7.5 7.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+817.0 722.0 7.5 7.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+824.0 720.0 7.5 7.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+831.0 718.5 7.5 7.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+838.5 716.5 7.0 7.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+936.5 741.5 6.0 6.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+936.5 741.5 6.0 6.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+931.0 739.5 6.5 6.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+925.5 738.5 6.0 6.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+919.5 737.0 6.0 6.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+913.5 735.5 6.0 6.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+907.5 734.5 6.0 6.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+902.5 732.5 6.0 6.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+896.5 731.5 6.0 6.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+890.5 729.5 6.0 6.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+884.5 728.5 6.0 6.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+879.0 726.5 6.5 6.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+873.5 725.5 6.0 6.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+867.5 723.5 6.0 6.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+861.5 722.5 6.0 6.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+855.5 721.0 6.0 6.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+850.5 719.5 6.0 6.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+844.5 718.5 6.0 6.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+838.5 716.5 6.0 6.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+935.5 735.5 6.0 6.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+933.5 729.5 6.0 6.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+932.5 723.5 6.0 6.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+930.5 717.5 6.0 6.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+929.5 711.5 6.0 6.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+927.5 705.5 6.0 6.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+926.5 699.5 6.0 6.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+924.5 693.5 6.0 6.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+923.5 687.5 6.0 6.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+921.5 681.5 6.0 6.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+920.5 675.5 6.0 6.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+915.0 672.5 5.5 6.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+909.5 669.5 6.0 6.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+904.0 667.0 5.5 5.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+898.5 668.5 6.0 6.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+893.5 670.0 6.0 5.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+888.0 671.5 5.5 6.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+883.0 673.0 5.5 5.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+877.5 674.5 6.0 6.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+872.0 676.0 5.5 5.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+867.0 677.0 5.5 5.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+862.0 679.0 5.5 5.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+856.0 680.0 5.5 5.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+851.0 682.0 5.5 5.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+846.0 683.0 5.5 5.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+840.0 685.0 5.5 5.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+835.0 686.0 5.5 5.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+830.0 687.5 5.5 5.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+824.5 689.0 5.0 5.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+819.0 690.5 5.5 5.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+814.0 692.0 5.5 5.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+810.0 690.0 5.5 5.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+805.5 688.5 5.0 5.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+801.5 686.5 5.0 5.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+797.5 684.5 5.0 5.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+793.5 683.0 5.0 4.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+789.0 681.0 4.5 4.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+785.0 679.0 4.5 4.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+781.0 678.0 4.5 4.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+777.0 676.0 4.5 4.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+773.0 674.5 4.5 4.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+768.5 672.5 4.0 4.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+764.5 670.5 4.0 4.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+761.0 669.0 3.5 3.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+757.0 667.0 3.5 3.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+754.0 666.0 3.5 3.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+751.0 664.0 3.5 3.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+748.0 663.0 3.5 3.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+746.0 661.5 3.5 3.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+743.0 660.0 3.5 3.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+740.0 659.0 3.5 3.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+380.0 543.0 3.5 3.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+382.5 542.0 3.0 3.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+385.5 540.5 3.0 3.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+388.0 539.0 3.5 3.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+391.0 537.5 3.5 3.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+393.5 536.0 3.0 3.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+396.0 535.0 3.5 3.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+399.5 536.0 3.0 3.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+402.5 537.5 3.0 3.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+406.0 539.0 3.5 3.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+409.0 540.0 3.5 3.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+412.0 541.0 3.5 3.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+415.0 542.5 3.5 3.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+418.5 544.0 3.0 3.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+421.5 545.0 3.0 3.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+424.5 546.5 3.0 3.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+428.0 547.5 3.5 3.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+431.0 549.0 3.5 3.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+434.0 550.0 3.5 3.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+437.0 551.5 3.5 3.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+183.5 601.0 3.0 3.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+737.5 657.5 3.0 3.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+185.0 603.0 3.5 3.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+187.0 605.0 3.5 3.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+735.0 656.0 3.5 3.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+189.0 607.5 3.5 3.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+191.0 609.5 3.5 3.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+732.0 654.5 3.5 3.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+193.0 611.5 3.5 3.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+194.5 613.5 3.0 3.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+729.5 653.5 3.0 3.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+196.5 615.5 3.0 3.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+198.5 618.0 3.0 3.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+726.5 652.0 3.0 3.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+200.5 620.0 3.0 3.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+202.5 622.5 3.0 3.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+723.5 650.5 3.0 3.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+204.5 624.5 3.0 3.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+206.5 626.5 3.0 3.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+721.5 649.5 3.0 3.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+208.5 628.5 3.0 3.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+718.5 647.5 3.0 3.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+210.0 630.5 3.5 3.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+211.5 632.5 3.0 3.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+715.5 646.5 3.0 3.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+213.5 634.5 3.0 3.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+215.5 636.5 3.0 3.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+713.0 645.0 2.5 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+217.5 639.0 3.0 2.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+219.5 641.5 3.0 3.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+710.5 643.5 3.0 3.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+221.5 643.5 3.0 3.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+223.5 645.5 3.0 3.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+707.5 642.5 3.0 3.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+225.5 647.5 3.0 3.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+227.0 649.5 2.5 3.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+704.5 641.0 3.0 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+229.0 651.5 2.5 3.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+231.0 654.0 2.5 2.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+702.0 639.5 2.5 3.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+233.0 656.0 2.5 2.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+235.0 658.0 2.5 2.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+699.5 638.0 3.0 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+236.5 660.0 3.0 2.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+238.5 662.0 3.0 2.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+696.5 637.0 3.0 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+240.5 664.5 3.0 3.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+694.0 635.5 2.5 3.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+242.5 666.5 3.0 3.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+244.0 668.5 2.5 3.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+691.0 634.0 2.5 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+246.0 671.0 2.5 2.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+689.0 633.0 2.5 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+248.0 673.0 2.5 2.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+687.0 632.5 2.5 3.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+250.0 675.0 2.5 2.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+685.0 632.0 2.5 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+252.0 677.0 2.5 2.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+682.5 631.0 3.0 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+680.0 630.0 2.5 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+254.0 679.0 2.5 2.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+678.0 629.0 2.5 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+256.0 681.0 2.5 2.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+676.0 629.0 2.5 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+258.0 683.0 2.5 2.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+674.0 628.0 2.5 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+672.0 627.0 2.5 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+259.5 685.5 2.0 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+670.0 626.0 2.5 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+261.0 688.0 2.5 2.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+667.5 625.0 2.0 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+263.0 690.0 2.5 2.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+665.0 624.5 2.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+265.0 692.0 2.5 2.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+663.0 624.0 2.5 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+267.5 691.5 2.0 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+270.0 691.0 2.5 2.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+272.0 691.0 2.5 2.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+274.5 690.5 2.0 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+277.0 690.0 2.5 2.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+661.0 623.0 2.5 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+279.0 690.0 2.5 2.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+281.5 690.0 2.0 2.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+284.0 689.0 2.5 2.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+286.0 689.0 2.5 2.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+288.5 689.0 2.0 2.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+291.0 688.5 2.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+659.0 622.0 2.5 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+293.0 688.0 2.5 2.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+295.5 688.0 2.0 2.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+298.0 687.5 2.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+300.0 687.0 2.5 2.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+302.0 687.0 2.5 2.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+657.0 621.5 2.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+304.5 686.5 2.0 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+307.0 686.0 2.5 2.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+309.0 686.0 2.5 2.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+311.5 685.5 2.0 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+314.0 685.0 2.5 2.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+316.0 685.0 2.5 2.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+654.5 620.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+318.5 684.5 2.0 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+321.0 684.5 2.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+323.0 684.0 2.5 2.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+325.5 684.0 2.0 2.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+328.0 683.5 2.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+652.5 620.0 2.0 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+330.0 683.0 2.5 2.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+332.5 683.0 2.0 2.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+335.0 682.5 2.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+337.0 682.0 2.5 2.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+339.5 682.0 2.0 2.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+342.0 681.5 2.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+650.5 619.0 2.0 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+344.0 681.0 2.5 2.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+346.5 681.0 2.0 2.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+348.5 680.5 2.0 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+351.0 680.5 2.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+353.5 680.0 2.0 2.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+648.0 618.5 2.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+355.5 679.5 2.0 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+358.0 679.5 2.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+360.5 679.0 2.0 2.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+362.5 679.0 2.0 2.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+365.0 678.5 2.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+367.0 678.0 2.5 2.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+646.0 617.5 2.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+369.5 678.0 2.0 2.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+372.0 677.5 2.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+374.0 677.0 2.5 2.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+376.5 677.0 2.0 2.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+379.0 676.5 2.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+644.0 616.5 2.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+381.0 676.5 2.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+383.5 676.0 2.0 2.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+386.0 675.5 2.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+437.0 551.5 2.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+436.5 553.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+435.5 555.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+435.0 557.5 2.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+434.0 559.5 2.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+433.0 561.5 2.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+432.5 564.0 2.0 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+431.5 566.0 2.0 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+430.5 568.0 2.0 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+430.0 570.0 2.5 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+429.0 572.0 2.5 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+428.0 574.0 2.5 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+427.5 576.0 2.0 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+426.5 578.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+426.0 580.5 2.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+425.0 582.5 2.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+424.0 584.5 2.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+423.5 586.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+422.5 588.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+421.5 590.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+421.0 592.5 2.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+420.0 595.0 2.5 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+419.0 597.0 2.5 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+418.5 599.0 2.0 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+417.5 601.0 2.0 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+416.5 603.0 2.0 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+416.0 605.0 2.5 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+415.0 607.0 2.5 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+414.5 609.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+413.5 611.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+412.5 613.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+412.0 615.5 2.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+411.0 617.5 2.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+410.0 619.5 2.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+409.5 621.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+408.5 623.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+407.5 625.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+407.0 628.0 2.5 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+406.0 630.0 2.5 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+405.5 632.0 2.0 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+404.5 634.0 2.0 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+403.5 636.0 2.0 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+403.0 638.0 2.5 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+402.0 640.0 2.5 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+401.0 642.5 2.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+400.5 644.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+399.5 646.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+398.5 648.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+398.0 650.5 2.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+397.0 652.5 2.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+396.5 654.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+395.5 656.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+394.5 659.0 2.0 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+394.0 661.0 2.5 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+393.0 663.0 2.5 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+392.0 665.0 2.5 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+391.5 667.0 2.0 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+390.5 669.0 2.0 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+389.5 671.0 2.0 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+389.0 673.5 2.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+388.0 675.5 2.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+388.0 675.5 2.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+642.0 616.0 2.5 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+639.5 615.0 2.0 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+637.5 614.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+635.5 613.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+633.5 612.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+631.0 612.0 2.5 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+629.0 611.5 2.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+380.0 543.5 2.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+378.5 544.0 2.0 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+626.5 610.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+376.5 545.0 2.0 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+624.5 609.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+375.0 546.0 2.5 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+622.5 608.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+373.5 547.0 2.0 2.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+371.5 547.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+620.5 608.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+370.5 548.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+618.5 607.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+368.5 549.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+366.5 550.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+616.5 606.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+365.5 551.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+613.5 605.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+363.5 552.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+611.5 604.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+361.5 553.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+360.5 554.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+609.5 604.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+358.5 555.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+607.5 603.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+357.0 556.5 1.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+605.5 602.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+355.5 557.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+353.5 558.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+603.5 601.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+352.0 559.5 1.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+601.0 601.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+599.5 600.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+350.5 560.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+597.5 600.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+595.5 600.0 2.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+594.0 599.5 1.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+348.5 561.0 2.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+592.5 599.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+590.5 599.0 2.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+588.5 598.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+347.5 562.0 2.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+587.0 598.5 1.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+585.5 598.0 2.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+583.5 597.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+345.5 563.0 2.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+581.5 597.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+579.5 597.0 2.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+578.0 596.5 1.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+344.0 564.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+576.5 596.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+574.5 596.0 2.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+572.5 595.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+342.5 565.0 2.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+571.0 595.5 1.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+569.5 595.0 2.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+340.5 565.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+567.5 595.0 2.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+565.5 594.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+564.0 594.5 1.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+339.0 566.5 1.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+562.0 594.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+560.5 593.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+558.5 593.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+337.5 567.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+557.0 593.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+126.0 716.5 1.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 715.0 1.5 1.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 713.0 1.5 1.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 711.5 1.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 709.5 1.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 707.5 1.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 706.0 1.5 1.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 704.0 1.5 1.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 702.5 1.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 700.5 1.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 698.5 1.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 697.0 1.5 1.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 695.0 1.5 1.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 693.5 1.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 691.5 1.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 689.5 1.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 688.0 1.5 1.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 686.0 1.5 1.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 684.5 1.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 682.5 1.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 681.0 1.5 1.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 679.0 1.5 1.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 677.5 1.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 675.5 1.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 673.5 1.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 672.0 1.5 1.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 670.0 1.5 1.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 668.5 1.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 666.5 1.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 664.5 1.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 663.0 1.5 1.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 661.0 1.5 1.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 659.5 1.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 657.5 1.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 655.5 1.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 654.0 1.5 1.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 652.0 1.5 1.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 650.5 1.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 648.5 1.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 647.0 1.5 1.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 645.0 1.5 1.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 643.5 1.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 641.5 1.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 639.5 1.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 638.0 1.5 1.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 636.0 1.5 1.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 634.5 1.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 632.5 1.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 630.5 1.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 629.0 1.5 1.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 627.0 1.5 1.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 625.5 1.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 623.5 1.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 621.5 1.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 620.0 1.5 1.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 618.0 1.5 1.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 616.5 1.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 614.5 1.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 613.0 1.5 1.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 611.0 1.5 1.5 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+126.0 609.5 1.5 2.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+555.0 592.5 1.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+553.5 592.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+335.5 568.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+551.5 592.0 2.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+550.0 591.5 1.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+548.0 591.5 1.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+334.0 569.5 1.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+546.5 591.0 2.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+544.5 590.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+542.5 590.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+332.5 570.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+541.0 590.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+539.0 589.5 1.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+537.5 589.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+331.0 571.5 1.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+535.5 589.0 2.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+534.0 588.5 1.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+532.0 588.5 1.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+329.0 572.5 1.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+530.5 588.0 2.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+528.5 587.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+527.0 587.5 1.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+327.5 573.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+525.0 587.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+523.5 587.0 2.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+521.5 586.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+326.0 574.5 1.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+520.0 586.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+518.0 586.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+516.0 585.5 1.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+324.0 575.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+514.5 585.0 2.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+513.0 585.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+322.5 576.0 2.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+437.0 551.5 1.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+439.0 552.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+440.0 553.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+442.0 553.5 1.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+443.5 554.0 2.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+445.0 555.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+446.5 555.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+448.0 556.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+449.5 557.0 2.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+451.0 557.5 1.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+452.5 558.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+454.0 559.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+455.5 559.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+457.0 560.5 1.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+459.0 561.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+460.0 562.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+462.0 562.5 1.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+463.5 563.0 2.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+465.0 564.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+466.5 564.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+468.0 565.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+469.5 566.0 2.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+471.0 566.5 1.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+472.5 567.0 2.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+474.0 568.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+475.5 568.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+477.0 569.5 1.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+479.0 570.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+480.0 571.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+482.0 571.5 1.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+483.0 572.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+485.0 573.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+486.5 573.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+488.0 574.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+489.5 575.0 2.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+491.0 575.5 1.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+492.5 576.0 2.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+494.0 577.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+495.5 577.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+497.0 578.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+498.5 579.0 2.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+500.0 579.5 1.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+502.0 580.5 1.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+503.0 581.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+505.0 582.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+506.5 582.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+508.0 583.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+509.5 584.0 2.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+511.0 584.5 1.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+321.0 576.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+320.0 575.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+318.5 575.0 2.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+317.0 574.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+315.5 574.0 2.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+314.0 573.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+313.0 573.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+311.0 572.5 1.5 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+310.0 572.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+308.5 571.5 2.0 2.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+307.0 571.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+306.0 571.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+304.0 570.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+303.0 570.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+302.0 569.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+300.0 569.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+299.0 568.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+297.0 568.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+296.0 567.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+294.5 567.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+293.0 566.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+292.0 566.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+290.0 565.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+289.0 565.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+287.5 564.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+286.0 564.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+285.0 563.5 1.5 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+283.0 563.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+282.0 562.5 1.5 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+280.5 562.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+279.0 561.5 1.5 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+277.5 561.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+276.0 560.5 1.5 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+275.0 560.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+273.5 559.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+272.5 560.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+271.0 560.5 1.5 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+270.0 561.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+269.0 561.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+268.0 561.5 1.5 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+266.5 562.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+265.5 562.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+264.5 562.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+263.5 563.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+262.5 563.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+261.0 564.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+260.0 564.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+259.0 564.5 1.5 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+257.5 565.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+256.5 565.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+255.5 565.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+254.5 566.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+253.5 566.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+252.5 566.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+251.0 567.5 1.5 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+250.0 567.5 1.5 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+93.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+94.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+95.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+96.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+98.0 568.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+99.0 568.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+100.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+101.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+102.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+103.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+105.0 568.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+106.0 568.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+107.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+108.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+109.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+249.0 568.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+247.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+246.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+245.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+244.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+243.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+242.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+241.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+240.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+239.0 568.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+238.0 568.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+237.0 568.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+235.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+234.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+233.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+232.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+231.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+230.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+229.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+228.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+227.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+226.0 568.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+225.0 568.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+224.0 568.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+222.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+221.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+220.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+219.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+218.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+217.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+216.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+215.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+214.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+213.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+212.0 568.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+211.0 568.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+209.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+208.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+207.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+206.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+205.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+204.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+203.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+202.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+201.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+200.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+199.0 568.0 1.5 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+197.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+196.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+195.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+194.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+193.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+192.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+191.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+190.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+189.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+188.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+187.5 568.0 1.0 1.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+186.0 567.5 1.5 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+184.5 567.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+183.5 567.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+182.5 567.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+181.5 567.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+180.5 567.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+179.5 567.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+178.5 567.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+177.5 567.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+176.5 567.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+175.5 567.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+174.5 567.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+173.5 567.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+172.5 567.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+171.5 567.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+170.5 567.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+169.5 567.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+168.5 567.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+167.5 567.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+166.5 567.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+165.5 567.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+165.5 567.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+164.5 567.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+163.5 567.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+162.5 567.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+161.5 567.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+160.5 567.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+159.5 567.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+158.5 567.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+157.5 567.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+156.5 567.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+155.5 567.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+154.5 567.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+153.5 567.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+153.0 567.5 0.5 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+152.5 567.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+151.5 567.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+150.5 567.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+149.5 567.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+148.5 567.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+147.5 568.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+146.5 568.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+145.5 568.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+144.5 568.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+143.5 568.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+142.5 568.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+109.5 568.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+109.5 568.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+109.5 569.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+109.5 570.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+109.5 571.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+109.5 572.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+110.0 573.5 0.5 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+110.0 574.5 0.5 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+110.0 575.5 0.5 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+110.5 576.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+110.5 577.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+110.5 578.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+110.5 579.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+110.5 580.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+110.5 580.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+110.5 581.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+110.5 582.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+110.5 583.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+110.5 584.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+110.5 585.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+110.5 586.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+110.5 587.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+110.5 588.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+110.5 589.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+110.5 590.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+110.5 591.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+111.0 592.0 0.5 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+111.0 592.5 0.5 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+111.0 593.5 0.5 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+111.5 594.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+111.5 595.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+111.5 596.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+111.5 597.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+111.5 598.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+111.5 599.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+111.5 600.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+111.5 601.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+111.5 602.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+111.5 603.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+111.5 604.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+111.5 604.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+111.5 605.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+111.5 606.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+111.5 607.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+111.5 608.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+112.0 609.5 0.5 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+112.0 610.5 0.5 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+112.0 611.5 0.5 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+112.5 612.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+112.5 613.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+112.5 614.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+112.5 615.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+112.5 616.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+112.5 616.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+112.5 617.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+112.5 618.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+112.5 619.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+112.5 620.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+112.5 621.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+112.5 622.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+112.5 623.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+112.5 624.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+112.5 625.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+112.5 626.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+112.5 627.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+113.0 628.0 0.5 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+113.0 628.5 0.5 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+113.0 629.5 0.5 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+113.5 630.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+113.5 631.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+113.5 632.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+113.5 633.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+113.5 634.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+113.5 635.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+113.5 636.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+113.5 637.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+113.5 638.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+113.5 639.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+113.5 640.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+113.5 640.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+113.5 641.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+113.5 642.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+113.5 643.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+113.5 644.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+113.5 645.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+114.0 646.5 0.5 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+114.0 647.5 0.5 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+114.0 648.5 0.5 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+114.5 649.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+114.5 650.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+114.5 651.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+114.5 652.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+114.5 652.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+114.5 653.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+114.5 654.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+114.5 655.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+114.5 656.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+114.5 657.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+114.5 658.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+114.5 659.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+114.5 660.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+114.5 661.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+114.5 662.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+114.5 663.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+115.0 664.0 0.5 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+115.0 664.5 0.5 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+115.0 665.5 0.5 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+115.5 666.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+115.5 667.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+115.5 668.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+115.5 669.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+115.5 670.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+115.5 671.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+115.5 672.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+115.5 673.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+115.5 674.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+115.5 675.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+115.5 676.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+115.5 676.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+115.5 677.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+115.5 678.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+115.5 679.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+115.5 680.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+115.5 681.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+116.0 682.5 0.5 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+116.0 683.5 0.5 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+116.0 684.5 0.5 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+116.5 685.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+116.5 686.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+116.5 687.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+116.5 688.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+116.5 688.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+116.5 689.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+116.5 690.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+116.5 691.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+116.5 692.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+116.5 693.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+116.5 694.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+116.5 695.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+116.5 696.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+116.5 697.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+116.5 698.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+116.5 699.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+116.5 700.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+117.0 700.5 0.5 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+117.0 701.5 0.5 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+117.0 702.5 0.5 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+117.5 703.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+117.5 704.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+117.5 705.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+117.5 706.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+117.5 707.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+117.5 708.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+117.5 709.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+117.5 710.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+117.5 711.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+117.5 712.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+117.5 712.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+117.5 713.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+117.5 714.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+117.5 715.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+117.5 716.5 1.0 1.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+142.0 568.0 0.5 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+141.0 568.0 0.5 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+140.5 568.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+139.5 568.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+138.5 568.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+137.5 568.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+136.5 568.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+135.5 568.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+134.5 568.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+133.5 568.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+132.5 568.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+131.5 568.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+130.5 568.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+130.0 568.0 0.5 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+129.0 568.0 0.5 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+128.0 568.0 0.5 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+127.5 568.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+126.5 568.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+125.5 568.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+124.5 568.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+123.5 568.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+122.5 568.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+121.5 568.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+120.5 568.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+119.5 568.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+119.0 568.0 0.5 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+118.0 568.0 0.5 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+117.0 568.0 0.5 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+116.0 568.0 0.5 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+115.5 568.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+114.5 568.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+113.5 568.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+112.5 568.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+111.5 568.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+110.5 568.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+109.5 568.0 1.0 0.5 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+0 777 61 623 0 0 0 0 false 0 0 [] -1 0 1.00 1.00 1.00 true DrawRectangle
+0 527 1051 373 0 0 0 0 false 0 0 [] -1 0 1.00 1.00 1.00 true DrawRectangle
+0 0 0 0 false 0 0 [] 1 1050 527 60 527 DrawLine
+0 0 0 0 false 0 0 [] 1 60 527 60 777 DrawLine
+36 534 525 17 11 0 false 0 0 0 false 0 0 0 false (0.0) 10 /Courier-Bold DrawText
+0 0 0 0 false 0 0 [] 1 60 527 57 527 DrawLine
+30 617 608 23 11 0 false 0 0 0 false 0 0 0 false (50.0) 10 /Courier-Bold DrawText
+0 0 0 0 false 0 0 [] 1 60 610 57 610 DrawLine
+24 700 691 29 11 0 false 0 0 0 false 0 0 0 false (100.0) 10 /Courier-Bold DrawText
+0 0 0 0 false 0 0 [] 1 60 694 57 694 DrawLine
+24 783 774 29 11 0 false 0 0 0 false 0 0 0 false (150.0) 10 /Courier-Bold DrawText
+0 0 0 0 false 0 0 [] 1 60 777 57 777 DrawLine
+27 803 794 66 11 0 false 0 0 0 false 0 0 0 false (MILES-NORTH) 10 /Courier-Bold DrawText
+1056 579 570 6 11 0 false 0 0 0 false 0 0 0 false ( ) 10 /Courier-Bold DrawText
+1056 566 557 6 11 0 false 0 0 0 false 0 0 0 false ( ) 10 /Courier-Bold DrawText
+1056 553 544 6 11 0 false 0 0 0 false 0 0 0 false ( ) 10 /Courier-Bold DrawText
+1056 540 531 6 11 0 false 0 0 0 false 0 0 0 false ( ) 10 /Courier-Bold DrawText
+691.5 428.5 3.0 3.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+695 447 436 35 14 0 false 1.00 0.00 0.00 true 0 0 0 false (9-Nov) 12 /Courier-Bold DrawText
+175.5 349.5 3.0 3.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+179 368 357 34 14 0 false 1.00 0.00 0.00 true 0 0 0 false (7-Dec) 12 /Courier-Bold DrawText
+273.5 330.5 3.0 3.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+277 349 338 34 14 0 false 1.00 0.00 0.00 true 0 0 0 false (6-Dec) 12 /Courier-Bold DrawText
+379.5 377.5 3.0 3.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+383 396 385 42 14 0 false 1.00 0.00 0.00 true 0 0 0 false (28-Nov) 12 /Courier-Bold DrawText
+879.5 471.5 3.0 3.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+883 490 479 41 14 0 false 1.00 0.00 0.00 true 0 0 0 false (24-Oct) 12 /Courier-Bold DrawText
+437.5 419.5 3.0 3.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+441 438 427 42 14 0 false 1.00 0.00 0.00 true 0 0 0 false (24-Nov) 12 /Courier-Bold DrawText
+936.5 471.5 3.0 3.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+940 490 479 41 14 0 false 1.00 0.00 0.00 true 0 0 0 false (18-Oct) 12 /Courier-Bold DrawText
+601.5 372.5 3.0 3.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+604 391 380 42 14 0 false 1.00 0.00 0.00 true 0 0 0 false (14-Nov) 12 /Courier-Bold DrawText
+322.5 358.5 3.0 3.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+326 377 366 34 14 0 false 1.00 0.00 0.00 true 0 0 0 false (1-Dec) 12 /Courier-Bold DrawText
+0 488 61 334 0 0 0 0 false 0 0 [] -1 0 1.00 1.00 1.00 true DrawRectangle
+0 322 1051 168 0 0 0 0 false 0 0 [] -1 0 1.00 1.00 1.00 true DrawRectangle
+0 0 0 0 false 0 0 [] 1 1050 322 60 322 DrawLine
+0 0 0 0 false 0 0 [] 1 60 322 60 488 DrawLine
+36 328 319 17 11 0 false 0 0 0 false 0 0 0 false (-40) 10 /Courier-Bold DrawText
+0 0 0 0 false 0 0 [] 1 60 322 57 322 DrawLine
+48 411 402 5 11 0 false 0 0 0 false 0 0 0 false (0) 10 /Courier-Bold DrawText
+0 0 0 0 false 0 0 [] 1 60 405 57 405 DrawLine
+42 495 486 11 11 0 false 0 0 0 false 0 0 0 false (40) 10 /Courier-Bold DrawText
+0 0 0 0 false 0 0 [] 1 60 488 57 488 DrawLine
+6 514 505 108 11 0 false 0 0 0 false 0 0 0 false (DEGREES-FAHRENHEIT) 10 /Courier-Bold DrawText
+1056 348 339 6 11 0 false 0 0 0 false 0 0 0 false ( ) 10 /Courier-Bold DrawText
+1056 335 326 6 11 0 false 0 0 0 false 0 0 0 false ( ) 10 /Courier-Bold DrawText
+51 315 306 17 11 0 false 0 0 0 false 0 0 0 false (0.0) 10 /Courier-Bold DrawText
+0 0 0 0 false 0 0 [] 1 60 318 60 322 DrawLine
+375 315 306 29 11 0 false 0 0 0 false 0 0 0 false (200.0) 10 /Courier-Bold DrawText
+0 0 0 0 false 0 0 [] 1 390 318 390 322 DrawLine
+705 315 306 29 11 0 false 0 0 0 false 0 0 0 false (400.0) 10 /Courier-Bold DrawText
+0 0 0 0 false 0 0 [] 1 720 318 720 322 DrawLine
+1035 315 306 29 11 0 false 0 0 0 false 0 0 0 false (600.0) 10 /Courier-Bold DrawText
+0 0 0 0 false 0 0 [] 1 1050 318 1050 322 DrawLine
+474 296 287 163 11 0 false 0 0 0 false 0 0 0 false (MILES-EAST-OF-POLISH-BORDER) 10 /Courier-Bold DrawText
+429 270 211 36 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+435 267 258 90 11 0 false 0 0 0 false 0 0 0 false (March-Direction) 10 /Courier-Bold DrawText
+558.5 260.5 6.0 6.0 0 360 0 0.00 1.00 0.00 true 0 0 [] 1 0 0.65 1.00 0.65 true DrawEllipse
+537 251 242 42 11 0 false 0 0 0 false 0 0 0 false (Advance) 10 /Courier-Bold DrawText
+612.5 260.5 6.0 6.0 0 360 0 1.00 0.00 0.00 true 0 0 [] 1 0 1.00 0.60 0.60 true DrawEllipse
+591 251 242 43 11 0 false 0 0 0 false 0 0 0 false (Retreat) 10 /Courier-Bold DrawText
+354 229 361 72 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+360 208 199 78 11 0 false 0 0 0 false 0 0 0 false (Number-Of-Men) 10 /Courier-Bold DrawText
+471.5 201.0 1.0 0.5 0 360 0 0 0 0 false 0 0 [] 1 0 1.00 1.00 1.00 true DrawEllipse
+468 174 165 5 11 0 false 0 0 0 false 0 0 0 false (0) 10 /Courier-Bold DrawText
+525.5 201.0 7.0 6.5 0 360 0 0 0 0 false 0 0 [] 1 0 1.00 1.00 1.00 true DrawEllipse
+507 174 165 35 11 0 false 0 0 0 false 0 0 0 false (110000) 10 /Courier-Bold DrawText
+579.5 201.0 13.0 12.5 0 360 0 0 0 0 false 0 0 [] 1 0 1.00 1.00 1.00 true DrawEllipse
+561 174 165 35 11 0 false 0 0 0 false 0 0 0 false (220000) 10 /Courier-Bold DrawText
+633.5 201.0 19.0 18.5 0 360 0 0 0 0 false 0 0 [] 1 0 1.00 1.00 1.00 true DrawEllipse
+615 174 165 35 11 0 false 0 0 0 false 0 0 0 false (330000) 10 /Courier-Bold DrawText
+687.5 201.0 25.0 24.5 0 360 0 0 0 0 false 0 0 [] 1 0 1.00 1.00 1.00 true DrawEllipse
+669 174 165 35 11 0 false 0 0 0 false 0 0 0 false (440000) 10 /Courier-Bold DrawText
+grestore
+
+grestore
+
+grestore
+
+
+showpage
+%%Trailer
+%%DocumentFonts: /Courier-Bold 
+%%BoundingBox: 30 83 762 529

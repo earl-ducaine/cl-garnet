@@ -1,0 +1,508 @@
+%!PS-Adobe-2.0 EPSF-2.0
+%%Title: text interactor
+%%Creator: Make-PS-File -- Garnet Version 2.2
+%%CreationDate: Sep 22, 1993, 2:07 PM
+%%For: 
+%%This file does not use real color
+%%DocumentFonts: (atend)
+%%BoundingBox: 72 149 540 643
+%%Pages: 1
+%%EndComments
+
+
+/EllipseDict 23 dict def
+EllipseDict /mtrx matrix put
+/DrawEllipse { % x y xrad yrad startangle endangle line-color
+	       % cap join dash thickness fill-color => -
+    EllipseDict begin
+	/fill-color exch def /thickness exch def
+	/dash-pattern exch def  /line-join exch def  /line-cap exch def
+	/line-color exch def  /endangle exch def /startangle exch def
+	/yrad exch def  /xrad exch def /y exch def /x exch def
+	/savematrix mtrx currentmatrix def
+	% Draw the filling
+	gsave
+	    newpath
+	    x y translate
+	    xrad thickness sub yrad thickness sub scale
+	    0 0 1 startangle endangle arc
+	    savematrix setmatrix
+	    fill-color FillShape
+	    newpath
+	    x y translate
+	    xrad thickness 2 div sub yrad thickness 2 div sub scale
+	    0 0 1 startangle endangle arc
+	    savematrix setmatrix
+	    line-color
+	    0 % line-cap
+	    line-join dash-pattern thickness
+	    StrokeShape
+	grestore
+    end
+} def
+
+/DefImage { % image-name font-name w h string => -
+  20 dict begin
+    /ImageString exch def /ImageHeight exch def /ImageWidth exch def
+    /FontName exch def
+    /ImageName exch def
+    /FontType 3 def
+    /FontMatrix [1 0 0 1 0 0] def
+    /FontBBox [0 0 1 1] def
+    /Encoding [
+      /image 255 { /.notdef } repeat
+    ] def
+    /BuildChar { % font char => -
+      pop begin
+        1 0
+	0 0 1 1 setcachedevice
+	gsave
+	  ImageWidth ImageHeight false
+	  [ ImageWidth 0 0 ImageHeight 0 0 ]
+          {ImageString} imagemask
+	grestore
+      end
+    } def
+    ImageName currentdict definefont
+    FontName exch
+    ImageName ImageString
+  end
+  def def
+} def
+
+
+/FillPattern { % fgR fgG fgB [bgR bgG bgB] opaque? top font => -
+  50 dict begin gsave
+    /font exch def
+    /top exch def
+    /opaque? exch def
+    /w font /ImageWidth get def
+    /h font /ImageHeight get def
+    font [w 0 0 h 0 0] makefont setfont
+    pathbbox
+    /y1 exch def /x1 exch def
+    /y0 exch def /x0 exch def
+    clip
+    opaque? {
+      gsave
+	setrgbcolor
+	fill
+      grestore
+    } if
+    newpath
+    setrgbcolor
+    /y0 y0 top sub h div floor h mul top add cvi def
+    /x0 x0 w div floor w mul cvi def
+    x0 y0 translate
+    /W x1 x0 sub w div ceiling cvi 1 add def
+    /H y1 y0 sub h div ceiling cvi def
+    /s W string def
+    H {
+      0 0 moveto
+      s show
+      0 h translate
+    } repeat
+  grestore end
+  newpath
+} def
+
+
+/AdjustLineDict 20 dict def
+/AdjustLine { % x1 y1 x2 y2 width => x1 y1 x2 y2
+  AdjustLineDict begin
+    /width exch cvi def
+    /hw width 2 div def
+    /oddwidth? width 1 and 1 eq def
+    /y2 exch def /x2 exch def /y1 exch def /x1 exch def
+    /dx x2 x1 sub def /dy y2 y1 sub def
+    dy 0 eq {
+      dx 0 eq {
+	% point
+	oddwidth? {
+	  /x1 x1 .5 add def /y1 y1 .5 sub def
+	  /x2 x2 .5 add def /y2 y2 .5 sub def
+	} if
+      } {
+	% horizontal
+	oddwidth? {
+	  /y1 y1 .5 sub def
+	  /y2 y2 .5 sub def
+	} if
+      } ifelse
+    } {
+      dx 0 eq {
+	% vertical
+	oddwidth? {
+	  /x1 x1 .5 add def
+	  /x2 x2 .5 add def
+	} if
+      } {
+	% diagonal
+	oddwidth? {
+	  /x1 x1 .5 add def /y1 y1 .5 sub def
+	  /x2 x2 .5 add def /y2 y2 .5 sub def
+	} if
+      } ifelse
+    } ifelse
+    x1 y1 x2 y2
+  end
+} def
+
+/DrawLineDict 20 dict def
+/DrawLine { % line-color cap join dash thickness x2 y2 x1 y1 => -
+    gsave DrawLineDict begin
+	4 index AdjustLine
+	moveto lineto
+	StrokeShape
+    end grestore
+} def
+
+/TextDict 40 dict def
+/DrawText { % left top base-y opal-width height fill-p
+	    % fore-color back-color string size font-name => -
+    TextDict begin
+	gsave
+	    findfont exch scalefont setfont
+	    /s exch def
+	    /back-color exch def /fore-color exch def /fill-p exch def
+	    /height exch def  /opal-width exch def
+	    /base-y exch def  /top exch def
+	    /left exch 1 sub def % XXX: I don't know why!
+
+	    % Calculate distance to add between each character, based on the 
+	    % width expected by Opal, the width expected by postscript, and 
+	    % the number of characters to distribute the change over.
+	    /x-dist opal-width s stringwidth pop sub s length div def
+
+	    % Draw background of text if appropriate
+	    fill-p {
+		gsave
+		    newpath
+		    left top opal-width height RectanglePath
+		    back-color FillShape
+		grestore
+	    } if
+
+	    % Draw text in the appropriate color
+	    newpath
+	    s length 0 ne {
+		left base-y moveto
+		fore-color aload length 3 eq {
+		    setrgbcolor
+		    x-dist 0 s ashow
+		} { % Halftone pattern:
+		    %   fgR fgG fgB bgR bgG bgB top pattern
+		    %   fgR fgG fgB false top pattern
+		    /pattern exch def /top exch def /opaque? exch def
+		    opaque? not { .5 .5 .5 } if
+		    /bgB exch def /bgG exch def /bgR exch def
+		    /fgB exch def /fgG exch def /fgR exch def
+
+		    fgR bgR add 2 div
+		    fgG bgG add 2 div
+		    fgB bgB add 2 div
+		    setrgbcolor
+
+		    opaque? {
+			x-dist 0 s ashow
+		    } {
+			mark
+			/ch 1 string def
+			/space { /space { x-dist 0 rmoveto } def } def
+%			/jt statusdict begin jobtimeout end def
+			gsave { % try really hard to do it right
+			    s {
+				% don't take more than 2 seconds a character
+%				statusdict begin 2 setjobtimeout end
+				space
+				ch 0 3 -1 roll put
+				ch true charpath
+				currentpoint /yy exch def /xx exch def
+				fgR fgG fgB false top pattern FillPattern
+				newpath xx yy moveto
+			    } forall
+			} stopped grestore { % fall back in case we fail
+			    x-dist 0 s ashow
+			} if
+%			statusdict begin jt setjobtimeout end
+			cleartomark
+		    } ifelse
+		} ifelse
+	    } if
+	grestore
+    end
+} def
+
+/RectanglePath { % left top width height => -
+    /h exch def  /w exch def
+    moveto			% Go to the left,top corner
+    w 0 rlineto			% top side
+    0 h neg rlineto		% right side
+    w neg 0 rlineto		% bottom side
+    closepath			% left side
+} def
+
+/RectangleDict 21 dict def
+/DrawRectangle { % left top width height line-color
+		 % cap join dash thickness fill-color => -
+    RectangleDict begin
+	/fill-color exch def  /thickness exch def /dash-pattern exch def
+	/line-join exch def  /line-cap exch def /line-color exch def
+	/height exch def /width exch def  /top exch def  /left exch def
+        /thickness-for-fill thickness 0 lt {0} {thickness} ifelse def
+	% Draw filling
+	newpath
+	left thickness-for-fill add top thickness-for-fill sub
+        width thickness-for-fill 2 mul sub height thickness-for-fill 2 mul sub
+	RectanglePath
+	fill-color FillShape
+	% Draw border
+	newpath
+	left thickness 2 div add  top thickness 2 div sub
+	width thickness sub  height thickness sub
+	RectanglePath
+	line-color line-cap line-join dash-pattern thickness StrokeShape
+    end
+} def
+
+/DrawGenericWindowFrame { % label left top w h
+			  % leftmargin topmargin rightmargin bottommargin => -
+  30 dict begin
+
+  { % setup
+    /bottommargin exch def /rightmargin exch def
+    /topmargin exch def /leftmargin exch def
+    /h exch def /w exch def /y exch h sub def /x exch def
+    /label exch def
+    /pointsize
+      topmargin 1 sub
+      dup 1 lt { pop 1 } if
+      dup 12 gt { 12 sub 3 div 12 add } if
+    def
+
+    /bottom y def /top y h add def
+    /left x def /right  x w add def
+    1 setlinewidth
+    0 setlinecap
+  } exec
+
+  { % background
+    newpath
+    left leftmargin sub bottom bottommargin sub moveto
+    left leftmargin sub top topmargin add lineto
+    right rightmargin add top topmargin add lineto
+    right rightmargin add bottom bottommargin sub lineto
+    closepath
+    0 setgray fill
+
+    left bottom moveto
+    left top lineto
+    right top lineto
+    right bottom lineto
+    closepath
+    1 setgray fill
+  } exec
+
+  topmargin 8 ge {
+    /Helvetica-Bold findfont pointsize scalefont setfont
+    label stringwidth pop
+    left right add 2 div
+    exch 2 div sub
+    top topmargin 2 div add pointsize 2 div sub 2 add moveto
+    1 setgray
+    label show
+  } if
+
+  end
+} def
+
+/FillShape { % [halftone] | [r g b] | null => -
+    gsave
+        dup null eq { pop } {
+	  aload length 3 eq { setrgbcolor fill } {
+	      FillPattern
+	  } ifelse
+        } ifelse
+    grestore
+    newpath
+} def
+
+/StrokeShape { % line-color cap join dash thickness => -
+    % If no line is desired, pass -1 for line-thickness
+    dup 0 ge 5 index null ne and {
+	% if line-thickness >= 0, then draw the outline
+	gsave
+	    setlinewidth 0 setdash setlinejoin setlinecap
+	    aload length 3 eq { setrgbcolor stroke } {
+		strokepath FillPattern
+	    } ifelse
+	grestore
+    } {
+	pop pop pop pop pop
+    } ifelse
+    newpath
+} def
+
+/ClipDict 2 dict def
+/ClipToRectangle { % left top width height => -
+    ClipDict begin
+	/height exch def  /width exch def
+        newpath
+	    moveto			% Go to the left,top corner
+	    width 0 rlineto		% top side
+	    0 height neg rlineto	% right side
+	    width neg 0 rlineto		% bottom side
+	    closepath			% left side
+	gsave 1 setgray fill grestore
+	clip newpath
+    end
+} def
+
+/image-1 /image-1-font 4 4 <
+00 00 00 00>
+DefImage
+
+
+%%EndProlog
+%%Page: 1 1
+
+gsave
+72 72 translate
+0.87 0.87 scale
+0 657 translate
+
+%
+% Begin new window
+%
+gsave
+0 0 538 568 ClipToRectangle
+gsave
+0 0 538 568 [0 0 0] 0 0 [] -1 [1 1 1] DrawRectangle
+grestore
+
+
+%
+% Begin new window
+%
+gsave
+2 -23 translate
+(text interactor) 0 0 534 543 2 23 2 2 DrawGenericWindowFrame
+0 0 534 543 ClipToRectangle
+gsave
+15 -5 -27 154 28 false [0 0 0] [1 1 1] (Text Interactor) 24 /Times-BoldItalic DrawText
+15 -44 -55 109 14 false [0 0 0] [1 1 1] (Interactor Name:) 12 /Courier-Bold DrawText
+129 -42 150 18 [0 0 0] 0 0 [] 1 null DrawRectangle
+407 -10 117 28 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+402 -5 117 28 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+406 -9 109 20 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawRectangle
+409 -12 -23 103 14 false [0 0 0] [1 1 1] (CREATE INSTANCE) 12 /Courier DrawText
+407 -48 117 28 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+402 -43 117 28 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+406 -47 109 20 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawRectangle
+439 -50 -61 42 14 false [0 0 0] [1 1 1] (MODIFY) 12 /Courier DrawText
+407 -86 117 28 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+402 -81 117 28 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+406 -85 109 20 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawRectangle
+436 -88 -99 49 14 false [0 0 0] [1 1 1] (DESTROY) 12 /Courier DrawText
+407 -124 117 28 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+402 -119 117 28 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+406 -123 109 20 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawRectangle
+447 -126 -137 26 14 false [0 0 0] [1 1 1] (SAVE) 12 /Courier DrawText
+407 -162 117 28 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+402 -157 117 28 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+406 -161 109 20 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawRectangle
+451 -164 -175 19 14 false [0 0 0] [1 1 1] (C32) 12 /Courier DrawText
+407 -200 117 28 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+402 -195 117 28 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+406 -199 109 20 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawRectangle
+440 -202 -213 40 14 false [0 0 0] [1 1 1] (CANCEL) 12 /Courier DrawText
+15 -76 368 137 [0 0 0] 0 0 [] 1 null DrawRectangle
+25 -69 91 14 [0 0 0] 0 0 [] -1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawRectangle
+30 -69 -80 81 14 false [0 0 0] [1 1 1] (:start-where) 12 /Courier-Bold DrawText
+218.5 -105.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0 0 0] DrawEllipse
+213.5 -100.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawEllipse
+213.5 -100.5 8.5 8.5 0 360 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawEllipse
+30 -96 -107 167 14 false [0 0 0] [1 1 1] (Start Anywhere in Window) 12 /Courier DrawText
+196.5 -147.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0 0 0] DrawEllipse
+191.5 -142.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawEllipse
+191.5 -142.5 8.5 8.5 0 360 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawEllipse
+30 -138 -149 145 14 false [0 0 0] [1 1 1] (One of this aggregate) 12 /Courier DrawText
+217 -135 125 20 [0 0 0] 0 0 [] 1 null DrawRectangle
+45 -116 -127 12 14 false [0 0 0] [1 1 1] (or) 12 /Courier DrawText
+45 -158 -169 12 14 false [0 0 0] [1 1 1] (or) 12 /Courier DrawText
+35 -181 45 26 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+30 -176 45 26 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+33 -179 39 20 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawRectangle
+36 -182 -193 33 14 false [0 0 0] [1 1 1] (Other) 12 /Courier DrawText
+89 -181 125 20 [0 0 0] 0 0 [] 1 null DrawRectangle
+349 -184 20 20 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+344 -179 20 20 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+347 -182 14 14 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawRectangle
+223 -184 -195 116 14 false [0 0 0] [1 1 1] (Type restriction:) 12 /Courier DrawText
+15 -229 342 124 [0 0 0] 0 0 [] 1 null DrawRectangle
+25 -222 126 14 [0 0 0] 0 0 [] -1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawRectangle
+30 -222 -233 116 14 false [0 0 0] [1 1 1] (:object-to-change) 12 /Courier-Bold DrawText
+191.5 -255.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0 0 0] DrawEllipse
+186.5 -250.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawEllipse
+186.5 -250.5 8.5 8.5 0 360 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawEllipse
+25 -246 -257 145 14 false [0 0 0] [1 1 1] (result of start-where) 12 /Courier DrawText
+191.5 -293.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0 0 0] DrawEllipse
+186.5 -288.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawEllipse
+186.5 -288.5 8.5 8.5 0 360 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawEllipse
+35 -284 -295 125 14 false [0 0 0] [1 1 1] (change this object) 12 /Courier DrawText
+191.5 -331.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0 0 0] DrawEllipse
+186.5 -326.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawEllipse
+186.5 -326.5 8.5 8.5 0 360 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawEllipse
+67 -322 -333 61 14 false [0 0 0] [1 1 1] (<formula>) 12 /Courier DrawText
+186.5 -250.5 5.5 5.5 0 360 [0 0 0] 0 0 [] -1 [0 0 0] DrawEllipse
+212 -281 125 20 [0 0 0] 0 0 [] 1 null DrawRectangle
+15 -369 379 48 [0 0 0] 0 0 [] 1 null DrawRectangle
+25 -362 96 14 [0 0 0] 0 0 [] -1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawRectangle
+30 -362 -373 86 14 false [0 0 0] [1 1 1] (:feedback-obj) 12 /Courier-Bold DrawText
+162.5 -398.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0 0 0] DrawEllipse
+157.5 -393.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawEllipse
+157.5 -393.5 8.5 8.5 0 360 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawEllipse
+30 -389 -400 111 14 false [0 0 0] [1 1 1] (Interim Feedback) 12 /Courier DrawText
+183 -386 125 20 [0 0 0] 0 0 [] 1 null DrawRectangle
+366.5 -398.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0 0 0] DrawEllipse
+361.5 -393.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawEllipse
+361.5 -393.5 8.5 8.5 0 360 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawEllipse
+318 -389 -400 27 14 false [0 0 0] [1 1 1] (None) 12 /Courier DrawText
+361.5 -393.5 5.5 5.5 0 360 [0 0 0] 0 0 [] -1 [0 0 0] DrawEllipse
+15 -433 -444 102 14 false [0 0 0] [1 1 1] (Cursor appears:) 12 /Courier-Bold DrawText
+243.5 -442.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0 0 0] DrawEllipse
+238.5 -437.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawEllipse
+238.5 -437.5 8.5 8.5 0 360 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawEllipse
+131 -433 -444 91 14 false [0 0 0] [1 1 1] (where pressed) 12 /Courier DrawText
+392.5 -442.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0 0 0] DrawEllipse
+387.5 -437.5 11.5 11.5 0 360 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawEllipse
+387.5 -437.5 8.5 8.5 0 360 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawEllipse
+260 -433 -444 111 14 false [0 0 0] [1 1 1] (at end of string) 12 /Courier DrawText
+238.5 -437.5 5.5 5.5 0 360 [0 0 0] 0 0 [] -1 [0 0 0] DrawEllipse
+15 -465 -476 102 14 false [0 0 0] [1 1 1] (Final Function:) 12 /Courier-Bold DrawText
+122 -463 150 18 [0 0 0] 0 0 [] 1 null DrawRectangle
+25 -500 97 34 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+15 -490 97 34 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+20 -495 87 24 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawRectangle
+25 -500 -511 76 14 false [0 0 0] [1 1 1] (Start-Event) 12 /Courier DrawText
+137 -500 97 34 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+127 -490 97 34 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+132 -495 87 24 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawRectangle
+141 -500 -511 69 14 false [0 0 0] [1 1 1] (Stop-Event) 12 /Courier DrawText
+249 -500 97 34 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+239 -490 97 34 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+244 -495 87 24 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawRectangle
+249 -500 -511 77 14 false [0 0 0] [1 1 1] (Abort-Event) 12 /Courier DrawText
+grestore
+
+grestore
+
+grestore
+
+grestore
+
+
+showpage
+%%Trailer
+%%DocumentFonts: /Courier /Courier-Bold /Times-BoldItalic Helvetica-Bold 
+%%BoundingBox: 72 149 540 643

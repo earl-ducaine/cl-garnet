@@ -1,0 +1,44 @@
+#!/bin/csh -f
+
+# Experimental file to extract index references from .ps files
+#
+
+bawk '/^\(Index\)SH$/	{if (++on == 2) ++printing}\
+	{if (printing) {\
+	  if ($0 == "(Table of Contents)SH") exit; else print}}'  $1 | \
+gawk '\
+function is_aligned(n)\
+{if (n % 15600 == 8280) return 1; return (n % 15600 == 6120)}\
+\
+/ MT$/||/ XM$/	{gsub(/\\050/, "(", entry); gsub(/\\051/, ")", entry);\
+		 if (is_aligned($1)) x = $1;\
+		 print entry;\
+		 entry = ""; prev_x = $1}\
+/^6 SS $/	{getline; getline;\
+		 entry = entry " " substr($0,2,length($0)-4) " ";\
+		 getline; getline; next}\
+/^SH\(/	{start = index($0,"(")+1;\
+	 entry = entry substr($0,start, index($0,")")-start); next}\
+/^\(/	{if (! is_aligned(prev_x)) {\
+	   base = prev_x - 1098\
+	   if (e[base] ~ / [0-9]+$/) {\
+	     l = split(e[base], temp);\
+	     e[base] = temp[1]\
+	     for (i = 2; i < l; ++i) e[base] = e[base] " " temp[i]}\
+	   if (e[base] == "") e[base] = "Examples"\
+	   entry = "iNDEXsEC " e[base] " sECOND " entry}\
+	 zero = (entry == "")\
+	 entry = entry substr($0,2,index($0,")") - 2)\
+	 gsub(/\\134/, "\\", entry);\
+	 if (zero && is_aligned(prev_x)) e[x] = entry\
+	 next}\
+/\(/	{start = index($0,"(")+1;\
+	 entry = entry substr($0,start, index($0,")")-start)}' | \
+bawk 'NR ==1	{next}\
+/[^0-9]$/	{next}\
+	{l = NF; t = length($0) - length($NF) - 1\
+	 while ($(l-1) ~ /^[0-9]+,/) {\
+	   --l; t = t - length($l) - 1}\
+	 name = substr($0, 1, t);\
+	 while (l < NF) {print substr($l,1,length($l)-1), name; ++l}\
+	 print $NF, name}'

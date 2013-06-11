@@ -1,0 +1,43 @@
+#!/bin/csh -f
+
+# This command file creates the "pagenumbers.mss" file which is used by
+# Scribe to set the page numbers of the Garnet document properly.
+
+set args = ( $argv )
+if ( $#args < 1) then
+  echo "usage:    get-indices  names-of-ps-files"
+  exit
+endif
+
+cat /dev/null > /tmp/pages
+foreach i ( $args )
+  awk -f scripts/create-pages.awk $i >> /tmp/pages
+end
+
+awk 'BEGIN {start = 1}\
+	{pages = $3 \
+	 if ($2 % 2 == 0) {$2 = $2 + 1; ++pages} \
+	 if (pages % 2) ++pages	  \
+	 print "@string(" $1 " = \"" start "\") @comment(" pages " pages)" \
+	 print "@string(" $1 "-first-page = \"" start + 1 + $2 "\")" \
+	 start += pages}\
+END	{print "@string(GlobalIndex = \"" start - 1 "\")"}' \
+  /tmp/pages > /tmp/pagenumbers.mss
+
+# Be careful not to modify pagenumbers.mss unless needed, since this forces
+# reScribing of all the manuals.
+
+if ( ! -e "pagenumbers.mss" ) then
+  cp /tmp/pagenumbers.mss pagenumbers.mss
+  echo "Please run  make  again - page numbers were modified."
+  exit
+endif
+
+diff /tmp/pagenumbers.mss pagenumbers.mss > /tmp/foo
+if ( ! -z /tmp/foo ) then
+  mv /tmp/pagenumbers.mss pagenumbers.mss
+  echo "Please run  make  again - page numbers were modified."
+  exit
+endif
+
+echo "      ****  PAGE NUMBERS DID NOT CHANGE.  GOOD.  ****"

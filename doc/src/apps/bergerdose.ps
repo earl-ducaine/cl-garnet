@@ -1,0 +1,652 @@
+%!PS-Adobe-2.0 EPSF 2.0
+%%Title: 
+%%Creator: Make-PS-File -- Garnet Version 2.1
+%%CreationDate: Sep 16, 1993, 11:12 AM
+%%For: 
+%%This file uses real color
+%%DocumentFonts: (atend)
+%%BoundingBox: 72 226 540 566
+%%Pages: 1
+%%EndComments
+
+
+/EllipseDict 23 dict def
+EllipseDict /mtrx matrix put
+/DrawEllipse
+   {    EllipseDict begin
+        /fill-color-p exch def  /fill-blue exch def  /fill-green exch def
+        /fill-red exch def  /fill-halftone exch def  /thickness exch def
+        /dash-pattern exch def  /line-join exch def  /line-cap exch def
+        /line-color-p exch def  /line-blue exch def  /line-green exch def
+        /line-red exch def  /line-halftone exch def  /endangle exch def
+        /startangle exch def  /yrad exch def  /xrad exch def  /y exch def
+        /x exch def  /savematrix mtrx currentmatrix def
+        /thickness-by-2 thickness 2 div def
+        % Draw the filling
+        newpath
+	  x y translate
+          gsave
+	    xrad thickness-by-2 sub  yrad thickness-by-2 sub scale
+            0 0 1 startangle endangle arc
+            savematrix setmatrix
+	    fill-halftone fill-red fill-green fill-blue fill-color-p FillShape
+          grestore
+        % Draw the border
+        newpath
+          xrad yrad scale
+          0 0 1 startangle endangle arc
+	  savematrix setmatrix
+          line-halftone line-red line-green line-blue line-color-p
+          line-cap line-join dash-pattern thickness StrokeShape
+        end
+   } def
+
+/TextDict 19 dict def
+/DrawText
+   {	% stack: left top base-y opal-width height line-halftone fill-p
+        %        fore-red fore-green fore-blue fore-color-p
+        %        back-red back-green back-blue back-color-p
+        %        string size font-name
+        TextDict begin
+        gsave
+	findfont exch scalefont setfont
+	/s exch def
+        /back-color-p exch def  /back-blue exch def  /back-green exch def
+        /back-red exch def  /fore-color-p exch def  /fore-blue exch def
+        /fore-green exch def  /fore-red exch def  /fill-p exch def
+        /line-halftone exch def /height exch def  /opal-width exch def
+        /base-y exch def  /top exch def  /left exch def
+
+        % Calculate distance to add between each character, based on the width
+        % expected by Opal, the width expected by postscript, and the number
+        % of characters to distribute the change over
+	/x-dist opal-width s stringwidth pop sub s length div def
+
+        % Draw background of text if appropriate
+        fill-p
+        { gsave
+            newpath
+            left top opal-width height RectanglePath
+            1 back-red back-green back-blue back-color-p
+            FillShape
+          grestore } if
+
+        % Draw text in the appropriate color
+	newpath
+          fore-color-p
+          { fore-red fore-green fore-blue setrgbcolor }
+          { line-halftone setgray } ifelse
+	  left base-y moveto
+	  x-dist 0 s ashow
+        grestore
+        end
+   } def
+
+/DrawLine
+   {    % stack: line-halftone, red, green, blue, color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness
+        %        x2, y2, x1, y1
+        newpath
+          moveto
+          lineto
+          StrokeShape
+   } def
+
+/PolylineDict 15 dict def
+/DrawPolyline
+   {	% stack: x1, y1, ..., xn, yn, n, line-halftone, line-red, line-blue,
+        %        line-green, line-join, line-cap, dash-pattern,
+        %        line-thickness, fill-halftone
+        PolylineDict begin
+        /fill-color-p exch def  /fill-blue exch def  /fill-green exch def
+        /fill-red exch def  /fill-halftone exch def  /thickness exch def
+        /dash-pattern exch def  /line-join exch def  /line-cap exch def
+        /line-color-p exch def  /line-blue exch def  /line-green exch def
+        /line-red exch def  /line-halftone exch def  /num-points exch 4 sub def
+	newpath
+	  moveto
+	  num-points -2 0 {pop lineto} for
+	  fill-halftone fill-red fill-green fill-blue fill-color-p FillShape
+          line-halftone line-red line-green line-blue line-color-p
+          line-cap line-join dash-pattern thickness StrokeShape
+        end
+   } def
+
+/RectanglePath
+   {    % stack: left, top, width, height
+        /h exch def  /w exch def
+	moveto		        % Go to the left,top corner
+	w 0 rlineto	        % top side
+	0 h neg rlineto		% right side
+	w neg 0 rlineto		% bottom side
+	closepath		% left side
+   } def
+
+/RectangleDict 21 dict def
+/DrawRectangle
+   {	% stack: left, top, width, height, line-halftone, line-red, line-green,
+        %        line-blue, line-color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness,
+        %        fill-halftone, fill-red, fill-green, fill-blue, fill-color-p
+        RectangleDict begin
+        /fill-color-p exch def  /fill-blue exch def  /fill-green exch def
+        /fill-red exch def /fill-halftone exch def  /thickness exch def
+        /dash-pattern exch def  /line-join exch def  /line-cap exch def
+        /line-color-p exch def  /line-blue exch def  /line-green exch def
+        /line-red exch def  /line-halftone exch def  /height exch def
+        /width exch def  /top exch def  /left exch def
+        /thickness-by-2 thickness 2 div def
+        % Draw filling
+        newpath
+          left thickness-by-2 add  top thickness-by-2 sub
+          width thickness sub  height thickness sub
+          RectanglePath
+	  fill-halftone fill-red fill-green fill-blue fill-color-p FillShape
+        % Draw border
+        newpath
+          left top width height RectanglePath
+          line-halftone line-red line-green line-blue line-color-p
+          line-cap line-join dash-pattern thickness StrokeShape
+        end
+   } def
+
+/ClipDict 2 dict def
+/ClipToRectangle
+   {    % stack: left, top, width, height
+        ClipDict begin
+	/height exch def  /width exch def
+        newpath
+	  moveto		% Go to the left,top corner
+	  width 0 rlineto	% top side
+	  0 height neg rlineto	% right side
+	  width neg 0 rlineto	% bottom side
+	  closepath		% left side
+	gsave 1 setgray fill grestore
+	clip newpath
+        end
+   } def
+
+/FillShape
+   {	% stack: fill-halftone, red, green, blue, color-p
+        %   Color-p should be true or false - false means ignore the three vals
+        %   Use -1 for fill-halftone to mean NIL, 0 = black, 1 = white
+        %   Use -2 for fill-halftone to indicate there is an arbitrary filling
+        % style on the stack
+        gsave
+        { setrgbcolor fill pop }
+	{ pop pop pop 
+	  dup 0 ge
+	    % if fill-halftone >= 0, then fill the shape with a halftone
+	    { setgray fill}
+            % else, if there is an arbitrary filling style, then fill
+            { -2 eq
+              {SetPattern fill} if
+            } ifelse } ifelse
+        grestore
+   } def
+
+/StrokeShape
+   {	% stack: line-halftone, red, green, blue, color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness
+	% If no line is desired, pass -1 for line-thickness
+        % Halftones: 0 = black, 1 = white
+	dup 0 ge
+	  % if line-thickness >= 0, then draw the outline
+	  {gsave
+	   setlinewidth 0 setdash setlinejoin setlinecap
+             { setrgbcolor pop }
+             { pop pop pop setgray } ifelse
+	   stroke
+	   grestore}
+	  {pop pop pop pop pop pop pop pop pop newpath} ifelse
+   } def
+
+
+%%EndProlog
+%%Page: 1 1
+
+gsave
+72 72 translate
+0.42545456 0.42545456 scale
+
+%
+% Begin new window
+%
+0 -362 translate
+gsave
+0 1523 1100 800 ClipToRectangle
+0 0 translate
+gsave
+0 1523 1100 800 0 0 0 0 false 0 0 [] -1 0 1.00 1.00 1.00 true DrawRectangle
+grestore
+
+gsave
+
+%
+% Begin new window
+%
+0 0 translate
+gsave
+0 1523 1100 800 ClipToRectangle
+0 0 translate
+gsave
+0 1523 1100 800 0 0 0 0 false 0 0 [] -1 0 1.00 1.00 1.00 true DrawRectangle
+541 974 564 974 570 971 573 974 605 977 609 974 631 974 634 971 637 974 653 974 657 971 743 971 762 987 785 987 804 1003 807 1025 817 1048 817 1080 823 1093 823 1141 820 1144 817 1163 797 1198 772 1227 772 1230 753 1246 733 1259 698 1275 682 1278 669 1285 660 1285 657 1288 625 1288 618 1294 615 1294 612 1288 545 1288 541 1291 458 1294 455 1291 445 1291 442 1288 433 1288 429 1285 404 1278 375 1262 365 1265 365 1259 346 1246 321 1221 301 1192 301 1185 292 1166 292 1157 285 1144 285 1131 279 1118 279 1109 276 1105 276 1067 279 1064 279 1054 285 1045 285 1038 295 1022 295 1006 298 1003 301 987 314 977 330 981 337 974 340 977 346 977 349 974 356 977 385 977 388 974 541 974 541 974 158 0 0 0 0 false 0 0 [] 1 0 0.50 0.62 0.75 true DrawPolyline
+532 1089 538 1093 541 1093 545 1086 551 1083 551 1080 554 1073 557 1070 557 1064 561 1057 561 1048 564 1041 564 1038 570 1032 570 1029 577 1025 586 1013 583 1009 577 1013 573 1016 567 1016 564 1019 557 1022 551 1019 541 1009 535 1009 529 1013 522 1019 516 1019 500 1013 484 1013 490 1019 497 1022 500 1029 506 1032 509 1038 513 1041 513 1048 516 1054 516 1070 519 1080 525 1086 532 1089 532 1089 88 0 0 0 0 false 0 0 [] 1 0 1.00 0.87 0.50 true DrawPolyline
+548 1041 548 1045 545 1048 541 1048 541 1051 535 1051 532 1048 529 1048 529 1032 532 1032 532 1029 541 1029 545 1032 548 1032 548 1038 548 1041 32 0 0 0 0 false 0 0 [] 1 0 0.75 0.87 0.50 true DrawPolyline
+673 1233 692 1224 730 1182 730 1176 737 1166 737 1160 743 1147 740 1118 721 1070 695 1045 685 1038 679 1038 669 1029 663 1029 653 1022 644 1025 634 1019 605 1019 586 1029 570 1048 573 1051 593 1048 602 1054 605 1061 605 1080 599 1086 602 1089 612 1083 615 1086 621 1083 618 1077 615 1080 612 1077 615 1064 621 1061 621 1067 634 1077 637 1093 650 1115 628 1115 609 1105 602 1096 596 1099 596 1105 593 1109 618 1121 615 1125 605 1125 596 1137 602 1147 602 1185 599 1189 599 1195 586 1217 577 1224 573 1221 557 1221 532 1240 541 1246 570 1246 573 1249 625 1249 628 1246 650 1243 673 1233 673 1233 132 0 0 0 0 false 0 0 [] 1 0 0.50 0.75 1.00 true DrawPolyline
+420 1227 423 1227 429 1233 433 1233 439 1240 445 1240 449 1243 452 1243 455 1246 458 1246 461 1249 500 1249 506 1243 503 1240 500 1240 493 1233 490 1233 487 1230 487 1227 474 1214 474 1211 477 1208 484 1208 493 1198 493 1157 490 1153 490 1131 493 1128 481 1115 484 1115 490 1109 490 1099 487 1096 490 1093 500 1093 503 1089 500 1086 493 1086 490 1089 487 1089 484 1086 484 1083 490 1077 493 1080 497 1080 503 1073 503 1070 506 1067 503 1064 503 1057 509 1051 509 1048 506 1045 506 1041 493 1029 490 1029 487 1025 436 1025 433 1029 426 1029 423 1032 420 1032 417 1035 413 1035 388 1061 388 1064 385 1067 385 1070 378 1077 378 1080 375 1083 375 1086 372 1089 372 1105 369 1109 369 1144 372 1147 372 1157 375 1160 375 1166 378 1169 378 1173 381 1176 381 1182 388 1189 388 1192 394 1198 394 1201 420 1227 420 1227 180 0 0 0 0 false 0 0 [] 1 0 0.50 0.75 1.00 true DrawPolyline
+525 1115 522 1118 516 1118 509 1121 506 1128 503 1131 490 1131 487 1125 484 1121 474 1105 474 1093 484 1083 490 1080 493 1077 500 1061 506 1061 513 1064 516 1070 522 1073 525 1083 525 1102 529 1109 525 1115 46 0 0 0 0 false 0 0 [] 1 0 0.75 0.25 0.00 true DrawPolyline
+0 0.00 1.00 0.00 true 0 0 [] 3 1301 2483 501 1097 DrawLine
+0 0.00 1.00 0.00 true 0 0 [] 3 543 1073 463 1119 DrawLine
+0 0.00 1.00 0.00 true 0 0 [] 3 546 1077 543 1073 DrawLine
+0 0.00 1.00 0.00 true 0 0 [] 3 466 1123 463 1119 DrawLine
+697 1523 1503 86 25 0 false 0 0 0 false 0 0 0 false (BEAM 1) 24 /Courier-Bold DrawText
+0 0.00 1.00 0.00 true 0 0 [] 3 -299 -288 501 1097 DrawLine
+0 0.00 1.00 0.00 true 0 0 [] 3 463 1119 543 1073 DrawLine
+0 0.00 1.00 0.00 true 0 0 [] 3 460 1115 463 1119 DrawLine
+0 0.00 1.00 0.00 true 0 0 [] 3 540 1069 543 1073 DrawLine
+249 747 727 86 25 0 false 0 0 0 false 0 0 0 false (BEAM 2) 24 /Courier-Bold DrawText
+542 1054 542 1054 542 1054 6 0 1.00 1.00 1.00 true 0 0 [] 3 -1 0 0 0 false DrawPolyline
+546 1286 556 1291 571 1292 585 1293 599 1293 613 1293 627 1293 641 1293 655 1292 665 1286 669 1281 677 1278 669 1271 668 1269 666 1261 664 1253 655 1246 654 1245 653 1236 648 1228 641 1221 640 1220 639 1211 632 1203 627 1197 626 1195 625 1186 617 1178 613 1174 612 1170 610 1162 602 1153 599 1150 598 1145 595 1137 586 1128 585 1126 584 1120 580 1112 571 1104 571 1103 570 1095 565 1087 557 1079 556 1078 556 1070 550 1062 542 1054 541 1046 535 1037 528 1030 528 1029 527 1021 521 1012 514 1006 514 1004 513 996 505 988 500 984 499 979 486 973 472 972 458 972 444 972 430 972 416 972 402 972 388 973 374 979 375 988 377 996 385 1004 388 1007 389 1012 391 1021 400 1029 402 1032 403 1037 405 1046 414 1054 416 1057 417 1062 421 1070 429 1079 430 1080 431 1087 435 1095 443 1104 444 1105 445 1112 450 1120 458 1128 458 1129 459 1137 465 1145 472 1153 473 1162 479 1170 486 1178 486 1178 487 1186 493 1195 500 1202 500 1203 502 1211 507 1220 514 1227 515 1228 516 1236 521 1245 528 1252 529 1253 530 1261 535 1269 542 1275 544
+ 1278 546 1286 234 0 1.00 1.00 1.00 true 0 0 [] 3 -1 0 0 0 false DrawPolyline
+561 1286 571 1289 585 1289 599 1289 613 1291 627 1289 641 1289 655 1288 659 1286 662 1278 655 1269 655 1267 654 1261 651 1253 643 1245 641 1237 641 1236 637 1228 630 1220 627 1212 627 1211 623 1203 617 1195 613 1188 612 1186 609 1178 604 1170 599 1164 597 1162 595 1153 590 1145 585 1140 583 1137 581 1128 577 1120 571 1116 568 1112 567 1104 563 1095 556 1091 554 1087 553 1079 548 1070 542 1067 540 1062 538 1054 532 1046 528 1043 525 1037 524 1029 517 1021 514 1019 511 1012 509 1004 501 996 500 995 496 988 491 979 486 977 472 975 458 975 444 975 430 975 416 975 402 975 388 976 382 979 386 988 388 992 389 996 392 1004 397 1012 402 1018 403 1021 406 1029 410 1037 416 1042 418 1046 420 1054 424 1062 430 1067 433 1070 434 1079 438 1087 444 1092 447 1095 448 1104 452 1112 458 1116 461 1120 462 1128 467 1137 472 1141 475 1145 476 1153 482 1162 486 1165 489 1170 491 1178 498 1186 500 1189 503 1195 505 1203 512 1211 514 1213 517 1220 521 1228 527 1236 528 1237 531 1245 537 1253 542 1261 543 1261 546 1269 555 1278 556 
+1280 561 1286 234 0 1.00 0.75 0.47 true 0 0 [] 3 -1 0 0 0 false DrawPolyline
+585 1286 599 1286 613 1289 627 1286 631 1286 641 1286 652 1278 650 1269 650 1261 644 1253 641 1250 638 1245 636 1236 632 1228 627 1223 624 1220 622 1211 618 1203 613 1197 610 1195 608 1186 605 1178 599 1172 597 1170 593 1162 591 1153 585 1146 583 1145 579 1137 577 1128 571 1121 570 1120 564 1112 563 1104 556 1096 556 1095 550 1087 549 1079 542 1072 541 1070 536 1062 534 1054 528 1048 525 1046 522 1037 520 1029 514 1024 511 1021 507 1012 504 1004 500 1000 496 996 492 988 486 981 481 979 472 977 458 977 444 977 430 977 416 977 402 977 391 979 393 988 394 996 397 1004 402 1010 404 1012 408 1021 410 1029 416 1036 418 1037 422 1046 424 1054 430 1062 431 1062 436 1070 438 1079 444 1087 444 1087 451 1095 452 1104 458 1111 459 1112 465 1120 466 1128 472 1135 474 1137 479 1145 480 1153 486 1159 489 1162 493 1170 495 1178 500 1184 504 1186 507 1195 510 1203 514 1207 518 1211 521 1220 527 1228 528 1230 532 1236 535 1245 542 1252 544 1253 547 1261 551 1269 556 1274 561 1278 571 1285 585 1286 585 1286 226 0 1.00 0.49 0.0
+0 true 0 0 [] 3 -1 0 0 0 false DrawPolyline
+607 1286 613 1287 618 1286 627 1282 641 1281 645 1278 646 1269 646 1261 641 1255 638 1253 634 1245 632 1236 627 1228 626 1228 620 1220 618 1211 614 1203 613 1202 606 1195 604 1186 600 1178 599 1176 592 1170 589 1162 587 1153 585 1151 578 1145 575 1137 573 1128 571 1126 564 1120 561 1112 559 1104 556 1101 550 1095 546 1087 545 1079 542 1076 535 1070 532 1062 530 1054 528 1052 521 1046 518 1037 516 1029 514 1028 506 1021 504 1012 500 1006 498 1004 491 996 487 988 486 987 472 981 458 980 444 980 430 980 416 980 402 982 398 988 398 996 401 1004 402 1006 409 1012 412 1021 414 1029 416 1032 423 1037 426 1046 428 1054 430 1057 436 1062 440 1070 442 1079 444 1082 450 1087 454 1095 456 1104 458 1107 465 1112 468 1120 470 1128 472 1131 479 1137 482 1145 484 1153 486 1155 494 1162 496 1170 499 1178 500 1179 508 1186 510 1195 514 1202 515 1203 522 1211 524 1220 528 1225 533 1228 536 1236 539 1245 542 1248 549 1253 551 1261 556 1269 556 1270 567 1278 571 1280 585 1281 599 1282 607 1286 222 0 0.85 0.23 0.00 true 0 0 [] 3 
+-1 0 0 0 false DrawPolyline
+514 1195 514 1195 514 1195 6 0 0.66 0.00 0.00 true 0 0 [] 3 -1 0 0 0 false DrawPolyline
+601 1278 613 1282 624 1278 627 1277 641 1273 642 1269 641 1261 641 1260 632 1253 630 1245 628 1236 627 1234 620 1228 616 1220 614 1211 613 1209 606 1203 601 1195 600 1186 599 1184 593 1178 587 1170 585 1162 585 1159 579 1153 573 1145 571 1137 571 1135 565 1128 559 1120 557 1112 556 1110 551 1104 544 1095 543 1087 542 1085 536 1079 530 1070 529 1062 528 1061 522 1054 516 1046 515 1037 514 1037 506 1029 502 1021 500 1015 498 1012 489 1004 486 998 483 996 472 990 458 988 444 989 430 988 416 989 408 996 411 1004 414 1012 416 1021 416 1022 422 1029 428 1037 430 1046 430 1048 436 1054 442 1062 444 1070 444 1073 450 1079 456 1087 458 1095 458 1097 464 1104 470 1112 472 1120 472 1122 478 1128 485 1137 486 1145 486 1146 493 1153 499 1162 500 1170 500 1171 508 1178 512 1186 514 1195 523 1203 526 1211 528 1220 538 1228 540 1236 542 1243 544 1245 553 1253 555 1261 556 1263 566 1269 571 1273 585 1276 599 1277 601 1278 206 0 0.66 0.00 0.00 true 0 0 [] 3 -1 0 0 0 false DrawPolyline
+575 1269 585 1271 599 1271 613 1275 627 1271 631 1269 634 1261 629 1253 628 1245 627 1239 625 1236 616 1228 614 1220 613 1214 610 1211 602 1203 599 1195 599 1192 594 1186 587 1178 585 1170 585 1169 578 1162 572 1153 571 1148 568 1145 561 1137 558 1128 556 1125 551 1120 546 1112 543 1104 542 1102 536 1095 532 1087 529 1079 528 1078 522 1070 518 1062 515 1054 514 1053 508 1046 504 1037 501 1029 500 1028 493 1021 488 1012 486 1010 477 1004 472 1001 458 1000 444 999 430 999 420 1004 422 1012 426 1021 429 1029 430 1034 433 1037 440 1046 443 1054 444 1057 449 1062 454 1070 458 1079 458 1081 464 1087 469 1095 472 1104 472 1105 479 1112 483 1120 486 1128 486 1130 492 1137 496 1145 500 1153 500 1156 504 1162 509 1170 513 1178 514 1184 516 1186 522 1195 527 1203 528 1211 528 1212 535 1220 541 1228 542 1236 542 1237 550 1245 555 1253 556 1257 562 1261 571 1268 575 1269 194 0 0.53 0.00 0.00 true 0 0 [] 3 -1 0 0 0 false DrawPolyline
+612 1269 613 1270 613 1269 627 1266 630 1261 628 1253 627 1245 627 1244 620 1236 614 1228 613 1220 612 1220 605 1211 600 1203 599 1198 594 1195 588 1186 585 1178 585 1178 576 1170 572 1162 571 1159 563 1153 557 1145 556 1144 548 1137 544 1128 542 1126 530 1120 528 1117 514 1119 508 1120 504 1128 509 1137 510 1145 512 1153 513 1162 514 1170 520 1178 524 1186 527 1195 528 1201 530 1203 535 1211 539 1220 542 1228 542 1230 548 1236 554 1245 556 1252 557 1253 568 1261 571 1264 585 1267 599 1268 612 1269 112 0 0.46 0.00 0.00 true 0 0 [] 3 -1 0 0 0 false DrawPolyline
+485 1079 486 1081 487 1079 486 1078 485 1079 10 0 0.46 0.00 0.00 true 0 0 [] 3 -1 0 0 0 false DrawPolyline
+472 1070 472 1071 473 1070 481 1062 486 1057 494 1054 490 1046 490 1037 487 1029 486 1028 476 1021 472 1018 458 1019 444 1014 439 1021 441 1029 444 1037 444 1038 454 1046 457 1054 458 1056 468 1062 472 1070 46 0 0.46 0.00 0.00 true 0 0 [] 3 -1 0 0 0 false DrawPolyline
+584 1261 571 1257 567 1253 558 1245 556 1242 554 1236 551 1228 547 1220 543 1211 542 1210 542 1203 542 1195 542 1194 556 1191 569 1186 571 1186 571 1186 585 1194 585 1195 591 1203 599 1209 599 1211 604 1220 613 1228 613 1228 615 1236 619 1245 624 1253 618 1261 613 1262 599 1264 585 1261 584 1261 66 0 0.39 0.00 0.00 true 0 0 [] 3 -1 0 0 0 false DrawPolyline
+584 1261 571 1257 567 1253 558 1245 556 1242 554 1236 551 1228 547 1220 543 1211 542 1210 542 1203 542 1195 542 1194 556 1191 569 1186 571 1186 571 1186 585 1194 585 1195 591 1203 599 1209 599 1211 604 1220 613 1228 613 1228 615 1236 619 1245 624 1253 618 1261 613 1262 599 1264 585 1261 584 1261 66 0 0.39 0.00 0.00 true 0 0 [] 3 -1 0 0 0 false DrawPolyline
+598 1245 599 1245 599 1245 600 1236 599 1233 592 1236 598 1245 14 0 0.39 0.00 0.00 true 0 0 [] 3 -1 0 0 0 false DrawPolyline
+599.5 1235.5 4.5 4.5 0 360 0 0 0 0 false 0 0 [] 1 0 1.00 0.00 0.00 true DrawEllipse
+501.5 1096.5 4.5 4.5 0 360 0 0 0 0 false 0 0 [] 1 0 1.00 1.00 0.00 true DrawEllipse
+249 747 86 25 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawRectangle
+grestore
+
+grestore
+
+0 1523 1100 800 0 0 0 0 false 0 0 [] 2 -1 0 0 0 false DrawRectangle
+grestore
+
+gsave
+
+%
+% Begin new window
+%
+0 0 translate
+gsave
+0 1523 315 92 ClipToRectangle
+0 0 translate
+gsave
+0 1523 315 92 0 0 0 0 false 0 0 [] -1 0 0.83 0.83 0.83 true DrawRectangle
+0 1523 1508 207 20 0 false 0 0 0 false 0 0 0 false (CECILE90152 / 44502) 18 /Courier-Bold DrawText
+0 1500 1485 119 20 0 false 0 0 0 false 0 0 0 false (CECILE90152) 18 /Courier-Bold DrawText
+0 1477 1462 185 20 0 false 0 0 0 false 0 0 0 false (DOSE MAX:   115.2) 18 /Courier-Bold DrawText
+0 1454 1439 19 20 0 false 1.00 1.00 1.00 true 0 0 0 false (10) 18 /Courier-Bold DrawText
+40 1454 1439 19 20 0 false 1.00 0.75 0.47 true 0 0 0 false (30) 18 /Courier-Bold DrawText
+80 1454 1439 19 20 0 false 1.00 0.49 0.00 true 0 0 0 false (50) 18 /Courier-Bold DrawText
+120 1454 1439 19 20 0 false 0.85 0.23 0.00 true 0 0 0 false (70) 18 /Courier-Bold DrawText
+160 1454 1439 19 20 0 false 0.66 0.00 0.00 true 0 0 0 false (90) 18 /Courier-Bold DrawText
+200 1454 1439 30 20 0 false 0.53 0.00 0.00 true 0 0 0 false (100) 18 /Courier-Bold DrawText
+240 1454 1439 30 20 0 false 0.46 0.00 0.00 true 0 0 0 false (105) 18 /Courier-Bold DrawText
+280 1454 1439 30 20 0 false 0.39 0.00 0.00 true 0 0 0 false (110) 18 /Courier-Bold DrawText
+grestore
+
+grestore
+
+0 1523 315 92 0 0 0 0 false 0 0 [] 2 -1 0 0 0 false DrawRectangle
+grestore
+
+gsave
+
+%
+% Begin new window
+%
+0 -89 translate
+gsave
+0 1523 150 330 ClipToRectangle
+0 0 translate
+gsave
+0 1523 150 330 0 0 0 0 false 0 0 [] -1 0 0.83 0.83 0.83 true DrawRectangle
+5 1520 1509 109 14 0 false 0 0 0 false 0 0 0 false (REFERENCE POINT:) 12 /Courier DrawText
+5 1500 1489 27 14 0 false 0 0 0 false 0 0 0 false (Dose) 12 /Courier DrawText
+80 1503 45 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+86 1500 1489 33 14 0 false 0 0 0 false 0 0 0 false (105.0) 12 /Courier DrawText
+60 1503 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+63 1493 70 1486 70 1490 77 1490 77 1496 70 1496 70 1500 63 1493 16 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+125 1503 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+142 1493 135 1486 135 1490 128 1490 128 1496 135 1496 135 1500 142 1493 16 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+7 1480 1469 21 14 0 false 0 0 0 false 0 0 0 false (X: ) 12 /Courier DrawText
+0 0 0 0 false 0 0 [] 1 52 1448 51 1448 DrawLine
+33 1480 41 15 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+36 1480 1469 34 14 0 false 0 0 0 false 0 0 0 false ( -2.9) 12 /Courier DrawText
+0 0 0 0 false 0 0 [] 2 51 1438 51 1458 DrawLine
+0 0 0 0 false 0 0 [] 2 52 1438 52 1458 DrawLine
+26 1458 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+29 1448 36 1441 36 1445 43 1445 43 1451 36 1451 36 1455 29 1448 16 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+57 1458 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+74 1448 67 1441 67 1445 60 1445 60 1451 67 1451 67 1455 74 1448 16 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+87 1480 1469 21 14 0 false 0 0 0 false 0 0 0 false (Y: ) 12 /Courier DrawText
+0 0 0 0 false 0 0 [] 1 124 1434 124 1435 DrawLine
+104 1480 41 15 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+107 1480 1469 34 14 0 false 0 0 0 false 0 0 0 false ( -3.1) 12 /Courier DrawText
+0 0 0 0 false 0 0 [] 2 134 1435 114 1435 DrawLine
+0 0 0 0 false 0 0 [] 2 134 1434 114 1434 DrawLine
+114 1460 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+124 1457 117 1450 121 1450 121 1443 127 1443 127 1450 131 1450 124 1457 16 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+114 1429 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+124 1412 117 1419 121 1419 121 1426 127 1426 127 1419 131 1419 124 1412 16 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+29 1433 45 24 0 0 0 0 false 0 0 [] -1 0 1 1 1 true DrawRectangle
+31 1431 43 22 0 0 0 0 false 0 0 [] -1 0 0.20 0.20 0.20 true DrawRectangle
+31 1431 41 20 0 0 0 0 false 0 0 [] -1 0 0.83 0.83 0.83 true DrawRectangle
+34 1428 1417 35 14 0 false 0 0 0 false 0 0 0 false (Reset) 12 /Courier DrawText
+5 1403 1392 66 14 0 false 0 0 0 false 0 0 0 false (ISOCENTER:) 12 /Courier DrawText
+7 1383 1372 21 14 0 false 0 0 0 false 0 0 0 false (X: ) 12 /Courier DrawText
+0 0 0 0 false 0 0 [] 1 52 1351 51 1351 DrawLine
+33 1383 41 15 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+36 1383 1372 34 14 0 false 0 0 0 false 0 0 0 false ( -2.9) 12 /Courier DrawText
+0 0 0 0 false 0 0 [] 2 51 1341 51 1361 DrawLine
+0 0 0 0 false 0 0 [] 2 52 1341 52 1361 DrawLine
+26 1361 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+29 1351 36 1344 36 1348 43 1348 43 1354 36 1354 36 1358 29 1351 16 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+57 1361 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+74 1351 67 1344 67 1348 60 1348 60 1354 67 1354 67 1358 74 1351 16 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+87 1383 1372 21 14 0 false 0 0 0 false 0 0 0 false (Y: ) 12 /Courier DrawText
+0 0 0 0 false 0 0 [] 1 124 1337 124 1338 DrawLine
+104 1383 41 15 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+107 1383 1372 34 14 0 false 0 0 0 false 0 0 0 false ( -3.1) 12 /Courier DrawText
+0 0 0 0 false 0 0 [] 2 134 1338 114 1338 DrawLine
+0 0 0 0 false 0 0 [] 2 134 1337 114 1337 DrawLine
+114 1363 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+124 1360 117 1353 121 1353 121 1346 127 1346 127 1353 131 1353 124 1360 16 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+114 1332 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+124 1315 117 1322 121 1322 121 1329 127 1329 127 1322 131 1322 124 1315 16 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+29 1336 45 24 0 0 0 0 false 0 0 [] -1 0 1 1 1 true DrawRectangle
+31 1334 43 22 0 0 0 0 false 0 0 [] -1 0 0.20 0.20 0.20 true DrawRectangle
+31 1334 41 20 0 0 0 0 false 0 0 [] -1 0 0.83 0.83 0.83 true DrawRectangle
+34 1331 1320 35 14 0 false 0 0 0 false 0 0 0 false (Reset) 12 /Courier DrawText
+2 1301 52 24 0 0 0 0 false 0 0 [] -1 0 1 1 1 true DrawRectangle
+4 1299 50 22 0 0 0 0 false 0 0 [] -1 0 0.20 0.20 0.20 true DrawRectangle
+4 1299 48 20 0 0 0 0 false 0 0 [] -1 0 0.83 0.83 0.83 true DrawRectangle
+7 1296 1285 42 14 0 false 0 0 0 false 0 0 0 false (FRAME ) 12 /Courier DrawText
+80 1299 45 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+93 1296 1285 19 14 0 false 0 0 0 false 0 0 0 false (1.0) 12 /Courier DrawText
+60 1299 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+63 1289 70 1282 70 1286 77 1286 77 1292 70 1292 70 1296 63 1289 16 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+125 1299 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+142 1289 135 1282 135 1286 128 1286 128 1292 135 1292 135 1296 142 1289 16 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+5 1268 1257 41 14 0 false 0 0 0 false 0 0 0 false (ORIENT) 12 /Courier DrawText
+80 1270 45 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+93 1267 1256 19 14 0 false 0 0 0 false 0 0 0 false (150) 12 /Courier DrawText
+60 1270 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+63 1260 70 1253 70 1257 77 1257 77 1263 70 1263 70 1267 63 1260 16 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+125 1270 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+142 1260 135 1253 135 1257 128 1257 128 1263 135 1263 135 1267 142 1260 16 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+5 1241 1230 27 14 0 false 0 0 0 false 0 0 0 false (COLY) 12 /Courier DrawText
+80 1243 45 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+89 1240 1229 26 14 0 false 0 0 0 false 0 0 0 false (10.0) 12 /Courier DrawText
+60 1243 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+63 1233 70 1226 70 1230 77 1230 77 1236 70 1236 70 1240 63 1233 16 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+125 1243 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+142 1233 135 1226 135 1230 128 1230 128 1236 135 1236 135 1240 142 1233 16 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+5 1219 1208 26 14 0 false 0 0 0 false 0 0 0 false (SITE) 12 /Courier DrawText
+63 1212 69 1218 75 1212 6 0 1 1 1 true 0 0 [] 2 0 0.83 0.83 0.83 true DrawPolyline
+63 1212 69 1206 75 1212 6 0 0.20 0.20 0.20 true 0 0 [] 2 0 0.83 0.83 0.83 true DrawPolyline
+80 1219 1208 13 14 0 false 0 0 0 false 0 0 0 false (Uc) 12 /Courier DrawText
+111 1212 117 1218 123 1212 6 0 0.20 0.20 0.20 true 0 0 [] 2 0 0.70 0.70 0.70 true DrawPolyline
+111 1212 117 1206 123 1212 6 0 1 1 1 true 0 0 [] 2 0 0.70 0.70 0.70 true DrawPolyline
+128 1219 1208 21 14 0 false 0 0 0 false 0 0 0 false (Mrh) 12 /Courier DrawText
+grestore
+
+grestore
+
+0 1523 150 330 0 0 0 0 false 0 0 [] 2 -1 0 0 0 false DrawRectangle
+grestore
+
+gsave
+
+%
+% Begin new window
+%
+3 -653 translate
+gsave
+0 1523 91 140 ClipToRectangle
+0 0 translate
+gsave
+0 1523 91 140 0 0 0 0 false 0 0 [] -1 0 0.83 0.83 0.83 true DrawRectangle
+2 1521 87 20 0 0 0 0 false 0 0 [] -1 0 1 1 1 true DrawRectangle
+4 1519 85 18 0 0 0 0 false 0 0 [] -1 0 0.20 0.20 0.20 true DrawRectangle
+4 1519 83 16 0 0 0 0 false 0 0 [] -1 0 0.83 0.83 0.83 true DrawRectangle
+7 1518 1507 77 14 0 false 0 0 0 false 0 0 0 false (New patient) 12 /Courier DrawText
+2 1492 87 20 0 0 0 0 false 0 0 [] -1 0 1 1 1 true DrawRectangle
+4 1490 85 18 0 0 0 0 false 0 0 [] -1 0 0.20 0.20 0.20 true DrawRectangle
+4 1490 83 16 0 0 0 0 false 0 0 [] -1 0 0.83 0.83 0.83 true DrawRectangle
+7 1489 1478 55 14 0 false 0 0 0 false 0 0 0 false (Evaluate) 12 /Courier DrawText
+2 1463 87 20 0 0 0 0 false 0 0 [] -1 0 1 1 1 true DrawRectangle
+4 1461 85 18 0 0 0 0 false 0 0 [] -1 0 0.20 0.20 0.20 true DrawRectangle
+4 1461 83 16 0 0 0 0 false 0 0 [] -1 0 0.83 0.83 0.83 true DrawRectangle
+7 1460 1449 26 14 0 false 0 0 0 false 0 0 0 false (Self) 12 /Courier DrawText
+2 1434 87 20 0 0 0 0 false 0 0 [] -1 0 1 1 1 true DrawRectangle
+4 1432 85 18 0 0 0 0 false 0 0 [] -1 0 0.20 0.20 0.20 true DrawRectangle
+4 1432 83 16 0 0 0 0 false 0 0 [] -1 0 0.83 0.83 0.83 true DrawRectangle
+7 1431 1420 56 14 0 false 0 0 0 false 0 0 0 false (Add beam) 12 /Courier DrawText
+2 1405 87 20 0 0 0 0 false 0 0 [] -1 0 1 1 1 true DrawRectangle
+4 1403 85 18 0 0 0 0 false 0 0 [] -1 0 0.20 0.20 0.20 true DrawRectangle
+4 1403 83 16 0 0 0 0 false 0 0 [] -1 0 0.83 0.83 0.83 true DrawRectangle
+7 1402 1391 33 14 0 false 0 0 0 false 0 0 0 false (Clear) 12 /Courier DrawText
+grestore
+
+grestore
+
+0 1523 91 140 0 0 0 0 false 0 0 [] 2 -1 0 0 0 false DrawRectangle
+grestore
+
+gsave
+
+%
+% Begin new window
+%
+206 -653 translate
+gsave
+0 1523 210 145 ClipToRectangle
+0 0 translate
+gsave
+0 1523 210 145 0 0 0 0 false 0 0 [] -1 0 0.83 0.83 0.83 true DrawRectangle
+5 1400 1389 60 14 0 false 0 0 0 false 0 0 0 false (WEDGE   :) 12 /Courier DrawText
+94 1400 17 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+100 1396 1387 4 11 0 false 0 0 0 false 0 0 0 false (0) 10 /Courier DrawText
+74 1400 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+77 1390 84 1383 84 1387 91 1387 91 1393 84 1393 84 1397 77 1390 16 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+111 1400 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+128 1390 121 1383 121 1387 114 1387 114 1393 121 1393 121 1397 128 1390 16 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+5 1420 1409 60 14 0 false 0 0 0 false 0 0 0 false (WEIGHT  :) 12 /Courier DrawText
+114 1420 41 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+123 1416 1407 22 11 0 false 0 0 0 false 0 0 0 false (1.00) 10 /Courier DrawText
+74 1420 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+77 1410 84 1403 84 1407 91 1407 91 1413 84 1413 84 1417 77 1410 16 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+175 1420 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+192 1410 185 1403 185 1407 178 1407 178 1413 185 1413 185 1417 192 1410 16 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+94 1420 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+98 1410 105 1417 105 1403 98 1410 8 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+102 1410 109 1417 109 1403 102 1410 8 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+155 1420 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+171 1410 164 1417 164 1403 171 1410 8 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+167 1410 160 1417 160 1403 167 1410 8 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+5 1440 1429 60 14 0 false 0 0 0 false 0 0 0 false (RIGHTJAW:) 12 /Courier DrawText
+114 1440 41 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+123 1436 1427 22 11 0 false 0 0 0 false 0 0 0 false (3.00) 10 /Courier DrawText
+74 1440 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+77 1430 84 1423 84 1427 91 1427 91 1433 84 1433 84 1437 77 1430 16 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+175 1440 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+192 1430 185 1423 185 1427 178 1427 178 1433 185 1433 185 1437 192 1430 16 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+94 1440 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+98 1430 105 1437 105 1423 98 1430 8 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+102 1430 109 1437 109 1423 102 1430 8 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+155 1440 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+171 1430 164 1437 164 1423 171 1430 8 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+167 1430 160 1437 160 1423 167 1430 8 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+5 1460 1449 60 14 0 false 0 0 0 false 0 0 0 false (LEFTJAW :) 12 /Courier DrawText
+114 1460 41 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+123 1456 1447 22 11 0 false 0 0 0 false 0 0 0 false (2.75) 10 /Courier DrawText
+74 1460 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+77 1450 84 1443 84 1447 91 1447 91 1453 84 1453 84 1457 77 1450 16 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+175 1460 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+192 1450 185 1443 185 1447 178 1447 178 1453 185 1453 185 1457 192 1450 16 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+94 1460 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+98 1450 105 1457 105 1443 98 1450 8 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+102 1450 109 1457 109 1443 102 1450 8 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+155 1460 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+171 1450 164 1457 164 1443 171 1450 8 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+167 1450 160 1457 160 1443 167 1450 8 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+5 1480 1469 59 14 0 false 0 0 0 false 0 0 0 false (GANTRY  :) 12 /Courier DrawText
+113 1480 41 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+125 1476 1467 16 11 0 false 0 0 0 false 0 0 0 false (330) 10 /Courier DrawText
+73 1480 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+76 1470 83 1463 83 1467 90 1467 90 1473 83 1473 83 1477 76 1470 16 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+174 1480 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+191 1470 184 1463 184 1467 177 1467 177 1473 184 1473 184 1477 191 1470 16 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+93 1480 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+97 1470 104 1477 104 1463 97 1470 8 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+101 1470 108 1477 108 1463 101 1470 8 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+154 1480 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+170 1470 163 1477 163 1463 170 1470 8 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+166 1470 159 1477 159 1463 166 1470 8 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+5 1498 1487 60 14 0 false 0 0 0 false 0 0 0 false (ENERGY  :) 12 /Courier DrawText
+77 1489 83 1495 89 1489 6 0 1 1 1 true 0 0 [] 2 0 0.83 0.83 0.83 true DrawPolyline
+77 1489 83 1483 89 1489 6 0 0.20 0.20 0.20 true 0 0 [] 2 0 0.83 0.83 0.83 true DrawPolyline
+94 1496 1485 20 14 0 false 0 0 0 false 0 0 0 false (S6x) 12 /Courier DrawText
+127 1489 133 1495 139 1489 6 0 1 1 1 true 0 0 [] 2 0 0.83 0.83 0.83 true DrawPolyline
+127 1489 133 1483 139 1489 6 0 0.20 0.20 0.20 true 0 0 [] 2 0 0.83 0.83 0.83 true DrawPolyline
+144 1496 1485 12 14 0 false 0 0 0 false 0 0 0 false (10) 12 /Courier DrawText
+177 1489 183 1495 189 1489 6 0 0.20 0.20 0.20 true 0 0 [] 2 0 0.70 0.70 0.70 true DrawPolyline
+177 1489 183 1483 189 1489 6 0 1 1 1 true 0 0 [] 2 0 0.70 0.70 0.70 true DrawPolyline
+194 1496 1485 12 14 0 false 0 0 0 false 0 0 0 false (18) 12 /Courier DrawText
+80 1523 1512 42 14 0 false 0 0 0 false 0 0 0 false (BEAM 2) 12 /Courier-Bold DrawText
+2 1521 52 24 0 0 0 0 false 0 0 [] -1 0 1 1 1 true DrawRectangle
+4 1519 50 22 0 0 0 0 false 0 0 [] -1 0 0.20 0.20 0.20 true DrawRectangle
+4 1519 48 20 0 0 0 0 false 0 0 [] -1 0 0.83 0.83 0.83 true DrawRectangle
+7 1516 1505 42 14 0 false 0 0 0 false 0 0 0 false (Frame ) 12 /Courier DrawText
+148 1521 51 24 0 0 0 0 false 0 0 [] -1 0 1 1 1 true DrawRectangle
+150 1519 49 22 0 0 0 0 false 0 0 [] -1 0 0.20 0.20 0.20 true DrawRectangle
+150 1519 47 20 0 0 0 0 false 0 0 [] -1 0 0.83 0.83 0.83 true DrawRectangle
+153 1516 1505 41 14 0 false 0 0 0 false 0 0 0 false (Delete) 12 /Courier DrawText
+grestore
+
+grestore
+
+0 1523 210 145 0 0 0 0 false 0 0 [] 2 -1 0 0 0 false DrawRectangle
+grestore
+
+gsave
+
+%
+% Begin new window
+%
+691 -9 translate
+gsave
+0 1523 210 145 ClipToRectangle
+0 0 translate
+gsave
+0 1523 210 145 0 0 0 0 false 0 0 [] -1 0 0.83 0.83 0.83 true DrawRectangle
+5 1400 1389 60 14 0 false 0 0 0 false 0 0 0 false (WEDGE   :) 12 /Courier DrawText
+94 1400 17 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+100 1396 1387 4 11 0 false 0 0 0 false 0 0 0 false (0) 10 /Courier DrawText
+74 1400 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+77 1390 84 1383 84 1387 91 1387 91 1393 84 1393 84 1397 77 1390 16 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+111 1400 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+128 1390 121 1383 121 1387 114 1387 114 1393 121 1393 121 1397 128 1390 16 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+5 1420 1409 60 14 0 false 0 0 0 false 0 0 0 false (WEIGHT  :) 12 /Courier DrawText
+114 1420 41 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+123 1416 1407 22 11 0 false 0 0 0 false 0 0 0 false (1.00) 10 /Courier DrawText
+74 1420 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+77 1410 84 1403 84 1407 91 1407 91 1413 84 1413 84 1417 77 1410 16 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+175 1420 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+192 1410 185 1403 185 1407 178 1407 178 1413 185 1413 185 1417 192 1410 16 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+94 1420 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+98 1410 105 1417 105 1403 98 1410 8 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+102 1410 109 1417 109 1403 102 1410 8 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+155 1420 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+171 1410 164 1417 164 1403 171 1410 8 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+167 1410 160 1417 160 1403 167 1410 8 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+5 1440 1429 60 14 0 false 0 0 0 false 0 0 0 false (RIGHTJAW:) 12 /Courier DrawText
+114 1440 41 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+123 1436 1427 22 11 0 false 0 0 0 false 0 0 0 false (2.75) 10 /Courier DrawText
+74 1440 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+77 1430 84 1423 84 1427 91 1427 91 1433 84 1433 84 1437 77 1430 16 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+175 1440 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+192 1430 185 1423 185 1427 178 1427 178 1433 185 1433 185 1437 192 1430 16 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+94 1440 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+98 1430 105 1437 105 1423 98 1430 8 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+102 1430 109 1437 109 1423 102 1430 8 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+155 1440 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+171 1430 164 1437 164 1423 171 1430 8 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+167 1430 160 1437 160 1423 167 1430 8 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+5 1460 1449 60 14 0 false 0 0 0 false 0 0 0 false (LEFTJAW :) 12 /Courier DrawText
+114 1460 41 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+123 1456 1447 22 11 0 false 0 0 0 false 0 0 0 false (3.00) 10 /Courier DrawText
+74 1460 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+77 1450 84 1443 84 1447 91 1447 91 1453 84 1453 84 1457 77 1450 16 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+175 1460 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+192 1450 185 1443 185 1447 178 1447 178 1453 185 1453 185 1457 192 1450 16 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+94 1460 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+98 1450 105 1457 105 1443 98 1450 8 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+102 1450 109 1457 109 1443 102 1450 8 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+155 1460 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+171 1450 164 1457 164 1443 171 1450 8 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+167 1450 160 1457 160 1443 167 1450 8 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+5 1480 1469 59 14 0 false 0 0 0 false 0 0 0 false (GANTRY  :) 12 /Courier DrawText
+113 1480 41 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+125 1476 1467 16 11 0 false 0 0 0 false 0 0 0 false (150) 10 /Courier DrawText
+73 1480 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+76 1470 83 1463 83 1467 90 1467 90 1473 83 1473 83 1477 76 1470 16 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+174 1480 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+191 1470 184 1463 184 1467 177 1467 177 1473 184 1473 184 1477 191 1470 16 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+93 1480 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+97 1470 104 1477 104 1463 97 1470 8 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+101 1470 108 1477 108 1463 101 1470 8 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+154 1480 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+170 1470 163 1477 163 1463 170 1470 8 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+166 1470 159 1477 159 1463 166 1470 8 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+5 1498 1487 60 14 0 false 0 0 0 false 0 0 0 false (ENERGY  :) 12 /Courier DrawText
+77 1489 83 1495 89 1489 6 0 1 1 1 true 0 0 [] 2 0 0.83 0.83 0.83 true DrawPolyline
+77 1489 83 1483 89 1489 6 0 0.20 0.20 0.20 true 0 0 [] 2 0 0.83 0.83 0.83 true DrawPolyline
+94 1496 1485 20 14 0 false 0 0 0 false 0 0 0 false (S6x) 12 /Courier DrawText
+127 1489 133 1495 139 1489 6 0 1 1 1 true 0 0 [] 2 0 0.83 0.83 0.83 true DrawPolyline
+127 1489 133 1483 139 1489 6 0 0.20 0.20 0.20 true 0 0 [] 2 0 0.83 0.83 0.83 true DrawPolyline
+144 1496 1485 12 14 0 false 0 0 0 false 0 0 0 false (10) 12 /Courier DrawText
+177 1489 183 1495 189 1489 6 0 0.20 0.20 0.20 true 0 0 [] 2 0 0.70 0.70 0.70 true DrawPolyline
+177 1489 183 1483 189 1489 6 0 1 1 1 true 0 0 [] 2 0 0.70 0.70 0.70 true DrawPolyline
+194 1496 1485 12 14 0 false 0 0 0 false 0 0 0 false (18) 12 /Courier DrawText
+80 1523 1512 42 14 0 false 0 0 0 false 0 0 0 false (BEAM 1) 12 /Courier-Bold DrawText
+2 1521 52 24 0 0 0 0 false 0 0 [] -1 0 1 1 1 true DrawRectangle
+4 1519 50 22 0 0 0 0 false 0 0 [] -1 0 0.20 0.20 0.20 true DrawRectangle
+4 1519 48 20 0 0 0 0 false 0 0 [] -1 0 0.83 0.83 0.83 true DrawRectangle
+7 1516 1505 42 14 0 false 0 0 0 false 0 0 0 false (Frame ) 12 /Courier DrawText
+148 1521 51 24 0 0 0 0 false 0 0 [] -1 0 1 1 1 true DrawRectangle
+150 1519 49 22 0 0 0 0 false 0 0 [] -1 0 0.20 0.20 0.20 true DrawRectangle
+150 1519 47 20 0 0 0 0 false 0 0 [] -1 0 0.83 0.83 0.83 true DrawRectangle
+153 1516 1505 41 14 0 false 0 0 0 false 0 0 0 false (Delete) 12 /Courier DrawText
+grestore
+
+grestore
+
+0 1523 210 145 0 0 0 0 false 0 0 [] 2 -1 0 0 0 false DrawRectangle
+grestore
+
+grestore
+
+0 1523 1100 800 0 0 0 0 false 0 0 [] 2 -1 0 0 0 false DrawRectangle
+grestore
+
+
+showpage
+%%Trailer
+%%DocumentFonts: /Courier /Courier-Bold 
+%%BoundingBox: 72 226 540 566

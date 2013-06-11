@@ -1,0 +1,231 @@
+%!PS-Adobe-2.0 EPSF-2.0
+%%Title: Opal 37
+%%Creator: Make-PS-File -- Garnet Version 2.2
+%%CreationDate: Jun 23, 1993, 3:49 PM
+%%For: 
+%%This file does not use real color
+%%DocumentFonts: (atend)
+%%BoundingBox: 295 385 317 408
+%%Pages: 1
+%%EndComments
+
+
+/BitmapDict 20 dict def
+/DrawBitmap { % left top width height pattern transparent-p color => -
+    BitmapDict begin
+	/color exch def /transparent-p exch def
+	/pattern exch def  /height exch def  /width exch def
+	gsave
+	    translate
+	    width height scale
+	    color length 3 eq {
+	        color aload pop setrgbcolor
+	    } {
+	        .5 setgray % fudge pattern fills
+	    } ifelse
+	    transparent-p {
+		% The case where the background is not drawn
+		width height false
+		[ width 0 0 height 0 height ]
+		{pattern} imagemask
+	    } {
+		% The case where the background is drawn
+		width height 1
+		[ width 0 0 height 0 height ]
+		{pattern} image
+	    } ifelse
+	grestore
+    end
+} def
+
+/DefImage { % image-name font-name w h string => -
+  20 dict begin
+    /ImageString exch def /ImageHeight exch def /ImageWidth exch def
+    /FontName exch def
+    /ImageName exch def
+    /FontType 3 def
+    /FontMatrix [1 0 0 1 0 0] def
+    /FontBBox [0 0 1 1] def
+    /Encoding [
+      /image 255 { /.notdef } repeat
+    ] def
+    /BuildChar { % font char => -
+      pop begin
+        1 0
+	0 0 1 1 setcachedevice
+	gsave
+	  ImageWidth ImageHeight false
+	  [ ImageWidth 0 0 ImageHeight 0 0 ]
+          {ImageString} imagemask
+	grestore
+      end
+    } def
+    ImageName currentdict definefont
+    FontName exch
+    ImageName ImageString
+  end
+  def def
+} def
+
+
+/FillPattern { % fgR fgG fgB [bgR bgG bgB] opaque? top font => -
+  50 dict begin gsave
+    /font exch def
+    /top exch def
+    /opaque? exch def
+    /w font /ImageWidth get def
+    /h font /ImageHeight get def
+    font [w 0 0 h 0 0] makefont setfont
+    pathbbox
+    /y1 exch def /x1 exch def
+    /y0 exch def /x0 exch def
+    clip
+    opaque? {
+      gsave
+	setrgbcolor
+	fill
+      grestore
+    } if
+    newpath
+    setrgbcolor
+    /y0 y0 top sub h div floor h mul top add cvi def
+    /x0 x0 w div floor w mul cvi def
+    x0 y0 translate
+    /W x1 x0 sub w div ceiling cvi 1 add def
+    /H y1 y0 sub h div ceiling cvi def
+    /s W string def
+    H {
+      0 0 moveto
+      s show
+      0 h translate
+    } repeat
+  grestore end
+  newpath
+} def
+
+
+/RectanglePath { % left top width height => -
+    /h exch def  /w exch def
+    moveto			% Go to the left,top corner
+    w 0 rlineto			% top side
+    0 h neg rlineto		% right side
+    w neg 0 rlineto		% bottom side
+    closepath			% left side
+} def
+
+/RectangleDict 21 dict def
+/DrawRectangle { % left top width height line-color
+		 % cap join dash thickness fill-color => -
+    RectangleDict begin
+	/fill-color exch def  /thickness exch def /dash-pattern exch def
+	/line-join exch def  /line-cap exch def /line-color exch def
+	/height exch def /width exch def  /top exch def  /left exch def
+        /thickness-for-fill thickness 0 lt {0} {thickness} ifelse def
+	% Draw filling
+	newpath
+	left thickness-for-fill add top thickness-for-fill sub
+        width thickness-for-fill 2 mul sub height thickness-for-fill 2 mul sub
+	RectanglePath
+	fill-color FillShape
+	% Draw border
+	newpath
+	left thickness 2 div add  top thickness 2 div sub
+	width thickness sub  height thickness sub
+	RectanglePath
+	line-color line-cap line-join dash-pattern thickness StrokeShape
+    end
+} def
+
+/FillShape { % [halftone] | [r g b] | null => -
+    gsave
+        dup null eq { pop } {
+	  aload length 3 eq { setrgbcolor fill } {
+	      FillPattern
+	  } ifelse
+        } ifelse
+    grestore
+    newpath
+} def
+
+/StrokeShape { % line-color cap join dash thickness => -
+    % If no line is desired, pass -1 for line-thickness
+    dup 0 ge 5 index null ne and {
+	% if line-thickness >= 0, then draw the outline
+	gsave
+	    setlinewidth 0 setdash setlinejoin setlinecap
+	    aload length 3 eq { setrgbcolor stroke } {
+		strokepath FillPattern
+	    } ifelse
+	grestore
+    } {
+	pop pop pop pop pop
+    } ifelse
+    newpath
+} def
+
+/ClipDict 2 dict def
+/ClipToRectangle { % left top width height => -
+    ClipDict begin
+	/height exch def  /width exch def
+        newpath
+	    moveto			% Go to the left,top corner
+	    width 0 rlineto		% top side
+	    0 height neg rlineto	% right side
+	    width neg 0 rlineto		% bottom side
+	    closepath			% left side
+	gsave 1 setgray fill grestore
+	clip newpath
+    end
+} def
+
+/image-2 /image-2-font 9 10 <
+f7ff ebff ddff beff 1c7f ddff ddff ddff ddff c1ff>
+DefImage
+
+/image-1 /image-1-font 4 4 <
+f0 f0 f0 f0>
+DefImage
+
+
+%%EndProlog
+%%Page: 1 1
+
+gsave
+72 72 translate
+1 1 scale
+223 336 translate
+
+%
+% Begin new window
+%
+gsave
+0 0 22 23 ClipToRectangle
+gsave
+0 0 22 23 [0 0 0] 0 0 [] -1 [1 1 1] DrawRectangle
+grestore
+
+
+%
+% Begin new window
+%
+gsave
+0 0 translate
+0 0 22 23 ClipToRectangle
+gsave
+2 -2 19 20 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+0 0 19 20 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+2 -2 15 16 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawRectangle
+5 -5 9 10 image-2 false [0 0 0] DrawBitmap
+grestore
+
+grestore
+
+grestore
+
+grestore
+
+
+showpage
+%%Trailer
+%%DocumentFonts: 
+%%BoundingBox: 295 385 317 408

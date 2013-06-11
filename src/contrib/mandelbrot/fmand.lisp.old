@@ -1,0 +1,715 @@
+;;;
+;;; File: Mandelbrot.lisp
+;;;
+;;; Calculate and plot the Mandelbrot set
+;;;
+;;; Time-stamp: "Sunday 14-Nov-1999 11:30:20 PST"
+;;;
+;;;
+
+(declaim (optimize (speed 3) (safety 0) (debug 1)))
+
+(defvar DEMO-MOTIF-INIT
+  (dolist (file '("motif-text-buttons-loader" "motif-save-gadget-loader"
+		  "motif-h-scroll-loader" "prop-sheet-win-loader"
+		  "mouseline-loader"))
+    (user::garnet-load (concatenate 'string "gadgets:" file))))
+
+
+;;;
+;;; Window variables.
+;;;
+(defvar *w* nil)                  ; Top-level window.
+(defvar *w-agg* nil)              ; Top-level aggregate.
+(defvar *pixmap* nil)             ; Pixmap of mandelbrot set.
+(declaim (type (simple-array (unsigned-byte 16) (650 650)) *pixarray*))
+(defvar *pixarray*)               ; Array we plot points into.
+(defvar *image*)
+(defvar *moving-rectangle* nil)   ; Feedback for selecting enlargement.
+(defvar *outline-rectangle* nil)  ; Shows area to be enlarged.
+(defvar *box-list* nil)           ; x, y, width, height of outline rectangle.
+(defvar *gw* nil)                 ; Gadget window.
+(defvar *gw-agg* nil)             ; Gadget window aggregate.
+(defvar *chw* nil)                ; Color-change window.
+(defvar *menu* nil)
+(defvar *save-dialog* nil)
+(defvar *slider* nil)
+(defvar *indicator* nil)
+(defvar *indicator-text* nil)
+(defvar *prop* nil)
+(declaim (fixnum +plot-xy+))
+(defconstant +plot-xy+ 650)
+
+
+;;;
+;;; Plot parameters.
+;;;
+(declaim (long-float *real-center* *imaginary-center* *radius*))
+(defvar *real-center* -0.5l0)
+(defvar *imaginary-center* 0.0l0)
+(defvar *radius* 2.0l0)
+
+;;;
+;;; For balloon help.
+;;;
+(defparameter pixmap-balloon-help
+  "Click left mouse button and drag to select region.
+Click middle mouse button to zoom in to selected region.
+Click right mouse button to zoom out by a factor of 2.")
+
+;;;
+;;; Initialize a plot window.
+;;;
+(defun init (&optional (title "Plot Window") (xSize 400) (ySize 400))
+  (unless *w*     ; Only do it once.
+    ;; Create window and aggregate.
+    (setf *w* (create-instance nil inter:interactor-window
+			       (:title title)
+			       (:left 100) (:top 40)
+			       (:width xSize) (:height ySize)
+			       (:double-buffered-p t)
+			       (:foreground-color opal:blue)
+			       (:background-color opal:white))
+	  *w-agg* (create-instance nil opal:aggregate))
+    
+    (s-value *w* :aggregate *w-agg*)
+    (opal:update *w*)
+
+    ;; Set up pixmap and pixarray
+    (let ((width (g-value *w* :width))
+	  (height (g-value *w* :height)))
+      (setf *pixmap*
+	    (create-instance nil opal:pixmap
+			     (:image (opal:create-pixmap-image width height)))))
+    (opal:add-component *w-agg* *pixmap*)
+    (setf *pixarray* (g-value *pixmap* :pixarray))
+
+    (create-feedback-rectangles)
+    (create-interactors)
+
+    (setup-control-panel)
+
+    ;; Set up balloon help.
+    (s-value *pixmap* :help-string pixmap-balloon-help)
+    (create-instance 'pixmap-mouseline gg:mouselinepopup (:wait-amount 4))
+    (opal:add-component *w-agg* pixmap-mouseline)))
+
+;;;
+;;; Create rectangles used to select area to zoom.
+;;;
+(defun create-feedback-rectangles ()
+  (unless *moving-rectangle*
+
+    (setf
+
+     *moving-rectangle*
+     (create-instance nil opal:rectangle
+		      (:box (list 0 0 0 0))
+		      (:left (o-formula (first (gvl :box))))
+		      (:top (o-formula (second (gvl :box))))
+		      (:width (o-formula (third (gvl :box))))
+		      (:height (o-formula (fourth (gvl :box))))
+		      (:line-style opal:white-line))
+
+     *outline-rectangle*
+     (create-instance nil opal:rectangle
+		      (:line-style opal:white-line)
+		      (:visible nil)
+		      (:left 0)
+		      (:top 0)
+		      (:width 0)
+		      (:height 0)))
+
+    (opal:add-components *w-agg* *moving-rectangle* *outline-rectangle*)))
+
+;;;
+;;; Create interactors that allow us to manipulate the plot.
+;;;
+(defun create-interactors ()
+
+  ;; This lets us select an area of the plot to enlarge.
+  (create-instance nil inter:two-point-interactor
+		   (:window *w*)
+		   (:start-event :leftdown)
+		   (:start-action #'(lambda (i p)
+				      (declare (ignore i p))
+				      (s-value *outline-rectangle* :visible nil)))
+		   (:start-where T)
+		   (:final-function #'set-outline-rectangle)
+		   (:feedback-obj *moving-rectangle*)
+		   (:line-p nil)
+		   (:Min-height 0)
+		   (:Min-width 0))
+
+  ;; This starts the enlargement.
+  (create-instance nil inter:button-interactor
+		   (:window *w*)
+		   (:start-event :middledown)
+		   (:start-where T)
+		   (:continuous nil)
+		   (:final-function #'zoom-in))
+
+  ;; This zooms out by a factor of 2.
+  (create-instance nil inter:button-interactor
+		   (:window *w*)
+		   (:start-event :rightdown)
+		   (:start-where T)
+		   (:continuous nil)
+		   (:final-function #'zoom-out)))
+
+
+;;;
+;;; Callbacks for interactors.
+;;;
+
+(defun set-outline-rectangle (int box-list)
+  (declare (ignore int))
+  (when box-list
+    (setf *box-list* box-list)
+    (s-value *outline-rectangle* :left (first box-list))
+    (s-value *outline-rectangle* :top (second box-list))
+    (s-value *outline-rectangle* :width (third box-list))
+    (s-value *outline-rectangle* :height (fourth box-list))
+    (s-value *outline-rectangle* :visible t)))
+
+
+(defun zoom-in (int obj)
+  (declare (ignore int obj))
+  (s-value *outline-rectangle* :visible nil)
+
+  (let* ((x-point (+ (first *box-list*) (/ (third *box-list*) 2)))
+	 (y-point (+ (second *box-list*) (/ (fourth *box-list*) 2)))
+	 (plot-center (/ +plot-xy+ 2))
+	 (scale-factor (/ (* 2 *radius*) +plot-xy+))
+	 (new-x-unscaled (- x-point plot-center))
+	 (new-y-unscaled (- y-point plot-center)))
+    (setf *radius* (* *radius* (/ (third *box-list*) +plot-xy+)))
+    (setf *real-center*
+	  (+ *real-center* (* new-x-unscaled scale-factor))
+	  *imaginary-center*
+	  (+ *imaginary-center* (* new-y-unscaled scale-factor))))
+
+  (mp:make-process #'m))
+
+
+(defun zoom-out (int obj)
+  (declare (ignore int obj))
+  (s-value *outline-rectangle* :visible nil)
+  (setf *radius* (* *radius* 2.0l0))
+  (mp:make-process #'m))
+
+
+
+(defparameter button-help
+  `(("Reset Plot" "Reset plot to original Mandelbrot set.")
+    ("Re-do Plot" "Re-do plot with same location and radius, maybe changed iterations.")
+    ("Save Image" "Save plot image to XPM file.")
+    ("Quit" "Quit Mandelbrot plotter.")))
+
+(defparameter iter-help "Change number of iterations used to decide
+whether a point is in the Mandelbrot set.")
+
+(defparameter prop-help "Displays parameters for current display:
+Real Center --- the location of the center of the plot on the real axis
+Imaginary Center --- the location of the center of the plot on the imaginary axis
+Radius --- the radius of the plot around the center.")
+
+(defparameter indicator-help "Displays percentage of plot that has been completed.")
+
+
+(defun setup-control-panel ()
+  (setf *gw* (create-instance nil inter:interactor-window
+		(:title "Control Window")
+		(:left 100) (:top 10)
+		(:width 450) (:height 250)
+		;; (:double-buffered-p t)
+		(:foreground-color opal:black)
+		(:background-color opal:motif-blue))
+	*gw-agg* (create-instance nil opal:aggregate))
+  (s-value *gw* :aggregate *gw-agg*)
+  (opal:update *gw*)
+
+
+  (setf *save-dialog*
+	(create-instance nil garnet-gadgets:motif-save-gadget
+           ;; (:parent-window *gw*)
+	   (:parent-window nil)
+	   (:query-message "replace existing file")
+	   (:modal-p t)
+	   (:selection-function #'save-text)))
+
+  (setf *menu*
+	(create-instance 'MENU garnet-gadgets:motif-text-button-panel
+           ;; can't be constant since we want to center it!
+           (:items '(("Reset Plot" reset-plot)
+		     ("Re-do Plot" m)
+		     ("Save Image" do-save)
+		     ("Set Colors" do-color-set)
+		     ("Quit" do-quit)))
+	   (:left (o-formula (- (round (gvl :parent :window :width) 2)
+				(round (gvl :width) 2))))
+	   (:top 5)
+	   (:h-align :center)
+	   (:direction :horizontal)
+	   ))
+
+  ;; set up help strings for the mouseline gadget.
+  (dolist (button (g-value menu :button-list :components))
+    (s-value button :help-string (cadr (assoc (g-value button :string)
+					      button-help
+					      :test #'string=))))
+  (create-instance 'slider-label opal:text
+     (:left (o-formula (- (round (gvl :parent :window :width) 2)
+			  (round (gvl :width) 2))))
+     (:top (o-formula (+ (opal:gv-bottom menu) 15)))
+     (:string "Iterations"))
+
+  (setf *slider*
+	(create-instance 'SLIDER garnet-gadgets:motif-h-scroll-bar
+           (:constant T :except :foreground-color)
+	   (:left (o-formula (- (round (gvl :parent :window :width) 2)
+				(round (gvl :width) 2))))
+	   (:top (o-formula (+ (opal:gv-bottom slider-label) 5)))
+	   (:h-align :center)
+	   (:val-1 128)
+	   (:val-2 32767)
+	   (:scr-incr 100)
+	   (:percent-visible .05)
+	   (:active-p T)
+	   (:selection-function
+	    #'(lambda (gadget value)
+		(declare (ignore gadget))
+		(setf *iterations* value)))))
+
+  (s-value slider :help-string iter-help)
+
+  (create-instance 'iteration-text opal:text
+     (:left (o-formula (- (round (gvl :parent :window :width) 2)
+			  (round (gvl :width) 2))))
+     (:top (o-formula (+ (opal:gv-bottom slider) 5)))
+     (:string (o-formula (format nil "~D" (gv slider :value)))))
+     
+  (setf *prop*
+	(create-instance 'PROP gg:prop-sheet
+	   (:left 75)
+	   (:top (o-formula (+ (opal:gv-bottom iteration-text) 15)))
+	   (:items
+	    `(("Real Center" ,(o-formula (format nil "~A" *real-center*)))
+	     ("Imaginary Center" ,(o-formula (format nil "~A" *imaginary-center*)))
+	     ("Radius" ,(o-formula (format nil "~A" *radius*)))))))
+
+  (s-value prop :help-string prop-help)
+  
+  (setf *indicator*
+	(create-instance 'indicator garnet-gadgets:motif-h-scroll-bar
+	   (:left (o-formula (- (round (gvl :parent :window :width) 2)
+				(round (gvl :width) 2))))
+	   (:top (o-formula (+ (opal:gv-bottom prop) 15)))
+	   (:h-align :center)
+	   (:val-1 0)
+	   (:val-2 +plot-xy+)
+	   (:scr-incr 100)
+	   (:scr-trill-p nil)
+	   (:percent-visible 0.0)
+	   (:active-p T)))
+
+  (s-value indicator :help-string indicator-help)
+
+  (setf *indicator-text*
+	(create-instance 'indicator-text opal:text
+	   (:left (o-formula (- (round (gvl :parent :window :width) 2)
+				(round (gvl :width) 2))))
+	   (:top (o-formula (+ (opal:gv-bottom indicator) 5)))
+	   (:string "Percent Complete: 0")))
+
+  (create-instance 'control-mouseline gg:mouselinepopup (:wait-amount 2))
+
+  (opal:add-components *gw-agg*
+		       *menu*
+		       slider-label *slider* iteration-text
+		       *prop*
+		       *indicator* *indicator-text*
+		       control-mouseline)
+  (opal:update *gw*))
+
+
+
+(defun update-iterations-scroll ()
+  (s-value *slider* :value *iterations*))
+
+(defun update-propsheet ()
+  (gg:reusepropsheet
+   *prop*
+   `(("Real Center" ,(o-formula (format nil "~A" *real-center*)))
+     ("Imaginary Center" ,(o-formula (format nil "~A" *imaginary-center*)))
+     ("Radius" ,(o-formula (format nil "~A" *radius*))))))
+
+
+(defun update-indicator (current)
+  (declare (fixnum current))
+  (let ((done (float (/ current +plot-xy+))))
+    (s-value *indicator* :percent-visible done)
+    (s-value *indicator-text* :string
+	     (format nil "Percent Complete: ~D"
+		     (ceiling (* done 100))))))
+
+
+;;;
+;;; Function to plot a point in the pixmap.
+;;;
+;(declaim (inline point))
+(defun plot-point (x y color)
+  (declare (fixnum x y color))
+  (setf (aref *pixarray* y x) color))
+
+
+;;;
+;;; Graphics parameters.
+;;;
+(declaim (fixnum *iterations* *initial-iterations* *max-colors*))
+(defparameter *initial-iterations* 128)
+(defparameter *iterations* 128)
+(defvar *max-colors* 65535)      ; Currently not used.
+
+;;;
+;;; The following is a rudimentary scheme to let us pick colors.  It
+;;; assumes a true-color arrangement.  I've only tried it with 16-bit
+;;; color.
+;;;
+
+(declaim (fixnum *black-index*))
+
+;;; Set up the black colormap index.
+(defvar *black-index* (g-value opal:black :colormap-index)) ; Get black's colormap index.
+
+;;;
+;;;  A green color scheme, merging into blues.
+;;;
+(declaim (type (integer 0 65535) *offset-index*))
+(defparameter *offset-index* (g-value opal:green :colormap-index))
+
+;;; Mangle the color index.
+(declaim (inline f))
+(declaim (function f (fixnum) fixnum))
+(defun f (i)
+  (declare (fixnum i))
+  (let* ((a (- *iterations* i))
+	 (b (* a 10))
+	 (c (+ b *offset-index*)))
+    (declare (fixnum a b c))
+    c))
+
+
+
+;;;
+;;; Stuff stolen from demo-motif (Garnet Motif-style demo).
+;;;
+(defparameter *FILL-TO-SWAP* (create-instance NIL opal:default-filling-style
+				(:foreground-color
+				 (create-instance NIL opal:black))))
+
+
+(defun CHANGE-COLOR (obj red green blue)
+  (let* ((old-fill (g-value obj :filling-style))
+	 (new-fill *FILL-TO-SWAP*)
+	 (color (g-value new-fill :foreground-color)))
+    (setf *FILL-TO-SWAP* old-fill)
+    (s-value color :red red)
+    (s-value color :green green)
+    (s-value color :blue blue)
+    (s-value obj :filling-style new-fill)))
+
+(defun NEW-COLOR (red-255 green-255 blue-255)
+  (let* ((red-100 (round red-255 2.55))
+	 (green-100 (round green-255 2.55))
+	 (blue-100 (round blue-255 2.55)))
+    (cond
+      ((g-value opal:color :color-p)
+       (let ((red-1 (float (/ red-255 255)))
+	     (green-1 (float (/ green-255 255)))
+	     (blue-1 (float (/ blue-255 255))))
+	 (change-color COMBO-BOX red-1 green-1 blue-1)
+	 (change-color RED-BOX red-1 0 0)
+	 (change-color GREEN-BOX 0 green-1 0)
+	 (change-color BLUE-BOX 0 0 blue-1)))
+
+      (t (s-value COMBO-BOX
+		  :filling-style
+		  (opal:halftone (round (+ red-255 green-255 blue-255) 7.65)))
+	 (s-value RED-BOX
+		  :filling-style
+		  (opal:halftone red-100))
+	 (s-value GREEN-BOX
+		  :filling-style
+		  (opal:halftone green-100))
+	 (s-value BLUE-BOX
+		  :filling-style
+		  (opal:halftone blue-100))))
+
+    (s-value RED-BAR :value red-100)
+    (s-value GREEN-BAR :value green-100)
+    (s-value BLUE-BAR :value blue-100)))
+
+
+(defun INITIAL-COLOR-FILL (color)
+  (if (g-value opal:color :color-p)
+      (create-instance NIL opal:default-filling-style
+	 (:foreground-color (create-instance NIL color)))
+      (opal:halftone 100)))
+
+(defun CREATE-COLOR-FILL (color-list)
+  (create-instance NIL opal:default-filling-style
+     (:foreground-color (create-instance NIL opal:color
+			   (:red (first color-list))
+			   (:green (second color-list))
+			   (:blue (third color-list))))))
+
+(defun S-VALUE-RED-FILLING-STYLE ()
+  (let ((red-value (g-value RED-BAR :value)))
+    (if (g-value opal:color :color-p)
+        (change-color RED-BOX (float (/ red-value 100)) 0 0)
+        (s-value RED-BOX
+		  :filling-style
+		  (opal:halftone red-value)))))
+
+(defun S-VALUE-GREEN-FILLING-STYLE ()
+  (let ((green-value (g-value GREEN-BAR :value)))
+    (if (g-value opal:color :color-p)
+        (change-color GREEN-BOX 0 (float (/ green-value 100)) 0)
+        (s-value GREEN-BOX
+		  :filling-style
+		  (opal:halftone green-value)))))
+
+(defun S-VALUE-BLUE-FILLING-STYLE ()
+  (let ((blue-value (g-value BLUE-BAR :value)))
+    (if (g-value opal:color :color-p)
+        (change-color BLUE-BOX 0 0 (float (/ blue-value 100)))
+        (s-value BLUE-BOX
+		  :filling-style
+		  (opal:halftone blue-value)))))
+
+(defun S-VALUE-COMBO-FILLING-STYLE ()
+  (let ((red-value (g-value RED-BAR :value))
+	(green-value (g-value GREEN-BAR :value))
+	(blue-value (g-value BLUE-BAR :value)))
+    (if (g-value opal:color :color-p)
+        (change-color COMBO-BOX
+		     (if (g-value RED-BAR :visible)
+			 (float (/ red-value 100)) 0)
+		     (if (g-value GREEN-BAR :visible)
+			 (float (/ green-value 100)) 0)
+		     (if (g-value BLUE-BAR :visible)
+			 (float (/ blue-value 100)) 0))
+        (s-value COMBO-BOX
+		 :filling-style
+		 (opal:halftone (round (+ red-value green-value blue-value) 3))))))
+
+
+(defun MEMBER-STRING (string list)
+  (member string list :test 'string=))
+
+(defun setup-color-change-gadget ()
+
+  (setf *chw*  (create-instance nil inter:interactor-window
+			       (:title "Set Colors")
+			       (:left 100) (:top 40)
+			       (:width 115) (:height 300)
+			       (:double-buffered-p t)
+			       (:foreground-color opal:blue)
+			       (:background-color opal:white)
+			       (:aggregate (create-instance 'color-agg opal:aggregate))))
+  
+  ;; We bind COLOR-BOX-PROTO as a variable instead of making a named schema
+  ;; so that if we call do-go multiple times, we will not get destroy messages.
+  (let ((COLOR-BOX-PROTO
+	 (create-instance NIL opal:rectangle
+	   (:width 25) (:height 25)
+	   (:fast-redraw-p (if (g-value opal:color :color-p) :rectangle T))
+	   (:draw-function (if (g-value opal:color :color-p) :copy :xor))
+	   (:fast-redraw-line-style (o-formula (gv *chw*
+						   :foreground-line-style)))
+	   (:fast-redraw-filling-style (o-formula
+					(gv *chw* :filling-style))))))
+
+    (create-instance 'RED-BOX-BORDER COLOR-BOX-PROTO
+       (:left 10) (:top 10))
+
+    (create-instance 'RED-BOX COLOR-BOX-PROTO
+       (:left 11) (:top 11) (:height 23) (:width 23)
+       (:line-style NIL)
+       (:filling-style (initial-color-fill opal:red)))
+
+    (create-instance 'GREEN-BOX-BORDER COLOR-BOX-PROTO
+       (:left 45) (:top 10))
+    (create-instance 'GREEN-BOX COLOR-BOX-PROTO
+       (:left 46) (:top 11) (:height 23) (:width 23)
+       (:line-style NIL)
+       (:filling-style (initial-color-fill opal:green)))
+
+    (create-instance 'BLUE-BOX-BORDER COLOR-BOX-PROTO
+       (:left 80) (:top 10))
+    (create-instance 'BLUE-BOX COLOR-BOX-PROTO
+       (:left 81) (:top 11) (:height 23) (:width 23)
+       (:line-style NIL)
+       (:filling-style (initial-color-fill opal:blue)))
+
+    (create-instance 'COMBO-BOX-BORDER COLOR-BOX-PROTO
+       (:left 10) (:top 245) (:width 95) (:height 25))
+
+    (create-instance 'COMBO-BOX COLOR-BOX-PROTO
+       (:left 11) (:top 246) (:width 93) (:height 23)
+       (:line-style NIL)
+       (:filling-style (initial-color-fill opal:white)))
+  
+    (create-instance 'RED-BAR garnet-gadgets:MOTIF-V-SCROLL-BAR
+       (:constant T :except :visible :foreground-color)
+       (:left 14) (:top 40)
+       (:val-1 100) (:val-2 0)
+       (:page-incr 5)
+       (:percent-visible .05)
+       (:foreground-color (o-formula (gv *chw* :background-color)))
+       (:active-p T)
+       (:selection-function
+	#'(lambda (gadget value)
+	    (declare (ignore gadget value))
+	    (S-VALUE-RED-FILLING-STYLE)
+	    (S-VALUE-COMBO-FILLING-STYLE))))
+
+    (create-instance 'GREEN-BAR garnet-gadgets:MOTIF-V-SCROLL-BAR
+       (:constant T :except :visible :foreground-color)
+       (:left 49) (:top 40)
+       (:val-1 100) (:val-2 0)
+       (:page-incr 5)
+       (:percent-visible .05)
+       (:foreground-color (o-formula (gv *chw* :background-color)))
+       (:active-p T)
+       (:selection-function
+	#'(lambda (gadget value)
+	    (declare (ignore gadget value))
+	    (S-VALUE-GREEN-FILLING-STYLE)
+	    (S-VALUE-COMBO-FILLING-STYLE))))
+
+    (create-instance 'BLUE-BAR garnet-gadgets:MOTIF-V-SCROLL-BAR
+       (:constant T :except :visible :foreground-color)
+       (:left 84) (:top 40)
+       (:val-1 100) (:val-2 0)
+       (:page-incr 5)
+       (:percent-visible .05)
+       (:foreground-color (o-formula (gv *chw* :background-color)))
+       (:active-p T)
+       (:selection-function
+	#'(lambda (gadget value)
+	    (declare (ignore gadget value))
+	    (S-VALUE-BLUE-FILLING-STYLE)
+	    (S-VALUE-COMBO-FILLING-STYLE))))
+  
+    (opal:add-components color-agg red-bar green-bar blue-bar
+		       red-box-border red-box green-box-border green-box
+		       blue-box-border blue-box combo-box-border combo-box)
+    (opal:update *chw*)))
+;;;
+;;;
+
+
+
+(defun set-colors ()
+  )
+
+(declaim (start-block m))
+
+(declaim (function tst (fixnum float float) fixnum))
+(defun tst (k rec imc)
+  (declare (fixnum k)
+	   (long-float rec imc))
+  (let ((re rec)
+	(im imc))
+    (declare (long-float re im))
+    (dotimes (j (- k 2) *black-index*)    ; Note: K must be negative.
+      (declare (fixnum j))
+      (let ((re2 (* re re))
+	    (im2 (* im im)))
+	(declare (long-float re2 im2))
+	(when (> (+ re2 im2) 256)
+	  (return-from tst (f j)))
+	(setf im (+ (* 2 re im) imc)
+	      re (+ (- re2 im2) rec))))))
+
+
+;;;
+;;;  Function M  is called to calculate the Mandelbrot set
+;;; for complex points around the complex number zero.
+;;;
+
+(defun M ()
+
+  ;; Set up window stuff.
+  (init "Mandelbrot Plot" +plot-xy+ +plot-xy+)
+  (opal:raise-window *w*)
+
+  ;; Do the plot.
+  (opal:with-hourglass-cursor
+   (let* ((w +plot-xy+)
+	  (half-w (truncate w 2))
+	  (r *radius*)
+	  (s (* 2.0l0 (/ r w)))
+	  (recen *real-center*)
+	  (imcen *imaginary-center*)
+	  (k *iterations*))
+     (declare (fixnum w k)
+	      (long-float r s recen imcen))
+
+     (update-iterations-scroll)
+     (update-propsheet)
+     (opal:update *gw*)
+
+     (dotimes (y w)
+       (declare (fixnum y))
+       (update-indicator y)
+       (opal:update *gw*)
+       (mp:process-yield)
+       (dotimes (x w)
+	 (declare (fixnum x))
+	 (let ((rec (+ (* s (- x half-w)) recen))
+	       (imc (+ (* s (- y half-w)) imcen)))
+	   (declare (long-float rec imc))
+	   (plot-point x y (tst k rec imc))))))
+   (opal:update *w* t)
+   (opal:update *gw* t)))
+
+(declaim (end-block))
+
+
+(defun do-quit ()
+  (opal:destroy *gw*)
+  (opal:destroy *w*)
+  (setf *w* nil)
+  (setf *moving-rectangle* nil))
+
+
+(defun start ()
+  (reset-plot))
+
+(defun reset-plot ()
+  (setf *radius* 2.0l0)
+  (setf *real-center* -0.5l0)
+  (setf *imaginary-center* 0.0l0)
+  (setf *iterations* *initial-iterations*)
+  (mp:make-process #'m))
+
+
+(defun save-xpm ()
+  (opal:write-xpm-file *pixmap* "fmand.xpm"))
+
+(defvar *last-filename* "mand.xpm")
+
+(defun save-text (gadget filename)
+  (declare (ignore gadget))
+  (opal:with-hourglass-cursor
+   (opal:write-xpm-file *pixmap* filename))
+  (setf *last-filename* filename))
+
+
+(defun do-save (gadgets-object item-string)
+  (declare (ignore gadgets-object item-string))
+  (gg:display-save-gadget-and-wait *SAVE-DIALOG* *last-filename*))
+

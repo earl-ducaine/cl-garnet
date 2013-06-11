@@ -1,0 +1,5 @@
+@findex font-lines-height
+@anchor{Function font-lines-height}
+@deffn {Function} {font-lines-height} drawable font lines-count
+Returns text lines height in pixels. For one line height is ascender+descender. For more than one line height is ascender+descender+linegap.
+@end deffn

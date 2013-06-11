@@ -1,0 +1,239 @@
+%!PS-Adobe-2.0
+%%Title: Opal 13
+%%Creator: Make-PS-File -- Garnet Version 2.1
+%%CreationDate: Jun 3, 1992, 4:22 PM
+%%For: 
+%%This file does not use real color
+%%DocumentFonts: (atend)
+%%BoundingBox: 218 333 393 458
+%%Pages: 1
+%%EndComments
+
+
+/BitmapDict 9 dict def
+/DrawBitmap
+   {    % stack: left top width height pattern transparent-p
+        %        red green blue color-p
+        BitmapDict begin
+        /picstr 256 string def
+	/color-p exch def  /blue exch def  /green exch def /red exch def
+        /transparent-p exch def
+        /pattern exch def  /height exch def  /width exch def
+        gsave
+          translate
+          width height scale
+	  color-p {red green blue setrgbcolor} if
+          transparent-p
+	  % The case where the background is not drawn
+	  { width height false
+            [ width 0 0 height 0 height ]
+            {pattern} imagemask }
+	  % The case where the background is drawn
+          { width height 1
+            [ width 0 0 height 0 height ]
+            {pattern} image } ifelse
+        grestore
+        end
+   } def
+
+/TextDict 19 dict def
+/DrawText
+   {	% stack: left top base-y opal-width height line-halftone fill-p
+        %        fore-red fore-green fore-blue fore-color-p
+        %        back-red back-green back-blue back-color-p
+        %        string size font-name
+        TextDict begin
+        gsave
+	findfont exch scalefont setfont
+	/s exch def
+        /back-color-p exch def  /back-blue exch def  /back-green exch def
+        /back-red exch def  /fore-color-p exch def  /fore-blue exch def
+        /fore-green exch def  /fore-red exch def  /fill-p exch def
+        /line-halftone exch def /height exch def  /opal-width exch def
+        /base-y exch def  /top exch def  /left exch def
+
+        % Calculate distance to add between each character, based on the width
+        % expected by Opal, the width expected by postscript, and the number
+        % of characters to distribute the change over
+	/x-dist opal-width s stringwidth pop sub s length div def
+
+        % Draw background of text if appropriate
+        fill-p
+        { gsave
+            newpath
+            left top opal-width height RectanglePath
+            1 back-red back-green back-blue back-color-p
+            FillShape
+          grestore } if
+
+        % Draw text in the appropriate color
+	newpath
+          fore-color-p
+          { fore-red fore-green fore-blue setrgbcolor }
+          { line-halftone setgray } ifelse
+	  left base-y moveto
+	  x-dist 0 s ashow
+        grestore
+        end
+   } def
+
+/RectanglePath
+   {    % stack: left, top, width, height
+        /h exch def  /w exch def
+	moveto		        % Go to the left,top corner
+	w 0 rlineto	        % top side
+	0 h neg rlineto		% right side
+	w neg 0 rlineto		% bottom side
+	closepath		% left side
+   } def
+
+/RectangleDict 21 dict def
+/DrawRectangle
+   {	% stack: left, top, width, height, line-halftone, line-red, line-green,
+        %        line-blue, line-color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness,
+        %        fill-halftone, fill-red, fill-green, fill-blue, fill-color-p
+        RectangleDict begin
+        /fill-color-p exch def  /fill-blue exch def  /fill-green exch def
+        /fill-red exch def /fill-halftone exch def  /thickness exch def
+        /dash-pattern exch def  /line-join exch def  /line-cap exch def
+        /line-color-p exch def  /line-blue exch def  /line-green exch def
+        /line-red exch def  /line-halftone exch def  /height exch def
+        /width exch def  /top exch def  /left exch def  /thickness-by-2 thickness 2 div def
+        % Draw filling
+        newpath
+          left thickness-by-2 add  top thickness-by-2 sub   width thickness sub  height thickness sub
+          RectanglePath
+	  fill-halftone fill-red fill-green fill-blue fill-color-p FillShape
+        % Draw border
+        newpath
+          left top width height RectanglePath
+          line-halftone line-red line-green line-blue line-color-p
+          line-cap line-join dash-pattern thickness StrokeShape
+        end
+   } def
+
+/ClipDict 2 dict def
+/ClipToRectangle
+   {    % stack: left, top, width, height
+        ClipDict begin
+	/height exch def  /width exch def
+        newpath
+	  moveto		% Go to the left,top corner
+	  width 0 rlineto	% top side
+	  0 height neg rlineto	% right side
+	  width neg 0 rlineto	% bottom side
+	  closepath		% left side
+	gsave 1 setgray fill grestore
+	clip newpath
+        end
+   } def
+
+/FillShape
+   {	% stack: fill-halftone, red, green, blue, color-p
+        %   Color-p should be true or false - false means ignore the three vals
+        %   Use -1 for fill-halftone to mean NIL, 0 = black, 1 = white
+        %   Use -2 for fill-halftone to indicate there is an arbitrary filling
+        % style on the stack
+        gsave
+        { setrgbcolor fill pop }
+	{ pop pop pop 
+	  dup 0 ge
+	    % if fill-halftone >= 0, then fill the shape with a halftone
+	    { setgray fill}
+            % else, if there is an arbitrary filling style, then fill
+            { -2 eq
+              {SetPattern fill} if
+            } ifelse } ifelse
+        grestore
+   } def
+
+/StrokeShape
+   {	% stack: line-halftone, red, green, blue, color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness
+	% If no line is desired, pass -1 for line-thickness
+        % Halftones: 0 = black, 1 = white
+	dup 0 ge
+	  % if line-thickness >= 0, then draw the outline
+	  {gsave
+	   setlinewidth 0 setdash setlinejoin setlinecap
+             { setrgbcolor pop }
+             { pop pop pop setgray } ifelse
+	   stroke
+	   grestore}
+	  {pop pop pop pop pop pop pop pop pop newpath} ifelse
+   } def
+
+/image-2
+<ffff ff3f ff3f fe7f ee7f e4ff e0ff e01f e03f e07f e0ff e1ff e3ff e7ff efff
+ffff>
+def
+
+/image-1
+<ff3f fe1f fe1f cc3f c43f c07f c00f c00f c01f c03f c07f c0ff c1ff c3ff c7ff
+cfff>
+def
+
+
+%%EndProlog
+%%Page: 1 1
+
+gsave
+72 72 translate
+1 1 scale
+
+%
+% Begin new window
+%
+146 -262 translate
+gsave
+0 648 175 125 ClipToRectangle
+0 0 translate
+gsave
+0 648 52 14 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+5 648 637 42 14 0 false 1.00 1.00 1.00 true 0 0 0 false (Family) 12 /Courier DrawText
+52 648 37 14 0 0 0 0 false 0 0 [] -1 1 0 0 0 false DrawRectangle
+57 648 637 27 14 0 false 0 0 0 false 0 0 0 false (Face) 12 /Courier DrawText
+89 648 36 14 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+94 648 637 26 14 0 false 1.00 1.00 1.00 true 0 0 0 false (Size) 12 /Courier DrawText
+10 448 437 34 14 0 false 0 0 0 false 0 0 0 false (fixed) 12 /Courier DrawText
+75 448 437 34 14 0 false 0 0 0 false 0 0 0 false (roman) 12 /Courier DrawText
+140 448 437 42 14 0 false 0 0 0 false 0 0 0 false (medium) 12 /Courier DrawText
+75 418 407 33 14 0 false 0 0 0 false 0 0 0 false (combo) 12 /Courier DrawText
+grestore
+
+gsave
+
+%
+% Begin new window
+%
+52 -14 translate
+gsave
+0 648 86 96 ClipToRectangle
+0 0 translate
+gsave
+5 643 632 35 14 0 false 0 0 0 false 0 0 0 false (Roman) 12 /Courier DrawText
+5 619 76 14 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+5 619 608 28 14 1 false 0 0 0 false 0 0 0 false (Bold) 12 /Courier DrawText
+59 614 16 16 image-1 true 1.00 1.00 1.00 true DrawBitmap
+59 614 16 16 image-1 true 1.00 1.00 1.00 true DrawBitmap
+59 614 16 16 image-2 true 0 0 0 false DrawBitmap
+5 595 584 40 14 0 false 0 0 0 false 0 0 0 false (Italic) 12 /Courier DrawText
+5 571 560 76 14 0 false 0 0 0 false 0 0 0 false (Bold-Italic) 12 /Courier DrawText
+grestore
+
+grestore
+
+0 648 86 96 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+grestore
+
+grestore
+
+0 648 175 125 0 0 0 0 false 0 0 [] 2 -1 0 0 0 false DrawRectangle
+grestore
+
+
+showpage
+%%Trailer
+%%DocumentFonts: /Courier 
+%%BoundingBox: 218 333 393 458

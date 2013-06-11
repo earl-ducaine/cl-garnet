@@ -1,0 +1,393 @@
+%!PS-Adobe-2.0 EPSF-2.0
+%%Title: Drawing Window 2
+%%Creator: Make-PS-File -- Garnet Version 2.2
+%%CreationDate: Jul 5, 1993, 12:07 PM
+%%For: 
+%%This file does not use real color
+%%DocumentFonts: (atend)
+%%BoundingBox: 188 317 423 476
+%%Pages: 1
+%%EndComments
+
+
+/EllipseDict 23 dict def
+EllipseDict /mtrx matrix put
+/DrawEllipse { % x y xrad yrad startangle endangle line-color
+	       % cap join dash thickness fill-color => -
+    EllipseDict begin
+	/fill-color exch def /thickness exch def
+	/dash-pattern exch def  /line-join exch def  /line-cap exch def
+	/line-color exch def  /endangle exch def /startangle exch def
+	/yrad exch def  /xrad exch def /y exch def /x exch def
+	/savematrix mtrx currentmatrix def
+	% Draw the filling
+	gsave
+	    newpath
+	    x y translate
+	    xrad thickness sub yrad thickness sub scale
+	    0 0 1 startangle endangle arc
+	    savematrix setmatrix
+	    fill-color FillShape
+	    newpath
+	    x y translate
+	    xrad thickness 2 div sub yrad thickness 2 div sub scale
+	    0 0 1 startangle endangle arc
+	    savematrix setmatrix
+	    line-color
+	    0 % line-cap
+	    line-join dash-pattern thickness
+	    StrokeShape
+	grestore
+    end
+} def
+
+/RoundtanglePath { % left top width height radius => -
+    /r exch def  /h exch def  /w exch def  /t exch def  /l exch def
+    /right l w add def  /bottom t h sub def
+    l r add t moveto                         % origin
+    right t right t r sub r arcto            % top side
+    right bottom right r sub bottom r arcto  % right side
+    l bottom l bottom r add r arcto          % bottom side
+    l t l r add t r arcto		     % left side
+    16 {pop} repeat  % each arcto accumulates 4 stack parameters
+} def
+
+/RoundtangleDict 27 dict def
+/DrawRoundtangle { % left top width height radius line-color
+		   % cap join dash thickness fill-color => -
+    gsave RoundtangleDict begin
+	/fill-color exch def  /thickness exch def
+	/dash-pattern exch def  /line-join exch def  /line-cap exch def
+	/line-color exch def  /radius exch def
+	/height exch def  /width exch def  /top exch def  /left exch def
+        
+	% Draw filling
+	newpath
+	left thickness add top thickness sub
+	width thickness 2 mul sub height thickness 2 mul sub
+        radius thickness sub dup 0 lt { pop 0 } if RoundtanglePath
+	fill-color FillShape
+
+	left thickness 2 div add top thickness 2 div sub
+	width thickness sub height thickness sub
+        radius thickness 2 div sub dup 0 lt { pop 0 } if RoundtanglePath
+
+	% Draw border
+	line-color line-cap line-join dash-pattern thickness
+	StrokeShape
+    end grestore
+} def
+
+
+/TextDict 40 dict def
+/DrawText { % left top base-y opal-width height fill-p
+	    % fore-color back-color string size font-name => -
+    TextDict begin
+	gsave
+	    findfont exch scalefont setfont
+	    /s exch def
+	    /back-color exch def /fore-color exch def /fill-p exch def
+	    /height exch def  /opal-width exch def
+	    /base-y exch def  /top exch def
+	    /left exch 1 sub def % XXX: I don't know why!
+
+	    % Calculate distance to add between each character, based on the 
+	    % width expected by Opal, the width expected by postscript, and 
+	    % the number of characters to distribute the change over.
+	    /x-dist opal-width s stringwidth pop sub s length div def
+
+	    % Draw background of text if appropriate
+	    fill-p {
+		gsave
+		    newpath
+		    left top opal-width height RectanglePath
+		    back-color FillShape
+		grestore
+	    } if
+
+	    % Draw text in the appropriate color
+	    newpath
+	    s length 0 ne {
+		left base-y moveto
+		fore-color aload length 3 eq {
+		    setrgbcolor
+		    x-dist 0 s ashow
+		} { % Halftone pattern:
+		    %   fgR fgG fgB bgR bgG bgB top pattern
+		    %   fgR fgG fgB false top pattern
+		    /pattern exch def /top exch def /opaque? exch def
+		    opaque? not { .5 .5 .5 } if
+		    /bgB exch def /bgG exch def /bgR exch def
+		    /fgB exch def /fgG exch def /fgR exch def
+
+		    fgR bgR add 2 div
+		    fgG bgG add 2 div
+		    fgB bgB add 2 div
+		    setrgbcolor
+
+		    opaque? {
+			x-dist 0 s ashow
+		    } {
+			mark
+			/ch 1 string def
+			/space { /space { x-dist 0 rmoveto } def } def
+%			/jt statusdict begin jobtimeout end def
+			gsave { % try really hard to do it right
+			    s {
+				% don't take more than 2 seconds a character
+%				statusdict begin 2 setjobtimeout end
+				space
+				ch 0 3 -1 roll put
+				ch true charpath
+				currentpoint /yy exch def /xx exch def
+				fgR fgG fgB false top pattern FillPattern
+				newpath xx yy moveto
+			    } forall
+			} stopped grestore { % fall back in case we fail
+			    x-dist 0 s ashow
+			} if
+%			statusdict begin jt setjobtimeout end
+			cleartomark
+		    } ifelse
+		} ifelse
+	    } if
+	grestore
+    end
+} def
+
+/PolylineDict 20 dict def
+/DrawPolyline { % x1 y1 {{x y ...} ...} line-color
+		% join cap dash thickness fill-color => -
+    gsave PolylineDict begin
+	/fill-color exch def  /thickness exch def  /dash-pattern exch def
+	/line-join exch def  /line-cap exch def  /line-color exch def
+	% Don't draw the path of the fill if the filling-style is null.
+	fill-color null eq not {
+		3 copy
+		newpath
+		3 1 roll moveto
+		{ aload length 2 idiv { lineto } repeat } forall
+		fill-color FillShape
+		} if
+
+	newpath
+	.5 -.5 translate
+
+	% Stroke after every sub-array to avoid a limitcheck error
+	2 index 2 index moveto
+	{ aload length 2 sub 2 idiv { lineto } repeat
+	2 copy lineto
+	line-color line-cap line-join dash-pattern thickness StrokeShape
+	moveto
+	} forall
+
+	currentpoint
+	3 -1 roll sub abs .01 lt
+	3 1 roll sub abs .01 lt and {
+	  0 0 rlineto closepath
+	} if
+
+	line-color line-cap line-join dash-pattern
+	thickness
+%	dup -1 ne { .5 add } if % fudge outline width thicker
+	StrokeShape
+
+    end grestore
+} def
+
+/AdjustLineDict 20 dict def
+/AdjustLine { % x1 y1 x2 y2 width => x1 y1 x2 y2
+  AdjustLineDict begin
+    /width exch cvi def
+    /hw width 2 div def
+    /oddwidth? width 1 and 1 eq def
+    /y2 exch def /x2 exch def /y1 exch def /x1 exch def
+    /dx x2 x1 sub def /dy y2 y1 sub def
+    dy 0 eq {
+      dx 0 eq {
+	% point
+	oddwidth? {
+	  /x1 x1 .5 add def /y1 y1 .5 sub def
+	  /x2 x2 .5 add def /y2 y2 .5 sub def
+	} if
+      } {
+	% horizontal
+	oddwidth? {
+	  /y1 y1 .5 sub def
+	  /y2 y2 .5 sub def
+	} if
+      } ifelse
+    } {
+      dx 0 eq {
+	% vertical
+	oddwidth? {
+	  /x1 x1 .5 add def
+	  /x2 x2 .5 add def
+	} if
+      } {
+	% diagonal
+	oddwidth? {
+	  /x1 x1 .5 add def /y1 y1 .5 sub def
+	  /x2 x2 .5 add def /y2 y2 .5 sub def
+	} if
+      } ifelse
+    } ifelse
+    x1 y1 x2 y2
+  end
+} def
+
+/DrawLineDict 20 dict def
+/DrawLine { % line-color cap join dash thickness x2 y2 x1 y1 => -
+    gsave DrawLineDict begin
+	4 index AdjustLine
+	moveto lineto
+	StrokeShape
+    end grestore
+} def
+
+/RectanglePath { % left top width height => -
+    /h exch def  /w exch def
+    moveto			% Go to the left,top corner
+    w 0 rlineto			% top side
+    0 h neg rlineto		% right side
+    w neg 0 rlineto		% bottom side
+    closepath			% left side
+} def
+
+/RectangleDict 21 dict def
+/DrawRectangle { % left top width height line-color
+		 % cap join dash thickness fill-color => -
+    RectangleDict begin
+	/fill-color exch def  /thickness exch def /dash-pattern exch def
+	/line-join exch def  /line-cap exch def /line-color exch def
+	/height exch def /width exch def  /top exch def  /left exch def
+        /thickness-for-fill thickness 0 lt {0} {thickness} ifelse def
+	% Draw filling
+	newpath
+	left thickness-for-fill add top thickness-for-fill sub
+        width thickness-for-fill 2 mul sub height thickness-for-fill 2 mul sub
+	RectanglePath
+	fill-color FillShape
+	% Draw border
+	newpath
+	left thickness 2 div add  top thickness 2 div sub
+	width thickness sub  height thickness sub
+	RectanglePath
+	line-color line-cap line-join dash-pattern thickness StrokeShape
+    end
+} def
+
+/FillShape { % [halftone] | [r g b] | null => -
+    gsave
+        dup null eq { pop } {
+	  aload length 3 eq { setrgbcolor fill } {
+	      FillPattern
+	  } ifelse
+        } ifelse
+    grestore
+    newpath
+} def
+
+/StrokeShape { % line-color cap join dash thickness => -
+    % If no line is desired, pass -1 for line-thickness
+    dup 0 ge 5 index null ne and {
+	% if line-thickness >= 0, then draw the outline
+	gsave
+	    setlinewidth 0 setdash setlinejoin setlinecap
+	    aload length 3 eq { setrgbcolor stroke } {
+		strokepath FillPattern
+	    } ifelse
+	grestore
+    } {
+	pop pop pop pop pop
+    } ifelse
+    newpath
+} def
+
+/ClipDict 2 dict def
+/ClipToRectangle { % left top width height => -
+    ClipDict begin
+	/height exch def  /width exch def
+        newpath
+	    moveto			% Go to the left,top corner
+	    width 0 rlineto		% top side
+	    0 height neg rlineto	% right side
+	    width neg 0 rlineto		% bottom side
+	    closepath			% left side
+	gsave 1 setgray fill grestore
+	clip newpath
+    end
+} def
+
+
+%%EndProlog
+%%Page: 1 1
+
+gsave
+72 72 translate
+1 1 scale
+116 404 translate
+
+%
+% Begin new window
+%
+gsave
+0 0 235 159 ClipToRectangle
+gsave
+0 0 235 159 [0 0 0] 0 0 [] -1 [1 1 1] DrawRectangle
+grestore
+
+
+%
+% Begin new window
+%
+gsave
+0 0 translate
+0 0 235 159 ClipToRectangle
+gsave
+16 -48 102 51 [0 0 0] 0 0 [] 1 null DrawRectangle
+10 -42 13 13 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+111 -42 13 13 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+10 -92 13 13 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+111 -92 13 13 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+58 -67 102 51 [0 0 0] 0 0 [4 4] 1 null DrawRectangle
+[0 0 0] 0 0 [] 1 138 -67 179 -35 DrawLine
+149 -65 {
+  { 143 -57 138 -67 }
+} [0 0 0] 0 0 [] 1 null DrawPolyline
+138 -18 -30 82 15 false [0 0 0] [1 1 1] (interim feedback) 12 /Times-Roman DrawText
+6 -130 -142 75 15 false [0 0 0] [1 1 1] (obj-to-change) 12 /Times-Roman DrawText
+15 -6 -18 100 15 false [0 0 0] [1 1 1] (objects to start over) 12 /Times-Roman DrawText
+[0 0 0] 0 0 [] 1 21 -92 65 -23 DrawLine
+30 -87 {
+  { 22 -81 21 -92 }
+} [0 0 0] 0 0 [] 1 null DrawPolyline
+[0 0 0] 0 0 [] 1 111 -93 65 -23 DrawLine
+110 -82 {
+  { 102 -88 111 -93 }
+} [0 0 0] 0 0 [] 1 null DrawPolyline
+[0 0 0] 0 0 [] 1 107 -43 65 -23 DrawLine
+100 -34 {
+  { 96 -44 107 -43 }
+} [0 0 0] 0 0 [] 1 null DrawPolyline
+[0 0 0] 0 0 [] 1 24 -42 65 -23 DrawLine
+35 -43 {
+  { 31 -33 24 -42 }
+} [0 0 0] 0 0 [] 1 null DrawPolyline
+[0 0 0] 0 0 [] 1 48 -99 43 -130 DrawLine
+41 -108 {
+  { 51 -110 48 -99 }
+} [0 0 0] 0 0 [] 1 null DrawPolyline
+grestore
+
+grestore
+
+grestore
+
+grestore
+
+
+showpage
+%%Trailer
+%%DocumentFonts: /Times-Roman 
+%%BoundingBox: 188 317 423 476

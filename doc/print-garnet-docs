@@ -1,0 +1,21 @@
+alias garnet-print "lpr '\!*'"
+
+garnet-print manual-cover.ps
+garnet-print refman.ps
+garnet-print overview.ps
+garnet-print apps.ps
+garnet-print tour.ps
+garnet-print tutorial.ps
+garnet-print kr-manual.ps
+garnet-print opal-manual.ps
+garnet-print inter-manual.ps
+garnet-print aggregadgets-manual.ps
+garnet-print gadgets-manual.ps
+garnet-print debug-manual.ps
+garnet-print demoguide.ps
+garnet-print sampleprog.ps
+garnet-print gilt-manual.ps
+garnet-print c32-manual.ps
+garnet-print lapidary-manual.ps
+garnet-print hints.ps
+garnet-print index.ps

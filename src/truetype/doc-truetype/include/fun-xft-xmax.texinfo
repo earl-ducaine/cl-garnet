@@ -1,0 +1,5 @@
+@findex xmax
+@anchor{Function xmax}
+@deffn {Function} {xmax} bounding-box
+Returns right side x of @var{bounding-box}
+@end deffn

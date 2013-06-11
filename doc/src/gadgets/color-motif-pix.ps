@@ -1,0 +1,273 @@
+%!PS-Adobe-2.0
+%%Title: Opal 42
+%%Creator: Make-PS-File -- Garnet Version 2.1
+%%CreationDate: Jun 1, 1992, 4:15 PM
+%%For: 
+%%This file uses real color
+%%DocumentFonts: (atend)
+%%BoundingBox: 181 296 431 496
+%%Pages: 1
+%%EndComments
+
+
+/ArcDict 22 dict def
+ArcDict /mtrx matrix put
+/DrawArc
+   {
+        ArcDict begin
+        /fill-color-p exch def  /fill-blue exch def  /fill-green exch def
+        /fill-red exch def  /fill-halftone exch def  /thickness exch def
+        /dash-pattern exch def  /line-join exch def  /line-cap exch def
+        /line-color-p exch def  /line-blue exch def  /line-green exch def
+        /line-red exch def  /line-halftone exch def  /endangle exch def
+        /startangle exch def  /yrad exch def  /xrad exch def  /y exch def
+        /x exch def  /savematrix mtrx currentmatrix def
+        newpath
+	  x y translate
+	  xrad yrad scale
+          % Fill the arc
+          newpath
+            0 0 moveto  0 0 1 startangle endangle arc  closepath
+            fill-halftone fill-red fill-green fill-blue fill-color-p FillShape
+          % Draw the border
+          newpath
+            0 0 1 startangle endangle arc
+            savematrix setmatrix
+            line-halftone line-red line-green line-blue line-color-p
+            line-cap line-join dash-pattern thickness StrokeShape
+        end
+   } def
+
+/TextDict 19 dict def
+/DrawText
+   {	% stack: left top base-y opal-width height line-halftone fill-p
+        %        fore-red fore-green fore-blue fore-color-p
+        %        back-red back-green back-blue back-color-p
+        %        string size font-name
+        TextDict begin
+        gsave
+	findfont exch scalefont setfont
+	/s exch def
+        /back-color-p exch def  /back-blue exch def  /back-green exch def
+        /back-red exch def  /fore-color-p exch def  /fore-blue exch def
+        /fore-green exch def  /fore-red exch def  /fill-p exch def
+        /line-halftone exch def /height exch def  /opal-width exch def
+        /base-y exch def  /top exch def  /left exch def
+
+        % Calculate distance to add between each character, based on the width
+        % expected by Opal, the width expected by postscript, and the number
+        % of characters to distribute the change over
+	/x-dist opal-width s stringwidth pop sub s length div def
+
+        % Draw background of text if appropriate
+        fill-p
+        { gsave
+            newpath
+            left top opal-width height RectanglePath
+            1 back-red back-green back-blue back-color-p
+            FillShape
+          grestore } if
+
+        % Draw text in the appropriate color
+	newpath
+          fore-color-p
+          { fore-red fore-green fore-blue setrgbcolor }
+          { line-halftone setgray } ifelse
+	  left base-y moveto
+	  x-dist 0 s ashow
+        grestore
+        end
+   } def
+
+/DrawLine
+   {    % stack: line-halftone, red, green, blue, color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness
+        %        x2, y2, x1, y1
+        newpath
+          moveto
+          lineto
+          StrokeShape
+   } def
+
+/PolylineDict 15 dict def
+/DrawPolyline
+   {	% stack: x1, y1, ..., xn, yn, n, line-halftone, line-red, line-blue,
+        %        line-green, line-join, line-cap, dash-pattern,
+        %        line-thickness, fill-halftone
+        PolylineDict begin
+        /fill-color-p exch def  /fill-blue exch def  /fill-green exch def
+        /fill-red exch def  /fill-halftone exch def  /thickness exch def
+        /dash-pattern exch def  /line-join exch def  /line-cap exch def
+        /line-color-p exch def  /line-blue exch def  /line-green exch def
+        /line-red exch def  /line-halftone exch def  /num-points exch 4 sub def
+	newpath
+	  moveto
+	  num-points -2 0 {pop lineto} for
+	  fill-halftone fill-red fill-green fill-blue fill-color-p FillShape
+          line-halftone line-red line-green line-blue line-color-p
+          line-cap line-join dash-pattern thickness StrokeShape
+        end
+   } def
+
+/RectanglePath
+   {    % stack: left, top, width, height
+        /h exch def  /w exch def
+	moveto		        % Go to the left,top corner
+	w 0 rlineto	        % top side
+	0 h neg rlineto		% right side
+	w neg 0 rlineto		% bottom side
+	closepath		% left side
+   } def
+
+/RectangleDict 21 dict def
+/DrawRectangle
+   {	% stack: left, top, width, height, line-halftone, line-red, line-green,
+        %        line-blue, line-color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness,
+        %        fill-halftone, fill-red, fill-green, fill-blue, fill-color-p
+        RectangleDict begin
+        /fill-color-p exch def  /fill-blue exch def  /fill-green exch def
+        /fill-red exch def /fill-halftone exch def  /thickness exch def
+        /dash-pattern exch def  /line-join exch def  /line-cap exch def
+        /line-color-p exch def  /line-blue exch def  /line-green exch def
+        /line-red exch def  /line-halftone exch def  /height exch def
+        /width exch def  /top exch def  /left exch def  /thickness-by-2 thickness 2 div def
+        % Draw filling
+        newpath
+          left thickness-by-2 add  top thickness-by-2 sub   width thickness sub  height thickness sub
+          RectanglePath
+	  fill-halftone fill-red fill-green fill-blue fill-color-p FillShape
+        % Draw border
+        newpath
+          left top width height RectanglePath
+          line-halftone line-red line-green line-blue line-color-p
+          line-cap line-join dash-pattern thickness StrokeShape
+        end
+   } def
+
+/ClipDict 2 dict def
+/ClipToRectangle
+   {    % stack: left, top, width, height
+        ClipDict begin
+	/height exch def  /width exch def
+        newpath
+	  moveto		% Go to the left,top corner
+	  width 0 rlineto	% top side
+	  0 height neg rlineto	% right side
+	  width neg 0 rlineto	% bottom side
+	  closepath		% left side
+	gsave 1 setgray fill grestore
+	clip newpath
+        end
+   } def
+
+/FillShape
+   {	% stack: fill-halftone, red, green, blue, color-p
+        %   Color-p should be true or false - false means ignore the three vals
+        %   Use -1 for fill-halftone to mean NIL, 0 = black, 1 = white
+        %   Use -2 for fill-halftone to indicate there is an arbitrary filling
+        % style on the stack
+        gsave
+        { setrgbcolor fill pop }
+	{ pop pop pop 
+	  dup 0 ge
+	    % if fill-halftone >= 0, then fill the shape with a halftone
+	    { setgray fill}
+            % else, if there is an arbitrary filling style, then fill
+            { -2 eq
+              {SetPattern fill} if
+            } ifelse } ifelse
+        grestore
+   } def
+
+/StrokeShape
+   {	% stack: line-halftone, red, green, blue, color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness
+	% If no line is desired, pass -1 for line-thickness
+        % Halftones: 0 = black, 1 = white
+	dup 0 ge
+	  % if line-thickness >= 0, then draw the outline
+	  {gsave
+	   setlinewidth 0 setdash setlinejoin setlinecap
+             { setrgbcolor pop }
+             { pop pop pop setgray } ifelse
+	   stroke
+	   grestore}
+	  {pop pop pop pop pop pop pop pop pop newpath} ifelse
+   } def
+
+
+%%EndProlog
+%%Page: 1 1
+
+gsave
+72 72 translate
+1 1 scale
+
+%
+% Begin new window
+%
+109 -224 translate
+gsave
+0 648 250 200 ClipToRectangle
+0 0 translate
+gsave
+0 648 250 200 0 0 0 0 false 0 0 [] -1 0 0.827451 0.827451 0.827451 true DrawRectangle
+17 631 16 171 0 0 0 0 false 0 0 [] -1 0 0.20 0.20 0.20 true DrawRectangle
+19 629 14 169 0 0 0 0 false 0 0 [] -1 0 1 1 1 true DrawRectangle
+19 629 12 167 0 0 0 0 false 0 0 [] -1 0 0.70 0.70 0.70 true DrawRectangle
+19 616 12 69 0 0 0 0 false 0 0 [] -1 0 1 1 1 true DrawRectangle
+21 614 10 67 0 0 0 0 false 0 0 [] -1 0 0.20 0.20 0.20 true DrawRectangle
+21 614 8 65 0 0 0 0 false 0 0 [] -1 0 0.83 0.83 0.83 true DrawRectangle
+25 628 29 618 20 618 6 0 0.20 0.20 0.20 true 0 0 [] 2 0 0.83 0.83 0.83 true DrawPolyline
+0 1 1 1 true 0 0 [] 2 20 618 25 628 DrawLine
+25 465 20 475 30 475 6 0 1 1 1 true 0 0 [] 2 0 0.83 0.83 0.83 true DrawPolyline
+0 0.20 0.20 0.20 true 0 0 [] 2 25 465 30 475 DrawLine
+73 514 79 520 85 514 6 0 1 1 1 true 0 0 [] 2 0 0.83 0.83 0.83 true DrawPolyline
+73 514 79 508 85 514 6 0 0.20 0.20 0.20 true 0 0 [] 2 0 0.83 0.83 0.83 true DrawPolyline
+90 521 510 48 14 0 false 0 0 0 false 0 0 0 false (Radio 1) 12 /Courier DrawText
+73 491 79 497 85 491 6 0 1 1 1 true 0 0 [] 2 0 0.83 0.83 0.83 true DrawPolyline
+73 491 79 485 85 491 6 0 0.20 0.20 0.20 true 0 0 [] 2 0 0.83 0.83 0.83 true DrawPolyline
+90 498 487 48 14 0 false 0 0 0 false 0 0 0 false (Radio 2) 12 /Courier DrawText
+73 468 79 474 85 468 6 0 1 1 1 true 0 0 [] 2 0 0.83 0.83 0.83 true DrawPolyline
+73 468 79 462 85 468 6 0 0.20 0.20 0.20 true 0 0 [] 2 0 0.83 0.83 0.83 true DrawPolyline
+90 475 464 48 14 0 false 0 0 0 false 0 0 0 false (Radio 3) 12 /Courier DrawText
+177 521 51 20 0 0 0 0 false 0 0 [] -1 0 1 1 1 true DrawRectangle
+179 519 49 18 0 0 0 0 false 0 0 [] -1 0 0.20 0.20 0.20 true DrawRectangle
+179 519 47 16 0 0 0 0 false 0 0 [] -1 0 0.83 0.83 0.83 true DrawRectangle
+182 518 507 41 14 0 false 0 0 0 false 0 0 0 false (Text 1) 12 /Courier DrawText
+177 492 51 20 0 0 0 0 false 0 0 [] -1 0 1 1 1 true DrawRectangle
+179 490 49 18 0 0 0 0 false 0 0 [] -1 0 0.20 0.20 0.20 true DrawRectangle
+179 490 47 16 0 0 0 0 false 0 0 [] -1 0 0.83 0.83 0.83 true DrawRectangle
+182 489 478 41 14 0 false 0 0 0 false 0 0 0 false (Text 2) 12 /Courier DrawText
+0 1 1 1 true 0 0 [] 2 222 549 85 549 DrawLine
+153.5 548.5 68.5 68.5 0 180 0 0.20 0.20 0.20 true 0 0 [] 2 0 0.70 0.70 0.70 true DrawArc
+0 0 0 0 false 0 0 [] 1 218 549 221 549 DrawLine
+226 560 551 4 11 0 false 0 0 0 false 0 0 0 false (0) 10 /Courier DrawText
+0 0 0 0 false 0 0 [] 1 209 581 212 583 DrawLine
+217 594 585 10 11 0 false 0 0 0 false 0 0 0 false (30) 10 /Courier DrawText
+0 0 0 0 false 0 0 [] 1 185 605 187 608 DrawLine
+192 619 610 10 11 0 false 0 0 0 false 0 0 0 false (60) 10 /Courier DrawText
+0 0 0 0 false 0 0 [] 1 153 614 153 617 DrawLine
+148 631 622 10 11 0 false 0 0 0 false 0 0 0 false (90) 10 /Courier DrawText
+0 0 0 0 false 0 0 [] 1 121 605 119 608 DrawLine
+98 619 610 16 11 0 false 0 0 0 false 0 0 0 false (120) 10 /Courier DrawText
+0 0 0 0 false 0 0 [] 1 97 581 94 583 DrawLine
+73 594 585 16 11 0 false 0 0 0 false 0 0 0 false (150) 10 /Courier DrawText
+0 0 0 0 false 0 0 [] 1 88 549 85 549 DrawLine
+64 560 551 16 11 0 false 0 0 0 false 0 0 0 false (180) 10 /Courier DrawText
+153 549 156 547 176 583 180 580 180 596 10 0 0.20 0.20 0.20 true 0 0 [] 2 0 0.83 0.83 0.83 true DrawPolyline
+180 596 166 588 171 586 150 551 153 549 10 0 1 1 1 true 0 0 [] 2 0 0.83 0.83 0.83 true DrawPolyline
+115 544 533 76 14 0 false 0 0 0 false 0 0 0 false (Motif Gauge) 12 /Courier DrawText
+grestore
+
+grestore
+
+0 648 250 200 0 0 0 0 false 0 0 [] 2 -1 0 0 0 false DrawRectangle
+grestore
+
+
+showpage
+%%Trailer
+%%DocumentFonts: /Courier 
+%%BoundingBox: 181 296 431 496

@@ -1,0 +1,566 @@
+<html lang="en">
+<head>
+<title>CLX-TRUETYPE</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="description" content="CLX-TRUETYPE">
+<meta name="generator" content="makeinfo 4.13">
+<link title="Top" rel="top" href="#Top">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc    { font-variant:small-caps }
+  span.roman { font-family:serif; font-weight:normal; } 
+  span.sansserif { font-family:sans-serif; font-weight:normal; } 
+.node { visibility:hidden; height: 0px; }
+.menu { visibility:hidden; height: 0px; }
+.appendix { background-color:#d3d3d3; padding: 0.2em; }
+.chapter { background-color:#d3d3d3; padding: 0.2em; }
+.section { background-color:#d3d3d3; padding: 0.2em; }
+.settitle { background-color:#d3d3d3; }
+.contents { border: 2px solid black;
+            margin: 1cm 1cm 1cm 1cm;
+            padding-left: 3mm; }
+.lisp { padding: 0; margin: 0em; }
+body { padding: 2em 8em; font-family: sans-serif; }
+h1 { padding: 1em; text-align: center; }
+li { margin: 1em; }
+
+--></style>
+</head>
+<body>
+<h1 class="settitle">CLX-TRUETYPE</h1>
+<div class="node">
+<a name="Top"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Overview">Overview</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#dir">(dir)</a>
+
+</div>
+
+<h2 class="unnumbered">Introduction</h2>
+
+<p><span class="sc">clx-truetype </span> renders TrueType fonts over X11 drawable (window or pixmap)
+ using CLX, XRender, ZPB-TTF, CL-VECTORS.
+
+   <p><span class="sc">clx-truetype </span> was originally written for mcclim font rendering
+by Gilbert Baumann and Andy Hefner.
+
+<!-- Version control -->
+   <p><span class="sc">clx-truetype </span> is maintained in Git:
+<pre class="example">     git clone git://github.com/filonenko-mikhail/clx-truetype
+</pre>
+   <p>will get you a local copy.
+<pre class="example">     <a href="http://github.com/filonenko-mikhail/clx-truetype/">http://github.com/filonenko-mikhail/clx-truetype/</a>
+</pre>
+   <p>is the GitHub project page, where the issue tracker is located.
+
+   <div class="contents">
+<h2>Table of Contents</h2>
+<ul>
+<li><a name="toc_Top" href="#Top">Introduction</a>
+<li><a name="toc_Overview" href="#Overview">1 Overview</a>
+<li><a name="toc_Examples" href="#Examples">2 Examples</a>
+<li><a name="toc_Dictionary" href="#Dictionary">3 Dictionary</a>
+<li><a name="toc_Concept-Index" href="#Concept-Index">Appendix A Concept Index</a>
+<li><a name="toc_Function-Index" href="#Function-Index">Appendix B Function Index</a>
+<li><a name="toc_Variable-Index" href="#Variable-Index">Appendix C Variable Index</a>
+<li><a name="toc_Type-Index" href="#Type-Index">Appendix D Type Index</a>
+<li><a name="toc_Colophon" href="#Colophon">Colophon</a>
+</li></ul>
+</div>
+
+<ul class="menu">
+<li><a accesskey="1" href="#Overview">Overview</a>
+<li><a accesskey="2" href="#Examples">Examples</a>
+<li><a accesskey="3" href="#Dictionary">Dictionary</a>
+<li><a accesskey="4" href="#Concept-Index">Concept Index</a>
+<li><a accesskey="5" href="#Function-Index">Function Index</a>
+<li><a accesskey="6" href="#Variable-Index">Variable Index</a>
+<li><a accesskey="7" href="#Type-Index">Type Index</a>
+<li><a accesskey="8" href="#Colophon">Colophon</a>
+</ul>
+
+<div class="node">
+<a name="Overview"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Examples">Examples</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Top">Top</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
+
+</div>
+
+<!-- node-name,  next,  previous,  up -->
+<h2 class="chapter">1 Overview</h2>
+
+<p><span class="sc">clx-truetype </span> is library for text rendering over X11 drawable using CLX, XRender,
+ZPB-TTF, CL-VECTORS.
+
+   <p>TrueType font metrics
+
+   <div class="block-image"><img src="ttf-metrics.png" alt="ttf-metrics.png"></div>
+
+     <ul>
+<li>TrueType hints are not supported. 
+<li>RGB antialiasing is not supported. 
+<li>Text rendering do not use XRender glyph sets. 
+</ul>
+
+<div class="node">
+<a name="Examples"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Dictionary">Dictionary</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Overview">Overview</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
+
+</div>
+
+<!-- node-name,  next,  previous,  up -->
+<h2 class="chapter">2 Examples</h2>
+
+<p>Drawing text is quite simple.
+
+   <p>First and only one time step is loading font cache using
+ <a href="#Function-cache_002dfonts"><code>cache-fonts</code></a>. 
+ If you add font to your system, you should call it again.
+
+<pre class="lisp">     (cache-fonts)
+</pre>
+   <p>Make instance of font:
+
+<pre class="lisp">     (font (make-instance 'font :family "Times New Roman" :subfamily "Bold Italic"
+                                   :size 12 :antialiased t))
+</pre>
+   <p>Draw it using <a href="#Function-draw_002dtext"><code>draw-text</code></a> or <a href="#Function-draw_002dtext_002dline"><code>draw-text-line</code></a> functions:
+
+<pre class="lisp">     (draw-text window grackon font "The quick brown fox jumps over the lazy dog." 100 100)
+</pre>
+   <p>Move &lt;&lt;cursor&gt;&gt; using <a href="#Function-baseline_002dto_002dbaseline"><code>baseline-to-baseline</code></a> distance.
+
+   <p>Here it is complete example. Just insert it into repl, and evaluate (show-window).
+
+<pre class="lisp">     (defpackage #:clx-truetype-test
+       (:nicknames :xft-test)
+       (:use #:cl #:xft)
+       (:export show-window))
+     
+     (in-package :clx-truetype-test)
+     
+     (defvar *display* (xlib:open-default-display))
+     
+     (defvar *screen* (xlib:display-default-screen *display*))
+     (defvar *root* (xlib:screen-root *screen*))
+     
+     (defun show-window ()
+       (let* ((black (xlib:screen-black-pixel *screen*))
+              (white (xlib:screen-white-pixel *screen*))
+              (window
+                (xlib:create-window :parent *root* :x 0 :y 0 :width 640 :height 480
+                               :class :input-output
+                               :background white
+                               :event-mask '(:key-press :key-release :exposure :button-press
+                                             :structure-notify)))
+              (grackon (xlib:create-gcontext
+                        :drawable window
+     		   :foreground black
+     		   :background white))
+              (font (make-instance 'font :family "Times New Roman" :subfamily "Bold Italic"
+                                   :size 12 :antialiased t)))
+         (unwind-protect
+              (progn
+                (xlib:map-window window)
+                (setf (xlib:gcontext-foreground grackon) black)
+                (xlib:event-case (*display* :force-output-p t
+                                       :discard-p t)
+                  (:exposure ()
+                             (draw-text window grackon font "The quick brown fox jumps over the lazy dog." 100 100)
+                             (when (= 0 (random 2))
+                               (rotatef (xlib:gcontext-foreground grackon) (xlib:gcontext-background grackon)))
+                             (draw-text window grackon font "Съешь же ещё этих мягких французских булок, да выпей чаю." 100 (+ 100 (baseline-to-baseline window font)))
+                             (setf (font-antialiased font) (= 0 (random 2)))
+                             (if (= 0 (random 2))
+                                 (setf (font-subfamily font) "Regular")
+                                 (setf (font-subfamily font) "Italic"))
+                             (draw-text window grackon font "Жебракують філософи при ґанку церкви в Гадячі, ще й шатро їхнє п’яне знаємо." 100 (+ 100 (* 2 (baseline-to-baseline window font))))
+                             (draw-text window grackon font "Press space to exit. Нажмите пробел для выхода." 100 (+ 100 (* 3 (baseline-to-baseline window font)))))
+                  (:button-press () t)
+                  (:key-press (code state) (char= #\Space (xlib:keycode-&gt;character *display* code state)))))
+           (progn
+             (xlib:free-gcontext grackon)
+             (xlib:destroy-window window)
+             (xlib:display-force-output *display*)))))
+</pre>
+   <p>Result is
+
+   <div class="block-image"><img src="example.png" alt="example.png"></div>
+
+<div class="node">
+<a name="Dictionary"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Concept-Index">Concept Index</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Examples">Examples</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
+
+</div>
+
+<!-- node-name,  next,  previous,  up -->
+<h2 class="chapter">3 Dictionary</h2>
+
+<p><a name="Package-xft"></a>
+
+<div class="defun">
+&mdash; Package: <b>xft</b><var><a name="index-xft-1"></a></var><br>
+<blockquote><p>Package contains <code>api</code> for TrueType text rendering using <code>clx</code>, XRender. Glyphs information is obtained by <code>zpb-ttf</code>. Font rasterization is made by <code>cl-vectors</code>. 
+</p></blockquote></div>
+
+   <p><a name="index-g_t_0040earmuffs_007bfont_002ddirs_007d-2"></a><a name="Variable-_002afont_002ddirs_002a"></a>
+
+<div class="defun">
+&mdash; Variable: <b>*font-dirs*</b><var><a name="index-g_t_0040earmuffs_007bfont_002ddirs_007d-3"></a></var><br>
+<blockquote><p>List of directories, which contain TrueType fonts. 
+</p></blockquote></div>
+
+   <p><a name="index-cache_002dfonts-4"></a><a name="Function-cache_002dfonts"></a>
+
+<div class="defun">
+&mdash; Function: <b>cache-fonts</b><var><a name="index-cache_002dfonts-5"></a></var><br>
+<blockquote><p>Caches fonts from <a href="#Variable-_002afont_002ddirs_002a"><code>*font-dirs*</code></a> directories. 
+</p></blockquote></div>
+
+   <p><a name="index-cache_002dfont_002dfile-6"></a><a name="Function-cache_002dfont_002dfile"></a>
+
+<div class="defun">
+&mdash; Function: <b>cache-font-file</b><var> pathname<a name="index-cache_002dfont_002dfile-7"></a></var><br>
+<blockquote><p>Caches font file. 
+</p></blockquote></div>
+
+   <p><a name="index-get_002dfont_002dfamilies-8"></a><a name="Function-get_002dfont_002dfamilies"></a>
+
+<div class="defun">
+&mdash; Function: <b>get-font-families</b><var><a name="index-get_002dfont_002dfamilies-9"></a></var><br>
+<blockquote><p>Returns cached font families. 
+</p></blockquote></div>
+
+   <p><a name="index-get_002dfont_002dsubfamilies-10"></a><a name="Function-get_002dfont_002dsubfamilies"></a>
+
+<div class="defun">
+&mdash; Function: <b>get-font-subfamilies</b><var> font-family<a name="index-get_002dfont_002dsubfamilies-11"></a></var><br>
+<blockquote><p>Returns font subfamilies for current <var>font-family</var>. For e.g. regular, italic, bold, etc. 
+</p></blockquote></div>
+
+   <p><a name="index-font-12"></a><a name="Class-font"></a>
+
+<div class="defun">
+&mdash; Class: <b>font</b><var><a name="index-font-13"></a></var><br>
+<blockquote><p>Class precedence list: <code>font, standard-object, t</code>
+
+        <p>Slots:
+          <ul>
+<li><code>family</code> &mdash; initarg: <code>:family<!-- /@w --></code>; reader: <code>clx-truetype:font-family<!-- /@w --></code>; writer: <code>(setf&nbsp;clx-truetype:font-family)<!-- /@w --></code>
+
+          <p>Font family. 
+<li><code>subfamily</code> &mdash; initarg: <code>:subfamily<!-- /@w --></code>; reader: <code>clx-truetype:font-subfamily<!-- /@w --></code>; writer: <code>(setf&nbsp;clx-truetype:font-subfamily)<!-- /@w --></code>
+
+          <p>Font subfamily. For e.g. regular, italic, bold, bold italib. 
+<li><code>size</code> &mdash; initarg: <code>:size<!-- /@w --></code>; reader: <code>clx-truetype:font-size<!-- /@w --></code>; writer: <code>(setf&nbsp;clx-truetype:font-size)<!-- /@w --></code>
+
+          <p>Font size in points. 
+<li><code>underline</code> &mdash; initarg: <code>:underline<!-- /@w --></code>; reader: <code>clx-truetype:font-underline<!-- /@w --></code>; writer: <code>(setf&nbsp;clx-truetype:font-underline)<!-- /@w --></code>
+
+          <p>Draw line under text string. 
+<li><code>strikethrough</code> &mdash; initarg: <code>:strikethrough<!-- /@w --></code>; reader: <code>clx-truetype:font-strikethrough<!-- /@w --></code>; writer: <code>(setf&nbsp;clx-truetype:font-strikethrough)<!-- /@w --></code>
+
+          <p>Draw strike through text string. 
+<li><code>overline</code> &mdash; initarg: <code>:overline<!-- /@w --></code>; reader: <code>clx-truetype:font-overline<!-- /@w --></code>; writer: <code>(setf&nbsp;clx-truetype:font-overline)<!-- /@w --></code>
+
+          <p>Draw line over text string. 
+<li><code>background</code> &mdash; initarg: <code>:background<!-- /@w --></code>; reader: <code>clx-truetype:font-background<!-- /@w --></code>; writer: <code>(setf&nbsp;clx-truetype:font-background)<!-- /@w --></code>
+
+          <p>Background color. 
+<li><code>foreground</code> &mdash; initarg: <code>:foreground<!-- /@w --></code>; reader: <code>clx-truetype::font-foreground<!-- /@w --></code>; writer: <code>(setf&nbsp;clx-truetype::font-foreground)<!-- /@w --></code>
+
+          <p>Foreground color. 
+<li><code>overwrite-gcontext</code> &mdash; initarg: <code>clx-truetype::overwrite-gcontext<!-- /@w --></code>; reader: <code>clx-truetype:font-overwrite-gcontext<!-- /@w --></code>; writer: <code>(setf&nbsp;clx-truetype:font-overwrite-gcontext)<!-- /@w --></code>
+
+          <p>Use font values for background and foreground colors. 
+<li><code>antialias</code> &mdash; initarg: <code>clx-truetype::antialias<!-- /@w --></code>; reader: <code>clx-truetype:font-antialias<!-- /@w --></code>; writer: <code>(setf&nbsp;clx-truetype:font-antialias)<!-- /@w --></code>
+
+          <p>Antialias text string. 
+<li><code>string-bboxes</code> &mdash; reader: <code>clx-truetype::font-string-bboxes<!-- /@w --></code>; writer: <code>(setf&nbsp;clx-truetype::font-string-bboxes)<!-- /@w --></code>
+
+          <p>Cache for bboxes
+<li><code>string-line-bboxes</code> &mdash; reader: <code>clx-truetype::font-string-line-bboxes<!-- /@w --></code>; writer: <code>(setf&nbsp;clx-truetype::font-string-line-bboxes)<!-- /@w --></code>
+
+          <p>Cache for bboxes
+</ul>
+
+        <p>Class for representing font information. 
+</p></blockquote></div>
+
+   <p><a name="index-font_002dequal-14"></a><a name="Generic_002dFunction-font_002dequal"></a>
+
+<div class="defun">
+&mdash; Generic Function: <b>font-equal</b><var> font1 font2<a name="index-font_002dequal-15"></a></var><br>
+<blockquote><p>Returns t if two font objects are equal, else returns nil. 
+</p></blockquote></div>
+
+   <p><a name="index-screen_002ddefault_002ddpi-16"></a><a name="Function-screen_002ddefault_002ddpi"></a>
+
+<div class="defun">
+&mdash; Function: <b>screen-default-dpi</b><var> screen<a name="index-screen_002ddefault_002ddpi-17"></a></var><br>
+<blockquote><p>Returns default dpi for <var>screen</var>. pixel width <code>*</code> 25.4/millimeters width
+</p></blockquote></div>
+
+   <p><a name="index-screen_002ddpi-18"></a><a name="Function-screen_002ddpi"></a>
+
+<div class="defun">
+&mdash; Function: <b>screen-dpi</b><var> screen<a name="index-screen_002ddpi-19"></a></var><br>
+<blockquote><p>Returns current dpi for <var>screen</var>. 
+</p></blockquote></div>
+
+   <p><a name="index-g_t_0040setf_007bscreen_002ddpi_007d-20"></a><a name="Function-_0028setf-screen_002ddpi_0029"></a>
+
+<div class="defun">
+&mdash; Function: <b>(setf screen-dpi)</b><var> value screen<a name="index-g_t_0040setf_007bscreen_002ddpi_007d-21"></a></var><br>
+<blockquote><p>Sets current dpi for <var>screen</var>. 
+</p></blockquote></div>
+
+   <p><a name="index-font_002dascent-22"></a><a name="Function-font_002dascent"></a>
+
+<div class="defun">
+&mdash; Function: <b>font-ascent</b><var> drawable font<a name="index-font_002dascent-23"></a></var><br>
+<blockquote><p>Returns ascent of <var>font</var>. <var>drawable</var> must be window, pixmap or screen. 
+</p></blockquote></div>
+
+   <p><a name="index-font_002ddescent-24"></a><a name="Function-font_002ddescent"></a>
+
+<div class="defun">
+&mdash; Function: <b>font-descent</b><var> drawable font<a name="index-font_002ddescent-25"></a></var><br>
+<blockquote><p>Returns descent of <var>font</var>. <var>drawable</var> must be window, pixmap or screen. 
+</p></blockquote></div>
+
+   <p><a name="index-font_002dline_002dgap-26"></a><a name="Function-font_002dline_002dgap"></a>
+
+<div class="defun">
+&mdash; Function: <b>font-line-gap</b><var> drawable font<a name="index-font_002dline_002dgap-27"></a></var><br>
+<blockquote><p>Returns line gap of <var>font</var>. <var>drawable</var> must be window, pixmap or screen. 
+</p></blockquote></div>
+
+   <p><a name="index-baseline_002dto_002dbaseline-28"></a><a name="Function-baseline_002dto_002dbaseline"></a>
+
+<div class="defun">
+&mdash; Function: <b>baseline-to-baseline</b><var> drawable font<a name="index-baseline_002dto_002dbaseline-29"></a></var><br>
+<blockquote><p>Returns distance between baselines of <var>font</var>. <var>drawable</var> must be window, pixmap or screen. ascent <code>-</code> descent <code>+</code> line gap
+</p></blockquote></div>
+
+   <p><a name="index-text_002dbounding_002dbox-30"></a><a name="Function-text_002dbounding_002dbox"></a>
+
+<div class="defun">
+&mdash; Function: <b>text-bounding-box</b><var> drawable font string &amp;key start end<a name="index-text_002dbounding_002dbox-31"></a></var><br>
+<blockquote><p>Returns text bounding box. <var>drawable</var> must be window, pixmap or screen. Text bounding box is only for contours. Bounding box for space (#x20) is zero. 
+</p></blockquote></div>
+
+   <p><a name="index-text_002dwidth-32"></a><a name="Function-text_002dwidth"></a>
+
+<div class="defun">
+&mdash; Function: <b>text-width</b><var> drawable font string &amp;key start end<a name="index-text_002dwidth-33"></a></var><br>
+<blockquote><p>Returns width of text bounding box. <var>drawable</var> must be window, pixmap or screen. 
+</p></blockquote></div>
+
+   <p><a name="index-text_002dheight-34"></a><a name="Function-text_002dheight"></a>
+
+<div class="defun">
+&mdash; Function: <b>text-height</b><var> drawable font string &amp;key start end<a name="index-text_002dheight-35"></a></var><br>
+<blockquote><p>Returns height of text bounding box. <var>drawable</var> must be window, pixmap or screen. 
+</p></blockquote></div>
+
+   <p><a name="index-text_002dline_002dbounding_002dbox-36"></a><a name="Function-text_002dline_002dbounding_002dbox"></a>
+
+<div class="defun">
+&mdash; Function: <b>text-line-bounding-box</b><var> drawable font string &amp;key start end<a name="index-text_002dline_002dbounding_002dbox-37"></a></var><br>
+<blockquote><p>Returns text line bounding box. <var>drawable</var> must be window, pixmap or screen. Text line bounding box is bigger than text bounding box. It's height is ascent <code>+</code> descent, width is sum of advance widths minus sum of kernings. 
+</p></blockquote></div>
+
+   <p><a name="index-text_002dline_002dwidth-38"></a><a name="Function-text_002dline_002dwidth"></a>
+
+<div class="defun">
+&mdash; Function: <b>text-line-width</b><var> drawable font string &amp;key start end<a name="index-text_002dline_002dwidth-39"></a></var><br>
+<blockquote><p>Returns width of text line bounding box. <var>drawable</var> must be window, pixmap or screen. It is sum of advance widths minus sum of kernings. 
+</p></blockquote></div>
+
+   <p><a name="index-text_002dline_002dheight-40"></a><a name="Function-text_002dline_002dheight"></a>
+
+<div class="defun">
+&mdash; Function: <b>text-line-height</b><var> drawable font string &amp;key start end<a name="index-text_002dline_002dheight-41"></a></var><br>
+<blockquote><p>Returns height of text line bounding box. <var>drawable</var> must be window, pixmap or screen. 
+</p></blockquote></div>
+
+   <p><a name="index-xmin-42"></a><a name="Function-xmin"></a>
+
+<div class="defun">
+&mdash; Function: <b>xmin</b><var> bounding-box<a name="index-xmin-43"></a></var><br>
+<blockquote><p>Returns left side x of <var>bounding-box</var>
+</p></blockquote></div>
+
+   <p><a name="index-ymin-44"></a><a name="Function-ymin"></a>
+
+<div class="defun">
+&mdash; Function: <b>ymin</b><var> bounding-box<a name="index-ymin-45"></a></var><br>
+<blockquote><p>Returns bottom side y of <var>bounding-box</var>
+</p></blockquote></div>
+
+   <p><a name="index-xmax-46"></a><a name="Function-xmax"></a>
+
+<div class="defun">
+&mdash; Function: <b>xmax</b><var> bounding-box<a name="index-xmax-47"></a></var><br>
+<blockquote><p>Returns right side x of <var>bounding-box</var>
+</p></blockquote></div>
+
+   <p><a name="index-ymax-48"></a><a name="Function-ymax"></a>
+
+<div class="defun">
+&mdash; Function: <b>ymax</b><var> bounding-box<a name="index-ymax-49"></a></var><br>
+<blockquote><p>Returns top side y of <var>bounding-box</var>
+</p></blockquote></div>
+
+   <p><a name="index-draw_002dtext-50"></a><a name="Function-draw_002dtext"></a>
+
+<div class="defun">
+&mdash; Function: <b>draw-text</b><var> drawable gcontext font string x y &amp;key start end draw-background-p<a name="index-draw_002dtext-51"></a></var><br>
+<blockquote><p>Draws text string using <var>font</var> on <var>drawable</var> with graphic context <var>gcontext</var>. <var>x</var>, <var>y</var> are the left point of base line. <var>start</var> and <var>end</var> are used for substring rendering. 
+If <var>gcontext</var> has background color, text bounding box will be filled with it. Text line bounding box is bigger than text bounding box. <var>drawable</var> must be window or pixmap. 
+</p></blockquote></div>
+
+   <p><a name="index-draw_002dtext_002dline-52"></a><a name="Function-draw_002dtext_002dline"></a>
+
+<div class="defun">
+&mdash; Function: <b>draw-text-line</b><var> drawable gcontext font string x y &amp;key start end draw-background-p<a name="index-draw_002dtext_002dline-53"></a></var><br>
+<blockquote><p>Draws text string using <var>font</var> on <var>drawable</var> with graphic context <var>gcontext</var>. <var>x</var>, <var>y</var> are the left point of base line. <var>start</var> and <var>end</var> are used for substring rendering. 
+If <var>gcontext</var> has background color, text line bounding box will be filled with it. Text line bounding box is bigger than text bounding box. <var>drawable</var> must be window or pixmap. 
+</p></blockquote></div>
+
+   <p><a name="index-font_002dlines_002dheight-54"></a><a name="Function-font_002dlines_002dheight"></a>
+
+<div class="defun">
+&mdash; Function: <b>font-lines-height</b><var> drawable font lines-count<a name="index-font_002dlines_002dheight-55"></a></var><br>
+<blockquote><p>Returns text lines height in pixels. For one line height is ascender+descender. For more than one line height is ascender+descender+linegap. 
+</p></blockquote></div>
+
+<div class="node">
+<a name="Concept-Index"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Function-Index">Function Index</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Dictionary">Dictionary</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
+
+</div>
+
+<!-- node-name,  next,  previous,  up -->
+<h2 class="appendix">Appendix A Concept Index</h2>
+
+<ul class="index-cp" compact>
+   </ul><div class="node">
+<a name="Function-Index"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-Index">Variable Index</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Concept-Index">Concept Index</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
+
+</div>
+
+<!-- node-name,  next,  previous,  up -->
+<h2 class="appendix">Appendix B Function Index</h2>
+
+
+
+<ul class="index-fn" compact>
+<li><a href="#index-g_t_0040setf_007bscreen_002ddpi_007d-20"><code>(setf screen-dpi)</code></a>: <a href="#Dictionary">Dictionary</a></li>
+<li><a href="#index-baseline_002dto_002dbaseline-28"><code>baseline-to-baseline</code></a>: <a href="#Dictionary">Dictionary</a></li>
+<li><a href="#index-cache_002dfont_002dfile-6"><code>cache-font-file</code></a>: <a href="#Dictionary">Dictionary</a></li>
+<li><a href="#index-cache_002dfonts-4"><code>cache-fonts</code></a>: <a href="#Dictionary">Dictionary</a></li>
+<li><a href="#index-draw_002dtext-50"><code>draw-text</code></a>: <a href="#Dictionary">Dictionary</a></li>
+<li><a href="#index-draw_002dtext_002dline-52"><code>draw-text-line</code></a>: <a href="#Dictionary">Dictionary</a></li>
+<li><a href="#index-font_002dascent-22"><code>font-ascent</code></a>: <a href="#Dictionary">Dictionary</a></li>
+<li><a href="#index-font_002ddescent-24"><code>font-descent</code></a>: <a href="#Dictionary">Dictionary</a></li>
+<li><a href="#index-font_002dequal-14"><code>font-equal</code></a>: <a href="#Dictionary">Dictionary</a></li>
+<li><a href="#index-font_002dline_002dgap-26"><code>font-line-gap</code></a>: <a href="#Dictionary">Dictionary</a></li>
+<li><a href="#index-font_002dlines_002dheight-54"><code>font-lines-height</code></a>: <a href="#Dictionary">Dictionary</a></li>
+<li><a href="#index-get_002dfont_002dfamilies-8"><code>get-font-families</code></a>: <a href="#Dictionary">Dictionary</a></li>
+<li><a href="#index-get_002dfont_002dsubfamilies-10"><code>get-font-subfamilies</code></a>: <a href="#Dictionary">Dictionary</a></li>
+<li><a href="#index-screen_002ddefault_002ddpi-16"><code>screen-default-dpi</code></a>: <a href="#Dictionary">Dictionary</a></li>
+<li><a href="#index-screen_002ddpi-18"><code>screen-dpi</code></a>: <a href="#Dictionary">Dictionary</a></li>
+<li><a href="#index-text_002dbounding_002dbox-30"><code>text-bounding-box</code></a>: <a href="#Dictionary">Dictionary</a></li>
+<li><a href="#index-text_002dheight-34"><code>text-height</code></a>: <a href="#Dictionary">Dictionary</a></li>
+<li><a href="#index-text_002dline_002dbounding_002dbox-36"><code>text-line-bounding-box</code></a>: <a href="#Dictionary">Dictionary</a></li>
+<li><a href="#index-text_002dline_002dheight-40"><code>text-line-height</code></a>: <a href="#Dictionary">Dictionary</a></li>
+<li><a href="#index-text_002dline_002dwidth-38"><code>text-line-width</code></a>: <a href="#Dictionary">Dictionary</a></li>
+<li><a href="#index-text_002dwidth-32"><code>text-width</code></a>: <a href="#Dictionary">Dictionary</a></li>
+<li><a href="#index-xmax-46"><code>xmax</code></a>: <a href="#Dictionary">Dictionary</a></li>
+<li><a href="#index-xmin-42"><code>xmin</code></a>: <a href="#Dictionary">Dictionary</a></li>
+<li><a href="#index-ymax-48"><code>ymax</code></a>: <a href="#Dictionary">Dictionary</a></li>
+<li><a href="#index-ymin-44"><code>ymin</code></a>: <a href="#Dictionary">Dictionary</a></li>
+   </ul><div class="node">
+<a name="Variable-Index"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Type-Index">Type Index</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Function-Index">Function Index</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
+
+</div>
+
+<!-- node-name,  next,  previous,  up -->
+<h2 class="appendix">Appendix C Variable Index</h2>
+
+
+
+<ul class="index-vr" compact>
+<li><a href="#index-g_t_0040earmuffs_007bfont_002ddirs_007d-2"><code>*font-dirs*</code></a>: <a href="#Dictionary">Dictionary</a></li>
+<li><a href="#index-xft-1"><code>xft</code></a>: <a href="#Dictionary">Dictionary</a></li>
+   </ul><div class="node">
+<a name="Type-Index"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Colophon">Colophon</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-Index">Variable Index</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
+
+</div>
+
+<!-- node-name,  next,  previous,  up -->
+<h2 class="appendix">Appendix D Type Index</h2>
+
+
+
+<ul class="index-tp" compact>
+<li><a href="#index-font-12"><code>font</code></a>: <a href="#Dictionary">Dictionary</a></li>
+   </ul><div class="node">
+<a name="Colophon"></a>
+<p><hr>
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Type-Index">Type Index</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
+
+</div>
+
+<!-- node-name,  next,  previous,  up -->
+<h2 class="unnumbered">Colophon</h2>
+
+<p>This manual is maintained in Texinfo, and automatically translated
+into other forms (e.g. HTML or pdf). If you're <em>reading</em> this
+manual in one of these non-Texinfo translated forms, that's fine, but
+if you want to <em>modify</em> this manual, you are strongly advised to
+seek out a Texinfo version and modify that instead of modifying a
+translated version.
+
+</body></html>
+
+<!--
+
+Local Variables:
+coding: utf-8
+End:
+
+-->

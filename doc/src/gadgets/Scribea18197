@@ -1,0 +1,5 @@
+@Comment{ERRLOG of test.mss by Scribe 7(1700) on 12 August 1992 at 20:56}
+
+Error in LIBRARYFILE(GARNET) command found while reading setup commands.
+test.mss, line 4:  @LibraryFile(Garnet)
+Database entry "GARNET" missing for device postscript.

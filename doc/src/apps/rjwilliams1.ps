@@ -1,0 +1,1259 @@
+%!PS-Adobe-2.0 EPSF 2.0
+%%Title: Layout Tool
+%%Creator: Make-PS-File -- Garnet Version 2.1
+%%CreationDate: Nov 25, 1992, 4:12 PM
+%%For: R J Williams <rodw@cbl.leeds.ac.uk>
+%%This file uses real color
+%%DocumentFonts: (atend)
+%%BoundingBox: 72 167 540 624
+%%Pages: 1
+%%EndComments
+
+
+/AdjustLineDict 20 dict def
+/AdjustLine { % x1 y1 x2 y2 width => x1 y1 x2 y2
+  AdjustLineDict begin
+    /width exch cvi def
+    /hw width 2 div def
+    /oddwidth? width 1 and 1 eq def
+    /y2 exch def /x2 exch def /y1 exch def /x1 exch def
+    /dx x2 x1 sub def /dy y2 y1 sub def
+    dy 0 eq {
+      dx 0 eq {
+	% point
+	oddwidth? {
+	  /x1 x1 .5 add def /y1 y1 .5 sub def
+	  /x2 x2 .5 add def /y2 y2 .5 sub def
+	} if
+      } {
+	% horizontal
+	oddwidth? {
+	  /y1 y1 .5 sub def
+	  /y2 y2 .5 sub def
+	} if
+      } ifelse
+    } {
+      dx 0 eq {
+	% vertical
+	oddwidth? {
+	  /x1 x1 .5 add def
+	  /x2 x2 .5 add def
+	} if
+      } {
+	% diagonal
+	oddwidth? {
+	  /x1 x1 .5 add def /y1 y1 .5 sub def
+	  /x2 x2 .5 add def /y2 y2 .5 sub def
+	} if
+      } ifelse
+    } ifelse
+    x1 y1 x2 y2
+  end
+} def
+
+/DrawLineDict 20 dict def
+/DrawLine { % line-color cap join dash thickness x2 y2 x1 y1 => -
+    gsave DrawLineDict begin
+	4 index AdjustLine
+	moveto lineto
+	StrokeShape
+    end grestore
+} def
+
+/FillPattern { % fgR fgG fgB [bgR bgG bgB] opaque? top font => -
+  50 dict begin gsave
+    /font exch def
+    /top exch def
+    /opaque? exch def
+    /w font /ImageWidth get def
+    /h font /ImageHeight get def
+    font [w 0 0 h 0 0] makefont setfont
+    pathbbox
+    /y1 exch def /x1 exch def
+    /y0 exch def /x0 exch def
+    clip
+    opaque? {
+      gsave
+	setrgbcolor
+	fill
+      grestore
+    } if
+    newpath
+    setrgbcolor
+    /y0 y0 top sub h div floor h mul top add cvi def
+    /x0 x0 w div floor w mul cvi def
+    x0 y0 translate
+    /W x1 x0 sub w div ceiling cvi 1 add def
+    /H y1 y0 sub h div ceiling cvi def
+    /s W string def
+    H {
+      0 0 moveto
+      s show
+      0 h translate
+    } repeat
+  grestore end
+  newpath
+} def
+
+
+/DefImage { % image-name font-name w h string => -
+  20 dict begin
+    /ImageString exch def /ImageHeight exch def /ImageWidth exch def
+    /FontName exch def
+    /ImageName exch def
+    /FontType 3 def
+    /FontMatrix [1 0 0 1 0 0] def
+    /FontBBox [0 0 1 1] def
+    /Encoding [
+      /image 255 { /.notdef } repeat
+    ] def
+    /BuildChar { % font char => -
+      pop begin
+        1 0
+	0 0 1 1 setcachedevice
+	gsave
+	  ImageWidth ImageHeight false
+	  [ ImageWidth 0 0 ImageHeight 0 0 ]
+          {ImageString} imagemask
+	grestore
+      end
+    } def
+    ImageName currentdict definefont
+    FontName exch
+    ImageName ImageString
+  end
+  def def
+} def
+
+
+/BitmapDict 20 dict def
+/DrawBitmap { % left top width height pattern transparent-p color => -
+    BitmapDict begin
+	/color exch def /transparent-p exch def
+	/pattern exch def  /height exch def  /width exch def
+	gsave
+	    translate
+	    width height scale
+	    color length 3 eq {
+	        color aload pop setrgbcolor
+	    } {
+	        .5 setgray % fudge pattern fills
+	    } ifelse
+	    transparent-p {
+		% The case where the background is not drawn
+		width height false
+		[ width 0 0 height 0 height ]
+		{pattern} imagemask
+	    } {
+		% The case where the background is drawn
+		width height 1
+		[ width 0 0 height 0 height ]
+		{pattern} image
+	    } ifelse
+	grestore
+    end
+} def
+
+/PolylineDict 20 dict def
+
+/DrawPolyline { % x1 y1 {{x y ...} ...} line-color
+		% join cap dash thickness fill-color => -
+    gsave PolylineDict begin
+	/fill-color exch def  /thickness exch def  /dash-pattern exch def
+	/line-join exch def  /line-cap exch def  /line-color exch def
+	3 copy
+	newpath
+	3 1 roll moveto
+	{ aload length 2 idiv { lineto } repeat } forall
+	fill-color FillShape
+
+	newpath
+	.5 -.5 translate
+
+	2 index 2 index moveto
+	{ aload length 2 idiv { lineto } repeat } forall
+
+	currentpoint
+	3 -1 roll sub abs .01 lt
+	3 1 roll sub abs .01 lt and {
+	  0 0 rlineto closepath
+	} if
+
+	line-color line-cap line-join dash-pattern
+	thickness
+	dup -1 ne { .5 add } if % fudge outline width thicker
+	StrokeShape
+
+    end grestore
+} def
+
+/TextDict 19 dict def
+/DrawText { % left top base-y opal-width height fill-p
+	    % fore-color back-color string size font-name => -
+    TextDict begin
+	gsave
+	    findfont exch scalefont setfont
+	    /s exch def
+	    /back-color exch def /fore-color exch def /fill-p exch def
+	    /height exch def  /opal-width exch def
+	    /base-y exch def  /top exch def
+	    /left exch 1 sub def % XXX: I don't know why!
+
+	    % Calculate distance to add between each character, based on the 
+	    % width expected by Opal, the width expected by postscript, and 
+	    % the number of characters to distribute the change over.
+	    /x-dist opal-width s stringwidth pop sub s length div def
+
+	    % Draw background of text if appropriate
+	    fill-p {
+		gsave
+		    newpath
+		    left top opal-width height RectanglePath
+		    back-color FillShape
+		grestore
+	    } if
+
+	    % Draw text in the appropriate color
+	    newpath
+	    left base-y moveto
+	    fore-color length 3 ne {
+		0 setgray
+	    } {
+		fore-color aload pop setrgbcolor
+	    } ifelse
+	    x-dist 0 s ashow
+	grestore
+    end
+} def
+
+/RectanglePath { % left top width height => -
+    /h exch def  /w exch def
+    moveto			% Go to the left,top corner
+    w 0 rlineto			% top side
+    0 h neg rlineto		% right side
+    w neg 0 rlineto		% bottom side
+    closepath			% left side
+} def
+
+/RectangleDict 21 dict def
+/DrawRectangle { % left top width height line-color
+		 % cap join dash thickness fill-color => -
+    RectangleDict begin
+	/fill-color exch def  /thickness exch def /dash-pattern exch def
+	/line-join exch def  /line-cap exch def /line-color exch def
+	/height exch def /width exch def  /top exch def  /left exch def
+	% Draw filling
+	newpath
+	left thickness add top thickness sub
+        width thickness 2 mul sub height thickness 2 mul sub
+	RectanglePath
+	fill-color FillShape
+	% Draw border
+	newpath
+	left thickness 2 div add  top thickness 2 div sub
+	width thickness sub  height thickness sub
+	RectanglePath
+	line-color line-cap line-join dash-pattern thickness StrokeShape
+    end
+} def
+
+/DrawGenericWindowFrame { % label left top w h
+			  % leftmargin topmargin rightmargin bottommargin => -
+  30 dict begin
+
+  { % setup
+    /bottommargin exch def /rightmargin exch def
+    /topmargin exch def /leftmargin exch def
+    /h exch def /w exch def /y exch h sub def /x exch def
+    /label exch def
+    /pointsize
+      topmargin 1 sub
+      dup 1 lt { pop 1 } if
+      dup 12 gt { 12 sub 3 div 12 add } if
+    def
+
+    /bottom y def /top y h add def
+    /left x def /right  x w add def
+    1 setlinewidth
+    0 setlinecap
+  } exec
+
+  { % background
+    newpath
+    left leftmargin sub bottom bottommargin sub moveto
+    left leftmargin sub top topmargin add lineto
+    right rightmargin add top topmargin add lineto
+    right rightmargin add bottom bottommargin sub lineto
+    closepath
+    0 setgray fill
+
+    left bottom moveto
+    left top lineto
+    right top lineto
+    right bottom lineto
+    closepath
+    1 setgray fill
+  } exec
+
+  topmargin 8 ge {
+    /Helvetica-Bold findfont pointsize scalefont setfont
+    label stringwidth pop
+    left right add 2 div
+    exch 2 div sub
+    top topmargin 2 div add pointsize 2 div sub 2 add moveto
+    1 setgray
+    label show
+  } if
+
+  end
+} def
+
+/ClipDict 2 dict def
+/ClipToRectangle { % left top width height => -
+    ClipDict begin
+	/height exch def  /width exch def
+        newpath
+	    moveto			% Go to the left,top corner
+	    width 0 rlineto		% top side
+	    0 height neg rlineto	% right side
+	    width neg 0 rlineto		% bottom side
+	    closepath			% left side
+	gsave 1 setgray fill grestore
+	clip newpath
+    end
+} def
+
+/FillShape { % [halftone] | [r g b] | null => -
+    gsave
+        dup null eq { pop } {
+	  aload length 3 eq { setrgbcolor fill } {
+	      FillPattern
+	  } ifelse
+        } ifelse
+    grestore
+    newpath
+} def
+
+/StrokeShape { % line-color cap join dash thickness => -
+    % If no line is desired, pass -1 for line-thickness
+    dup 0 ge 5 index null ne and {
+	% if line-thickness >= 0, then draw the outline
+	gsave
+	    setlinewidth 0 setdash setlinejoin setlinecap
+	    aload length 3 eq { setrgbcolor stroke } {
+		strokepath FillPattern
+	    } ifelse
+	grestore
+    } {
+	pop pop pop pop pop
+    } ifelse
+    newpath
+} def
+
+/image-18 /image-18-font 30 30 <
+FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF
+FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF
+FFFFB19F FFFFD6BF FFFFE73F FFFFF39F FFFFFFFF FFFFFFFF FFFFC61F FFFFDAFF
+FFFF9CFF FFFFCE7F FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF>
+DefImage
+
+/image-17 /image-17-font 30 30 <
+FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF FFFF9FFF
+FFFF9FFF FFFF9FFF FFFF9FFF FFFF6FFF FFFEF7FF FFFDDBFF FFFF7BFF FFFCD7FF
+FFFF7BFF FFFED7FF FFFF2FFF FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF
+FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF>
+DefImage
+
+/image-16 /image-16-font 30 30 <
+FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF
+FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF FFFF03FF FFFF5BFF FFFF5BFF
+FFFF7BFF FFFF3BFF FFFF3BFF FFFF7BFF FFFF6BFF FFFF7BFF FFFF5BFF FFFF5BFF
+FFFF7BFF FFFE01FF FFFEFDFF FFFE01FF FFFEB5FF FFFFFFFF>
+DefImage
+
+/image-15 /image-15-font 30 30 <
+FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF
+FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF
+FFFFFFFF FFFFFFFF FFFFFFFF FE7BFFFF EDB7FFFF FE7BFFFF FFFFFFFF F3CFFFFF
+EDB7FFFF F3CFFFFF FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF>
+DefImage
+
+/image-14 /image-14-font 36 32 <
+FFFFFFFFFF FFFFFFFFFF FFFFFFFFFF FF0658EFFF FF7D9DD7FF FF7DDDDFFF FF7DDDDFFF
+FF0D9DDFFF FF7E598FFF FF7FDFDFFF FF7FDDDFFF FF07DFFFFF FFFFFFFFFF FFFFFFFFFF
+FFFFFA00FF FFFFEEFEFF FFFFBEFEFF FFFEFE82FF FFFBFEFEFF FE0FFE82FF FCE7FEFEFF
+F9F3FE9EFF F3FBFEFEFF F7FBFE86FF F3F3FEFEFF FBE7FE8EFF F9CFFEFEFF FC1AAA00FF
+FFFFFFFFFF FFFFFFFFFF FFFFFFFFFF FFFFFFFFFF>
+DefImage
+
+/image-13 /image-13-font 36 32 <
+FFFFFFFFFF FFFFFFFFFF FFFEFFFFFF FFFEFF8FFF FFFEFF2FFF FFFEFE6FFF F7FEFCCFFF
+F7FEFC99FF FBFEFC30FF FBFEFE46FF FDFEFC0CFF FDFE8041FF FEFE38E3FF FEFCE5FFFF
+FF728DFFFF FF4E5BFFFF FF38B7FFFF FCA66FFFFF F39EDFFFFF F65DBFFFFF F1EB7FFFFF
+F7E6FFFFFF FFECFFFFFF FFDAFFFFFF FFB2FFFFFF FF6AFFFFFF FE1CFFFFFF FFFC7FFFFF
+FFFD7FFFFF FFFC7FFFFF FFFFFFFFFF FFFFFFFFFF>
+DefImage
+
+/image-12 /image-12-font 36 32 <
+FFFFFFFFFF FFFFFFFFFF FFFFFFFFFF FE7FFFE7FF FF3FFFE7FF FE9FFFA7FF FFCFFFE7FF
+FEE7FEE7FF FFF3FFE7FF FEF9FBE7FF FFFCFFE7FF FEFE6FE7FF FFFF3FE7FF FEFF9FE7FF
+FFFFCFE7FF FEFEE7E7FF FFFFF3E7FF FEFBF9E7FF FFFFFCE7FF FEEFFE67FF FFFFFF27FF
+FEBFFF87FF FFFFFFC7FF FABFEF81FF FFFFF781FF FBB80399FF FFFFF799FF FABFEF81FF
+FFFFFF81FF FFFFFFFFFF FFFFFFFFFF FFFFFFFFFF>
+DefImage
+
+/image-11 /image-11-font 36 32 <
+FFFFFFFFFF FFFFFFFFFF FFFFFFFFFF FFFFFFFFFF FFFFFFFFFF FFFFFFFFFF EAAAAAAAFF
+FFFFFFFFFF FFFFFFFFFF FFFFBFFFFF E7FFBFFE7F F3FFBFFCFF F9FFBFF9FF FCFFBFF3FF
+FE7FBFE7FF FF3EAFCFFF FF9F1F9FFF FFCFBF3FFF FFE7FE7FFF FFF3FCFFFF FFF9F9FFFF
+FFFC03FFFF FFFE07FFFF FFFE67FFFF FFFE67FFFF FFFE07FFFF FFFE07FFFF FFFFFFFFFF
+FFFFFFFFFF FFFFFFFFFF FFFFFFFFFF FFFFFFFFFF>
+DefImage
+
+/image-10 /image-10-font 36 32 <
+FFFFFFFFFF FFFFFFFFFF FFFFFFFFFF C38C63DC7F ED76DDABBF ED7EDFBBFF ED06C1B83F
+ED76DDBBBF ED8EE3BC7F EDFEFF1FFF C3FCFFBFFF FFFFFFFFFF FFFFFFFFFF FFDFFEFFFF
+FFC3F07FFF FFF8077FFF FFFE1FFFFF FFF1E3FFFF FFEF3DFFFF FFDE1E7FFF FFDE1EFFFF
+FFFE1FFFFF FFFC0FFFFF FFF807FFFF FFF333FFFF FFF333FFFF FFF807FFFF FFFC0FFFFF
+FFFE1FFFFF FFFFFFFFFF FFFFFFFFFF FFFFFFFFFF>
+DefImage
+
+/image-9 /image-9-font 36 32 <
+FFFFFFFFFF FFFFFFFFFF FFFFFFFFFF FDDC7BC7FF FDDBB5BBFF FDDBB5BFFF FD5BAE83FF
+FD5BAEBBFF FC9C6EC7FF FC9FFFFFFF FDDFFFFFFF FFFFFFFFFF FFFFFFFFFF FFFFBFFFFF
+FFFF1FFFFF FFFEAFFFFF FFFFBFFFFF FFFFBFFFFF FFFFBFFFFF FFFFBFFFFF FFFFBFFFFF
+FFFFFFFFFF FFFFFFFFFF FFEAABFFFF FFFFFFFFFF FFF7FDFFFF FFFFFFFFFF FFFBFEFFFF
+FFFFFFFFFF FFFD557FFF FFFFFFFFFF FFFFFFFFFF>
+DefImage
+
+/image-8 /image-8-font 36 32 <
+FFFFFFFFFF FFFFFFFFFF FFFFFFFFFF FDDC7BC7FF FDDBB5BBFF FDDBB5BFFF FD5BAE83FF
+FD5BAEBBFF FC9C6EC7FF FC9FFFFFFF FDDFFFFFFF FFFFFFFFFF FFFFFFFFFF FFEAABFFFF
+FFFFFFFFFF FFF7FDFFFF FFFFFFFFFF FFFBFEFFFF FFFFFFFFFF FFFD557FFF FFFFFFFFFF
+FFFFFFFFFF FFFFDFFFFF FFFFDFFFFF FFFFDFFFFF FFFFDFFFFF FFFFDFFFFF FFFF57FFFF
+FFFF8FFFFF FFFFDFFFFF FFFFFFFFFF FFFFFFFFFF>
+DefImage
+
+/image-7 /image-7-font 36 32 <
+FFFFFFFFFF FFFFFFFFFF FFFFFFFFFF FDDC7BC7FF FDDBB5BBFF FDDBB5BFFF FD5BAE83FF
+FD5BAEBBFF FC9C6EC7FF FC9FFFFFFF FDDFFFFFFF FFFFFFFFFF FFFFFFFFFF FFFFFFE3FF
+FEBFFFC1FF FFDFFF99FF FBFFFF39FF FFDFFE79FF F7FFEE7CFF FFEFF67CFF F7FC027CFF
+FFEFF67CFF F7FFEE7CFF FFEFFE79FF F7DFFE79FF FFFFFE79FF F7DFFF39FF FBFFFF83FF
+FEBFFFC7FF FFFFFFFFFF FFFFFFFFFF FFFFFFFFFF>
+DefImage
+
+/image-6 /image-6-font 36 32 <
+FFFFFFFFFF FFFFFFFFFF FFFFFFFFFF F5555555FF FFFFFFFFFF F7FFFFFDFF FF00F77FFF
+F77EF7BDFF FF7EF7DFFF F77EF7EDFF FF00F7EFFF F7FFF7EDFF FFFFF7EFFF F7FF80EDFF
+FFC3FFDFFF F7BDFFBDFF FF7EFF7FFF F7FEFFFDFF FFFDFFFFFF F7C3F8FDFF FFBFE73FFF
+F77FDFDDFF FF7EDFDFFF F7BDDFDDFF FFC3E73FFF F7FFF8FDFF FFFFFFFFFF F5555555FF
+FFFFFFFFFF FFFFFFFFFF FFFFFFFFFF FFFFFFFFFF>
+DefImage
+
+/image-5 /image-5-font 36 32 <
+FFFFFFFFFF FFFFFFFFFF E3FFFFF8FF E0000000FF E3FFFFF8FF F7FFFFFDFF F700F77DFF
+F77EF7BDFF F77EF7DDFF F77EF7EDFF F700F7EDFF F7FFF7EDFF F7FFF7EDFF F7FF80EDFF
+F7C3FFDDFF F7BDFFBDFF F77EFF7DFF F7FEFFFDFF F7FDFFFDFF F7C3F8FDFF F7BFE73DFF
+F77FDFDDFF F77EDFDDFF F7BDDFDDFF F7C3E73DFF F7FFF8FDFF E3FFFFF8FF E0000000FF
+E3FFFFF8FF FFFFFFFFFF FFFFFFFFFF FFFFFFFFFF>
+DefImage
+
+/image-4 /image-4-font 36 32 <
+FFFFFFFFFF FFFFFFFFFF FFFFFFFFFF FFFFFFFFFF FFF801FFFF FFFBFDFFFF FFFBFDFFFF
+FFFBFDFFFF FFFBFDFFFF FFFBFDFFFF FFFBFDFFFF FFFBFDFFFF FFFBFDFFFF FFFBFDFFFF
+FFFBFDFFFF FFFBFDFFFF FFFBFDFFFF FFFBFDFFFF FFFBFDFFFF FC03FC03FF FDFFFFFBFF
+FDFFFFFBFF FDFFFFFBFF FDFFFFFBFF FDFFFFFBFF FDFFFFFBFF FDFFFFFBFF FC000003FF
+FFFFFFFFFF FFFFFFFFFF FFFFFFFFFF FFFFFFFFFF>
+DefImage
+
+/image-3 /image-3-font 36 32 <
+FFFFFFFFFF FFFFFFFFFF FFFFFFFFFF FFFFFFFFFF FF0003FFFF FF7FFDFFFF FF7FFEFFFF
+FF7FFF7FFF FF7FFFBFFF FF7FFFDFFF FF7FFFEFFF FF7FFFEFFF FF7FFFEFFF FF7FFFEFFF
+FF7FFFEFFF FF7FFFEFFF FF7FFFEFFF FF7FFFEFFF FF7FFFEFFF FF7FFFEFFF FF7FFFEFFF
+FF7FFFEFFF FF7FFFDFFF FF7FFFBFFF FF7FFF7FFF FF7FFEFFFF FF7FFDFFFF FF0003FFFF
+FFFFFFFFFF FFFFFFFFFF FFFFFFFFFF FFFFFFFFFF>
+DefImage
+
+/image-2 /image-2-font 36 32 <
+FFFFFFFFFF FFFFFFFFFF FFDFFFBFFF FFDFFFBFFF FFFFFFFFFF FFFFFFFFFF FFDFFFBFFF
+FFC6263FFF FFFFBFFFFF FFFFBFFFFF FFFFBFFFFF FFFFBFFFFF FFFFBFFFFF FFFFBFFFFF
+FFFFBFFFFF FFFFBFFFFF FFFFBFFFFF FFFFBFFFFF FFFFBFFFFF FFFFBFFFFF FFFFBFFFFF
+FFFFBFFFFF FFFFBFFFFF FFFFBFFFFF FFC6463FFF FFDFFFBFFF FFFFFFFFFF FFFFFFFFFF
+FFDFFFBFFF FFDFFFBFFF FFFFFFFFFF FFFFFFFFFF>
+DefImage
+
+/image-1 /image-1-font 36 32 <
+FFFFFFFFFF FFFFFFFFFF FFFFFFFFFF FFFFFFFFFF FFFFFFFFFF FFFFFFFFFF FFFFFFFFFF
+FFFFFFFFFF FFC0003FFF FFDFFFBFFF FFDFFFBFFF FFDFFFBFFF FFDFFFBFFF FFDFFFBFFF
+FFDFFFBFFF FFDFFFBFFF FFDFFFBFFF FFDFFFBFFF FFDFFFBFFF FFDFFFBFFF FFDFFFBFFF
+FFDFFFBFFF FFDFFFBFFF FFC0003FFF FFFFFFFFFF FFFFFFFFFF FFFFFFFFFF FFFFFFFFFF
+FFFFFFFFFF FFFFFFFFFF FFFFFFFFFF FFFFFFFFFF>
+DefImage
+
+
+%%EndProlog
+%%Page: 1 1
+
+gsave
+72 72 translate
+0.5391705069124424 0.5391705069124424 scale
+0 1202 translate
+
+%
+% Begin new window
+%
+0 -178 translate
+gsave
+0 0 868 847 ClipToRectangle
+-177 9 translate
+gsave
+0 0 868 847 [0 0 0] 0 0 [] -1 [1.00 1.00 1.00] DrawRectangle
+grestore
+
+gsave
+
+%
+% Begin new window
+%
+179 -11 translate
+gsave
+() 0 0 864 843 2 2 2 2 DrawGenericWindowFrame
+0 0 864 843 ClipToRectangle
+gsave
+14 -12 37 24 [0.00 0.00 0.00] 0 0 [] 1 [0.00 0.00 0.00] DrawRectangle
+9 -7 37 24 [0.00 0.00 0.00] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+12 -10 31 18 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+14 -12 -23 27 14 false [0.00 0.00 0.00] [1.00 1.00 1.00] (Quit) 12 /Courier DrawText
+61 -12 80 24 [0.00 0.00 0.00] 0 0 [] 1 [0.00 0.00 0.00] DrawRectangle
+56 -7 80 24 [0.00 0.00 0.00] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+59 -10 74 18 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+61 -12 -23 70 14 false [0.00 0.00 0.00] [1.00 1.00 1.00] (Delete All) 12 /Courier DrawText
+151 -12 48 24 [0.00 0.00 0.00] 0 0 [] 1 [0.00 0.00 0.00] DrawRectangle
+146 -7 48 24 [0.00 0.00 0.00] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+149 -10 42 18 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+151 -12 -23 38 14 false [0.00 0.00 0.00] [1.00 1.00 1.00] (Load..) 12 /Courier DrawText
+209 -12 47 24 [0.00 0.00 0.00] 0 0 [] 1 [0.00 0.00 0.00] DrawRectangle
+204 -7 47 24 [0.00 0.00 0.00] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+207 -10 41 18 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+209 -12 -23 37 14 false [0.00 0.00 0.00] [1.00 1.00 1.00] (Save..) 12 /Courier DrawText
+266 -12 47 24 [0.00 0.00 0.00] 0 0 [] 1 [0.00 0.00 0.00] DrawRectangle
+261 -7 47 24 [0.00 0.00 0.00] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+264 -10 41 18 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+266 -12 -23 37 14 false [0.00 0.00 0.00] [1.00 1.00 1.00] (Zoom..) 12 /Courier DrawText
+323 -12 125 24 [0.00 0.00 0.00] 0 0 [] 1 [0.00 0.00 0.00] DrawRectangle
+318 -7 125 24 [0.00 0.00 0.00] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+321 -10 119 18 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+323 -12 -23 115 14 false [0.00 0.00 0.00] [1.00 1.00 1.00] (Filter Features..) 12 /Courier DrawText
+458 -12 90 24 [0.00 0.00 0.00] 0 0 [] 1 [0.00 0.00 0.00] DrawRectangle
+453 -7 90 24 [0.00 0.00 0.00] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+456 -10 84 18 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+458 -12 -23 80 14 false [0.00 0.00 0.00] [1.00 1.00 1.00] (View Rooms..) 12 /Courier DrawText
+558 -12 97 24 [0.00 0.00 0.00] 0 0 [] 1 [0.00 0.00 0.00] DrawRectangle
+553 -7 97 24 [0.00 0.00 0.00] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+556 -10 91 18 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+558 -12 -23 87 14 false [0.00 0.00 0.00] [1.00 1.00 1.00] (Name Spaces..) 12 /Courier DrawText
+665 -12 76 24 [0.00 0.00 0.00] 0 0 [] 1 [0.00 0.00 0.00] DrawRectangle
+660 -7 76 24 [0.00 0.00 0.00] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+663 -10 70 18 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+665 -12 -23 66 14 false [0.00 0.00 0.00] [1.00 1.00 1.00] (Map Game..) 12 /Courier DrawText
+751 -12 45 24 [0.00 0.00 0.00] 0 0 [] 1 [0.00 0.00 0.00] DrawRectangle
+746 -7 45 24 [0.00 0.00 0.00] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+749 -10 39 18 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+751 -12 -23 35 14 false [0.00 0.00 0.00] [1.00 1.00 1.00] (Print) 12 /Courier DrawText
+61 -102 20 653 [0.00 0.00 0.00] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+61 -62 20 20 [0.00 0.00 0.00] 0 0 [] 1 null DrawRectangle
+71 -65 {
+  { 71 -65 78 -72 74 -72 74 -79 68 -79 68 -72 64 -72 }
+} [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawPolyline
+61 -775 20 20 [0.00 0.00 0.00] 0 0 [] 1 null DrawRectangle
+71 -792 {
+  { 71 -792 78 -785 74 -785 74 -778 68 -778 68 -785 64 -785 }
+} [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawPolyline
+61 -82 20 20 [0.00 0.00 0.00] 0 0 [] 1 null DrawRectangle
+71 -86 {
+  { 71 -86 78 -93 64 -93 }
+} [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawPolyline
+71 -90 {
+  { 71 -90 78 -97 64 -97 }
+} [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawPolyline
+61 -755 20 20 [0.00 0.00 0.00] 0 0 [] 1 null DrawRectangle
+71 -771 {
+  { 71 -771 78 -764 64 -764 }
+} [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawPolyline
+71 -767 {
+  { 71 -767 78 -760 64 -760 }
+} [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawPolyline
+62 -114 18 18 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+121 -42 696 20 [0.00 0.00 0.00] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+81 -42 20 20 [0.00 0.00 0.00] 0 0 [] 1 null DrawRectangle
+84 -52 {
+  { 84 -52 91 -45 91 -49 98 -49 98 -55 91 -55 91 -59 }
+} [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawPolyline
+837 -42 20 20 [0.00 0.00 0.00] 0 0 [] 1 null DrawRectangle
+854 -52 {
+  { 854 -52 847 -45 847 -49 840 -49 840 -55 847 -55 847 -59 }
+} [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawPolyline
+101 -42 20 20 [0.00 0.00 0.00] 0 0 [] 1 null DrawRectangle
+105 -52 {
+  { 105 -52 112 -59 112 -45 }
+} [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawPolyline
+109 -52 {
+  { 109 -52 116 -59 116 -45 }
+} [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawPolyline
+817 -42 20 20 [0.00 0.00 0.00] 0 0 [] 1 null DrawRectangle
+833 -52 {
+  { 833 -52 826 -59 826 -45 }
+} [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawPolyline
+829 -52 {
+  { 829 -52 822 -59 822 -45 }
+} [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawPolyline
+145 -43 18 18 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+13 -83 36 32 image-1 false [0.00 0.00 0.00] DrawBitmap
+13 -83 36 32 [0.00 0.00 0.00] 0 0 [] 1 null DrawRectangle
+13 -117 36 32 image-2 false [0.00 0.00 0.00] DrawBitmap
+13 -117 36 32 [0.00 0.00 0.00] 0 0 [] 1 null DrawRectangle
+13 -151 36 32 image-3 false [0.00 0.00 0.00] DrawBitmap
+13 -151 36 32 [0.00 0.00 0.00] 0 0 [] 1 null DrawRectangle
+13 -185 36 32 image-4 false [0.00 0.00 0.00] DrawBitmap
+13 -185 36 32 [0.00 0.00 0.00] 0 0 [] 1 null DrawRectangle
+13 -185 36 32 [0 0 0] 0 0 [] -1 [0.00 0.00 0.00] DrawRectangle
+13 -219 36 32 image-5 false [0.00 0.00 0.00] DrawBitmap
+13 -219 36 32 [0.00 0.00 0.00] 0 0 [] 1 null DrawRectangle
+13 -253 36 32 image-6 false [0.00 0.00 0.00] DrawBitmap
+13 -253 36 32 [0.00 0.00 0.00] 0 0 [] 1 null DrawRectangle
+13 -287 36 32 image-7 false [0.00 0.00 0.00] DrawBitmap
+13 -287 36 32 [0.00 0.00 0.00] 0 0 [] 1 null DrawRectangle
+13 -321 36 32 image-8 false [0.00 0.00 0.00] DrawBitmap
+13 -321 36 32 [0.00 0.00 0.00] 0 0 [] 1 null DrawRectangle
+13 -355 36 32 image-9 false [0.00 0.00 0.00] DrawBitmap
+13 -355 36 32 [0.00 0.00 0.00] 0 0 [] 1 null DrawRectangle
+13 -389 36 32 image-10 false [0.00 0.00 0.00] DrawBitmap
+13 -389 36 32 [0.00 0.00 0.00] 0 0 [] 1 null DrawRectangle
+13 -423 36 32 image-11 false [0.00 0.00 0.00] DrawBitmap
+13 -423 36 32 [0.00 0.00 0.00] 0 0 [] 1 null DrawRectangle
+13 -423 36 32 [0 0 0] 0 0 [] -1 [0.50 dup dup] DrawRectangle
+13 -457 36 32 image-12 false [0.00 0.00 0.00] DrawBitmap
+13 -457 36 32 [0.00 0.00 0.00] 0 0 [] 1 null DrawRectangle
+13 -457 36 32 [0 0 0] 0 0 [] -1 [0.50 dup dup] DrawRectangle
+13 -491 36 32 image-13 false [0.00 0.00 0.00] DrawBitmap
+13 -491 36 32 [0.00 0.00 0.00] 0 0 [] 1 null DrawRectangle
+13 -491 36 32 [0 0 0] 0 0 [] -1 [0.50 dup dup] DrawRectangle
+13 -525 36 32 image-14 false [0.00 0.00 0.00] DrawBitmap
+13 -525 36 32 [0.00 0.00 0.00] 0 0 [] 1 null DrawRectangle
+61 -812 -823 83 14 false [0.00 0.00 0.00] [1.00 1.00 1.00] (Terrain Type) 12 /Courier DrawText
+146 -802 34 34 [0.00 0.00 0.00] 0 0 [] 1 [0.59 0.85 0.50] DrawRectangle
+grestore
+
+gsave
+
+%
+% Begin new window
+%
+84 -65 translate
+gsave
+() 0 0 772 729 1 1 1 1 DrawGenericWindowFrame
+0 0 772 729 ClipToRectangle
+gsave
+
+%
+% Begin new window
+%
+-328 176 translate
+gsave
+() 0 0 10000 10000 0 0 0 0 DrawGenericWindowFrame
+0 0 10000 10000 ClipToRectangle
+gsave
+350 -270 {
+  { 350 -270 350 -990 1030 -990 1030 -630 830 -630 830 -550 670 -550 670 -470 630 -470 630 -270 }
+} [0.00 0.00 0.00] 0 0 [] 1 [0.60 1.00 0.60] DrawPolyline
+430 -270 {
+  { 430 -270 470 -270 470 -310 630 -310 670 -310 670 -270 750 -270 750 -190 1030 -190 1030 -630 830 -630 830 -550 630 -550 630 -510 590 -510 590 -350 430 -350 }
+} [0.00 0.00 0.00] 0 0 [] 1 [0.60 0.93 0.55] DrawPolyline
+670 -310 {
+  { 670 -310 670 -350 710 -350 710 -310 750 -310 750 -230 1030 -230 1030 -630 870 -630 870 -550 670 -550 670 -510 630 -510 630 -470 630 -390 670 -390 }
+} [0.00 0.00 0.00] 0 0 [] 1 [0.59 0.85 0.50] DrawPolyline
+790 -270 {
+  { 790 -270 1030 -270 1030 -470 950 -470 950 -390 790 -390 790 -430 870 -430 870 -510 710 -510 710 -350 790 -350 }
+} [0.00 0.00 0.00] 0 0 [] 1 [0.59 0.78 0.45] DrawPolyline
+990 -310 {
+  { 990 -310 1030 -310 1030 -430 990 -430 }
+} [0.00 0.00 0.00] 0 0 [] 1 [0.58 0.71 0.39] DrawPolyline
+790 -350 {
+  { 790 -350 790 -470 870 -470 870 -510 750 -510 750 -350 }
+} [0.00 0.00 0.00] 0 0 [] 1 [0.58 0.71 0.39] DrawPolyline
+950 -510 {
+  { 950 -510 1030 -510 1030 -590 950 -590 }
+} [0.00 0.00 0.00] 0 0 [] 1 [0.58 0.71 0.39] DrawPolyline
+830 -310 {
+  { 830 -310 830 -350 910 -350 910 -310 }
+} [0.00 0.00 0.00] 0 0 [] 1 [0.58 0.71 0.39] DrawPolyline
+590 -550 {
+  { 590 -550 590 -590 790 -590 790 -710 1030 -710 1030 -670 830 -670 830 -550 }
+} [0.00 0.00 0.00] 0 0 [] 1 [ 0.0 0.0 0.0 false 0 image-15-font ] DrawPolyline
+630 -430 {
+  { 630 -430 670 -430 670 -470 630 -470 }
+} [0.00 0.00 0.00] 0 0 [] 1 [ 0.0 0.0 0.0 false 0 image-16-font ] DrawPolyline
+870 -230 {
+  { 870 -230 950 -230 950 -270 990 -270 990 -310 990 -430 950 -430 950 -310 910 -310 910 -270 870 -270 }
+} [0.00 0.00 0.00] 0 0 [] 1 [ 0.0 0.0 0.0 false 0 image-15-font ] DrawPolyline
+350 -630 {
+  { 350 -630 350 -950 990 -950 990 -830 990 -670 910 -670 910 -590 630 -590 630 -630 }
+} [0.00 0.00 0.00] 0 0 [] 1 [ 0.0 0.0 0.0 false 0 image-17-font ] DrawPolyline
+350 -390 {
+  { 350 -390 350 -630 430 -630 430 -390 }
+} [0.00 0.00 0.00] 0 0 [] 1 [ 0.0 0.0 0.0 0.392 0.584 0.929 true 0 image-18-font ] DrawPolyline
+870 -430 {
+  { 870 -430 870 -510 910 -510 910 -430 }
+} [0.00 0.00 0.00] 0 0 [] 1 [ 0.0 0.0 0.0 0.392 0.584 0.929 true 0 image-18-font ] DrawPolyline
+350 -310 {
+  { 350 -310 350 -390 430 -390 430 -310 }
+} [0.00 0.00 0.00] 0 0 [] 1 [ 0.0 0.0 0.0 false 0 image-16-font ] DrawPolyline
+550 -550 {
+  { 550 -550 590 -550 590 -590 550 -590 }
+} [0.00 0.00 0.00] 0 0 [] 1 [ 0.0 0.0 0.0 false 0 image-16-font ] DrawPolyline
+790 -790 {
+  { 790 -790 790 -950 870 -950 870 -790 }
+} [0.00 0.00 0.00] 0 0 [] 1 [ 0.0 0.0 0.0 false 0 image-16-font ] DrawPolyline
+360 -360 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+560 -440 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+760 -760 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+600 -520 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+480 -520 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+360 -400 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+560 -480 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+440 -480 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+760 -840 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+480 -480 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+840 -760 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+520 -600 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+520 -520 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+480 -400 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+840 -800 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+840 -920 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+800 -760 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+560 -400 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+480 -440 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+720 -560 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+840 -880 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+680 -560 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+520 -480 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+720 -840 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+680 -880 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+880 -680 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+400 -360 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+520 -360 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+440 -520 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+560 -520 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+600 -560 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+520 -440 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+560 -560 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+520 -400 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+800 -640 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+920 -680 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+400 -320 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+800 -800 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+960 -680 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+440 -400 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+560 -600 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+840 -680 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+800 -560 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+840 -840 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+360 -320 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+440 -440 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+640 -560 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+440 -360 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+720 -760 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+800 -840 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+800 -680 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+480 -560 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+480 -600 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+880 -640 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+720 -880 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+640 -880 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+560 -360 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+760 -800 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+440 -560 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+800 -600 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+480 -360 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+520 -560 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+760 -560 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+800 -720 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+360 -400 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+[1.00 1.00 1.00] 0 0 [] 5 510 -570 500 -570 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 510 -570 500 -570 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 520 -570 510 -570 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 520 -570 510 -570 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 630 -530 620 -530 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 630 -530 620 -530 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 530 -590 530 -580 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 530 -590 530 -580 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 530 -600 530 -590 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 530 -600 530 -590 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 610 -520 610 -510 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 610 -520 610 -510 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 490 -550 490 -540 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 490 -550 490 -540 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 490 -560 490 -550 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 490 -560 490 -550 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 510 -490 500 -490 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 510 -490 500 -490 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 520 -490 510 -490 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 520 -490 510 -490 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 370 -390 370 -380 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 370 -390 370 -380 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 370 -400 370 -390 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 370 -400 370 -390 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 770 -790 770 -780 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 770 -790 770 -780 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 770 -800 770 -790 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 770 -800 770 -790 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 590 -410 580 -410 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 590 -410 580 -410 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 810 -830 810 -820 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 810 -830 810 -820 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 810 -840 810 -830 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 810 -840 810 -830 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 410 -350 410 -340 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 410 -350 410 -340 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 410 -360 410 -350 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 410 -360 410 -350 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 510 -610 500 -610 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 510 -610 500 -610 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 520 -610 510 -610 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 520 -610 510 -610 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 550 -430 540 -420 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 550 -430 540 -420 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 560 -440 550 -430 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 560 -440 550 -430 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 550 -370 540 -370 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 550 -370 540 -370 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 560 -370 550 -370 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 560 -370 550 -370 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 810 -560 810 -550 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 810 -560 810 -550 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 510 -370 500 -370 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 510 -370 500 -370 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 520 -370 510 -370 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 520 -370 510 -370 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 670 -570 660 -570 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 670 -570 660 -570 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 680 -570 670 -570 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 680 -570 670 -570 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 430 -390 420 -380 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 430 -390 420 -380 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 440 -400 430 -390 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 440 -400 430 -390 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 830 -810 820 -810 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 830 -810 820 -810 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 840 -810 830 -810 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 840 -810 830 -810 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 650 -560 650 -550 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 650 -560 650 -550 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 470 -530 460 -530 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 470 -530 460 -530 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 480 -530 470 -530 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 480 -530 470 -530 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 630 -570 620 -570 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 630 -570 620 -570 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 640 -570 630 -570 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 640 -570 630 -570 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 830 -770 820 -770 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 830 -770 820 -770 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 840 -770 830 -770 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 840 -770 830 -770 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 710 -890 720 -890 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 710 -890 720 -890 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 700 -890 710 -890 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 700 -890 710 -890 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 490 -590 490 -580 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 490 -590 490 -580 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 490 -600 490 -590 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 490 -600 490 -590 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 530 -510 530 -500 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 530 -510 530 -500 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 530 -520 530 -510 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 530 -520 530 -510 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 510 -470 520 -460 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 510 -470 520 -460 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 500 -480 510 -470 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 500 -480 510 -470 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 590 -590 600 -580 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 590 -590 600 -580 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 580 -600 590 -590 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 580 -600 590 -590 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 550 -490 540 -490 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 550 -490 540 -490 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 560 -490 550 -490 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 560 -490 550 -490 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 510 -450 500 -450 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 510 -450 500 -450 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 520 -450 510 -450 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 520 -450 510 -450 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 470 -370 460 -370 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 470 -370 460 -370 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 480 -370 470 -370 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 480 -370 470 -370 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 550 -530 540 -530 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 550 -530 540 -530 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 560 -530 550 -530 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 560 -530 550 -530 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 810 -630 810 -620 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 810 -630 810 -620 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 810 -640 810 -630 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 810 -640 810 -630 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 510 -510 500 -500 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 510 -510 500 -500 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 520 -520 510 -510 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 520 -520 510 -510 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 850 -870 850 -860 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 850 -870 850 -860 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 850 -880 850 -870 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 850 -880 850 -870 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 850 -910 850 -900 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 850 -910 850 -900 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 850 -920 850 -910 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 850 -920 850 -910 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 830 -850 820 -850 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 830 -850 820 -850 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 840 -850 830 -850 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 840 -850 830 -850 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 850 -830 850 -820 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 850 -830 850 -820 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 850 -840 850 -830 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 850 -840 850 -830 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 770 -830 770 -820 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 770 -830 770 -820 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 770 -840 770 -830 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 770 -840 770 -830 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 830 -690 840 -690 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 830 -690 840 -690 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 820 -690 830 -690 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 820 -690 830 -690 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 590 -570 580 -570 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 590 -570 580 -570 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 600 -570 590 -570 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 600 -570 590 -570 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 670 -890 680 -890 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 670 -890 680 -890 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 660 -890 670 -890 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 660 -890 670 -890 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 590 -530 580 -530 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 590 -530 580 -530 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 600 -530 590 -530 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 600 -530 590 -530 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 750 -570 740 -570 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 750 -570 740 -570 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 760 -570 750 -570 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 760 -570 750 -570 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 490 -510 490 -500 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 490 -510 490 -500 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 490 -520 490 -510 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 490 -520 490 -510 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 550 -410 540 -410 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 550 -410 540 -410 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 560 -410 550 -410 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 560 -410 550 -410 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 370 -350 370 -340 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 370 -350 370 -340 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 370 -360 370 -350 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 370 -360 370 -350 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 810 -670 810 -660 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 810 -670 810 -660 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 810 -680 810 -670 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 810 -680 810 -670 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 810 -750 810 -740 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 810 -750 810 -740 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 810 -760 810 -750 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 810 -760 810 -750 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 950 -690 940 -690 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 950 -690 940 -690 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 960 -690 950 -690 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 960 -690 950 -690 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 710 -570 700 -570 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 710 -570 700 -570 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 720 -570 710 -570 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 720 -570 710 -570 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 530 -550 530 -540 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 530 -550 530 -540 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 530 -560 530 -550 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 530 -560 530 -550 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 890 -630 890 -640 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 890 -630 890 -640 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 470 -410 460 -410 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 470 -410 460 -410 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 480 -410 470 -410 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 480 -410 470 -410 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 790 -570 780 -570 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 790 -570 780 -570 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 800 -570 790 -570 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 800 -570 790 -570 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 610 -550 610 -540 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 610 -550 610 -540 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 610 -560 610 -550 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 610 -560 610 -550 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 870 -690 880 -690 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 870 -690 880 -690 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 860 -690 870 -690 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 860 -690 870 -690 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 810 -590 810 -580 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 810 -590 810 -580 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 810 -600 810 -590 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 810 -600 810 -590 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 470 -490 460 -490 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 470 -490 460 -490 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 480 -490 470 -490 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 480 -490 470 -490 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 570 -510 570 -500 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 570 -510 570 -500 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 570 -520 570 -510 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 570 -520 570 -510 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 490 -390 490 -380 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 490 -390 490 -380 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 490 -400 490 -390 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 490 -400 490 -390 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 450 -390 450 -380 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 450 -390 450 -380 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 450 -400 450 -390 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 450 -400 450 -390 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 530 -390 530 -380 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 530 -390 530 -380 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 530 -400 530 -390 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 530 -400 530 -390 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 890 -670 890 -680 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 890 -670 890 -680 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 890 -660 890 -670 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 890 -660 890 -670 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 510 -410 500 -410 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 510 -410 500 -410 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 520 -410 510 -410 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 520 -410 510 -410 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 450 -550 450 -540 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 450 -550 450 -540 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 450 -560 450 -550 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 450 -560 450 -550 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 550 -470 560 -480 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 550 -470 560 -480 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 540 -460 550 -470 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 540 -460 550 -470 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 590 -450 580 -450 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 590 -450 580 -450 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 470 -450 460 -450 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 470 -450 460 -450 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 480 -450 470 -450 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 480 -450 470 -450 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 590 -370 580 -370 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 590 -370 580 -370 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 590 -490 580 -490 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 590 -490 580 -490 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 790 -750 800 -740 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 790 -750 800 -740 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 780 -760 790 -750 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 780 -760 790 -750 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 750 -770 740 -770 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 750 -770 740 -770 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 760 -770 750 -770 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 760 -770 750 -770 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 810 -710 810 -700 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 810 -710 810 -700 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 810 -720 810 -710 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 810 -720 810 -710 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 390 -370 380 -370 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 390 -370 380 -370 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 400 -370 390 -370 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 400 -370 390 -370 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 450 -470 450 -460 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 450 -470 450 -460 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 450 -480 450 -470 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 450 -480 450 -470 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 430 -370 420 -370 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 430 -370 420 -370 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 440 -370 430 -370 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 440 -370 430 -370 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 450 -510 450 -500 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 450 -510 450 -500 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 450 -520 450 -510 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 450 -520 450 -510 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 550 -610 540 -610 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 550 -610 540 -610 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 560 -610 550 -610 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 560 -610 550 -610 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 530 -470 530 -460 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 530 -470 530 -460 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 530 -480 530 -470 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 530 -480 530 -470 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 470 -570 460 -570 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 470 -570 460 -570 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 480 -570 470 -570 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 480 -570 470 -570 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 510 -530 500 -530 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 510 -530 500 -530 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 520 -530 510 -530 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 520 -530 510 -530 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 570 -390 570 -380 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 570 -390 570 -380 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 570 -400 570 -390 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 570 -400 570 -390 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 730 -870 730 -860 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 730 -870 730 -860 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 730 -880 730 -870 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 730 -880 730 -870 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 910 -690 900 -690 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 910 -690 900 -690 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 920 -690 910 -690 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 920 -690 910 -690 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 750 -870 760 -860 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 750 -870 760 -860 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 740 -880 750 -870 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 740 -880 750 -870 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 470 -590 460 -580 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 470 -590 460 -580 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 480 -600 470 -590 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 480 -600 470 -590 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 810 -790 810 -780 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 810 -790 810 -780 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 810 -800 810 -790 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 810 -800 810 -790 DrawLine
+640 -360 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+600 -360 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+600 -440 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+600 -480 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+640 -520 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+880 -200 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+600 -400 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+640 -320 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+[1.00 1.00 1.00] 0 0 [] 5 640 -530 630 -530 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 640 -530 630 -530 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 670 -370 660 -370 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 670 -370 660 -370 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 610 -510 610 -500 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 610 -510 610 -500 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 630 -390 640 -380 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 630 -390 640 -380 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 620 -400 630 -390 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 620 -400 630 -390 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 600 -410 590 -410 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 600 -410 590 -410 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 630 -370 620 -370 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 630 -370 620 -370 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 640 -370 630 -370 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 640 -370 630 -370 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 650 -550 650 -540 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 650 -550 650 -540 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 610 -390 610 -380 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 610 -390 610 -380 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 610 -400 610 -390 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 610 -400 610 -390 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 630 -510 620 -500 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 630 -510 620 -500 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 640 -520 630 -510 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 640 -520 630 -510 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 610 -430 610 -420 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 610 -430 610 -420 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 610 -440 610 -430 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 610 -440 610 -430 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 600 -450 590 -450 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 600 -450 590 -450 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 600 -370 590 -370 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 600 -370 590 -370 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 600 -490 590 -490 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 600 -490 590 -490 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 650 -350 650 -340 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 650 -350 650 -340 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 650 -360 650 -350 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 650 -360 650 -350 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 610 -470 610 -460 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 610 -470 610 -460 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 610 -480 610 -470 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 610 -480 610 -470 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 890 -230 890 -220 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 890 -230 890 -220 DrawLine
+880 -520 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+880 -400 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+800 -520 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+920 -440 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+920 -480 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+880 -240 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+840 -520 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+880 -600 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+680 -360 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+880 -560 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+[1.00 1.00 1.00] 0 0 [] 5 680 -370 670 -370 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 680 -370 670 -370 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 910 -270 900 -260 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 910 -270 900 -260 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 870 -530 880 -530 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 870 -530 880 -530 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 860 -530 870 -530 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 860 -530 870 -530 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 810 -550 810 -540 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 810 -550 810 -540 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 890 -550 890 -560 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 890 -550 890 -560 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 890 -540 890 -550 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 890 -540 890 -550 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 930 -470 930 -460 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 930 -470 930 -460 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 930 -480 930 -470 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 930 -480 930 -470 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 910 -430 920 -440 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 910 -430 920 -440 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 900 -420 910 -430 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 900 -420 910 -430 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 910 -510 900 -520 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 910 -510 900 -520 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 920 -500 910 -510 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 920 -500 910 -510 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 890 -620 890 -630 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 890 -620 890 -630 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 890 -590 890 -600 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 890 -590 890 -600 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 890 -580 890 -590 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 890 -580 890 -590 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 940 -440 950 -430 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 940 -440 950 -430 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 890 -240 890 -230 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 890 -240 890 -230 DrawLine
+960 -400 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+960 -320 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+920 -280 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+960 -360 20 20 [0.00 0.00 0.00] 0 0 [] 1 [1.00 dup dup] DrawRectangle
+[1.00 1.00 1.00] 0 0 [] 5 920 -280 910 -270 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 920 -280 910 -270 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 950 -310 940 -300 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 950 -310 940 -300 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 960 -320 950 -310 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 960 -320 950 -310 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 970 -350 970 -340 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 970 -350 970 -340 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 970 -360 970 -350 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 970 -360 970 -350 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 970 -390 970 -380 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 970 -390 970 -380 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 970 -400 970 -390 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 970 -400 970 -390 DrawLine
+[1.00 1.00 1.00] 0 0 [] 5 950 -430 960 -420 DrawLine
+[0.00 0.00 0.00] 0 0 [] 1 950 -430 960 -420 DrawLine
+[0.00 0.00 0.00] 0 0 [4 4] 1 0 0 0 0 DrawLine
+grestore
+
+grestore
+
+grestore
+
+grestore
+
+grestore
+
+grestore
+
+grestore
+
+grestore
+
+grestore
+
+
+showpage
+%%Trailer
+%%DocumentFonts: /Courier Helvetica-Bold 
+%%BoundingBox: 72 167 540 624

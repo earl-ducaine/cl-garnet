@@ -1,0 +1,738 @@
+%!PS-Adobe-2.0
+%%Title: Mesh Display
+%%Creator: Make-PS-File -- Garnet Version 1.4
+%%CreationDate: Oct 4, 1991, 1:44 PM
+%%For: 
+%%DocumentFonts: (atend)
+%%BoundingBox: 72 190 540 601
+%%Pages: 1
+%%EndComments
+
+
+/DrawLine
+   {    % stack: line-halftone, red, green, blue, color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness
+        %        x2, y2, x1, y1
+        newpath
+          moveto
+          lineto
+          StrokeShape
+   } def
+
+/PolylineDict 15 dict def
+/DrawPolyline
+   {	% stack: x1, y1, ..., xn, yn, n, line-halftone, line-red, line-blue,
+        %        line-green, line-join, line-cap, dash-pattern,
+        %        line-thickness, fill-halftone
+        PolylineDict begin
+        /fill-color-p exch def  /fill-blue exch def  /fill-green exch def
+        /fill-red exch def  /fill-halftone exch def  /lt exch def
+        /dash-pattern exch def  /line-join exch def  /line-cap exch def
+        /line-color-p exch def  /line-blue exch def  /line-green exch def
+        /line-red exch def  /line-halftone exch def  /num-points exch 4 sub def
+	newpath
+	  moveto
+	  num-points -2 0 {pop lineto} for
+	  fill-halftone fill-red fill-green fill-blue fill-color-p FillShape
+          line-halftone line-red line-green line-blue line-color-p
+          line-cap line-join dash-pattern lt StrokeShape
+        end
+   } def
+
+/TextDict 2 dict def
+/DrawText
+   {	% stack: left bottom opal-width line-halftone red green blue color-p
+        %        string size font-name
+        TextDict begin
+        gsave
+	findfont exch scalefont setfont
+	/s exch def
+        % Color-p is on top of stack, so set color/halftone
+          { setrgbcolor pop }
+          { pop pop pop setgray } ifelse
+        % Calculate distance to add between each character, based on the width
+        % expected by Opal, the width expected by postscript, and the number
+        % of characters to distribute the change over
+	/x-dist exch s stringwidth pop sub s length div def
+        newpath
+	  moveto
+	  x-dist 0 s ashow
+          stroke
+        grestore
+        end
+   } def
+
+/RectanglePath
+   {    % stack: left, top, width, height
+        /h exch def  /w exch def
+	moveto		        % Go to the left,top corner
+	w 0 rlineto	        % top side
+	0 h neg rlineto		% right side
+	w neg 0 rlineto		% bottom side
+	closepath		% left side
+   } def
+
+/RectangleDict 21 dict def
+/DrawRectangle
+   {	% stack: left, top, width, height, line-halftone, line-red, line-green,
+        %        line-blue, line-color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness,
+        %        fill-halftone, fill-red, fill-green, fill-blue, fill-color-p
+        RectangleDict begin
+        /fill-color-p exch def  /fill-blue exch def  /fill-green exch def
+        /fill-red exch def /fill-halftone exch def  /lt exch def
+        /dash-pattern exch def  /line-join exch def  /line-cap exch def
+        /line-color-p exch def  /line-blue exch def  /line-green exch def
+        /line-red exch def  /line-halftone exch def  /height exch def
+        /width exch def  /top exch def  /left exch def  /lt-by-2 lt 2 div def
+        % Draw filling
+        newpath
+          left lt-by-2 add  top lt-by-2 sub   width lt sub  height lt sub
+          RectanglePath
+	  fill-halftone fill-red fill-green fill-blue fill-color-p FillShape
+        % Draw border
+        newpath
+          left top width height RectanglePath
+          line-halftone line-red line-green line-blue line-color-p
+          line-cap line-join dash-pattern lt StrokeShape
+        end
+   } def
+
+/ClipDict 2 dict def
+/ClipToRectangle
+   {    % stack: left, top, width, height
+        ClipDict begin
+	/height exch def  /width exch def
+        newpath
+	  moveto		% Go to the left,top corner
+	  width 0 rlineto	% top side
+	  0 height neg rlineto	% right side
+	  width neg 0 rlineto	% bottom side
+	  closepath		% left side
+	gsave 1 setgray fill grestore
+	clip newpath
+        end
+   } def
+
+/FillShape
+   {	% stack: fill-halftone, red, green, blue, color-p
+        %   Color-p should be true or false - false means ignore the three vals
+        %   Use -1 for fill-halftone to mean NIL, 0 = black, 1 = white
+        %   Use -2 for fill-halftone to indicate there is an arbitrary filling
+        % style on the stack
+        gsave
+        { setrgbcolor fill pop }
+	{ pop pop pop 
+	  dup 0 ge
+	    % if fill-halftone >= 0, then fill the shape with a halftone
+	    {setgray fill}
+            % else, if there is an arbitrary filling style, then fill
+            { -2 eq
+              {SetPattern fill} if
+            } ifelse } ifelse
+        grestore
+   } def
+
+/StrokeShape
+   {	% stack: line-halftone, red, green, blue, color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness
+	% If no line is desired, pass -1 for line-thickness
+        % Halftones: 0 = black, 1 = white
+	dup 0 ge
+	  % if line-thickness >= 0, then draw the outline
+	  {gsave
+	   setlinewidth 0 setdash setlinejoin setlinecap
+             { setrgbcolor pop }
+             { pop pop pop setgray } ifelse
+	   stroke
+	   grestore}
+	  {pop pop pop pop pop pop pop pop pop newpath} ifelse
+   } def
+
+
+%%EndProlog
+%%Page: 1 1
+
+72 72 translate
+0.74 0.74 scale
+
+%
+% Begin new window
+%
+0 -160 translate
+gsave
+0 872 630 553 ClipToRectangle
+0 0 translate
+gsave
+0 872 630 553 0 0 0 0 false 0 0 [] -1 0.0 0.83 0.83 0.83 true DrawRectangle
+12 357 37 20 0 0 0 0 false 0 0 [] -1 0.0 1.00 1.00 1.00 true DrawRectangle
+14 355 35 18 0 0 0 0 false 0 0 [] -1 0.0 0.46 0.46 0.46 true DrawRectangle
+14 355 33 16 0 0 0 0 false 0 0 [] -1 0.0 0.83 0.83 0.83 true DrawRectangle
+17 343 27 0 0 0 0 false (Done) 12 /Courier DrawText
+64 410 70 416 76 410 6 0 0.46 0.46 0.46 true 0 0 [] 2 0.0 0.70 0.70
+0.70 true DrawPolyline
+64 410 70 404 76 410 6 0 1.00 1.00 1.00 true 0 0 [] 2 0.0 0.70 0.70
+0.70 true DrawPolyline
+81 406 91 0 0 0 0 false (Magnification) 12 /Courier DrawText
+64 387 70 393 76 387 6 0 1.00 1.00 1.00 true 0 0 [] 2 0.0 0.83 0.83
+0.83 true DrawPolyline
+64 387 70 381 76 387 6 0 0.46 0.46 0.46 true 0 0 [] 2 0.0 0.83 0.83
+0.83 true DrawPolyline
+81 383 68 0 0 0 0 false (Quantities) 12 /Courier DrawText
+64 364 70 370 76 364 6 0 1.00 1.00 1.00 true 0 0 [] 2 0.0 0.83 0.83
+0.83 true DrawPolyline
+64 364 70 358 76 364 6 0 0.46 0.46 0.46 true 0 0 [] 2 0.0 0.83 0.83
+0.83 true DrawPolyline
+81 360 34 0 0 0 0 false (Knobs) 12 /Courier DrawText
+185 410 191 416 197 410 6 0 1.00 1.00 1.00 true 0 0 [] 2 0.0 0.83 0.83
+0.83 true DrawPolyline
+185 410 191 404 197 410 6 0 0.46 0.46 0.46 true 0 0 [] 2 0.0 0.83 0.83
+0.83 true DrawPolyline
+202 406 68 0 0 0 0 false (Gray Scale) 12 /Courier DrawText
+grestore
+
+gsave
+
+%
+% Begin new window
+%
+0 0 translate
+gsave
+0 872 430 443 ClipToRectangle
+0 0 translate
+gsave
+0 872 430 443 0 0 0 0 false 0 0 [] -1 0.0 0.83 0.83 0.83 true DrawRectangle
+2 870 16 419 0 0 0 0 false 0 0 [] -1 0.0 0.46 0.46 0.46 true DrawRectangle
+4 868 14 417 0 0 0 0 false 0 0 [] -1 0.0 1.00 1.00 1.00 true DrawRectangle
+4 868 12 415 0 0 0 0 false 0 0 [] -1 0.0 0.70 0.70 0.70 true DrawRectangle
+4 855 12 386 0 0 0 0 false 0 0 [] -1 0.0 1.00 1.00 1.00 true DrawRectangle
+6 853 10 384 0 0 0 0 false 0 0 [] -1 0.0 0.46 0.46 0.46 true DrawRectangle
+6 853 8 382 0 0 0 0 false 0 0 [] -1 0.0 0.83 0.83 0.83 true DrawRectangle
+10 867 14 857 5 857 6 0 0.46 0.46 0.46 true 0 0 [] 2 0.0 0.83 0.83 0.83
+true DrawPolyline
+0 1.00 1.00 1.00 true 0 0 [] 2 5 857 10 867 DrawLine
+10 456 5 466 15 466 6 0 1.00 1.00 1.00 true 0 0 [] 2 0.0 0.83 0.83 0.83
+true DrawPolyline
+0 0.46 0.46 0.46 true 0 0 [] 2 10 456 15 466 DrawLine
+22 446 406 16 0 0 0 0 false 0 0 [] -1 0.0 0.46 0.46 0.46 true DrawRectangle
+24 444 404 14 0 0 0 0 false 0 0 [] -1 0.0 1.00 1.00 1.00 true DrawRectangle
+24 444 402 12 0 0 0 0 false 0 0 [] -1 0.0 0.70 0.70 0.70 true DrawRectangle
+37 444 373 12 0 0 0 0 false 0 0 [] -1 0.0 1.00 1.00 1.00 true DrawRectangle
+39 442 371 10 0 0 0 0 false 0 0 [] -1 0.0 0.46 0.46 0.46 true DrawRectangle
+39 442 369 8 0 0 0 0 false 0 0 [] -1 0.0 0.83 0.83 0.83 true DrawRectangle
+25 439 35 434 35 444 6 0 0.46 0.46 0.46 true 0 0 [] 2 0.0 0.83 0.83
+0.83 true DrawPolyline
+0 1.00 1.00 1.00 true 0 0 [] 2 35 444 25 439 DrawLine
+413 433 413 443 423 438 6 0 1.00 1.00 1.00 true 0 0 [] 2 0.0 0.83 0.83
+0.83 true DrawPolyline
+0 0.46 0.46 0.46 true 0 0 [] 2 423 438 413 433 DrawLine
+grestore
+
+gsave
+
+%
+% Begin new window
+%
+20 0 translate
+gsave
+0 872 410 423 ClipToRectangle
+0 0 translate
+gsave
+grestore
+
+gsave
+
+%
+% Begin new window
+%
+0 0 translate
+gsave
+0 872 410 423 ClipToRectangle
+0 0 translate
+gsave
+0 872 410 423 0 0 0 0 false 0 0 [] -1 0.0 0.83 0.83 0.83 true DrawRectangle
+102 484 112 502 122 521 109 519 97 515 101 501 102 484 14 0 0 0 0 false
+0 0 [] 1 0.0 0.27 0.27 0.27 true DrawPolyline
+102 484 113 484 123 484 123 502 122 521 112 502 102 484 14 0 0 0 0
+false 0 0 [] 1 0.0 0.13 0.13 0.13 true DrawPolyline
+123 484 133 484 143 484 133 502 122 521 123 502 123 484 14 0 0 0 0
+false 0 0 [] 1 0.0 0.13 0.13 0.13 true DrawPolyline
+143 484 143 502 143 521 132 521 122 521 133 502 143 484 14 0 0 0 0
+false 0 0 [] 1 0.0 0.27 0.27 0.27 true DrawPolyline
+143 484 153 503 163 521 153 521 143 521 143 502 143 484 14 0 0 0 0
+false 0 0 [] 1 0.0 0.20 0.20 0.20 true DrawPolyline
+143 484 153 484 164 484 164 503 163 521 153 503 143 484 14 0 0 0 0
+false 0 0 [] 1 0.0 0.07 0.07 0.07 true DrawPolyline
+164 484 174 484 184 484 174 503 163 521 164 503 164 484 14 0 0 0 0
+false 0 0 [] 1 0.0 0.07 0.07 0.07 true DrawPolyline
+184 484 184 503 184 521 174 521 163 521 174 503 184 484 14 0 0 0 0
+false 0 0 [] 1 0.0 0.20 0.20 0.20 true DrawPolyline
+184 484 194 503 205 521 194 521 184 521 184 503 184 484 14 0 0 0 0
+false 0 0 [] 1 0.0 0.20 0.20 0.20 true DrawPolyline
+184 484 194 484 205 484 205 503 205 521 194 503 184 484 14 0 0 0 0
+false 0 0 [] 1 0.0 0.07 0.07 0.07 true DrawPolyline
+205 484 215 484 225 484 215 503 205 521 205 503 205 484 14 0 0 0 0
+false 0 0 [] 1 0.0 0.07 0.07 0.07 true DrawPolyline
+225 484 225 503 225 521 215 521 205 521 215 503 225 484 14 0 0 0 0
+false 0 0 [] 1 0.0 0.20 0.20 0.20 true DrawPolyline
+225 484 235 503 246 521 235 521 225 521 225 503 225 484 14 0 0 0 0
+false 0 0 [] 1 0.0 0.20 0.20 0.20 true DrawPolyline
+225 484 235 484 245 484 245 503 246 521 235 503 225 484 14 0 0 0 0
+false 0 0 [] 1 0.0 0.07 0.07 0.07 true DrawPolyline
+245 484 256 484 266 484 256 503 246 521 245 503 245 484 14 0 0 0 0
+false 0 0 [] 1 0.0 0.07 0.07 0.07 true DrawPolyline
+266 484 266 502 266 521 256 521 246 521 256 503 266 484 14 0 0 0 0
+false 0 0 [] 1 0.0 0.20 0.20 0.20 true DrawPolyline
+266 484 276 502 287 521 277 521 266 521 266 502 266 484 14 0 0 0 0
+false 0 0 [] 1 0.0 0.27 0.27 0.27 true DrawPolyline
+266 484 276 484 286 484 286 502 287 521 276 502 266 484 14 0 0 0 0
+false 0 0 [] 1 0.0 0.13 0.13 0.13 true DrawPolyline
+286 484 296 484 307 484 297 502 287 521 286 502 286 484 14 0 0 0 0
+false 0 0 [] 1 0.0 0.13 0.13 0.13 true DrawPolyline
+307 484 308 501 312 515 300 519 287 521 297 502 307 484 14 0 0 0 0
+false 0 0 [] 1 0.0 0.27 0.27 0.27 true DrawPolyline
+97 515 97 529 94 541 78 532 71 518 84 518 97 515 14 0 0 0 0 false 0 0
+[] 1 0.0 0.67 0.67 0.67 true DrawPolyline
+97 515 109 519 122 521 112 534 94 541 97 529 97 515 14 0 0 0 0 false 0
+0 [] 1 0.0 0.53 0.53 0.53 true DrawPolyline
+122 521 132 521 143 521 126 536 94 541 112 534 122 521 14 0 0 0 0 false
+0 0 [] 1 0.0 0.47 0.47 0.47 true DrawPolyline
+143 521 139 538 128 550 111 546 94 541 126 536 143 521 14 0 0 0 0 false
+0 0 [] 1 0.0 0.60 0.60 0.60 true DrawPolyline
+143 521 151 538 157 555 143 553 128 550 139 538 143 521 14 0 0 0 0
+false 0 0 [] 1 0.0 0.53 0.53 0.53 true DrawPolyline
+143 521 153 521 163 521 162 539 157 555 151 538 143 521 14 0 0 0 0
+false 0 0 [] 1 0.0 0.47 0.47 0.47 true DrawPolyline
+163 521 174 521 184 521 173 539 157 555 162 539 163 521 14 0 0 0 0
+false 0 0 [] 1 0.0 0.40 0.40 0.40 true DrawPolyline
+184 521 184 539 181 556 170 555 157 555 173 539 184 521 14 0 0 0 0
+false 0 0 [] 1 0.0 0.53 0.53 0.53 true DrawPolyline
+184 521 194 540 205 558 193 557 181 556 184 539 184 521 14 0 0 0 0
+false 0 0 [] 1 0.0 0.53 0.53 0.53 true DrawPolyline
+184 521 194 521 205 521 205 539 205 558 194 540 184 521 14 0 0 0 0
+false 0 0 [] 1 0.0 0.40 0.40 0.40 true DrawPolyline
+205 521 215 521 225 521 215 540 205 558 205 539 205 521 14 0 0 0 0
+false 0 0 [] 1 0.0 0.40 0.40 0.40 true DrawPolyline
+225 521 225 539 228 556 216 557 205 558 215 540 225 521 14 0 0 0 0
+false 0 0 [] 1 0.0 0.53 0.53 0.53 true DrawPolyline
+225 521 236 539 252 555 239 555 228 556 225 539 225 521 14 0 0 0 0
+false 0 0 [] 1 0.0 0.53 0.53 0.53 true DrawPolyline
+225 521 235 521 246 521 247 539 252 555 236 539 225 521 14 0 0 0 0
+false 0 0 [] 1 0.0 0.40 0.40 0.40 true DrawPolyline
+246 521 256 521 266 521 258 538 252 555 247 539 246 521 14 0 0 0 0
+false 0 0 [] 1 0.0 0.47 0.47 0.47 true DrawPolyline
+266 521 270 538 281 550 266 553 252 555 258 538 266 521 14 0 0 0 0
+false 0 0 [] 1 0.0 0.53 0.53 0.53 true DrawPolyline
+266 521 283 536 315 541 298 546 281 550 270 538 266 521 14 0 0 0 0
+false 0 0 [] 1 0.0 0.60 0.60 0.60 true DrawPolyline
+266 521 277 521 287 521 297 534 315 541 283 536 266 521 14 0 0 0 0
+false 0 0 [] 1 0.0 0.47 0.47 0.47 true DrawPolyline
+287 521 300 519 312 515 312 529 315 541 297 534 287 521 14 0 0 0 0
+false 0 0 [] 1 0.0 0.53 0.53 0.53 true DrawPolyline
+312 515 325 518 338 518 331 532 315 541 312 529 312 515 14 0 0 0 0
+false 0 0 [] 1 0.0 0.67 0.67 0.67 true DrawPolyline
+71 518 60 532 53 545 43 536 37 527 54 520 71 518 14 0 0 0 0 false 0 0
+[] 1 0.0 0.80 0.80 0.80 true DrawPolyline
+71 518 78 532 94 541 73 543 53 545 60 532 71 518 14 0 0 0 0 false 0 0
+[] 1 0.0 0.73 0.73 0.73 true DrawPolyline
+94 541 111 546 128 550 89 549 53 545 73 543 94 541 14 0 0 0 0 false 0 0
+[] 1 0.0 0.73 0.73 0.73 true DrawPolyline
+128 550 107 555 85 559 68 553 53 545 89 549 128 550 14 0 0 0 0 false 0
+0 [] 1 0.0 0.80 0.80 0.80 true DrawPolyline
+128 550 125 560 123 569 103 564 85 559 107 555 128 550 14 0 0 0 0 false
+0 0 [] 1 0.0 0.80 0.80 0.80 true DrawPolyline
+128 550 143 553 157 555 143 564 123 569 125 560 128 550 14 0 0 0 0
+false 0 0 [] 1 0.0 0.73 0.73 0.73 true DrawPolyline
+157 555 170 555 181 556 160 567 123 569 143 564 157 555 14 0 0 0 0
+false 0 0 [] 1 0.0 0.73 0.73 0.73 true DrawPolyline
+181 556 175 570 164 579 143 574 123 569 160 567 181 556 14 0 0 0 0
+false 0 0 [] 1 0.0 0.80 0.80 0.80 true DrawPolyline
+181 556 190 572 205 583 184 582 164 579 175 570 181 556 14 0 0 0 0
+false 0 0 [] 1 0.0 0.80 0.80 0.80 true DrawPolyline
+181 556 193 557 205 558 205 572 205 583 190 572 181 556 14 0 0 0 0
+false 0 0 [] 1 0.0 0.73 0.73 0.73 true DrawPolyline
+205 558 216 557 228 556 219 572 205 583 205 572 205 558 14 0 0 0 0
+false 0 0 [] 1 0.0 0.73 0.73 0.73 true DrawPolyline
+228 556 234 570 245 579 225 582 205 583 219 572 228 556 14 0 0 0 0
+false 0 0 [] 1 0.0 0.80 0.80 0.80 true DrawPolyline
+228 556 249 567 286 569 266 574 245 579 234 570 228 556 14 0 0 0 0
+false 0 0 [] 1 0.0 0.80 0.80 0.80 true DrawPolyline
+228 556 239 555 252 555 266 564 286 569 249 567 228 556 14 0 0 0 0
+false 0 0 [] 1 0.0 0.73 0.73 0.73 true DrawPolyline
+252 555 266 553 281 550 284 560 286 569 266 564 252 555 14 0 0 0 0
+false 0 0 [] 1 0.0 0.73 0.73 0.73 true DrawPolyline
+281 550 302 555 324 559 306 564 286 569 284 560 281 550 14 0 0 0 0
+false 0 0 [] 1 0.0 0.80 0.80 0.80 true DrawPolyline
+281 550 320 549 356 545 341 553 324 559 302 555 281 550 14 0 0 0 0
+false 0 0 [] 1 0.0 0.80 0.80 0.80 true DrawPolyline
+281 550 298 546 315 541 336 543 356 545 320 549 281 550 14 0 0 0 0
+false 0 0 [] 1 0.0 0.73 0.73 0.73 true DrawPolyline
+315 541 331 532 338 518 349 532 356 545 336 543 315 541 14 0 0 0 0
+false 0 0 [] 1 0.0 0.73 0.73 0.73 true DrawPolyline
+338 518 355 520 372 527 366 536 356 545 349 532 338 518 14 0 0 0 0
+false 0 0 [] 1 0.0 0.80 0.80 0.80 true DrawPolyline
+37 527 28 546 27 565 17 560 8 556 21 539 37 527 14 0 0 0 0 false 0 0 []
+1 0.0 0.87 0.87 0.87 true DrawPolyline
+37 527 43 536 53 545 38 553 27 565 28 546 37 527 14 0 0 0 0 false 0 0
+[] 1 0.0 0.87 0.87 0.87 true DrawPolyline
+53 545 68 553 85 559 51 559 27 565 38 553 53 545 14 0 0 0 0 false 0 0
+[] 1 0.0 0.87 0.87 0.87 true DrawPolyline
+85 559 66 564 53 572 39 569 27 565 51 559 85 559 14 0 0 0 0 false 0 0
+[] 1 0.0 0.93 0.93 0.93 true DrawPolyline
+85 559 83 569 86 579 69 576 53 572 66 564 85 559 14 0 0 0 0 false 0 0
+[] 1 0.0 0.93 0.93 0.93 true DrawPolyline
+85 559 103 564 123 569 103 574 86 579 83 569 85 559 14 0 0 0 0 false 0
+0 [] 1 0.0 0.87 0.87 0.87 true DrawPolyline
+123 569 143 574 164 579 124 578 86 579 103 574 123 569 14 0 0 0 0 false
+0 0 [] 1 0.0 0.93 0.93 0.93 true DrawPolyline
+164 579 146 583 132 587 108 583 86 579 124 578 164 579 14 0 0 0 0 false
+0 0 [] 1 0.0 0.93 0.93 0.93 true DrawPolyline
+164 579 174 587 205 593 164 591 132 587 146 583 164 579 14 0 0 0 0
+false 0 0 [] 1 0.0 0.93 0.93 0.93 true DrawPolyline
+164 579 184 582 205 583 205 589 205 593 174 587 164 579 14 0 0 0 0
+false 0 0 [] 1 0.0 0.93 0.93 0.93 true DrawPolyline
+205 583 225 582 245 579 235 587 205 593 205 589 205 583 14 0 0 0 0
+false 0 0 [] 1 0.0 0.93 0.93 0.93 true DrawPolyline
+245 579 263 583 277 587 245 591 205 593 235 587 245 579 14 0 0 0 0
+false 0 0 [] 1 0.0 0.93 0.93 0.93 true DrawPolyline
+245 579 285 578 323 579 301 583 277 587 263 583 245 579 14 0 0 0 0
+false 0 0 [] 1 0.0 0.93 0.93 0.93 true DrawPolyline
+245 579 266 574 286 569 306 574 323 579 285 578 245 579 14 0 0 0 0
+false 0 0 [] 1 0.0 0.93 0.93 0.93 true DrawPolyline
+286 569 306 564 324 559 326 569 323 579 306 574 286 569 14 0 0 0 0
+false 0 0 [] 1 0.0 0.87 0.87 0.87 true DrawPolyline
+324 559 343 564 356 572 340 576 323 579 326 569 324 559 14 0 0 0 0
+false 0 0 [] 1 0.0 0.93 0.93 0.93 true DrawPolyline
+324 559 358 559 382 565 370 569 356 572 343 564 324 559 14 0 0 0 0
+false 0 0 [] 1 0.0 0.93 0.93 0.93 true DrawPolyline
+324 559 341 553 356 545 371 553 382 565 358 559 324 559 14 0 0 0 0
+false 0 0 [] 1 0.0 0.87 0.87 0.87 true DrawPolyline
+356 545 366 536 372 527 381 546 382 565 371 553 356 545 14 0 0 0 0
+false 0 0 [] 1 0.0 0.87 0.87 0.87 true DrawPolyline
+372 527 388 539 401 556 392 560 382 565 381 546 372 527 14 0 0 0 0
+false 0 0 [] 1 0.0 0.87 0.87 0.87 true DrawPolyline
+8 556 11 578 19 597 9 598 0 598 2 576 8 556 14 0 0 0 0 false 0 0 [] 1
+0.0 0.93 0.93 0.93 true DrawPolyline
+8 556 17 560 27 565 21 580 19 597 11 578 8 556 14 0 0 0 0 false 0 0 []
+1 0.0 0.93 0.93 0.93 true DrawPolyline
+27 565 39 569 53 572 33 582 19 597 21 580 27 565 14 0 0 0 0 false 0 0
+[] 1 0.0 0.93 0.93 0.93 true DrawPolyline
+53 572 46 584 44 597 31 597 19 597 33 582 53 572 14 0 0 0 0 false 0 0
+[] 1 0.0 0.93 0.93 0.93 true DrawPolyline
+53 572 61 586 76 597 59 597 44 597 46 584 53 572 14 0 0 0 0 false 0 0
+[] 1 0.0 1.00 1.00 1.00 true DrawPolyline
+53 572 69 576 86 579 78 587 76 597 61 586 53 572 14 0 0 0 0 false 0 0
+[] 1 0.0 0.93 0.93 0.93 true DrawPolyline
+86 579 108 583 132 587 98 590 76 597 78 587 86 579 14 0 0 0 0 false 0 0
+[] 1 0.0 1.00 1.00 1.00 true DrawPolyline
+132 587 122 592 120 598 95 597 76 597 98 590 132 587 14 0 0 0 0 false 0
+0 [] 1 0.0 1.00 1.00 1.00 true DrawPolyline
+132 587 156 594 204 598 155 598 120 598 122 592 132 587 14 0 0 0 0
+false 0 0 [] 1 0.0 1.00 1.00 1.00 true DrawPolyline
+132 587 164 591 205 593 205 596 204 598 156 594 132 587 14 0 0 0 0
+false 0 0 [] 1 0.0 1.00 1.00 1.00 true DrawPolyline
+205 593 245 591 277 587 253 594 204 598 205 596 205 593 14 0 0 0 0
+false 0 0 [] 1 0.0 1.00 1.00 1.00 true DrawPolyline
+277 587 287 592 289 598 254 598 204 598 253 594 277 587 14 0 0 0 0
+false 0 0 [] 1 0.0 1.00 1.00 1.00 true DrawPolyline
+277 587 311 590 333 597 314 597 289 598 287 592 277 587 14 0 0 0 0
+false 0 0 [] 1 0.0 1.00 1.00 1.00 true DrawPolyline
+277 587 301 583 323 579 331 587 333 597 311 590 277 587 14 0 0 0 0
+false 0 0 [] 1 0.0 1.00 1.00 1.00 true DrawPolyline
+323 579 340 576 356 572 348 586 333 597 331 587 323 579 14 0 0 0 0
+false 0 0 [] 1 0.0 0.93 0.93 0.93 true DrawPolyline
+356 572 363 584 365 597 350 597 333 597 348 586 356 572 14 0 0 0 0
+false 0 0 [] 1 0.0 1.00 1.00 1.00 true DrawPolyline
+356 572 376 582 390 597 378 597 365 597 363 584 356 572 14 0 0 0 0
+false 0 0 [] 1 0.0 0.93 0.93 0.93 true DrawPolyline
+356 572 370 569 382 565 388 580 390 597 376 582 356 572 14 0 0 0 0
+false 0 0 [] 1 0.0 0.93 0.93 0.93 true DrawPolyline
+382 565 392 560 401 556 398 578 390 597 388 580 382 565 14 0 0 0 0
+false 0 0 [] 1 0.0 0.93 0.93 0.93 true DrawPolyline
+401 556 407 576 410 598 400 598 390 597 398 578 401 556 14 0 0 0 0
+false 0 0 [] 1 0.0 0.93 0.93 0.93 true DrawPolyline
+0 598 12 618 31 630 21 635 12 640 3 620 0 598 14 0 0 0 0 false 0 0 [] 1
+0.0 0.93 0.93 0.93 true DrawPolyline
+0 598 9 598 19 597 23 615 31 630 12 618 0 598 14 0 0 0 0 false 0 0 [] 1
+0.0 0.93 0.93 0.93 true DrawPolyline
+19 597 31 597 44 597 35 612 31 630 23 615 19 597 14 0 0 0 0 false 0 0
+[] 1 0.0 0.93 0.93 0.93 true DrawPolyline
+44 597 48 611 58 622 44 626 31 630 35 612 44 597 14 0 0 0 0 false 0 0
+[] 1 0.0 0.93 0.93 0.93 true DrawPolyline
+44 597 64 609 93 616 75 619 58 622 48 611 44 597 14 0 0 0 0 false 0 0
+[] 1 0.0 0.93 0.93 0.93 true DrawPolyline
+44 597 59 597 76 597 81 607 93 616 64 609 44 597 14 0 0 0 0 false 0 0
+[] 1 0.0 0.93 0.93 0.93 true DrawPolyline
+76 597 95 597 120 598 101 606 93 616 81 607 76 597 14 0 0 0 0 false 0 0
+[] 1 0.0 1.00 1.00 1.00 true DrawPolyline
+120 598 126 604 138 609 114 613 93 616 101 606 120 598 14 0 0 0 0 false
+0 0 [] 1 0.0 0.93 0.93 0.93 true DrawPolyline
+120 598 159 601 205 604 167 605 138 609 126 604 120 598 14 0 0 0 0
+false 0 0 [] 1 0.0 1.00 1.00 1.00 true DrawPolyline
+120 598 155 598 204 598 205 601 205 604 159 601 120 598 14 0 0 0 0
+false 0 0 [] 1 0.0 1.00 1.00 1.00 true DrawPolyline
+204 598 254 598 289 598 250 601 205 604 205 601 204 598 14 0 0 0 0
+false 0 0 [] 1 0.0 1.00 1.00 1.00 true DrawPolyline
+289 598 283 604 271 609 242 605 205 604 250 601 289 598 14 0 0 0 0
+false 0 0 [] 1 0.0 1.00 1.00 1.00 true DrawPolyline
+289 598 308 606 316 616 295 613 271 609 283 604 289 598 14 0 0 0 0
+false 0 0 [] 1 0.0 0.93 0.93 0.93 true DrawPolyline
+289 598 314 597 333 597 328 607 316 616 308 606 289 598 14 0 0 0 0
+false 0 0 [] 1 0.0 1.00 1.00 1.00 true DrawPolyline
+333 597 350 597 365 597 345 609 316 616 328 607 333 597 14 0 0 0 0
+false 0 0 [] 1 0.0 0.93 0.93 0.93 true DrawPolyline
+365 597 361 611 351 622 334 619 316 616 345 609 365 597 14 0 0 0 0
+false 0 0 [] 1 0.0 0.93 0.93 0.93 true DrawPolyline
+365 597 374 612 378 630 365 626 351 622 361 611 365 597 14 0 0 0 0
+false 0 0 [] 1 0.0 0.93 0.93 0.93 true DrawPolyline
+365 597 378 597 390 597 386 615 378 630 374 612 365 597 14 0 0 0 0
+false 0 0 [] 1 0.0 0.93 0.93 0.93 true DrawPolyline
+390 597 400 598 410 598 397 618 378 630 386 615 390 597 14 0 0 0 0
+false 0 0 [] 1 0.0 0.93 0.93 0.93 true DrawPolyline
+410 598 406 620 397 640 388 635 378 630 397 618 410 598 14 0 0 0 0
+false 0 0 [] 1 0.0 0.93 0.93 0.93 true DrawPolyline
+12 640 34 648 62 648 50 657 43 667 26 656 12 640 14 0 0 0 0 false 0 0
+[] 1 0.0 0.80 0.80 0.80 true DrawPolyline
+12 640 21 635 31 630 45 641 62 648 34 648 12 640 14 0 0 0 0 false 0 0
+[] 1 0.0 0.87 0.87 0.87 true DrawPolyline
+31 630 44 626 58 622 58 635 62 648 45 641 31 630 14 0 0 0 0 false 0 0
+[] 1 0.0 0.87 0.87 0.87 true DrawPolyline
+58 622 75 631 95 637 77 642 62 648 58 635 58 622 14 0 0 0 0 false 0 0
+[] 1 0.0 0.80 0.80 0.80 true DrawPolyline
+58 622 92 627 133 628 114 632 95 637 75 631 58 622 14 0 0 0 0 false 0 0
+[] 1 0.0 0.87 0.87 0.87 true DrawPolyline
+58 622 75 619 93 616 111 623 133 628 92 627 58 622 14 0 0 0 0 false 0 0
+[] 1 0.0 0.87 0.87 0.87 true DrawPolyline
+93 616 114 613 138 609 132 618 133 628 111 623 93 616 14 0 0 0 0 false
+0 0 [] 1 0.0 0.87 0.87 0.87 true DrawPolyline
+138 609 155 613 169 620 151 624 133 628 132 618 138 609 14 0 0 0 0
+false 0 0 [] 1 0.0 0.87 0.87 0.87 true DrawPolyline
+138 609 178 610 205 617 186 618 169 620 155 613 138 609 14 0 0 0 0
+false 0 0 [] 1 0.0 0.87 0.87 0.87 true DrawPolyline
+138 609 167 605 205 604 205 609 205 617 178 610 138 609 14 0 0 0 0
+false 0 0 [] 1 0.0 0.93 0.93 0.93 true DrawPolyline
+205 604 242 605 271 609 231 610 205 617 205 609 205 604 14 0 0 0 0
+false 0 0 [] 1 0.0 0.93 0.93 0.93 true DrawPolyline
+271 609 254 613 240 620 223 618 205 617 231 610 271 609 14 0 0 0 0
+false 0 0 [] 1 0.0 0.87 0.87 0.87 true DrawPolyline
+271 609 277 618 276 628 258 624 240 620 254 613 271 609 14 0 0 0 0
+false 0 0 [] 1 0.0 0.87 0.87 0.87 true DrawPolyline
+271 609 295 613 316 616 298 623 276 628 277 618 271 609 14 0 0 0 0
+false 0 0 [] 1 0.0 0.87 0.87 0.87 true DrawPolyline
+316 616 334 619 351 622 317 627 276 628 298 623 316 616 14 0 0 0 0
+false 0 0 [] 1 0.0 0.87 0.87 0.87 true DrawPolyline
+351 622 334 631 314 637 295 632 276 628 317 627 351 622 14 0 0 0 0
+false 0 0 [] 1 0.0 0.87 0.87 0.87 true DrawPolyline
+351 622 351 635 347 648 332 642 314 637 334 631 351 622 14 0 0 0 0
+false 0 0 [] 1 0.0 0.80 0.80 0.80 true DrawPolyline
+351 622 365 626 378 630 364 641 347 648 351 635 351 622 14 0 0 0 0
+false 0 0 [] 1 0.0 0.87 0.87 0.87 true DrawPolyline
+378 630 388 635 397 640 375 648 347 648 364 641 378 630 14 0 0 0 0
+false 0 0 [] 1 0.0 0.87 0.87 0.87 true DrawPolyline
+397 640 383 656 366 667 359 656 347 648 375 648 397 640 14 0 0 0 0
+false 0 0 [] 1 0.0 0.80 0.80 0.80 true DrawPolyline
+43 667 69 661 104 658 89 664 75 674 59 672 43 667 14 0 0 0 0 false 0 0
+[] 1 0.0 0.73 0.73 0.73 true DrawPolyline
+43 667 50 657 62 648 82 653 104 658 69 661 43 667 14 0 0 0 0 false 0 0
+[] 1 0.0 0.73 0.73 0.73 true DrawPolyline
+62 648 77 642 95 637 99 647 104 658 82 653 62 648 14 0 0 0 0 false 0 0
+[] 1 0.0 0.73 0.73 0.73 true DrawPolyline
+95 637 117 642 134 651 119 654 104 658 99 647 95 637 14 0 0 0 0 false 0
+0 [] 1 0.0 0.67 0.67 0.67 true DrawPolyline
+95 637 134 639 159 650 147 650 134 651 117 642 95 637 14 0 0 0 0 false
+0 0 [] 1 0.0 0.67 0.67 0.67 true DrawPolyline
+95 637 114 632 133 628 149 636 159 650 134 639 95 637 14 0 0 0 0 false
+0 0 [] 1 0.0 0.73 0.73 0.73 true DrawPolyline
+133 628 151 624 169 620 164 634 159 650 149 636 133 628 14 0 0 0 0
+false 0 0 [] 1 0.0 0.73 0.73 0.73 true DrawPolyline
+169 620 178 632 183 648 171 649 159 650 164 634 169 620 14 0 0 0 0
+false 0 0 [] 1 0.0 0.67 0.67 0.67 true DrawPolyline
+169 620 191 631 205 648 194 648 183 648 178 632 169 620 14 0 0 0 0
+false 0 0 [] 1 0.0 0.67 0.67 0.67 true DrawPolyline
+169 620 186 618 205 617 205 630 205 648 191 631 169 620 14 0 0 0 0
+false 0 0 [] 1 0.0 0.73 0.73 0.73 true DrawPolyline
+205 617 223 618 240 620 218 631 205 648 205 630 205 617 14 0 0 0 0
+false 0 0 [] 1 0.0 0.73 0.73 0.73 true DrawPolyline
+240 620 231 632 226 648 215 648 205 648 218 631 240 620 14 0 0 0 0
+false 0 0 [] 1 0.0 0.67 0.67 0.67 true DrawPolyline
+240 620 245 634 250 650 238 649 226 648 231 632 240 620 14 0 0 0 0
+false 0 0 [] 1 0.0 0.67 0.67 0.67 true DrawPolyline
+240 620 258 624 276 628 260 636 250 650 245 634 240 620 14 0 0 0 0
+false 0 0 [] 1 0.0 0.73 0.73 0.73 true DrawPolyline
+276 628 295 632 314 637 275 639 250 650 260 636 276 628 14 0 0 0 0
+false 0 0 [] 1 0.0 0.73 0.73 0.73 true DrawPolyline
+314 637 292 642 275 651 262 650 250 650 275 639 314 637 14 0 0 0 0
+false 0 0 [] 1 0.0 0.67 0.67 0.67 true DrawPolyline
+314 637 310 647 305 658 290 654 275 651 292 642 314 637 14 0 0 0 0
+false 0 0 [] 1 0.0 0.67 0.67 0.67 true DrawPolyline
+314 637 332 642 347 648 327 653 305 658 310 647 314 637 14 0 0 0 0
+false 0 0 [] 1 0.0 0.73 0.73 0.73 true DrawPolyline
+347 648 359 656 366 667 340 661 305 658 327 653 347 648 14 0 0 0 0
+false 0 0 [] 1 0.0 0.73 0.73 0.73 true DrawPolyline
+366 667 350 672 334 674 320 664 305 658 340 661 366 667 14 0 0 0 0
+false 0 0 [] 1 0.0 0.73 0.73 0.73 true DrawPolyline
+75 674 106 671 123 687 113 687 102 687 88 678 75 674 14 0 0 0 0 false 0
+0 [] 1 0.0 0.47 0.47 0.47 true DrawPolyline
+75 674 89 664 104 658 118 669 123 687 106 671 75 674 14 0 0 0 0 false 0
+0 [] 1 0.0 0.53 0.53 0.53 true DrawPolyline
+104 658 119 654 134 651 130 668 123 687 118 669 104 658 14 0 0 0 0
+false 0 0 [] 1 0.0 0.53 0.53 0.53 true DrawPolyline
+134 651 141 668 143 687 133 687 123 687 130 668 134 651 14 0 0 0 0
+false 0 0 [] 1 0.0 0.40 0.40 0.40 true DrawPolyline
+134 651 152 668 164 687 153 687 143 687 141 668 134 651 14 0 0 0 0
+false 0 0 [] 1 0.0 0.40 0.40 0.40 true DrawPolyline
+134 651 147 650 159 650 163 667 164 687 152 668 134 651 14 0 0 0 0
+false 0 0 [] 1 0.0 0.47 0.47 0.47 true DrawPolyline
+159 650 171 649 183 648 173 667 164 687 163 667 159 650 14 0 0 0 0
+false 0 0 [] 1 0.0 0.47 0.47 0.47 true DrawPolyline
+183 648 184 667 184 687 174 687 164 687 173 667 183 648 14 0 0 0 0
+false 0 0 [] 1 0.0 0.40 0.40 0.40 true DrawPolyline
+183 648 194 667 205 687 194 687 184 687 184 667 183 648 14 0 0 0 0
+false 0 0 [] 1 0.0 0.40 0.40 0.40 true DrawPolyline
+183 648 194 648 205 648 205 667 205 687 194 667 183 648 14 0 0 0 0
+false 0 0 [] 1 0.0 0.47 0.47 0.47 true DrawPolyline
+205 648 215 648 226 648 215 667 205 687 205 667 205 648 14 0 0 0 0
+false 0 0 [] 1 0.0 0.47 0.47 0.47 true DrawPolyline
+226 648 225 667 225 687 215 687 205 687 215 667 226 648 14 0 0 0 0
+false 0 0 [] 1 0.0 0.40 0.40 0.40 true DrawPolyline
+226 648 236 667 245 687 235 687 225 687 225 667 226 648 14 0 0 0 0
+false 0 0 [] 1 0.0 0.40 0.40 0.40 true DrawPolyline
+226 648 238 649 250 650 246 667 245 687 236 667 226 648 14 0 0 0 0
+false 0 0 [] 1 0.0 0.47 0.47 0.47 true DrawPolyline
+250 650 262 650 275 651 257 668 245 687 246 667 250 650 14 0 0 0 0
+false 0 0 [] 1 0.0 0.47 0.47 0.47 true DrawPolyline
+275 651 268 668 266 687 256 687 245 687 257 668 275 651 14 0 0 0 0
+false 0 0 [] 1 0.0 0.40 0.40 0.40 true DrawPolyline
+275 651 279 668 286 687 276 687 266 687 268 668 275 651 14 0 0 0 0
+false 0 0 [] 1 0.0 0.40 0.40 0.40 true DrawPolyline
+275 651 290 654 305 658 291 669 286 687 279 668 275 651 14 0 0 0 0
+false 0 0 [] 1 0.0 0.53 0.53 0.53 true DrawPolyline
+305 658 320 664 334 674 303 671 286 687 291 669 305 658 14 0 0 0 0
+false 0 0 [] 1 0.0 0.53 0.53 0.53 true DrawPolyline
+334 674 321 678 307 687 296 687 286 687 303 671 334 674 14 0 0 0 0
+false 0 0 [] 1 0.0 0.47 0.47 0.47 true DrawPolyline
+184 687 194 687 205 687 205 718 205 749 194 718 184 687 14 0 0 0 0
+false 0 0 [] 1 0.0 0.27 0.27 0.27 true DrawPolyline
+205 687 215 718 225 749 215 749 205 749 205 718 205 687 14 0 0 0 0
+false 0 0 [] 1 0.0 0.27 0.27 0.27 true DrawPolyline
+205 687 215 687 225 687 225 718 225 749 215 718 205 687 14 0 0 0 0
+false 0 0 [] 1 0.0 0.27 0.27 0.27 true DrawPolyline
+225 687 235 718 245 749 235 749 225 749 225 718 225 687 14 0 0 0 0
+false 0 0 [] 1 0.0 0.27 0.27 0.27 true DrawPolyline
+225 687 235 687 245 687 245 718 245 749 235 718 225 687 14 0 0 0 0
+false 0 0 [] 1 0.0 0.27 0.27 0.27 true DrawPolyline
+245 687 256 718 266 749 256 749 245 749 245 718 245 687 14 0 0 0 0
+false 0 0 [] 1 0.0 0.27 0.27 0.27 true DrawPolyline
+205 749 215 749 225 749 225 780 225 811 215 780 205 749 14 0 0 0 0
+false 0 0 [] 1 0.0 0.27 0.27 0.27 true DrawPolyline
+225 749 235 780 245 811 235 811 225 811 225 780 225 749 14 0 0 0 0
+false 0 0 [] 1 0.0 0.27 0.27 0.27 true DrawPolyline
+225 749 235 749 245 749 245 780 245 811 235 780 225 749 14 0 0 0 0
+false 0 0 [] 1 0.0 0.27 0.27 0.27 true DrawPolyline
+245 749 256 780 266 811 256 811 245 811 245 780 245 749 14 0 0 0 0
+false 0 0 [] 1 0.0 0.27 0.27 0.27 true DrawPolyline
+245 749 256 749 266 749 266 780 266 811 256 780 245 749 14 0 0 0 0
+false 0 0 [] 1 0.0 0.27 0.27 0.27 true DrawPolyline
+266 749 276 780 286 811 276 811 266 811 266 780 266 749 14 0 0 0 0
+false 0 0 [] 1 0.0 0.27 0.27 0.27 true DrawPolyline
+225 811 235 811 245 811 245 842 245 872 235 842 225 811 14 0 0 0 0
+false 0 0 [] 1 0.0 0.27 0.27 0.27 true DrawPolyline
+245 811 256 842 266 872 256 872 245 872 245 842 245 811 14 0 0 0 0
+false 0 0 [] 1 0.0 0.27 0.27 0.27 true DrawPolyline
+245 811 256 811 266 811 266 842 266 872 256 842 245 811 14 0 0 0 0
+false 0 0 [] 1 0.0 0.27 0.27 0.27 true DrawPolyline
+266 811 276 842 286 872 276 872 266 872 266 842 266 811 14 0 0 0 0
+false 0 0 [] 1 0.0 0.27 0.27 0.27 true DrawPolyline
+266 811 276 811 286 811 286 842 286 872 276 842 266 811 14 0 0 0 0
+false 0 0 [] 1 0.0 0.27 0.27 0.27 true DrawPolyline
+286 811 296 842 307 872 296 872 286 872 286 842 286 811 14 0 0 0 0
+false 0 0 [] 1 0.0 0.27 0.27 0.27 true DrawPolyline
+-1 579 7 7 0 0 0 0 false 0 0 [] 1 1.0 0 0 0 false DrawRectangle
+8 581 7 7 0 0 0 0 false 0 0 [] 1 1.0 0 0 0 false DrawRectangle
+18 583 7 7 0 0 0 0 false 0 0 [] 1 1.0 0 0 0 false DrawRectangle
+30 585 7 7 0 0 0 0 false 0 0 [] 1 1.0 0 0 0 false DrawRectangle
+43 587 7 7 0 0 0 0 false 0 0 [] 1 1.0 0 0 0 false DrawRectangle
+153 597 7 7 0 0 0 0 false 0 0 [] 1 1.0 0 0 0 false DrawRectangle
+202 599 7 7 0 0 0 0 false 0 0 [] 1 1.0 0 0 0 false DrawRectangle
+250 597 7 7 0 0 0 0 false 0 0 [] 1 1.0 0 0 0 false DrawRectangle
+360 587 7 7 0 0 0 0 false 0 0 [] 1 1.0 0 0 0 false DrawRectangle
+373 585 7 7 0 0 0 0 false 0 0 [] 1 1.0 0 0 0 false DrawRectangle
+385 583 7 7 0 0 0 0 false 0 0 [] 1 1.0 0 0 0 false DrawRectangle
+395 581 7 7 0 0 0 0 false 0 0 [] 1 1.0 0 0 0 false DrawRectangle
+404 579 7 7 0 0 0 0 false 0 0 [] 1 1.0 0 0 0 false DrawRectangle
+-3 601 7 7 0 0 0 0 false 0 0 [] 1 1.0 0 0 0 false DrawRectangle
+6 601 7 7 0 0 0 0 false 0 0 [] 1 1.0 0 0 0 false DrawRectangle
+16 600 7 7 0 0 0 0 false 0 0 [] 1 1.0 0 0 0 false DrawRectangle
+152 601 7 7 0 0 0 0 false 0 0 [] 1 1.0 0 0 0 false DrawRectangle
+201 601 7 7 0 0 0 0 false 0 0 [] 1 1.0 0 0 0 false DrawRectangle
+251 601 7 7 0 0 0 0 false 0 0 [] 1 1.0 0 0 0 false DrawRectangle
+387 600 7 7 0 0 0 0 false 0 0 [] 1 1.0 0 0 0 false DrawRectangle
+397 601 7 7 0 0 0 0 false 0 0 [] 1 1.0 0 0 0 false DrawRectangle
+407 601 7 7 0 0 0 0 false 0 0 [] 1 1.0 0 0 0 false DrawRectangle
+grestore
+
+grestore
+
+0 872 410 423 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+grestore
+
+grestore
+
+0 872 410 423 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+grestore
+
+grestore
+
+0 872 430 443 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+grestore
+
+gsave
+
+%
+% Begin new window
+%
+431 0 translate
+gsave
+0 872 199 443 ClipToRectangle
+0 0 translate
+gsave
+0 872 199 443 0 0 0 0 false 0 0 [] -1 0.0 0.83 0.83 0.83 true DrawRectangle
+12 844 114 0 0 0 0 false (Magnify Mesh) 18 /Helvetica DrawText
+29 831 80 20 0 0 0 0 false 0 0 [] -1 0.0 1.00 1.00 1.00 true DrawRectangle
+31 829 78 18 0 0 0 0 false 0 0 [] -1 0.0 0.46 0.46 0.46 true DrawRectangle
+31 829 76 16 0 0 0 0 false 0 0 [] -1 0.0 0.83 0.83 0.83 true DrawRectangle
+34 817 48 0 0 0 0 false (Enlarge) 12 /Courier DrawText
+29 802 80 20 0 0 0 0 false 0 0 [] -1 0.0 1.00 1.00 1.00 true DrawRectangle
+31 800 78 18 0 0 0 0 false 0 0 [] -1 0.0 0.46 0.46 0.46 true DrawRectangle
+31 800 76 16 0 0 0 0 false 0 0 [] -1 0.0 0.83 0.83 0.83 true DrawRectangle
+34 788 41 0 0 0 0 false (Reduce) 12 /Courier DrawText
+29 773 80 20 0 0 0 0 false 0 0 [] -1 0.0 1.00 1.00 1.00 true DrawRectangle
+31 771 78 18 0 0 0 0 false 0 0 [] -1 0.0 0.46 0.46 0.46 true DrawRectangle
+31 771 76 16 0 0 0 0 false 0 0 [] -1 0.0 0.83 0.83 0.83 true DrawRectangle
+34 759 70 0 0 0 0 false (Fit Window) 12 /Courier DrawText
+29 744 80 20 0 0 0 0 false 0 0 [] -1 0.0 1.00 1.00 1.00 true DrawRectangle
+31 742 78 18 0 0 0 0 false 0 0 [] -1 0.0 0.46 0.46 0.46 true DrawRectangle
+31 742 76 16 0 0 0 0 false 0 0 [] -1 0.0 0.83 0.83 0.83 true DrawRectangle
+34 730 49 0 0 0 0 false (Default) 12 /Courier DrawText
+6 683 39 0 0 0 0 false (Scale:) 12 /Courier-Bold DrawText
+50 696 88 18 0 0 0 0 false 0 0 [] -1 0.0 0.46 0.46 0.46 true DrawRectangle
+52 694 86 16 0 0 0 0 false 0 0 [] -1 0.0 1.00 1.00 1.00 true DrawRectangle
+52 694 84 14 0 0 0 0 false 0 0 [] -1 0.0 0.70 0.70 0.70 true DrawRectangle
+54 683 30 0 0 0 0 false (2.38) 12 /Courier DrawText
+52 659 76 0 0 0 0 false (screen/real) 12 /Courier DrawText
+grestore
+
+grestore
+
+0 872 199 443 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+grestore
+
+grestore
+
+0 872 630 553 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+
+showpage
+%%Trailer
+%%DocumentFonts: /Courier-Bold /Helvetica /Courier 
+%%BoundingBox: 72 190 540 601
+

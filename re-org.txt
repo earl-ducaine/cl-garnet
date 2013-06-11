@@ -1,0 +1,57 @@
+Re-organization of Garnet sources:
+
+1) Maybe we should go back to the old structure with 
+src, lib and bin directories.  Reasons:
+
+a) I find it more convenient given that I need to maintain both MCL
+and ACL binaries, both of which are conveniently named "fasl".  It
+also makes it easier to do testing on older version of Lisp.
+
+b) Fred Gilham has not been participating in the sourceforge project
+in large part because of the difficulty of dealing with the changed
+layout.  
+
+I can live with the former, but the latter seems and excellent reason
+to go back to the original layout.
+
+2) Unbundling contrib code.
+
+I'm proposing that we move the following code into 
+garnet-gadgets from contrib:
+
+choice-gadget.lisp
+ritter-labeled-box.lisp
+prompter/scrolling-unlabeled-box-loader.lisp
+prompter/scrolling-unlabeled-box.lisp
+
+I'm also proposing moving 
+kr-doc.lisp 
+from contrib to kr, but it would not be loaded by default.  If kr-doc
+is loaded before the rest of garnet, then the KR doc string will be
+loaded as well.  This allows people to reduce the size of the garnet
+footprint, but putting 
+#+kr-doc
+	(:documentation "....")
+#+kr-doc
+	(:slot-doc :left "..." ...)
+
+will keep unwanted stuff out.
+
+
+Finally, I'll move/merge all of the prompter code into the
+protected-eval package.
+
+
+3)  #+garnet-test
+
+I've added an extra compile switch #+garnet-test and used it to
+comment out a lot of test code in the garnet-gadgets package.  This
+made a substantial reduction in the size of the garnet footprint.
+
+
+
+
+I tagged the pre-org structure with the tag RGApreReorg.
+I'll tag the post-reorg structure with the tage RGApostReorg.
+
+     --Russell

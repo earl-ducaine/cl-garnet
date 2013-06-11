@@ -1,0 +1,59 @@
+These are the postscript files that make up the manual for Garnet
+Version 3.0.  The first file (manual-cover.ps) is optional, and can be
+printed in color, if you have a color printer.
+
+All of these manuals will print single-sided, even if you have a printer
+that can print double-sided.  The reason we have put code in the files to
+explicitly make them single-sided is so that you can rearrange the table
+of contents of each manual, and insert blank pages behind the title pages,
+before copying them on a double-sided copier.  To see how blank pages can
+be inserted into the single-sided copy so that it can be fed to a double-sided
+copier, refer to the format of a previous version of the manual (e.g., the
+Garnet 2.2 manual).
+
+To create a manual, print all the postscript files (with something
+like "lpr *.ps" or use the print-garnet-docs shell script), and then
+assemble them in the following order:
+
+manual-cover.ps
+refman.ps
+overview.ps
+apps.ps
+tour.ps
+tutorial.ps
+kr-manual.ps
+opal-manual.ps
+inter-manual.ps
+aggregadgets-manual.ps
+gadgets-manual.ps
+debug-manual.ps
+demoguide.ps
+sampleprog.ps
+gilt-manual.ps
+c32-manual.ps
+lapidary-manual.ps
+hints.ps
+index.ps
+
+
+To quickly print all the files in the right order, you can execute the
+shell script 'print-garnet-docs', found in this directory.  It uses the 'lpr'
+command to send all the files to your default printer.  
+  Ex:  csh print-garnet-docs
+
+(Of course, you might want to print manual-cover.ps to a different
+printer, so it will be in color.)
+
+
+There is an additional file, changes3.0.txt, which discusses all the changes
+that were made since the 2.2 release.  This document is a plain text file,
+and is not printed by the shell script.  You may not even want to print this
+document, because the complete 3.0 manual covers all of the material included
+in the changes document.
+
+
+If you have trouble printing the documents, some people have reported
+that it works better to change the top line of each postscript file from
+    %!PS-Adobe-2.0
+to be just
+    %!

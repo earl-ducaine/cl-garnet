@@ -1,0 +1,5 @@
+@findex font-descent
+@anchor{Function font-descent}
+@deffn {Function} {font-descent} drawable font
+Returns descent of @var{font}. @var{drawable} must be window, pixmap or screen.
+@end deffn

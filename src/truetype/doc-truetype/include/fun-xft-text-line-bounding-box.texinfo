@@ -1,0 +1,5 @@
+@findex text-line-bounding-box
+@anchor{Function text-line-bounding-box}
+@deffn {Function} {text-line-bounding-box} drawable font string @&key start end
+Returns text line bounding box. @var{drawable} must be window, pixmap or screen. Text line bounding box is bigger than text bounding box. It's height is ascent @code{+} descent, width is sum of advance widths minus sum of kernings.
+@end deffn

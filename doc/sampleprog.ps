@@ -1,0 +1,2227 @@
+%!PS-Adobe-2.0
+%%Title: sampleprog/sampleprog.mss
+%%DocumentFonts: (atend)
+%%Creator: Andrew Mickish and Scribe 7(1700)
+%%CreationDate: 12 December 1994 15:22
+%%Pages: (atend)
+%%EndComments
+% PostScript Prelude for Scribe.
+/BS {/SV save def 0.0 792.0 translate .01 -.01 scale} bind def
+/ES {showpage SV restore} bind def
+/SC {setrgbcolor} bind def
+/FMTX matrix def
+/RDF {WFT SLT 0.0 eq 
+  {SSZ 0.0 0.0 SSZ neg 0.0 0.0 FMTX astore}
+  {SSZ 0.0 SLT neg sin SLT cos div SSZ mul SSZ neg 0.0 0.0 FMTX astore}
+  ifelse makefont setfont} bind def
+/SLT 0.0 def
+/SI { /SLT exch cvr def RDF} bind def
+/WFT /Courier findfont def
+/SF { /WFT exch findfont def RDF} bind def
+/SSZ 1000.0 def
+/SS { /SSZ exch 100.0 mul def RDF} bind def
+/AF { /WFT exch findfont def /SSZ exch 100.0 mul def RDF} bind def
+/MT /moveto load def
+/XM {currentpoint exch pop moveto} bind def
+/UL {gsave newpath moveto dup 2.0 div 0.0 exch rmoveto
+   setlinewidth 0.0 rlineto stroke grestore} bind def
+/LH {gsave newpath moveto setlinewidth
+   0.0 rlineto
+   gsave stroke grestore} bind def
+/LV {gsave newpath moveto setlinewidth
+   0.0 exch rlineto
+   gsave stroke grestore} bind def
+/BX {gsave newpath moveto setlinewidth
+   exch
+   dup 0.0 rlineto
+   exch 0.0 exch neg rlineto
+   neg 0.0 rlineto
+   closepath
+   gsave stroke grestore} bind def
+/BX1 {grestore} bind def
+/BX2 {setlinewidth 1 setgray stroke grestore} bind def
+/PB {/PV save def newpath translate
+    100.0 -100.0 scale pop /showpage {} def} bind def
+/PE {PV restore} bind def
+/GB {/PV save def newpath translate rotate
+    div dup scale 100.0 -100.0 scale
+    /showpage {} def
+    /letter {} def
+    /lettersmall {} def
+    /note {} def
+    } bind def
+/GE {PV restore} bind def
+/FB {dict dup /FontMapDict exch def begin} bind def
+/FM {cvn exch cvn exch def} bind def
+/FE {end /original-findfont /findfont load def  /findfont
+   {dup FontMapDict exch known{FontMapDict exch get} if
+   original-findfont} def} bind def
+/BC {gsave moveto dup 0 exch rlineto exch 0 rlineto neg 0 exch rlineto closepath clip} bind def
+/EC /grestore load def
+/SH /show load def
+/MX {exch show 0.0 rmoveto} bind def
+/W {0 32 4 -1 roll widthshow} bind def
+/WX {0 32 5 -1 roll widthshow 0.0 rmoveto} bind def
+/RC {100.0 -100.0 scale
+612.0 0.0 translate
+-90.0 rotate
+.01 -.01 scale} bind def
+/URC {100.0 -100.0 scale
+90.0 rotate
+-612.0 0.0 translate
+.01 -.01 scale} bind def
+/RCC {100.0 -100.0 scale
+0.0 -792.0 translate 90.0 rotate
+.01 -.01 scale} bind def
+/URCC {100.0 -100.0 scale
+-90.0 rotate 0.0 792.0 translate
+.01 -.01 scale} bind def
+%%EndProlog
+%%Page: 0 1
+BS
+0 SI
+11 SS 
+1 1 0 8280 7200 GB 
+%%BeginDocument: single-sided.ps
+%!PS-Adobe-2.0
+%
+%  This PostScript code turns off double-sided printing,
+%  which is desirable since we want to be able to move the
+%  Tables of Contents by hand after the manuals are printed.
+%
+statusdict begin
+   false setduplexmode
+end
+
+%%EndDocument
+ GE 16 /Times-Bold AF
+22459 18976 MT
+(A Sample Garnet Program)SH
+11 SS 
+28182 21368 MT
+(Brad A. Myers)SH
+/Times-Roman SF
+28183 23294 MT
+(December 1994)SH
+/Times-Bold SF
+29634 44214 MT
+(Abstract)SH
+/Times-Roman SF
+8280 45966 MT
+(This file contains a sample program written using the Garnet)
+40 W( Toolkit.  The program is a simple graphical)39 W
+8280 47262 MT
+(editor that allows the user to create boxes and arrows.)SH
+21010 52980 MT
+(Copyright)SH
+/Symbol SF
+25747 XM
+(\323)SH
+/Times-Roman SF
+26891 XM
+(1994 - Carnegie Mellon University)SH
+8280 59763 MT
+(This research was sponsored by NCCOSC under Contract No.  N66001-94-C-6037, Arpa Order)
+207 W( No.)208 W
+8280 61059 MT
+(B326. The)
+381 W( views and conclusions contained in this document)
+53 W( are those of the authors and should not be)52 W
+8280 62355 MT
+(interpreted as representing the official policies, either expressed or implied, of NCCOSC or)
+192 W( the U.S.)193 W
+8280 63651 MT
+(Government.)SH
+ES
+%%Page: 493 2
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(Section 3)
+SH( User)
+1550 W( Interface)SH
+51386 XM
+(Page 493)SH
+46800 50 8280 4486 UL
+16 /Times-Bold AF
+8280 8272 MT
+(1. Introduction)SH
+11 /Times-Roman AF
+8280 10524 MT
+(The program in this file is implemented using)
+43 W( the Garnet Toolkit, and is presented as an example of how)42 W
+8280 11720 MT
+(to write programs using the toolkit.  The program implements)
+100 W( a graphical editor that allows the user to)101 W
+8280 12916 MT
+(create boxes with textual labels which can be connected by lines.  The lines have arrowheads,)
+139 W( and go)138 W
+8280 14112 MT
+(from the center of one box to the center of another.  The boxes can be moved or changed size,)
+95 W( and the)96 W
+8280 15308 MT
+(arrows stay attached correctly.  The boxes or lines can also be deleted, and the labels can be edited.)SH
+8280 17606 MT
+(The sample program is in the file)194 W
+10 /Courier AF
+24515 XM
+(demo-editor.lisp)SH
+11 /Times-Roman AF
+(, and a source and binary \050compiled\051)
+194 W( version)193 W
+8280 18802 MT
+(should be available in the)SH
+10 /Courier AF
+19797 XM
+(demos)SH
+11 /Times-Roman AF
+23072 XM
+(sub-directory of the Garnet system files.)SH
+8280 21100 MT
+(This graphical editor shows the use of:)SH
+/Symbol SF
+10249 22678 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(Constraints: to keep the arrows centered, to keep the name labels at the tops of boxes, etc.)SH
+/Symbol SF
+10249 24572 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(Opal objects: roundtangles, cursor-text, windows.)SH
+/Symbol SF
+10249 26466 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(Interactors: to choose which drawing mode \050)198 W
+10 /Courier AF
+(menu-interactor)SH
+11 /Times-Roman AF
+(\051, to edit the)
+198 W( text strings)199 W
+11030 27662 MT
+(\050two)SH
+10 /Courier AF
+13321 XM
+(text-interactor)SH
+11 /Times-Roman AF
+(s\051, and to create new objects \050)SH
+10 /Courier AF
+(two-point-interactor)SH
+11 /Times-Roman AF
+(\051.)SH
+/Symbol SF
+10249 29556 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(Toolkit widgets:)36 W
+10 /Courier AF
+18620 XM
+(Text-button-panel)SH
+11 /Times-Roman AF
+29131 XM
+(\050a form of)
+36 W( menu\051,)35 W
+10 /Courier AF
+37366 XM
+(graphics-selection)SH
+11 /Times-Roman AF
+48476 XM
+(\050to show)35 W
+11030 30752 MT
+(which object is selected and allow it to be moved\051, and)62 W
+10 /Courier AF
+36151 XM
+(arrow-line)SH
+11 /Times-Roman AF
+(s. These)
+401 W( widgets have)63 W
+11030 31948 MT
+(built in Opal objects and Interactors.)SH
+/Symbol SF
+10249 33842 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(Aggregadgets: to group the roundtangle and label string.)SH
+/Symbol SF
+10249 35736 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(Creating instances from prototypes \050creating the new boxes and arrows\051.)SH
+8280 38034 MT
+(This code is about 365 lines long, including comments, and)
+79 W( took me two hours to code and one hour to)78 W
+8280 39230 MT
+(debug. I)
+275 W( did not use any higher-level Garnet tools to create it \050it was all coded directly in Lisp\051.)SH
+16 /Times-Bold AF
+8280 43902 MT
+(2. Loading the Editor)SH
+11 /Times-Roman AF
+8280 46154 MT
+(After loading)SH
+10 /Courier AF
+14450 XM
+(Garnet-loader)SH
+11 /Times-Roman AF
+(, either of the following commands will load the editor:)SH
+8 /Courier AF
+10200 47367 MT
+(\050garnet-load "demos:demo-editor"\051)SH
+/Times-Italic SF
+29880 XM
+(; To load the compiled version)SH
+11 /Times-Roman AF
+8280 48788 MT
+(or)SH
+8 /Courier AF
+10200 50001 MT
+(\050garnet-load "demos-src:demo-editor"\051)SH
+/Times-Italic SF
+29880 XM
+(; To load the interpreted version, which)SH
+29880 50866 MT
+(; may make experimenting/debugging easier)SH
+16 /Times-Bold AF
+8280 55538 MT
+(3. User Interface)SH
+11 /Times-Roman AF
+8280 57790 MT
+(A snap shot of the editor in use is shown in Figure 1.)SH
+8280 60088 MT
+(The user interface is as follows.  The menu at the top determines the current mode.  When the)
+2 W( roundtangle)1 W
+8280 61284 MT
+(is outlined, the user can draw new boxes, and when the arrow is outlined, the user can draw)
+47 W( new arrows.)48 W
+8280 62480 MT
+(Press with either the left or right mouse buttons over one to change modes.)SH
+8280 64778 MT
+(To create a new)
+23 W( roundtangle, press with the)22 W
+/Times-Italic SF
+27914 XM
+(right)SH
+/Times-Roman SF
+30351 XM
+(button in the workspace window \050on the right\051 and hold)22 W
+8280 65974 MT
+(down. Drag)
+323 W( to the desired size and then release.  Next, type in the new name.  Various editing characters)25 W
+8280 67170 MT
+(are supported during typing, including:)SH
+10 /Courier AF
+8280 69121 MT
+(^h, delete, backspace)SH
+11 /Times-Roman AF
+(: delete previous character.)SH
+10 /Courier AF
+8280 70317 MT
+(^d)SH
+11 /Times-Roman AF
+(: delete next character.)SH
+10 /Courier AF
+8280 71513 MT
+(^u)SH
+11 /Times-Roman AF
+(: delete entire string.)SH
+ES
+%%Page: 494 3
+BS
+0 SI
+10 /Times-Roman AF
+6120 4286 MT
+(Page 494)
+SH( Sample)
+830 W( Program)SH
+41679 XM
+(User Interface)
+SH( Section)
+1550 W( 3)SH
+46800 50 6120 4486 UL
+46800 50 6120 8155 UL
+11 SS 
+1 1 0 -1080 61952 GB 
+%%BeginDocument: sampleprog/toolkitpic.PS
+%!PS-Adobe-2.0
+%%Title: GARNET Sample Editor
+%%Creator: Make-PS-File -- Garnet Version 2.1
+%%CreationDate: Jun 3, 1992, 10:56 AM
+%%For: 
+%%This file does not use real color
+%%DocumentFonts: (atend)
+%%BoundingBox: 72 263 540 530
+%%%Pages: 1
+%%EndComments
+
+
+/PolylineDict 15 dict def
+/DrawPolyline
+   {    % stack: x1, y1, ..., xn, yn, n, line-halftone, line-red, line-blue,
+        %        line-green, line-join, line-cap, dash-pattern,
+        %        line-thickness, fill-halftone
+        PolylineDict begin
+        /fill-color-p exch def  /fill-blue exch def  /fill-green exch def
+        /fill-red exch def  /fill-halftone exch def  /thickness exch def
+        /dash-pattern exch def  /line-join exch def  /line-cap exch def
+        /line-color-p exch def  /line-blue exch def  /line-green exch def
+        /line-red exch def  /line-halftone exch def  /num-points exch 4 sub def
+        newpath
+          moveto
+          num-points -2 0 {pop lineto} for
+          fill-halftone fill-red fill-green fill-blue fill-color-p FillShape
+          line-halftone line-red line-green line-blue line-color-p
+          line-cap line-join dash-pattern thickness StrokeShape
+        end
+   } def
+
+/DrawLine
+   {    % stack: line-halftone, red, green, blue, color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness
+        %        x2, y2, x1, y1
+        newpath
+          moveto
+          lineto
+          StrokeShape
+   } def
+
+/TextDict 19 dict def
+/DrawText
+   {    % stack: left top base-y opal-width height line-halftone fill-p
+        %        fore-red fore-green fore-blue fore-color-p
+        %        back-red back-green back-blue back-color-p
+        %        string size font-name
+        TextDict begin
+        gsave
+        findfont exch scalefont setfont
+        /s exch def
+        /back-color-p exch def  /back-blue exch def  /back-green exch def
+        /back-red exch def  /fore-color-p exch def  /fore-blue exch def
+        /fore-green exch def  /fore-red exch def  /fill-p exch def
+        /line-halftone exch def /height exch def  /opal-width exch def
+        /base-y exch def  /top exch def  /left exch def
+
+        % Calculate distance to add between each character, based on the width
+        % expected by Opal, the width expected by postscript, and the number
+        % of characters to distribute the change over
+        /x-dist opal-width s stringwidth pop sub s length div def
+
+        % Draw background of text if appropriate
+        fill-p
+        { gsave
+            newpath
+            left top opal-width height RectanglePath
+            1 back-red back-green back-blue back-color-p
+            FillShape
+          grestore } if
+
+        % Draw text in the appropriate color
+        newpath
+          fore-color-p
+          { fore-red fore-green fore-blue setrgbcolor }
+          { line-halftone setgray } ifelse
+          left base-y moveto
+          x-dist 0 s ashow
+        grestore
+        end
+   } def
+
+/RoundtanglePath
+   {    % stack: left, top, width, height, radius
+        /r exch def  /h exch def  /w exch def  /t exch def  /l exch def
+        /right l w add def  /bottom t h sub def
+          l r add t moveto                         % origin
+          right t right t r sub r arcto            % top side
+          right bottom right r sub bottom r arcto  % right side
+          l bottom l bottom r add r arcto          % bottom side
+          l t l r add t r arcto                    % left side
+          16 {pop} repeat  % each arcto accumulates 4 stack parameters
+   } def
+
+/RoundtangleDict 27 dict def
+/DrawRoundtangle
+   {    % stack: left, top, width, height, radius, line-halftone,
+        %        line-red, line-green, line-blue, line-color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness,
+        %        fill-halftone, fill-red, fill-green, fill-blue, fill-color-p
+        
+        RoundtangleDict begin
+        /fill-color-p exch def  /fill-blue exch def  /fill-green exch def
+        /fill-red exch def  /fill-halftone exch def  /thickness exch def
+        /dash-pattern exch def  /line-join exch def  /line-cap exch def
+        /line-color-p exch def  /line-blue exch def  /line-green exch def
+        /line-red exch def  /line-halftone exch def  /radius exch def
+        /height exch def  /width exch def  /top exch def  /left exch def
+        /thickness-by-2 thickness 2 div def
+        % Draw filling
+        newpath
+          left thickness-by-2 add  top thickness-by-2 sub  width thickness sub  height thickness sub
+          radius thickness sub RoundtanglePath
+          fill-halftone fill-red fill-green fill-blue fill-color-p FillShape
+        % Draw border
+        newpath
+          left top width height radius thickness-by-2 sub RoundtanglePath
+          line-halftone line-red line-green line-blue line-color-p
+          line-cap line-join dash-pattern thickness StrokeShape
+        end
+   } def
+
+/RectanglePath
+   {    % stack: left, top, width, height
+        /h exch def  /w exch def
+        moveto                  % Go to the left,top corner
+        w 0 rlineto             % top side
+        0 h neg rlineto         % right side
+        w neg 0 rlineto         % bottom side
+        closepath               % left side
+   } def
+
+/RectangleDict 21 dict def
+/DrawRectangle
+   {    % stack: left, top, width, height, line-halftone, line-red, line-green,
+        %        line-blue, line-color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness,
+        %        fill-halftone, fill-red, fill-green, fill-blue, fill-color-p
+        RectangleDict begin
+        /fill-color-p exch def  /fill-blue exch def  /fill-green exch def
+        /fill-red exch def /fill-halftone exch def  /thickness exch def
+        /dash-pattern exch def  /line-join exch def  /line-cap exch def
+        /line-color-p exch def  /line-blue exch def  /line-green exch def
+        /line-red exch def  /line-halftone exch def  /height exch def
+        /width exch def  /top exch def  /left exch def  /thickness-by-2 thickness 2 div def
+        % Draw filling
+        newpath
+          left thickness-by-2 add  top thickness-by-2 sub   width thickness sub  height thickness sub
+          RectanglePath
+          fill-halftone fill-red fill-green fill-blue fill-color-p FillShape
+        % Draw border
+        newpath
+          left top width height RectanglePath
+          line-halftone line-red line-green line-blue line-color-p
+          line-cap line-join dash-pattern thickness StrokeShape
+        end
+   } def
+
+/ClipDict 2 dict def
+/ClipToRectangle
+   {    % stack: left, top, width, height
+        ClipDict begin
+        /height exch def  /width exch def
+        newpath
+          moveto                % Go to the left,top corner
+          width 0 rlineto       % top side
+          0 height neg rlineto  % right side
+          width neg 0 rlineto   % bottom side
+          closepath             % left side
+        gsave 1 setgray fill grestore
+        clip newpath
+        end
+   } def
+
+/FillShape
+   {    % stack: fill-halftone, red, green, blue, color-p
+        %   Color-p should be true or false - false means ignore the three vals
+        %   Use -1 for fill-halftone to mean NIL, 0 = black, 1 = white
+        %   Use -2 for fill-halftone to indicate there is an arbitrary filling
+        % style on the stack
+        gsave
+        { setrgbcolor fill pop }
+        { pop pop pop 
+          dup 0 ge
+            % if fill-halftone >= 0, then fill the shape with a halftone
+            { setgray fill}
+            % else, if there is an arbitrary filling style, then fill
+            { -2 eq
+              {SetPattern fill} if
+            } ifelse } ifelse
+        grestore
+   } def
+
+/StrokeShape
+   {    % stack: line-halftone, red, green, blue, color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness
+        % If no line is desired, pass -1 for line-thickness
+        % Halftones: 0 = black, 1 = white
+        dup 0 ge
+          % if line-thickness >= 0, then draw the outline
+          {gsave
+           setlinewidth 0 setdash setlinejoin setlinecap
+             { setrgbcolor pop }
+             { pop pop pop setgray } ifelse
+           stroke
+           grestore}
+          {pop pop pop pop pop pop pop pop pop newpath} ifelse
+   } def
+
+
+%%EndProlog
+%%%Page: 1 1
+
+gsave
+72 72 translate
+0.6685714 0.6685714 scale
+
+%
+% Begin new window
+%
+0 -284 translate
+gsave
+0 969 700 400 ClipToRectangle
+0 0 translate
+gsave
+20 949 80 40 15 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRoundtangle
+43 944 933 35 14 0 false 0 0 0 false 0 0 0 false (Label) 12 /Courier DrawText
+20 889 80 40 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+0 0 0 0 false 0 0 [] 1 86 869 22 869 DrawLine
+86 874 96 869 86 864 86 874 8 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawPolyline
+16 893 88 48 0 0 0 0 false 0 0 [] 4 -1 0 0 0 false DrawRectangle
+25 764 61 34 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawRectangle
+20 769 61 34 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+25 764 51 24 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRectangle
+30 759 748 41 14 0 false 0 0 0 false 0 0 0 false (Delete) 12 /Courier DrawText
+25 720 61 34 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawRectangle
+20 725 61 34 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+25 720 51 24 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRectangle
+37 715 704 27 14 0 false 0 0 0 false 0 0 0 false (Quit) 12 /Courier DrawText
+grestore
+
+gsave
+
+%
+% Begin new window
+%
+150 2 translate
+gsave
+0 969 550 400 ClipToRectangle
+0 0 translate
+gsave
+54 943 175 104 15 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRoundtangle
+96 938 927 90 14 0 false 0 0 0 false 0 0 0 false (Brad A. Myers) 12 /Courier DrawText
+15 810 214 49 15 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRoundtangle
+56 805 794 133 14 0 false 0 0 0 false 0 0 0 false (Roger B. Dannenberg) 12 /Courier DrawText
+109 730 119 77 15 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRoundtangle
+130 725 714 76 14 0 false 0 0 0 false 0 0 0 false (Dave Kosbie) 12 /Courier DrawText
+60 618 222 39 15 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRoundtangle
+122 613 602 98 14 0 false 0 0 0 false 0 0 0 false (Andrew Mickish) 12 /Courier DrawText
+321 940 176 44 15 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRoundtangle
+346 935 924 126 14 0 false 0 0 0 false 0 0 0 false (Brad Vander Zanden) 12 /Courier DrawText
+370 856 122 53 15 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRoundtangle
+400 851 840 63 14 0 false 0 0 0 false 0 0 0 false (Ed Pervin) 12 /Courier DrawText
+356 773 140 99 15 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRoundtangle
+388 768 757 76 14 0 false 0 0 0 false 0 0 0 false (Dario Guise) 12 /Courier DrawText
+321 653 171 62 15 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRoundtangle
+350 648 637 112 14 0 false 0 0 0 false 0 0 0 false (Philippe Marchal) 12 /Courier DrawText
+0 0 0 0 false 0 0 [] 1 151 892 409 918 DrawLine
+152 887 141 891 150 897 152 887 8 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawPolyline
+0 0 0 0 false 0 0 [] 1 417 729 141 891 DrawLine
+420 733 426 724 414 725 420 733 8 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawPolyline
+0 0 0 0 false 0 0 [] 1 421 832 141 891 DrawLine
+422 837 431 830 420 827 422 837 8 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawPolyline
+0 0 0 0 false 0 0 [] 1 429 840 409 918 DrawLine
+434 841 431 830 424 839 434 841 8 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawPolyline
+0 0 0 0 false 0 0 [] 1 421 829 122 786 DrawLine
+420 834 431 830 422 824 420 834 8 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawPolyline
+0 0 0 0 false 0 0 [] 1 164 701 122 786 DrawLine
+168 703 168 692 160 699 168 703 8 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawPolyline
+0 0 0 0 false 0 0 [] 1 422 825 168 692 DrawLine
+420 829 431 830 424 821 420 829 8 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawPolyline
+0 0 0 0 false 0 0 [] 1 431 820 426 724 DrawLine
+426 820 431 830 436 820 426 820 8 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawPolyline
+318 636 7 7 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+318 613 7 7 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+318 594 7 7 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+374 594 7 7 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+433 594 7 7 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+489 594 7 7 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+489 613 7 7 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+489 636 7 7 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+489 656 7 7 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+433 656 7 7 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+374 656 7 7 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+318 656 7 7 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawRectangle
+grestore
+
+grestore
+
+0 969 550 400 0 0 0 0 false 0 0 [] 2 -1 0 0 0 false DrawRectangle
+grestore
+
+grestore
+
+0 969 700 400 0 0 0 0 false 0 0 [] 2 -1 0 0 0 false DrawRectangle
+grestore
+
+
+showpage
+%%Trailer
+%%DocumentFonts: /Courier 
+%%BoundingBox: 72 263 540 530
+
+%%EndDocument
+ GE /Times-Bold SF
+6120 37404 MT
+(Figure 1:)SH
+/Times-Roman SF
+10977 XM
+(A Sample Garnet Application.)
+255 W( The)
+786 W( code for this application is listed at the end of this)256 W
+10977 38600 MT
+(technical report.)SH
+46800 50 6120 40552 UL
+10 /Courier AF
+6120 42303 MT
+(^b, left-arrow)SH
+11 /Times-Roman AF
+(: go back one character.)SH
+10 /Courier AF
+6120 43499 MT
+(^f, right-arrow)SH
+11 /Times-Roman AF
+(: go forward one character.)SH
+10 /Courier AF
+6120 44695 MT
+(^a, home)SH
+11 /Times-Roman AF
+(: go to the beginning of the string.)SH
+10 /Courier AF
+6120 45891 MT
+(^e, end)SH
+11 /Times-Roman AF
+(: go to the end of the string.)SH
+10 /Courier AF
+6120 47087 MT
+(^y, insert)SH
+11 /Times-Roman AF
+(: insert the contents of the X cut buffer into the string at the current point.)SH
+6120 49038 MT
+(When finished typing, press RETURN or any mouse button to stop.)SH
+6120 51336 MT
+(To create a new arrow, when in arrow mode, press with the)82 W
+/Times-Italic SF
+33490 XM
+(right)SH
+/Times-Roman SF
+35987 XM
+(button over a roundtangle and release)82 W
+6120 52532 MT
+(over a different roundtangle.)
+93 W( An)
+463 W( arrow will be drawn starting at the center of the first roundtangle and)94 W
+6120 53728 MT
+(going to the center of the other one.)SH
+6120 56026 MT
+(Press with the)6 W
+/Times-Italic SF
+12585 XM
+(left)SH
+/Times-Roman SF
+14272 XM
+(button on a roundtangle or an arrow to select it.  Press on the background to)
+6 W( cause there)5 W
+6120 57222 MT
+(to be no selection.  Press and release on the ``Delete'' button to delete the selected object.)SH
+6120 59520 MT
+(If a roundtangle is selected, you can move it by pressing on a small white square)
+41 W( with the left button and)42 W
+6120 60716 MT
+(dragging to the new)
+39 W( position and releasing.  You can change its size by pressing with the left button on a)38 W
+6120 61912 MT
+(black square.  While the dotted outline box is displayed, you can abort the operation by)
+77 W( moving outside)78 W
+6120 63108 MT
+(the window and releasing, or by hitting ^G \050control-G\051.)SH
+6120 65406 MT
+(To change the string of a label, press on)
+80 W( the label with the left button and begin typing.  When finished)79 W
+6120 66602 MT
+(typing, press RETURN)
+118 W( or any mouse button to stop, or press ^G to abort the editing and return to the)119 W
+6120 67798 MT
+(original string.)SH
+ES
+%%Page: 495 4
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(Section 4)
+SH( Overview)
+1550 W( of How the Code Works)SH
+51386 XM
+(Page 495)SH
+46800 50 8280 4486 UL
+16 /Times-Bold AF
+8280 8272 MT
+(4. Overview of How the Code Works)SH
+11 /Times-Roman AF
+8280 10524 MT
+(The next section contains the actual code for the demo editor.  This section presents some the parts)
+26 W( of the)25 W
+8280 11720 MT
+(design and serves as a guide to the code.)SH
+8280 14018 MT
+(The standard)
+156 W( ``Garnet style'' is to)157 W
+10 /Courier AF
+24431 XM
+(USE-PACKAGE)SH
+11 /Times-Roman AF
+31463 XM
+(the)SH
+10 /Courier AF
+33239 XM
+(KR)SH
+11 /Times-Roman AF
+34871 XM
+(package, and directly reference all the other)157 W
+8280 15214 MT
+(Garnet packages, so this is how the code is written.)
+43 W( Functions)
+360 W( such as)42 W
+10 /Courier AF
+40038 XM
+(create-instance, s-value,)42 W
+8280 16410 MT
+(o-formula, formula, gv,)SH
+11 /Times-Roman AF
+22355 XM
+(and)SH
+10 /Courier AF
+24218 XM
+(gvl)SH
+11 /Times-Roman AF
+26293 XM
+(are defined in)SH
+10 /Courier AF
+32614 XM
+(KR)SH
+11 /Times-Roman AF
+(.)SH
+8280 18708 MT
+(The first part of the code creates)92 W
+/Times-Italic SF
+23429 XM
+(prototypes)SH
+/Times-Roman SF
+28440 XM
+(of the basic items that the user will create: arrow lines)
+92 W( and)93 W
+8280 19904 MT
+(labeled boxes.)
+51 W( When)
+375 W( the editor is running, the code will create an)50 W
+/Times-Italic SF
+38284 XM
+(instance)SH
+/Times-Roman SF
+42275 XM
+(of one of these prototypes to)50 W
+8280 21100 MT
+(get a new set of objects to be displayed.  The arrow line object is composed)
+10 W( of one)11 W
+10 /Courier AF
+45026 XM
+(arrow-line)SH
+11 /Times-Roman AF
+51312 XM
+(from the)11 W
+8280 22296 MT
+(Garnet-Gadget set, with some special)92 W
+/Times-Italic SF
+25478 XM
+(constraints)SH
+/Times-Roman SF
+30735 XM
+(on its end-points.  The arrow-line is)
+92 W( parameterized by)91 W
+8280 23492 MT
+(the two objects it is connected to.  These two objects are kept in slots of the arrow-line:)47 W
+10 /Courier AF
+47769 XM
+(:from-obj)SH
+11 /Times-Roman AF
+53492 XM
+(and)SH
+10 /Courier AF
+8280 24688 MT
+(:to-obj)SH
+11 /Times-Roman AF
+(. The)
+473 W( constraints on the end-points of the arrow-line are expressed)
+99 W( as)98 W
+/Times-Italic SF
+44613 XM
+(formulas)SH
+/Times-Roman SF
+48898 XM
+(that cause the)98 W
+8280 25884 MT
+(arrow to go from the center)
+61 W( of the object stored in the)62 W
+10 /Courier AF
+32843 XM
+(:from-obj)SH
+11 /Times-Roman AF
+38580 XM
+(slot of the arrowline, to the center of)62 W
+8280 27080 MT
+(the object in the)SH
+10 /Courier AF
+15612 XM
+(:to-obj)SH
+11 /Times-Roman AF
+20087 XM
+(slot.)SH
+8280 29378 MT
+(The labeled box is more complicated.)
+46 W( It)
+365 W( is composed of two parts: a rounded-rectangle \050``roundtangle''\051)45 W
+8280 30574 MT
+(and a label.  An)58 W
+/Times-Italic SF
+15778 XM
+(AggreGadget)SH
+/Times-Roman SF
+22037 XM
+(is used to compose these together.  The boundaries of the roundtangle are)58 W
+8280 31770 MT
+(defined by the values in the)39 W
+10 /Courier AF
+20915 XM
+(:box)SH
+11 /Times-Roman AF
+23628 XM
+(slot, since the standard)38 W
+10 /Courier AF
+34075 XM
+(Move-Grow-Interactor)SH
+11 /Times-Roman AF
+46388 XM
+(modifies objects by)38 W
+8280 32966 MT
+(setting this slot.  The label string is constrained to be centered at the top)
+73 W( of the roundtangle.  The actual)74 W
+8280 34162 MT
+(string used is stored both at the top level AggreGadget, and)
+86 W( in the text object, so formulas are set up to)85 W
+8280 35358 MT
+(keep these two)SH
+10 /Courier AF
+15091 XM
+(:string)SH
+11 /Times-Roman AF
+19566 XM
+(slots having the same value.)SH
+8280 37656 MT
+(The next function \050)67 W
+10 /Courier AF
+(create-mode-menu)SH
+11 /Times-Roman AF
+(\051 creates the top menu that contains a label object and)
+67 W( an arrow)68 W
+8280 38852 MT
+(object. A)
+413 W( feedback rectangle is also created to show what)
+69 W( the current mode is.  This feedback rectangle)68 W
+8280 40048 MT
+(has formulas that keep it over whatever mode object is selected.  An interactor is then created to allow the)10 W
+8280 41244 MT
+(user to choose the mode.)SH
+8280 43542 MT
+(The main command menu is created using)308 W
+10 /Courier AF
+29345 XM
+(create-menu)SH
+11 /Times-Roman AF
+(, which simply creates an)
+308 W( instance of a)307 W
+10 /Courier AF
+8280 44738 MT
+(garnet-gadget:text-button-panel)SH
+11 /Times-Roman AF
+27553 XM
+(in the correct place.  The functions to be)
+398 W( executed are)399 W
+10 /Courier AF
+8280 45934 MT
+(delete-object)SH
+11 /Times-Roman AF
+16375 XM
+(and)SH
+10 /Courier AF
+18258 XM
+(do-quit)SH
+11 /Times-Roman AF
+(, and these are defined next.  The only trick here is that if a)
+20 W( labeled box is)19 W
+8280 47130 MT
+(deleted, the lines to it are also deleted.  For)
+113 W( quit, destroying a window automatically destroys all of its)114 W
+8280 48326 MT
+(contents.)SH
+8280 50624 MT
+(Creating a new object is fairly straightforward.  The interactor is queried to find out whether)
+77 W( to create a)76 W
+8280 51820 MT
+(line or a box, and the appropriate kind of object is then created.  Lines can)
+54 W( only start or end in boxes, so)55 W
+8280 53016 MT
+(the appropriate boxes are found.  To appear in a window, the newly created objects must be added to)
+60 W( an)59 W
+/Times-Italic SF
+8280 54212 MT
+(aggregate)SH
+/Times-Roman SF
+13595 XM
+(which is attached to the window,)
+580 W( Here, the aggregate found by looking in the)581 W
+10 /Courier AF
+8280 55408 MT
+(:objs-aggregate)SH
+11 /Times-Roman AF
+17555 XM
+(slot of the interactor.)SH
+8280 57706 MT
+(Another important feature of the)35 W
+10 /Courier AF
+23024 XM
+(Create-New-Obj)SH
+11 /Times-Roman AF
+31734 XM
+(procedure is that if the object being created)
+35 W( is a box,)34 W
+8280 58902 MT
+(then it starts an interactor to allow the user to type the text label.)SH
+8280 61200 MT
+(The top-level, exported procedure,)6 W
+10 /Courier AF
+23818 XM
+(do-go)SH
+11 /Times-Roman AF
+(, starts everything up by creating a window, a sub-window to)
+6 W( be)7 W
+8280 62396 MT
+(the work area, and top-level aggregates for both windows.  Another aggregate will hold the)
+68 W( user-created)67 W
+8280 63592 MT
+(objects. The)619 W
+10 /Courier AF
+14723 XM
+(selection)SH
+11 /Times-Roman AF
+20571 XM
+(object will show which object is selected, and also allow that object to be)173 W
+8280 64788 MT
+(moved or grown)
+90 W( \050if it is not a line\051.  Two text editing interactors are then created.  One is used when a)89 W
+8280 65984 MT
+(new object)
+208 W( is created to have the user type in the initial name.  This one is started explicitly using)209 W
+10 /Courier AF
+8280 67180 MT
+(Start-interactor)SH
+11 /Times-Roman AF
+18273 XM
+(in)SH
+10 /Courier AF
+19522 XM
+(Create-New-Object)SH
+11 /Times-Roman AF
+(. The)
+511 W( other)
+118 W( interactor is used when the user presses on)117 W
+8280 68376 MT
+(the text label of an object to edit the name.)SH
+8280 70674 MT
+(Finally, the interactor to create new objects)
+83 W( is defined.  This one is a little complex, because it needs to)84 W
+8280 71870 MT
+(decide whether to use a line or rectangle feedback based on the current mode.)SH
+ES
+%%Page: 496 5
+BS
+0 SI
+10 /Times-Roman AF
+6120 4286 MT
+(Page 496)
+SH( Sample)
+830 W( Program)SH
+33401 XM
+(Overview of How the Code Works)
+SH( Section)
+1550 W( 4)SH
+46800 50 6120 4486 UL
+11 SS 
+6120 7955 MT
+(The last step is to add the top level aggregates to the windows and call)153 W
+10 /Courier AF
+39666 XM
+(update)SH
+11 /Times-Roman AF
+43694 XM
+(to get the)
+153 W( objects to)152 W
+6120 9151 MT
+(appear. If)
+417 W( you are running Allegro, Lucid, Lispworks, CMUCL, or MCL CommonLisp, they will begin)71 W
+6120 10347 MT
+(operating by themselves, but under)
+21 W( other CommonLisps, the)20 W
+10 /Courier AF
+33170 XM
+(Main-Event-Loop)SH
+11 /Times-Roman AF
+42465 XM
+(call is needed to get the)20 W
+6120 11543 MT
+(interactors to run.  The)125 W
+10 /Courier AF
+17069 XM
+(Exit-Main-Event-Loop)SH
+11 /Times-Roman AF
+29469 XM
+(function in)125 W
+10 /Courier AF
+34791 XM
+(Do-Quit)SH
+11 /Times-Roman AF
+39392 XM
+(causes)SH
+10 /Courier AF
+42663 XM
+(Main-Event-Loop)SH
+11 /Times-Roman AF
+52064 XM
+(to)SH
+6120 12739 MT
+(exit.)SH
+ES
+%%Page: 497 6
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(Section 5)
+SH( The)
+1550 W( Code)SH
+51386 XM
+(Page 497)SH
+46800 50 8280 4486 UL
+16 /Times-Bold AF
+8280 8272 MT
+(5. The Code)SH
+9 /Courier AF
+8280 10668 MT
+(;;;)SH
+/Times-Italic SF
+10440 XM
+(-*- Mode: LISP; Syntax: Common-Lisp; Package: DEMO-EDITOR; Base: 10 -*-)SH
+/Courier SF
+8280 11616 MT
+(;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;)SH
+8280 12564 MT
+(;;;)SH
+/Times-Italic SF
+12240 XM
+(The Garnet User Interface Development Environment.)SH
+/Courier SF
+8280 13512 MT
+(;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;)SH
+8280 14460 MT
+(;;;)SH
+/Times-Italic SF
+10440 XM
+(This code was written as part of the Garnet project at)SH
+/Courier SF
+8280 15408 MT
+(;;;)SH
+/Times-Italic SF
+10440 XM
+(Carnegie Mellon University, and has been placed in the public)SH
+/Courier SF
+8280 16356 MT
+(;;;)SH
+/Times-Italic SF
+10440 XM
+(domain. If)
+225 W( you are using this code or any part of Garnet,)SH
+/Courier SF
+8280 17304 MT
+(;;;)SH
+/Times-Italic SF
+10440 XM
+(please contact garnet@cs.cmu.edu to be put on the mailing list.)SH
+/Courier SF
+8280 18252 MT
+(;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;)SH
+8280 21096 MT
+(;;;)SH
+/Times-Italic SF
+(This file is a sample of a graphics editor created with Garnet.  It is)SH
+/Courier SF
+8280 22044 MT
+(;;;)SH
+/Times-Italic SF
+(designed to be a model for other code development, and therefore uses)SH
+/Courier SF
+8280 22992 MT
+(;;;)SH
+/Times-Italic SF
+(all the most up-to-date Garnet features.)SH
+/Courier SF
+8280 23940 MT
+(;;;)SH
+8280 24888 MT
+(;;;)SH
+/Times-Italic SF
+(** Call \050demo-editor:Do-Go\051 to start and \050demo-editor:Do-Stop\051 to stop **)SH
+/Courier SF
+8280 25836 MT
+(;;;)SH
+8280 26784 MT
+(;;;)SH
+/Times-Italic SF
+(Designed and implemented by Brad A. Myers)SH
+/Courier SF
+8280 29628 MT
+(\050in-package :DEMO-EDITOR\051)SH
+8280 31524 MT
+(;;; Load)
+540 W( text-buttons-loader, graphics-loader, and arrow-line-loader unless)SH
+8280 32472 MT
+(;;; already)
+540 W( loaded)SH
+8280 33420 MT
+(;;;)SH
+8280 34368 MT
+(\050dolist \050pair '\050\050:text-buttons "text-buttons-loader"\051)SH
+16920 35316 MT
+(\050:graphics-selection "graphics-loader"\051)SH
+16920 36264 MT
+(\050:arrow-line "arrow-line-loader"\051\051\051)SH
+9360 37212 MT
+(\050when \050not \050get :garnet-modules \050car pair\051\051\051)SH
+10440 38160 MT
+(\050user::garnet-load \050concatenate 'string "gadgets:" \050cadr pair\051\051\051\051\051)SH
+8280 41004 MT
+(;; Eliminate compile warnings for named objects)SH
+8280 41952 MT
+(;;)SH
+8280 42900 MT
+(\050declaim \050special MYARROWLINE MYLABELEDBOX\051\051)SH
+ES
+%%Page: 498 7
+BS
+0 SI
+10 /Times-Roman AF
+6120 4286 MT
+(Page 498)
+SH( Sample)
+830 W( Program)SH
+43454 XM
+(The Code)
+SH( Section)
+1550 W( 5)SH
+46800 50 6120 4486 UL
+9 /Courier AF
+6120 7762 MT
+(;;;------------------------------------------------------------------------)SH
+6120 8710 MT
+(;;;)SH
+/Times-Italic SF
+(First create the prototypes for the box and lines)SH
+/Courier SF
+6120 9658 MT
+(;;;------------------------------------------------------------------------)SH
+6120 12502 MT
+(\050create-instance 'myarrowline garnet-gadgets:arrow-line)SH
+7200 13450 MT
+(\050:from-obj NIL\051 ;)SH
+/Times-Italic SF
+(set this with the object this arrow is from)SH
+/Courier SF
+7200 14398 MT
+(\050:to-obj NIL\051)
+SH( ;)1080 W
+/Times-Italic SF
+(set this with the object this arrow is from)SH
+/Courier SF
+7200 15346 MT
+(\050:x1 \050o-formula \050opal:gv-center-x \050gvl :from-obj\051\051\051\051)SH
+7200 16294 MT
+(\050:y1 \050o-formula \050opal:gv-center-y \050gvl :from-obj\051\051\051\051)SH
+7200 17242 MT
+(\050:x2 \050o-formula \050opal:gv-center-x \050gvl :to-obj\051\051\051\051)SH
+7200 18190 MT
+(\050:y2 \050o-formula \050opal:gv-center-y \050gvl :to-obj\051\051\051\051)SH
+7200 19138 MT
+(\050:open-p NIL\051)SH
+7200 20086 MT
+(\050:visible \050o-formula \050and \050gvl :from-obj\051\050gvl :to-obj\051\051\051\051)SH
+7200 21034 MT
+(\050:line-p T\051 ;)SH
+/Times-Italic SF
+(so that the selection object will know what kind this is)SH
+/Courier SF
+7200 21982 MT
+(\051)SH
+6120 23878 MT
+(\050create-instance 'mylabeledbox opal:aggregadget)SH
+7200 24826 MT
+(\050:box \050list 20 20 40 20\051\051 ;)SH
+/Times-Italic SF
+(this will be set by the)SH
+/Courier SF
+21240 25774 MT
+(;)SH
+/Times-Italic SF
+(interactors with the size of this box.)SH
+/Courier SF
+7200 27670 MT
+(\050:lines-at-this-box NIL\051  ;)SH
+/Times-Italic SF
+(Keep track of lines pointing)SH
+/Courier SF
+21240 28618 MT
+(;)SH
+/Times-Italic SF
+(to me, in case I am deleted.)SH
+/Courier SF
+7200 30514 MT
+(;;)SH
+/Times-Italic SF
+(Set up a circular constraint between this string slot and the)SH
+/Courier SF
+7200 31462 MT
+(;;)SH
+/Times-Italic SF
+(string slot in the label.  If either is changed, the other is)SH
+/Courier SF
+7200 32410 MT
+(;;)SH
+/Times-Italic SF
+(automatically updated.  For circular constraints, it is)SH
+/Courier SF
+7200 33358 MT
+(;;)SH
+/Times-Italic SF
+(important to have an initial value, here it is the empty string.)SH
+/Courier SF
+7200 34306 MT
+(\050:string \050o-formula \050gvl :label :string\051 ""\051\051)SH
+7200 36202 MT
+(\050:line-p NIL\051 ;)SH
+/Times-Italic SF
+(so that the selection object will know what kind this is)SH
+/Courier SF
+7200 37150 MT
+(\050:parts)SH
+7740 38098 MT
+(`\050\050:frame ,opal:roundtangle)SH
+13140 39046 MT
+(\050:radius 15\051)SH
+13140 39994 MT
+(\050:left ,\050o-formula \050first \050gvl :parent :box\051\051\051\051)SH
+13140 40942 MT
+(\050:top ,\050o-formula \050second \050gvl :parent :box\051\051\051\051)SH
+13140 41890 MT
+(\050:width ,\050o-formula \050third \050gvl :parent :box\051\051\051\051)SH
+13140 42838 MT
+(\050:height ,\050o-formula \050fourth \050gvl :parent :box\051\051\051\051\051)SH
+8820 43786 MT
+(\050:label ,opal:text)SH
+13140 44734 MT
+(\050:string ,\050o-formula \050gvl :parent :string\051 ""\051\051)SH
+13140 45682 MT
+(\050:cursor-index NIL\051)SH
+13140 46630 MT
+(;;)SH
+/Times-Italic SF
+(center me horizontally with respect to the frame)SH
+/Courier SF
+13140 47578 MT
+(\050:left ,\050o-formula \050- \050opal:gv-center-x \050gvl :parent :frame\051\051)SH
+25020 48526 MT
+(\050floor \050gvl :width\051 2\051\051\051\051)SH
+13140 49474 MT
+(\050:top ,\050o-formula \050+ \050gvl :parent :frame :top\051 5\051\051\051\051\051\051\051)SH
+ES
+%%Page: 499 8
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(Section 5)
+SH( The)
+1550 W( Code)SH
+51386 XM
+(Page 499)SH
+46800 50 8280 4486 UL
+9 /Courier AF
+8280 7762 MT
+(;;;------------------------------------------------------------------------)SH
+8280 8710 MT
+(;;;)SH
+/Times-Italic SF
+(Create main menu object)SH
+/Courier SF
+8280 9658 MT
+(;;;------------------------------------------------------------------------)SH
+8280 11554 MT
+(;;)SH
+/Times-Italic SF
+(Create an arrow and a box menu object, and put them in a menu, with an)SH
+/Courier SF
+8280 12502 MT
+(;;)SH
+/Times-Italic SF
+(interactor and feedback object to show which is selected.)SH
+/Courier SF
+8280 13450 MT
+(;;)SH
+/Times-Italic SF
+(Agg is the top level aggregate to put the menu in, and window is the window.)SH
+/Courier SF
+8280 14398 MT
+(;;)SH
+/Times-Italic SF
+(The :line-p slot of the agg is set with a formula to tell whether in line mode)SH
+/Courier SF
+8280 15346 MT
+(;;)SH
+/Times-Italic SF
+(or not.)SH
+/Courier SF
+8280 16294 MT
+(\050defun create-mode-menu \050agg window\051)SH
+9360 17242 MT
+(\050let \050feedback boxitem arrowitem\051)SH
+10440 18190 MT
+(\050setf boxitem \050create-instance NIL mylabeledbox)SH
+19080 19138 MT
+(\050:box \050list 20 20 80 40\051\051)SH
+19080 20086 MT
+(\050:string "Label"\051\051\051)SH
+10440 21034 MT
+(;;)SH
+/Times-Italic SF
+(the arrow will be inside a box.)SH
+/Courier SF
+10440 21982 MT
+(\050setf arrowitem)SH
+13680 22930 MT
+(\050create-instance NIL opal:aggregadget)SH
+14760 23878 MT
+(\050:parts)SH
+15300 24826 MT
+(`\050\050:frame ,opal:rectangle)SH
+20700 25774 MT
+(\050:left 20\051\050:top 80\051\050:width 80\051\050:height 40\051\051)SH
+16380 26722 MT
+(\050:line ,garnet-gadgets:arrow-line)SH
+20160 27670 MT
+(\050:open-p NIL\051)SH
+20160 28618 MT
+(\050:x1 ,\050o-formula \050+ \050gvl :parent :frame :left\051 2\051\051\051)SH
+20160 29566 MT
+(\050:y1 ,\050o-formula \050opal:gv-center-y \050gvl :parent :frame\051\051\051\051)SH
+20160 30514 MT
+(\050:x2 ,\050o-formula \050+ \050gvl :parent :frame :left\051 76\051\051\051)SH
+20160 31462 MT
+(\050:y2 ,\050o-formula \050gvl :y1\051\051\051\051\051\051\051\051)SH
+10440 33358 MT
+(;;)SH
+/Times-Italic SF
+(The interactor \050defined below\051 will set the :selected slot of the aggregate.)SH
+/Courier SF
+10440 34306 MT
+(;;)SH
+/Times-Italic SF
+(Use this to determine where the feedback should be.)SH
+/Courier SF
+10440 35254 MT
+(;;)SH
+/Times-Italic SF
+(We need to use formula rather than o-formula here so we can have a direct)SH
+/Courier SF
+10440 36202 MT
+(;;)SH
+/Times-Italic SF
+(reference to agg \050use formula whenever you need to reference an object that)SH
+/Courier SF
+10440 37150 MT
+(;;)SH
+/Times-Italic SF
+(is not stored in a slot of the current object\051.  Notice the use of)SH
+/Courier SF
+10440 38098 MT
+(;;)SH
+/Times-Italic SF
+(back-quote and comma to get a reference to the agg object.)SH
+/Courier SF
+10440 39046 MT
+(\050setf feedback \050create-instance NIL opal:rectangle)SH
+19620 39994 MT
+(\050:line-style opal:line-4\051)SH
+19620 40942 MT
+(\050:filling-style NIL\051)SH
+19620 41890 MT
+(\050:left \050o-formula \050- \050gvl :parent :selected :left\051 6\051\051\051)SH
+19620 42838 MT
+(\050:top \050o-formula \050- \050gvl :parent :selected :top\051 6\051\051\051)SH
+19620 43786 MT
+(\050:width \050o-formula \050+ \050gvl :parent :selected :width\051 12\051\051\051)SH
+19620 44734 MT
+(\050:height \050o-formula \050+ \050gvl :parent :selected :height\051 12\051\051\051)SH
+19620 45682 MT
+(\050:visible \050o-formula \050gvl :parent :selected\051\051\051)SH
+19620 46630 MT
+(\050:draw-function :xor\051)SH
+19620 47578 MT
+(\050:fast-redraw-p T\051\051\051)SH
+10440 48526 MT
+(\050opal:add-components agg boxitem arrowitem feedback\051)SH
+10440 50422 MT
+(;;)SH
+/Times-Italic SF
+(use the :menuobjs slot to hold the items that can be selected)SH
+/Courier SF
+10440 51370 MT
+(\050s-value agg :menuobjs \050list boxitem arrowitem\051\051)SH
+10440 53266 MT
+(;;)SH
+/Times-Italic SF
+(default mode is the rectangle)SH
+/Courier SF
+10440 54214 MT
+(\050s-value agg :selected boxitem\051)SH
+10440 56110 MT
+(;;)SH
+/Times-Italic SF
+(The :line-p slot of the agg is set with a formula to tell whether in line mode or not.)SH
+/Courier SF
+10440 57058 MT
+(\050s-value agg :line-p \050o-formula \050eq \050gvl :selected\051 \050second \050gvl :menuobjs\051\051\051\051\051)SH
+10440 58954 MT
+(;;)SH
+/Times-Italic SF
+(now create an interactor to choose which mode)SH
+/Courier SF
+10440 59902 MT
+(\050create-instance NIL inter:menu-interactor)SH
+11520 60850 MT
+(\050:window window\051)SH
+11520 61798 MT
+(\050:start-event '\050:leftdown :rightdown\051\051 ;)SH
+/Times-Italic SF
+(either one)SH
+/Courier SF
+11520 62746 MT
+(\050:start-where `\050:list-element-of ,agg :menuobjs\051\051\051\051\051)SH
+ES
+%%Page: 500 9
+BS
+0 SI
+10 /Times-Roman AF
+6120 4286 MT
+(Page 500)
+SH( Sample)
+830 W( Program)SH
+43454 XM
+(The Code)
+SH( Section)
+1550 W( 5)SH
+46800 50 6120 4486 UL
+9 /Courier AF
+6120 7816 MT
+(;;)SH
+/Times-Italic SF
+(This creates the menu of commands.  For now, it only has "delete" and "quit" in it.)SH
+/Courier SF
+6120 8764 MT
+(;;)SH
+/Times-Italic SF
+(The menu is stored into the aggregate agg.  Returns the menu created.)SH
+/Courier SF
+6120 9712 MT
+(\050defun create-menu \050agg\051)SH
+7200 10660 MT
+(\050let \050\050menu \050create-instance NIL Garnet-gadgets:Text-Button-Panel)SH
+14760 11608 MT
+(\050:constant T\051)SH
+14760 12556 MT
+(\050:items '\050\050"Delete" Delete-Object\051 \050"Quit" Do-Quit\051\051\051)SH
+14760 13504 MT
+(\050:left 20\051)SH
+14760 14452 MT
+(\050:top 200\051)SH
+14760 15400 MT
+(\050:font Opal:Default-font\051)SH
+14760 16348 MT
+(\050:shadow-offset 5\051)SH
+14760 17296 MT
+(\050:final-feedback-p NIL\051\051\051\051)SH
+8280 18244 MT
+(\050opal:add-components agg menu\051)SH
+8280 19192 MT
+(menu\051\051)SH
+6120 21088 MT
+(;;;********************************************************************)SH
+6120 22036 MT
+(;;;)SH
+/Times-Italic SF
+(Procedures to do the work)SH
+/Courier SF
+6120 22984 MT
+(;;;********************************************************************)SH
+6120 24880 MT
+(;;;)SH
+/Times-Italic SF
+(Delete-Line is called from delete object to delete lines)SH
+/Courier SF
+6120 25828 MT
+(\050defun Delete-Line\050line-obj\051)SH
+7200 26776 MT
+(\050let \050\050from-obj \050g-value line-obj :from-obj\051\051)SH
+10440 27724 MT
+(\050to-obj \050g-value line-obj :to-obj\051\051\051)SH
+8280 28672 MT
+(;;)SH
+/Times-Italic SF
+(remove this line from the boxes' lists)SH
+/Courier SF
+8280 29620 MT
+(\050s-value from-obj :lines-at-this-box)SH
+13140 30568 MT
+(\050delete line-obj \050g-value from-obj :lines-at-this-box\051\051\051)SH
+8280 31516 MT
+(\050s-value to-obj :lines-at-this-box)SH
+13140 32464 MT
+(\050delete line-obj \050g-value to-obj :lines-at-this-box\051\051\051)SH
+8280 33412 MT
+(\050opal:destroy line-obj\051\051\051)SH
+6120 35308 MT
+(;;;)SH
+/Times-Italic SF
+(Delete-object is called from the main menu routine)SH
+/Courier SF
+6120 36256 MT
+(\050defun Delete-Object \050toolkit-obj menu-item\051)SH
+7200 37204 MT
+(\050declare \050ignore menu-item\051\051)SH
+7200 38152 MT
+(\050let \050\050selected-obj \050g-value toolkit-obj :selection-obj :value\051\051\051)SH
+8280 39100 MT
+(\050if selected-obj)SH
+9360 40048 MT
+(\050progn)SH
+10440 40996 MT
+(;;)SH
+/Times-Italic SF
+(first turn off selection)SH
+/Courier SF
+10440 41944 MT
+(\050s-value \050g-value toolkit-obj :selection-obj\051 :value NIL\051)SH
+10440 42892 MT
+(;;)SH
+/Times-Italic SF
+(now delete object)SH
+/Courier SF
+10440 43840 MT
+(\050if \050g-value selected-obj :line-p\051)SH
+12600 44788 MT
+(;;)SH
+/Times-Italic SF
+(then deleting a line)SH
+/Courier SF
+12600 45736 MT
+(\050Delete-Line selected-obj\051)SH
+12600 46684 MT
+(;;)SH
+/Times-Italic SF
+(else deleting a box)SH
+/Courier SF
+12600 47632 MT
+(\050progn)SH
+13680 48580 MT
+(;;)SH
+/Times-Italic SF
+(first delete all lines to this box)SH
+/Courier SF
+13680 49528 MT
+(\050dolist \050line-at-box \050g-value selected-obj :lines-at-this-box\051\051)SH
+14760 50476 MT
+(\050delete-line line-at-box\051\051)SH
+13680 51424 MT
+(;;)SH
+/Times-Italic SF
+(now delete the box)SH
+/Courier SF
+13680 52372 MT
+(\050opal:destroy selected-obj\051\051\051\051)SH
+10440 53320 MT
+(;;)SH
+/Times-Italic SF
+(else nothing selected)SH
+/Courier SF
+10440 54268 MT
+(\050inter:beep\051\051\051\051)SH
+6120 56164 MT
+(\050defun Do-Quit \050toolkit-obj menu-item\051)SH
+7200 57112 MT
+(\050declare \050ignore menu-item\051\051)SH
+7200 58060 MT
+(\050opal:destroy \050g-value toolkit-obj :window\051\051)SH
+7200 59008 MT
+(;;for demo-controller)SH
+7200 59956 MT
+(\050unless \050and \050fboundp 'User::Garnet-Note-Quitted\051)SH
+14220 60904 MT
+(\050User::Garnet-Note-Quitted "DEMO-EDITOR"\051\051\051)SH
+6120 61852 MT
+(\051)SH
+ES
+%%Page: 501 10
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(Section 5)
+SH( The)
+1550 W( Code)SH
+51386 XM
+(Page 501)SH
+46800 50 8280 4486 UL
+9 /Courier AF
+8280 7816 MT
+(;;;)SH
+/Times-Italic SF
+(Create a new object.  Get the type of object to create from the interactor.)SH
+/Courier SF
+8280 8764 MT
+(;;;)SH
+/Times-Italic SF
+(This procedure is called as the final-function of the two-point interactor.)SH
+/Courier SF
+8280 9712 MT
+(\050defun Create-New-Obj \050inter point-list\051)SH
+9360 10660 MT
+(\050let \050\050agg \050g-value inter :objs-aggregate\051\051)SH
+12600 11608 MT
+(\050line-p \050g-value inter :line-p\051\051\051 ;)SH
+/Times-Italic SF
+(create a line or rectangle)SH
+/Courier SF
+10440 13504 MT
+(\050if line-p)SH
+12600 14452 MT
+(;;)SH
+/Times-Italic SF
+(then create a line, first have to find the objects where the line is drawn)SH
+/Courier SF
+12600 15400 MT
+(\050let \050\050from-box \050opal:point-to-component agg \050first point-list\051)SH
+21780 16348 MT
+(\050second point-list\051 :type mylabeledbox\051\051)SH
+15840 17296 MT
+(\050to-box \050opal:point-to-component agg \050third point-list\051)SH
+20700 18244 MT
+(\050fourth point-list\051 :type mylabeledbox\051\051)SH
+15840 19192 MT
+(new-line\051)SH
+13680 20140 MT
+(;;)SH
+/Times-Italic SF
+(If one end of the arrow is not inside a box, or is from and to the same box, then beep.)SH
+/Courier SF
+13680 21088 MT
+(\050if \050or \050null from-box\051\050null to-box\051 \050eq from-box to-box\051\051)SH
+15840 22036 MT
+(\050inter:beep\051)SH
+15840 22984 MT
+(;;)SH
+/Times-Italic SF
+17145 XM
+(else draw the arrow.)SH
+/Courier SF
+15840 23932 MT
+(\050progn)SH
+16920 24880 MT
+(\050setf new-line \050create-instance NIL myarrowline)SH
+34200 25828 MT
+(\050:from-obj from-box\051)SH
+34200 26776 MT
+(\050:to-obj to-box\051\051\051)SH
+16920 27724 MT
+(;;)SH
+/Times-Italic SF
+(keep track in case boxes are deleted so can delete this line.)SH
+/Courier SF
+16920 28672 MT
+(\050push new-line \050g-value from-box :lines-at-this-box\051\051)SH
+16920 29620 MT
+(\050push new-line \050g-value to-box :lines-at-this-box\051\051)SH
+16920 31516 MT
+(\050opal:add-component agg new-line\051\051\051\051)SH
+12600 32464 MT
+(;;)SH
+/Times-Italic SF
+(else, create a new box)SH
+/Courier SF
+12600 33412 MT
+(\050let \050\050textinter \050g-value inter :textinter\051\051)SH
+15840 34360 MT
+(\050new-box \050create-instance NIL mylabeledbox)SH
+21780 35308 MT
+(\050:box \050copy-list point-list\051\051\051\051\051 ;)SH
+/Times-Italic SF
+(have to make a copy of list since)SH
+/Courier SF
+39600 36256 MT
+(;)SH
+/Times-Italic SF
+(the interactor re-uses the same list)SH
+/Courier SF
+13680 37204 MT
+(\050opal:add-component agg new-box\051)SH
+13680 38152 MT
+(;;)SH
+/Times-Italic SF
+(now start the interactor to allow the user to type the label.)SH
+/Courier SF
+13680 39100 MT
+(;;)SH
+/Times-Italic SF
+(Obj-to-change is the label object of the new box.)SH
+/Courier SF
+13680 40048 MT
+(\050s-value textinter :obj-to-change \050g-value new-box :label\051\051)SH
+13680 40996 MT
+(\050inter:start-interactor textinter\051\051\051\051\051)SH
+8280 42892 MT
+(;;;)SH
+ES
+%%Page: 502 11
+BS
+0 SI
+10 /Times-Roman AF
+6120 4286 MT
+(Page 502)
+SH( Sample)
+830 W( Program)SH
+43454 XM
+(The Code)
+SH( Section)
+1550 W( 5)SH
+46800 50 6120 4486 UL
+9 /Courier AF
+6120 7762 MT
+(;;;********************************************************************)SH
+6120 8710 MT
+(;;;)SH
+/Times-Italic SF
+(Main procedures)SH
+/Courier SF
+6120 9658 MT
+(;;;********************************************************************)SH
+6120 11554 MT
+(\050defparameter current-window NIL\051 ;)SH
+/Times-Italic SF
+(this global variable is only used for the debugging function below: do-stop)SH
+/Courier SF
+6120 13450 MT
+(\050defun Do-Go \050&key dont-enter-main-event-loop double-buffered-p\051)SH
+7200 14398 MT
+(\050let \050top-win work-win top-agg work-agg selection objs-agg menu edit-text\051)SH
+8280 15346 MT
+(;;;)SH
+/Times-Italic SF
+(create top-level window)SH
+/Courier SF
+8280 16294 MT
+(\050setf top-win \050create-instance NIL inter:interactor-window)SH
+16920 17242 MT
+(\050:left 20\051 \050:top 45\051)SH
+16920 18190 MT
+(\050:double-buffered-p double-buffered-p\051)SH
+16920 19138 MT
+(\050:width 700\051 \050:height 400\051\050:title "GARNET Sample Editor"\051)SH
+16920 20086 MT
+(\050:icon-title "Graphics Editor"\051\051\051)SH
+8280 21034 MT
+(\050setf current-window top-win\051)SH
+8280 22930 MT
+(;;;)SH
+/Times-Italic SF
+(create window for the work area)SH
+/Courier SF
+8280 23878 MT
+(\050setf work-win \050create-instance NIL inter:interactor-window)SH
+17460 24826 MT
+(\050:left 150\051)SH
+17460 25774 MT
+(\050:top -2\051 ;)SH
+/Times-Italic SF
+(no extra border at the top)SH
+/Courier SF
+17460 26722 MT
+(\050:width \050o-formula \050- \050gvl :parent :width\051 150\051\051\051)SH
+17460 27670 MT
+(\050:height \050o-formula \050gvl :parent :height\051\051\051)SH
+17460 28618 MT
+(\050:double-buffered-p double-buffered-p\051)SH
+17460 29566 MT
+(\050:border-width 2\051)SH
+17460 30514 MT
+(\050:parent top-win\051\051\051)SH
+8280 32410 MT
+(;;;)SH
+/Times-Italic SF
+(create the top level aggregate in the windows)SH
+/Courier SF
+8280 33358 MT
+(\050setq top-agg \050create-instance NIL opal:aggregate)SH
+17460 34306 MT
+(\050:left 0\051\050:top 0\051)SH
+17460 35254 MT
+(\050:width \050o-formula \050gvl :window :width\051\051\051)SH
+17460 36202 MT
+(\050:height \050o-formula \050gvl :window :height\051\051\051\051\051)SH
+8280 38098 MT
+(\050setq work-agg \050create-instance NIL opal:aggregate)SH
+17460 39046 MT
+(\050:left 0\051\050:top 0\051)SH
+17460 39994 MT
+(\050:width \050o-formula \050gvl :window :width\051\051\051)SH
+17460 40942 MT
+(\050:height \050o-formula \050gvl :window :height\051\051\051\051\051)SH
+8280 41890 MT
+(;;;)SH
+/Times-Italic SF
+(create an aggregate to hold the user-created objects)SH
+/Courier SF
+8280 42838 MT
+(\050setq objs-agg \050create-instance NIL opal:aggregate)SH
+17460 43786 MT
+(\050:left 0\051\050:top 0\051)SH
+17460 44734 MT
+(\050:width \050o-formula \050gvl :window :width\051\051\051)SH
+17460 45682 MT
+(\050:height \050o-formula \050gvl :window :height\051\051\051\051\051)SH
+8280 46630 MT
+(\050opal:add-component work-agg objs-agg\051)SH
+8280 48526 MT
+(;;;)SH
+/Times-Italic SF
+(create menus)SH
+/Courier SF
+8280 49474 MT
+(\050create-mode-menu top-agg top-win\051)SH
+8280 50422 MT
+(\050setf menu \050create-menu top-agg\051\051)SH
+8280 52318 MT
+(;;;)SH
+/Times-Italic SF
+(create a graphics selection object)SH
+/Courier SF
+8280 53266 MT
+(\050setq selection \050create-instance NIL Garnet-Gadgets:graphics-selection)SH
+18000 54214 MT
+(\050:start-where \050list :element-of-or-none objs-agg\051\051)SH
+18000 55162 MT
+(\050:movegrow-lines-p NIL\051 ;)SH
+/Times-Italic SF
+(can't move lines)SH
+/Courier SF
+18000 56110 MT
+(;;)SH
+/Times-Italic SF
+(move objects while cursor in the work window)SH
+/Courier SF
+18000 57058 MT
+(\050:running-where \050list :in work-win\051\051\051\051)SH
+8280 58006 MT
+(\050opal:add-component work-agg selection\051)SH
+8280 59902 MT
+(;;)SH
+/Times-Italic SF
+(store the selection object in a new slot of the menu so that the delete)SH
+/Courier SF
+8280 60850 MT
+(;;)SH
+/Times-Italic SF
+(function can find which object is selected.)SH
+/Courier SF
+8280 61798 MT
+(\050s-value menu :selection-obj selection\051)SH
+8280 63694 MT
+(;;;)SH
+/Times-Italic SF
+(Create an interactor to edit the text of the labels when they are first)SH
+/Courier SF
+8280 64642 MT
+(;;;)SH
+/Times-Italic SF
+(created. This)
+225 W( interactor will never start by itself, but is started)SH
+/Courier SF
+8280 65590 MT
+(;;;)SH
+/Times-Italic SF
+(explicitly using Inter:Start-Interactor in the Create-New-Object function.)SH
+/Courier SF
+8280 66538 MT
+(\050setf edit-text \050create-instance NIL Inter:Text-Interactor)SH
+18000 67486 MT
+(\050:obj-to-change NIL\051 ;)SH
+/Times-Italic SF
+(this is set when the interactor is started)SH
+/Courier SF
+18000 68434 MT
+(\050:start-event NIL\051 ;)SH
+/Times-Italic SF
+(won't start by itself)SH
+/Courier SF
+18000 69382 MT
+(\050:start-where NIL\051 ;)SH
+/Times-Italic SF
+(won't start by itself)SH
+/Courier SF
+18000 70330 MT
+(\050:stop-event '\050#\134return :any-mousedown\051\051 ;)SH
+/Times-Italic SF
+(either stops it)SH
+/Courier SF
+18000 71278 MT
+(\050:window work-win\051\051\051)SH
+ES
+%%Page: 503 12
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(Section 5)
+SH( The)
+1550 W( Code)SH
+51386 XM
+(Page 503)SH
+46800 50 8280 4486 UL
+9 /Courier AF
+10440 7816 MT
+(;;)SH
+/Times-Italic SF
+(cont., next page...)SH
+ES
+%%Page: 504 13
+BS
+0 SI
+10 /Times-Roman AF
+6120 4286 MT
+(Page 504)
+SH( Sample)
+830 W( Program)SH
+43454 XM
+(The Code)
+SH( Section)
+1550 W( 5)SH
+46800 50 6120 4486 UL
+9 /Courier AF
+8280 7816 MT
+(;;)SH
+/Times-Italic SF
+(The next interactor edits the text when the user presses on a string.)SH
+/Courier SF
+8280 8764 MT
+(\050create-instance NIL Inter:Text-Interactor)SH
+9360 9712 MT
+(\050:stop-event '\050#\134return :any-mousedown\051\051 ;)SH
+/Times-Italic SF
+(either stops it)SH
+/Courier SF
+9360 10660 MT
+(\050:start-where \050list :leaf-element-of objs-agg :type opal:text\051\051)SH
+9360 11608 MT
+(;;)SH
+/Times-Italic SF
+(high priority so that if this one runs, the object)SH
+/Courier SF
+9360 12556 MT
+(;;)SH
+/Times-Italic SF
+(underneath will not become selected.)SH
+/Courier SF
+9360 13504 MT
+(\050:waiting-priority inter:high-priority-level\051)SH
+9360 14452 MT
+(\050:window work-win\051\051)SH
+8280 16348 MT
+(;;;)SH
+/Times-Italic SF
+(create an interactor to create the new objects)SH
+/Courier SF
+8280 17296 MT
+(\050create-instance NIL Inter:Two-Point-Interactor)SH
+9360 18244 MT
+(\050:start-event :rightdown\051)SH
+9360 19192 MT
+(\050:start-where T\051)SH
+9360 20140 MT
+(\050:running-where \050list :in work-win\051\051)SH
+9360 21088 MT
+(\050:window work-win\051)SH
+9360 22036 MT
+(\050:abort-event '\050:control-g :control-\134g\051\051)SH
+9360 22984 MT
+(\050:line-p \050o-formula \050gvl :window :parent :aggregate :line-p\051\051\051)SH
+9360 23932 MT
+(;)SH
+/Times-Italic SF
+(The next 2 slots are used by the Create-New-Obj procedure,)SH
+/Courier SF
+9360 24880 MT
+(;)SH
+/Times-Italic SF
+(not by this interactor itself.)SH
+/Courier SF
+9360 25828 MT
+(\050:objs-aggregate objs-agg\051)SH
+9360 26776 MT
+(\050:textinter edit-text\051)SH
+9360 27724 MT
+(\050:selection selection\051)SH
+9360 29620 MT
+(\050:feedback-obj)SH
+9900 30568 MT
+(;;)SH
+/Times-Italic SF
+(use the feedback objects in the graphics-selection object)SH
+/Courier SF
+9900 31516 MT
+(;;)SH
+/Times-Italic SF
+(pick which feedback depending on whether drawing line or box)SH
+/Courier SF
+9900 32464 MT
+(\050o-formula)SH
+10440 33412 MT
+(\050if \050gvl :line-p\051)SH
+12600 34360 MT
+(\050gvl :selection :line-movegrow-feedback\051)SH
+11520 35308 MT
+(\050gvl :selection :rect-movegrow-feedback\051\051\051\051)SH
+9360 36256 MT
+(\050:final-function #'Create-New-Obj\051\051)SH
+8280 38152 MT
+(;;;)SH
+/Times-Italic SF
+(Now, add the aggregates to the window and update)SH
+/Courier SF
+8280 39100 MT
+(\050s-value top-win :aggregate top-agg\051)SH
+8280 40048 MT
+(\050s-value work-win :aggregate work-agg\051)SH
+8280 40996 MT
+(\050opal:update top-win\051  ;;)SH
+/Times-Italic SF
+(will also update work-win)SH
+/Courier SF
+7200 42892 MT
+(;;)SH
+/Times-Italic SF
+(** Do-Go **)SH
+/Courier SF
+7200 43840 MT
+(\050Format T "~%Demo-Editor:)SH
+7200 44788 MT
+(Press with left button on top menu to change modes \050box or line\051.)SH
+7200 45736 MT
+(Press with left button on bottom menu to execute a command.)SH
+7200 46684 MT
+(Press with right button in work window to create a new object)SH
+10440 47632 MT
+(of the current mode.)SH
+7200 48580 MT
+(Boxes can be created anywhere, but lines must start and stop inside boxes.)SH
+7200 49528 MT
+(After creating a box, you should type the new label.)SH
+7200 50476 MT
+(Press with left button on text string to start editing that string.)SH
+10440 51424 MT
+(While editing a string, type RETURN or press a mouse button to stop.)SH
+7200 52372 MT
+(Press with left button in work window to select an object.)SH
+7200 53320 MT
+(Press with left button on white selection square to move an object.)SH
+7200 54268 MT
+(Press with left button on black selection square to change object size.)SH
+7200 55216 MT
+(While creating, moving, or growing a box, move outside window and release or)SH
+10440 56164 MT
+(hit ^G or ^g to abort.)SH
+7200 57112 MT
+(~%"\051)SH
+7200 59008 MT
+(\050unless dont-enter-main-event-loop #-cmu \050inter:main-event-loop\051\051)SH
+8280 60904 MT
+(;;)SH
+/Times-Italic SF
+(return top window)SH
+/Courier SF
+8280 61852 MT
+(top-win\051\051)SH
+6120 63748 MT
+(;;)SH
+/Times-Italic SF
+(** This is mainly for debugging, since usually the quit button in the menu will be used.)SH
+/Courier SF
+6120 64696 MT
+(\050defun Do-Stop \050\051)SH
+7200 65644 MT
+(\050opal:destroy current-window\051\051)SH
+ES
+%%Page: i 14
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(Sample Program)SH
+47914 XM
+(Table of Contents)SH
+46800 50 8280 4486 UL
+16 /Times-Bold AF
+25591 8272 MT
+(Table of Contents)SH
+12 SS 
+8280 9796 MT
+(1. Introduction)SH
+53280 XM
+(493)SH
+8280 11320 MT
+(2. Loading the Editor)SH
+53280 XM
+(493)SH
+8280 12844 MT
+(3. User Interface)SH
+53280 XM
+(493)SH
+8280 14368 MT
+(4. Overview of How the Code Works)SH
+53280 XM
+(495)SH
+8280 15892 MT
+(5. The Code)SH
+53280 XM
+(497)SH
+ES
+%%Trailer
+%%Pages: 14
+%%DocumentFonts: Times-Roman Times-Bold Symbol Courier Times-Italic

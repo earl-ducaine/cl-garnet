@@ -1,0 +1,5 @@
+@findex text-width
+@anchor{Function text-width}
+@deffn {Function} {text-width} drawable font string @&key start end
+Returns width of text bounding box. @var{drawable} must be window, pixmap or screen.
+@end deffn

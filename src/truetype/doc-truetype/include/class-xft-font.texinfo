@@ -1,0 +1,47 @@
+@tindex font
+@anchor{Class font}
+@deftp {Class} {font}
+Class precedence list: @code{@lw{font}, @lw{standard-object}, @lw{t}}
+
+Slots:
+@itemize
+@item @code{family} --- initarg: @code{@w{:family}}; reader: @code{@w{clx-truetype:font-family}}; writer: @code{@w{(setf clx-truetype:font-family)}}
+
+Font family.
+@item @code{subfamily} --- initarg: @code{@w{:subfamily}}; reader: @code{@w{clx-truetype:font-subfamily}}; writer: @code{@w{(setf clx-truetype:font-subfamily)}}
+
+Font subfamily. For e.g. regular, italic, bold, bold italib.
+@item @code{size} --- initarg: @code{@w{:size}}; reader: @code{@w{clx-truetype:font-size}}; writer: @code{@w{(setf clx-truetype:font-size)}}
+
+Font size in points.
+@item @code{underline} --- initarg: @code{@w{:underline}}; reader: @code{@w{clx-truetype:font-underline}}; writer: @code{@w{(setf clx-truetype:font-underline)}}
+
+Draw line under text string.
+@item @code{strikethrough} --- initarg: @code{@w{:strikethrough}}; reader: @code{@w{clx-truetype:font-strikethrough}}; writer: @code{@w{(setf clx-truetype:font-strikethrough)}}
+
+Draw strike through text string.
+@item @code{overline} --- initarg: @code{@w{:overline}}; reader: @code{@w{clx-truetype:font-overline}}; writer: @code{@w{(setf clx-truetype:font-overline)}}
+
+Draw line over text string.
+@item @code{background} --- initarg: @code{@w{:background}}; reader: @code{@w{clx-truetype:font-background}}; writer: @code{@w{(setf clx-truetype:font-background)}}
+
+Background color.
+@item @code{foreground} --- initarg: @code{@w{:foreground}}; reader: @code{@w{clx-truetype::font-foreground}}; writer: @code{@w{(setf clx-truetype::font-foreground)}}
+
+Foreground color.
+@item @code{overwrite-gcontext} --- initarg: @code{@w{clx-truetype::overwrite-gcontext}}; reader: @code{@w{clx-truetype:font-overwrite-gcontext}}; writer: @code{@w{(setf clx-truetype:font-overwrite-gcontext)}}
+
+Use font values for background and foreground colors.
+@item @code{antialias} --- initarg: @code{@w{clx-truetype::antialias}}; reader: @code{@w{clx-truetype:font-antialias}}; writer: @code{@w{(setf clx-truetype:font-antialias)}}
+
+Antialias text string.
+@item @code{string-bboxes} --- reader: @code{@w{clx-truetype::font-string-bboxes}}; writer: @code{@w{(setf clx-truetype::font-string-bboxes)}}
+
+Cache for bboxes
+@item @code{string-line-bboxes} --- reader: @code{@w{clx-truetype::font-string-line-bboxes}}; writer: @code{@w{(setf clx-truetype::font-string-line-bboxes)}}
+
+Cache for bboxes
+@end itemize
+
+Class for representing font information.
+@end deftp

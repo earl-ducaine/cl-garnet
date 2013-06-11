@@ -1,0 +1,27 @@
+#define noname_format 1
+#define noname_width  16
+#define noname_height 16
+#define noname_ncolors 2
+#define noname_chars_per_pixel 1
+static char *noname_colors[] = {
+   "`", "black",
+   "a", "white"
+};
+static char *noname_pixels[] = {
+"aaaaaaaaaaaaaaaa",
+"a``````a```````a",
+"a`aaaaaa`aaaaa`a",
+"a`a``````a```a`a",
+"a`a`aaaa`aaa`a`a",
+"a`a`a``a```a`a`a",
+"a`a`a`aa```a`a`a",
+"a`a`a`a`aa`a`a`a",
+"a`a`a`a``a`a`a`a",
+"a`a`a`aaaa`a`a`a",
+"a`a`a``````a`a`a",
+"a`a`aaaaaaaa`a`a",
+"a`a``````````a`a",
+"a`aaaaaaaaaaaa`a",
+"a``````````````a",
+"aaaaaaaaaaaaaaaa"
+};

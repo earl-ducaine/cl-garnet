@@ -1,0 +1,33 @@
+#define noname_format 1
+#define noname_width  159
+#define noname_height 20
+#define noname_ncolors 4
+#define noname_chars_per_pixel 1
+static char *noname_colors[] = {
+   "`", "black",
+   "a", "white",
+   "b", "#323232",
+   "c", "light grey"
+};
+static char *noname_pixels[] = {
+"ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+"ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaac",
+"ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaac",
+"ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccaaccccccccccccccccccccccccccccccccccccccccccccccccccccccbbc",
+"ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccaaccccccccccccccccccccccccccccccccccccccccccccccccccccccbbc",
+"cccccccccccccccccccccccc``ccccccccccccccccccccccc```ccccccccccccccccccccccccccccccccccccccccccccccccaacccccccccccccccccccccccccccccccccccccccccccc`cccccccccbbc",
+"cc````cccccccccc``cccccccccccccccccccccccccccccccc``ccccccccccccc``ccccc``ccccccccccccccccccccccccccaaccccccc`````ccc`cccccccccccccccccccccccccc```cccccccccbbc",
+"c``cc``ccccccccc``cccccccccccccccccccccccccccccccc``ccccccccccccc``ccccc``ccccccccccccccccccccccccccaaccccccccc`ccccc`cccccccccccccccccccccccccccc`cccccccccbbc",
+"c``cc````c```cc``````c````cccc````c``c```ccccccccc`````c```c```c``````c``````cc````c``c```cccc``ccccaaccccccccc`cccc`````ccc```cc```c`cccccccccccc`cccccccccbbc",
+"c``cc``c``cc``cc``cccccc``ccc``cc``c```c``cccccccc``cc``c``cc``cc``ccccc``cccc``cc``c```c``ccc``ccccaaccccccccc`ccccc`ccccc`ccc`cc`c`c`ccccccccccc`cccccccccbbc",
+"c``cc``c``cc``cc``cccccc``ccc``cc``c``cc``cccccccc``cc``c``cc``cc``ccccc``cccc``cc``c``cc``cccccccccaaccccccccc`ccccc`ccccc`````cc`c`c`ccccccccccc`cccccccccbbc",
+"c``cc``c``cc``cc``cccccc``ccc``cc``c``cc``cccccccc``cc``c``cc``cc``ccccc``cccc``cc``c``cc``cccccccccaaccccccccc`ccccc`ccccc`cccccc`c`c`ccccccccccc`cccccccccbbc",
+"c``cc``c``cc``cc``cc`ccc``ccc``cc``c``cc``cccccccc``cc``c``cc``cc``cc`cc``cc`c``cc``c``cc``ccc``ccccaaccccccccc`ccccc`ccc`c`ccc`cc`c`c`ccccccccccc`cccccccccbbc",
+"cc````cc`````cccc```cc``````cc````c````c``ccccccc``````ccc```c``cc```cccc```ccc````c````c``ccc``ccccaaccccccc`````cccc```ccc```cc``c`c``cccccccc`````cccccccbbc",
+"cccccccc``ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccaaccccccccccccccccccccccccccccccccccccccccccccccccccccccbbc",
+"cccccccc``ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccaaccccccccccccccccccccccccccccccccccccccccccccccccccccccbbc",
+"ccccccc````cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccaaccccccccccccccccccccccccccccccccccccccccccccccccccccccbbc",
+"ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbc",
+"ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbc",
+"ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+};

@@ -1,0 +1,378 @@
+%!PS-Adobe-2.0
+%%Title: Opal 24
+%%Creator: Make-PS-File -- Garnet Version 1.4
+%%CreationDate: Oct 4, 1991, 12:10 PM
+%%For: 
+%%DocumentFonts: (atend)
+%%BoundingBox: 30 227 582 566
+%%Pages: 1
+%%EndComments
+
+
+/TextDict 2 dict def
+/DrawText
+   {	% stack: left bottom opal-width line-halftone red green blue color-p
+        %        string size font-name
+        TextDict begin
+        gsave
+	findfont exch scalefont setfont
+	/s exch def
+        % Color-p is on top of stack, so set color/halftone
+          { setrgbcolor pop }
+          { pop pop pop setgray } ifelse
+        % Calculate distance to add between each character, based on the width
+        % expected by Opal, the width expected by postscript, and the number
+        % of characters to distribute the change over
+	/x-dist exch s stringwidth pop sub s length div def
+        newpath
+	  moveto
+	  x-dist 0 s ashow
+          stroke
+        grestore
+        end
+   } def
+
+/DrawLine
+   {    % stack: line-halftone, red, green, blue, color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness
+        %        x2, y2, x1, y1
+        newpath
+          moveto
+          lineto
+          StrokeShape
+   } def
+
+/RectanglePath
+   {    % stack: left, top, width, height
+        /h exch def  /w exch def
+	moveto		        % Go to the left,top corner
+	w 0 rlineto	        % top side
+	0 h neg rlineto		% right side
+	w neg 0 rlineto		% bottom side
+	closepath		% left side
+   } def
+
+/RectangleDict 21 dict def
+/DrawRectangle
+   {	% stack: left, top, width, height, line-halftone, line-red, line-green,
+        %        line-blue, line-color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness,
+        %        fill-halftone, fill-red, fill-green, fill-blue, fill-color-p
+        RectangleDict begin
+        /fill-color-p exch def  /fill-blue exch def  /fill-green exch def
+        /fill-red exch def /fill-halftone exch def  /lt exch def
+        /dash-pattern exch def  /line-join exch def  /line-cap exch def
+        /line-color-p exch def  /line-blue exch def  /line-green exch def
+        /line-red exch def  /line-halftone exch def  /height exch def
+        /width exch def  /top exch def  /left exch def  /lt-by-2 lt 2 div def
+        % Draw filling
+        newpath
+          left lt-by-2 add  top lt-by-2 sub   width lt sub  height lt sub
+          RectanglePath
+	  fill-halftone fill-red fill-green fill-blue fill-color-p FillShape
+        % Draw border
+        newpath
+          left top width height RectanglePath
+          line-halftone line-red line-green line-blue line-color-p
+          line-cap line-join dash-pattern lt StrokeShape
+        end
+   } def
+
+/FillShape
+   {	% stack: fill-halftone, red, green, blue, color-p
+        %   Color-p should be true or false - false means ignore the three vals
+        %   Use -1 for fill-halftone to mean NIL, 0 = black, 1 = white
+        %   Use -2 for fill-halftone to indicate there is an arbitrary filling
+        % style on the stack
+        gsave
+        { setrgbcolor fill pop }
+	{ pop pop pop 
+	  dup 0 ge
+	    % if fill-halftone >= 0, then fill the shape with a halftone
+	    {setgray fill}
+            % else, if there is an arbitrary filling style, then fill
+            { -2 eq
+              {SetPattern fill} if
+            } ifelse } ifelse
+        grestore
+   } def
+
+/StrokeShape
+   {	% stack: line-halftone, red, green, blue, color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness
+	% If no line is desired, pass -1 for line-thickness
+        % Halftones: 0 = black, 1 = white
+	dup 0 ge
+	  % if line-thickness >= 0, then draw the outline
+	  {gsave
+	   setlinewidth 0 setdash setlinejoin setlinecap
+             { setrgbcolor pop }
+             { pop pop pop setgray } ifelse
+	   stroke
+	   grestore}
+	  {pop pop pop pop pop pop pop pop pop newpath} ifelse
+   } def
+
+
+%%EndProlog
+%%Page: 1 1
+
+30 30 translate
+0.63 0.63 scale
+
+%
+% Begin new window
+%
+0 -314 translate
+gsave
+0 0 translate
+gsave
+0 1171 883 542 0 1.00 1.00 1.00 true 0 0 [] 1 -1 0 0 0 false DrawRectangle
+0 0 0 0 false 0 0 [] 1 336 914 159 914 DrawLine
+0 0 0 0 false 0 0 [] 1 417 914 402 1031 DrawLine
+0 0 0 0 false 0 0 [] 1 417 1031 402 1031 DrawLine
+0 0 0 0 false 0 0 [] 1 492 1031 477 1031 DrawLine
+0 0 0 0 false 0 0 [] 1 492 972 477 1031 DrawLine
+0 0 0 0 false 0 0 [] 1 93 1031 78 972 DrawLine
+0 0 0 0 false 0 0 [] 1 93 914 78 972 DrawLine
+0 0 0 0 false 0 0 [] 1 336 797 321 856 DrawLine
+0 0 0 0 false 0 0 [] 1 492 856 321 856 DrawLine
+0 0 0 0 false 0 0 [] 1 804 972 789 972 DrawLine
+0 0 0 0 false 0 0 [] 1 804 972 789 1089 DrawLine
+0 0 0 0 false 0 0 [] 1 729 972 714 972 DrawLine
+0 0 0 0 false 0 0 [] 1 729 1089 714 1089 DrawLine
+0 0 0 0 false 0 0 [] 1 648 1089 558 856 DrawLine
+0 0 0 0 false 0 0 [] 1 729 826 558 856 DrawLine
+0 0 0 0 false 0 0 [] 1 648 972 558 856 DrawLine
+0 0 0 0 false 0 0 [] 1 255 856 159 1031 DrawLine
+0 0 0 0 false 0 0 [] 1 174 1031 159 1031 DrawLine
+0 0 0 0 false 0 0 [] 1 255 1031 240 1031 DrawLine
+0 0 0 0 false 0 0 [] 1 648 972 558 972 DrawLine
+0 0 0 0 false 0 0 [] 1 648 1089 633 1089 DrawLine
+0 0 0 0 false 0 0 [] 1 729 826 558 797 DrawLine
+0 0 0 0 false 0 0 [] 1 804 972 789 1147 DrawLine
+0 0 0 0 false 0 0 [] 1 417 914 402 914 DrawLine
+0 0 0 0 false 0 0 [] 1 804 972 789 826 DrawLine
+0 0 0 0 false 0 0 [] 1 492 972 477 914 DrawLine
+0 0 0 0 false 0 0 [] 1 573 1089 558 1031 DrawLine
+0 0 0 0 false 0 0 [] 1 492 797 402 797 DrawLine
+0 0 0 0 false 0 0 [] 1 492 1147 402 1147 DrawLine
+0 0 0 0 false 0 0 [] 1 729 1147 558 1147 DrawLine
+0 0 0 0 false 0 0 [] 1 573 1089 558 1147 DrawLine
+0 0 0 0 false 0 0 [] 1 336 914 321 1031 DrawLine
+0 0 0 0 false 0 0 [] 1 336 1031 321 1031 DrawLine
+0 0 0 0 false 0 0 [] 1 336 1147 321 1031 DrawLine
+93 934 67 42 0 0 0 0 false 0 0 [] 1 0.0 1.00 1.00 1.00 true DrawRectangle
+102 906 49 11 0 0 0 0 false 0 0 [] -1 0.0 1.00 1.00 1.00 true DrawRectangle
+102 906 33 11 0 0 0 0 false 0 0 [] -1 0.0 0 0 0 false DrawRectangle
+102 906 49 11 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+96 911 59 0 0 0 0 false (Ass-Partns) 10 /Courier DrawText
+132 924 22 0 0 0 0 false (6000) 10 /Courier DrawText
+96 924 22 0 0 0 0 false (3000) 10 /Courier DrawText
+336 1051 67 42 0 0 0 0 false 0 0 [] 1 0.0 1.00 1.00 1.00 true DrawRectangle
+345 1023 49 12 0 0 0 0 false 0 0 [] -1 0.0 1.00 1.00 1.00 true DrawRectangle
+345 1023 33 12 0 0 0 0 false 0 0 [] -1 0.0 0 0 0 false DrawRectangle
+345 1023 49 12 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+342 1028 53 0 0 0 0 false (Brick-W-1) 10 /Courier DrawText
+381 1041 16 0 0 0 0 false (500) 10 /Courier DrawText
+339 1041 22 0 0 0 0 false (1500) 10 /Courier DrawText
+417 1051 61 42 0 0 0 0 false 0 0 [] 1 0.0 1.00 1.00 1.00 true DrawRectangle
+423 1023 49 12 0 0 0 0 false 0 0 [] -1 0.0 1.00 1.00 1.00 true DrawRectangle
+423 1023 27 12 0 0 0 0 false 0 0 [] -1 0.0 0 0 0 false DrawRectangle
+423 1023 49 12 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+420 1028 53 0 0 0 0 false (Brick-W-2) 10 /Courier DrawText
+456 1041 17 0 0 0 0 false (400) 10 /Courier DrawText
+420 1041 22 0 0 0 0 false (1200) 10 /Courier DrawText
+12 993 67 42 0 0 0 0 false 0 0 [] 1 0.0 1.00 1.00 1.00 true DrawRectangle
+21 964 49 11 0 0 0 0 false 0 0 [] -1 0.0 1.00 1.00 1.00 true DrawRectangle
+21 964 17 11 0 0 0 0 false 0 0 [] -1 0.0 0 0 0 false DrawRectangle
+21 964 49 11 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+15 970 60 0 0 0 0 false (Bulk-Clear) 10 /Courier DrawText
+57 983 16 0 0 0 0 false (250) 10 /Courier DrawText
+15 983 16 0 0 0 0 false (750) 10 /Courier DrawText
+804 993 67 42 0 0 0 0 false 0 0 [] 1 0.0 1.00 1.00 1.00 true DrawRectangle
+813 964 49 11 0 0 0 0 false 0 0 [] -1 0.0 1.00 1.00 1.00 true DrawRectangle
+813 964 7 11 0 0 0 0 false 0 0 [] -1 0.0 0 0 0 false DrawRectangle
+813 964 49 11 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+807 970 58 0 0 0 0 false (Clean-Site) 10 /Courier DrawText
+849 983 16 0 0 0 0 false (100) 10 /Courier DrawText
+807 983 16 0 0 0 0 false (200) 10 /Courier DrawText
+255 876 67 42 0 0 0 0 false 0 0 [] 1 0.0 1.00 1.00 1.00 true DrawRectangle
+264 848 49 12 0 0 0 0 false 0 0 [] -1 0.0 1.00 1.00 1.00 true DrawRectangle
+264 848 14 12 0 0 0 0 false 0 0 [] -1 0.0 0 0 0 false DrawRectangle
+264 848 49 12 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+258 853 60 0 0 0 0 false (Dig-Trench) 10 /Courier DrawText
+300 866 16 0 0 0 0 false (200) 10 /Courier DrawText
+258 866 16 0 0 0 0 false (600) 10 /Courier DrawText
+729 993 61 42 0 0 0 0 false 0 0 [] 1 0.0 1.00 1.00 1.00 true DrawRectangle
+735 964 49 11 0 0 0 0 false 0 0 [] -1 0.0 1.00 1.00 1.00 true DrawRectangle
+735 964 33 11 0 0 0 0 false 0 0 [] -1 0.0 0 0 0 false DrawRectangle
+735 964 49 11 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+732 970 53 0 0 0 0 false (Drywall-1) 10 /Courier DrawText
+762 983 22 0 0 0 0 false (5000) 10 /Courier DrawText
+732 983 22 0 0 0 0 false (1000) 10 /Courier DrawText
+729 1109 61 42 0 0 0 0 false 0 0 [] 1 0.0 1.00 1.00 1.00 true DrawRectangle
+735 1081 49 11 0 0 0 0 false 0 0 [] -1 0.0 1.00 1.00 1.00 true DrawRectangle
+735 1081 33 11 0 0 0 0 false 0 0 [] -1 0.0 0 0 0 false DrawRectangle
+735 1081 49 11 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+732 1086 53 0 0 0 0 false (Drywall-2) 10 /Courier DrawText
+762 1099 22 0 0 0 0 false (5000) 10 /Courier DrawText
+732 1099 22 0 0 0 0 false (1000) 10 /Courier DrawText
+648 993 67 42 0 0 0 0 false 0 0 [] 1 0.0 1.00 1.00 1.00 true DrawRectangle
+657 964 49 11 0 0 0 0 false 0 0 [] -1 0.0 1.00 1.00 1.00 true DrawRectangle
+657 964 30 11 0 0 0 0 false 0 0 [] -1 0.0 0 0 0 false DrawRectangle
+657 964 49 11 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+651 970 59 0 0 0 0 false (E&P-Floor1) 10 /Courier DrawText
+687 983 22 0 0 0 0 false (6300) 10 /Courier DrawText
+651 983 22 0 0 0 0 false (2700) 10 /Courier DrawText
+648 1109 67 42 0 0 0 0 false 0 0 [] 1 0.0 1.00 1.00 1.00 true DrawRectangle
+657 1081 49 11 0 0 0 0 false 0 0 [] -1 0.0 1.00 1.00 1.00 true DrawRectangle
+657 1081 39 11 0 0 0 0 false 0 0 [] -1 0.0 0 0 0 false DrawRectangle
+657 1081 49 11 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+651 1086 59 0 0 0 0 false (E&P-Floor2) 10 /Courier DrawText
+687 1099 22 0 0 0 0 false (8400) 10 /Courier DrawText
+651 1099 22 0 0 0 0 false (3600) 10 /Courier DrawText
+492 876 67 42 0 0 0 0 false 0 0 [] 1 0.0 1.00 1.00 1.00 true DrawRectangle
+501 848 49 12 0 0 0 0 false 0 0 [] -1 0.0 1.00 1.00 1.00 true DrawRectangle
+501 848 14 12 0 0 0 0 false 0 0 [] -1 0.0 0 0 0 false DrawRectangle
+501 848 49 12 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+498 853 54 0 0 0 0 false (E&P-Under) 10 /Courier DrawText
+531 866 22 0 0 0 0 false (2800) 10 /Courier DrawText
+495 866 22 0 0 0 0 false (1200) 10 /Courier DrawText
+93 1051 67 42 0 0 0 0 false 0 0 [] 1 0.0 1.00 1.00 1.00 true DrawRectangle
+102 1023 49 12 0 0 0 0 false 0 0 [] -1 0.0 1.00 1.00 1.00 true DrawRectangle
+102 1023 20 12 0 0 0 0 false 0 0 [] -1 0.0 0 0 0 false DrawRectangle
+102 1023 49 12 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+102 1028 47 0 0 0 0 false (Excavate) 10 /Courier DrawText
+138 1041 16 0 0 0 0 false (300) 10 /Courier DrawText
+96 1041 16 0 0 0 0 false (900) 10 /Courier DrawText
+174 1051 67 42 0 0 0 0 false 0 0 [] 1 0.0 1.00 1.00 1.00 true DrawRectangle
+183 1023 49 12 0 0 0 0 false 0 0 [] -1 0.0 1.00 1.00 1.00 true DrawRectangle
+183 1023 36 12 0 0 0 0 false 0 0 [] -1 0.0 0 0 0 false DrawRectangle
+183 1023 49 12 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+177 1028 60 0 0 0 0 false (Foundation) 10 /Courier DrawText
+213 1041 22 0 0 0 0 false (3300) 10 /Courier DrawText
+177 1041 22 0 0 0 0 false (2200) 10 /Courier DrawText
+492 993 67 42 0 0 0 0 false 0 0 [] 1 0.0 1.00 1.00 1.00 true DrawRectangle
+501 964 49 11 0 0 0 0 false 0 0 [] -1 0.0 1.00 1.00 1.00 true DrawRectangle
+501 964 23 11 0 0 0 0 false 0 0 [] -1 0.0 0 0 0 false DrawRectangle
+501 964 49 11 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+498 970 53 0 0 0 0 false (Framing-1) 10 /Courier DrawText
+531 983 22 0 0 0 0 false (3500) 10 /Courier DrawText
+495 983 16 0 0 0 0 false (700) 10 /Courier DrawText
+573 1109 61 42 0 0 0 0 false 0 0 [] 1 0.0 1.00 1.00 1.00 true DrawRectangle
+579 1081 49 11 0 0 0 0 false 0 0 [] -1 0.0 1.00 1.00 1.00 true DrawRectangle
+579 1081 23 11 0 0 0 0 false 0 0 [] -1 0.0 0 0 0 false DrawRectangle
+579 1081 49 11 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+576 1086 53 0 0 0 0 false (Framing-2) 10 /Courier DrawText
+606 1099 22 0 0 0 0 false (3500) 10 /Courier DrawText
+576 1099 16 0 0 0 0 false (700) 10 /Courier DrawText
+492 818 67 42 0 0 0 0 false 0 0 [] 1 0.0 1.00 1.00 1.00 true DrawRectangle
+501 789 49 11 0 0 0 0 false 0 0 [] -1 0.0 1.00 1.00 1.00 true DrawRectangle
+501 789 14 11 0 0 0 0 false 0 0 [] -1 0.0 0 0 0 false DrawRectangle
+501 789 49 11 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+495 795 59 0 0 0 0 false (Gardn-Wall) 10 /Courier DrawText
+531 808 22 0 0 0 0 false (1200) 10 /Courier DrawText
+495 808 16 0 0 0 0 false (800) 10 /Courier DrawText
+729 1168 61 42 0 0 0 0 false 0 0 [] 1 0.0 1.00 1.00 1.00 true DrawRectangle
+735 1139 49 11 0 0 0 0 false 0 0 [] -1 0.0 1.00 1.00 1.00 true DrawRectangle
+735 1139 39 11 0 0 0 0 false 0 0 [] -1 0.0 0 0 0 false DrawRectangle
+735 1139 49 11 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+738 1145 40 0 0 0 0 false (Gutters) 10 /Courier DrawText
+768 1158 16 0 0 0 0 false (600) 10 /Courier DrawText
+732 1158 22 0 0 0 0 false (1800) 10 /Courier DrawText
+336 934 67 42 0 0 0 0 false 0 0 [] 1 0.0 1.00 1.00 1.00 true DrawRectangle
+345 906 49 11 0 0 0 0 false 0 0 [] -1 0.0 1.00 1.00 1.00 true DrawRectangle
+345 906 23 11 0 0 0 0 false 0 0 [] -1 0.0 0 0 0 false DrawRectangle
+345 906 49 11 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+339 911 59 0 0 0 0 false (Ins-Partns) 10 /Courier DrawText
+375 924 23 0 0 0 0 false (4200) 10 /Courier DrawText
+339 924 22 0 0 0 0 false (2100) 10 /Courier DrawText
+729 847 61 42 0 0 0 0 false 0 0 [] 1 0.0 1.00 1.00 1.00 true DrawRectangle
+735 819 49 12 0 0 0 0 false 0 0 [] -1 0.0 1.00 1.00 1.00 true DrawRectangle
+735 819 33 12 0 0 0 0 false 0 0 [] -1 0.0 0 0 0 false DrawRectangle
+735 819 49 12 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+732 824 53 0 0 0 0 false (Landscape) 10 /Courier DrawText
+768 837 16 0 0 0 0 false (500) 10 /Courier DrawText
+732 837 22 0 0 0 0 false (1000) 10 /Courier DrawText
+417 934 61 42 0 0 0 0 false 0 0 [] 1 0.0 1.00 1.00 1.00 true DrawRectangle
+423 906 49 11 0 0 0 0 false 0 0 [] -1 0.0 1.00 1.00 1.00 true DrawRectangle
+423 906 33 11 0 0 0 0 false 0 0 [] -1 0.0 0 0 0 false DrawRectangle
+423 906 49 11 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+420 911 53 0 0 0 0 false (Masonry-1) 10 /Courier DrawText
+450 924 22 0 0 0 0 false (3000) 10 /Courier DrawText
+420 924 22 0 0 0 0 false (2000) 10 /Courier DrawText
+492 1051 67 42 0 0 0 0 false 0 0 [] 1 0.0 1.00 1.00 1.00 true DrawRectangle
+501 1023 49 12 0 0 0 0 false 0 0 [] -1 0.0 1.00 1.00 1.00 true DrawRectangle
+501 1023 27 12 0 0 0 0 false 0 0 [] -1 0.0 0 0 0 false DrawRectangle
+501 1023 49 12 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+498 1028 53 0 0 0 0 false (Masonry-2) 10 /Courier DrawText
+531 1041 22 0 0 0 0 false (2400) 10 /Courier DrawText
+495 1041 22 0 0 0 0 false (1600) 10 /Courier DrawText
+336 818 67 42 0 0 0 0 false 0 0 [] 1 0.0 1.00 1.00 1.00 true DrawRectangle
+345 789 49 11 0 0 0 0 false 0 0 [] -1 0.0 1.00 1.00 1.00 true DrawRectangle
+345 789 27 11 0 0 0 0 false 0 0 [] -1 0.0 0 0 0 false DrawRectangle
+345 789 49 11 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+342 795 54 0 0 0 0 false (Pave-Path) 10 /Courier DrawText
+381 808 17 0 0 0 0 false (400) 10 /Courier DrawText
+339 808 16 0 0 0 0 false (800) 10 /Courier DrawText
+336 1168 67 42 0 0 0 0 false 0 0 [] 1 0.0 1.00 1.00 1.00 true DrawRectangle
+345 1139 49 11 0 0 0 0 false 0 0 [] -1 0.0 1.00 1.00 1.00 true DrawRectangle
+345 1139 27 11 0 0 0 0 false 0 0 [] -1 0.0 0 0 0 false DrawRectangle
+345 1139 49 11 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+339 1145 59 0 0 0 0 false (Roof-Frame) 10 /Courier DrawText
+375 1158 23 0 0 0 0 false (4800) 10 /Courier DrawText
+339 1158 22 0 0 0 0 false (2400) 10 /Courier DrawText
+492 1168 67 42 0 0 0 0 false 0 0 [] 1 0.0 1.00 1.00 1.00 true DrawRectangle
+501 1139 49 11 0 0 0 0 false 0 0 [] -1 0.0 1.00 1.00 1.00 true DrawRectangle
+501 1139 30 11 0 0 0 0 false 0 0 [] -1 0.0 0 0 0 false DrawRectangle
+501 1139 49 11 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+498 1145 53 0 0 0 0 false (Shingling) 10 /Courier DrawText
+537 1158 17 0 0 0 0 false (450) 10 /Courier DrawText
+495 1158 22 0 0 0 0 false (1350) 10 /Courier DrawText
+255 1051 67 42 0 0 0 0 false 0 0 [] 1 0.0 1.00 1.00 1.00 true DrawRectangle
+264 1023 49 12 0 0 0 0 false 0 0 [] -1 0.0 1.00 1.00 1.00 true DrawRectangle
+264 1023 49 12 0 0 0 0 false 0 0 [] -1 0.0 0 0 0 false DrawRectangle
+264 1023 49 12 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+258 1028 59 0 0 0 0 false (Stl-Struct) 10 /Courier DrawText
+294 1041 22 0 0 0 0 false (9000) 10 /Courier DrawText
+258 1041 23 0 0 0 0 false (4500) 10 /Courier DrawText
+369 742 143 0 0 0 0 false (Links: Has-Next-Activity) 10 /Courier DrawText
+351 731 181 59 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+357 728 55 42 0 0 0 0 false 0 0 [] 1 0.0 1.00 1.00 1.00 true DrawRectangle
+381 692 5 0 0 0 0 false (D) 10 /Courier DrawText
+381 705 4 0 0 0 0 false (C) 10 /Courier DrawText
+402 718 5 0 0 0 0 false (B) 10 /Courier DrawText
+360 718 6 0 0 0 0 false (A) 10 /Courier DrawText
+423 719 78 0 0 0 0 false (A: Labor-Cost) 10 /Courier DrawText
+423 706 102 0 0 0 0 false (B: Materials-Cost) 10 /Courier DrawText
+423 693 64 0 0 0 0 false (C: ACTIVITY) 10 /Courier DrawText
+423 680 66 0 0 0 0 false (D: Duration) 10 /Courier DrawText
+285 666 313 34 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+291 655 60 0 0 0 0 false (Day-Amount) 10 /Courier DrawText
+363 663 49 11 0 0 0 0 false 0 0 [] -1 0.0 1.00 1.00 1.00 true DrawRectangle
+363 663 1 11 0 0 0 0 false 0 0 [] -1 0.0 0 0 0 false DrawRectangle
+363 663 49 11 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+384 640 4 0 0 0 0 false (0) 10 /Courier DrawText
+423 663 49 11 0 0 0 0 false 0 0 [] -1 0.0 1.00 1.00 1.00 true DrawRectangle
+423 663 17 11 0 0 0 0 false 0 0 [] -1 0.0 0 0 0 false DrawRectangle
+423 663 49 11 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+444 640 4 0 0 0 0 false (5) 10 /Courier DrawText
+483 663 49 11 0 0 0 0 false 0 0 [] -1 0.0 1.00 1.00 1.00 true DrawRectangle
+483 663 33 11 0 0 0 0 false 0 0 [] -1 0.0 0 0 0 false DrawRectangle
+483 663 49 11 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+501 640 10 0 0 0 0 false (10) 10 /Courier DrawText
+543 663 49 11 0 0 0 0 false 0 0 [] -1 0.0 1.00 1.00 1.00 true DrawRectangle
+543 663 49 11 0 0 0 0 false 0 0 [] -1 0.0 0 0 0 false DrawRectangle
+543 663 49 11 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+561 640 10 0 0 0 0 false (15) 10 /Courier DrawText
+grestore
+
+grestore
+
+0 1171 883 542 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+
+showpage
+%%Trailer
+%%DocumentFonts: /Courier 
+%%BoundingBox: 30 227 582 566

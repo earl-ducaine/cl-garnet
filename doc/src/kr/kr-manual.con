@@ -1,0 +1,130 @@
+@Comment{CONTENTS of kr/kr-manual.mss by Scribe 7(1700) on 30 November 1994 at 21:41}
+@PrefaceSection(Table of Contents)
+@Set(Page=1)@Style(PageNumber <@i>)
+@define(foot,invisible)
+@begin(TC1)@rfstr(52)1.@ @$Introduction@end(TC1)
+
+@begin(TC1)@rfstr(53)2.@ @$Structure of the System@end(TC1)
+
+@begin(TC1)@rfstr(54)3.@ @$Basic Concepts@end(TC1)
+
+@begin(TC2)@rfstr(54)3.1.@ @$Main Concepts: Schema, Slot, Value@end(TC2)
+
+@begin(TC2)@rfstr(56)3.2.@ @$Inheritance@end(TC2)
+
+@begin(TC1)@rfstr(57)4.@ @$Object-Oriented Programming@end(TC1)
+
+@begin(TC2)@rfstr(57)4.1.@ @$Objects@end(TC2)
+
+@begin(TC2)@rfstr(57)4.2.@ @$Prototypes vs. Classes@end(TC2)
+
+@begin(TC2)@rfstr(57)4.3.@ @$Inheritance of Formulas@end(TC2)
+
+@begin(TC1)@rfstr(58)5.@ @$Constraint Maintenance@end(TC1)
+
+@begin(TC2)@rfstr(58)5.1.@ @$Value Propagation@end(TC2)
+
+@begin(TC2)@rfstr(58)5.2.@ @$Formulas@end(TC2)
+
+@begin(TC3)@rfstr(59)5.2.1.@ @$Circular Dependencies@end(TC3)
+
+@begin(TC3)@rfstr(59)5.2.2.@ @$Dependency Paths@end(TC3)
+
+@begin(TC1)@rfstr(60)6.@ @$Functional Interface: Common Functions@end(TC1)
+
+@begin(TC2)@rfstr(60)6.1.@ @$Schema Manipulation@end(TC2)
+
+@begin(TC2)@rfstr(61)6.2.@ @$Slot and Value Manipulation Functions@end(TC2)
+
+@begin(TC3)@rfstr(61)6.2.1.@ @$Getting Values with G-Value and GV@end(TC3)
+
+@begin(TC3)@rfstr(62)6.2.2.@ @$Setting Values with S-Value@end(TC3)
+
+@begin(TC3)@rfstr(63)6.2.3.@ @$Formula and O-Formula@end(TC3)
+
+@begin(TC3)@rfstr(64)6.2.4.@ @$GV and GVL in Formulas@end(TC3)
+
+@begin(TC2)@rfstr(64)6.3.@ @$Object-Oriented Programming@end(TC2)
+
+@begin(TC2)@rfstr(66)6.4.@ @$Reader Macros@end(TC2)
+
+@begin(TC1)@rfstr(67)7.@ @$The Type-Checking System@end(TC1)
+
+@begin(TC2)@rfstr(67)7.1.@ @$Creating Types@end(TC2)
+
+@begin(TC2)@rfstr(68)7.2.@ @$Declaring the Type of a Slot@end(TC2)
+
+@begin(TC2)@rfstr(69)7.3.@ @$Type Documentation Strings@end(TC2)
+
+@begin(TC2)@rfstr(69)7.4.@ @$Retrieving the Predicate Expression@end(TC2)
+
+@begin(TC2)@rfstr(69)7.5.@ @$Explicit Type-Checking@end(TC2)
+
+@begin(TC2)@rfstr(69)7.6.@ @$Temporarily Disabling Types@end(TC2)
+
+@begin(TC2)@rfstr(69)7.7.@ @$System-Defined Types@end(TC2)
+
+@begin(TC1)@rfstr(72)8.@ @$Functional Interface: Additional Topics@end(TC1)
+
+@begin(TC2)@rfstr(72)8.1.@ @$Schema Manipulation@end(TC2)
+
+@begin(TC2)@rfstr(73)8.2.@ @$Uniform Declaration Syntax@end(TC2)
+
+@begin(TC3)@rfstr(74)8.2.1.@ @$Declarations in Instances@end(TC3)
+
+@begin(TC3)@rfstr(75)8.2.2.@ @$Examining Slot Declarations@end(TC3)
+
+@begin(TC2)@rfstr(75)8.3.@ @$Relations and Slots@end(TC2)
+
+@begin(TC2)@rfstr(77)8.4.@ @$Constraint Maintenance@end(TC2)
+
+@begin(TC2)@rfstr(78)8.5.@ @$Constant Formulas@end(TC2)
+
+@begin(TC2)@rfstr(80)8.6.@ @$Efficient Path Definitions@end(TC2)
+
+@begin(TC2)@rfstr(80)8.7.@ @$Tracking Formula Dependencies@end(TC2)
+
+@begin(TC2)@rfstr(81)8.8.@ @$Formula Meta-Information@end(TC2)
+
+@begin(TC3)@rfstr(81)8.8.1.@ @$Creating Meta-Information@end(TC3)
+
+@begin(TC3)@rfstr(81)8.8.2.@ @$Accessing Meta-Information@end(TC3)
+
+@begin(TC2)@rfstr(82)8.9.@ @$Demons@end(TC2)
+
+@begin(TC3)@rfstr(83)8.9.1.@ @$Overview of the Demon Mechanism@end(TC3)
+
+@begin(TC3)@rfstr(83)8.9.2.@ @$The :Update-Slots List@end(TC3)
+
+@begin(TC3)@rfstr(84)8.9.3.@ @$Examples of Demons@end(TC3)
+
+@begin(TC3)@rfstr(84)8.9.4.@ @$Enabling and Disabling Demons@end(TC3)
+
+@begin(TC2)@rfstr(85)8.10.@ @$Multiple Inheritance@end(TC2)
+
+@begin(TC2)@rfstr(85)8.11.@ @$Local Values@end(TC2)
+
+@begin(TC2)@rfstr(86)8.12.@ @$Local-only Slots@end(TC2)
+
+@begin(TC2)@rfstr(86)8.13.@ @$Schema Creation Options@end(TC2)
+
+@begin(TC2)@rfstr(87)8.14.@ @$Print Control@end(TC2)
+
+@begin(TC3)@rfstr(88)8.14.1.@ @$Print Control Slots@end(TC3)
+
+@begin(TC3)@rfstr(90)8.14.2.@ @$Slot Printing Functions@end(TC3)
+
+@begin(TC2)@rfstr(90)8.15.@ @$Control Variables@end(TC2)
+
+@begin(TC1)@rfstr(92)9.@ @$An Example@end(TC1)
+
+@begin(TC2)@rfstr(92)9.1.@ @$The Degrees Schema@end(TC2)
+
+@begin(TC2)@rfstr(92)9.2.@ @$The Thermometer Example@end(TC2)
+
+@begin(TC1)@rfstr(95)10.@ @$Summary@end(TC1)
+
+@begin(TC1)@rfstr(96)References@end(TC1)
+
+@begin(TC1)@rfstr(97)Index@end(TC1)
+

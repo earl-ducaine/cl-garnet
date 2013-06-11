@@ -1,0 +1,5 @@
+@findex ymin
+@anchor{Function ymin}
+@deffn {Function} {ymin} bounding-box
+Returns bottom side y of @var{bounding-box}
+@end deffn

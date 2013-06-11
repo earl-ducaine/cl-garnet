@@ -1,0 +1,459 @@
+%!PS-Adobe-2.0 EPSF-2.0
+%%Title: Untitled
+%%Creator: Make-PS-File -- Garnet Version 2.2
+%%CreationDate: Jul 13, 1993, 11:00 AM
+%%For: 
+%%This file uses real color
+%%DocumentFonts: (atend)
+%%BoundingBox: 169 320 443 472
+%%Pages: 1
+%%EndComments
+
+
+/DefImage { % image-name font-name w h string => -
+  20 dict begin
+    /ImageString exch def /ImageHeight exch def /ImageWidth exch def
+    /FontName exch def
+    /ImageName exch def
+    /FontType 3 def
+    /FontMatrix [1 0 0 1 0 0] def
+    /FontBBox [0 0 1 1] def
+    /Encoding [
+      /image 255 { /.notdef } repeat
+    ] def
+    /BuildChar { % font char => -
+      pop begin
+        1 0
+	0 0 1 1 setcachedevice
+	gsave
+	  ImageWidth ImageHeight false
+	  [ ImageWidth 0 0 ImageHeight 0 0 ]
+          {ImageString} imagemask
+	grestore
+      end
+    } def
+    ImageName currentdict definefont
+    FontName exch
+    ImageName ImageString
+  end
+  def def
+} def
+
+
+/BitmapDict 20 dict def
+/DrawBitmap { % left top width height pattern transparent-p color => -
+    BitmapDict begin
+	/color exch def /transparent-p exch def
+	/pattern exch def  /height exch def  /width exch def
+	gsave
+	    translate
+	    width height scale
+	    color length 3 eq {
+	        color aload pop setrgbcolor
+	    } {
+	        .5 setgray % fudge pattern fills
+	    } ifelse
+	    transparent-p {
+		% The case where the background is not drawn
+		width height false
+		[ width 0 0 height 0 height ]
+		{pattern} imagemask
+	    } {
+		% The case where the background is drawn
+		width height 1
+		[ width 0 0 height 0 height ]
+		{pattern} image
+	    } ifelse
+	grestore
+    end
+} def
+
+/PolylineDict 20 dict def
+/DrawPolyline { % x1 y1 {{x y ...} ...} line-color
+		% join cap dash thickness fill-color => -
+    gsave PolylineDict begin
+	/fill-color exch def  /thickness exch def  /dash-pattern exch def
+	/line-join exch def  /line-cap exch def  /line-color exch def
+	% Don't draw the path of the fill if the filling-style is null.
+	fill-color null eq not {
+		3 copy
+		newpath
+		3 1 roll moveto
+		{ aload length 2 idiv { lineto } repeat } forall
+		fill-color FillShape
+		} if
+
+	newpath
+	.5 -.5 translate
+
+	% Stroke after every sub-array to avoid a limitcheck error
+	2 index 2 index moveto
+	{ aload length 2 sub 2 idiv { lineto } repeat
+	2 copy lineto
+	line-color line-cap line-join dash-pattern thickness StrokeShape
+	moveto
+	} forall
+
+	currentpoint
+	3 -1 roll sub abs .01 lt
+	3 1 roll sub abs .01 lt and {
+	  0 0 rlineto closepath
+	} if
+
+	line-color line-cap line-join dash-pattern
+	thickness
+%	dup -1 ne { .5 add } if % fudge outline width thicker
+	StrokeShape
+
+    end grestore
+} def
+
+/AdjustLineDict 20 dict def
+/AdjustLine { % x1 y1 x2 y2 width => x1 y1 x2 y2
+  AdjustLineDict begin
+    /width exch cvi def
+    /hw width 2 div def
+    /oddwidth? width 1 and 1 eq def
+    /y2 exch def /x2 exch def /y1 exch def /x1 exch def
+    /dx x2 x1 sub def /dy y2 y1 sub def
+    dy 0 eq {
+      dx 0 eq {
+	% point
+	oddwidth? {
+	  /x1 x1 .5 add def /y1 y1 .5 sub def
+	  /x2 x2 .5 add def /y2 y2 .5 sub def
+	} if
+      } {
+	% horizontal
+	oddwidth? {
+	  /y1 y1 .5 sub def
+	  /y2 y2 .5 sub def
+	} if
+      } ifelse
+    } {
+      dx 0 eq {
+	% vertical
+	oddwidth? {
+	  /x1 x1 .5 add def
+	  /x2 x2 .5 add def
+	} if
+      } {
+	% diagonal
+	oddwidth? {
+	  /x1 x1 .5 add def /y1 y1 .5 sub def
+	  /x2 x2 .5 add def /y2 y2 .5 sub def
+	} if
+      } ifelse
+    } ifelse
+    x1 y1 x2 y2
+  end
+} def
+
+/DrawLineDict 20 dict def
+/DrawLine { % line-color cap join dash thickness x2 y2 x1 y1 => -
+    gsave DrawLineDict begin
+	4 index AdjustLine
+	moveto lineto
+	StrokeShape
+    end grestore
+} def
+
+/TextDict 40 dict def
+/DrawText { % left top base-y opal-width height fill-p
+	    % fore-color back-color string size font-name => -
+    TextDict begin
+	gsave
+	    findfont exch scalefont setfont
+	    /s exch def
+	    /back-color exch def /fore-color exch def /fill-p exch def
+	    /height exch def  /opal-width exch def
+	    /base-y exch def  /top exch def
+	    /left exch 1 sub def % XXX: I don't know why!
+
+	    % Calculate distance to add between each character, based on the 
+	    % width expected by Opal, the width expected by postscript, and 
+	    % the number of characters to distribute the change over.
+	    /x-dist opal-width s stringwidth pop sub s length div def
+
+	    % Draw background of text if appropriate
+	    fill-p {
+		gsave
+		    newpath
+		    left top opal-width height RectanglePath
+		    back-color FillShape
+		grestore
+	    } if
+
+	    % Draw text in the appropriate color
+	    newpath
+	    s length 0 ne {
+		left base-y moveto
+		fore-color aload length 3 eq {
+		    setrgbcolor
+		    x-dist 0 s ashow
+		} { % Halftone pattern:
+		    %   fgR fgG fgB bgR bgG bgB top pattern
+		    %   fgR fgG fgB false top pattern
+		    /pattern exch def /top exch def /opaque? exch def
+		    opaque? not { .5 .5 .5 } if
+		    /bgB exch def /bgG exch def /bgR exch def
+		    /fgB exch def /fgG exch def /fgR exch def
+
+		    fgR bgR add 2 div
+		    fgG bgG add 2 div
+		    fgB bgB add 2 div
+		    setrgbcolor
+
+		    opaque? {
+			x-dist 0 s ashow
+		    } {
+			mark
+			/ch 1 string def
+			/space { /space { x-dist 0 rmoveto } def } def
+%			/jt statusdict begin jobtimeout end def
+			gsave { % try really hard to do it right
+			    s {
+				% don't take more than 2 seconds a character
+%				statusdict begin 2 setjobtimeout end
+				space
+				ch 0 3 -1 roll put
+				ch true charpath
+				currentpoint /yy exch def /xx exch def
+				fgR fgG fgB false top pattern FillPattern
+				newpath xx yy moveto
+			    } forall
+			} stopped grestore { % fall back in case we fail
+			    x-dist 0 s ashow
+			} if
+%			statusdict begin jt setjobtimeout end
+			cleartomark
+		    } ifelse
+		} ifelse
+	    } if
+	grestore
+    end
+} def
+
+/RectanglePath { % left top width height => -
+    /h exch def  /w exch def
+    moveto			% Go to the left,top corner
+    w 0 rlineto			% top side
+    0 h neg rlineto		% right side
+    w neg 0 rlineto		% bottom side
+    closepath			% left side
+} def
+
+/RectangleDict 21 dict def
+/DrawRectangle { % left top width height line-color
+		 % cap join dash thickness fill-color => -
+    RectangleDict begin
+	/fill-color exch def  /thickness exch def /dash-pattern exch def
+	/line-join exch def  /line-cap exch def /line-color exch def
+	/height exch def /width exch def  /top exch def  /left exch def
+        /thickness-for-fill thickness 0 lt {0} {thickness} ifelse def
+	% Draw filling
+	newpath
+	left thickness-for-fill add top thickness-for-fill sub
+        width thickness-for-fill 2 mul sub height thickness-for-fill 2 mul sub
+	RectanglePath
+	fill-color FillShape
+	% Draw border
+	newpath
+	left thickness 2 div add  top thickness 2 div sub
+	width thickness sub  height thickness sub
+	RectanglePath
+	line-color line-cap line-join dash-pattern thickness StrokeShape
+    end
+} def
+
+/DrawGenericWindowFrame { % label left top w h
+			  % leftmargin topmargin rightmargin bottommargin => -
+  30 dict begin
+
+  { % setup
+    /bottommargin exch def /rightmargin exch def
+    /topmargin exch def /leftmargin exch def
+    /h exch def /w exch def /y exch h sub def /x exch def
+    /label exch def
+    /pointsize
+      topmargin 1 sub
+      dup 1 lt { pop 1 } if
+      dup 12 gt { 12 sub 3 div 12 add } if
+    def
+
+    /bottom y def /top y h add def
+    /left x def /right  x w add def
+    1 setlinewidth
+    0 setlinecap
+  } exec
+
+  { % background
+    newpath
+    left leftmargin sub bottom bottommargin sub moveto
+    left leftmargin sub top topmargin add lineto
+    right rightmargin add top topmargin add lineto
+    right rightmargin add bottom bottommargin sub lineto
+    closepath
+    0 setgray fill
+
+    left bottom moveto
+    left top lineto
+    right top lineto
+    right bottom lineto
+    closepath
+    1 setgray fill
+  } exec
+
+  topmargin 8 ge {
+    /Helvetica-Bold findfont pointsize scalefont setfont
+    label stringwidth pop
+    left right add 2 div
+    exch 2 div sub
+    top topmargin 2 div add pointsize 2 div sub 2 add moveto
+    1 setgray
+    label show
+  } if
+
+  end
+} def
+
+/FillShape { % [halftone] | [r g b] | null => -
+    gsave
+        dup null eq { pop } {
+	  aload length 3 eq { setrgbcolor fill } {
+	      FillPattern
+	  } ifelse
+        } ifelse
+    grestore
+    newpath
+} def
+
+/StrokeShape { % line-color cap join dash thickness => -
+    % If no line is desired, pass -1 for line-thickness
+    dup 0 ge 5 index null ne and {
+	% if line-thickness >= 0, then draw the outline
+	gsave
+	    setlinewidth 0 setdash setlinejoin setlinecap
+	    aload length 3 eq { setrgbcolor stroke } {
+		strokepath FillPattern
+	    } ifelse
+	grestore
+    } {
+	pop pop pop pop pop
+    } ifelse
+    newpath
+} def
+
+/ClipDict 2 dict def
+/ClipToRectangle { % left top width height => -
+    ClipDict begin
+	/height exch def  /width exch def
+        newpath
+	    moveto			% Go to the left,top corner
+	    width 0 rlineto		% top side
+	    0 height neg rlineto	% right side
+	    width neg 0 rlineto		% bottom side
+	    closepath			% left side
+	gsave 1 setgray fill grestore
+	clip newpath
+    end
+} def
+
+/image-2 /image-2-font 16 16 <
+ffff ff3f ff3f fe7f ee7f e4ff e0ff e01f e03f e07f e0ff e1ff e3ff e7ff efff
+ffff>
+DefImage
+
+/image-1 /image-1-font 16 16 <
+ff3f fe1f fe1f cc3f c43f c07f c00f c00f c01f c03f c07f c0ff c1ff c3ff c7ff
+cfff>
+DefImage
+
+
+%%EndProlog
+%%Page: 1 1
+
+gsave
+72 72 translate
+1 1 scale
+97 400 translate
+
+%
+% Begin new window
+%
+gsave
+0 0 274 152 ClipToRectangle
+gsave
+0 0 274 152 [0 0 0] 0 0 [] -1 [1 1 1] DrawRectangle
+grestore
+
+
+%
+% Begin new window
+%
+gsave
+2 -2 translate
+() 0 0 270 148 2 2 2 2 DrawGenericWindowFrame
+0 0 270 148 ClipToRectangle
+gsave
+0 0 270 148 [0 0 0] 0 0 [] -1 [0.83 0.83 0.83] DrawRectangle
+0 0 270 28 [0 0 0] 0 0 [] -1 [1 1 1] DrawRectangle
+2 -2 268 26 [0 0 0] 0 0 [] -1 [0.20 0.20 0.20] DrawRectangle
+2 -2 266 24 [0 0 0] 0 0 [] -1 [0.83 0.83 0.83] DrawRectangle
+9 -7 -18 42 14 false [0 0 0] [1 1 1] (Family) 12 /Courier-Bold DrawText
+59 -7 -18 27 14 false [0 0 0] [1 1 1] (Face) 12 /Courier-Bold DrawText
+94 -7 -18 27 14 false [0 0 0] [1 1 1] (Size) 12 /Courier-Bold DrawText
+90 -24 {
+  { 125 -5 90 -5 }
+} [1 1 1] 0 0 [] 2 null DrawPolyline
+89 -23 {
+  { 124 -6 124 -23 }
+} [0.20 0.20 0.20] 0 0 [] 2 null DrawPolyline
+grestore
+
+grestore
+
+
+%
+% Begin new window
+%
+gsave
+89 -29 translate
+() 0 0 108 92 0 0 0 0 DrawGenericWindowFrame
+0 0 108 92 ClipToRectangle
+gsave
+0 0 108 92 [0 0 0] 0 0 [] -1 [0.83 0.83 0.83] DrawRectangle
+0 0 108 92 [0 0 0] 0 0 [] -1 [1 1 1] DrawRectangle
+2 -2 106 90 [0 0 0] 0 0 [] -1 [0.20 0.20 0.20] DrawRectangle
+2 -2 104 88 [0 0 0] 0 0 [] -1 [0.83 0.83 0.83] DrawRectangle
+6 -6 -17 34 14 false [0 0 0] [1 1 1] (Small) 12 /Courier-Bold DrawText
+89 -6 -17 11 14 false [0 0 0] [1 1 1] (!s) 12 /Courier-Bold DrawText
+6 -28 -39 42 14 false [0 0 0] [1 1 1] (Medium) 12 /Courier-Bold DrawText
+89 -28 -39 11 14 false [0 0 0] [1 1 1] (!m) 12 /Courier-Bold DrawText
+6 -50 -61 35 14 false [0 0 0] [1 1 1] (Large) 12 /Courier-Bold DrawText
+89 -50 -61 11 14 false [0 0 0] [1 1 1] (!l) 12 /Courier-Bold DrawText
+6 -72 -83 70 14 false [0 0 0] [1 1 1] (Very-Large) 12 /Courier-Bold DrawText
+88 -72 -83 12 14 false [0 0 0] [1 1 1] (!v) 12 /Courier-Bold DrawText
+[0.20 0.20 0.20] 0 0 [] 1 104 -46 4 -46 DrawLine
+[1 1 1] 0 0 [] 1 104 -47 4 -47 DrawLine
+5 -21 {
+  { 103 -5 5 -5 }
+} [1 1 1] 0 0 [] 2 null DrawPolyline
+103 -5 {
+  { 5 -21 103 -21 }
+} [0.20 0.20 0.20] 0 0 [] 2 null DrawPolyline
+61 -15 16 16 image-1 true [1 1 1] DrawBitmap
+61 -15 16 16 image-2 true [0 0 0] DrawBitmap
+grestore
+
+grestore
+
+grestore
+
+grestore
+
+
+showpage
+%%Trailer
+%%DocumentFonts: /Courier-Bold Helvetica-Bold 
+%%BoundingBox: 169 320 443 472

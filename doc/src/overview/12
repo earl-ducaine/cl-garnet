@@ -1,0 +1,233 @@
+Projects Using Garnet (as of September, 1994)
+
+Companies
+
+1. Corporation For Open Systems. Automated Protocol Analysis/Reference
+Tool (APART). Frank J. Wroblewski
+
+2. Design Research Institute (Cornell & Xerox). (various). Jim Davis
+
+3. Deutches Forschungszentrum fuer Kuenstliche Intelligenz
+GmbH. COSMA. Stephen P. Spackman
+
+4. GE Research and Development Center. Metallurgical Expert Systems
+for Manufacturing. K. J. Meltsner
+
+5. GE Research and Development Center. SKETCHER. K. J. Meltsner
+
+6. Hughes AI Center. NLP Project. Seth Goldman or Charles Dolan
+
+7. Institute of Knowledge Engineering, Madrid, Spain. KIISS: Knowledge
+Interface Interactive Surgery System. Roberto Moriyon
+
+8. Istituto di Psicologia, Consiglio Nazionale delle Ricerche, GUI for
+a Knowledge Base. Daniela D'Aloisi (dany@pscs2.irmkant.rm.cnr.it),
+Vittorio Giannini (vittorio@Ipchost.irmkant.rm.cnr.it)
+
+9. IRISA (Inst. de recherche en info. et systemes aleatoires),
+France. Handwriting recognition pen-based editor. Annick Leroy
+
+10. Lawrence Livermore National Lab. PLANET (Pump Layout ANd
+Evaluation Tool). Tom Canales
+
+11. Microelectronics and Computer Technology Corp. (MCC). Scan:
+Intelligent Text Retrieval. Elaine Rich
+
+12. MITRE Corporation. AIMI (An Intelligent Multimedia
+Interface). John D. Burger
+
+13. Mitsubishi Electric Research Laboratories. A toolkit for building
+collaborative agents. Charles Rich
+
+14. NASA Ames Research Center, AI. AMPHION (Knowledge-based software
+engineering system). Andrew Philpot, philpot@ptolemy.arc.nasa.gov
+Michael Lowry
+
+15. NASA Ames Research Center, AI. Dedal (Design Information Reuse and
+Retrieval). Aseem Das, C.Baudin
+
+16. National Science Center Foundation. Learning Logic. Lawrence Freil
+
+17. PTT Research, Groningen, The Netherlands. DESSERT (requirements
+capture for the clients of telcommunications). Colin Tattersall
+
+18. Rank Xerox EuroPARC. (various CSCWrelated projects). Paul Dourish
+
+19. Siemens AG, Corporate Research, Germany. Programming by
+Demonstration. Michael Sassin
+
+20. StatSci. GRAPHICAL-BELIEF. Russell Almond
+
+21. Transarc Corporation. Lisp GUI for Encina. Mark Sherman
+
+22. UNISYS, CAD/CAE group of Computer Systems Products. GLL (Geometric
+Layout Language). Shelly Evans
+
+23. U S WEST Advanced Technologies. KBNL natural language
+system. Randall Sparks
+
+24. USC/ISI. Humanoid. Pedro Szekely
+
+25. USC/ISI. SHELTER knowledge-based development environment. Pedro
+Szekely
+
+ 
+
+Universities
+
+26. Carnegie Mellon University, CS. Miro. J. D. Tygar and J. M. Wing
+
+27. Carnegie Mellon University, CS. Learning Calendar System. Conrad
+Poelman
+
+28. Carnegie Mellon University, CS. Interactive Fiction
+Editor. Merrick Furst
+
+29. Carnegie Mellon University, CS. Redstone. Jeff Schlimmer
+
+30. Carnegie Mellon University, CS. PURSUIT. Francesmary Modugno
+
+31. Carnegie Mellon University, CS. KATIE. David Kosbie
+
+32. Carnegie Mellon University, ERDC. LOOS. Ulrich Flemming or Robert
+Coyne
+
+33. Carnegie Mellon University, Math. Educational Theorem Proving
+System. Peter Andrews
+
+34. Carnegie Mellon University, Philosophy. Carnegie Mellon Proof
+Tutor II. Richard Scheines (R.Scheines@andrew.cmu.edu), Wilfried Sieg
+(W.Sieg@andrew.cmu), John Byrnes (J.Byrnes@andrew.cmu)
+
+35. Carnegie Mellon University, Psychology. Soar Graphics
+Interface. Frank Ritter
+
+36. Carnegie Mellon University, Robotics. MICRO-BOSS. Norman Sadeh
+
+37. Carnegie Mellon University, Robotics. SAGE Data
+Visualization. Steve Roth
+
+38. Georgia Institute of Technology. KritikTutor (interactive learning
+environment). Andres Gomez de Silva Garza, Nathalie Grue
+
+39. MIT, Dept. of Brain and Cognitive Sciences. SURF-HIPPO Neuron
+Simulator. Lyle J. Borg-Graham
+
+40. MIT, LCS, Computation Structures Group. Debugging tools for the Id
+Language. Steve Glim and R. Paul Johnson
+
+41. MIT, LCS. DYNAMOL: A DYNAmic decision MOdeling Language. Tze-Yun
+Leong
+
+42. Monash University, Dept. of CS, Australia. Multimedia Presentation
+Planning. Ingrid Zukerman, Yi Han
+
+43. New York University, Courant Institute. COMLEX (Common Lexicon)
+dictionary. R. Grishman, C.Macleod, S. Wolff, and K. Rajan
+
+44. Oregon State University, Computer Science Dept. Forms/3 (visual
+language). Margaret Burnett
+
+45. Oregon State University, Computer Science Dept. CarGo (Game of
+Go). Peter Dudey
+
+46. State University of New York at Buffalo, CS. Air Battle
+Simulation. Henry Hexmoor
+
+47. State University of New York at Buffalo, CS. SNePS Graphical
+UI. Stuart C. Shapiro shapiro@cs.buffalo.edu
+
+48. Tulane University, CS. Natural Language Processing. Robert Goldman
+
+49. Tulane University, CS. THESEUS. Raymond Lang
+
+50. Universidad de las Americas-Puebla (Mexico). UDLA-PLV (Prototipo
+de un Lenguaje Visual). A. Gaspar Contreras, M. Sanchez Sandoval
+
+51. Universite de Nice Sophia-Antipolis. Environment for distributed
+languages. Pazzaglia Jean-Christophe
+(pazzagli@mimosa.unice.fr),pazzagli@mimosa.unice.fr Regourd
+Jean-Pierre (rjp@mimosa.unice.fr), Michel Claude
+
+52. University College London. The Cognitive Browser. Gordon Joly
+
+53. Univ. of CA at Santa Barbara, CS & ECE. Graph. Tools for the
+Dev. of Concurrent Systems. L.Dillon, G.Kutty, P.Melliar-Smith,
+L.Moser, Y.Ramakrishna
+
+54. University of CA at Santa Barbara, CS & ECE. GIL (Graphical
+Interval Logic) (visual spec. lang.). G. Kutty, Ron Dolin, Laurie
+Dillon, Louise Moser
+
+55. University of Chicago, CS. Shopper (planning and visual
+navigation). Daniel Fu
+
+56. University of Chicago, CS. SEAL (situation-driven execution and
+constructivist learning). Charles Earl
+
+57. University of Chicago, AI Lab. Roentgen (case-based aid for
+radiation therapy). Jeff Berger
+
+58. University of Edinburgh, Human Communication Research Centre
+(HCRC). SIGNAL. Robert Inder, Keith Stenning
+
+59. University of Iowa. Failure-Resistant Induction with Window
+Interfaces. Sitao Yang, Hantao Zhang
+
+60. University of Kaiserslautern, Germany. PLATIN (planning and
+automatic theorum proving tool). Robert Eschbach and Carlo Reiffers
+
+61. University of Leeds. Graphical Multi-User Domain
+Designer. Roderick J. Williams
+
+62. University of Leeds. CLARE. Nikos Drakos
+
+63. University of Leeds. ADVISOR. Andrew J. Cole
+
+64. University of Leeds. PORSCHE. Colin Tattersall
+
+65. University of Manchester Institute of Science and
+Technology. Multi-User-Garnet. Reza Hazemi <reza@sna.co.umist.ac.uk>
+and Linda Macaulay
+
+66. University of Michigan, EE&CS. Science works: Nuclear
+Engineering. Kasem Abotel, Elliot Solloway, Chris Quintaina, William
+Martin
+
+67. University of Michigan, AI Lab. Symbiosis Testbed. Jason Daida
+
+68. University of New South Wales Sydney, Australia. TURNINT (Process
+Planning Expert System for Turning Operation). Bela Pecsek
+
+69. University of New South Wales Sydney, Australia. TURNINT (Process
+Planning Expert System for Turning Operation). Bela Pecsek
+
+70. University of Queensland, Australia. Conceptual Modeling CASE
+tool. Anthony Berglas
+
+71. University of Pittsburgh. DIPART (Distr. Intera. Planner's
+Asst. for Real-time Transp. Planning). Martha Pollack, Taieb Znati,
+Nilufer Onder nilufer@cs.pitt.edu
+
+72. University of Queensland, Australia. Interoperating Network
+Servers. Hung Wing
+
+73. University of Saskatchewan. DISCUS (DIstributed Computing at the U
+of S). Beth Protsko (User Interface only)
+
+74. University of Southern California. Dynamic Aggregation in
+Qualitative Simulation. Nicolas Rouquette
+
+75. University of Southern California. Rev-Enge: Knowledge-based S/W
+for (Re)Design-for-Assembly. Gerard Kim, George Bekey,
+
+76. University of Washington, CS. Multi-Garnet. Michael Sannella
+
+77. University of Washington, CS. Electronic Encyclopedia
+Exploratorium. Mike Salisbury
+
+78. Victoria University of Wellington, New Zealand. Caselaw (argument
+representation & legal reasoning). Paul Hosking, Eric Jones
+
+79. Vrije Universiteit, Computer/Law Institute, The
+Netherlands. PROLEXS (legal expert system shell). Geert-Jan van Opdorp

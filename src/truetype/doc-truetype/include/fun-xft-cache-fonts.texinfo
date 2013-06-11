@@ -1,0 +1,5 @@
+@findex cache-fonts
+@anchor{Function cache-fonts}
+@deffn {Function} {cache-fonts}
+Caches fonts from @refvar{*font-dirs*} directories.
+@end deffn

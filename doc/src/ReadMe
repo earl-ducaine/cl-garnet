@@ -1,0 +1,183 @@
+Notes on Garnet Documentation
+Roger B. Dannenberg 	- 17 July 90
+Dario A. Giuse		- 3 June 1991
+
+BUILDING A MANUAL
+
+To build the complete manual, the correct sequence of steps, after
+collecting everything into one directory tree, is:
+
+make		-- this scribes all the individual manuals
+
+(you will have to repeat this if you are told to do so.  The script
+updates the file pagenumbers.mss; if this is changed, all manuals have
+to be Scribed again, since their starting pages change).
+
+
+make refman/refman.ps
+		-- this rescribes everything with the correct page numbers
+		   and produces refman/refman.ps (which contains the
+		   global title pages) and index/index.ps (which contains
+		   the global index).
+
+
+make clean -- if you wish to save space by deleting scribe output	
+
+
+
+
+
+MODIFYING A MANUAL SECTION
+
+The current sources for the entire garnet manual are in 
+	/afs/cs/project/garnet/doc
+There is a makefile that builds the entire manual, but if you just want to
+make changes to a single section, e.g. debug-manual.mss, then copy the
+relevant files to your machine, being sure to also get
+	/afs/cs/project/garnet/doc/creditetc.mss
+	/afs/cs/project/garnet/doc/garnet.bib
+	/afs/cs/project/garnet/doc/garnet.lib
+	/afs/cs/project/garnet/doc/gmanua.mak
+and	/afs/cs/project/garnet/doc/pagenumbers.mss
+(you can of course set up links to these rather than copy them).
+You should now be able to run scribe in the normal manner.
+
+
+WRITING A NEW SECTION
+
+If you are starting a new manual, you might want to get stdtop.mss, a template
+that will help you be consistent with the other garnet documents.
+You will also need to add a line to pagenumbers.mss.  See the implementation
+notes below.
+
+
+STYLE GUIDELINES
+
+Here is a checklist to make your section consistent.  This list
+is not complete, but it mentions at least a few things you might
+not have thought of:
+
+* use the @pr environment for program text within running text
+  such as "the @pr(cons) function is used to build lists".
+
+* be sure to start with the source that was used for the last printed
+  manual rather than a personal copy that may have been modified
+  when I put the manual together.
+
+* be sure you @include(pagenumbers.mss) and 
+	@set(page = section-first-page) in your section
+	(starting with the right source will take care of this)
+
+* use @prexample for code listings, e.g. 
+	@begin(prexample)
+	(defun my-example ()
+	    (print "hello world"))
+	@end(prexample)
+
+* use @programexample for code listing in small font -- I prefer
+  @prexample, but a smaller font means less dealing with
+  lines that are too long to fit the page
+
+* format functions and methods like this:
+
+  @pr(my-function) @i(parm1) [@i(option-1)]@value(function)
+
+  This is like the (Steele) Common Lisp book, except optional
+  parameters are indicated using [brackets].  Variables are
+  defined the same way, except say @value(variable).  See 
+  garnet.lib for the full set of options.
+
+* dashes are peculiar: the "-" should only be used for hyphens,
+  @value(shortdash) should be used in enumerated lists, e.g.
+	:top @value(shortdash) the top (vertical) coordinate
+	:left @value(shortdash) the left (horizontal) coordinate
+  @value(dash) should be used @value(dash) sparingly @value(dash)
+	in text like this
+
+* index every function and method definition, slot name, and variable.
+  Keywords like :top are indexed without the colon: 
+	@pr(:top)@index(top)
+
+
+
+DESIGN AND IMPLEMENTATION NOTES
+
+
+Directory Structure
+
+There are a number of shared files, including pagenumbers.mss, garnet.lib,
+creditetc.mss, gmanua.mak, stdtop.mss, and garnet.bib.  Rather than
+link these files to every subdirectory containing a manual, I chose
+to copy the manual into the doc directory, scribe it, and copy the
+results back to the appropriate subdirectory.  This is all done with
+a makefile, so files are not moved by hand.  An implication of this is
+that illustrations and sub-parts are accessed from the subdirectory,
+e.g. @picture(... postscript="opal/schemata.ps") rather than the current
+directory.  If you are only responsible for one or two manual sections,
+you might want to set up your directory structure like this:
+	garnet/doc/aggregadgets/ -- contains aggregadgets-manual.mss and
+		links to pagenumbers.mss, garnet.lib, creditetc.mss, 
+		gmanua.mak, stdtop.mss, and garnet.bib
+	garnet/doc/aggregadgets/aggregadgets/ -- contains all the 
+		figures for aggregadgets-manual.mss
+so that you do not have to copy files to the parent directory
+before scribing them.  You can also just copy the make file
+and use it to do the copying.
+
+The pagenumbers.mss File
+
+Just before the introduction, you should @include(pagenumbers.mss),
+and then say @set(page=<sectionname-first-page>), where 
+<sectionname-first-page> is the name of the section, one of:
+	overview-first-page
+	article-first-page
+	tour-first-page
+	kr-first-page
+	opal-first-page
+	inter-first-page
+	aggre-first-page
+	gadgets-first-page
+	debug-first-page
+	demo-first-page
+	sample-first-page
+These are set (using @set) in pagenumbers.mss to a value that is
+calculated by reading in the .ps files and counting pages.
+Tables-of-contents and title pages are designed without page numbers
+so they can be moved around easily.
+
+
+
+Description Of The Algorithm Used By refman.lisp
+
+# Title page comes from refman.ps, page 1.
+# Back of Title page is blank -- this must be inserted
+# Abstract comes from refman.ps, page 2.
+# Page ii from refman.ps, page 3
+# Master TOC from refman.ps, page 4
+# Back of TOC is blank -- this must be inserted.
+	NOTE: Master TOC must be only one page!
+
+--- each section is inserted as follows ---
+# Title page comes from section.ps, page 1
+# If length of TOC is even, insert a blank page here
+	How do we know the length of the TOC?  We find the TOC by
+	searching for a page starting with "%%Page: i ", since we
+	know the TOC is on page "i".  Then we find additional pages
+	by searching for the string "(Table of Contents)SH" which
+	is the postscript command that writes the page header.
+	NOTE: if page headers change, this code will break!
+# Insert table-of-contents from end, don't put in figure contents
+# Insert pages up to %%Page: i ...
+# Check that we end on even page number
+---
+
+# Insert Global Index from refman.ps, find it by searching for
+	"(Global Index)SH" after reading the master table of contents
+	The page AFTER the global index has the string 
+	"(Table of Contents)SH"
+
+In practice, the sections will be processed first to produce 
+   PRINTME/2.ps, PRINTME/3.ps, ...
+and to get the data for pagenumbers.mss.  This avoids the need
+to process refman.ps until all the page numbers are known to
+be correct.

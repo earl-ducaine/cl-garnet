@@ -1,0 +1,1072 @@
+%!PS-Adobe-2.0 EPSF-2.0
+%%Title: Gilt Gadgets
+%%Creator: Make-PS-File -- Garnet Version 2.2
+%%CreationDate: Jul 14, 1993, 5:54 PM
+%%For: 
+%%This file does not use real color
+%%DocumentFonts: (atend)
+%%BoundingBox: 72 154 540 636
+%%Pages: 1
+%%EndComments
+
+
+/EllipseDict 23 dict def
+EllipseDict /mtrx matrix put
+/DrawEllipse { % x y xrad yrad startangle endangle line-color
+	       % cap join dash thickness fill-color => -
+    EllipseDict begin
+	/fill-color exch def /thickness exch def
+	/dash-pattern exch def  /line-join exch def  /line-cap exch def
+	/line-color exch def  /endangle exch def /startangle exch def
+	/yrad exch def  /xrad exch def /y exch def /x exch def
+	/savematrix mtrx currentmatrix def
+	% Draw the filling
+	gsave
+	    newpath
+	    x y translate
+	    xrad thickness sub yrad thickness sub scale
+	    0 0 1 startangle endangle arc
+	    savematrix setmatrix
+	    fill-color FillShape
+	    newpath
+	    x y translate
+	    xrad thickness 2 div sub yrad thickness 2 div sub scale
+	    0 0 1 startangle endangle arc
+	    savematrix setmatrix
+	    line-color
+	    0 % line-cap
+	    line-join dash-pattern thickness
+	    StrokeShape
+	grestore
+    end
+} def
+
+/DefImage { % image-name font-name w h string => -
+  20 dict begin
+    /ImageString exch def /ImageHeight exch def /ImageWidth exch def
+    /FontName exch def
+    /ImageName exch def
+    /FontType 3 def
+    /FontMatrix [1 0 0 1 0 0] def
+    /FontBBox [0 0 1 1] def
+    /Encoding [
+      /image 255 { /.notdef } repeat
+    ] def
+    /BuildChar { % font char => -
+      pop begin
+        1 0
+	0 0 1 1 setcachedevice
+	gsave
+	  ImageWidth ImageHeight false
+	  [ ImageWidth 0 0 ImageHeight 0 0 ]
+          {ImageString} imagemask
+	grestore
+      end
+    } def
+    ImageName currentdict definefont
+    FontName exch
+    ImageName ImageString
+  end
+  def def
+} def
+
+
+/BitmapDict 20 dict def
+/DrawBitmap { % left top width height pattern transparent-p color => -
+    BitmapDict begin
+	/color exch def /transparent-p exch def
+	/pattern exch def  /height exch def  /width exch def
+	gsave
+	    translate
+	    width height scale
+	    color length 3 eq {
+	        color aload pop setrgbcolor
+	    } {
+	        .5 setgray % fudge pattern fills
+	    } ifelse
+	    transparent-p {
+		% The case where the background is not drawn
+		width height false
+		[ width 0 0 height 0 height ]
+		{pattern} imagemask
+	    } {
+		% The case where the background is drawn
+		width height 1
+		[ width 0 0 height 0 height ]
+		{pattern} image
+	    } ifelse
+	grestore
+    end
+} def
+
+/TextDict 40 dict def
+/DrawText { % left top base-y opal-width height fill-p
+	    % fore-color back-color string size font-name => -
+    TextDict begin
+	gsave
+	    findfont exch scalefont setfont
+	    /s exch def
+	    /back-color exch def /fore-color exch def /fill-p exch def
+	    /height exch def  /opal-width exch def
+	    /base-y exch def  /top exch def
+	    /left exch 1 sub def % XXX: I don't know why!
+
+	    % Calculate distance to add between each character, based on the 
+	    % width expected by Opal, the width expected by postscript, and 
+	    % the number of characters to distribute the change over.
+	    /x-dist opal-width s stringwidth pop sub s length div def
+
+	    % Draw background of text if appropriate
+	    fill-p {
+		gsave
+		    newpath
+		    left top opal-width height RectanglePath
+		    back-color FillShape
+		grestore
+	    } if
+
+	    % Draw text in the appropriate color
+	    newpath
+	    s length 0 ne {
+		left base-y moveto
+		fore-color aload length 3 eq {
+		    setrgbcolor
+		    x-dist 0 s ashow
+		} { % Halftone pattern:
+		    %   fgR fgG fgB bgR bgG bgB top pattern
+		    %   fgR fgG fgB false top pattern
+		    /pattern exch def /top exch def /opaque? exch def
+		    opaque? not { .5 .5 .5 } if
+		    /bgB exch def /bgG exch def /bgR exch def
+		    /fgB exch def /fgG exch def /fgR exch def
+
+		    fgR bgR add 2 div
+		    fgG bgG add 2 div
+		    fgB bgB add 2 div
+		    setrgbcolor
+
+		    opaque? {
+			x-dist 0 s ashow
+		    } {
+			mark
+			/ch 1 string def
+			/space { /space { x-dist 0 rmoveto } def } def
+%			/jt statusdict begin jobtimeout end def
+			gsave { % try really hard to do it right
+			    s {
+				% don't take more than 2 seconds a character
+%				statusdict begin 2 setjobtimeout end
+				space
+				ch 0 3 -1 roll put
+				ch true charpath
+				currentpoint /yy exch def /xx exch def
+				fgR fgG fgB false top pattern FillPattern
+				newpath xx yy moveto
+			    } forall
+			} stopped grestore { % fall back in case we fail
+			    x-dist 0 s ashow
+			} if
+%			statusdict begin jt setjobtimeout end
+			cleartomark
+		    } ifelse
+		} ifelse
+	    } if
+	grestore
+    end
+} def
+
+/AdjustLineDict 20 dict def
+/AdjustLine { % x1 y1 x2 y2 width => x1 y1 x2 y2
+  AdjustLineDict begin
+    /width exch cvi def
+    /hw width 2 div def
+    /oddwidth? width 1 and 1 eq def
+    /y2 exch def /x2 exch def /y1 exch def /x1 exch def
+    /dx x2 x1 sub def /dy y2 y1 sub def
+    dy 0 eq {
+      dx 0 eq {
+	% point
+	oddwidth? {
+	  /x1 x1 .5 add def /y1 y1 .5 sub def
+	  /x2 x2 .5 add def /y2 y2 .5 sub def
+	} if
+      } {
+	% horizontal
+	oddwidth? {
+	  /y1 y1 .5 sub def
+	  /y2 y2 .5 sub def
+	} if
+      } ifelse
+    } {
+      dx 0 eq {
+	% vertical
+	oddwidth? {
+	  /x1 x1 .5 add def
+	  /x2 x2 .5 add def
+	} if
+      } {
+	% diagonal
+	oddwidth? {
+	  /x1 x1 .5 add def /y1 y1 .5 sub def
+	  /x2 x2 .5 add def /y2 y2 .5 sub def
+	} if
+      } ifelse
+    } ifelse
+    x1 y1 x2 y2
+  end
+} def
+
+/DrawLineDict 20 dict def
+/DrawLine { % line-color cap join dash thickness x2 y2 x1 y1 => -
+    gsave DrawLineDict begin
+	4 index AdjustLine
+	moveto lineto
+	StrokeShape
+    end grestore
+} def
+
+/RectanglePath { % left top width height => -
+    /h exch def  /w exch def
+    moveto			% Go to the left,top corner
+    w 0 rlineto			% top side
+    0 h neg rlineto		% right side
+    w neg 0 rlineto		% bottom side
+    closepath			% left side
+} def
+
+/RectangleDict 21 dict def
+/DrawRectangle { % left top width height line-color
+		 % cap join dash thickness fill-color => -
+    RectangleDict begin
+	/fill-color exch def  /thickness exch def /dash-pattern exch def
+	/line-join exch def  /line-cap exch def /line-color exch def
+	/height exch def /width exch def  /top exch def  /left exch def
+        /thickness-for-fill thickness 0 lt {0} {thickness} ifelse def
+	% Draw filling
+	newpath
+	left thickness-for-fill add top thickness-for-fill sub
+        width thickness-for-fill 2 mul sub height thickness-for-fill 2 mul sub
+	RectanglePath
+	fill-color FillShape
+	% Draw border
+	newpath
+	left thickness 2 div add  top thickness 2 div sub
+	width thickness sub  height thickness sub
+	RectanglePath
+	line-color line-cap line-join dash-pattern thickness StrokeShape
+    end
+} def
+
+/DrawMotifWindowFrame { % label left top w h 
+			% leftmargin topmargin rightmargin bottommargin => -
+  30 dict begin
+
+  { % setup
+    /bottommargin exch def /rightmargin exch def
+    /topmargin exch def /leftmargin exch def
+    /h exch def /w exch def /y exch h sub def /x exch def
+    /label exch def
+
+    /bottom y bottommargin sub def
+    /top y h add topmargin add def
+    /left x leftmargin sub def
+    /right x w add rightmargin add def
+
+    /light .9 def
+    /medium .7 def
+    /dark .4 def
+
+    1 setlinewidth
+    0 setlinecap
+  } exec
+
+  { % background
+    left bottom moveto
+    left top lineto
+    right top lineto
+    right bottom lineto
+    closepath
+    medium setgray fill
+  } exec
+
+  { % outer upper left edges
+    left bottom moveto
+    right bottom lineto
+    right top lineto
+    right 2 sub top 2 sub lineto
+    right 2 sub bottom 2 add lineto
+    left 2 add bottom 2 add lineto
+    closepath
+    dark setgray fill
+  } exec
+
+  { % outer lower right edges
+    left bottom moveto
+    left top lineto
+    right top lineto
+    right 2 sub top 2 sub lineto
+    left 2 add top 2 sub lineto
+    left 2 add bottom 2 add lineto
+    closepath
+    light setgray fill
+  } exec
+
+  { % inner lower right edges
+    left 9 add bottom 9 add moveto
+    right 9 sub bottom 9 add lineto
+    right 9 sub top 25 sub lineto
+    right 11 sub top 27 sub lineto
+    right 11 sub bottom 11 add lineto
+    left 11 add bottom 11 add lineto
+    closepath
+    light setgray fill
+  } exec
+
+  { % inner upper left edges
+    left 9 add bottom 9 add moveto
+    left 9 add top 25 sub lineto
+    right 9 sub top 25 sub lineto
+    right 11 sub top 27 sub lineto
+    left 11 add top 27 sub lineto
+    left 11 add bottom 11 add lineto
+    closepath
+    dark setgray fill
+  } exec
+
+  { % top rut above label
+    left 9 add top 9.5 sub moveto
+    right 9.01 sub top 9.5 sub lineto
+    dark setgray stroke
+    left 10 add top 10.5 sub moveto
+    right 9.01 sub top 10.5 sub lineto
+    light setgray stroke
+  } exec
+
+  { % left edge of left button
+    left 9.5 add top 9 sub moveto
+    left 9.5 add top 25.99 sub lineto
+    dark setgray stroke
+    left 10.5 add top 10 sub moveto
+    left 10.5 add top 25.99 sub lineto
+    light setgray stroke
+  } exec
+
+  { % right edge of big right button
+    right 10.5 sub top 11 sub moveto
+    right 10.5 sub top 25.99 sub lineto
+    dark setgray stroke
+    right 9.5 sub top 11 sub moveto
+    right 9.5 sub top 25.99 sub lineto
+    light setgray stroke
+  } exec
+
+  { % right edge of left button
+    left 26.5 add top 11 sub moveto
+    left 26.5 add top 25.99 sub lineto
+    dark setgray stroke
+    left 27.5 add top 11 sub moveto
+    left 27.5 add top 25.99 sub lineto
+    light setgray stroke
+  } exec
+
+  { % edge between small and big right buttons
+    right 27.5 sub top 11 sub moveto
+    right 27.5 sub top 25.99 sub lineto
+    dark setgray stroke
+    right 26.5 sub top 11 sub moveto
+    right 26.5 sub top 25.99 sub lineto
+    light setgray stroke
+  } exec
+
+  { % left edge of small right button
+    right 44.5 sub top 11 sub moveto
+    right 44.5 sub top 25.99 sub lineto
+    dark setgray stroke
+    right 43.5 sub top 11 sub moveto
+    right 43.5 sub top 25.99 sub lineto
+    light setgray stroke
+  } exec
+
+  { % top left resize corner
+    left 26.5 add top 1 sub moveto
+    left 26.5 add top 9.99 sub lineto
+    dark setgray stroke
+    left 27.5 add top 1 sub moveto
+    left 27.5 add top 9.99 sub lineto
+    light setgray stroke
+
+    left 1 add top 26.5 sub moveto
+    left 9.99 add top 26.5 sub lineto
+    dark setgray stroke
+    left 1 add top 27.5 sub moveto
+    left 9.99 add top 27.5 sub lineto
+    light setgray stroke
+  } exec
+
+  { % top right resize corner
+    right 27.5 sub top 1 sub moveto
+    right 27.5 sub top 9.99 sub lineto
+    dark setgray stroke
+    right 26.5 sub top 1 sub moveto
+    right 26.5 sub top 9.99 sub lineto
+    light setgray stroke
+
+    right 1.01 sub top 26.5 sub moveto
+    right 9 sub top 26.5 sub lineto
+    dark setgray stroke
+    right 1.01 sub top 27.5 sub moveto
+    right 9 sub top 27.5 sub lineto
+    light setgray stroke
+  } exec
+
+  { % bottom left resize corner
+    left 26.5 add bottom 1.01 add moveto
+    left 26.5 add bottom 9 add lineto
+    dark setgray stroke
+    left 27.5 add bottom 1.01 add moveto
+    left 27.5 add bottom 9 add lineto
+    light setgray stroke
+
+    left 1 add bottom 27.5 add moveto
+    left 9.99 add bottom 27.5 add lineto
+    dark setgray stroke
+    left 1 add bottom 26.5 add moveto
+    left 9.99 add bottom 26.5 add lineto
+    light setgray stroke
+  } exec
+
+  { % bottom right resize corner
+    right 27.5 sub bottom 1.01 add moveto
+    right 27.5 sub bottom 9 add lineto
+    dark setgray stroke
+    right 26.5 sub bottom 1.01 add moveto
+    right 26.5 sub bottom 9 add lineto
+    light setgray stroke
+
+    right 1.01 sub bottom 27.5 add moveto
+    right 9 sub bottom 27.5 add lineto
+    dark setgray stroke
+    right 1.01 sub bottom 26.5 add moveto
+    right 9 sub bottom 26.5 add lineto
+    light setgray stroke
+  } exec
+
+  { % upper left button
+    left 14.5 add top 19.99 sub moveto
+    left 14.5 add top 16.5 sub lineto
+    left 22.99 add top 16.5 sub lineto
+    light setgray stroke
+    left 15 add top 19.5 sub moveto
+    left 22.5 add top 19.5 sub lineto
+    left 22.5 add top 17 sub lineto
+    dark setgray stroke
+  } exec
+
+  { % upper right big button
+    right 14.01 sub top 14.5 sub moveto
+    right 22.5 sub top 14.5 sub lineto
+    right 22.5 sub top 22.99 sub lineto
+    light setgray stroke
+    right 14.5 sub top 15 sub moveto
+    right 14.5 sub top 22.5 sub lineto
+    right 22 sub top 22.5 sub lineto
+    dark setgray stroke
+  } exec
+
+  { % upper right small button
+    right 34.01 sub top 16.5 sub moveto
+    right 37.5 sub top 16.5 sub lineto
+    right 37.5 sub top 19.99 sub lineto
+    light setgray stroke
+    right 34.5 sub top 17 sub moveto
+    right 34.5 sub top 19.5 sub lineto
+    right 37 sub top 19.5 sub lineto
+    dark setgray stroke
+  } exec
+
+  { % label
+    /Helvetica-Bold findfont 10 scalefont setfont
+    label stringwidth pop
+    left 28 add right 44 sub add 2 div
+    1 index 2 div sub
+    dup 2 sub top 24 sub
+    moveto
+    1 index 4 add 0 rlineto
+    0 12 rlineto
+    exch 4 add neg 0 rlineto
+    closepath
+    1 setgray fill
+    top 21 sub moveto
+    0 setgray
+    label show
+  } exec
+
+  end
+} def
+
+/DrawGenericWindowFrame { % label left top w h
+			  % leftmargin topmargin rightmargin bottommargin => -
+  30 dict begin
+
+  { % setup
+    /bottommargin exch def /rightmargin exch def
+    /topmargin exch def /leftmargin exch def
+    /h exch def /w exch def /y exch h sub def /x exch def
+    /label exch def
+    /pointsize
+      topmargin 1 sub
+      dup 1 lt { pop 1 } if
+      dup 12 gt { 12 sub 3 div 12 add } if
+    def
+
+    /bottom y def /top y h add def
+    /left x def /right  x w add def
+    1 setlinewidth
+    0 setlinecap
+  } exec
+
+  { % background
+    newpath
+    left leftmargin sub bottom bottommargin sub moveto
+    left leftmargin sub top topmargin add lineto
+    right rightmargin add top topmargin add lineto
+    right rightmargin add bottom bottommargin sub lineto
+    closepath
+    0 setgray fill
+
+    left bottom moveto
+    left top lineto
+    right top lineto
+    right bottom lineto
+    closepath
+    1 setgray fill
+  } exec
+
+  topmargin 8 ge {
+    /Helvetica-Bold findfont pointsize scalefont setfont
+    label stringwidth pop
+    left right add 2 div
+    exch 2 div sub
+    top topmargin 2 div add pointsize 2 div sub 2 add moveto
+    1 setgray
+    label show
+  } if
+
+  end
+} def
+
+/FillShape { % [halftone] | [r g b] | null => -
+    gsave
+        dup null eq { pop } {
+	  aload length 3 eq { setrgbcolor fill } {
+	      FillPattern
+	  } ifelse
+        } ifelse
+    grestore
+    newpath
+} def
+
+/StrokeShape { % line-color cap join dash thickness => -
+    % If no line is desired, pass -1 for line-thickness
+    dup 0 ge 5 index null ne and {
+	% if line-thickness >= 0, then draw the outline
+	gsave
+	    setlinewidth 0 setdash setlinejoin setlinecap
+	    aload length 3 eq { setrgbcolor stroke } {
+		strokepath FillPattern
+	    } ifelse
+	grestore
+    } {
+	pop pop pop pop pop
+    } ifelse
+    newpath
+} def
+
+/ClipDict 2 dict def
+/ClipToRectangle { % left top width height => -
+    ClipDict begin
+	/height exch def  /width exch def
+        newpath
+	    moveto			% Go to the left,top corner
+	    width 0 rlineto		% top side
+	    0 height neg rlineto	% right side
+	    width neg 0 rlineto		% bottom side
+	    closepath			% left side
+	gsave 1 setgray fill grestore
+	clip newpath
+    end
+} def
+
+/image-15 /image-15-font 72 64 <
+000000000000000000 000000000000000000 3ffffffffffffffffc 3ffe1ffffffffffffc
+3ff961fffffffffffc 3fe77e0ffffffffffc 3fdf7ff0fffffffffc 3fc77fff1ffffffffc
+3fdb1fffaffffffffc 3fbd60ffaffffffffc 3fbc3f0777fffffffc 3fba43f8f7fffffffc
+3fba1c3efbfffffffc 3f7961c2e3fffffffc 3f797e1c1bfffffffc 3f74ffe277fffffffc
+3f74fff977fffffffc 3ef2fff4f7fffffffc 3ef2fff4f7fffffffc 3ee9fff4effffffffc
+3ee9fff2effffffffc 3ee5fffffffffffffc 3de5f0e0884701843c 3dd3f9f9dced9bc67c
+3dd3f9e9c8ed980e7c 3dcbf9f9e1e89dce7c 3babf839f3e89c9e0c 3babf999e3e29e9e64
+3ba7f999c5e31e1e64 3b97f989cee31f3e64 3b57f02084478f3c0c 3757ffdffffffffffc
+374fff577ffffffffc 372fff577ffffffffc 36afff2efffffffffc 2eafff2efffffffffc
+2e9ffeaefffffffffc 2e5ffeaefffffffffc 2d07fe5dfffffffffc 18387e5dfffffffffc
+0743855dfffffffffc 1f7c395dfffffffffc 2f1fc2bbfffffffffc 2ee0fc3bfffffffffc
+36ff063bfffffffffc 35fff89bfffffffffc 39fffe27fffffffffc 3e1ffe37fffffffffc
+3fe1fe6ffffffffffc 3ffe3e1ffffffffffc 3fffc261fffffffffc 3ffff81ffffffffffc
+3fffc17ffffffffffc 3fff353ffffffffffc 3ffffcbffffffffffc 3ffffcbffffffffffc
+3ffffcfffffffffffc 3ffffcfffffffffffc 3ffffcfffffffffffc 3ffffdfffffffffffc
+3ffffdfffffffffffc 3ffffdfffffffffffc 000000000000000000 000000000000000000>
+DefImage
+
+/image-14 /image-14-font 42 31 <
+ffff80ffffff fffc7f1fffff fff3ffe7ffff ffef80fbffff ffde7f3dffff ffb9ffceffff
+ff7780f77fff feee7f3bbfff feddffddbfff ffffffffe1ff fffffffff3ff fffffffff3ff
+030388ac007f 99cf34a9933f 99cf3ca9933f 99cf3cac133f 99cf3c0f933f 830e015c247f
+9fff3fffffff 9fff3fffffff 1fcfffffffff ffffffffffff feddffddbfff feee7f3bbfff
+ff7780f77fff ffb9ffceffff ffde7f3dffff ffef80fbffff fff3ffe7ffff fffc7f1fffff
+ffff80ffffff>
+DefImage
+
+/image-13 /image-13-font 106 20 <
+000000000000000000000000003f 7fffe7fffe7fffff9ffff9ffffbf
+7fdfe7feee7fffff9eeff9ff7fbf 7f9fe7fcce7fffff9e67f9ff3fbf
+7f5fe7faae7fffff9eabf9ff5fbf 7edfe7f66e7fffff9ecdf9ff6fbf
+7dc027eeee7e0c3f9eeef98077bf 7bffa7ddee7eebdf9ef779bffbbf
+77ffa7bbee7f7fdf9efbb9bffdbf 6fffa777ee7fbfdf9efdd9bffebf
+77ffa7bbee7fdc3f9efbb9bffdbf 7bffa7ddee7eedff9ef779bffbbf
+7dc027eeee7eedff9eeef98077bf 7edfe7f66e7eedff9ecdf9ff6fbf
+7f5fe7faae7f1c1f9eabf9ff5fbf 7f9fe7fcce7fffff9e67f9ff3fbf
+7fdfe7feee7fffff9eeff9ff7fbf 7fffe7fffe7fffff9ffff9ffffbf
+7fffe7fffe7fffff9ffff9ffffbf 000000000000000000000000003f>
+DefImage
+
+/image-12 /image-12-font 135 81 <
+ffffffffffffe0e0e3071fffffffffffff fffffffffffffbfbdddeefffffffffffff
+fffffffffffffbfbdfdeffffffffffffff fffffffffffffbfbdfde0fffffffffffff
+fffffffffffffbfbdfdeefffffffffffff ffffffffffffdb6383df1fffffffffffff
+ffffffffffffdb7fdfdfffffffffffffff ffffffffffffc07fdfdfffffffffffffff
+fffffffffffffffbff1fffffffffffffff ffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffff 9ffffffffffffffffffffffffffffff067
+6ffffffffffffffffffffffffffffffddb 6ffffffffffffffffffffffffffffffddb
+6fff80000000000000000000000003fddb 6fffbffffffffffe53fffffffffffbfddb
+6fffbffffffffffea7fffffffffffbf1db 9fffbffffffffffd57fffffffffffbfde7
+ffffbffffffffffaaffffffffffffbffff ffffbffffffffff55ffffffffffffbffff
+ffffbffffffffff2bffffffffffffbffff ffffbfffffffffe53ffffffffffffbffff
+ffffdfffffffffca7ffffffffffff7ffff ffffdfffffffff94fffffffffffff7ffff
+ffffdfffffffffaafffffffffffff7ffff ffffdfffffffff55fffffffffffff7ffff
+ffffdffffffffeabfffffffffffff7ffff ffffeffffffffd57ffffffffffffefffff
+ffffeffffffffca7ffffffffffffefffff ffffeffffffff94fffffffffffffefffff
+fffff7fffffff29fffffffffffffdfffff fffff7ffffffe55fffffffffffffdfffff
+fffff7ffffffeabfffffffffffffdfffff fffffbffffffd57fffffffffffffbfffff
+fffffbfffffbaa7fffffffffffffbfffff fffffdfffff954ffffffffffffff7fffff
+fffffdfffff929ffffffffffffff7fffff fffffefffff853fffffffffffffeffffff
+fffffefffff2abfffffffffffffeffffff ffffff7ffff557fffffffffffffdffffff
+ffffff7ffff2a7fffffffffffffdffffff ffffffbbfff550ffffffffffffbbffffff
+ffffffd7fff2a3ffffffffffffd7ffffff ffffffcffff54fffffffffffffe7ffffff
+ffffffefffea3fffffffffffffefcfffff fffffff7ffe4ffffffffffffffdfb7ffff
+fff87ffbffe3ffffffffffffffbfb7ffff fffbfffbffffffffffffffffffbfcfffff
+fffdfffdffffffffffffffffff7fb7ffff fffefffefffffffffffffffffeffb7ffff
+ffff7fff7ffffffffffffffffdffcfffff fffb7fffbffffffffffffffffbffffffff
+fffcffffcfffffffffffffffe7ffffffff fffffffff7ffffffffffffffdfffffffff
+fffffffffbffffffffffffffbfffffffff fffffffffcfffffffffffffe7fffffffff
+ffffffffff7ffffffffffffdffffffffff ffffffffff9ffffffffffff3ffffffffff
+ffffffffffe7ffffffffffcfffffffffff fffffffffff9f7ffffffdf3fffffffffff
+fffffffffffe77ffffffdcffffffffffff ffffffffffff87ffffffc3ffffffffffff
+fffffffffffff1ffffff1fffffffffffff fffffffffffffe0fffe0ffffffffffffff
+fffffffffffffff0001fffffffffffffff fffffffffffffffffffff3ffffffffffff
+ffffffffffff7fffffffedffffffffffff ffffffffffff7fffffffedffffffffffff
+fffffffffff83fffffffe3ffffffffffff fffffffffffb7fffffffefffffffffffff
+fffffffffffd7fffffffedffffffffffff fffffffffffe7ffffffff3ffffffffffff
+ffffffffffff7fffffffffffffffffffff ffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffff>
+DefImage
+
+/image-11 /image-11-font 40 250 <
+ffff800007 ffffbffff7 ffffbfeff7 ffffbfd7f7 ffffbfbbf7 ffffbf7df7 ffffbefef7
+ffffbdff77 ffffbbffb7 ffffb07c17 ffffbf7df7 ffffbf7df7 ffffbf7df7 ffffbf7df7
+ffffbf7df7 ffffbf7df7 ffffbf01f7 ffffbffff7 ffffbffff7 ffff800007 ffff800007
+ffffbffff7 ffffbffff7 ffffbfeff7 ffffbfd7f7 ffffbfbbf7 ffffbf7df7 ffffbeeef7
+ffffbdd777 ffffbbbbb7 ffffb07c17 ffffbefef7 ffffbdff77 ffffbbffb7 ffffb00017
+ffffbffff7 ffffbffff7 ffffbffff7 ffffbffff7 ffff800007 ffffffffff c39fffffff
+f76fffffff f76fffffff f76f800007 f76f800007 c76fffefff f79fffefff ffffffefff
+ffffffefff ffffffefff ffffffefff ffffffefff ffffffefff ffffffefff ffffffefff
+ffffffefff ffffffefff ffffffefff ffffffefff ffffffefff ffffffefff ffffffefff
+ffffffefff ffffffefff ffffffefff ffffffefff ffffffefff ffffffefff ff9fffefff
+ff6fffefff ff6fffefff ff9ffc007f ff6fffefff ff6fffefff ff9fffefff ffffffefff
+ffffffefff ffffffefff ffffffefff ffffffefff ffffffefff ffffffefff ffffffefff
+ffffffefff ffffffefff ffffffefff ffffffefff ffffffefff ffffffefff ffffffefff
+ffffffefff ffffffefff ffffffefff ffffffefff ffffffefff ffffffefff ff9fffefff
+ff6fffefff ff6fffefff ff1ffc007f ff7fffefff ff7fffefff ff8fffefff ffffffefff
+ffffffefff ffffffefff ffffffefff ffffffefff ffffffefff ffffffefff ffffffefff
+ffffffefff ffffffefff ffffffefff ffffffefff ffffffefff ffffffefff ffffffefff
+ffffffefff ffffffefff ffffffefff ffffffefff ffffffefff ffdfffefff ffdfffefff
+fe0fffefff fedffc007f ff5fffefff ff9fffefff ffdfffefff ffffffefff ffffffefff
+ffffffefff ffffffeffd ffffffeff9 ffffffeff1 ffffffefc1 ffffffef81 ffffffef01
+ffffffee01 ffffffe801 ffffffee01 ffffffef01 ffffffef81 ffffffefc1 ffffffeff1
+ffffffeff9 ffffffeffd ffffffefff ffffffefff ffffffefff ff0fffefff ff7fffefff
+ffbfffefff ffdffc007f ffefffefff ff6fffefff ff9fffefff ffffffefff ffffffefff
+ffffffefff ffffffefff ffffffefff ffffffefff ffffffefff ffffffefff ffffffefff
+ffffffefff ffffffefff ffffffefff ffffffefff ffffffefff ffffffefff ffffffefff
+ffffffefff ffffffefff ffffffefff ffffffefff ffffffefff ff9fffefff ff6fffefff
+ff6fffefff ff6f800007 ff6f800007 ff6fffffff ff9fffffff ffffffffff ffffffffff
+ffff800007 ffffbffff7 ffffbffff7 ffffbffff7 ffffb00017 ffffbbffb7 ffffbdff77
+ffffbefef7 ffffb07c17 ffffbbbbb7 ffffbdd777 ffffbeeef7 ffffbf7df7 ffffbfbbf7
+ffffbfd7f7 ffffbfeff7 ffffbffff7 ffffbffff7 ffffbffff7 ffff800007 ffff800007
+ffffbffff7 ffffbf01f7 ffffbf7df7 ffffbf7df7 ffffbf7df7 ffffbf7df7 ffffbf7df7
+ffffbf7df7 ffffb07c17 ffffbbffb7 ffffbdff77 ffffbefef7 ffffbf7df7 ffffbfbbf7
+ffffbfd7f7 ffffbfeff7 ffffbffff7 ffffbffff7 ffff800007 ffffffffff ffffffffff
+ffffffffff ffffffffff ffffffffff ffff800007 ffffbffff7 ffffbffff7 ffffbffff7
+ffffbfc7f7 ffffbfbbf7 ffffbffbf7 ffffbffbf7 ffffbfe7f7 ffffbffbf7 ffffbffbf7
+ffffbfbbf7 ffffbfc7f7 ffffbffff7 ffffbffff7 ffff800007>
+DefImage
+
+/image-10 /image-10-font 20 250 <
+00000f 7fffef 7fdfef 7fafef 7f77ef 7efbef 7dfdef 7bfeef 77ff6f 60f82f 7efbef
+7efbef 7efbef 7efbef 7efbef 7efbef 7e03ef 7fffef 7fffef 00000f 00000f 7fffef
+7fffef 7fdfef 7fafef 7f77ef 7efbef 7dddef 7baeef 77776f 60f82f 7dfdef 7bfeef
+77ff6f 60002f 7fffef 7fffef 7fffef 7fffef 00000f 00000f 2aaaaf 55554f 2aaaaf
+55554f 2aaaaf 55554f 2aaaaf 55554f 2aaaaf 55554f 2aaaaf 55554f 2aaaaf 55554f
+2aaaaf 55554f 2aaaaf 55554f 2aaaaf 55554f 2aaaaf 55554f 2aaaaf 55554f 2aaaaf
+55554f 2aaaaf 55554f 2aaaaf 55554f 2aaaaf 55554f 2aaaaf 55554f 2aaaaf 55554f
+2aaaaf 55554f 2aaaaf 55554f 2aaaaf 55554f 2aaaaf 55554f 2aaaaf 55554f 2aaaaf
+55554f 2aaaaf 55554f 2aaaaf 55554f 2aaaaf 55554f 2aaaaf 55554f 2aaaaf 55554f
+2aaaaf 55554f 2aaaaf 55554f 2aaaaf 55554f 2aaaaf 55554f 2aaaaf 55554f 2aaaaf
+55554f 2aaaaf 55554f 2aaaaf 55554f 2aaaaf 55554f 2aaaaf 55554f 2aaaaf 55554f
+2aaaaf 55554f 2aaaaf 55554f 2aaaaf 55554f 2aaaaf 55554f 2aaaaf 55554f 2aaaaf
+55554f 2aaaaf 55554f 2aaaaf 55554f 2aaaaf 55554f 2aaaaf 55554f 2aaaaf 55554f
+2aaaaf 55554f 2aaaaf 55554f 2aaaaf 55554f 2aaaaf 55554f 2aaaaf 55554f 2aaaaf
+00000f 3fffcf 3fffcf 3fffcf 3fffcf 3863cf 3bfdcf 3dfdcf 3ee3cf 3f6fcf 3b6fcf
+3ce1cf 3fffcf 3fffcf 3fffcf 3fffcf 3fffcf 00000f 55554f 2aaaaf 55554f 2aaaaf
+55554f 2aaaaf 55554f 2aaaaf 55554f 2aaaaf 55554f 2aaaaf 55554f 2aaaaf 55554f
+2aaaaf 55554f 2aaaaf 55554f 2aaaaf 55554f 2aaaaf 55554f 2aaaaf 55554f 2aaaaf
+55554f 2aaaaf 55554f 2aaaaf 55554f 2aaaaf 55554f 2aaaaf 55554f 2aaaaf 55554f
+00000f 00000f 7fffef 7fffef 7fffef 60002f 77ff6f 7bfeef 7dfdef 60f82f 77776f
+7baeef 7dddef 7efbef 7f77ef 7fafef 7fdfef 7fffef 7fffef 7fffef 00000f 00000f
+7fffef 7e03ef 7efbef 7efbef 7efbef 7efbef 7efbef 7efbef 60f82f 77ff6f 7bfeef
+7dfdef 7efbef 7f77ef 7fafef 7fdfef 7fffef 7fffef 00000f>
+DefImage
+
+/image-9 /image-9-font 200 32 <
+fffffffffffffffff9fff87fffbfff3fff9ffc19ffffffffff
+fffffffffffffffff6fffbffffbffedfff6fff76ffffffffff
+fffffffffffffffff6fffdfffc1ffedfff6fff76ffffffffff
+fffffffffffffffff6fffefffdbffe3fff9fff76ffffffffff
+fffffffffffffffff6ffff7ffebffeffff6fff76ffffffffff
+fffffffffffffffff6fffb7fff3ffedfff6ffc76ffffffffff
+fffffffffffffffff9fffcffffbfff3fff9fff79ffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffff800000000079ffffffffffffffffffffcf0000000000
+ffffffbffff3ffff79ffffffffffffffffffffcf7fffe7fffe
+00000fbfeff3ff7779ffffffffffffffffffffcf7bbfe7fdfe
+7fffefbfcff3fe6779ffffffffffffffffffffcf799fe7fcfe
+7fffefbfaff3fd5779fffeffff7fffbfffdfffcf7aafe7fd7e
+7fffefbf6ff3fb3779fffeffff7fffbfffdfffcf7b37e7fdbe
+7f8fefbee013f77779fffeffff7fffbfffdfffcf7bbbe601de
+7f77efbdffd3eef779fffeffff7fffbfffdfffcf7bdde6ffee
+7ff7efbbffd3ddf779fffeffff7fffbfffdfffcf7beee6fff6
+7ff7efb7ffd3bbf778000000000000000000000f7bf766fffa
+7fcfefbbffd3ddf779fffeffff7fffbfffdfffcf7beee6fff6
+7ff7efbdffd3eef779fffeffff7fffbfffdfffcf7bdde6ffee
+7ff7efbee013f77779fffeff7f7fffbfffdfffcf7bbbe601de
+7f77efbf6ff3fb3779fffefe3f7fffbfffdfffcf7b37e7fdbe
+7f8fefbfaff3fd5779fffefc1f7fffbfffdfffcf7aafe7fd7e
+7fffefbfcff3fe6779fffffc1fffffffffffffcf799fe7fcfe
+7fffefbfeff3ff7779fffff80fffffffffffffcf7bbfe7fdfe
+00000fbffff3ffff79fffff007ffffffffffffcf7fffe7fffe
+ffffffbffff3ffff79fffff007ffffffffffffcf7fffe7fffe
+ffffff800000000079ffffe003ffffffffffffcf0000000000
+ffffffffffffffffffffffc001ffffffffffffffffffffffff
+ffffffffffffffffffffff8000ffffffffffffffffffffffff>
+DefImage
+
+/image-8 /image-8-font 200 20 <
+00000000000000000000000000000000000000000000000000
+7fffe7fffe2aaaaa80000aaaaaaaaaaaaaaaaaaa7fffe7fffe
+7fdfe7feee5555555fffe55555555555555555547bbfe7fdfe
+7f9fe7fcce2aaaaa9fffeaaaaaaaaaaaaaaaaaaa799fe7fcfe
+7f5fe7faae5555555fffe55555555555555555547aafe7fd7e
+7edfe7f66e2aaaaa9fffeaaaaaaaaaaaaaaaaaaa7b37e7fdbe
+7dc027eeee5555555c31e55555555555555555547bbbe601de
+7bffa7ddee2aaaaa9dfeeaaaaaaaaaaaaaaaaaaa7bdde6ffee
+77ffa7bbee5555555efee55555555555555555547beee6fff6
+6fffa777ee2aaaaa9f71eaaaaaaaaaaaaaaaaaaa7bf766fffa
+77ffa7bbee5555555fb7e55555555555555555547beee6fff6
+7bffa7ddee2aaaaa9db7eaaaaaaaaaaaaaaaaaaa7bdde6ffee
+7dc027eeee5555555e70e55555555555555555547bbbe601de
+7edfe7f66e2aaaaa9fffeaaaaaaaaaaaaaaaaaaa7b37e7fdbe
+7f5fe7faae5555555fffe55555555555555555547aafe7fd7e
+7f9fe7fcce2aaaaa9fffeaaaaaaaaaaaaaaaaaaa799fe7fcfe
+7fdfe7feee5555555fffe55555555555555555547bbfe7fdfe
+7fffe7fffe2aaaaa9fffeaaaaaaaaaaaaaaaaaaa7fffe7fffe
+7fffe7fffe5555554000055555555555555555547fffe7fffe
+00000000000000000000000000000000000000000000000000>
+DefImage
+
+/image-7 /image-7-font 21 22 <
+c00007 c00007 000007 555547 000007 5fff47 1fff07 580347 1fff07 5fff47 180307
+5fff47 1fff07 580347 1fff07 5fff47 180307 5fff47 1fff07 400047 2aaa9f 00001f>
+DefImage
+
+/image-6 /image-6-font 163 30 <
+ffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffe000000000001f
+ffffffffffffffffffffffffffffe000000000001f
+ffffffffffffffffffffffffffffe000000000001f
+ffffffffffffffffffffffffffffe000000000001f
+ffffffffffffffffffffffffffffe000000000001f
+fffffffffffffffffffffffffffc0000000000001f
+fffffffffffffffffffffffffffdfffffffffff81f
+fffffffffffffffffffffffffffdfffffffffff81f
+fffffffffffffffffffffffffffdfffffffffff81f
+ffe1fffffffffffffffffffffffdfffffffffff81f
+fff3fffffffffffffffffffffffdfffffffffff81f
+fff3fffffffffffffffffffffffdfffffffffff81f
+fc3078c0c213f81c4c78e109cffdc1e38ca7f8381f
+f99333739933fcc999b34c99cffdf7dd76affef81f
+f99333f39933fcc999f3cc99fffdf7df7eaffef81f
+f99333f39933fcc999f3cc99fffdf7df06affef81f
+f99333f39913fcc999f3cc89cffdf7df76affef81f
+f9846043c247fc1110206123cffdf7838c5ffef81f
+f99ff3fffffffcfff9f3fffffffdf7dffffffef81f
+fc3ff3fffffffcfff9f3fffffffdc1dffffff8f81f
+fffffff3fffff8fffffffffffffdfffffffffef81f
+fffffffffffffffffffffffffffdfffffffffff81f
+fffffffffffffffffffffffffffdfffffffffffbff
+fffffffffffffffffffffffffffdfffffffffffbff
+fffffffffffffffffffffffffffdfffffffffffbff
+fffffffffffffffffffffffffffdfffffffffffbff
+fffffffffffffffffffffffffffc000000000003ff
+ffffffffffffffffffffffffffffffffffffffffff>
+DefImage
+
+/image-5 /image-5-font 54 100 <
+f8000000000003 f8000000000003 f8000000000003 f8000000000003 f8000000000003
+00000000000003 7fffffffffff03 7fffffffffff03 7fffffffffff03 7fffffffffff03
+7fffffffffff03 7fffffffffff03 703891e3818f03 7bb76eddef7703 7bb76edfeff703
+7bf86ec1eff703 7bff6eddefcf03 7bf0e1e3eff703 7bffefffeff703 71ffefffef7703
+7fffcfff8f8f03 7fffffffffff03 7fffffffffff03 7fffffffffff03 7fffffffffff03
+7fffffffffff03 7fffffffffff03 7fffffffffff03 7fffffffffff03 7fffffffffff03
+7fffffffffff03 7fffffffffff03 7fffffffffff03 7fffffffffff03 703891e3810703
+7bb76eddef7703 7bb76edfefbf03 7bf86ec1efdf03 7bff6eddefef03 7bf0e1e3ef7703
+7bffefffef7703 71ffefffef7703 7fffcfff8f8f03 7fffffffffff03 7fffffffffff03
+7fffffffffff03 7fffffffffff03 7fffffffffff03 7fffffffffff03 7fffffffffff03
+7fffffffffff03 7fffffffffff03 7fffffffffff03 7fffffffffff03 7fffffffffff03
+7fffffffffff03 703891e3810703 7bb76eddefdf03 7bb76edfefdf03 7bf86ec1efdf03
+7bff6eddefdf03 7bf0e1e3efdf03 7bffefffefdf03 71ffefffef1f03 7fffcfff8fdf03
+7fffffffffff03 7fffffffffff03 7fffffffffff03 7fffffffffff03 7fffffffffff03
+7fffffffffff03 7fffffffffff03 00000000000003 00000000000003 00000000000003
+00000000000003 00000000000003 00000000000003 00000000000003 003c3c778f0003
+001818eb1d8003 001818c3384003 001818c3300003 001818c3300003 001818c33fc003
+001818c330c003 001818c3198003 001839f30f0003 001800c3000003 01188043000003
+01999803000003 01ff9807000003 00000000000003 00000000000003 00000000000003
+0000000000007f 0000000000007f 0000000000007f 0000000000007f 0000000000007f>
+DefImage
+
+/image-4 /image-4-font 178 29 <
+f8000000000000ffc0000000000007fe0000000000003f
+f8000000000000ffc0000000000007fe0000000000003f
+f8000000000000ffc0000000000007fe0000000000003f
+f8000000000000ffc0000000000007fe0000000000003f
+f8000000000000ffc0000000000007fe0000000000003f
+00000000000000f800000000000007c00000000000003f
+2aaaaaaaaaaa80faaaaaaaaaaaaa07caaaaaaaaaaaa03f
+55555555555540f955555555555407d55555555555503f
+20000000000080fa00000000000207c80000000000203f
+4ffffffffffe40f97ffffffffff407d3ffffffffff903f
+2ffffffffffe80fa7ff1e3ffcff207cbffffffffffa03f
+4ffffffffffe40f97ffbf7fff7f407d3ffffffffff903f
+2ffffffffffe80fa7ffbf7fff7f207cbffffffffffa03f
+4ffff18cfffe40f9788870e077f407d31e2198f1c0903f
+2fffeeddfffe80fa7ddbb77be3f207caeddbb76ef7a03f
+4fffeedbfffe40f97ddbb77bebf407d2eddbb7eff7903f
+2fffeec7fffe80fa7c1bb77bddf207cafe1bb7e0f7a03f
+4fffeecffffe40f97ebbb77bddf407d2ffd9b76ef7903f
+2fffeed7fffe80fa7eb468fb88f207caec3478f1f7a03f
+4fffeedbfffe40f97f7ffffbfff407d2effffffff7903f
+2ffff189fffe80fa7c7ffffbfff207cb1ffffffff7a03f
+4ffffffffffe40f97fffffe3fff407d3ffffffffc7903f
+2ffffffffffe80fa7ffffffffff207cbffffffffffa03f
+4ffffffffffe40f97ffffffffff407d3ffffffffff903f
+2ffffffffffe9ffa7ffffffffff2ffcbffffffffffa7ff
+4000000000005ff9000000000004ffd0000000000017ff
+2aaaaaaaaaaa9ffaaaaaaaaaaaaaffcaaaaaaaaaaaa7ff
+5555555555555ff9555555555554ffd5555555555557ff
+0000000000001ff8000000000000ffc0000000000007ff>
+DefImage
+
+/image-3 /image-3-font 117 29 <
+f8000000000000ffc0000000000007 f8000000000000ffc0000000000007
+f8000000000000ffc0000000000007 f8000000000000ffc0000000000007
+f8000000000000ffc0000000000007 00000000000000f800000000000007
+2aaaaaaaaaaa80faaaaaaaaaaaaa07 55555555555540f955555555555407
+20000000000080fa00000000000207 4ffffffffffe40f97ffffffffff407
+2ffffffffffe80fa7ffffffffff207 4ffffffffffe40f97ffffffffff407
+2ffffffffffe80fa7ffffffffff207 4ffff18cfffe40f963c4331e381407
+2fffeeddfffe80fa5dbb76eddef207 4fffeedbfffe40f95dbb76fdfef407
+2fffeec7fffe80fa5fc376fc1ef207 4fffeecffffe40f95ffb36eddef407
+2fffeed7fffe80fa5d868f1e3ef207 4fffeedbfffe40f95dfffffffef407
+2ffff189fffe80fa63fffffffef207 4ffffffffffe40f97ffffffff8f407
+2ffffffffffe80fa7ffffffffff207 4ffffffffffe40f97ffffffffff407
+2ffffffffffe9ffa7ffffffffff2ff 4000000000005ff9000000000004ff
+2aaaaaaaaaaa9ffaaaaaaaaaaaaaff 5555555555555ff9555555555554ff
+0000000000001ff8000000000000ff>
+DefImage
+
+/image-2 /image-2-font 70 127 <
+000000000000000003 7fffe7fffffffffffb 7fdfe7fffffffffffb 7fafe7fffffffffffb
+7f77e7fffffffffffb 7efbe7fffffffffffb 7dfde703891e3810fb 7bfee7bb76eddeef7b
+77ff67bb76edfeff7b 60f827bf86ec1eff7b 7efbe7bff6eddef0fb 7efbe7bf0e1e3ef7fb
+7efbe7bffefffef7fb 7efbe71ffefffef7fb 7efbe7fffcfff8f07b 7efbe7fffffffffffb
+7e03e7fffffffffffb 7fffe7fffffffffffb 7fffe7fffffffffffb 000007fffffffffffb
+000007fffffffffffb 7fffe7fffffffffffb 7fffe7fffffffffffb 7fdfe7fffffffffffb
+7fafe7fffffffffffb 7f77e7fffffffffffb 7efbe703891e381c7b 7ddde7bb76eddefefb
+7baee7bb76edfee07b 777767bf86ec1eeefb 60f827bff6eddef6fb 7dfde7bf0e1e3efafb
+7bfee7bffefffefafb 77ff671ffefffefcfb 600027fffcfff8fefb 7fffe7fffffffffffb
+7fffe7fffffffffffb 7fffe7fffffffffffb 7fffe7fffffffffffb 000007fffffffffffb
+000007fffffffffffb 2aaaa7fffffffffffb 555547fffffffffffb 2aaaa7fffffffffffb
+555547fffffffffffb 2aaaa7fffffffffffb 55554703891e3818fb 2aaaa7bb76eddef77b
+555547bb76edfeff7b 2aaaa7bf86ec1eff7b 555547bff6eddefcfb 2aaaa7bf0e1e3eff7b
+555547bffefffeff7b 2aaaa71ffefffef77b 555547fffcfff8f8fb 2aaaa7fffffffffffb
+555547fffffffffffb 2aaaa7fffffffffffb 555547fffffffffffb 2aaaa7fffffffffffb
+555547fffffffffffb 2aaaa7fffffffffffb 555547fffffffffffb 2aaaa7fffffffffffb
+555547fffffffffffb 2aaaa7fffffffffffb 55554703891e38107b 2aaaa7bb76eddef77b
+555547bb76edfefbfb 000007bf86ec1efdfb 3fffc7bff6eddefefb 3fffc7bf0e1e3ef77b
+3fffc7bffefffef77b 3fffc71ffefffef77b 3fffc7fffcfff8f8fb 3fffc7fffffffffffb
+3fffc7fffffffffffb 3fffc7fffffffffffb 3fffc7fffffffffffb 3fffc7fffffffffffb
+3fffc7fffffffffffb 3fffc7fffffffffffb 3fffc7fffffffffffb 3fffc7fffffffffffb
+3fffc7fffffffffffb 3fffc7fffffffffffb 00000703891e38107b 000007bb76eddefdfb
+7fffe7bb76edfefdfb 7fffe7bf86ec1efdfb 7fffe7bff6eddefdfb 600027bf0e1e3efdfb
+77ff67bffefffefdfb 7bfee71ffefffef1fb 7dfde7fffcfff8fdfb 60f827fffffffffffb
+777767fffffffffffb 7baee7fffffffffffb 7ddde7fffffffffffb 7efbe7fffffffffffb
+7f77e0000000000003 7fafe0000000000003 7fdfe3fffffffffff3 7fffe3fffffffffff3
+7fffe3fffffffffff3 7fffe3fffffffffff3 000003fffffffffff3 000003fe1e1c4387f3
+7fffe3ff3f38a713f3 7e03e3ff3f39e63df3 7efbe3ff3f39e67ff3 7efbe3ff3f39e67ff3
+7efbe3ff3f39e601f3 7efbe3ff3f39e679f3 7efbe3ff3f39e733f3 7efbe3ff3e306787f3
+60f823ff3ff9e7fff3 77ff63f73bfde7fff3 7bfee3f3333fe7fff3 7dfde3f0033fc7fff3
+7efbe3fffffffffff3 7f77e3fffffffffff3 7fafe3fffffffffff3 7fdfe3fffffffffff3
+7fffe3fffffffffff3 7fffe0000000000003 000000000000000003>
+DefImage
+
+/image-1 /image-1-font 118 14 <
+000000000000000000000000000003 000000000000000000000000000003
+000000000000000000000000000003 0787cfce003f1d7c38007077738f03
+02010211001122104400888a244403 020102100010221040008882240403
+0281021f001422104000888227c403 03810211001c221040008883244403
+02a7020e00141e70f80089f2c38b83 022002000011020040008882000003
+07e00200003f020040007082000003 00010e000000061000000006000003
+000000000000000000000000000003 000000000000000000000000000003>
+DefImage
+
+
+%%EndProlog
+%%Page: 1 1
+
+gsave
+72 72 translate
+0.95 0.95 scale
+0 596 translate
+
+%
+% Begin new window
+%
+gsave
+0 0 494 509 ClipToRectangle
+gsave
+0 0 494 509 [0 0 0] 0 0 [] -1 [1 dup dup] DrawRectangle
+grestore
+
+
+%
+% Begin new window
+%
+gsave
+11 -27 translate
+(Gilt Gadgets) 0 0 472 471 11 27 11 11 DrawMotifWindowFrame
+0 0 472 471 ClipToRectangle
+gsave
+[0.0 dup dup] 0 0 [] 1 448 -11 2 -11 DrawLine
+177 0 -17 117 22 true [0.0 dup dup] [1.0 dup dup] (Garnet Gadgets) 18 /Times-Italic DrawText
+14 -29 118 14 image-1 false [0.0 dup dup] DrawBitmap
+20 -67 61 34 [0.0 dup dup] 0 0 [] 1 [0.0 dup dup] DrawRectangle
+10 -57 61 34 [0.0 dup dup] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+15 -62 51 24 [0.0 dup dup] 0 0 [] 1 [1 dup dup] DrawRectangle
+20 -67 -78 41 14 false [0.0 dup dup] [1.0 dup dup] (Label1) 12 /Courier DrawText
+20 -116 61 34 [0.0 dup dup] 0 0 [] 1 [0.0 dup dup] DrawRectangle
+10 -106 61 34 [0.0 dup dup] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+15 -111 51 24 [0.0 dup dup] 0 0 [] 1 [1 dup dup] DrawRectangle
+20 -116 -127 41 14 false [0.0 dup dup] [1.0 dup dup] (Label2) 12 /Courier DrawText
+20 -165 61 34 [0.0 dup dup] 0 0 [] 1 [0.0 dup dup] DrawRectangle
+10 -155 61 34 [0.0 dup dup] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+15 -160 51 24 [0.0 dup dup] 0 0 [] 1 [1 dup dup] DrawRectangle
+20 -165 -176 41 14 false [0.0 dup dup] [1.0 dup dup] (Label3) 12 /Courier DrawText
+155 -61 20 20 [0.0 dup dup] 0 0 [] 1 [0.0 dup dup] DrawRectangle
+150 -56 20 20 [0.0 dup dup] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+153 -59 14 14 [0.0 dup dup] 0 0 [] 1 [1 dup dup] DrawRectangle
+104 -61 -72 41 14 false [0.0 dup dup] [1.0 dup dup] (Label1) 12 /Courier DrawText
+155 -91 20 20 [0.0 dup dup] 0 0 [] 1 [0.0 dup dup] DrawRectangle
+150 -86 20 20 [0.0 dup dup] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+153 -89 14 14 [0.0 dup dup] 0 0 [] 1 [1 dup dup] DrawRectangle
+104 -91 -102 41 14 false [0.0 dup dup] [1.0 dup dup] (Label2) 12 /Courier DrawText
+155 -121 20 20 [0.0 dup dup] 0 0 [] 1 [0.0 dup dup] DrawRectangle
+150 -116 20 20 [0.0 dup dup] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+153 -119 14 14 [0.0 dup dup] 0 0 [] 1 [1 dup dup] DrawRectangle
+104 -121 -132 41 14 false [0.0 dup dup] [1.0 dup dup] (Label3) 12 /Courier DrawText
+166.5 -169.5 11.5 11.5 0 360 [0.0 dup dup] 0 0 [] 1 [0.0 dup dup] DrawEllipse
+161.5 -164.5 11.5 11.5 0 360 [0.0 dup dup] 0 0 [] 1 [0.50 dup dup] DrawEllipse
+161.5 -164.5 8.5 8.5 0 360 [0.0 dup dup] 0 0 [] 1 [1 dup dup] DrawEllipse
+104 -160 -171 41 14 false [0.0 dup dup] [1.0 dup dup] (Label1) 12 /Courier DrawText
+166.5 -202.5 11.5 11.5 0 360 [0.0 dup dup] 0 0 [] 1 [0.0 dup dup] DrawEllipse
+161.5 -197.5 11.5 11.5 0 360 [0.0 dup dup] 0 0 [] 1 [0.50 dup dup] DrawEllipse
+161.5 -197.5 8.5 8.5 0 360 [0.0 dup dup] 0 0 [] 1 [1 dup dup] DrawEllipse
+104 -193 -204 41 14 false [0.0 dup dup] [1.0 dup dup] (Label2) 12 /Courier DrawText
+166.5 -235.5 11.5 11.5 0 360 [0.0 dup dup] 0 0 [] 1 [0.0 dup dup] DrawEllipse
+161.5 -230.5 11.5 11.5 0 360 [0.0 dup dup] 0 0 [] 1 [0.50 dup dup] DrawEllipse
+161.5 -230.5 8.5 8.5 0 360 [0.0 dup dup] 0 0 [] 1 [1 dup dup] DrawEllipse
+104 -226 -237 41 14 false [0.0 dup dup] [1.0 dup dup] (Label3) 12 /Courier DrawText
+10 -214 70 127 image-2 false [0.0 dup dup] DrawBitmap
+10 -430 117 29 image-3 false [0.0 dup dup] DrawBitmap
+170 -430 178 29 image-4 false [0.0 dup dup] DrawBitmap
+106 -252 54 100 image-5 false [0.0 dup dup] DrawBitmap
+21 -360 163 30 image-6 false [0.0 dup dup] DrawBitmap
+23 -400 21 22 image-7 false [0.0 dup dup] DrawBitmap
+200 -31 200 20 image-8 false [0.0 dup dup] DrawBitmap
+200 -64 200 32 image-9 false [0.0 dup dup] DrawBitmap
+196 -110 20 250 image-10 false [0.0 dup dup] DrawBitmap
+233 -110 40 250 image-11 false [0.0 dup dup] DrawBitmap
+295 -110 135 81 image-12 false [0.0 dup dup] DrawBitmap
+296 -214 106 20 image-13 false [0.0 dup dup] DrawBitmap
+295 -252 -263 39 14 false [0.0 dup dup] [1.0 dup dup] (Title:) 12 /Courier-Bold DrawText
+345 -252 -263 41 14 false [0.0 dup dup] [1.0 dup dup] (String) 12 /Courier DrawText
+339 -250 53 18 [0.0 dup dup] 0 0 [] 1 null DrawRectangle
+296 -282 -293 39 14 false [0.0 dup dup] [1.0 dup dup] (Title:) 12 /Courier-Bold DrawText
+340 -280 76 18 [0.0 dup dup] 0 0 [] 1 null DrawRectangle
+349 -282 -293 56 14 false [0.0 dup dup] [1.0 dup dup] ( long st) 12 /Courier DrawText
+342 -282 -292 7 13 false [0.0 dup dup] [1.0 dup dup] (...) 10 /Times-Roman DrawText
+407 -282 -292 7 13 false [0.0 dup dup] [1.0 dup dup] (...) 10 /Times-Roman DrawText
+286 -368 56 44 [0.0 dup dup] 0 0 [] 1 null DrawRectangle
+[0.0 dup dup] 0 0 [] 1 378 -369 350 -411 DrawLine
+295 -317 -328 35 14 false [0.0 dup dup] [1.0 dup dup] (Label) 12 /Courier DrawText
+414 -355 42 31 image-14 false [0.0 dup dup] DrawBitmap
+350 -309 -324 35 19 false [0.0 dup dup] [1.0 dup dup] (Multi) 12 /Courier DrawText
+385 -309 -324 66 19 false [0.0 dup dup] [1.0 dup dup] (Font, ) 18 /Courier DrawText
+350 -328 -340 33 15 false [0.0 dup dup] [1.0 dup dup] (multi-) 12 /Times-Roman DrawText
+383 -328 -340 22 15 false [0.0 dup dup] [1.0 dup dup] (line ) 12 /Times-Italic DrawText
+405 -328 -340 35 15 false [0.0 dup dup] [1.0 dup dup] (text ) 12 /Courier-Bold DrawText
+391 -396 72 64 image-15 false [0.0 dup dup] DrawBitmap
+grestore
+
+grestore
+
+grestore
+
+grestore
+
+
+showpage
+%%Trailer
+%%DocumentFonts: /Times-Roman /Courier-Bold /Courier /Times-Italic Helvetica-Bold 
+%%BoundingBox: 72 154 540 636

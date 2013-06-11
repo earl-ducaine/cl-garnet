@@ -1,0 +1,416 @@
+%!PS-Adobe-2.0 EPSF-2.0
+%%Title: Opal 1
+%%Creator: Make-PS-File -- Garnet Version 2.2
+%%CreationDate: Sep 28, 1993, 5:33 PM
+%%For: 
+%%This file does not use real color
+%%DocumentFonts: (atend)
+%%BoundingBox: 15 54 597 738
+%%Pages: 1
+%%EndComments
+
+
+/TextDict 40 dict def
+/DrawText { % left top base-y opal-width height fill-p
+	    % fore-color back-color string size font-name => -
+    TextDict begin
+	gsave
+	    findfont exch scalefont setfont
+	    /s exch def
+	    /back-color exch def /fore-color exch def /fill-p exch def
+	    /height exch def  /opal-width exch def
+	    /base-y exch def  /top exch def
+	    /left exch 1 sub def % XXX: I don't know why!
+
+	    % Calculate distance to add between each character, based on the 
+	    % width expected by Opal, the width expected by postscript, and 
+	    % the number of characters to distribute the change over.
+	    /x-dist opal-width s stringwidth pop sub s length div def
+
+	    % Draw background of text if appropriate
+	    fill-p {
+		gsave
+		    newpath
+		    left top opal-width height RectanglePath
+		    back-color FillShape
+		grestore
+	    } if
+
+	    % Draw text in the appropriate color
+	    newpath
+	    s length 0 ne {
+		left base-y moveto
+		fore-color aload length 3 eq {
+		    setrgbcolor
+		    x-dist 0 s ashow
+		} { % Halftone pattern:
+		    %   fgR fgG fgB bgR bgG bgB top pattern
+		    %   fgR fgG fgB false top pattern
+		    /pattern exch def /top exch def /opaque? exch def
+		    opaque? not { .5 .5 .5 } if
+		    /bgB exch def /bgG exch def /bgR exch def
+		    /fgB exch def /fgG exch def /fgR exch def
+
+		    fgR bgR add 2 div
+		    fgG bgG add 2 div
+		    fgB bgB add 2 div
+		    setrgbcolor
+
+		    opaque? {
+			x-dist 0 s ashow
+		    } {
+			mark
+			/ch 1 string def
+			/space { /space { x-dist 0 rmoveto } def } def
+%			/jt statusdict begin jobtimeout end def
+			gsave { % try really hard to do it right
+			    s {
+				% don't take more than 2 seconds a character
+%				statusdict begin 2 setjobtimeout end
+				space
+				ch 0 3 -1 roll put
+				ch true charpath
+				currentpoint /yy exch def /xx exch def
+				fgR fgG fgB false top pattern FillPattern
+				newpath xx yy moveto
+			    } forall
+			} stopped grestore { % fall back in case we fail
+			    x-dist 0 s ashow
+			} if
+%			statusdict begin jt setjobtimeout end
+			cleartomark
+		    } ifelse
+		} ifelse
+	    } if
+	grestore
+    end
+} def
+
+/RoundtanglePath { % left top width height radius => -
+    /r exch def  /h exch def  /w exch def  /t exch def  /l exch def
+    /right l w add def  /bottom t h sub def
+    l r add t moveto                         % origin
+    right t right t r sub r arcto            % top side
+    right bottom right r sub bottom r arcto  % right side
+    l bottom l bottom r add r arcto          % bottom side
+    l t l r add t r arcto		     % left side
+    16 {pop} repeat  % each arcto accumulates 4 stack parameters
+} def
+
+/RoundtangleDict 27 dict def
+/DrawRoundtangle { % left top width height radius line-color
+		   % cap join dash thickness fill-color => -
+    gsave RoundtangleDict begin
+	/fill-color exch def  /thickness exch def
+	/dash-pattern exch def  /line-join exch def  /line-cap exch def
+	/line-color exch def  /radius exch def
+	/height exch def  /width exch def  /top exch def  /left exch def
+        
+	% Draw filling
+	newpath
+	left thickness add top thickness sub
+	width thickness 2 mul sub height thickness 2 mul sub
+        radius thickness sub dup 0 lt { pop 0 } if RoundtanglePath
+	fill-color FillShape
+
+	left thickness 2 div add top thickness 2 div sub
+	width thickness sub height thickness sub
+        radius thickness 2 div sub dup 0 lt { pop 0 } if RoundtanglePath
+
+	% Draw border
+	line-color line-cap line-join dash-pattern thickness
+	StrokeShape
+    end grestore
+} def
+
+
+/AdjustLineDict 20 dict def
+/AdjustLine { % x1 y1 x2 y2 width => x1 y1 x2 y2
+  AdjustLineDict begin
+    /width exch cvi def
+    /hw width 2 div def
+    /oddwidth? width 1 and 1 eq def
+    /y2 exch def /x2 exch def /y1 exch def /x1 exch def
+    /dx x2 x1 sub def /dy y2 y1 sub def
+    dy 0 eq {
+      dx 0 eq {
+	% point
+	oddwidth? {
+	  /x1 x1 .5 add def /y1 y1 .5 sub def
+	  /x2 x2 .5 add def /y2 y2 .5 sub def
+	} if
+      } {
+	% horizontal
+	oddwidth? {
+	  /y1 y1 .5 sub def
+	  /y2 y2 .5 sub def
+	} if
+      } ifelse
+    } {
+      dx 0 eq {
+	% vertical
+	oddwidth? {
+	  /x1 x1 .5 add def
+	  /x2 x2 .5 add def
+	} if
+      } {
+	% diagonal
+	oddwidth? {
+	  /x1 x1 .5 add def /y1 y1 .5 sub def
+	  /x2 x2 .5 add def /y2 y2 .5 sub def
+	} if
+      } ifelse
+    } ifelse
+    x1 y1 x2 y2
+  end
+} def
+
+/DrawLineDict 20 dict def
+/DrawLine { % line-color cap join dash thickness x2 y2 x1 y1 => -
+    gsave DrawLineDict begin
+	4 index AdjustLine
+	moveto lineto
+	StrokeShape
+    end grestore
+} def
+
+/RectanglePath { % left top width height => -
+    /h exch def  /w exch def
+    moveto			% Go to the left,top corner
+    w 0 rlineto			% top side
+    0 h neg rlineto		% right side
+    w neg 0 rlineto		% bottom side
+    closepath			% left side
+} def
+
+/RectangleDict 21 dict def
+/DrawRectangle { % left top width height line-color
+		 % cap join dash thickness fill-color => -
+    RectangleDict begin
+	/fill-color exch def  /thickness exch def /dash-pattern exch def
+	/line-join exch def  /line-cap exch def /line-color exch def
+	/height exch def /width exch def  /top exch def  /left exch def
+        /thickness-for-fill thickness 0 lt {0} {thickness} ifelse def
+	% Draw filling
+	newpath
+	left thickness-for-fill add top thickness-for-fill sub
+        width thickness-for-fill 2 mul sub height thickness-for-fill 2 mul sub
+	RectanglePath
+	fill-color FillShape
+	% Draw border
+	newpath
+	left thickness 2 div add  top thickness 2 div sub
+	width thickness sub  height thickness sub
+	RectanglePath
+	line-color line-cap line-join dash-pattern thickness StrokeShape
+    end
+} def
+
+/FillShape { % [halftone] | [r g b] | null => -
+    gsave
+        dup null eq { pop } {
+	  aload length 3 eq { setrgbcolor fill } {
+	      FillPattern
+	  } ifelse
+        } ifelse
+    grestore
+    newpath
+} def
+
+/StrokeShape { % line-color cap join dash thickness => -
+    % If no line is desired, pass -1 for line-thickness
+    dup 0 ge 5 index null ne and {
+	% if line-thickness >= 0, then draw the outline
+	gsave
+	    setlinewidth 0 setdash setlinejoin setlinecap
+	    aload length 3 eq { setrgbcolor stroke } {
+		strokepath FillPattern
+	    } ifelse
+	grestore
+    } {
+	pop pop pop pop pop
+    } ifelse
+    newpath
+} def
+
+/ClipDict 2 dict def
+/ClipToRectangle { % left top width height => -
+    ClipDict begin
+	/height exch def  /width exch def
+        newpath
+	    moveto			% Go to the left,top corner
+	    width 0 rlineto		% top side
+	    0 height neg rlineto	% right side
+	    width neg 0 rlineto		% bottom side
+	    closepath			% left side
+	gsave 1 setgray fill grestore
+	clip newpath
+    end
+} def
+
+
+%%EndProlog
+%%Page: 1 1
+
+gsave
+612 0 translate
+90 rotate
+72 72 translate
+0.75 0.75 scale
+-24 700 translate
+
+%
+% Begin new window
+%
+gsave
+0 0 912 776 ClipToRectangle
+gsave
+0 0 912 776 [0 0 0] 0 0 [] -1 [1 1 1] DrawRectangle
+grestore
+
+
+%
+% Begin new window
+%
+gsave
+0 0 translate
+0 0 912 776 ClipToRectangle
+gsave
+[0 0 0] 0 0 [] 1 267 -51 247 -51 DrawLine
+[0 0 0] 0 0 [] 1 742 -189 722 -216 DrawLine
+[0 0 0] 0 0 [] 1 742 -216 722 -216 DrawLine
+[0 0 0] 0 0 [] 1 742 -243 722 -216 DrawLine
+[0 0 0] 0 0 [] 1 735 -319 715 -319 DrawLine
+[0 0 0] 0 0 [] 1 614 -319 594 -319 DrawLine
+[0 0 0] 0 0 [] 1 565 -395 545 -408 DrawLine
+[0 0 0] 0 0 [] 1 565 -422 545 -408 DrawLine
+[0 0 0] 0 0 [] 1 554 -456 534 -456 DrawLine
+[0 0 0] 0 0 [] 1 426 -120 406 -343 DrawLine
+[0 0 0] 0 0 [] 1 426 -216 406 -343 DrawLine
+[0 0 0] 0 0 [] 1 426 -319 406 -343 DrawLine
+[0 0 0] 0 0 [] 1 426 -408 406 -343 DrawLine
+[0 0 0] 0 0 [] 1 426 -456 406 -343 DrawLine
+[0 0 0] 0 0 [] 1 426 -539 406 -343 DrawLine
+[0 0 0] 0 0 [] 1 428 -753 408 -753 DrawLine
+[0 0 0] 0 0 [] 1 286 -657 266 -712 DrawLine
+[0 0 0] 0 0 [] 1 286 -726 266 -712 DrawLine
+[0 0 0] 0 0 [] 1 286 -753 266 -712 DrawLine
+[0 0 0] 0 0 [] 1 152 -51 132 -368 DrawLine
+[0 0 0] 0 0 [] 1 152 -343 132 -368 DrawLine
+[0 0 0] 0 0 [] 1 152 -712 132 -368 DrawLine
+10 -322 122 92 5 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRoundtangle
+14 -326 -337 111 14 false [0 0 0] [1 1 1] (OPAL:VIEW-OBJECT) 12 /Courier-Bold DrawText
+16 -341 -352 45 14 false [0 0 0] [1 1 1] (:left 0) 12 /Courier DrawText
+16 -355 -366 38 14 false [0 0 0] [1 1 1] (:top 0) 12 /Courier DrawText
+16 -369 -380 52 14 false [0 0 0] [1 1 1] (:width 0) 12 /Courier DrawText
+16 -383 -394 59 14 false [0 0 0] [1 1 1] (:height 0) 12 /Courier DrawText
+16 -397 -408 108 14 false [0 0 0] [1 1 1] (:visible #k<F16>) 12 /Courier DrawText
+152 -12 95 78 5 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRoundtangle
+156 -16 -27 84 14 false [0 0 0] [1 1 1] (OPAL::WINDOW) 12 /Courier-Bold DrawText
+158 -31 -42 45 14 false [0 0 0] [1 1 1] (:left 0) 12 /Courier DrawText
+158 -45 -56 38 14 false [0 0 0] [1 1 1] (:top 0) 12 /Courier DrawText
+158 -59 -70 66 14 false [0 0 0] [1 1 1] (:width 355) 12 /Courier DrawText
+158 -73 -84 73 14 false [0 0 0] [1 1 1] (:height 277) 12 /Courier DrawText
+267 -40 172 22 5 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRoundtangle
+271 -44 -55 161 14 false [0 0 0] [1 1 1] (INTER:INTERACTOR-WINDOW) 12 /Courier-Bold DrawText
+152 -283 254 120 5 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRoundtangle
+156 -287 -298 146 14 false [0 0 0] [1 1 1] (OPAL:GRAPHICAL-OBJECT) 12 /Courier-Bold DrawText
+158 -302 -313 59 14 false [0 0 0] [1 1 1] (:width 20) 12 /Courier DrawText
+158 -316 -327 66 14 false [0 0 0] [1 1 1] (:height 20) 12 /Courier DrawText
+158 -330 -341 137 14 false [0 0 0] [1 1 1] (:draw-function :copy) 12 /Courier DrawText
+158 -344 -355 241 14 false [0 0 0] [1 1 1] (:line-style opal:default-line-style) 12 /Courier DrawText
+158 -358 -369 122 14 false [0 0 0] [1 1 1] (:filling-style NIL) 12 /Courier DrawText
+158 -372 -383 164 14 false [0 0 0] [1 1 1] (:select-outline-only NIL) 12 /Courier DrawText
+158 -386 -397 108 14 false [0 0 0] [1 1 1] (:hit-threshold 0) 12 /Courier DrawText
+426 -67 171 106 5 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRoundtangle
+430 -71 -82 62 14 false [0 0 0] [1 1 1] (OPAL:TEXT) 12 /Courier-Bold DrawText
+432 -86 -97 94 14 false [0 0 0] [1 1 1] (:width #k<F51>) 12 /Courier DrawText
+432 -100 -111 101 14 false [0 0 0] [1 1 1] (:height #k<F52>) 12 /Courier DrawText
+432 -114 -125 65 14 false [0 0 0] [1 1 1] (:string "") 12 /Courier DrawText
+432 -128 -139 158 14 false [0 0 0] [1 1 1] (:font opal:default-font) 12 /Courier DrawText
+432 -142 -153 150 14 false [0 0 0] [1 1 1] (:fill-background-p NIL) 12 /Courier DrawText
+432 -156 -167 137 14 false [0 0 0] [1 1 1] (:justification :left) 12 /Courier DrawText
+426 -184 296 64 5 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRoundtangle
+430 -188 -199 76 14 false [0 0 0] [1 1 1] (OPAL:BITMAP) 12 /Courier-Bold DrawText
+432 -203 -214 94 14 false [0 0 0] [1 1 1] (:width #k<F32>) 12 /Courier DrawText
+432 -217 -228 101 14 false [0 0 0] [1 1 1] (:height #k<F31>) 12 /Courier DrawText
+432 -231 -242 283 14 false [0 0 0] [1 1 1] (:filling-style opal:default-filling-style) 12 /Courier DrawText
+742 -178 87 22 5 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRoundtangle
+746 -182 -193 76 14 false [0 0 0] [1 1 1] (OPAL:PIXMAP) 12 /Courier-Bold DrawText
+742 -205 158 22 5 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRoundtangle
+746 -209 -220 147 14 false [0 0 0] [1 1 1] (OPAL:HOURGLASS-CURSOR) 12 /Courier-Bold DrawText
+742 -232 130 22 5 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRoundtangle
+746 -236 -247 119 14 false [0 0 0] [1 1 1] (OPAL:ARROW-CURSOR) 12 /Courier-Bold DrawText
+426 -273 168 92 5 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRoundtangle
+430 -277 -288 104 14 false [0 0 0] [1 1 1] (OPAL:MULTIPOINT) 12 /Courier-Bold DrawText
+432 -292 -303 155 14 false [0 0 0] [1 1 1] (:point-list \05018 10 ...\051) 12 /Courier DrawText
+432 -306 -317 87 14 false [0 0 0] [1 1 1] (:left #k<F30>) 12 /Courier DrawText
+432 -320 -331 80 14 false [0 0 0] [1 1 1] (:top #k<F29>) 12 /Courier DrawText
+432 -334 -345 94 14 false [0 0 0] [1 1 1] (:width #k<F28>) 12 /Courier DrawText
+432 -348 -359 101 14 false [0 0 0] [1 1 1] (:height #k<F27>) 12 /Courier DrawText
+614 -308 101 22 5 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRoundtangle
+618 -312 -323 90 14 false [0 0 0] [1 1 1] (OPAL:POLYLINE) 12 /Courier-Bold DrawText
+735 -259 108 120 5 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRoundtangle
+739 -263 -274 97 14 false [0 0 0] [1 1 1] (OPAL:ARROWHEAD) 12 /Courier-Bold DrawText
+741 -278 -289 59 14 false [0 0 0] [1 1 1] (:from-x 0) 12 /Courier DrawText
+741 -292 -303 59 14 false [0 0 0] [1 1 1] (:from-y 0) 12 /Courier DrawText
+741 -306 -317 59 14 false [0 0 0] [1 1 1] (:head-x 0) 12 /Courier DrawText
+741 -320 -331 59 14 false [0 0 0] [1 1 1] (:head-y 0) 12 /Courier DrawText
+741 -334 -345 66 14 false [0 0 0] [1 1 1] (:length 10) 12 /Courier DrawText
+741 -348 -359 80 14 false [0 0 0] [1 1 1] (:diameter 10) 12 /Courier DrawText
+741 -362 -373 60 14 false [0 0 0] [1 1 1] (:open-p T) 12 /Courier DrawText
+426 -383 119 50 5 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRoundtangle
+430 -387 -398 55 14 false [0 0 0] [1 1 1] (OPAL:ARC) 12 /Courier-Bold DrawText
+432 -402 -413 59 14 false [0 0 0] [1 1 1] (:angle1 0) 12 /Courier DrawText
+432 -416 -427 106 14 false [0 0 0] [1 1 1] (:angle2 \050/ PI 4\051) 12 /Courier DrawText
+565 -384 87 22 5 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRoundtangle
+569 -388 -399 76 14 false [0 0 0] [1 1 1] (OPAL:CIRCLE) 12 /Courier-Bold DrawText
+565 -411 72 22 5 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRoundtangle
+569 -415 -426 61 14 false [0 0 0] [1 1 1] (OPAL:OVAL) 12 /Courier-Bold DrawText
+426 -445 108 22 5 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRoundtangle
+430 -449 -460 97 14 false [0 0 0] [1 1 1] (OPAL:RECTANGLE) 12 /Courier-Bold DrawText
+554 -438 122 36 5 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRoundtangle
+558 -442 -453 111 14 false [0 0 0] [1 1 1] (OPAL:ROUNDTANGLE) 12 /Courier-Bold DrawText
+560 -457 -468 95 14 false [0 0 0] [1 1 1] (:radius :small) 12 /Courier DrawText
+426 -479 114 120 5 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRoundtangle
+430 -483 -494 62 14 false [0 0 0] [1 1 1] (OPAL:LINE) 12 /Courier-Bold DrawText
+432 -498 -509 80 14 false [0 0 0] [1 1 1] (:x1 0  :x2 0) 12 /Courier DrawText
+432 -512 -523 80 14 false [0 0 0] [1 1 1] (:y1 0  :y2 0) 12 /Courier DrawText
+432 -526 -537 87 14 false [0 0 0] [1 1 1] (:left #k<F25>) 12 /Courier DrawText
+432 -540 -551 80 14 false [0 0 0] [1 1 1] (:top #k<F24>) 12 /Courier DrawText
+432 -554 -565 94 14 false [0 0 0] [1 1 1] (:width #k<F23>) 12 /Courier DrawText
+432 -568 -579 101 14 false [0 0 0] [1 1 1] (:height #k<F24>) 12 /Courier DrawText
+432 -582 -593 60 14 false [0 0 0] [1 1 1] (:line-p T) 12 /Courier DrawText
+152 -673 114 78 5 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRoundtangle
+156 -677 -688 97 14 false [0 0 0] [1 1 1] (OPAL:AGGREGATE) 12 /Courier-Bold DrawText
+158 -692 -703 87 14 false [0 0 0] [1 1 1] (:left #k<F21>) 12 /Courier DrawText
+158 -706 -717 80 14 false [0 0 0] [1 1 1] (:top #k<F20>) 12 /Courier DrawText
+158 -720 -731 94 14 false [0 0 0] [1 1 1] (:width #k<F19>) 12 /Courier DrawText
+158 -734 -745 101 14 false [0 0 0] [1 1 1] (:height #k<F18>) 12 /Courier DrawText
+286 -604 150 106 5 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRoundtangle
+290 -608 -619 132 14 false [0 0 0] [1 1 1] (OPAL:MULTIFONT-TEXT) 12 /Courier-Bold DrawText
+292 -623 -634 107 14 false [0 0 0] [1 1 1] (:initial-text "") 12 /Courier DrawText
+292 -637 -648 108 14 false [0 0 0] [1 1 1] (:word-wrap-p NIL) 12 /Courier DrawText
+292 -651 -662 101 14 false [0 0 0] [1 1 1] (:text-width 300) 12 /Courier DrawText
+292 -665 -676 137 14 false [0 0 0] [1 1 1] (:fill-background-p T) 12 /Courier DrawText
+292 -679 -690 137 14 false [0 0 0] [1 1 1] (:draw-function :copy) 12 /Courier DrawText
+292 -693 -704 101 14 false [0 0 0] [1 1 1] (:show-marks NIL) 12 /Courier DrawText
+286 -715 108 22 5 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRoundtangle
+290 -719 -730 97 14 false [0 0 0] [1 1 1] (OPAL:AGGRELIST) 12 /Courier-Bold DrawText
+286 -742 122 22 5 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRoundtangle
+290 -746 -757 111 14 false [0 0 0] [1 1 1] (OPAL:AGGREGADGET) 12 /Courier-Bold DrawText
+428 -742 116 22 5 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRoundtangle
+432 -746 -757 105 14 false [0 0 0] [1 1 1] (OPAL:AGGREGRAPH) 12 /Courier-Bold DrawText
+grestore
+
+grestore
+
+grestore
+
+grestore
+
+
+showpage
+%%Trailer
+%%DocumentFonts: /Courier /Courier-Bold 
+%%BoundingBox: 15 54 597 738

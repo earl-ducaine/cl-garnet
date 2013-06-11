@@ -1,0 +1,70 @@
+@Comment{CONTENTS of demos/demoguide.mss by Scribe 7(1700) on 30 November 1994 at 21:33}
+@PrefaceSection(Table of Contents)
+@Set(Page=1)@Style(PageNumber <@i>)
+@define(foot,invisible)
+@begin(TC2)@rfstr(483)1.@ @$Introduction@end(TC2)
+
+@begin(TC2)@rfstr(483)2.@ @$Loading and Compiling Demos@end(TC2)
+
+@begin(TC2)@rfstr(483)3.@ @$Running Demo Programs@end(TC2)
+
+@begin(TC2)@rfstr(484)4.@ @$Double-Buffered Windows@end(TC2)
+
+@begin(TC2)@rfstr(484)5.@ @$Best Examples@end(TC2)
+
+@begin(TC3)@rfstr(484)5.1.@ @$GarnetDraw@end(TC3)
+
+@begin(TC3)@rfstr(484)5.2.@ @$Demo-Editor@end(TC3)
+
+@begin(TC3)@rfstr(485)5.3.@ @$Demo-Arith@end(TC3)
+
+@begin(TC3)@rfstr(485)5.4.@ @$Demo-Grow@end(TC3)
+
+@begin(TC3)@rfstr(485)5.5.@ @$Multifont and Multi-Line Text Input@end(TC3)
+
+@begin(TC3)@rfstr(485)5.6.@ @$Demo-Multifont@end(TC3)
+
+@begin(TC3)@rfstr(485)5.7.@ @$Creating New Objects@end(TC3)
+
+@begin(TC3)@rfstr(485)5.8.@ @$Angles@end(TC3)
+
+@begin(TC3)@rfstr(485)5.9.@ @$Aggregraphs@end(TC3)
+
+@begin(TC3)@rfstr(485)5.10.@ @$Scroll Bars@end(TC3)
+
+@begin(TC3)@rfstr(486)5.11.@ @$Menus@end(TC3)
+
+@begin(TC3)@rfstr(486)5.12.@ @$Animation@end(TC3)
+
+@begin(TC3)@rfstr(486)5.13.@ @$Garnet-Calculator@end(TC3)
+
+@begin(TC3)@rfstr(486)5.14.@ @$Browsers@end(TC3)
+
+@begin(TC3)@rfstr(486)5.15.@ @$Demo-Virtual-Agg@end(TC3)
+
+@begin(TC3)@rfstr(487)5.16.@ @$Demo-Pixmap@end(TC3)
+
+@begin(TC3)@rfstr(487)5.17.@ @$Demo-Gesture@end(TC3)
+
+@begin(TC3)@rfstr(487)5.18.@ @$Demo-Unidraw@end(TC3)
+
+@begin(TC3)@rfstr(487)5.19.@ @$Gadget Demos@end(TC3)
+
+@begin(TC3)@rfstr(489)5.20.@ @$Real-Time Constraints and Performance@end(TC3)
+
+@begin(TC2)@rfstr(489)6.@ @$Old Demos@end(TC2)
+
+@begin(TC3)@rfstr(489)6.1.@ @$Moving and Growing Objects@end(TC3)
+
+@begin(TC3)@rfstr(489)6.2.@ @$Menus@end(TC3)
+
+@begin(TC2)@rfstr(489)7.@ @$Demos of Advanced Features@end(TC2)
+
+@begin(TC3)@rfstr(489)7.1.@ @$Using Multiple Windows@end(TC3)
+
+@begin(TC3)@rfstr(489)7.2.@ @$Modes@end(TC3)
+
+@begin(TC3)@rfstr(489)7.3.@ @$Using Start-Interactor@end(TC3)
+
+@begin(TC1)@rfstr(490)Index@end(TC1)
+

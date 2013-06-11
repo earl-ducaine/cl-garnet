@@ -1,0 +1,54 @@
+@Comment{CONTENTS of gilt/gilt-manual.mss by Scribe 7(1700) on 30 November 1994 at 21:34}
+@PrefaceSection(Table of Contents)
+@Set(Page=1)@Style(PageNumber <@i>)
+@define(foot,invisible)
+@begin(TC1)@rfstr(507)1.@ @$Gilt@end(TC1)
+
+@begin(TC2)@rfstr(507)1.1.@ @$Introduction@end(TC2)
+
+@begin(TC2)@rfstr(508)1.2.@ @$Loading Gilt@end(TC2)
+
+@begin(TC2)@rfstr(508)1.3.@ @$User Interface@end(TC2)
+
+@begin(TC3)@rfstr(510)1.3.1.@ @$Gadget Palettes@end(TC3)
+
+@begin(TC3)@rfstr(510)1.3.2.@ @$Placing Gadgets@end(TC3)
+
+@begin(TC3)@rfstr(511)1.3.3.@ @$Selecting and Editing Gadgets@end(TC3)
+
+@begin(TC2)@rfstr(512)1.4.@ @$Editing Strings@end(TC2)
+
+@begin(TC2)@rfstr(513)1.5.@ @$Commands@end(TC2)
+
+@begin(TC3)@rfstr(513)1.5.1.@ @$To-Top and To-Bottom@end(TC3)
+
+@begin(TC3)@rfstr(513)1.5.2.@ @$Copying Objects@end(TC3)
+
+@begin(TC3)@rfstr(514)1.5.3.@ @$Aligning Objects@end(TC3)
+
+@begin(TC3)@rfstr(515)1.5.4.@ @$Deleting Objects@end(TC3)
+
+@begin(TC3)@rfstr(515)1.5.5.@ @$Properties@end(TC3)
+
+@begin(TC3)@rfstr(516)1.5.6.@ @$Saving to a file@end(TC3)
+
+@begin(TC3)@rfstr(517)1.5.7.@ @$Reading from a file@end(TC3)
+
+@begin(TC3)@rfstr(518)1.5.8.@ @$Value and Enable Control@end(TC3)
+
+@begin(TC2)@rfstr(518)1.6.@ @$Run Mode@end(TC2)
+
+@begin(TC2)@rfstr(518)1.7.@ @$Hacking Objects@end(TC2)
+
+@begin(TC2)@rfstr(519)1.8.@ @$Using Gilt-Created Dialog Boxes@end(TC2)
+
+@begin(TC3)@rfstr(519)1.8.1.@ @$Pop-up dialog box@end(TC3)
+
+@begin(TC2)@rfstr(520)1.9.@ @$Using Gilt-Created Objects in Windows@end(TC2)
+
+@begin(TC2)@rfstr(520)1.10.@ @$Hacking Gilt-Created Files@end(TC2)
+
+@begin(TC1)@rfstr(522)References@end(TC1)
+
+@begin(TC1)@rfstr(523)Index@end(TC1)
+

@@ -1,0 +1,163 @@
+%!PS-Adobe-1.0
+%%Creator: WOLF.DANTE.RI.CMU.EDU:prm (Philippe Marchal)
+%%Title: text-list.bmt (xwdump)
+%%CreationDate: Fri Jun 30 16:29:10 1989
+%%EndComments
+%%Pages: 1
+%%BoundingBox: 265 351 347 440
+%%EndProlog
+%%Page: 1 1
+
+/bitdump % stk: width, height, iscale
+% dump a bit image with lower left corner at current origin,
+% scaling by iscale (iscale=1 means 1/300 inch per pixel)
+{
+	% read arguments
+	/iscale exch def
+	/height exch def
+	/width exch def
+
+	% scale appropriately
+	width iscale mul height iscale mul scale
+
+	% allocate space for one scanline of input
+	/picstr % picstr holds one scan line
+		width 7 add 8 idiv % width of image in bytes = ceiling(width/8)
+		string
+		def
+
+	% read and dump the image
+	width height 1 [width 0 0 height neg 0 height]
+	{ currentfile picstr readhexstring pop }
+	image
+} def
+72 300 div dup scale
+1104 1464 translate
+114 124 3 bitdump
+000000000000000000000000000001
+000000000000000000000000000001
+3fffffffffffffffffffffffffff01
+3fffffffffffffffffffffffffff01
+3fffffffffffffffffffffffffff01
+3fffffffffffffffffffffffffff01
+3fffffffffffffffffffffffffff01
+3fffffffffffffffffffffffffff01
+3fffffffffffffffffffffffffff01
+3fffffffffffffffffffffffffff01
+3fffffffffffffffffffffffffff01
+3fffffffffffffffffffffffffff01
+3ff01bffffffffffffffffffffff01
+3ffefbffbfffffffffffffffffff01
+3ffefbffffffffffffffffffffff01
+3ffefbffffffffffffffffffffff01
+3ffef81fbf03ffffffffffffffff01
+3ffefbefbeffffffffffffffffff01
+3ffefbefbeffffffffffffffffff01
+3ffefbefbf07ffffffffffffffff01
+3ffefbefbffbffffffffffffffff01
+3ffefbefbffbffffffffffffffff01
+3ffefbefbe07ffffffffffffffff01
+3fffffffffffffffffffffffffff01
+3fffffffffffffffffffffffffff01
+3fffffffffffffffffffffffffff01
+3fffffffffffffffffffffffffff01
+3fffffffffffffffffffffffffff01
+3fffffffffffffffffffffffffff01
+3fffffffffffffffffffffffffff01
+3ffeffffffffffffffffffffffff01
+3fffffffffffffffffffffffffff01
+3fffffffffffffffffffffffffff01
+3ffefc0fffffffffffffffffffff01
+3ffefbffffffffffffffffffffff01
+3ffefbffffffffffffffffffffff01
+3ffefc1fffffffffffffffffffff01
+3ffeffefffffffffffffffffffff01
+3ffeffefffffffffffffffffffff01
+3ffef81fffffffffffffffffffff01
+3fffffffffffffffffffffffffff01
+3fffffffffffffffffffffffffff01
+3fffffffffffffffffffffffffff01
+3fffffffffffffffffffffffffff01
+3fffffffffffffffffffffffffff01
+3fffffffffffffffffffffffffff01
+3fffffffffffffffffffffffffff01
+3fffffffffffffffffffffffffff01
+3fffffffffffffffffffffffffff01
+3fffffffffffffffffffffffffff01
+3ff8383fffffffffffffffffffff01
+3ff7dbdfffffffffffffffffffff01
+3fffdbdfffffffffffffffffffff01
+3ff81bdfffffffffffffffffffff02
+3ff7dbdfffffffffffffffffffff02
+3ff7dbdfffffffffffffffffffff02
+3ff81bdfffffffffffffffffffff02
+3fffffffffffffffffffffffffff02
+3fffffffffffffffffffffffffff02
+3fffffffffffffffffffffffffff00
+3fffffffffffffffffffffffffff00
+3fffffffffffffffffffffffffff31
+3fffffffffffffffffffffffffff0e
+3fffffffffffffc7ffffffffffff02
+3ffffffffffffff7ffffffffffff02
+3ffffffffffffff7ffffffffffff02
+3ffffffffffffff7ffffffffffff35
+3ff83bee0e2703f7e0ffffffffff00
+3ff7ddddf6db7df7df7fffffffff3f
+3ff7debff6db7df7df7fffffffff00
+3ff03f7e06db7df7c0ffffffffff00
+3ff7febdf6db7df7dfffffffffff00
+3ff7fdddf6db03f7dfffffffffff3f
+3ff81bee06db7fc1e07fffffffff35
+3fffffffffff7fffffffffffffff0d
+3fffffffffff7fffffffffffffff00
+3fffffffffffffffffffffffffff0b
+3fffffffffffffffffffffffffff00
+3fffffffffffffffffffffffffff3f
+3fffffffffffffffffffffffffff00
+3fffff1fffffffffffffffffffff00
+3ffffeefffffffffffffffffffff34
+3ffffeffffffffffffffffffffff02
+3ffffeffffffffffffffffffffff02
+3ff87effffffffffffffffffffff02
+3ff7b83fffffffffffffffffffff02
+3ff7beffffffffffffffffffffff00
+3ff7beffffffffffffffffffffff35
+3ff7beffffffffffffffffffffff0b
+3ff7beffffffffffffffffffffff00
+3ff87effffffffffffffffffffff35
+3fffffffffffffffffffffffffff00
+3fffffffffffffffffffffffffff00
+3fffffffffffffffffffffffffff00
+3fffffffffffffffffffffffffff03
+3fffffffffffffffffffffffffff00
+3fffffffffffffffffffffffffff00
+3fffffffffffffffffffffffffff00
+3ffffffffffffffffbfbffffffff00
+3ffffffffffffffffffbffffffff03
+3ffffffffffffffffffbffffffff3a
+3ff83c1e0e8783c1fbe0f8389fff00
+3ff7dbedf67f7dbefbfbf7db6fff2b
+3fffdbedf6ff7dbefbfbf7db6fff2b
+3ff81bedf6ff03befbfbf03b6fff04
+3ff7dc0e06ff7fc0fbfbf7fb6fff03
+3ff7dfeff6ff7ffefbfb77fb6fff00
+3ff81feff6ff81fefbfcf81b6fff00
+3ffffbedf7ffffbeffffffffffff00
+3ffffc1e0fffffc1ffffffffffff03
+3fffffffffffffffffffffffffff19
+3fffffffffffffffffffffffffff37
+3fffffffffffffffffffffffffff2b
+3fffffffffffffffffffffffffff0f
+3fffffffffffffffffffffffffff05
+3fffffffffffffffffffffffffff07
+3fffffffffffffffffffffffffff1d
+3fffffffffffffffffffffffffff00
+3fffffffffffffffffffffffffff00
+3fffffffffffffffffffffffffff07
+3fffffffffffffffffffffffffff0e
+3fffffffffffffffffffffffffff05
+000000000000000000000000000017
+000000000000000000000000000012
+
+showpage
+%%Trailer

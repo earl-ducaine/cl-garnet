@@ -1,0 +1,237 @@
+\make{manual}
+\disable{figurecontents}
+\libraryfile{Garnet}
+\string{TitleString = `Sample Program'}
+\use{Bibliography = `garnet.bib'}
+\begin{titlepage}
+
+\begin{titlebox}
+\vspace{0.6 inch}
+\bg{A Sample Garnet Program}
+
+{\bf Brad A. Myers}
+\vspace{0.3 line}
+\value{date}
+\end{titlebox}
+\vspace{0.5 inch}
+\begin{center}
+{\bf Abstract}\end{center}
+\begin{text}
+This file contains a sample program written using the Garnet Toolkit.  The
+program is a simple graphical editor that allows the user to create boxes
+and arrows.
+
+\vspace{0.5 inch}
+\include{creditetc.mss}
+\end{text}
+\end{titlepage}
+
+
+\include{pagenumbers.mss}
+\set{page = sampleprog-first-page}
+
+\artsection{Introduction}
+The program in this file is implemented using the Garnet Toolkit, and is
+presented as an example of how to write programs using the toolkit.  The
+program implements a graphical editor that allows the user to create boxes
+with textual labels which can be connected by lines.  The lines have
+arrowheads, and go from the center of one box to the center of another.
+The boxes can be moved or changed size, and the arrows stay attached
+correctly.  The boxes or lines can also be deleted, and the labels can be
+edited.
+
+The sample program is in the file \pr{demo-editor.lisp}, and a source and
+binary (compiled) version should be available in the \pr{demos}
+sub-directory of the Garnet system files.
+
+This graphical editor shows the use of:
+\begin{itemize}
+\item Constraints: to keep the arrows centered,
+to keep the name labels at the tops of boxes, etc.
+
+\item Opal objects: roundtangles, cursor-text, windows.
+
+\item Interactors: to choose which drawing mode (\pr{menu-interactor}), to edit
+the text strings (two \pr{text-interactor}s), and to create new objects
+(\pr{two-point-interactor}).
+
+\item Toolkit widgets: \pr{Text-button-panel} (a form of menu),
+\pr{graphics-selection} (to show
+which object is selected and allow it to be moved), and \pr{arrow-line}s.
+These widgets have built in Opal objects and Interactors.
+
+\item Aggregadgets: to group the roundtangle and label string.
+
+\item Creating instances from prototypes (creating the new boxes and arrows).
+\end{itemize}
+
+This code is about 365 lines long, including comments, and took me two
+hours to code and one hour to debug.  I did not use any higher-level Garnet
+tools to create it (it was all coded directly in Lisp).
+
+\artsection{Loading the Editor}
+
+After loading \pr{Garnet-loader}, either of the following commands
+will load the editor:
+
+\begin{programexample}
+(garnet-load `demos:demo-editor')        {\it ; To load the compiled version}
+\end{programexample}
+or
+\begin{programexample}
+(garnet-load `demos-src:demo-editor')    {\it ; To load the interpreted version, which}
+                                         {\it ; may make experimenting/debugging easier}
+\end{programexample}
+
+
+
+\artsection{User Interface}
+
+A snap shot of the editor in use is shown in Figure \ref{SampleFig}.
+\begin{figure}
+\bar{}
+\begin{center}
+\graphic{Postscript=`sampleprog/toolkitpic.PS', boundingbox=file}\end{center}
+\caption{A Sample Garnet Application.  The code for this application is
+listed at the end of this technical report.}
+\tag{SampleFig}
+\bar{}
+\end{figure}
+
+The user interface is as follows.  The menu at the top determines the
+current mode.  When the roundtangle is outlined, the user can draw new
+boxes, and when the arrow is outlined, the user can draw new arrows.
+Press with either the left or right mouse buttons over one to change modes.
+
+To create a new roundtangle, press with the {\it right} button in the
+workspace window (on the right) and hold down.  Drag to the desired size
+and then release.  Next, type in the new name.  Various editing characters
+are supported during typing, including:
+\begin{description}
+\item[] \pr{{\tt\char`\^}h, delete, backspace}: delete previous character.
+
+\item[] \pr{{\tt\char`\^}d}: delete next character.
+
+\item[] \pr{{\tt\char`\^}u}: delete entire string.
+
+\item[] \pr{{\tt\char`\^}b, left-arrow}: go back one character.
+
+\item[] \pr{{\tt\char`\^}f, right-arrow}: go forward one character.
+
+\item[] \pr{{\tt\char`\^}a, home}: go to the beginning of the string.
+
+\item[] \pr{{\tt\char`\^}e, end}: go to the end of the string.
+
+\item[] \pr{{\tt\char`\^}y, insert}: insert the contents of the X cut buffer into the string at the
+current point.
+\end{description}
+When finished typing, press RETURN or any mouse button to stop.
+
+To create a new arrow, when in arrow mode, press with the {\it right} button over
+a roundtangle and release over a different roundtangle.  An arrow will be
+drawn starting at the center of the first roundtangle and going to the
+center of the other one.
+
+Press with the {\it left} button on a roundtangle or an arrow to select it.
+Press on the background to cause there to be no selection.  Press and
+release on the ``Delete'' button to delete the selected object.
+
+If a roundtangle is selected, you can move it by pressing on a small white
+square with the left button and dragging to the new position and releasing.
+You can change its size by pressing with the left button on a black square.
+While the dotted outline box is displayed, you can abort the operation by
+moving outside the window and releasing, or by hitting {\tt\char`\^}G (control-G).
+
+To change the string of a label, press on the label with the left button
+and begin typing.  When finished typing, press RETURN or any mouse button
+to stop, or press {\tt\char`\^}G to abort the editing and return to the original string.
+
+\artsection{Overview of How the Code Works}
+
+The next section contains the actual code for the demo editor.  This
+section presents some the parts of the design and serves as a guide to the
+code.
+
+The standard ``Garnet style'' is to \pr{USE-PACKAGE} the \pr{KR} package,
+and directly reference all the other Garnet packages, so this is how the
+code is written.  Functions such as \pr{create-instance, s-value,
+o-formula, formula, gv,} and \pr{gvl} are defined in \pr{KR}.
+
+The first part of the code creates {\it prototypes} of the basic items that
+the user will create: arrow lines and labeled boxes.  When the editor is
+running, the code will create an {\it instance} of one of these
+prototypes to get a new set of objects to be displayed.  The arrow line
+object is composed of one \pr{arrow-line} from the Garnet-Gadget set, with
+some special {\it constraints} on its end-points.  The arrow-line is
+parameterized by the two objects it is connected to.  These two objects are
+kept in slots of the arrow-line: \pr{:from-obj} and \pr{:to-obj}.
+The constraints on the end-points of the arrow-line are
+expressed as {\it formulas} that cause the arrow to go from the center of the
+object stored in the \pr{:from-obj} slot of the arrowline, to the center of
+the object in the \pr{:to-obj} slot.
+
+The labeled box is more complicated.  It is composed of two parts: a
+rounded-rectangle (``roundtangle'') and a label.  An {\it AggreGadget} is
+used to compose these together.  The boundaries of the roundtangle are
+defined by the values in the \pr{:box} slot, since the standard
+\pr{Move-Grow-Interactor} modifies objects by setting this slot.  The label
+string is constrained to be centered at the top of the roundtangle.  The
+actual string used is stored both at the top level AggreGadget, and in the
+text object, so formulas are set up to keep these two \pr{:string} slots
+having the same value.
+
+The next function (\pr{create-mode-menu}) creates the top menu that
+contains a label object and an arrow object.  A feedback rectangle is also
+created to show what the current mode is.  This feedback rectangle has
+formulas that keep it over whatever mode object is selected.
+An interactor is then created to allow the user to choose the mode.
+
+The main command menu is created using \pr{create-menu}, which simply
+creates an instance of a \pr{garnet-gadget:text-button-panel} in the
+correct place.  The functions to be executed are \pr{delete-object} and
+\pr{do-quit}, and these are defined next.  The only trick here is that if a
+labeled box is deleted, the lines to it are also deleted.  For quit,
+destroying a window automatically destroys all of its contents.
+
+Creating a new object is fairly straightforward.  The interactor is queried
+to find out whether to create a line or a box, and the appropriate kind of
+object is then created.  Lines can only start or end in boxes, so the
+appropriate boxes are found.  To appear in a window, the newly created
+objects must be added to an {\it aggregate} which is attached to the window,
+Here, the aggregate found by looking in the \pr{:objs-aggregate} slot of
+the interactor.
+
+Another important feature of the \pr{Create-New-Obj} procedure is that if
+the object being created is a box, then it starts an interactor to allow
+the user to type the text label.
+
+The top-level, exported procedure, \pr{do-go}, starts everything up by
+creating a window,
+a sub-window to be the work area, and top-level aggregates for both
+windows.  Another aggregate will hold the user-created objects.  The
+\pr{selection} object will show which object is selected, and also allow
+that object to be moved or grown (if it is not a line).  Two text editing
+interactors are then created.  One is used when a new object is created to
+have the user type in the initial name.  This one is started explicitly
+using \pr{Start-interactor} in \pr{Create-New-Object}.  The other
+interactor is used when the user presses on the text label of an object to
+edit the name.
+
+Finally, the interactor to create new objects is defined.  This one is a
+little complex, because it needs to decide whether to use a line or
+rectangle feedback based on the current mode.
+
+The last step is to add the top level aggregates to the windows and call
+\pr{update} to get the objects to appear.  If you are running Allegro, Lucid,
+Lispworks, CMUCL, or MCL CommonLisp, they will begin operating by
+themselves, but under other CommonLisps, the \pr{Main-Event-Loop} call
+is needed to get the interactors to run.  The
+\pr{Exit-Main-Event-Loop} function in \pr{Do-Quit} causes
+\pr{Main-Event-Loop} to exit.
+
+\newpage{}
+\artsection{The Code}
+\begin{programexample}
+\include{sampleprog/demo-editor.lisp}
+\end{programexample}
+

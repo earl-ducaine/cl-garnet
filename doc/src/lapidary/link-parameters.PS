@@ -1,0 +1,410 @@
+%!PS-Adobe-2.0 EPSF-2.0
+%%Title: link parameters
+%%Creator: Make-PS-File -- Garnet Version 2.2
+%%CreationDate: Aug 11, 1993, 6:00 PM
+%%For: 
+%%This file does not use real color
+%%DocumentFonts: (atend)
+%%BoundingBox: 72 243 540 548
+%%Pages: 1
+%%EndComments
+
+
+/AdjustLineDict 20 dict def
+/AdjustLine { % x1 y1 x2 y2 width => x1 y1 x2 y2
+  AdjustLineDict begin
+    /width exch cvi def
+    /hw width 2 div def
+    /oddwidth? width 1 and 1 eq def
+    /y2 exch def /x2 exch def /y1 exch def /x1 exch def
+    /dx x2 x1 sub def /dy y2 y1 sub def
+    dy 0 eq {
+      dx 0 eq {
+	% point
+	oddwidth? {
+	  /x1 x1 .5 add def /y1 y1 .5 sub def
+	  /x2 x2 .5 add def /y2 y2 .5 sub def
+	} if
+      } {
+	% horizontal
+	oddwidth? {
+	  /y1 y1 .5 sub def
+	  /y2 y2 .5 sub def
+	} if
+      } ifelse
+    } {
+      dx 0 eq {
+	% vertical
+	oddwidth? {
+	  /x1 x1 .5 add def
+	  /x2 x2 .5 add def
+	} if
+      } {
+	% diagonal
+	oddwidth? {
+	  /x1 x1 .5 add def /y1 y1 .5 sub def
+	  /x2 x2 .5 add def /y2 y2 .5 sub def
+	} if
+      } ifelse
+    } ifelse
+    x1 y1 x2 y2
+  end
+} def
+
+/DrawLineDict 20 dict def
+/DrawLine { % line-color cap join dash thickness x2 y2 x1 y1 => -
+    gsave DrawLineDict begin
+	4 index AdjustLine
+	moveto lineto
+	StrokeShape
+    end grestore
+} def
+
+/TextDict 40 dict def
+/DrawText { % left top base-y opal-width height fill-p
+	    % fore-color back-color string size font-name => -
+    TextDict begin
+	gsave
+	    findfont exch scalefont setfont
+	    /s exch def
+	    /back-color exch def /fore-color exch def /fill-p exch def
+	    /height exch def  /opal-width exch def
+	    /base-y exch def  /top exch def
+	    /left exch 1 sub def % XXX: I don't know why!
+
+	    % Calculate distance to add between each character, based on the 
+	    % width expected by Opal, the width expected by postscript, and 
+	    % the number of characters to distribute the change over.
+	    /x-dist opal-width s stringwidth pop sub s length div def
+
+	    % Draw background of text if appropriate
+	    fill-p {
+		gsave
+		    newpath
+		    left top opal-width height RectanglePath
+		    back-color FillShape
+		grestore
+	    } if
+
+	    % Draw text in the appropriate color
+	    newpath
+	    s length 0 ne {
+		left base-y moveto
+		fore-color aload length 3 eq {
+		    setrgbcolor
+		    x-dist 0 s ashow
+		} { % Halftone pattern:
+		    %   fgR fgG fgB bgR bgG bgB top pattern
+		    %   fgR fgG fgB false top pattern
+		    /pattern exch def /top exch def /opaque? exch def
+		    opaque? not { .5 .5 .5 } if
+		    /bgB exch def /bgG exch def /bgR exch def
+		    /fgB exch def /fgG exch def /fgR exch def
+
+		    fgR bgR add 2 div
+		    fgG bgG add 2 div
+		    fgB bgB add 2 div
+		    setrgbcolor
+
+		    opaque? {
+			x-dist 0 s ashow
+		    } {
+			mark
+			/ch 1 string def
+			/space { /space { x-dist 0 rmoveto } def } def
+%			/jt statusdict begin jobtimeout end def
+			gsave { % try really hard to do it right
+			    s {
+				% don't take more than 2 seconds a character
+%				statusdict begin 2 setjobtimeout end
+				space
+				ch 0 3 -1 roll put
+				ch true charpath
+				currentpoint /yy exch def /xx exch def
+				fgR fgG fgB false top pattern FillPattern
+				newpath xx yy moveto
+			    } forall
+			} stopped grestore { % fall back in case we fail
+			    x-dist 0 s ashow
+			} if
+%			statusdict begin jt setjobtimeout end
+			cleartomark
+		    } ifelse
+		} ifelse
+	    } if
+	grestore
+    end
+} def
+
+/DefImage { % image-name font-name w h string => -
+  20 dict begin
+    /ImageString exch def /ImageHeight exch def /ImageWidth exch def
+    /FontName exch def
+    /ImageName exch def
+    /FontType 3 def
+    /FontMatrix [1 0 0 1 0 0] def
+    /FontBBox [0 0 1 1] def
+    /Encoding [
+      /image 255 { /.notdef } repeat
+    ] def
+    /BuildChar { % font char => -
+      pop begin
+        1 0
+	0 0 1 1 setcachedevice
+	gsave
+	  ImageWidth ImageHeight false
+	  [ ImageWidth 0 0 ImageHeight 0 0 ]
+          {ImageString} imagemask
+	grestore
+      end
+    } def
+    ImageName currentdict definefont
+    FontName exch
+    ImageName ImageString
+  end
+  def def
+} def
+
+
+/FillPattern { % fgR fgG fgB [bgR bgG bgB] opaque? top font => -
+  50 dict begin gsave
+    /font exch def
+    /top exch def
+    /opaque? exch def
+    /w font /ImageWidth get def
+    /h font /ImageHeight get def
+    font [w 0 0 h 0 0] makefont setfont
+    pathbbox
+    /y1 exch def /x1 exch def
+    /y0 exch def /x0 exch def
+    clip
+    opaque? {
+      gsave
+	setrgbcolor
+	fill
+      grestore
+    } if
+    newpath
+    setrgbcolor
+    /y0 y0 top sub h div floor h mul top add cvi def
+    /x0 x0 w div floor w mul cvi def
+    x0 y0 translate
+    /W x1 x0 sub w div ceiling cvi 1 add def
+    /H y1 y0 sub h div ceiling cvi def
+    /s W string def
+    H {
+      0 0 moveto
+      s show
+      0 h translate
+    } repeat
+  grestore end
+  newpath
+} def
+
+
+/RectanglePath { % left top width height => -
+    /h exch def  /w exch def
+    moveto			% Go to the left,top corner
+    w 0 rlineto			% top side
+    0 h neg rlineto		% right side
+    w neg 0 rlineto		% bottom side
+    closepath			% left side
+} def
+
+/RectangleDict 21 dict def
+/DrawRectangle { % left top width height line-color
+		 % cap join dash thickness fill-color => -
+    RectangleDict begin
+	/fill-color exch def  /thickness exch def /dash-pattern exch def
+	/line-join exch def  /line-cap exch def /line-color exch def
+	/height exch def /width exch def  /top exch def  /left exch def
+        /thickness-for-fill thickness 0 lt {0} {thickness} ifelse def
+	% Draw filling
+	newpath
+	left thickness-for-fill add top thickness-for-fill sub
+        width thickness-for-fill 2 mul sub height thickness-for-fill 2 mul sub
+	RectanglePath
+	fill-color FillShape
+	% Draw border
+	newpath
+	left thickness 2 div add  top thickness 2 div sub
+	width thickness sub  height thickness sub
+	RectanglePath
+	line-color line-cap line-join dash-pattern thickness StrokeShape
+    end
+} def
+
+/DrawGenericWindowFrame { % label left top w h
+			  % leftmargin topmargin rightmargin bottommargin => -
+  30 dict begin
+
+  { % setup
+    /bottommargin exch def /rightmargin exch def
+    /topmargin exch def /leftmargin exch def
+    /h exch def /w exch def /y exch h sub def /x exch def
+    /label exch def
+    /pointsize
+      topmargin 1 sub
+      dup 1 lt { pop 1 } if
+      dup 12 gt { 12 sub 3 div 12 add } if
+    def
+
+    /bottom y def /top y h add def
+    /left x def /right  x w add def
+    1 setlinewidth
+    0 setlinecap
+  } exec
+
+  { % background
+    newpath
+    left leftmargin sub bottom bottommargin sub moveto
+    left leftmargin sub top topmargin add lineto
+    right rightmargin add top topmargin add lineto
+    right rightmargin add bottom bottommargin sub lineto
+    closepath
+    0 setgray fill
+
+    left bottom moveto
+    left top lineto
+    right top lineto
+    right bottom lineto
+    closepath
+    1 setgray fill
+  } exec
+
+  topmargin 8 ge {
+    /Helvetica-Bold findfont pointsize scalefont setfont
+    label stringwidth pop
+    left right add 2 div
+    exch 2 div sub
+    top topmargin 2 div add pointsize 2 div sub 2 add moveto
+    1 setgray
+    label show
+  } if
+
+  end
+} def
+
+/FillShape { % [halftone] | [r g b] | null => -
+    gsave
+        dup null eq { pop } {
+	  aload length 3 eq { setrgbcolor fill } {
+	      FillPattern
+	  } ifelse
+        } ifelse
+    grestore
+    newpath
+} def
+
+/StrokeShape { % line-color cap join dash thickness => -
+    % If no line is desired, pass -1 for line-thickness
+    dup 0 ge 5 index null ne and {
+	% if line-thickness >= 0, then draw the outline
+	gsave
+	    setlinewidth 0 setdash setlinejoin setlinecap
+	    aload length 3 eq { setrgbcolor stroke } {
+		strokepath FillPattern
+	    } ifelse
+	grestore
+    } {
+	pop pop pop pop pop
+    } ifelse
+    newpath
+} def
+
+/ClipDict 2 dict def
+/ClipToRectangle { % left top width height => -
+    ClipDict begin
+	/height exch def  /width exch def
+        newpath
+	    moveto			% Go to the left,top corner
+	    width 0 rlineto		% top side
+	    0 height neg rlineto	% right side
+	    width neg 0 rlineto		% bottom side
+	    closepath			% left side
+	gsave 1 setgray fill grestore
+	clip newpath
+    end
+} def
+
+/image-1 /image-1-font 4 4 <
+00 00 00 00>
+DefImage
+
+
+%%EndProlog
+%%Page: 1 1
+
+gsave
+72 72 translate
+0.67 0.67 scale
+0 714 translate
+
+%
+% Begin new window
+%
+gsave
+0 0 702 457 ClipToRectangle
+gsave
+0 0 702 457 [0 0 0] 0 0 [] -1 [1 1 1] DrawRectangle
+grestore
+
+
+%
+% Begin new window
+%
+gsave
+2 -23 translate
+(link parameters) 0 0 698 432 2 23 2 2 DrawGenericWindowFrame
+0 0 698 432 ClipToRectangle
+gsave
+476 -15 51 24 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+471 -10 51 24 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+474 -13 45 18 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawRectangle
+490 -15 -26 13 14 false [0 0 0] [1 1 1] (OK) 12 /Courier DrawText
+537 -15 51 24 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+532 -10 51 24 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+535 -13 45 18 [0 0 0] 0 0 [] 1 [ 1 1 1 1 1 1 true 0 image-1-font ] DrawRectangle
+537 -15 -26 41 14 false [0 0 0] [1 1 1] (Cancel) 12 /Courier DrawText
+10 -78 -89 621 14 false [0 0 0] [1 1 1] (Some of the slots in the object reference objects that might be parameters. These objects) 12 /Courier DrawText
+10 -92 -103 642 14 false [0 0 0] [1 1 1] (are listed below, along with the slots that reference them. If you make any of these objects) 12 /Courier DrawText
+10 -106 -117 656 14 false [0 0 0] [1 1 1] (into parameters, Lapidary will create formulas that cause the slots to retrieve the parameters) 12 /Courier DrawText
+10 -120 -131 303 14 false [0 0 0] [1 1 1] (from the object labeled 'parameters object'.) 12 /Courier DrawText
+10 -148 -159 651 14 false [0 0 0] [1 1 1] (If you want to see the object labeled 'object:', select the object's name with the left mouse ) 12 /Courier DrawText
+10 -162 -173 367 14 false [0 0 0] [1 1 1] (button and the object will be flashed on the display.) 12 /Courier DrawText
+10 -190 -201 678 14 false [0 0 0] [1 1 1] (If you want to make an object a parameter, enter the parameter name in the blank box next to each) 12 /Courier DrawText
+10 -204 -215 665 14 false [0 0 0] [1 1 1] (object. This name must be a slot name \050e.g., :string\051. If the user has already provided a name, ) 12 /Courier DrawText
+10 -218 -229 192 14 false [0 0 0] [1 1 1] (Lapidary puts it in the box.) 12 /Courier DrawText
+10 -246 -257 657 14 false [0 0 0] [1 1 1] (If you do not want an object to be a parameter, just leave its parameter box blank \050or make it) 12 /Courier DrawText
+10 -260 -271 297 14 false [0 0 0] [1 1 1] (blank if Lapidary has put a name in there\051.) 12 /Courier DrawText
+10 -288 -299 658 14 false [0 0 0] [1 1 1] (If you want to see one of the referenced objects, select the object's name with the left mouse ) 12 /Courier DrawText
+10 -302 -313 367 14 false [0 0 0] [1 1 1] (button and the object will be flashed on the display.) 12 /Courier DrawText
+10 -330 -341 514 14 false [0 0 0] [1 1 1] (For more information on this operation, see the Lapidary reference manual.) 12 /Courier DrawText
+10 -15 -30 72 20 false [0 0 0] [1 1 1] (object:) 18 /Courier-Bold DrawText
+10 -39 -54 193 20 false [0 0 0] [1 1 1] (parameters object:) 18 /Courier-Bold DrawText
+91 -15 -30 361 20 false [0 0 0] [1 1 1] (TRANSPARENT-THIN-ARROW-LINE-25038) 18 /Courier-Bold DrawText
+212 -39 -54 361 20 false [0 0 0] [1 1 1] (TRANSPARENT-THIN-ARROW-LINE-25038) 18 /Courier-Bold DrawText
+369 -388 -399 58 14 false [0 0 0] [1 1 1] (:from-obj) 12 /Courier DrawText
+363 -386 100 18 [0 0 0] 0 0 [] 1 null DrawRectangle
+369 -411 -422 44 14 false [0 0 0] [1 1 1] (:to-obj) 12 /Courier DrawText
+363 -409 100 18 [0 0 0] 0 0 [] 1 null DrawRectangle
+10 -386 -397 258 14 false [0 0 0] [1 1 1] (TRANSPARENT-THIN-LINE-RECTANGLE-25026) 12 /Courier DrawText
+10 -410 -421 258 14 false [0 0 0] [1 1 1] (TRANSPARENT-THIN-LINE-RECTANGLE-25028) 12 /Courier DrawText
+284 -386 -397 55 14 false [0 0 0] [1 1 1] ( :X1 :Y1) 12 /Courier DrawText
+284 -410 -421 55 14 false [0 0 0] [1 1 1] ( :X2 :Y2) 12 /Courier DrawText
+10 -363 -374 140 14 false [0 0 0] [1 1 1] (object referenced by) 12 /Courier-Bold DrawText
+287 -363 -374 34 14 false [0 0 0] [1 1 1] (slots) 12 /Courier-Bold DrawText
+358 -363 -374 98 14 false [0 0 0] [1 1 1] (parameter name) 12 /Courier-Bold DrawText
+grestore
+
+grestore
+
+grestore
+
+grestore
+
+
+showpage
+%%Trailer
+%%DocumentFonts: /Courier-Bold /Courier Helvetica-Bold 
+%%BoundingBox: 72 243 540 548

@@ -1,0 +1,246 @@
+%!PS-Adobe-2.0
+%%Title: Opal 32
+%%Creator: Make-PS-File -- Garnet Version 2.1
+%%CreationDate: Jun 2, 1992, 4:13 PM
+%%For: 
+%%This file does not use real color
+%%DocumentFonts: (atend)
+%%BoundingBox: 116 153 497 640
+%%Pages: 1
+%%EndComments
+
+
+/TextDict 19 dict def
+/DrawText
+   {	% stack: left top base-y opal-width height line-halftone fill-p
+        %        fore-red fore-green fore-blue fore-color-p
+        %        back-red back-green back-blue back-color-p
+        %        string size font-name
+        TextDict begin
+        gsave
+	findfont exch scalefont setfont
+	/s exch def
+        /back-color-p exch def  /back-blue exch def  /back-green exch def
+        /back-red exch def  /fore-color-p exch def  /fore-blue exch def
+        /fore-green exch def  /fore-red exch def  /fill-p exch def
+        /line-halftone exch def /height exch def  /opal-width exch def
+        /base-y exch def  /top exch def  /left exch def
+
+        % Calculate distance to add between each character, based on the width
+        % expected by Opal, the width expected by postscript, and the number
+        % of characters to distribute the change over
+	/x-dist opal-width s stringwidth pop sub s length div def
+
+        % Draw background of text if appropriate
+        fill-p
+        { gsave
+            newpath
+            left top opal-width height RectanglePath
+            1 back-red back-green back-blue back-color-p
+            FillShape
+          grestore } if
+
+        % Draw text in the appropriate color
+	newpath
+          fore-color-p
+          { fore-red fore-green fore-blue setrgbcolor }
+          { line-halftone setgray } ifelse
+	  left base-y moveto
+	  x-dist 0 s ashow
+        grestore
+        end
+   } def
+
+/RoundtanglePath
+   {    % stack: left, top, width, height, radius
+        /r exch def  /h exch def  /w exch def  /t exch def  /l exch def
+        /right l w add def  /bottom t h sub def
+          l r add t moveto                         % origin
+          right t right t r sub r arcto            % top side
+          right bottom right r sub bottom r arcto  % right side
+          l bottom l bottom r add r arcto          % bottom side
+          l t l r add t r arcto                    % left side
+          16 {pop} repeat  % each arcto accumulates 4 stack parameters
+   } def
+
+/RoundtangleDict 27 dict def
+/DrawRoundtangle
+   {    % stack: left, top, width, height, radius, line-halftone,
+        %        line-red, line-green, line-blue, line-color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness,
+        %        fill-halftone, fill-red, fill-green, fill-blue, fill-color-p
+        
+        RoundtangleDict begin
+        /fill-color-p exch def  /fill-blue exch def  /fill-green exch def
+        /fill-red exch def  /fill-halftone exch def  /thickness exch def
+        /dash-pattern exch def  /line-join exch def  /line-cap exch def
+        /line-color-p exch def  /line-blue exch def  /line-green exch def
+        /line-red exch def  /line-halftone exch def  /radius exch def
+        /height exch def  /width exch def  /top exch def  /left exch def
+        /thickness-by-2 thickness 2 div def
+        % Draw filling
+        newpath
+          left thickness-by-2 add  top thickness-by-2 sub  width thickness sub  height thickness sub
+          radius thickness sub RoundtanglePath
+          fill-halftone fill-red fill-green fill-blue fill-color-p FillShape
+        % Draw border
+        newpath
+          left top width height radius thickness-by-2 sub RoundtanglePath
+          line-halftone line-red line-green line-blue line-color-p
+          line-cap line-join dash-pattern thickness StrokeShape
+        end
+   } def
+
+/DrawLine
+   {    % stack: line-halftone, red, green, blue, color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness
+        %        x2, y2, x1, y1
+        newpath
+          moveto
+          lineto
+          StrokeShape
+   } def
+
+/ClipDict 2 dict def
+/ClipToRectangle
+   {    % stack: left, top, width, height
+        ClipDict begin
+	/height exch def  /width exch def
+        newpath
+	  moveto		% Go to the left,top corner
+	  width 0 rlineto	% top side
+	  0 height neg rlineto	% right side
+	  width neg 0 rlineto	% bottom side
+	  closepath		% left side
+	gsave 1 setgray fill grestore
+	clip newpath
+        end
+   } def
+
+/FillShape
+   {	% stack: fill-halftone, red, green, blue, color-p
+        %   Color-p should be true or false - false means ignore the three vals
+        %   Use -1 for fill-halftone to mean NIL, 0 = black, 1 = white
+        %   Use -2 for fill-halftone to indicate there is an arbitrary filling
+        % style on the stack
+        gsave
+        { setrgbcolor fill pop }
+	{ pop pop pop 
+	  dup 0 ge
+	    % if fill-halftone >= 0, then fill the shape with a halftone
+	    { setgray fill}
+            % else, if there is an arbitrary filling style, then fill
+            { -2 eq
+              {SetPattern fill} if
+            } ifelse } ifelse
+        grestore
+   } def
+
+/StrokeShape
+   {	% stack: line-halftone, red, green, blue, color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness
+	% If no line is desired, pass -1 for line-thickness
+        % Halftones: 0 = black, 1 = white
+	dup 0 ge
+	  % if line-thickness >= 0, then draw the outline
+	  {gsave
+	   setlinewidth 0 setdash setlinejoin setlinecap
+             { setrgbcolor pop }
+             { pop pop pop setgray } ifelse
+	   stroke
+	   grestore}
+	  {pop pop pop pop pop pop pop pop pop newpath} ifelse
+   } def
+
+
+%%EndProlog
+%%Page: 1 1
+
+gsave
+72 72 translate
+1 1 scale
+
+%
+% Begin new window
+%
+44 -80 translate
+gsave
+0 648 381 487 ClipToRectangle
+0 0 translate
+gsave
+0 0 0 0 false 0 0 [] 1 195 637 175 543 DrawLine
+0 0 0 0 false 0 0 [] 1 195 610 175 543 DrawLine
+0 0 0 0 false 0 0 [] 1 195 583 175 543 DrawLine
+0 0 0 0 false 0 0 [] 1 195 556 175 543 DrawLine
+0 0 0 0 false 0 0 [] 1 195 529 175 543 DrawLine
+0 0 0 0 false 0 0 [] 1 195 502 175 543 DrawLine
+0 0 0 0 false 0 0 [] 1 195 475 175 543 DrawLine
+0 0 0 0 false 0 0 [] 1 195 448 175 543 DrawLine
+0 0 0 0 false 0 0 [] 1 175 367 155 367 DrawLine
+0 0 0 0 false 0 0 [] 1 244 340 224 259 DrawLine
+0 0 0 0 false 0 0 [] 1 244 313 224 259 DrawLine
+0 0 0 0 false 0 0 [] 1 244 286 224 259 DrawLine
+0 0 0 0 false 0 0 [] 1 244 259 224 259 DrawLine
+0 0 0 0 false 0 0 [] 1 244 232 224 259 DrawLine
+0 0 0 0 false 0 0 [] 1 244 205 224 259 DrawLine
+0 0 0 0 false 0 0 [] 1 244 178 224 259 DrawLine
+0 0 0 0 false 0 0 [] 1 105 543 85 397 DrawLine
+0 0 0 0 false 0 0 [] 1 105 421 85 397 DrawLine
+0 0 0 0 false 0 0 [] 1 105 394 85 397 DrawLine
+0 0 0 0 false 0 0 [] 1 105 367 85 397 DrawLine
+0 0 0 0 false 0 0 [] 1 105 259 85 397 DrawLine
+0 408 85 22 5 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRoundtangle
+4 404 393 77 14 0 false 0 0 0 false 0 0 0 false (View-Object) 12 /Courier DrawText
+105 554 70 22 5 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRoundtangle
+109 550 539 62 14 0 false 0 0 0 false 0 0 0 false (Aggregate) 12 /Courier DrawText
+195 648 119 22 5 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRoundtangle
+199 644 633 111 14 0 false 0 0 0 false 0 0 0 false (Window-Aggregate) 12 /Courier DrawText
+195 621 105 22 5 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRoundtangle
+199 617 606 97 14 0 false 0 0 0 false 0 0 0 false (Aggregate-4731) 12 /Courier DrawText
+195 594 105 22 5 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRoundtangle
+199 590 579 97 14 0 false 0 0 0 false 0 0 0 false (Aggregate-4730) 12 /Courier DrawText
+195 567 29 22 5 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRoundtangle
+199 563 552 21 14 0 false 0 0 0 false 0 0 0 false (Agg) 12 /Courier DrawText
+195 540 105 22 5 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRoundtangle
+199 536 525 97 14 0 false 0 0 0 false 0 0 0 false (Aggregate-3766) 12 /Courier DrawText
+195 513 105 22 5 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRoundtangle
+199 509 498 97 14 0 false 0 0 0 false 0 0 0 false (Aggregate-3765) 12 /Courier DrawText
+195 486 71 22 5 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRoundtangle
+199 482 471 63 14 0 false 0 0 0 false 0 0 0 false (Aggrelist) 12 /Courier DrawText
+195 459 85 22 5 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRoundtangle
+199 455 444 77 14 0 false 0 0 0 false 0 0 0 false (Aggregadget) 12 /Courier DrawText
+105 432 85 22 5 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRoundtangle
+109 428 417 77 14 0 false 0 0 0 false 0 0 0 false (Null-Object) 12 /Courier DrawText
+105 405 162 22 5 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRoundtangle
+109 401 390 154 14 0 false 0 0 0 false 0 0 0 false (Virtual-Invalid-Object) 12 /Courier DrawText
+105 378 50 22 5 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRoundtangle
+109 374 363 42 14 0 false 0 0 0 false 0 0 0 false (Window) 12 /Courier DrawText
+175 378 126 22 5 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRoundtangle
+179 374 363 118 14 0 false 0 0 0 false 0 0 0 false (Interactor-Window) 12 /Courier DrawText
+105 270 119 22 5 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRoundtangle
+109 266 255 111 14 0 false 0 0 0 false 0 0 0 false (Graphical-Object) 12 /Courier DrawText
+244 351 35 22 5 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRoundtangle
+248 347 336 27 14 0 false 0 0 0 false 0 0 0 false (Line) 12 /Courier DrawText
+244 324 126 22 5 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRoundtangle
+248 320 309 118 14 0 false 0 0 0 false 0 0 0 false (Virtual-Aggregate) 12 /Courier DrawText
+244 297 49 22 5 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRoundtangle
+248 293 282 41 14 0 false 0 0 0 false 0 0 0 false (Bitmap) 12 /Courier DrawText
+244 270 36 22 5 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRoundtangle
+248 266 255 28 14 0 false 0 0 0 false 0 0 0 false (Text) 12 /Courier DrawText
+244 243 78 22 5 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRoundtangle
+248 239 228 70 14 0 false 0 0 0 false 0 0 0 false (Multipoint) 12 /Courier DrawText
+244 216 28 22 5 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRoundtangle
+248 212 201 20 14 0 false 0 0 0 false 0 0 0 false (Arc) 12 /Courier DrawText
+244 189 70 22 5 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRoundtangle
+248 185 174 62 14 0 false 0 0 0 false 0 0 0 false (Rectangle) 12 /Courier DrawText
+grestore
+
+grestore
+
+grestore
+
+
+showpage
+%%Trailer
+%%DocumentFonts: /Courier 
+%%BoundingBox: 116 153 497 640

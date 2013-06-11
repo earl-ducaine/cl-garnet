@@ -1,0 +1,557 @@
+%!PS-Adobe-2.0 EPSF-2.0
+%%Title: TEMP WINDOW
+%%Creator: Make-PS-File -- Garnet Version 2.2
+%%CreationDate: Sep 23, 1993, 4:08 PM
+%%For: 
+%%This file does not use real color
+%%DocumentFonts: (atend)
+%%BoundingBox: 178 223 435 569
+%%Pages: 1
+%%EndComments
+
+
+/ArcDict 23 dict def
+ArcDict /mtrx matrix put
+/DrawArc { % x y xrad yrad startangle endangle line-color
+	   % cap join dash thickness fill-color => -
+    ArcDict begin
+	/fill-color exch def /thickness exch def
+	/dash-pattern exch def  /line-join exch def  /line-cap exch def
+	/line-color exch def  /endangle exch def /startangle exch def
+	/yrad exch def  /xrad exch def /y exch def /x exch def
+	/savematrix mtrx currentmatrix def
+	% Draw the filling
+	gsave
+	    newpath
+	    x y translate
+	    xrad thickness sub yrad thickness sub scale
+	    0 0 moveto
+	    0 0 1 startangle endangle arc closepath
+	    savematrix setmatrix
+	    fill-color FillShape
+	    newpath
+	    x y translate
+	    xrad thickness 2 div sub yrad thickness 2 div sub scale
+	    0 0 1 startangle endangle arc
+	    savematrix setmatrix
+	    line-color
+	    0 % line-cap
+	    line-join dash-pattern thickness
+	    StrokeShape
+	grestore
+    end
+} def
+
+/AdjustLineDict 20 dict def
+/AdjustLine { % x1 y1 x2 y2 width => x1 y1 x2 y2
+  AdjustLineDict begin
+    /width exch cvi def
+    /hw width 2 div def
+    /oddwidth? width 1 and 1 eq def
+    /y2 exch def /x2 exch def /y1 exch def /x1 exch def
+    /dx x2 x1 sub def /dy y2 y1 sub def
+    dy 0 eq {
+      dx 0 eq {
+	% point
+	oddwidth? {
+	  /x1 x1 .5 add def /y1 y1 .5 sub def
+	  /x2 x2 .5 add def /y2 y2 .5 sub def
+	} if
+      } {
+	% horizontal
+	oddwidth? {
+	  /y1 y1 .5 sub def
+	  /y2 y2 .5 sub def
+	} if
+      } ifelse
+    } {
+      dx 0 eq {
+	% vertical
+	oddwidth? {
+	  /x1 x1 .5 add def
+	  /x2 x2 .5 add def
+	} if
+      } {
+	% diagonal
+	oddwidth? {
+	  /x1 x1 .5 add def /y1 y1 .5 sub def
+	  /x2 x2 .5 add def /y2 y2 .5 sub def
+	} if
+      } ifelse
+    } ifelse
+    x1 y1 x2 y2
+  end
+} def
+
+/DrawLineDict 20 dict def
+/DrawLine { % line-color cap join dash thickness x2 y2 x1 y1 => -
+    gsave DrawLineDict begin
+	4 index AdjustLine
+	moveto lineto
+	StrokeShape
+    end grestore
+} def
+
+/TextDict 40 dict def
+/DrawText { % left top base-y opal-width height fill-p
+	    % fore-color back-color string size font-name => -
+    TextDict begin
+	gsave
+	    findfont exch scalefont setfont
+	    /s exch def
+	    /back-color exch def /fore-color exch def /fill-p exch def
+	    /height exch def  /opal-width exch def
+	    /base-y exch def  /top exch def
+	    /left exch 1 sub def % XXX: I don't know why!
+
+	    % Calculate distance to add between each character, based on the 
+	    % width expected by Opal, the width expected by postscript, and 
+	    % the number of characters to distribute the change over.
+	    /x-dist opal-width s stringwidth pop sub s length div def
+
+	    % Draw background of text if appropriate
+	    fill-p {
+		gsave
+		    newpath
+		    left top opal-width height RectanglePath
+		    back-color FillShape
+		grestore
+	    } if
+
+	    % Draw text in the appropriate color
+	    newpath
+	    s length 0 ne {
+		left base-y moveto
+		fore-color aload length 3 eq {
+		    setrgbcolor
+		    x-dist 0 s ashow
+		} { % Halftone pattern:
+		    %   fgR fgG fgB bgR bgG bgB top pattern
+		    %   fgR fgG fgB false top pattern
+		    /pattern exch def /top exch def /opaque? exch def
+		    opaque? not { .5 .5 .5 } if
+		    /bgB exch def /bgG exch def /bgR exch def
+		    /fgB exch def /fgG exch def /fgR exch def
+
+		    fgR bgR add 2 div
+		    fgG bgG add 2 div
+		    fgB bgB add 2 div
+		    setrgbcolor
+
+		    opaque? {
+			x-dist 0 s ashow
+		    } {
+			mark
+			/ch 1 string def
+			/space { /space { x-dist 0 rmoveto } def } def
+%			/jt statusdict begin jobtimeout end def
+			gsave { % try really hard to do it right
+			    s {
+				% don't take more than 2 seconds a character
+%				statusdict begin 2 setjobtimeout end
+				space
+				ch 0 3 -1 roll put
+				ch true charpath
+				currentpoint /yy exch def /xx exch def
+				fgR fgG fgB false top pattern FillPattern
+				newpath xx yy moveto
+			    } forall
+			} stopped grestore { % fall back in case we fail
+			    x-dist 0 s ashow
+			} if
+%			statusdict begin jt setjobtimeout end
+			cleartomark
+		    } ifelse
+		} ifelse
+	    } if
+	grestore
+    end
+} def
+
+/PolylineDict 20 dict def
+/DrawPolyline { % x1 y1 {{x y ...} ...} line-color
+		% join cap dash thickness fill-color => -
+    gsave PolylineDict begin
+	/fill-color exch def  /thickness exch def  /dash-pattern exch def
+	/line-join exch def  /line-cap exch def  /line-color exch def
+	% Don't draw the path of the fill if the filling-style is null.
+	fill-color null eq not {
+		3 copy
+		newpath
+		3 1 roll moveto
+		{ aload length 2 idiv { lineto } repeat } forall
+		fill-color FillShape
+		} if
+
+	newpath
+	.5 -.5 translate
+
+	% Stroke after every sub-array to avoid a limitcheck error
+	2 index 2 index moveto
+	{ aload length 2 sub 2 idiv { lineto } repeat
+	2 copy lineto
+	line-color line-cap line-join dash-pattern thickness StrokeShape
+	moveto
+	} forall
+
+	currentpoint
+	3 -1 roll sub abs .01 lt
+	3 1 roll sub abs .01 lt and {
+	  0 0 rlineto closepath
+	} if
+
+	line-color line-cap line-join dash-pattern
+	thickness
+%	dup -1 ne { .5 add } if % fudge outline width thicker
+	StrokeShape
+
+    end grestore
+} def
+
+/RectanglePath { % left top width height => -
+    /h exch def  /w exch def
+    moveto			% Go to the left,top corner
+    w 0 rlineto			% top side
+    0 h neg rlineto		% right side
+    w neg 0 rlineto		% bottom side
+    closepath			% left side
+} def
+
+/RectangleDict 21 dict def
+/DrawRectangle { % left top width height line-color
+		 % cap join dash thickness fill-color => -
+    RectangleDict begin
+	/fill-color exch def  /thickness exch def /dash-pattern exch def
+	/line-join exch def  /line-cap exch def /line-color exch def
+	/height exch def /width exch def  /top exch def  /left exch def
+        /thickness-for-fill thickness 0 lt {0} {thickness} ifelse def
+	% Draw filling
+	newpath
+	left thickness-for-fill add top thickness-for-fill sub
+        width thickness-for-fill 2 mul sub height thickness-for-fill 2 mul sub
+	RectanglePath
+	fill-color FillShape
+	% Draw border
+	newpath
+	left thickness 2 div add  top thickness 2 div sub
+	width thickness sub  height thickness sub
+	RectanglePath
+	line-color line-cap line-join dash-pattern thickness StrokeShape
+    end
+} def
+
+/DrawGenericWindowFrame { % label left top w h
+			  % leftmargin topmargin rightmargin bottommargin => -
+  30 dict begin
+
+  { % setup
+    /bottommargin exch def /rightmargin exch def
+    /topmargin exch def /leftmargin exch def
+    /h exch def /w exch def /y exch h sub def /x exch def
+    /label exch def
+    /pointsize
+      topmargin 1 sub
+      dup 1 lt { pop 1 } if
+      dup 12 gt { 12 sub 3 div 12 add } if
+    def
+
+    /bottom y def /top y h add def
+    /left x def /right  x w add def
+    1 setlinewidth
+    0 setlinecap
+  } exec
+
+  { % background
+    newpath
+    left leftmargin sub bottom bottommargin sub moveto
+    left leftmargin sub top topmargin add lineto
+    right rightmargin add top topmargin add lineto
+    right rightmargin add bottom bottommargin sub lineto
+    closepath
+    0 setgray fill
+
+    left bottom moveto
+    left top lineto
+    right top lineto
+    right bottom lineto
+    closepath
+    1 setgray fill
+  } exec
+
+  topmargin 8 ge {
+    /Helvetica-Bold findfont pointsize scalefont setfont
+    label stringwidth pop
+    left right add 2 div
+    exch 2 div sub
+    top topmargin 2 div add pointsize 2 div sub 2 add moveto
+    1 setgray
+    label show
+  } if
+
+  end
+} def
+
+/FillShape { % [halftone] | [r g b] | null => -
+    gsave
+        dup null eq { pop } {
+	  aload length 3 eq { setrgbcolor fill } {
+	      FillPattern
+	  } ifelse
+        } ifelse
+    grestore
+    newpath
+} def
+
+/StrokeShape { % line-color cap join dash thickness => -
+    % If no line is desired, pass -1 for line-thickness
+    dup 0 ge 5 index null ne and {
+	% if line-thickness >= 0, then draw the outline
+	gsave
+	    setlinewidth 0 setdash setlinejoin setlinecap
+	    aload length 3 eq { setrgbcolor stroke } {
+		strokepath FillPattern
+	    } ifelse
+	grestore
+    } {
+	pop pop pop pop pop
+    } ifelse
+    newpath
+} def
+
+/ClipDict 2 dict def
+/ClipToRectangle { % left top width height => -
+    ClipDict begin
+	/height exch def  /width exch def
+        newpath
+	    moveto			% Go to the left,top corner
+	    width 0 rlineto		% top side
+	    0 height neg rlineto	% right side
+	    width neg 0 rlineto		% bottom side
+	    closepath			% left side
+	gsave 1 setgray fill grestore
+	clip newpath
+    end
+} def
+
+
+%%EndProlog
+%%Page: 1 1
+
+gsave
+72 72 translate
+1 1 scale
+106 497 translate
+
+%
+% Begin new window
+%
+gsave
+0 0 257 346 ClipToRectangle
+gsave
+0 0 257 346 [0 0 0] 0 0 [] -1 [1 1 1] DrawRectangle
+grestore
+
+
+%
+% Begin new window
+%
+gsave
+2 -2 translate
+() 0 0 253 342 2 2 2 2 DrawGenericWindowFrame
+0 0 253 342 ClipToRectangle
+gsave
+50 -257 120 20 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+10 -257 20 20 [0 0 0] 0 0 [] 1 null DrawRectangle
+13 -267 {
+  { 13 -267 20 -260 20 -264 27 -264 27 -270 20 -270 20 -274 }
+} [0 0 0] 0 0 [] 1 [1 dup dup] DrawPolyline
+190 -257 20 20 [0 0 0] 0 0 [] 1 null DrawRectangle
+207 -267 {
+  { 207 -267 200 -260 200 -264 193 -264 193 -270 200 -270 200 -274 }
+} [0 0 0] 0 0 [] 1 [1 dup dup] DrawPolyline
+30 -257 20 20 [0 0 0] 0 0 [] 1 null DrawRectangle
+34 -267 {
+  { 34 -267 41 -274 41 -260 }
+} [0 0 0] 0 0 [] 1 [1 dup dup] DrawPolyline
+38 -267 {
+  { 38 -267 45 -274 45 -260 }
+} [0 0 0] 0 0 [] 1 [1 dup dup] DrawPolyline
+170 -257 20 20 [0 0 0] 0 0 [] 1 null DrawRectangle
+186 -267 {
+  { 186 -267 179 -274 179 -260 }
+} [0 0 0] 0 0 [] 1 [1 dup dup] DrawPolyline
+182 -267 {
+  { 182 -267 175 -274 175 -260 }
+} [0 0 0] 0 0 [] 1 [1 dup dup] DrawPolyline
+50 -258 18 18 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+57 -262 -271 4 11 false [0 0 0] [1 1 1] (0) 10 /Courier DrawText
+[0 0 0] 0 0 [] 1 165 -302 80 -302 DrawLine
+10 -294 20 16 [0 0 0] 0 0 [] 1 null DrawRectangle
+17 -295 -306 5 14 false [0 0 0] [1 1 1] (2) 12 /Courier DrawText
+[0 0 0] 0 0 [] 1 80 -307 80 -297 DrawLine
+78 -313 -322 4 11 false [0 0 0] [1 1 1] (0) 10 /Courier DrawText
+[0 0 0] 0 0 [] 1 97 -307 97 -297 DrawLine
+95 -313 -322 4 11 false [0 0 0] [1 1 1] (2) 10 /Courier DrawText
+[0 0 0] 0 0 [] 1 114 -307 114 -297 DrawLine
+112 -313 -322 5 11 false [0 0 0] [1 1 1] (4) 10 /Courier DrawText
+[0 0 0] 0 0 [] 1 131 -307 131 -297 DrawLine
+129 -313 -322 4 11 false [0 0 0] [1 1 1] (6) 10 /Courier DrawText
+[0 0 0] 0 0 [] 1 148 -307 148 -297 DrawLine
+146 -313 -322 4 11 false [0 0 0] [1 1 1] (8) 10 /Courier DrawText
+[0 0 0] 0 0 [] 1 165 -307 165 -297 DrawLine
+160 -313 -322 10 11 false [0 0 0] [1 1 1] (10) 10 /Courier DrawText
+[0 0 0] 0 0 [] 2 80 -312 80 -292 DrawLine
+[0 0 0] 0 0 [] 2 165 -312 165 -292 DrawLine
+104 -290 {
+  { 90 -290 97 -300 }
+} [0 0 0] 0 0 [] -1 [0 0 0] DrawPolyline
+35 -292 20 20 [0 0 0] 0 0 [] 1 null DrawRectangle
+38 -302 {
+  { 38 -302 45 -295 45 -299 52 -299 52 -305 45 -305 45 -309 }
+} [0 0 0] 0 0 [] 1 [1 dup dup] DrawPolyline
+190 -292 20 20 [0 0 0] 0 0 [] 1 null DrawRectangle
+207 -302 {
+  { 207 -302 200 -295 200 -299 193 -299 193 -305 200 -305 200 -309 }
+} [0 0 0] 0 0 [] 1 [1 dup dup] DrawPolyline
+55 -292 20 20 [0 0 0] 0 0 [] 1 null DrawRectangle
+59 -302 {
+  { 59 -302 66 -309 66 -295 }
+} [0 0 0] 0 0 [] 1 [1 dup dup] DrawPolyline
+63 -302 {
+  { 63 -302 70 -309 70 -295 }
+} [0 0 0] 0 0 [] 1 [1 dup dup] DrawPolyline
+170 -292 20 20 [0 0 0] 0 0 [] 1 null DrawRectangle
+186 -302 {
+  { 186 -302 179 -309 179 -295 }
+} [0 0 0] 0 0 [] 1 [1 dup dup] DrawPolyline
+182 -302 {
+  { 182 -302 175 -309 175 -295 }
+} [0 0 0] 0 0 [] 1 [1 dup dup] DrawPolyline
+10 -50 20 125 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+10 -10 20 20 [0 0 0] 0 0 [] 1 null DrawRectangle
+20 -13 {
+  { 20 -13 27 -20 23 -20 23 -27 17 -27 17 -20 13 -20 }
+} [0 0 0] 0 0 [] 1 [1 dup dup] DrawPolyline
+10 -195 20 20 [0 0 0] 0 0 [] 1 null DrawRectangle
+20 -212 {
+  { 20 -212 27 -205 23 -205 23 -198 17 -198 17 -205 13 -205 }
+} [0 0 0] 0 0 [] 1 [1 dup dup] DrawPolyline
+10 -30 20 20 [0 0 0] 0 0 [] 1 null DrawRectangle
+20 -34 {
+  { 20 -34 27 -41 13 -41 }
+} [0 0 0] 0 0 [] 1 [1 dup dup] DrawPolyline
+20 -38 {
+  { 20 -38 27 -45 13 -45 }
+} [0 0 0] 0 0 [] 1 [1 dup dup] DrawPolyline
+10 -175 20 20 [0 0 0] 0 0 [] 1 null DrawRectangle
+20 -191 {
+  { 20 -191 27 -184 13 -184 }
+} [0 0 0] 0 0 [] 1 [1 dup dup] DrawPolyline
+20 -187 {
+  { 20 -187 27 -180 13 -180 }
+} [0 0 0] 0 0 [] 1 [1 dup dup] DrawPolyline
+11 -77 18 18 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+15 -81 -90 10 11 false [0 0 0] [1 1 1] (25) 10 /Courier DrawText
+[0 0 0] 0 0 [] 1 67 -170 67 -76 DrawLine
+57 -10 20 16 [0 0 0] 0 0 [] 1 null DrawRectangle
+64 -11 -22 5 14 false [0 0 0] [1 1 1] (6) 12 /Courier DrawText
+[0 0 0] 0 0 [] 1 72 -76 62 -76 DrawLine
+48 -71 -80 4 11 false [0 0 0] [1 1 1] (0) 10 /Courier DrawText
+[0 0 0] 0 0 [] 1 72 -95 62 -95 DrawLine
+48 -90 -99 4 11 false [0 0 0] [1 1 1] (2) 10 /Courier DrawText
+[0 0 0] 0 0 [] 1 72 -114 62 -114 DrawLine
+47 -109 -118 5 11 false [0 0 0] [1 1 1] (4) 10 /Courier DrawText
+[0 0 0] 0 0 [] 1 72 -132 62 -132 DrawLine
+48 -127 -136 4 11 false [0 0 0] [1 1 1] (6) 10 /Courier DrawText
+[0 0 0] 0 0 [] 1 72 -151 62 -151 DrawLine
+48 -146 -155 4 11 false [0 0 0] [1 1 1] (8) 10 /Courier DrawText
+[0 0 0] 0 0 [] 1 72 -170 62 -170 DrawLine
+42 -165 -174 10 11 false [0 0 0] [1 1 1] (10) 10 /Courier DrawText
+[0 0 0] 0 0 [] 2 77 -76 57 -76 DrawLine
+[0 0 0] 0 0 [] 2 77 -170 57 -170 DrawLine
+79 -140 {
+  { 79 -124 69 -132 }
+} [0 0 0] 0 0 [] -1 [0 0 0] DrawPolyline
+57 -31 20 20 [0 0 0] 0 0 [] 1 null DrawRectangle
+67 -34 {
+  { 67 -34 74 -41 70 -41 70 -48 64 -48 64 -41 60 -41 }
+} [0 0 0] 0 0 [] 1 [1 dup dup] DrawPolyline
+57 -195 20 20 [0 0 0] 0 0 [] 1 null DrawRectangle
+67 -212 {
+  { 67 -212 74 -205 70 -205 70 -198 64 -198 64 -205 60 -205 }
+} [0 0 0] 0 0 [] 1 [1 dup dup] DrawPolyline
+57 -51 20 20 [0 0 0] 0 0 [] 1 null DrawRectangle
+67 -55 {
+  { 67 -55 74 -62 60 -62 }
+} [0 0 0] 0 0 [] 1 [1 dup dup] DrawPolyline
+67 -59 {
+  { 67 -59 74 -66 60 -66 }
+} [0 0 0] 0 0 [] 1 [1 dup dup] DrawPolyline
+57 -175 20 20 [0 0 0] 0 0 [] 1 null DrawRectangle
+67 -191 {
+  { 67 -191 74 -184 60 -184 }
+} [0 0 0] 0 0 [] 1 [1 dup dup] DrawPolyline
+67 -187 {
+  { 67 -187 74 -180 60 -180 }
+} [0 0 0] 0 0 [] 1 [1 dup dup] DrawPolyline
+162.0 -108.0 51.0 51.0 0 180 [0 0 0] 0 0 [] 1 null DrawArc
+[0 0 0] 0 0 [] 1 213 -108 111 -108 DrawLine
+[0 0 0] 0 0 [] 1 210 -108 213 -108 DrawLine
+218 -97 -106 10 11 false [0 0 0] [1 1 1] (10) 10 /Courier DrawText
+[0 0 0] 0 0 [] 1 201 -80 203 -78 DrawLine
+208 -67 -76 4 11 false [0 0 0] [1 1 1] (8) 10 /Courier DrawText
+[0 0 0] 0 0 [] 1 177 -62 178 -59 DrawLine
+176 -45 -54 4 11 false [0 0 0] [1 1 1] (6) 10 /Courier DrawText
+[0 0 0] 0 0 [] 1 147 -62 146 -59 DrawLine
+144 -45 -54 5 11 false [0 0 0] [1 1 1] (4) 10 /Courier DrawText
+[0 0 0] 0 0 [] 1 123 -80 121 -78 DrawLine
+112 -67 -76 4 11 false [0 0 0] [1 1 1] (2) 10 /Courier DrawText
+[0 0 0] 0 0 [] 1 114 -108 111 -108 DrawLine
+102 -97 -106 4 11 false [0 0 0] [1 1 1] (0) 10 /Courier DrawText
+162 -108 {
+  { 162 -108 160 -106 178 -81 176 -79 186 -75 184 -87 182 -85 164 -110 }
+} [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawPolyline
+146 -113 -124 33 14 false [0 0 0] [1 1 1] (Gauge) 12 /Courier DrawText
+150 -175 26 20 [0 0 0] 0 0 [] 1 null DrawRectangle
+160 -178 -189 5 14 false [0 0 0] [1 1 1] (0) 12 /Courier DrawText
+110 -175 20 20 [0 0 0] 0 0 [] 1 null DrawRectangle
+113 -185 {
+  { 113 -185 120 -178 120 -182 127 -182 127 -188 120 -188 120 -192 }
+} [0 0 0] 0 0 [] 1 [1 dup dup] DrawPolyline
+196 -175 20 20 [0 0 0] 0 0 [] 1 null DrawRectangle
+213 -185 {
+  { 213 -185 206 -178 206 -182 199 -182 199 -188 206 -188 206 -192 }
+} [0 0 0] 0 0 [] 1 [1 dup dup] DrawPolyline
+130 -175 20 20 [0 0 0] 0 0 [] 1 null DrawRectangle
+134 -185 {
+  { 134 -185 141 -192 141 -178 }
+} [0 0 0] 0 0 [] 1 [1 dup dup] DrawPolyline
+138 -185 {
+  { 138 -185 145 -192 145 -178 }
+} [0 0 0] 0 0 [] 1 [1 dup dup] DrawPolyline
+176 -175 20 20 [0 0 0] 0 0 [] 1 null DrawRectangle
+192 -185 {
+  { 192 -185 185 -192 185 -178 }
+} [0 0 0] 0 0 [] 1 [1 dup dup] DrawPolyline
+188 -185 {
+  { 188 -185 181 -192 181 -178 }
+} [0 0 0] 0 0 [] 1 [1 dup dup] DrawPolyline
+13 -220 -232 14 15 false [0 0 0] [1 1 1] (\050a\051) 12 /Times-Bold DrawText
+60 -220 -232 13 15 false [0 0 0] [1 1 1] (\050b\051) 12 /Times-Bold DrawText
+153 -129 -141 13 15 false [0 0 0] [1 1 1] (\050c\051) 12 /Times-Bold DrawText
+154 -200 -212 13 15 false [0 0 0] [1 1 1] (\050d\051) 12 /Times-Bold DrawText
+222 -259 -271 14 15 false [0 0 0] [1 1 1] (\050e\051) 12 /Times-Bold DrawText
+222 -293 -305 11 15 false [0 0 0] [1 1 1] (\050f\051) 12 /Times-Bold DrawText
+grestore
+
+grestore
+
+grestore
+
+grestore
+
+
+showpage
+%%Trailer
+%%DocumentFonts: /Times-Bold /Courier Helvetica-Bold 
+%%BoundingBox: 178 223 435 569

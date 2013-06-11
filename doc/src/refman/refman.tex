@@ -1,0 +1,176 @@
+\device{postscript}
+\make{gmanual}
+\disable{figurecontents}
+\style{TopMargin .75 inch, BottomMargin .75 inch, PageNumber {\tt\char`\<}\ii>}
+\libraryfile{Garnet}
+\string{TitleString = `Garnet Toolkit'}
+\use{Bibliography = `garnet.bib'}
+
+\begin{titlepage}
+\begin{titlebox}
+% \comment{** Logo in the upper left corner of front page **}
+\graphic{Postscript=`refman/logo.ps', boundingbox=file, magnify=0.75}
+\vspace{0.4 inch}
+\bg{The Garnet Reference Manuals
+Revised for Version 3.0}
+\vspace{0.2 line}
+{\bf Brad A. Myers, Dario Giuse, Brad Vander Zanden,
+Andrew Mickish, David Kosbie, James A. Landay,
+Richard McDaniel, Rajan Parthasarathy, Matthew Goldberg,
+Roger B. Dannenberg, Philippe Marchal, Ed Pervin}
+\vspace{0.2 line}
+\value{date}
+CMU-CS-90-117-R5
+\end{titlebox}
+
+\begin{center}
+School of Computer Science
+Carnegie Mellon University
+Pittsburgh, PA 15213\end{center}
+\vspace{0.4 in}
+
+\begin{text}
+\begin{center}
+This is a revision which supercedes all previous versions:
+CMU-CS-90-117-R4 (October 1993), CMU-CS-90-117-R3 (November 1992),
+CMU-CS-90-117-R2 (May 1992), CMU-CS-90-117-R (June 1991),
+CMU-CS-90-117 (March, 1990), CMU-CS-89-196 (November, 1989),
+and all change documents.\end{center}
+\vspace{0.4 in}
+\include{creditetc.mss}
+\end{text}
+\end{titlepage}
+
+\newpage
+\pageheading{odd, immediate, right = `\value{Page}'}
+\pageheading{even, immediate, left = `\value{Page}'}
+\vspace{3 in}
+\begin{center}
+\bg{Abstract}\end{center}
+\begin{text}
+The Garnet User Interface Development Environment contains a comprehensive
+set of tools that make it significantly easier to design and implement
+highly-interactive, graphical, direct manipulation user interfaces.
+Garnet provides a high level of support, while still being
+Look-and-Feel independent and providing the applications with tremendous
+flexibility.  The Garnet tools are organized into two layers.
+The toolkit layer provides an object-oriented, constraint-based
+graphical system that allows properties of graphical objects to be
+specified in a simple, declarative manner, and then maintained automatically
+by the system.  The dynamic, interactive behavior of the objects can be
+specified separately by attaching high-level ``interactor'' objects to the
+graphics.  This layer includes two complete widget sets, one with the
+Garnet look and feel, and the other with a Motif look and feel.
+The higher layer of Garnet includes three tools at this time.  The first
+is an interface builder tool, called Gilt, which allows dialog boxes and other
+windows to be created.  The second is C32, which is a spreadsheet interface
+for editing constraints among objects.
+Last is Lapidary, which allows the user interface designer to
+draw pictures of {\it all} graphical aspects of the user interface.  Other tools
+are currently in production, such as Jade (which creates
+dialog boxes from a specification).
+
+The Garnet toolkit layer software is available for unlimited
+distribution by anonymous FTP.  Garnet uses
+Common Lisp and the X window manager, and is therefore portable across a
+wide variety of platforms.  This document contains an overview, tutorial
+and a full set of reference manuals for the Garnet System.
+\end{text}
+
+\vspace{1 inch}
+{\bf Keywords:}  User Interface Development Environments, User
+Interface Management Systems, Constraints, Interface Builders,
+Object-Oriented Programming, Direct Manipulation, Input/Output, Garnet.
+
+
+\newpage
+\heading{Overall Table of Contents}
+\vspace{0.25 inch}
+% \begin{comment}
+% **********************************************************************
+% Strings for all the sections of this manual, used in a number of places in
+% this part of the manual.  These should be filled in with the correct page
+% numbers where the sections start.
+% **********************************************************************
+% \end{comment}
+\include{pagenumbers.mss}
+
+% \begin{comment}
+% **********************************************************************
+% \end{comment}
+\begin{tabular}
+\tabclear{}\\
+\tabset{0.25inch}\\
+{\bf Overview of the Garnet System & \value{Overview}}\\
+ & {\it Introduction to the toolkit and overview of this technical report.}\\
+
+{\bf Pictures of Applications Using Garnet & \value{Apps}}\\
+ & {\it Some flashy color pictures sent in by Garnet users.}\\
+
+{\bf An On-line Tour through Garnet & \value{Tour}}\\
+ & {\it A guided tour of some of Garnet's features.}\\
+
+{\bf The Garnet Tutorial & \value{Tutorial}}\\
+ & {\it A tutorial to introduce the basic Garnet features.}\\
+
+{\bf KR Reference Manual; Constraint-Based Knowledge Representation & \value{KR}}\\
+ & {\it The object and constraint system in Garnet.}\\
+
+{\bf Opal Reference Manual; The Garnet Graphical Object System & \value{Opal}}\\
+ & {\it Support for graphical output.}\\
+
+{\bf Interactors Reference Manual; Encapsulating Mouse and Keyboard Behaviors & \value{Inter}}\\
+ & {\it Support for input from the user.}\\
+
+{\bf Aggregadgets, Aggrelists, \& Aggregraphs Reference Manual & \value{aggregadgets}}\\
+ & {\it Convenient way to create composite objects.  AggreLists and\\
+ & Aggregraphs lay out elements automatically.}\\
+
+{\bf Garnet Gadgets Reference Manual & \value{gadgets}}\\
+ & {\it A set of pre-defined interaction techniques.}\\
+
+{\bf Debugging Tools for Garnet; Reference Manual & \value{Debug}}\\
+ & {\it Tools to help debug Garnet code.}\\
+
+{\bf Garnet Demos & \value{demos}}\\
+ & {\it Descriptions of the demonstration programs provided with Garnet.}\\
+
+{\bf A Sample Garnet Program & \value{sampleprog}}\\
+ & {\it Actual code for a simple graphical editor.}\\
+
+{\bf Gilt Reference Manual: A Simple Interface Builder for Garnet & \value{gilt}}\\
+ & {\it A high-level tool for laying out gadgets using the mouse.}\\
+
+{\bf C32 Reference Manual: A Spreadsheet Interface to Constraints & \value{c32}}\\
+ & {\it C32 displays the slots of an object in a scrolling menu, allowing the\\
+ & user to type in values directly or define constraints among objects.}\\
+
+{\bf Lapidary Reference Manual & \value{Lapidary}}\\
+ & {\it Lapidary allows application-specific graphical objects to be created interactively.}\\
+
+{\bf How to Make Garnet Programs Run Faster & \value{hints}}\\
+ & {\it Some hints on making Garnet applications run faster.}\\
+
+{\bf Global Index & \value{globalindex}}\\
+ & {\it An index to all the names and procedures in the entire Garnet Toolkit.}\\
+\end{tabular}
+
+% \begin{comment}
+% \include{overview/overview.mss}
+% \include{tour/tour.mss}
+% \include{tutorial/tutorial.mss}
+% \include{kr/kr-manual.mss}
+% \include{opal/opal-manual.mss}
+% \include{inter/inter-manual.mss}
+% \include{aggregadgets/aggregadgets-manual.mss}
+% \include{gadgets/gadgets-manual.mss}
+% \include{debug/debug-manual.mss}
+% \include{demos/demoguide.mss}
+% \include{sampleprog/sampleprog.mss}
+% \include{gilt/gilt-manual.mss}
+% \include{c32/c32-manual.mss}
+% \include{lapidary/lapidary-manual.mss}
+% \include{hints/hints.mss}
+% \end{comment}
+% \comment{set up for global index}
+\set{page = GlobalIndex}

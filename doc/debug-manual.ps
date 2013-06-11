@@ -1,0 +1,6478 @@
+%!PS-Adobe-2.0
+%%Title: debug/debug-manual.mss
+%%DocumentFonts: (atend)
+%%Creator: Andrew Mickish and Scribe 7(1700)
+%%CreationDate: 12 December 1994 15:21
+%%Pages: (atend)
+%%EndComments
+% PostScript Prelude for Scribe.
+/BS {/SV save def 0.0 792.0 translate .01 -.01 scale} bind def
+/ES {showpage SV restore} bind def
+/SC {setrgbcolor} bind def
+/FMTX matrix def
+/RDF {WFT SLT 0.0 eq 
+  {SSZ 0.0 0.0 SSZ neg 0.0 0.0 FMTX astore}
+  {SSZ 0.0 SLT neg sin SLT cos div SSZ mul SSZ neg 0.0 0.0 FMTX astore}
+  ifelse makefont setfont} bind def
+/SLT 0.0 def
+/SI { /SLT exch cvr def RDF} bind def
+/WFT /Courier findfont def
+/SF { /WFT exch findfont def RDF} bind def
+/SSZ 1000.0 def
+/SS { /SSZ exch 100.0 mul def RDF} bind def
+/AF { /WFT exch findfont def /SSZ exch 100.0 mul def RDF} bind def
+/MT /moveto load def
+/XM {currentpoint exch pop moveto} bind def
+/UL {gsave newpath moveto dup 2.0 div 0.0 exch rmoveto
+   setlinewidth 0.0 rlineto stroke grestore} bind def
+/LH {gsave newpath moveto setlinewidth
+   0.0 rlineto
+   gsave stroke grestore} bind def
+/LV {gsave newpath moveto setlinewidth
+   0.0 exch rlineto
+   gsave stroke grestore} bind def
+/BX {gsave newpath moveto setlinewidth
+   exch
+   dup 0.0 rlineto
+   exch 0.0 exch neg rlineto
+   neg 0.0 rlineto
+   closepath
+   gsave stroke grestore} bind def
+/BX1 {grestore} bind def
+/BX2 {setlinewidth 1 setgray stroke grestore} bind def
+/PB {/PV save def newpath translate
+    100.0 -100.0 scale pop /showpage {} def} bind def
+/PE {PV restore} bind def
+/GB {/PV save def newpath translate rotate
+    div dup scale 100.0 -100.0 scale
+    /showpage {} def
+    /letter {} def
+    /lettersmall {} def
+    /note {} def
+    } bind def
+/GE {PV restore} bind def
+/FB {dict dup /FontMapDict exch def begin} bind def
+/FM {cvn exch cvn exch def} bind def
+/FE {end /original-findfont /findfont load def  /findfont
+   {dup FontMapDict exch known{FontMapDict exch get} if
+   original-findfont} def} bind def
+/BC {gsave moveto dup 0 exch rlineto exch 0 rlineto neg 0 exch rlineto closepath clip} bind def
+/EC /grestore load def
+/SH /show load def
+/MX {exch show 0.0 rmoveto} bind def
+/W {0 32 4 -1 roll widthshow} bind def
+/WX {0 32 5 -1 roll widthshow 0.0 rmoveto} bind def
+/RC {100.0 -100.0 scale
+612.0 0.0 translate
+-90.0 rotate
+.01 -.01 scale} bind def
+/URC {100.0 -100.0 scale
+90.0 rotate
+-612.0 0.0 translate
+.01 -.01 scale} bind def
+/RCC {100.0 -100.0 scale
+0.0 -792.0 translate 90.0 rotate
+.01 -.01 scale} bind def
+/URCC {100.0 -100.0 scale
+-90.0 rotate 0.0 792.0 translate
+.01 -.01 scale} bind def
+%%EndProlog
+%%Page: 0 1
+BS
+0 SI
+11 SS 
+1 1 0 8280 7200 GB 
+%%BeginDocument: single-sided.ps
+%!PS-Adobe-2.0
+%
+%  This PostScript code turns off double-sided printing,
+%  which is desirable since we want to be able to move the
+%  Tables of Contents by hand after the manuals are printed.
+%
+statusdict begin
+   false setduplexmode
+end
+
+%%EndDocument
+ GE 14 /Times-Bold AF
+23260 20882 MT
+(Debugging Tools for Garnet)SH
+26178 22560 MT
+(Reference Manual)SH
+11 SS 
+26562 25558 MT
+(Roger B. Dannenberg)SH
+27753 26754 MT
+(Andrew Mickish)SH
+28853 27950 MT
+(Dario Giuse)SH
+/Times-Roman SF
+28183 29876 MT
+(December 1994)SH
+/Times-Bold SF
+29634 44214 MT
+(Abstract)SH
+/Times-Roman SF
+8280 45966 MT
+(Debugging a constraint-based graphical system can be difficult because critical interdependencies)
+52 W( can be)51 W
+8280 47262 MT
+(hard to visualize or)
+135 W( even discover.  The debugging tools for Garnet provide many convenient ways to)136 W
+8280 48558 MT
+(inspect objects and constraints in Garnet-based systems.)SH
+21010 54276 MT
+(Copyright)SH
+/Symbol SF
+25747 XM
+(\323)SH
+/Times-Roman SF
+26891 XM
+(1994 - Carnegie Mellon University)SH
+8280 61059 MT
+(This research)
+208 W( was sponsored by NCCOSC under Contract No.  N66001-94-C-6037, Arpa Order No.)207 W
+8280 62355 MT
+(B326. The)
+379 W( views and conclusions contained in this document)
+52 W( are those of the authors and should not be)53 W
+8280 63651 MT
+(interpreted as representing)
+193 W( the official policies, either expressed or implied, of NCCOSC or the U.S.)192 W
+8280 64947 MT
+(Government.)SH
+ES
+%%Page: 463 2
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(Section 1.2)
+SH( Loading)
+1800 W( and Using Debugging Tools)SH
+51386 XM
+(Page 463)SH
+46800 50 8280 4486 UL
+16 /Times-Bold AF
+8280 8272 MT
+(1. Introduction)SH
+11 /Times-Roman AF
+8280 10524 MT
+(This manual is intended for users of the)
+199 W( Garnet system and assumes that the reader is familiar with)200 W
+8280 11720 MT
+(Garnet. Other)
+622 W( reference manuals cover the object and constraint system KR)
+173 W( [Giuse)
+SH( 89], the graphics)173 W
+8280 12916 MT
+(system Opal)
+36 W( [Myers)
+SH( 89a], Interactors)
+36 W( [Myers)
+SH( 89b])
+36 W( for handling keyboard and mouse input, Aggregadgets)37 W
+8555 14112 MT
+([Marchal 89] for making instances of aggregates of Opal objects.)SH
+14 /Times-Bold AF
+8280 17930 MT
+(1.1. Notation in this Manual)SH
+11 /Times-Roman AF
+8280 19126 MT
+(In the)
+61 W( examples that follow, user type-in follows the asterisk \050)60 W
+10 /Courier AF
+(*)SH
+11 /Times-Roman AF
+(\051, which is the prompt character in CMU)60 W
+8280 20322 MT
+(Common Lisp on the RT.  Function results are printed following the characters ``)32 W
+10 /Courier AF
+(-->)SH
+11 /Times-Roman AF
+(''. This)
+340 W( is not what)33 W
+8280 21518 MT
+(CMU Common Lisp prints, but)
+42 W( is added to avoid confusion, since most debugging functions print text in)41 W
+8280 22714 MT
+(addition to returning values:)SH
+8 /Courier AF
+10200 23879 MT
+(* \050some-function an-arg or-two\051)SH
+10200 24744 MT
+(some-function prints out this information,)SH
+12120 25609 MT
+(which may take several lines)SH
+10200 26474 MT
+(--> function-result-printed-here)SH
+14 /Times-Bold AF
+8280 30292 MT
+(1.2. Loading and Using Debugging Tools)SH
+11 /Times-Roman AF
+8280 31488 MT
+(Normally, debugging tools will be loaded automatically when you load the file)62 W
+10 /Courier AF
+44005 XM
+(garnet-loader.lisp)SH
+11 /Times-Roman AF
+(.)SH
+8280 32684 MT
+(Presently, the debugging tools are)
+139 W( located in the files)138 W
+10 /Courier AF
+33110 XM
+(debug-fns.lisp)SH
+11 /Times-Roman AF
+41923 XM
+(and)SH
+10 /Courier AF
+43924 XM
+(objsize.lisp)SH
+11 /Times-Roman AF
+(. A)
+551 W( few)138 W
+8280 33880 MT
+(additional functions are defined in the packages they support.)SH
+8280 36178 MT
+(Most of the debugging tools are in the)SH
+10 /Courier AF
+25328 XM
+(GARNET-DEBUG)SH
+11 /Times-Roman AF
+32803 XM
+(package, and you should ordinarily type)SH
+8 /Courier AF
+10200 37343 MT
+(\050use-package "GARNET-DEBUG"\051)SH
+11 /Times-Roman AF
+8280 38764 MT
+(to avoid typing the package name when using these tools.  Functions and symbols mentioned in)
+177 W( this)178 W
+8280 39960 MT
+(document that are)SH
+/Times-Italic SF
+16435 XM
+(not)SH
+/Times-Roman SF
+18116 XM
+(in the)SH
+10 /Courier AF
+20866 XM
+(GARNET-DEBUG)SH
+11 /Times-Roman AF
+28341 XM
+(package will be shown with their full package name.)SH
+ES
+%%Page: 464 3
+BS
+0 SI
+10 /Times-Roman AF
+6120 4286 MT
+(Page 464)
+SH( Debugging)830 W
+39733 XM
+(Inspecting Objects)
+SH( Chapter)
+1550 W( 2)SH
+46800 50 6120 4486 UL
+16 /Times-Bold AF
+6120 8272 MT
+(2. Inspecting Objects)SH
+14 SS 
+6120 13146 MT
+(2.1. Inspector)SH
+11 /Times-Roman AF
+6120 14342 MT
+(The)SH
+10 /Courier AF
+8239 XM
+(Inspector)SH
+11 /Times-Roman AF
+14048 XM
+(is a powerful tool that can be of significan help in debugging.  It)
+134 W( pops up a window)133 W
+6120 15538 MT
+(showing an object, and also shows the aggregate and is-a hierarchy for objects,)
+50 W( and the dependencies for)51 W
+6120 16734 MT
+(formulas. Various)
+339 W( operations)
+32 W( can be performed on objects and slots.  In general, the)31 W
+10 /Courier AF
+43974 XM
+(Inspector)SH
+11 /Times-Roman AF
+49680 XM
+(is quite)31 W
+6120 17930 MT
+(useful for debugging programs, and provides interfaces to many of the other debugging functions)
+203 W( in)204 W
+6120 19126 MT
+(Garnet. A)
+275 W( view of an object being inspected in shown in Figure 2-1.)SH
+46800 50 6120 21277 UL
+75 100 0 6570 62799 GB 
+%%BeginDocument: debug/inspectorfig.PS
+%!PS-Adobe-2.0 EPSF-2.0
+%%Title: Showing #k<TEXT-6508>
+%%Creator: Make-PS-File -- Garnet Version 2.2
+%%CreationDate: Jun 16, 1993, 1:43 PM
+%%For: 
+%%This file does not use real color
+%%DocumentFonts: (atend)
+%%BoundingBox: 72 250 540 543
+%%%Pages: 1
+%%EndComments
+
+
+/AdjustLineDict 20 dict def
+/AdjustLine { % x1 y1 x2 y2 width => x1 y1 x2 y2
+  AdjustLineDict begin
+    /width exch cvi def
+    /hw width 2 div def
+    /oddwidth? width 1 and 1 eq def
+    /y2 exch def /x2 exch def /y1 exch def /x1 exch def
+    /dx x2 x1 sub def /dy y2 y1 sub def
+    dy 0 eq {
+      dx 0 eq {
+        % point
+        oddwidth? {
+          /x1 x1 .5 add def /y1 y1 .5 sub def
+          /x2 x2 .5 add def /y2 y2 .5 sub def
+        } if
+      } {
+        % horizontal
+        oddwidth? {
+          /y1 y1 .5 sub def
+          /y2 y2 .5 sub def
+        } if
+      } ifelse
+    } {
+      dx 0 eq {
+        % vertical
+        oddwidth? {
+          /x1 x1 .5 add def
+          /x2 x2 .5 add def
+        } if
+      } {
+        % diagonal
+        oddwidth? {
+          /x1 x1 .5 add def /y1 y1 .5 sub def
+          /x2 x2 .5 add def /y2 y2 .5 sub def
+        } if
+      } ifelse
+    } ifelse
+    x1 y1 x2 y2
+  end
+} def
+
+/DrawLineDict 20 dict def
+/DrawLine { % line-color cap join dash thickness x2 y2 x1 y1 => -
+    gsave DrawLineDict begin
+        4 index AdjustLine
+        moveto lineto
+        StrokeShape
+    end grestore
+} def
+
+/TextDict 40 dict def
+/DrawText { % left top base-y opal-width height fill-p
+            % fore-color back-color string size font-name => -
+    TextDict begin
+        gsave
+            findfont exch scalefont setfont
+            /s exch def
+            /back-color exch def /fore-color exch def /fill-p exch def
+            /height exch def  /opal-width exch def
+            /base-y exch def  /top exch def
+            /left exch 1 sub def % XXX: I don't know why!
+
+            % Calculate distance to add between each character, based on the 
+            % width expected by Opal, the width expected by postscript, and 
+            % the number of characters to distribute the change over.
+            /x-dist opal-width s stringwidth pop sub s length div def
+
+            % Draw background of text if appropriate
+            fill-p {
+                gsave
+                    newpath
+                    left top opal-width height RectanglePath
+                    back-color FillShape
+                grestore
+            } if
+
+            % Draw text in the appropriate color
+            newpath
+            s length 0 ne {
+                left base-y moveto
+                fore-color aload length 3 eq {
+                    setrgbcolor
+                    x-dist 0 s ashow
+                } { % Halftone pattern:
+                    %   fgR fgG fgB bgR bgG bgB top pattern
+                    %   fgR fgG fgB false top pattern
+                    /pattern exch def /top exch def /opaque? exch def
+                    opaque? not { .5 .5 .5 } if
+                    /bgB exch def /bgG exch def /bgR exch def
+                    /fgB exch def /fgG exch def /fgR exch def
+
+                    fgR bgR add 2 div
+                    fgG bgG add 2 div
+                    fgB bgB add 2 div
+                    setrgbcolor
+
+                    opaque? {
+                        x-dist 0 s ashow
+                    } {
+                        mark
+                        /ch 1 string def
+                        /space { /space { x-dist 0 rmoveto } def } def
+%                       /jt statusdict begin jobtimeout end def
+                        gsave { % try really hard to do it right
+                            s {
+                                % don't take more than 2 seconds a character
+%                               statusdict begin 2 setjobtimeout end
+                                space
+                                ch 0 3 -1 roll put
+                                ch true charpath
+                                currentpoint /yy exch def /xx exch def
+                                fgR fgG fgB false top pattern FillPattern
+                                newpath xx yy moveto
+                            } forall
+                        } stopped grestore { % fall back in case we fail
+                            x-dist 0 s ashow
+                        } if
+%                       statusdict begin jt setjobtimeout end
+                        cleartomark
+                    } ifelse
+                } ifelse
+            } if
+        grestore
+    end
+} def
+
+/RectanglePath { % left top width height => -
+    /h exch def  /w exch def
+    moveto                      % Go to the left,top corner
+    w 0 rlineto                 % top side
+    0 h neg rlineto             % right side
+    w neg 0 rlineto             % bottom side
+    closepath                   % left side
+} def
+
+/RectangleDict 21 dict def
+/DrawRectangle { % left top width height line-color
+                 % cap join dash thickness fill-color => -
+    RectangleDict begin
+        /fill-color exch def  /thickness exch def /dash-pattern exch def
+        /line-join exch def  /line-cap exch def /line-color exch def
+        /height exch def /width exch def  /top exch def  /left exch def
+        /thickness-for-fill thickness 0 lt {0} {thickness} ifelse def
+        % Draw filling
+        newpath
+        left thickness-for-fill add top thickness-for-fill sub
+        width thickness-for-fill 2 mul sub height thickness-for-fill 2 mul sub
+        RectanglePath
+        fill-color FillShape
+        % Draw border
+        newpath
+        left thickness 2 div add  top thickness 2 div sub
+        width thickness sub  height thickness sub
+        RectanglePath
+        line-color line-cap line-join dash-pattern thickness StrokeShape
+    end
+} def
+
+/DrawMotifWindowFrame { % label left top w h 
+                        % leftmargin topmargin rightmargin bottommargin => -
+  30 dict begin
+
+  { % setup
+    /bottommargin exch def /rightmargin exch def
+    /topmargin exch def /leftmargin exch def
+    /h exch def /w exch def /y exch h sub def /x exch def
+    /label exch def
+
+    /bottom y bottommargin sub def
+    /top y h add topmargin add def
+    /left x leftmargin sub def
+    /right x w add rightmargin add def
+
+    /light .9 def
+    /medium .7 def
+    /dark .4 def
+
+    1 setlinewidth
+    0 setlinecap
+  } exec
+
+  { % background
+    left bottom moveto
+    left top lineto
+    right top lineto
+    right bottom lineto
+    closepath
+    medium setgray fill
+  } exec
+
+  { % outer upper left edges
+    left bottom moveto
+    right bottom lineto
+    right top lineto
+    right 2 sub top 2 sub lineto
+    right 2 sub bottom 2 add lineto
+    left 2 add bottom 2 add lineto
+    closepath
+    dark setgray fill
+  } exec
+
+  { % outer lower right edges
+    left bottom moveto
+    left top lineto
+    right top lineto
+    right 2 sub top 2 sub lineto
+    left 2 add top 2 sub lineto
+    left 2 add bottom 2 add lineto
+    closepath
+    light setgray fill
+  } exec
+
+  { % inner lower right edges
+    left 9 add bottom 9 add moveto
+    right 9 sub bottom 9 add lineto
+    right 9 sub top 25 sub lineto
+    right 11 sub top 27 sub lineto
+    right 11 sub bottom 11 add lineto
+    left 11 add bottom 11 add lineto
+    closepath
+    light setgray fill
+  } exec
+
+  { % inner upper left edges
+    left 9 add bottom 9 add moveto
+    left 9 add top 25 sub lineto
+    right 9 sub top 25 sub lineto
+    right 11 sub top 27 sub lineto
+    left 11 add top 27 sub lineto
+    left 11 add bottom 11 add lineto
+    closepath
+    dark setgray fill
+  } exec
+
+  { % top rut above label
+    left 9 add top 9.5 sub moveto
+    right 9.01 sub top 9.5 sub lineto
+    dark setgray stroke
+    left 10 add top 10.5 sub moveto
+    right 9.01 sub top 10.5 sub lineto
+    light setgray stroke
+  } exec
+
+  { % left edge of left button
+    left 9.5 add top 9 sub moveto
+    left 9.5 add top 25.99 sub lineto
+    dark setgray stroke
+    left 10.5 add top 10 sub moveto
+    left 10.5 add top 25.99 sub lineto
+    light setgray stroke
+  } exec
+
+  { % right edge of big right button
+    right 10.5 sub top 11 sub moveto
+    right 10.5 sub top 25.99 sub lineto
+    dark setgray stroke
+    right 9.5 sub top 11 sub moveto
+    right 9.5 sub top 25.99 sub lineto
+    light setgray stroke
+  } exec
+
+  { % right edge of left button
+    left 26.5 add top 11 sub moveto
+    left 26.5 add top 25.99 sub lineto
+    dark setgray stroke
+    left 27.5 add top 11 sub moveto
+    left 27.5 add top 25.99 sub lineto
+    light setgray stroke
+  } exec
+
+  { % edge between small and big right buttons
+    right 27.5 sub top 11 sub moveto
+    right 27.5 sub top 25.99 sub lineto
+    dark setgray stroke
+    right 26.5 sub top 11 sub moveto
+    right 26.5 sub top 25.99 sub lineto
+    light setgray stroke
+  } exec
+
+  { % left edge of small right button
+    right 44.5 sub top 11 sub moveto
+    right 44.5 sub top 25.99 sub lineto
+    dark setgray stroke
+    right 43.5 sub top 11 sub moveto
+    right 43.5 sub top 25.99 sub lineto
+    light setgray stroke
+  } exec
+
+  { % top left resize corner
+    left 26.5 add top 1 sub moveto
+    left 26.5 add top 9.99 sub lineto
+    dark setgray stroke
+    left 27.5 add top 1 sub moveto
+    left 27.5 add top 9.99 sub lineto
+    light setgray stroke
+
+    left 1 add top 26.5 sub moveto
+    left 9.99 add top 26.5 sub lineto
+    dark setgray stroke
+    left 1 add top 27.5 sub moveto
+    left 9.99 add top 27.5 sub lineto
+    light setgray stroke
+  } exec
+
+  { % top right resize corner
+    right 27.5 sub top 1 sub moveto
+    right 27.5 sub top 9.99 sub lineto
+    dark setgray stroke
+    right 26.5 sub top 1 sub moveto
+    right 26.5 sub top 9.99 sub lineto
+    light setgray stroke
+
+    right 1.01 sub top 26.5 sub moveto
+    right 9 sub top 26.5 sub lineto
+    dark setgray stroke
+    right 1.01 sub top 27.5 sub moveto
+    right 9 sub top 27.5 sub lineto
+    light setgray stroke
+  } exec
+
+  { % bottom left resize corner
+    left 26.5 add bottom 1.01 add moveto
+    left 26.5 add bottom 9 add lineto
+    dark setgray stroke
+    left 27.5 add bottom 1.01 add moveto
+    left 27.5 add bottom 9 add lineto
+    light setgray stroke
+
+    left 1 add bottom 27.5 add moveto
+    left 9.99 add bottom 27.5 add lineto
+    dark setgray stroke
+    left 1 add bottom 26.5 add moveto
+    left 9.99 add bottom 26.5 add lineto
+    light setgray stroke
+  } exec
+
+  { % bottom right resize corner
+    right 27.5 sub bottom 1.01 add moveto
+    right 27.5 sub bottom 9 add lineto
+    dark setgray stroke
+    right 26.5 sub bottom 1.01 add moveto
+    right 26.5 sub bottom 9 add lineto
+    light setgray stroke
+
+    right 1.01 sub bottom 27.5 add moveto
+    right 9 sub bottom 27.5 add lineto
+    dark setgray stroke
+    right 1.01 sub bottom 26.5 add moveto
+    right 9 sub bottom 26.5 add lineto
+    light setgray stroke
+  } exec
+
+  { % upper left button
+    left 14.5 add top 19.99 sub moveto
+    left 14.5 add top 16.5 sub lineto
+    left 22.99 add top 16.5 sub lineto
+    light setgray stroke
+    left 15 add top 19.5 sub moveto
+    left 22.5 add top 19.5 sub lineto
+    left 22.5 add top 17 sub lineto
+    dark setgray stroke
+  } exec
+
+  { % upper right big button
+    right 14.01 sub top 14.5 sub moveto
+    right 22.5 sub top 14.5 sub lineto
+    right 22.5 sub top 22.99 sub lineto
+    light setgray stroke
+    right 14.5 sub top 15 sub moveto
+    right 14.5 sub top 22.5 sub lineto
+    right 22 sub top 22.5 sub lineto
+    dark setgray stroke
+  } exec
+
+  { % upper right small button
+    right 34.01 sub top 16.5 sub moveto
+    right 37.5 sub top 16.5 sub lineto
+    right 37.5 sub top 19.99 sub lineto
+    light setgray stroke
+    right 34.5 sub top 17 sub moveto
+    right 34.5 sub top 19.5 sub lineto
+    right 37 sub top 19.5 sub lineto
+    dark setgray stroke
+  } exec
+
+  { % label
+    /Helvetica-Bold findfont 10 scalefont setfont
+    label stringwidth pop
+    left 28 add right 44 sub add 2 div
+    1 index 2 div sub
+    dup 2 sub top 24 sub
+    moveto
+    1 index 4 add 0 rlineto
+    0 12 rlineto
+    exch 4 add neg 0 rlineto
+    closepath
+    1 setgray fill
+    top 21 sub moveto
+    0 setgray
+    label show
+  } exec
+
+  end
+} def
+
+/DrawGenericWindowFrame { % label left top w h
+                          % leftmargin topmargin rightmargin bottommargin => -
+  30 dict begin
+
+  { % setup
+    /bottommargin exch def /rightmargin exch def
+    /topmargin exch def /leftmargin exch def
+    /h exch def /w exch def /y exch h sub def /x exch def
+    /label exch def
+    /pointsize
+      topmargin 1 sub
+      dup 1 lt { pop 1 } if
+      dup 12 gt { 12 sub 3 div 12 add } if
+    def
+
+    /bottom y def /top y h add def
+    /left x def /right  x w add def
+    1 setlinewidth
+    0 setlinecap
+  } exec
+
+  { % background
+    newpath
+    left leftmargin sub bottom bottommargin sub moveto
+    left leftmargin sub top topmargin add lineto
+    right rightmargin add top topmargin add lineto
+    right rightmargin add bottom bottommargin sub lineto
+    closepath
+    0 setgray fill
+
+    left bottom moveto
+    left top lineto
+    right top lineto
+    right bottom lineto
+    closepath
+    1 setgray fill
+  } exec
+
+  topmargin 8 ge {
+    /Helvetica-Bold findfont pointsize scalefont setfont
+    label stringwidth pop
+    left right add 2 div
+    exch 2 div sub
+    top topmargin 2 div add pointsize 2 div sub 2 add moveto
+    1 setgray
+    label show
+  } if
+
+  end
+} def
+
+/FillShape { % [halftone] | [r g b] | null => -
+    gsave
+        dup null eq { pop } {
+          aload length 3 eq { setrgbcolor fill } {
+              FillPattern
+          } ifelse
+        } ifelse
+    grestore
+    newpath
+} def
+
+/StrokeShape { % line-color cap join dash thickness => -
+    % If no line is desired, pass -1 for line-thickness
+    dup 0 ge 5 index null ne and {
+        % if line-thickness >= 0, then draw the outline
+        gsave
+            setlinewidth 0 setdash setlinejoin setlinecap
+            aload length 3 eq { setrgbcolor stroke } {
+                strokepath FillPattern
+            } ifelse
+        grestore
+    } {
+        pop pop pop pop pop
+    } ifelse
+    newpath
+} def
+
+/ClipDict 2 dict def
+/ClipToRectangle { % left top width height => -
+    ClipDict begin
+        /height exch def  /width exch def
+        newpath
+            moveto                      % Go to the left,top corner
+            width 0 rlineto             % top side
+            0 height neg rlineto        % right side
+            width neg 0 rlineto         % bottom side
+            closepath                   % left side
+        gsave 1 setgray fill grestore
+        clip newpath
+    end
+} def
+
+
+%%EndProlog
+%%%Page: 1 1
+
+gsave
+72 72 translate
+0.97 0.97 scale
+0 485 translate
+
+%
+% Begin new window
+%
+gsave
+0 0 482 302 ClipToRectangle
+gsave
+0 0 482 302 [0 0 0] 0 0 [] -1 [1 1 1] DrawRectangle
+grestore
+
+
+%
+% Begin new window
+%
+gsave
+11 -27 translate
+(Showing #k<TEXT-6508>) 0 0 460 264 11 27 11 11 DrawMotifWindowFrame
+0 0 460 264 ClipToRectangle
+gsave
+4 -4 80 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+3 -3 80 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+4 -4 78 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+5 -5 -16 76 14 false [0 0 0] [1 1 1] (Show Object) 12 /Courier DrawText
+90 -4 80 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+89 -3 80 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+90 -4 78 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+91 -5 -16 76 14 false [0 0 0] [1 1 1] (Show in New) 12 /Courier DrawText
+176 -4 60 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+175 -3 60 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+176 -4 58 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+177 -5 -16 56 14 false [0 0 0] [1 1 1] (Re-Fetch) 12 /Courier DrawText
+242 -4 87 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+241 -3 87 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+242 -4 85 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+243 -5 -16 83 14 false [0 0 0] [1 1 1] (Dependencies) 12 /Courier DrawText
+335 -4 31 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+334 -3 31 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+335 -4 29 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+336 -5 -16 27 14 false [0 0 0] [1 1 1] (Done) 12 /Courier DrawText
+372 -4 60 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+371 -3 60 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+372 -4 58 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+373 -5 -16 56 14 false [0 0 0] [1 1 1] (Done All) 12 /Courier DrawText
+4 -28 39 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+3 -27 39 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+4 -28 37 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+5 -29 -40 35 14 false [0 0 0] [1 1 1] (Flash) 12 /Courier DrawText
+49 -28 45 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+48 -27 45 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+49 -28 43 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+50 -29 -40 41 14 false [0 0 0] [1 1 1] (Search) 12 /Courier DrawText
+100 -28 39 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+99 -27 39 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+100 -28 37 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+101 -29 -40 35 14 false [0 0 0] [1 1 1] (Break) 12 /Courier DrawText
+145 -28 46 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+144 -27 46 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+145 -28 44 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+146 -29 -40 42 14 false [0 0 0] [1 1 1] (Notify) 12 /Courier DrawText
+197 -28 86 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+196 -27 86 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+197 -28 84 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+198 -29 -40 82 14 false [0 0 0] [1 1 1] (Clear Breaks) 12 /Courier DrawText
+289 -28 107 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+288 -27 107 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+289 -28 105 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+290 -29 -40 103 14 false [0 0 0] [1 1 1] (Inherited Slots) 12 /Courier DrawText
+402 -28 51 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+401 -27 51 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+402 -28 49 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+403 -29 -40 47 14 false [0 0 0] [1 1 1] (Objects) 12 /Courier DrawText
+2 -47 -62 141 20 false [0 0 0] [1 1 1] (#k<TEXT-6508>) 18 /Courier-Bold DrawText
+5 -77 -88 35 14 false [0 0 0] [1 1 1] (:IS-A) 12 /Courier DrawText
+40 -77 -88 133 14 false [0 0 0] [1 1 1] ( = \050#k<TEXT-6509>\051 ) 12 /Courier-Bold DrawText
+5 -91 -102 35 14 false [0 0 0] [1 1 1] (:LEFT) 12 /Courier DrawText
+40 -91 -102 132 14 false [0 0 0] [1 1 1] ( - #k<F2975-4250-6074>) 10 /Courier DrawText
+172 -91 -102 28 14 false [0 0 0] [1 1 1] ( \050V\051) 12 /Courier-BoldOblique DrawText
+200 -91 -102 49 14 false [0 0 0] [1 1 1] ( = 114 ) 12 /Courier-Bold DrawText
+5 -105 -116 28 14 false [0 0 0] [1 1 1] (:TOP) 12 /Courier DrawText
+33 -105 -116 132 14 false [0 0 0] [1 1 1] ( - #k<F2976-4252-6075>) 10 /Courier DrawText
+165 -105 -116 28 14 false [0 0 0] [1 1 1] ( \050V\051) 12 /Courier-BoldOblique DrawText
+193 -105 -116 35 14 false [0 0 0] [1 1 1] ( = 7 ) 12 /Courier-Bold DrawText
+5 -119 -130 42 14 false [0 0 0] [1 1 1] (:WIDTH) 12 /Courier DrawText
+47 -119 -130 150 14 false [0 0 0] [1 1 1] ( - #k<F32-3310-3311-5501>) 10 /Courier DrawText
+197 -119 -130 28 14 false [0 0 0] [1 1 1] ( \050V\051) 12 /Courier-BoldOblique DrawText
+225 -119 -130 42 14 false [0 0 0] [1 1 1] ( = 27 ) 12 /Courier-Bold DrawText
+5 -133 -144 49 14 false [0 0 0] [1 1 1] (:HEIGHT) 12 /Courier DrawText
+54 -133 -144 150 14 false [0 0 0] [1 1 1] ( - #k<F31-3333-3334-5511>) 10 /Courier DrawText
+204 -133 -144 28 14 false [0 0 0] [1 1 1] ( \050V\051) 12 /Courier-BoldOblique DrawText
+232 -133 -144 42 14 false [0 0 0] [1 1 1] ( = 14 ) 12 /Courier-Bold DrawText
+5 -147 -158 56 14 false [0 0 0] [1 1 1] (:VISIBLE) 12 /Courier DrawText
+61 -147 -158 198 14 false [0 0 0] [1 1 1] ( - #k<F16-352-357-3277-3278-5448>) 10 /Courier DrawText
+259 -147 -158 28 14 false [0 0 0] [1 1 1] ( \050V\051) 12 /Courier-BoldOblique DrawText
+287 -147 -158 35 14 false [0 0 0] [1 1 1] ( = T ) 12 /Courier-Bold DrawText
+5 -161 -172 77 14 false [0 0 0] [1 1 1] (:LINE-STYLE) 12 /Courier DrawText
+82 -161 -172 132 14 false [0 0 0] [1 1 1] ( - #k<F2979-4254-6076>) 10 /Courier DrawText
+214 -161 -172 28 14 false [0 0 0] [1 1 1] ( \050V\051) 12 /Courier-BoldOblique DrawText
+242 -161 -172 217 14 false [0 0 0] [1 1 1] ( = #k<OPAL:DEFAULT-LINE-STYLE> ) 12 /Courier-Bold DrawText
+5 -175 -186 49 14 false [0 0 0] [1 1 1] (:PARENT) 12 /Courier DrawText
+54 -175 -186 28 14 false [0 0 0] [1 1 1] ( \050C\051) 12 /Courier-BoldOblique DrawText
+82 -175 -186 224 14 false [0 0 0] [1 1 1] ( = #k<MOTIF-BAR-ITEM-3024-5430> ) 12 /Courier-Bold DrawText
+5 -189 -200 35 14 false [0 0 0] [1 1 1] (:FONT) 12 /Courier DrawText
+40 -189 -200 132 14 false [0 0 0] [1 1 1] ( - #k<F2977-3327-5508>) 10 /Courier DrawText
+172 -189 -200 28 14 false [0 0 0] [1 1 1] ( \050V\051) 12 /Courier-BoldOblique DrawText
+200 -189 -200 112 14 false [0 0 0] [1 1 1] ( = #k<FONT-192> ) 12 /Courier-Bold DrawText
+5 -203 -214 63 14 false [0 0 0] [1 1 1] (:KNOWN-AS) 12 /Courier DrawText
+68 -203 -214 28 14 false [0 0 0] [1 1 1] ( \050C\051) 12 /Courier-BoldOblique DrawText
+96 -203 -214 63 14 false [0 0 0] [1 1 1] ( = :TEXT ) 12 /Courier-Bold DrawText
+5 -217 -228 49 14 false [0 0 0] [1 1 1] (:STRING) 12 /Courier DrawText
+54 -217 -228 132 14 false [0 0 0] [1 1 1] ( - #k<F2978-3313-5502>) 10 /Courier DrawText
+186 -217 -228 28 14 false [0 0 0] [1 1 1] ( \050V\051) 12 /Courier-BoldOblique DrawText
+214 -217 -228 70 14 false [0 0 0] [1 1 1] ( = "Size" ) 12 /Courier-Bold DrawText
+5 -231 -242 84 14 false [0 0 0] [1 1 1] (:UPDATE-INFO) 12 /Courier DrawText
+89 -231 -242 308 14 false [0 0 0] [1 1 1] ( = #<Update-Info dirty-p NIL invalid-p NIL> ) 12 /Courier-Bold DrawText
+5 -245 -256 49 14 false [0 0 0] [1 1 1] (:WINDOW) 12 /Courier DrawText
+54 -245 -256 189 14 false [0 0 0] [1 1 1] ( = #k<DEMO-MULTIFONT::WIN> ) 12 /Courier-Bold DrawText
+grestore
+
+grestore
+
+grestore
+
+grestore
+
+
+showpage
+%%Trailer
+%%DocumentFonts: /Courier-BoldOblique /Courier-Bold /Courier Helvetica-Bold 
+%%BoundingBox: 72 250 540 543
+
+%%EndDocument
+ GE /Times-Bold SF
+6120 45801 MT
+(Figure 2-1:)SH
+/Times-Roman SF
+11893 XM
+(The Inspector showing a text object.)SH
+46800 50 6120 47753 UL
+6120 49851 MT
+(The)SH
+10 /Courier AF
+8163 XM
+(Inspector)SH
+11 /Times-Roman AF
+13896 XM
+(is loaded automatically when you)
+58 W( load the debugging tools which is enabled by default)57 W
+6120 51047 MT
+(in garnet-loader, but)
+53 W( it can also be loaded explicitly using)54 W
+10 /Courier AF
+32227 XM
+(\050garnet-load "debug:inspector"\051)54 W
+11 /Times-Roman AF
+51210 XM
+(The)SH
+10 /Courier AF
+6120 52243 MT
+(Inspector)SH
+11 /Times-Roman AF
+11795 XM
+(is in the)SH
+10 /Courier AF
+15554 XM
+(garnet-debug)SH
+11 /Times-Roman AF
+23029 XM
+(package.)SH
+6120 54541 MT
+(An example of using the Inspector is included in the Tutorial at the beginning of this Reference Manual.)SH
+12 /Times-Bold AF
+6120 58225 MT
+(2.1.1. Invoking the Inspector)SH
+11 /Times-Roman AF
+6120 59421 MT
+(There are a number of ways to inspect objects.  The easiest is to put the)
+38 W( mouse over an object and hit the)37 W
+10 /Courier AF
+6120 60617 MT
+(HELP)SH
+11 /Times-Roman AF
+8916 XM
+(keyboard key.  This will print a message in the Lisp listener window and pop up)
+121 W( a window like)122 W
+6120 61813 MT
+(Figure 2-1.  If you want to use the)188 W
+10 /Courier AF
+23085 XM
+(HELP)SH
+11 /Times-Roman AF
+25947 XM
+(keyboard key for something else, you can set the variable)187 W
+10 /Courier AF
+6120 63009 MT
+(garnet-debug:*inspector-key*)SH
+11 /Times-Roman AF
+23731 XM
+(to a different key)
+536 W( \050or NIL for none\051)537 W
+/Times-Italic SF
+43842 XM
+(before)SH
+/Times-Roman SF
+47464 XM
+(loading the)537 W
+10 /Courier AF
+6120 64205 MT
+(Inspector)SH
+11 /Times-Roman AF
+(.)SH
+6120 66838 MT
+(Alternatively, you can explicitly invoke the)SH
+10 /Courier AF
+25519 XM
+(Inspector)SH
+11 /Times-Roman AF
+31194 XM
+(on an object using either)SH
+8 /Courier AF
+8040 68051 MT
+(garnet-debug:Inspector)SH
+/Times-Italic SF
+19080 XM
+(obj)SH
+/Courier SF
+47152 XM
+([)SH
+/Times-Italic SF
+(Function)SH
+/Courier SF
+(])SH
+8040 68916 MT
+(gd:Inspector)SH
+/Times-Italic SF
+14280 XM
+(obj)SH
+11 /Times-Roman AF
+6120 70337 MT
+(\050)SH
+10 /Courier AF
+(gd)SH
+11 /Times-Roman AF
+7961 XM
+(is an abbreviation for)SH
+10 /Courier AF
+17613 XM
+(garnet-debug)SH
+11 /Times-Roman AF
+(\051.)SH
+6120 71533 MT
+(To inspect the)41 W
+/Times-Italic SF
+12750 XM
+(next)SH
+/Times-Roman SF
+14898 XM
+(interactor that runs, you can hit)41 W
+10 /Courier AF
+29165 XM
+(CONTROL-HELP)SH
+11 /Times-Roman AF
+36681 XM
+(on the keyboard \050the mouse position)40 W
+ES
+%%Page: 465 4
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(Section 2.1)
+SH( Inspector)1800 W
+51386 XM
+(Page 465)SH
+46800 50 8280 4486 UL
+11 SS 
+8280 7955 MT
+(is irrelevant\051, or call the function)SH
+8 /Courier AF
+10200 9168 MT
+(gd:Inspect-Next-Inter)SH
+49312 XM
+([)SH
+/Times-Italic SF
+(Function)SH
+/Courier SF
+(])SH
+11 /Times-Roman AF
+8280 10589 MT
+(Hitting)SH
+10 /Courier AF
+11988 XM
+(CONTROL-HELP)SH
+11 /Times-Roman AF
+19778 XM
+(a second time before an interactor runs will cancel the invocation)
+315 W( of the)316 W
+10 /Courier AF
+8280 11785 MT
+(Inspector)SH
+11 /Times-Roman AF
+(. To)
+481 W( change the)
+103 W( binding of this function, set the variable)102 W
+10 /Courier AF
+40080 XM
+(gd:*inspector-next-inter-)SH
+8280 12981 MT
+(key*)SH
+11 /Times-Italic AF
+10955 XM
+(before)SH
+/Times-Roman SF
+14040 XM
+(loading the)SH
+10 /Courier AF
+19234 XM
+(Inspector)SH
+11 /Times-Roman AF
+(.)SH
+8280 15279 MT
+(By default,)34 W
+10 /Courier AF
+13511 XM
+(SHIFT-HELP)SH
+11 /Times-Roman AF
+19820 XM
+(is bound to a little function that)
+34 W( simply prints the object under the mouse to the)35 W
+8280 16475 MT
+(Lisp Listener, and does not invoke the)SH
+10 /Courier AF
+25388 XM
+(Inspector)SH
+11 /Times-Roman AF
+(. Example)
+275 W( output from it is:)SH
+8 /Courier AF
+10200 17640 MT
+(--> \05024,96\051 = #k<MULTIFONT-LINE-1447> in window #k<INTERACTOR-WINDOW-1371>)SH
+10200 19370 MT
+(--> No object at \05079,71\051 in window #k<INTERACTOR-WINDOW-1371>)SH
+11 /Times-Roman AF
+8280 20791 MT
+(To change the binding of this function, use the variable)SH
+10 /Courier AF
+33146 XM
+(gd:*show-object-key*)SH
+11 /Times-Roman AF
+(.)SH
+12 /Times-Bold AF
+8280 24475 MT
+(2.1.2. Schema View)SH
+11 /Times-Roman AF
+8280 25671 MT
+(The schema view shown in Figure 2-1 tells all the local slots of an)
+25 W( object.  To see the inherited slots also,)24 W
+8280 26867 MT
+(click on the)SH
+10 /Courier AF
+13687 XM
+(Inherited Slots)SH
+11 /Times-Roman AF
+22962 XM
+(button. For)
+275 W( each slot, the display is:)SH
+/Symbol SF
+10249 28445 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(The slot name.)SH
+/Symbol SF
+10249 29641 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(A)SH
+/Times-BoldItalic SF
+12099 XM
+(\050C\051)SH
+/Times-Roman SF
+13840 XM
+(if the slot is constant.)SH
+/Symbol SF
+10249 30837 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(An)SH
+/Times-BoldItalic SF
+12649 XM
+(\050I\051)SH
+/Times-Roman SF
+14084 XM
+(if the slot is inherited.)SH
+/Symbol SF
+10249 32033 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(The formula for the slot, if any.)SH
+/Symbol SF
+10249 33229 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(If there is a formula, then a)SH
+/Times-BoldItalic SF
+23246 XM
+(\050V\051)SH
+/Times-Roman SF
+24987 XM
+(if the slot value is valid, otherwise a)SH
+/Times-BoldItalic SF
+41148 XM
+(\050IV\051)SH
+/Times-Roman SF
+43317 XM
+(for invalid.)SH
+/Symbol SF
+10249 34425 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(The current value of the slot, which may wrap to multiple lines if the value is long.)SH
+/Symbol SF
+10249 35621 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(The entire line is red if the slot is a)16 W
+/Times-Italic SF
+26770 XM
+(parameter)SH
+/Times-Roman SF
+31643 XM
+(to the object \050if it is in the)17 W
+10 /Courier AF
+43451 XM
+(:parameters)SH
+11 /Times-Roman AF
+50343 XM
+(list\051,)SH
+11030 36817 MT
+(otherwise the line is black.)SH
+8280 39115 MT
+(If the object's values change while it is being inspected, the view is)5 W
+/Times-Italic SF
+38281 XM
+(not)SH
+/Times-Roman SF
+39967 XM
+(updated automatically.  To)
+5 W( see the)4 W
+8280 40311 MT
+(current value of slots, hit the ")SH
+10 /Courier AF
+(Re-Fetch)SH
+11 /Times-Roman AF
+(" button.)SH
+8280 42609 MT
+(To change the value of a slot of an object, click in the value)
+115 W( part of the slot \050after the =\051, and edit the)116 W
+8280 43805 MT
+(value to the)
+111 W( desired value and hit return.  The object will immediately be updated and the)110 W
+10 /Courier AF
+49680 XM
+(Inspector)SH
+11 /Times-Roman AF
+8280 45001 MT
+(display will be re-fetched.  If you change your mind about editing the value before)
+52 W( hitting return, simply)53 W
+8280 46197 MT
+(hit)SH
+10 /Courier AF
+9773 XM
+(control-g)SH
+11 /Times-Roman AF
+(. If)
+387 W( you try to set a slot which is marked)
+56 W( constant, the)55 W
+10 /Courier AF
+39844 XM
+(Inspector)SH
+11 /Times-Roman AF
+45574 XM
+(will go ahead and set)55 W
+8280 47393 MT
+(the slot,)
+49 W( but it gives you a warning because often dependencies based on the slot will no longer be there,)50 W
+8280 48589 MT
+(so the effect of setting the slot may not work.)SH
+8280 50887 MT
+(If a slot's value is an object and you want to inspect that object, or if you want to inspect a formula, you)50 W
+8280 52083 MT
+(can double-click the)
+34 W( left button over the object name, and hit the ")35 W
+10 /Courier AF
+(Show Object)35 W
+11 /Times-Roman AF
+(" button.  Also, you can)35 W
+8280 53279 MT
+(use the ")SH
+10 /Courier AF
+(Show in New)SH
+11 /Times-Roman AF
+(" button if you want the object to be inspected in a new window.)SH
+12 /Times-Bold AF
+8280 56963 MT
+(2.1.3. Object View)SH
+11 /Times-Roman AF
+8280 58159 MT
+(Hitting the ")47 W
+10 /Courier AF
+(Objects)SH
+11 /Times-Roman AF
+(" button brings up the view in Figure 2-2.)
+47 W( This)
+367 W( view shows the name of the object)46 W
+8280 59355 MT
+(being inspected at the top, then)
+266 W( the)267 W
+10 /Courier AF
+25724 XM
+(is-a)SH
+11 /Times-Roman AF
+28666 XM
+(hierarchy. In)
+809 W( Figure 2-2,)267 W
+10 /Courier AF
+41332 XM
+(TEXT-6509)SH
+11 /Times-Roman AF
+47274 XM
+(is the immediate)267 W
+8280 60551 MT
+(prototype of the)
+57 W( inspected object \050)56 W
+10 /Courier AF
+(TEXT-6508)SH
+11 /Times-Roman AF
+(\051, and)56 W
+10 /Courier AF
+31912 XM
+(TEXT-7180)SH
+11 /Times-Roman AF
+37643 XM
+(is the prototype of)56 W
+10 /Courier AF
+46177 XM
+(TEXT-6509)SH
+11 /Times-Roman AF
+(, and so)56 W
+8280 61747 MT
+(on. The)
+753 W( next set of objects shows the aggregate hierarchy.  Here,)240 W
+10 /Courier AF
+40412 XM
+(TEXT-6508)SH
+11 /Times-Roman AF
+46327 XM
+(is in the aggregate)240 W
+10 /Courier AF
+8280 62943 MT
+(MOTIF-BAR-ITEM-3024-5430)SH
+11 /Times-Roman AF
+(, etc.  The last item in this)
+57 W( list is always the window that the object is in)56 W
+8280 64139 MT
+(\050even though that is technically not the)53 W
+10 /Courier AF
+26034 XM
+(:parent)SH
+11 /Times-Roman AF
+30562 XM
+(of the top-level aggregate\051.)
+53 W( The)
+383 W( final list is simply the)54 W
+8280 65335 MT
+(list of objects that have been viewed in this window, which forms a simple history of views.)SH
+8280 67633 MT
+(To return to)
+24 W( the schema view of the current object, use the ")23 W
+10 /Courier AF
+(Re-Fetch)SH
+11 /Times-Roman AF
+(" button.  You can double-click on)23 W
+8280 68829 MT
+(any object and use ")27 W
+10 /Courier AF
+(Show Object)28 W
+11 /Times-Roman AF
+(" or ")28 W
+10 /Courier AF
+(Show in New)28 W
+11 /Times-Roman AF
+(" to see its fields, or you can hit ")28 W
+10 /Courier AF
+(Objects)SH
+11 /Times-Roman AF
+(" to go)28 W
+8280 70025 MT
+(to the object view of the selected object.)SH
+ES
+%%Page: 466 5
+BS
+0 SI
+10 /Times-Roman AF
+6120 4286 MT
+(Page 466)
+SH( Debugging)830 W
+39733 XM
+(Inspecting Objects)
+SH( Chapter)
+1550 W( 2)SH
+46800 50 6120 4486 UL
+46800 50 6120 8155 UL
+11 SS 
+75 100 0 6570 52752 GB 
+%%BeginDocument: debug/inspectorobjsfig.PS
+%!PS-Adobe-2.0 EPSF-2.0
+%%Title: Showing #k<TEXT-6508>
+%%Creator: Make-PS-File -- Garnet Version 2.2
+%%CreationDate: Jun 16, 1993, 2:12 PM
+%%For: 
+%%This file does not use real color
+%%DocumentFonts: (atend)
+%%BoundingBox: 72 209 540 584
+%%%Pages: 1
+%%EndComments
+
+
+/AdjustLineDict 20 dict def
+/AdjustLine { % x1 y1 x2 y2 width => x1 y1 x2 y2
+  AdjustLineDict begin
+    /width exch cvi def
+    /hw width 2 div def
+    /oddwidth? width 1 and 1 eq def
+    /y2 exch def /x2 exch def /y1 exch def /x1 exch def
+    /dx x2 x1 sub def /dy y2 y1 sub def
+    dy 0 eq {
+      dx 0 eq {
+        % point
+        oddwidth? {
+          /x1 x1 .5 add def /y1 y1 .5 sub def
+          /x2 x2 .5 add def /y2 y2 .5 sub def
+        } if
+      } {
+        % horizontal
+        oddwidth? {
+          /y1 y1 .5 sub def
+          /y2 y2 .5 sub def
+        } if
+      } ifelse
+    } {
+      dx 0 eq {
+        % vertical
+        oddwidth? {
+          /x1 x1 .5 add def
+          /x2 x2 .5 add def
+        } if
+      } {
+        % diagonal
+        oddwidth? {
+          /x1 x1 .5 add def /y1 y1 .5 sub def
+          /x2 x2 .5 add def /y2 y2 .5 sub def
+        } if
+      } ifelse
+    } ifelse
+    x1 y1 x2 y2
+  end
+} def
+
+/DrawLineDict 20 dict def
+/DrawLine { % line-color cap join dash thickness x2 y2 x1 y1 => -
+    gsave DrawLineDict begin
+        4 index AdjustLine
+        moveto lineto
+        StrokeShape
+    end grestore
+} def
+
+/TextDict 40 dict def
+/DrawText { % left top base-y opal-width height fill-p
+            % fore-color back-color string size font-name => -
+    TextDict begin
+        gsave
+            findfont exch scalefont setfont
+            /s exch def
+            /back-color exch def /fore-color exch def /fill-p exch def
+            /height exch def  /opal-width exch def
+            /base-y exch def  /top exch def
+            /left exch 1 sub def % XXX: I don't know why!
+
+            % Calculate distance to add between each character, based on the 
+            % width expected by Opal, the width expected by postscript, and 
+            % the number of characters to distribute the change over.
+            /x-dist opal-width s stringwidth pop sub s length div def
+
+            % Draw background of text if appropriate
+            fill-p {
+                gsave
+                    newpath
+                    left top opal-width height RectanglePath
+                    back-color FillShape
+                grestore
+            } if
+
+            % Draw text in the appropriate color
+            newpath
+            s length 0 ne {
+                left base-y moveto
+                fore-color aload length 3 eq {
+                    setrgbcolor
+                    x-dist 0 s ashow
+                } { % Halftone pattern:
+                    %   fgR fgG fgB bgR bgG bgB top pattern
+                    %   fgR fgG fgB false top pattern
+                    /pattern exch def /top exch def /opaque? exch def
+                    opaque? not { .5 .5 .5 } if
+                    /bgB exch def /bgG exch def /bgR exch def
+                    /fgB exch def /fgG exch def /fgR exch def
+
+                    fgR bgR add 2 div
+                    fgG bgG add 2 div
+                    fgB bgB add 2 div
+                    setrgbcolor
+
+                    opaque? {
+                        x-dist 0 s ashow
+                    } {
+                        mark
+                        /ch 1 string def
+                        /space { /space { x-dist 0 rmoveto } def } def
+%                       /jt statusdict begin jobtimeout end def
+                        gsave { % try really hard to do it right
+                            s {
+                                % don't take more than 2 seconds a character
+%                               statusdict begin 2 setjobtimeout end
+                                space
+                                ch 0 3 -1 roll put
+                                ch true charpath
+                                currentpoint /yy exch def /xx exch def
+                                fgR fgG fgB false top pattern FillPattern
+                                newpath xx yy moveto
+                            } forall
+                        } stopped grestore { % fall back in case we fail
+                            x-dist 0 s ashow
+                        } if
+%                       statusdict begin jt setjobtimeout end
+                        cleartomark
+                    } ifelse
+                } ifelse
+            } if
+        grestore
+    end
+} def
+
+/RectanglePath { % left top width height => -
+    /h exch def  /w exch def
+    moveto                      % Go to the left,top corner
+    w 0 rlineto                 % top side
+    0 h neg rlineto             % right side
+    w neg 0 rlineto             % bottom side
+    closepath                   % left side
+} def
+
+/RectangleDict 21 dict def
+/DrawRectangle { % left top width height line-color
+                 % cap join dash thickness fill-color => -
+    RectangleDict begin
+        /fill-color exch def  /thickness exch def /dash-pattern exch def
+        /line-join exch def  /line-cap exch def /line-color exch def
+        /height exch def /width exch def  /top exch def  /left exch def
+        /thickness-for-fill thickness 0 lt {0} {thickness} ifelse def
+        % Draw filling
+        newpath
+        left thickness-for-fill add top thickness-for-fill sub
+        width thickness-for-fill 2 mul sub height thickness-for-fill 2 mul sub
+        RectanglePath
+        fill-color FillShape
+        % Draw border
+        newpath
+        left thickness 2 div add  top thickness 2 div sub
+        width thickness sub  height thickness sub
+        RectanglePath
+        line-color line-cap line-join dash-pattern thickness StrokeShape
+    end
+} def
+
+/DrawMotifWindowFrame { % label left top w h 
+                        % leftmargin topmargin rightmargin bottommargin => -
+  30 dict begin
+
+  { % setup
+    /bottommargin exch def /rightmargin exch def
+    /topmargin exch def /leftmargin exch def
+    /h exch def /w exch def /y exch h sub def /x exch def
+    /label exch def
+
+    /bottom y bottommargin sub def
+    /top y h add topmargin add def
+    /left x leftmargin sub def
+    /right x w add rightmargin add def
+
+    /light .9 def
+    /medium .7 def
+    /dark .4 def
+
+    1 setlinewidth
+    0 setlinecap
+  } exec
+
+  { % background
+    left bottom moveto
+    left top lineto
+    right top lineto
+    right bottom lineto
+    closepath
+    medium setgray fill
+  } exec
+
+  { % outer upper left edges
+    left bottom moveto
+    right bottom lineto
+    right top lineto
+    right 2 sub top 2 sub lineto
+    right 2 sub bottom 2 add lineto
+    left 2 add bottom 2 add lineto
+    closepath
+    dark setgray fill
+  } exec
+
+  { % outer lower right edges
+    left bottom moveto
+    left top lineto
+    right top lineto
+    right 2 sub top 2 sub lineto
+    left 2 add top 2 sub lineto
+    left 2 add bottom 2 add lineto
+    closepath
+    light setgray fill
+  } exec
+
+  { % inner lower right edges
+    left 9 add bottom 9 add moveto
+    right 9 sub bottom 9 add lineto
+    right 9 sub top 25 sub lineto
+    right 11 sub top 27 sub lineto
+    right 11 sub bottom 11 add lineto
+    left 11 add bottom 11 add lineto
+    closepath
+    light setgray fill
+  } exec
+
+  { % inner upper left edges
+    left 9 add bottom 9 add moveto
+    left 9 add top 25 sub lineto
+    right 9 sub top 25 sub lineto
+    right 11 sub top 27 sub lineto
+    left 11 add top 27 sub lineto
+    left 11 add bottom 11 add lineto
+    closepath
+    dark setgray fill
+  } exec
+
+  { % top rut above label
+    left 9 add top 9.5 sub moveto
+    right 9.01 sub top 9.5 sub lineto
+    dark setgray stroke
+    left 10 add top 10.5 sub moveto
+    right 9.01 sub top 10.5 sub lineto
+    light setgray stroke
+  } exec
+
+  { % left edge of left button
+    left 9.5 add top 9 sub moveto
+    left 9.5 add top 25.99 sub lineto
+    dark setgray stroke
+    left 10.5 add top 10 sub moveto
+    left 10.5 add top 25.99 sub lineto
+    light setgray stroke
+  } exec
+
+  { % right edge of big right button
+    right 10.5 sub top 11 sub moveto
+    right 10.5 sub top 25.99 sub lineto
+    dark setgray stroke
+    right 9.5 sub top 11 sub moveto
+    right 9.5 sub top 25.99 sub lineto
+    light setgray stroke
+  } exec
+
+  { % right edge of left button
+    left 26.5 add top 11 sub moveto
+    left 26.5 add top 25.99 sub lineto
+    dark setgray stroke
+    left 27.5 add top 11 sub moveto
+    left 27.5 add top 25.99 sub lineto
+    light setgray stroke
+  } exec
+
+  { % edge between small and big right buttons
+    right 27.5 sub top 11 sub moveto
+    right 27.5 sub top 25.99 sub lineto
+    dark setgray stroke
+    right 26.5 sub top 11 sub moveto
+    right 26.5 sub top 25.99 sub lineto
+    light setgray stroke
+  } exec
+
+  { % left edge of small right button
+    right 44.5 sub top 11 sub moveto
+    right 44.5 sub top 25.99 sub lineto
+    dark setgray stroke
+    right 43.5 sub top 11 sub moveto
+    right 43.5 sub top 25.99 sub lineto
+    light setgray stroke
+  } exec
+
+  { % top left resize corner
+    left 26.5 add top 1 sub moveto
+    left 26.5 add top 9.99 sub lineto
+    dark setgray stroke
+    left 27.5 add top 1 sub moveto
+    left 27.5 add top 9.99 sub lineto
+    light setgray stroke
+
+    left 1 add top 26.5 sub moveto
+    left 9.99 add top 26.5 sub lineto
+    dark setgray stroke
+    left 1 add top 27.5 sub moveto
+    left 9.99 add top 27.5 sub lineto
+    light setgray stroke
+  } exec
+
+  { % top right resize corner
+    right 27.5 sub top 1 sub moveto
+    right 27.5 sub top 9.99 sub lineto
+    dark setgray stroke
+    right 26.5 sub top 1 sub moveto
+    right 26.5 sub top 9.99 sub lineto
+    light setgray stroke
+
+    right 1.01 sub top 26.5 sub moveto
+    right 9 sub top 26.5 sub lineto
+    dark setgray stroke
+    right 1.01 sub top 27.5 sub moveto
+    right 9 sub top 27.5 sub lineto
+    light setgray stroke
+  } exec
+
+  { % bottom left resize corner
+    left 26.5 add bottom 1.01 add moveto
+    left 26.5 add bottom 9 add lineto
+    dark setgray stroke
+    left 27.5 add bottom 1.01 add moveto
+    left 27.5 add bottom 9 add lineto
+    light setgray stroke
+
+    left 1 add bottom 27.5 add moveto
+    left 9.99 add bottom 27.5 add lineto
+    dark setgray stroke
+    left 1 add bottom 26.5 add moveto
+    left 9.99 add bottom 26.5 add lineto
+    light setgray stroke
+  } exec
+
+  { % bottom right resize corner
+    right 27.5 sub bottom 1.01 add moveto
+    right 27.5 sub bottom 9 add lineto
+    dark setgray stroke
+    right 26.5 sub bottom 1.01 add moveto
+    right 26.5 sub bottom 9 add lineto
+    light setgray stroke
+
+    right 1.01 sub bottom 27.5 add moveto
+    right 9 sub bottom 27.5 add lineto
+    dark setgray stroke
+    right 1.01 sub bottom 26.5 add moveto
+    right 9 sub bottom 26.5 add lineto
+    light setgray stroke
+  } exec
+
+  { % upper left button
+    left 14.5 add top 19.99 sub moveto
+    left 14.5 add top 16.5 sub lineto
+    left 22.99 add top 16.5 sub lineto
+    light setgray stroke
+    left 15 add top 19.5 sub moveto
+    left 22.5 add top 19.5 sub lineto
+    left 22.5 add top 17 sub lineto
+    dark setgray stroke
+  } exec
+
+  { % upper right big button
+    right 14.01 sub top 14.5 sub moveto
+    right 22.5 sub top 14.5 sub lineto
+    right 22.5 sub top 22.99 sub lineto
+    light setgray stroke
+    right 14.5 sub top 15 sub moveto
+    right 14.5 sub top 22.5 sub lineto
+    right 22 sub top 22.5 sub lineto
+    dark setgray stroke
+  } exec
+
+  { % upper right small button
+    right 34.01 sub top 16.5 sub moveto
+    right 37.5 sub top 16.5 sub lineto
+    right 37.5 sub top 19.99 sub lineto
+    light setgray stroke
+    right 34.5 sub top 17 sub moveto
+    right 34.5 sub top 19.5 sub lineto
+    right 37 sub top 19.5 sub lineto
+    dark setgray stroke
+  } exec
+
+  { % label
+    /Helvetica-Bold findfont 10 scalefont setfont
+    label stringwidth pop
+    left 28 add right 44 sub add 2 div
+    1 index 2 div sub
+    dup 2 sub top 24 sub
+    moveto
+    1 index 4 add 0 rlineto
+    0 12 rlineto
+    exch 4 add neg 0 rlineto
+    closepath
+    1 setgray fill
+    top 21 sub moveto
+    0 setgray
+    label show
+  } exec
+
+  end
+} def
+
+/DrawGenericWindowFrame { % label left top w h
+                          % leftmargin topmargin rightmargin bottommargin => -
+  30 dict begin
+
+  { % setup
+    /bottommargin exch def /rightmargin exch def
+    /topmargin exch def /leftmargin exch def
+    /h exch def /w exch def /y exch h sub def /x exch def
+    /label exch def
+    /pointsize
+      topmargin 1 sub
+      dup 1 lt { pop 1 } if
+      dup 12 gt { 12 sub 3 div 12 add } if
+    def
+
+    /bottom y def /top y h add def
+    /left x def /right  x w add def
+    1 setlinewidth
+    0 setlinecap
+  } exec
+
+  { % background
+    newpath
+    left leftmargin sub bottom bottommargin sub moveto
+    left leftmargin sub top topmargin add lineto
+    right rightmargin add top topmargin add lineto
+    right rightmargin add bottom bottommargin sub lineto
+    closepath
+    0 setgray fill
+
+    left bottom moveto
+    left top lineto
+    right top lineto
+    right bottom lineto
+    closepath
+    1 setgray fill
+  } exec
+
+  topmargin 8 ge {
+    /Helvetica-Bold findfont pointsize scalefont setfont
+    label stringwidth pop
+    left right add 2 div
+    exch 2 div sub
+    top topmargin 2 div add pointsize 2 div sub 2 add moveto
+    1 setgray
+    label show
+  } if
+
+  end
+} def
+
+/FillShape { % [halftone] | [r g b] | null => -
+    gsave
+        dup null eq { pop } {
+          aload length 3 eq { setrgbcolor fill } {
+              FillPattern
+          } ifelse
+        } ifelse
+    grestore
+    newpath
+} def
+
+/StrokeShape { % line-color cap join dash thickness => -
+    % If no line is desired, pass -1 for line-thickness
+    dup 0 ge 5 index null ne and {
+        % if line-thickness >= 0, then draw the outline
+        gsave
+            setlinewidth 0 setdash setlinejoin setlinecap
+            aload length 3 eq { setrgbcolor stroke } {
+                strokepath FillPattern
+            } ifelse
+        grestore
+    } {
+        pop pop pop pop pop
+    } ifelse
+    newpath
+} def
+
+/ClipDict 2 dict def
+/ClipToRectangle { % left top width height => -
+    ClipDict begin
+        /height exch def  /width exch def
+        newpath
+            moveto                      % Go to the left,top corner
+            width 0 rlineto             % top side
+            0 height neg rlineto        % right side
+            width neg 0 rlineto         % bottom side
+            closepath                   % left side
+        gsave 1 setgray fill grestore
+        clip newpath
+    end
+} def
+
+
+%%EndProlog
+%%%Page: 1 1
+
+gsave
+72 72 translate
+0.97 0.97 scale
+0 527 translate
+
+%
+% Begin new window
+%
+gsave
+0 0 482 386 ClipToRectangle
+gsave
+0 0 482 386 [0 0 0] 0 0 [] -1 [1 1 1] DrawRectangle
+grestore
+
+
+%
+% Begin new window
+%
+gsave
+11 -27 translate
+(Showing #k<TEXT-6508>) 0 0 460 348 11 27 11 11 DrawMotifWindowFrame
+0 0 460 348 ClipToRectangle
+gsave
+4 -4 80 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+3 -3 80 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+4 -4 78 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+5 -5 -16 76 14 false [0 0 0] [1 1 1] (Show Object) 12 /Courier DrawText
+90 -4 80 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+89 -3 80 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+90 -4 78 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+91 -5 -16 76 14 false [0 0 0] [1 1 1] (Show in New) 12 /Courier DrawText
+176 -4 60 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+175 -3 60 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+176 -4 58 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+177 -5 -16 56 14 false [0 0 0] [1 1 1] (Re-Fetch) 12 /Courier DrawText
+242 -4 87 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+241 -3 87 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+242 -4 85 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+243 -5 -16 83 14 false [0 0 0] [1 1 1] (Dependencies) 12 /Courier DrawText
+335 -4 31 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+334 -3 31 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+335 -4 29 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+336 -5 -16 27 14 false [0 0 0] [1 1 1] (Done) 12 /Courier DrawText
+372 -4 60 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+371 -3 60 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+372 -4 58 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+373 -5 -16 56 14 false [0 0 0] [1 1 1] (Done All) 12 /Courier DrawText
+4 -28 39 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+3 -27 39 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+4 -28 37 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+5 -29 -40 35 14 false [0 0 0] [1 1 1] (Flash) 12 /Courier DrawText
+49 -28 45 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+48 -27 45 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+49 -28 43 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+50 -29 -40 41 14 false [0 0 0] [1 1 1] (Search) 12 /Courier DrawText
+100 -28 39 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+99 -27 39 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+100 -28 37 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+101 -29 -40 35 14 false [0 0 0] [1 1 1] (Break) 12 /Courier DrawText
+145 -28 46 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+144 -27 46 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+145 -28 44 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+146 -29 -40 42 14 false [0 0 0] [1 1 1] (Notify) 12 /Courier DrawText
+197 -28 86 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+196 -27 86 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+197 -28 84 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+198 -29 -40 82 14 false [0 0 0] [1 1 1] (Clear Breaks) 12 /Courier DrawText
+289 -28 107 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+288 -27 107 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+289 -28 105 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+290 -29 -40 103 14 false [0 0 0] [1 1 1] (Inherited Slots) 12 /Courier DrawText
+402 -28 51 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+401 -27 51 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+402 -28 49 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+403 -29 -40 47 14 false [0 0 0] [1 1 1] (Objects) 12 /Courier DrawText
+2 -47 -62 141 20 false [0 0 0] [1 1 1] (#k<TEXT-6508>) 18 /Courier-Bold DrawText
+5 -77 -88 7 14 false [0 0 0] [1 1 1] ( ) 12 /Courier DrawText
+5 -91 -102 140 14 false [0 0 0] [1 1 1] (For #k<TEXT-6508> : ) 12 /Courier-Bold DrawText
+5 -105 -116 7 14 false [0 0 0] [1 1 1] ( ) 12 /Courier DrawText
+5 -119 -130 112 14 false [0 0 0] [1 1 1] (IS-A hierarchy: ) 12 /Courier-Bold DrawText
+5 -133 -144 119 14 false [0 0 0] [1 1 1] (   #k<TEXT-6509> ) 12 /Courier DrawText
+5 -147 -158 119 14 false [0 0 0] [1 1 1] (   #k<TEXT-7180> ) 12 /Courier DrawText
+5 -161 -172 119 14 false [0 0 0] [1 1 1] (   #k<OPAL:TEXT> ) 12 /Courier DrawText
+5 -175 -186 203 14 false [0 0 0] [1 1 1] (   #k<OPAL:GRAPHICAL-OBJECT> ) 12 /Courier DrawText
+5 -189 -200 168 14 false [0 0 0] [1 1 1] (   #k<OPAL:VIEW-OBJECT> ) 12 /Courier DrawText
+5 -203 -214 7 14 false [0 0 0] [1 1 1] ( ) 12 /Courier DrawText
+5 -217 -228 252 14 false [0 0 0] [1 1 1] (Aggregate hierarchy \050:parent slot\051: ) 12 /Courier-Bold DrawText
+5 -231 -242 224 14 false [0 0 0] [1 1 1] (   #k<MOTIF-BAR-ITEM-3024-5430> ) 12 /Courier DrawText
+5 -245 -256 182 14 false [0 0 0] [1 1 1] (   #k<MENUBAR-ITEMS-7179> ) 12 /Courier DrawText
+5 -259 -270 231 14 false [0 0 0] [1 1 1] (   #k<DEMO-MULTIFONT::PULL-DOWN> ) 12 /Courier DrawText
+5 -273 -284 189 14 false [0 0 0] [1 1 1] (   #k<DEMO-MULTIFONT::TOP> ) 12 /Courier DrawText
+5 -287 -298 189 14 false [0 0 0] [1 1 1] (   #k<DEMO-MULTIFONT::WIN> ) 12 /Courier DrawText
+5 -301 -312 7 14 false [0 0 0] [1 1 1] ( ) 12 /Courier DrawText
+5 -315 -326 210 14 false [0 0 0] [1 1 1] (Objects Shown in This Window: ) 12 /Courier-Bold DrawText
+5 -329 -340 119 14 false [0 0 0] [1 1 1] (   #k<TEXT-6508> ) 12 /Courier DrawText
+grestore
+
+grestore
+
+grestore
+
+grestore
+
+
+showpage
+%%Trailer
+%%DocumentFonts: /Courier-Bold /Courier Helvetica-Bold 
+%%BoundingBox: 72 209 540 584
+
+%%EndDocument
+ GE /Times-Bold SF
+6120 38829 MT
+(Figure 2-2:)SH
+/Times-Roman SF
+11893 XM
+(The Inspector showing the objects related to the text object of Figure 2-1.)SH
+46800 50 6120 40781 UL
+12 /Times-Bold AF
+6120 44265 MT
+(2.1.4. Formula Dependencies View)SH
+11 /Times-Roman AF
+6120 45461 MT
+(If you select a formula or a slot name \050by double-clicking)
+198 W( on it\051 and then hit the ")197 W
+10 /Courier AF
+(Dependencies)SH
+11 /Times-Roman AF
+(")SH
+6120 46657 MT
+(button, you get the view of Figure 2-3.  This slows the slots used in calculating the value in the formula.)SH
+46800 50 6120 48808 UL
+75 100 0 6570 86655 GB 
+%%BeginDocument: debug/inspectordepfig.PS
+%!PS-Adobe-2.0 EPSF-2.0
+%%Title: Showing #k<TEXT-6508>
+%%Creator: Make-PS-File -- Garnet Version 2.2
+%%CreationDate: Jun 16, 1993, 2:45 PM
+%%For: 
+%%This file does not use real color
+%%DocumentFonts: (atend)
+%%BoundingBox: 72 297 540 494
+%%%Pages: 1
+%%EndComments
+
+
+/AdjustLineDict 20 dict def
+/AdjustLine { % x1 y1 x2 y2 width => x1 y1 x2 y2
+  AdjustLineDict begin
+    /width exch cvi def
+    /hw width 2 div def
+    /oddwidth? width 1 and 1 eq def
+    /y2 exch def /x2 exch def /y1 exch def /x1 exch def
+    /dx x2 x1 sub def /dy y2 y1 sub def
+    dy 0 eq {
+      dx 0 eq {
+        % point
+        oddwidth? {
+          /x1 x1 .5 add def /y1 y1 .5 sub def
+          /x2 x2 .5 add def /y2 y2 .5 sub def
+        } if
+      } {
+        % horizontal
+        oddwidth? {
+          /y1 y1 .5 sub def
+          /y2 y2 .5 sub def
+        } if
+      } ifelse
+    } {
+      dx 0 eq {
+        % vertical
+        oddwidth? {
+          /x1 x1 .5 add def
+          /x2 x2 .5 add def
+        } if
+      } {
+        % diagonal
+        oddwidth? {
+          /x1 x1 .5 add def /y1 y1 .5 sub def
+          /x2 x2 .5 add def /y2 y2 .5 sub def
+        } if
+      } ifelse
+    } ifelse
+    x1 y1 x2 y2
+  end
+} def
+
+/DrawLineDict 20 dict def
+/DrawLine { % line-color cap join dash thickness x2 y2 x1 y1 => -
+    gsave DrawLineDict begin
+        4 index AdjustLine
+        moveto lineto
+        StrokeShape
+    end grestore
+} def
+
+/TextDict 40 dict def
+/DrawText { % left top base-y opal-width height fill-p
+            % fore-color back-color string size font-name => -
+    TextDict begin
+        gsave
+            findfont exch scalefont setfont
+            /s exch def
+            /back-color exch def /fore-color exch def /fill-p exch def
+            /height exch def  /opal-width exch def
+            /base-y exch def  /top exch def
+            /left exch 1 sub def % XXX: I don't know why!
+
+            % Calculate distance to add between each character, based on the 
+            % width expected by Opal, the width expected by postscript, and 
+            % the number of characters to distribute the change over.
+            /x-dist opal-width s stringwidth pop sub s length div def
+
+            % Draw background of text if appropriate
+            fill-p {
+                gsave
+                    newpath
+                    left top opal-width height RectanglePath
+                    back-color FillShape
+                grestore
+            } if
+
+            % Draw text in the appropriate color
+            newpath
+            s length 0 ne {
+                left base-y moveto
+                fore-color aload length 3 eq {
+                    setrgbcolor
+                    x-dist 0 s ashow
+                } { % Halftone pattern:
+                    %   fgR fgG fgB bgR bgG bgB top pattern
+                    %   fgR fgG fgB false top pattern
+                    /pattern exch def /top exch def /opaque? exch def
+                    opaque? not { .5 .5 .5 } if
+                    /bgB exch def /bgG exch def /bgR exch def
+                    /fgB exch def /fgG exch def /fgR exch def
+
+                    fgR bgR add 2 div
+                    fgG bgG add 2 div
+                    fgB bgB add 2 div
+                    setrgbcolor
+
+                    opaque? {
+                        x-dist 0 s ashow
+                    } {
+                        mark
+                        /ch 1 string def
+                        /space { /space { x-dist 0 rmoveto } def } def
+%                       /jt statusdict begin jobtimeout end def
+                        gsave { % try really hard to do it right
+                            s {
+                                % don't take more than 2 seconds a character
+%                               statusdict begin 2 setjobtimeout end
+                                space
+                                ch 0 3 -1 roll put
+                                ch true charpath
+                                currentpoint /yy exch def /xx exch def
+                                fgR fgG fgB false top pattern FillPattern
+                                newpath xx yy moveto
+                            } forall
+                        } stopped grestore { % fall back in case we fail
+                            x-dist 0 s ashow
+                        } if
+%                       statusdict begin jt setjobtimeout end
+                        cleartomark
+                    } ifelse
+                } ifelse
+            } if
+        grestore
+    end
+} def
+
+/RectanglePath { % left top width height => -
+    /h exch def  /w exch def
+    moveto                      % Go to the left,top corner
+    w 0 rlineto                 % top side
+    0 h neg rlineto             % right side
+    w neg 0 rlineto             % bottom side
+    closepath                   % left side
+} def
+
+/RectangleDict 21 dict def
+/DrawRectangle { % left top width height line-color
+                 % cap join dash thickness fill-color => -
+    RectangleDict begin
+        /fill-color exch def  /thickness exch def /dash-pattern exch def
+        /line-join exch def  /line-cap exch def /line-color exch def
+        /height exch def /width exch def  /top exch def  /left exch def
+        /thickness-for-fill thickness 0 lt {0} {thickness} ifelse def
+        % Draw filling
+        newpath
+        left thickness-for-fill add top thickness-for-fill sub
+        width thickness-for-fill 2 mul sub height thickness-for-fill 2 mul sub
+        RectanglePath
+        fill-color FillShape
+        % Draw border
+        newpath
+        left thickness 2 div add  top thickness 2 div sub
+        width thickness sub  height thickness sub
+        RectanglePath
+        line-color line-cap line-join dash-pattern thickness StrokeShape
+    end
+} def
+
+/DrawMotifWindowFrame { % label left top w h 
+                        % leftmargin topmargin rightmargin bottommargin => -
+  30 dict begin
+
+  { % setup
+    /bottommargin exch def /rightmargin exch def
+    /topmargin exch def /leftmargin exch def
+    /h exch def /w exch def /y exch h sub def /x exch def
+    /label exch def
+
+    /bottom y bottommargin sub def
+    /top y h add topmargin add def
+    /left x leftmargin sub def
+    /right x w add rightmargin add def
+
+    /light .9 def
+    /medium .7 def
+    /dark .4 def
+
+    1 setlinewidth
+    0 setlinecap
+  } exec
+
+  { % background
+    left bottom moveto
+    left top lineto
+    right top lineto
+    right bottom lineto
+    closepath
+    medium setgray fill
+  } exec
+
+  { % outer upper left edges
+    left bottom moveto
+    right bottom lineto
+    right top lineto
+    right 2 sub top 2 sub lineto
+    right 2 sub bottom 2 add lineto
+    left 2 add bottom 2 add lineto
+    closepath
+    dark setgray fill
+  } exec
+
+  { % outer lower right edges
+    left bottom moveto
+    left top lineto
+    right top lineto
+    right 2 sub top 2 sub lineto
+    left 2 add top 2 sub lineto
+    left 2 add bottom 2 add lineto
+    closepath
+    light setgray fill
+  } exec
+
+  { % inner lower right edges
+    left 9 add bottom 9 add moveto
+    right 9 sub bottom 9 add lineto
+    right 9 sub top 25 sub lineto
+    right 11 sub top 27 sub lineto
+    right 11 sub bottom 11 add lineto
+    left 11 add bottom 11 add lineto
+    closepath
+    light setgray fill
+  } exec
+
+  { % inner upper left edges
+    left 9 add bottom 9 add moveto
+    left 9 add top 25 sub lineto
+    right 9 sub top 25 sub lineto
+    right 11 sub top 27 sub lineto
+    left 11 add top 27 sub lineto
+    left 11 add bottom 11 add lineto
+    closepath
+    dark setgray fill
+  } exec
+
+  { % top rut above label
+    left 9 add top 9.5 sub moveto
+    right 9.01 sub top 9.5 sub lineto
+    dark setgray stroke
+    left 10 add top 10.5 sub moveto
+    right 9.01 sub top 10.5 sub lineto
+    light setgray stroke
+  } exec
+
+  { % left edge of left button
+    left 9.5 add top 9 sub moveto
+    left 9.5 add top 25.99 sub lineto
+    dark setgray stroke
+    left 10.5 add top 10 sub moveto
+    left 10.5 add top 25.99 sub lineto
+    light setgray stroke
+  } exec
+
+  { % right edge of big right button
+    right 10.5 sub top 11 sub moveto
+    right 10.5 sub top 25.99 sub lineto
+    dark setgray stroke
+    right 9.5 sub top 11 sub moveto
+    right 9.5 sub top 25.99 sub lineto
+    light setgray stroke
+  } exec
+
+  { % right edge of left button
+    left 26.5 add top 11 sub moveto
+    left 26.5 add top 25.99 sub lineto
+    dark setgray stroke
+    left 27.5 add top 11 sub moveto
+    left 27.5 add top 25.99 sub lineto
+    light setgray stroke
+  } exec
+
+  { % edge between small and big right buttons
+    right 27.5 sub top 11 sub moveto
+    right 27.5 sub top 25.99 sub lineto
+    dark setgray stroke
+    right 26.5 sub top 11 sub moveto
+    right 26.5 sub top 25.99 sub lineto
+    light setgray stroke
+  } exec
+
+  { % left edge of small right button
+    right 44.5 sub top 11 sub moveto
+    right 44.5 sub top 25.99 sub lineto
+    dark setgray stroke
+    right 43.5 sub top 11 sub moveto
+    right 43.5 sub top 25.99 sub lineto
+    light setgray stroke
+  } exec
+
+  { % top left resize corner
+    left 26.5 add top 1 sub moveto
+    left 26.5 add top 9.99 sub lineto
+    dark setgray stroke
+    left 27.5 add top 1 sub moveto
+    left 27.5 add top 9.99 sub lineto
+    light setgray stroke
+
+    left 1 add top 26.5 sub moveto
+    left 9.99 add top 26.5 sub lineto
+    dark setgray stroke
+    left 1 add top 27.5 sub moveto
+    left 9.99 add top 27.5 sub lineto
+    light setgray stroke
+  } exec
+
+  { % top right resize corner
+    right 27.5 sub top 1 sub moveto
+    right 27.5 sub top 9.99 sub lineto
+    dark setgray stroke
+    right 26.5 sub top 1 sub moveto
+    right 26.5 sub top 9.99 sub lineto
+    light setgray stroke
+
+    right 1.01 sub top 26.5 sub moveto
+    right 9 sub top 26.5 sub lineto
+    dark setgray stroke
+    right 1.01 sub top 27.5 sub moveto
+    right 9 sub top 27.5 sub lineto
+    light setgray stroke
+  } exec
+
+  { % bottom left resize corner
+    left 26.5 add bottom 1.01 add moveto
+    left 26.5 add bottom 9 add lineto
+    dark setgray stroke
+    left 27.5 add bottom 1.01 add moveto
+    left 27.5 add bottom 9 add lineto
+    light setgray stroke
+
+    left 1 add bottom 27.5 add moveto
+    left 9.99 add bottom 27.5 add lineto
+    dark setgray stroke
+    left 1 add bottom 26.5 add moveto
+    left 9.99 add bottom 26.5 add lineto
+    light setgray stroke
+  } exec
+
+  { % bottom right resize corner
+    right 27.5 sub bottom 1.01 add moveto
+    right 27.5 sub bottom 9 add lineto
+    dark setgray stroke
+    right 26.5 sub bottom 1.01 add moveto
+    right 26.5 sub bottom 9 add lineto
+    light setgray stroke
+
+    right 1.01 sub bottom 27.5 add moveto
+    right 9 sub bottom 27.5 add lineto
+    dark setgray stroke
+    right 1.01 sub bottom 26.5 add moveto
+    right 9 sub bottom 26.5 add lineto
+    light setgray stroke
+  } exec
+
+  { % upper left button
+    left 14.5 add top 19.99 sub moveto
+    left 14.5 add top 16.5 sub lineto
+    left 22.99 add top 16.5 sub lineto
+    light setgray stroke
+    left 15 add top 19.5 sub moveto
+    left 22.5 add top 19.5 sub lineto
+    left 22.5 add top 17 sub lineto
+    dark setgray stroke
+  } exec
+
+  { % upper right big button
+    right 14.01 sub top 14.5 sub moveto
+    right 22.5 sub top 14.5 sub lineto
+    right 22.5 sub top 22.99 sub lineto
+    light setgray stroke
+    right 14.5 sub top 15 sub moveto
+    right 14.5 sub top 22.5 sub lineto
+    right 22 sub top 22.5 sub lineto
+    dark setgray stroke
+  } exec
+
+  { % upper right small button
+    right 34.01 sub top 16.5 sub moveto
+    right 37.5 sub top 16.5 sub lineto
+    right 37.5 sub top 19.99 sub lineto
+    light setgray stroke
+    right 34.5 sub top 17 sub moveto
+    right 34.5 sub top 19.5 sub lineto
+    right 37 sub top 19.5 sub lineto
+    dark setgray stroke
+  } exec
+
+  { % label
+    /Helvetica-Bold findfont 10 scalefont setfont
+    label stringwidth pop
+    left 28 add right 44 sub add 2 div
+    1 index 2 div sub
+    dup 2 sub top 24 sub
+    moveto
+    1 index 4 add 0 rlineto
+    0 12 rlineto
+    exch 4 add neg 0 rlineto
+    closepath
+    1 setgray fill
+    top 21 sub moveto
+    0 setgray
+    label show
+  } exec
+
+  end
+} def
+
+/DrawGenericWindowFrame { % label left top w h
+                          % leftmargin topmargin rightmargin bottommargin => -
+  30 dict begin
+
+  { % setup
+    /bottommargin exch def /rightmargin exch def
+    /topmargin exch def /leftmargin exch def
+    /h exch def /w exch def /y exch h sub def /x exch def
+    /label exch def
+    /pointsize
+      topmargin 1 sub
+      dup 1 lt { pop 1 } if
+      dup 12 gt { 12 sub 3 div 12 add } if
+    def
+
+    /bottom y def /top y h add def
+    /left x def /right  x w add def
+    1 setlinewidth
+    0 setlinecap
+  } exec
+
+  { % background
+    newpath
+    left leftmargin sub bottom bottommargin sub moveto
+    left leftmargin sub top topmargin add lineto
+    right rightmargin add top topmargin add lineto
+    right rightmargin add bottom bottommargin sub lineto
+    closepath
+    0 setgray fill
+
+    left bottom moveto
+    left top lineto
+    right top lineto
+    right bottom lineto
+    closepath
+    1 setgray fill
+  } exec
+
+  topmargin 8 ge {
+    /Helvetica-Bold findfont pointsize scalefont setfont
+    label stringwidth pop
+    left right add 2 div
+    exch 2 div sub
+    top topmargin 2 div add pointsize 2 div sub 2 add moveto
+    1 setgray
+    label show
+  } if
+
+  end
+} def
+
+/FillShape { % [halftone] | [r g b] | null => -
+    gsave
+        dup null eq { pop } {
+          aload length 3 eq { setrgbcolor fill } {
+              FillPattern
+          } ifelse
+        } ifelse
+    grestore
+    newpath
+} def
+
+/StrokeShape { % line-color cap join dash thickness => -
+    % If no line is desired, pass -1 for line-thickness
+    dup 0 ge 5 index null ne and {
+        % if line-thickness >= 0, then draw the outline
+        gsave
+            setlinewidth 0 setdash setlinejoin setlinecap
+            aload length 3 eq { setrgbcolor stroke } {
+                strokepath FillPattern
+            } ifelse
+        grestore
+    } {
+        pop pop pop pop pop
+    } ifelse
+    newpath
+} def
+
+/ClipDict 2 dict def
+/ClipToRectangle { % left top width height => -
+    ClipDict begin
+        /height exch def  /width exch def
+        newpath
+            moveto                      % Go to the left,top corner
+            width 0 rlineto             % top side
+            0 height neg rlineto        % right side
+            width neg 0 rlineto         % bottom side
+            closepath                   % left side
+        gsave 1 setgray fill grestore
+        clip newpath
+    end
+} def
+
+
+%%EndProlog
+%%%Page: 1 1
+
+gsave
+72 72 translate
+0.80 0.80 scale
+0 527 translate
+
+%
+% Begin new window
+%
+gsave
+0 0 584 246 ClipToRectangle
+gsave
+0 0 584 246 [0 0 0] 0 0 [] -1 [1 1 1] DrawRectangle
+grestore
+
+
+%
+% Begin new window
+%
+gsave
+11 -27 translate
+(Showing #k<TEXT-6508>) 0 0 562 208 11 27 11 11 DrawMotifWindowFrame
+0 0 562 208 ClipToRectangle
+gsave
+4 -4 80 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+3 -3 80 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+4 -4 78 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+5 -5 -16 76 14 false [0 0 0] [1 1 1] (Show Object) 12 /Courier DrawText
+90 -4 80 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+89 -3 80 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+90 -4 78 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+91 -5 -16 76 14 false [0 0 0] [1 1 1] (Show in New) 12 /Courier DrawText
+176 -4 60 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+175 -3 60 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+176 -4 58 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+177 -5 -16 56 14 false [0 0 0] [1 1 1] (Re-Fetch) 12 /Courier DrawText
+242 -4 87 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+241 -3 87 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+242 -4 85 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+243 -5 -16 83 14 false [0 0 0] [1 1 1] (Dependencies) 12 /Courier DrawText
+335 -4 31 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+334 -3 31 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+335 -4 29 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+336 -5 -16 27 14 false [0 0 0] [1 1 1] (Done) 12 /Courier DrawText
+372 -4 60 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+371 -3 60 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+372 -4 58 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+373 -5 -16 56 14 false [0 0 0] [1 1 1] (Done All) 12 /Courier DrawText
+438 -4 39 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+437 -3 39 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+438 -4 37 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+439 -5 -16 35 14 false [0 0 0] [1 1 1] (Flash) 12 /Courier DrawText
+483 -4 45 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+482 -3 45 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+483 -4 43 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+484 -5 -16 41 14 false [0 0 0] [1 1 1] (Search) 12 /Courier DrawText
+4 -28 39 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+3 -27 39 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+4 -28 37 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+5 -29 -40 35 14 false [0 0 0] [1 1 1] (Break) 12 /Courier DrawText
+49 -28 46 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+48 -27 46 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+49 -28 44 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+50 -29 -40 42 14 false [0 0 0] [1 1 1] (Notify) 12 /Courier DrawText
+101 -28 86 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+100 -27 86 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+101 -28 84 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+102 -29 -40 82 14 false [0 0 0] [1 1 1] (Clear Breaks) 12 /Courier DrawText
+193 -28 107 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+192 -27 107 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+193 -28 105 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+194 -29 -40 103 14 false [0 0 0] [1 1 1] (Inherited Slots) 12 /Courier DrawText
+306 -28 51 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+305 -27 51 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+306 -28 49 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+307 -29 -40 47 14 false [0 0 0] [1 1 1] (Objects) 12 /Courier DrawText
+2 -47 -62 141 20 false [0 0 0] [1 1 1] (#k<TEXT-6508>) 18 /Courier-Bold DrawText
+5 -77 -88 553 14 false [0 0 0] [1 1 1] (Slot :VISIBLE of #k<TEXT-6508> \050formula = #k<F16-352-357-3277-3278-5448>\051 = T: ) 12 /Courier-Bold DrawText
+5 -91 -102 343 14 false [0 0 0] [1 1 1] (Expression = \050LET \050\050OPAL::PARENT \050GVL :PARENT\051\051\051
+  \050OR \050NULL OPAL::PARENT\051 \050GV OPAL::PARENT :VISI ) 12 /Courier DrawText
+5 -105 -116 385 14 false [0 0 0] [1 1 1] (  \050OR \050NULL OPAL::PARENT\051 \050GV OPAL::PARENT :VISIBLE\051\051\051 ) 12 /Courier DrawText
+5 -119 -130 98 14 false [0 0 0] [1 1 1] (Dependencies: ) 12 /Courier-Bold DrawText
+5 -133 -144 336 14 false [0 0 0] [1 1 1] (   :VISIBLE of #k<MOTIF-BAR-ITEM-3024-5430> = T ) 12 /Courier DrawText
+5 -147 -158 315 14 false [0 0 0] [1 1 1] (      :VISIBLE of #k<MENUBAR-ITEMS-7179> = T ) 12 /Courier DrawText
+5 -161 -172 385 14 false [0 0 0] [1 1 1] (         :VISIBLE of #k<DEMO-MULTIFONT::PULL-DOWN> = T ) 12 /Courier DrawText
+5 -175 -186 112 14 false [0 0 0] [1 1 1] (            ... ) 12 /Courier-Bold DrawText
+5 -189 -200 497 14 false [0 0 0] [1 1 1] (      :PARENT of #k<MOTIF-BAR-ITEM-3024-5430> = #k<MENUBAR-ITEMS-7179> ) 12 /Courier DrawText
+383 -105 2 14 [0 0 0] 0 0 [] -1 [0 0 0] DrawRectangle
+grestore
+
+grestore
+
+grestore
+
+grestore
+
+
+showpage
+%%Trailer
+%%DocumentFonts: /Courier-Bold /Courier Helvetica-Bold 
+%%BoundingBox: 72 297 540 494
+
+%%EndDocument
+ GE /Times-Bold SF
+6120 66132 MT
+(Figure 2-3:)SH
+/Times-Roman SF
+11893 XM
+(The Inspector)
+12 W( showing the dependencies of the)13 W
+10 /Courier AF
+32966 XM
+(:visible)SH
+11 /Times-Roman AF
+38054 XM
+(slot of the object shown in Figure)13 W
+11893 67328 MT
+(2-1.)SH
+46800 50 6120 69280 UL
+6120 71378 MT
+(The first lines show the object, the slot, the formula name, and the)
+76 W( expression of the formula.  Then the)75 W
+ES
+%%Page: 467 6
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(Section 2.1)
+SH( Inspector)1800 W
+51386 XM
+(Page 467)SH
+46800 50 8280 4486 UL
+11 SS 
+8280 7955 MT
+(dependencies are shown.  The outer-most level of indenting are those slots that are)
+63 W( immediately used by)64 W
+8280 9151 MT
+(the formula.  In this case, the)122 W
+10 /Courier AF
+22177 XM
+(:visible)SH
+11 /Times-Roman AF
+27374 XM
+(slot of)122 W
+10 /Courier AF
+30674 XM
+(#k<MOTIF-BAR-ITEM-3024-5430>)SH
+11 /Times-Roman AF
+(. Note)
+519 W( that)
+122 W( only)121 W
+8280 10347 MT
+(non-constant slots are)
+36 W( shown, which is why the)37 W
+10 /Courier AF
+29623 XM
+(:parent)SH
+11 /Times-Roman AF
+34135 XM
+(slot of)37 W
+10 /Courier AF
+37265 XM
+(TEXT-6508)SH
+11 /Times-Roman AF
+42977 XM
+(is not listed \050it is constant\051.)37 W
+8280 11543 MT
+(Indented underneath each slot are the)
+786 W( slots it depends on in turn, so)785 W
+10 /Courier AF
+48304 XM
+(:visible)SH
+11 /Times-Roman AF
+54164 XM
+(of)SH
+10 /Courier AF
+8280 12739 MT
+(#k<MOTIF-BAR-ITEM-3024-5430>)SH
+11 /Times-Roman AF
+25452 XM
+(depends on)
+97 W( its)98 W
+10 /Courier AF
+32314 XM
+(:parent)SH
+11 /Times-Roman AF
+36887 XM
+(and its parent's)98 W
+10 /Courier AF
+44176 XM
+(:visible)SH
+11 /Times-Roman AF
+(. The)471 W
+10 /Courier AF
+52080 XM
+("...")SH
+11 /Times-Roman AF
+8280 13935 MT
+(means that there are more levels of dependencies.  To see)
+22 W( these, you can double click on the)21 W
+10 /Courier AF
+49472 XM
+("...")SH
+11 /Times-Roman AF
+52768 XM
+(or on)21 W
+8280 15131 MT
+(any slot name and hit the ")SH
+10 /Courier AF
+(Dependencies)SH
+11 /Times-Roman AF
+(" button.)SH
+12 /Times-Bold AF
+8280 18815 MT
+(2.1.5. Summary of Commands)SH
+11 /Times-Italic AF
+8280 20766 MT
+(double-clicking)SH
+/Times-Roman SF
+15544 XM
+(the left)
+147 W( button on an object or slot will select it, and it will then be the parameter for)148 W
+11880 21962 MT
+(further commands.)SH
+/Times-Italic SF
+8280 23657 MT
+(single-clicking)SH
+/Times-Roman SF
+15035 XM
+(the left button after the)4 W
+10 /Courier AF
+25410 XM
+(=)SH
+11 /Times-Roman AF
+26289 XM
+(will let you)
+4 W( edit the value.  Hit return to set the value or control-g)3 W
+11880 24853 MT
+(to abort.)SH
+10 /Courier AF
+8280 26548 MT
+(Show Object)SH
+11 /Times-Roman AF
+15155 XM
+(- displays the selected object in the same window.)SH
+10 /Courier AF
+8280 28243 MT
+(Show in New)SH
+11 /Times-Roman AF
+15155 XM
+(- displays the selected object in a new window.)SH
+10 /Courier AF
+8280 29938 MT
+(Re-Fetch)SH
+11 /Times-Roman AF
+13454 XM
+(- redisplay the current object, and re-fetch the values of all slots, in case)
+99 W( any have changed.)100 W
+11880 31134 MT
+(This command is also used to get back to the schema view from the object or dependency views.)SH
+10 /Courier AF
+8280 32829 MT
+(Dependencies)SH
+11 /Times-Roman AF
+15799 XM
+(- when a formula or a slot containing a formula is selected, then shows the slots that are)43 W
+11880 34025 MT
+(used to calculate it \050see section 2.1.4\051.)SH
+10 /Courier AF
+8280 35720 MT
+(Done)SH
+11 /Times-Roman AF
+10955 XM
+(- get rid of this)SH
+10 /Courier AF
+17768 XM
+(Inspector)SH
+11 /Times-Roman AF
+23443 XM
+(window.)SH
+10 /Courier AF
+8280 37415 MT
+(Done All)SH
+11 /Times-Roman AF
+13355 XM
+(- get rid of all)SH
+10 /Courier AF
+19678 XM
+(Inspector)SH
+11 /Times-Roman AF
+25353 XM
+(windows.)SH
+10 /Courier AF
+8280 39110 MT
+(Flash)SH
+11 /Times-Roman AF
+11590 XM
+(- if an object is selected, flash it, otherwise flash the current object being)
+35 W( inspected.  The object is)36 W
+11880 40306 MT
+(flashed by bringing its window to the top and putting an)
+241 W( XOR rectangle over it \050using the)240 W
+11880 41502 MT
+(function)SH
+10 /Courier AF
+15821 XM
+(gd:flash)SH
+11 /Times-Roman AF
+(\051.)SH
+10 /Courier AF
+8280 43197 MT
+(Search)SH
+11 /Times-Roman AF
+12198 XM
+(- Find a slot of the)
+43 W( object and display it at the top of the list.  This helps you find slots in a long)44 W
+11880 44393 MT
+(list, and it will find inherited slots, so you don't)
+1 W( have to hit)SH
+10 /Courier AF
+38016 XM
+(Inherited Slots)SH
+11 /Times-Roman AF
+47291 XM
+(and get the whole)SH
+11880 45589 MT
+(list when you are only interested in one slot.  After hitting the)214 W
+10 /Courier AF
+42036 XM
+(Search)SH
+11 /Times-Roman AF
+46125 XM
+(button, you will)
+214 W( be)215 W
+11880 46785 MT
+(prompted for the slot name, and you can type)
+39 W( in a few letters, hit RETURN, and the)38 W
+10 /Courier AF
+49680 XM
+(Inspector)SH
+11 /Times-Roman AF
+11880 47981 MT
+(will try to fill out the name based on all current slots of the object.)SH
+10 /Courier AF
+8280 49676 MT
+(Notify)SH
+11 /Times-Roman AF
+12330 XM
+(- If a slot)
+175 W( is selected, then will print a message in the)176 W
+10 /Courier AF
+38015 XM
+(Inspector)SH
+11 /Times-Italic AF
+43866 XM
+(and)SH
+/Times-Roman SF
+45967 XM
+(in the Lisp Listener)176 W
+11880 50872 MT
+(window whenever)
+125 W( the selected slot of the object is set.  If no slot is selected, then will print a)124 W
+11880 52068 MT
+(message whenever)135 W
+/Times-Italic SF
+20700 XM
+(any)SH
+/Times-Roman SF
+22698 XM
+(slot of the object is set.)
+135 W( You)
+547 W( can be waiting for a Notify or Break on)136 W
+11880 53264 MT
+(multiple slots of multiple objects at)
+140 W( the same time.  Note that execution is much slower when)139 W
+11880 54460 MT
+(there are)SH
+/Times-Italic SF
+15970 XM
+(any)SH
+/Times-Roman SF
+17833 XM
+(Breaks or Notifies in effect.)SH
+10 /Courier AF
+8280 56155 MT
+(Break)SH
+11 /Times-Roman AF
+11602 XM
+(- If a slot is selected, then will break into the debugger whenever the selected)
+47 W( slot of the object is)48 W
+11880 57351 MT
+(set. If)
+317 W( no)
+21 W( slot is selected, then will break into the debugger whenever)20 W
+/Times-Italic SF
+42953 XM
+(any)SH
+/Times-Roman SF
+44836 XM
+(slot of the object is set.)20 W
+11880 58547 MT
+(You should go to your Lisp Listener window to handle)
+143 W( the break, and then)144 W
+/Times-Italic SF
+46972 XM
+(continue)SH
+/Times-Roman SF
+51179 XM
+(from the)144 W
+11880 59743 MT
+(break \050rather than aborting or popping from the break\051.)
+77 W( The)427 W
+10 /Courier AF
+39478 XM
+(Inspector)SH
+11 /Times-Roman AF
+45229 XM
+(will not operate while)76 W
+11880 60939 MT
+(you are in the debugger unless you type)SH
+10 /Courier AF
+29658 XM
+(\050inter:main-event-loop\051)SH
+11 /Times-Roman AF
+(.)SH
+10 /Courier AF
+8280 62634 MT
+(Clear Breaks)18 W
+11 /Times-Roman AF
+15791 XM
+(- Clear all the breaks and notifies.  All)
+18 W( Breaks and Notifies are also cleared when you hit)19 W
+11880 63830 MT
+(the)SH
+10 /Courier AF
+13499 XM
+(Done)SH
+11 /Times-Roman AF
+16174 XM
+(or)SH
+10 /Courier AF
+17365 XM
+(Done All)SH
+11 /Times-Roman AF
+22440 XM
+(buttons. There)
+275 W( is no interface for clearing a single break or notify.)SH
+10 /Courier AF
+8280 65525 MT
+(Inherited Slots)SH
+11 /Times-Roman AF
+17555 XM
+(- Toggle the display of inherited slots in the schema view.)SH
+10 /Courier AF
+8280 67220 MT
+(Objects)SH
+11 /Times-Roman AF
+12755 XM
+(- Switch to the object view that shows the is-a and aggregate hierarchy \050see section 2.1.3\051.)SH
+ES
+%%Page: 468 7
+BS
+0 SI
+10 /Times-Roman AF
+6120 4286 MT
+(Page 468)
+SH( Debugging)830 W
+39733 XM
+(Inspecting Objects)
+SH( Chapter)
+1550 W( 2)SH
+46800 50 6120 4486 UL
+14 /Times-Bold AF
+6120 8138 MT
+(2.2. PS -- Print Schema)SH
+11 /Times-Roman AF
+6120 9334 MT
+(The same information that is shown in)
+72 W( the Inspector for an object's slots and values can be printed with)71 W
+6120 10530 MT
+(the simpler)127 W
+10 /Courier AF
+11568 XM
+(kr:ps)SH
+11 /Times-Roman AF
+(. This)
+529 W( function does not create a new window to show the information,)
+127 W( but instead)128 W
+6120 11726 MT
+(prints right into the lisp listener.)SH
+8 /Courier AF
+8040 12939 MT
+(kr:PS)SH
+/Times-Italic SF
+10920 XM
+(object)SH
+/Courier SF
+13354 XM
+(&key)SH
+/Times-Italic SF
+15754 XM
+(types-p all-p)200 W
+/Courier SF
+20453 XM
+(\050)SH
+/Times-Italic SF
+(control)SH
+/Courier SF
+23723 XM
+(T\051 \050)SH
+/Times-Italic SF
+(inherit)SH
+/Courier SF
+28255 XM
+(NIL\051)SH
+47152 XM
+([)SH
+/Times-Italic SF
+(Function)SH
+/Courier SF
+(])SH
+15720 13804 MT
+(\050)SH
+/Times-Italic SF
+(indent)SH
+/Courier SF
+18679 XM
+(0\051 \050)SH
+/Times-Italic SF
+(stream)SH
+/Courier SF
+23256 XM
+(*standard-output*\051)SH
+11 /Times-Roman AF
+6120 15225 MT
+(\050All the nuances of this function are described in the KR manual.\051)SH
+14 /Times-Bold AF
+6120 19043 MT
+(2.3. Look, What, and Kids)SH
+11 /Times-Roman AF
+6120 20239 MT
+(For quick inspection of objects, the)SH
+10 /Courier AF
+21915 XM
+(look)SH
+11 /Times-Roman AF
+(,)SH
+10 /Courier AF
+24865 XM
+(what)SH
+11 /Times-Roman AF
+(, and)SH
+10 /Courier AF
+29678 XM
+(kids)SH
+11 /Times-Roman AF
+32353 XM
+(functions may be used:)SH
+8 /Courier AF
+8040 21452 MT
+(gd:Look)SH
+/Times-Italic SF
+11880 XM
+(object)SH
+/Courier SF
+14314 XM
+(&optional \050)SH
+/Times-Italic SF
+(detail)SH
+/Courier SF
+21895 XM
+(2\051)SH
+47152 XM
+([)SH
+/Times-Italic SF
+(Function)SH
+/Courier SF
+(])SH
+8040 22317 MT
+(gd:What)SH
+/Times-Italic SF
+11880 XM
+(object)SH
+/Courier SF
+47152 XM
+([)SH
+/Times-Italic SF
+(Function)SH
+/Courier SF
+(])SH
+8040 23182 MT
+(gd:Kids)SH
+/Times-Italic SF
+11880 XM
+(object)SH
+/Courier SF
+47152 XM
+([)SH
+/Times-Italic SF
+(Function)SH
+/Courier SF
+(])SH
+11 /Times-Roman AF
+6120 24603 MT
+(The)SH
+10 /Courier AF
+8355 XM
+(look)SH
+11 /Times-Roman AF
+11280 XM
+(function prints out varying amounts of)
+250 W( information about an object, depending upon the)249 W
+6120 25799 MT
+(optional argument)SH
+/Times-Italic SF
+14430 XM
+(detail)SH
+/Times-Roman SF
+(:)SH
+/Symbol SF
+8089 27377 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(\050look obj 0\051)SH
+11 /Times-Roman AF
+16345 XM
+(prints a one-line description of)SH
+10 /Courier AF
+30122 XM
+(obj)SH
+11 /Times-Roman AF
+(. This)
+275 W( is equivalent to calling)SH
+10 /Courier AF
+45244 XM
+(\050what)SH
+8870 28573 MT
+(obj\051)SH
+11 /Times-Roman AF
+(.)SH
+/Symbol SF
+8089 30467 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(\050look obj 1\051)SH
+11 /Times-Roman AF
+16345 XM
+(prints a one-line description of)SH
+10 /Courier AF
+30122 XM
+(obj)SH
+11 /Times-Roman AF
+32197 XM
+(and also shows the immediate)SH
+8870 31663 MT
+(components of)SH
+10 /Courier AF
+15652 XM
+(obj)SH
+11 /Times-Roman AF
+17727 XM
+(if it is an aggregate.  This form is equivalent to calling)SH
+10 /Courier AF
+41892 XM
+(\050kids obj\051)SH
+11 /Times-Roman AF
+(.)SH
+/Symbol SF
+8089 33557 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(\050look obj 2\051)SH
+11 /Times-Roman AF
+16345 XM
+(recursively prints all components of)SH
+10 /Courier AF
+32444 XM
+(obj)SH
+11 /Times-Roman AF
+(. This)
+275 W( is the default, equivalent to)SH
+8870 34753 MT
+(typing)SH
+10 /Courier AF
+11957 XM
+(\050look obj\051)SH
+11 /Times-Roman AF
+(. Use)
+275 W( it to look at the structure of an aggregate.)SH
+/Symbol SF
+8089 36647 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(\050look obj 3\051)SH
+11 /Times-Roman AF
+16345 XM
+(prints slots of)SH
+10 /Courier AF
+22610 XM
+(obj)SH
+11 /Times-Roman AF
+(, using)SH
+10 /Courier AF
+27619 XM
+(ps)SH
+11 /Times-Roman AF
+(, and then prints the tree of components.)SH
+/Symbol SF
+8089 38541 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(\050look obj 4\051)SH
+11 /Times-Roman AF
+16345 XM
+(prints slots of)SH
+10 /Courier AF
+22610 XM
+(obj)SH
+11 /Times-Roman AF
+24685 XM
+(and its immediate components.  Any \050trees of\051 sub-)SH
+8870 39737 MT
+(components are also printed.)SH
+/Symbol SF
+8089 41631 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(\050look obj 5\051)SH
+11 /Times-Roman AF
+16345 XM
+(prints what is essentially complete information about a tree of objects,)SH
+8870 42827 MT
+(including all slots of all components.)SH
+6120 44280 MT
+(For example,)SH
+8 /Courier AF
+8040 45445 MT
+(* \050what mywindow\051)SH
+8040 46310 MT
+(#k<MYWINDOW> is-a #k<INTERACTOR-WINDOW> \050WINDOW\051)SH
+8040 47175 MT
+(--> NIL)SH
+8040 48040 MT
+(* \050look mywindow\051)SH
+8040 48905 MT
+(#k<MYWINDOW> is-a #k<INTERACTOR-WINDOW> \050WINDOW\051)SH
+9480 49770 MT
+(#k<MYAGG> is-a #k<AGGREGATE> \050VIEW-OBJECT\051)SH
+10920 50635 MT
+(#k<MYRECT> is-a #k<MOVING-RECTANGLE> \050RECTANGLE\051)SH
+10920 51500 MT
+(#k<MYTEXT> is-a #k<CURSOR-MULTI-TEXT> \050MULTI-TEXT\051)SH
+8040 52365 MT
+(--> NIL)SH
+14 /Times-Bold AF
+6120 56183 MT
+(2.4. Is-A-Tree)SH
+11 /Times-Roman AF
+6120 57379 MT
+(Look prints)
+25 W( the parent of the object and then the ``standard parent''  of the object's parent in parentheses.)26 W
+6120 58575 MT
+(The ``standard)
+72 W( parent'' is the first named object encountered traveling up the)71 W
+10 /Courier AF
+41119 XM
+(:is-a)SH
+11 /Times-Roman AF
+44465 XM
+(tree. If)417 W
+10 /Courier AF
+48158 XM
+(look)SH
+11 /Times-Roman AF
+50904 XM
+(does)SH
+6120 59771 MT
+(not print enough information about an object, the)SH
+10 /Courier AF
+28025 XM
+(is-a-tree)SH
+11 /Times-Roman AF
+33700 XM
+(function might be useful:)SH
+8 /Courier AF
+8040 60984 MT
+(gd:Is-A-Tree)SH
+47152 XM
+([)SH
+/Times-Italic SF
+(Function)SH
+/Courier SF
+(])SH
+11 /Times-Roman AF
+6120 62405 MT
+(This function traces up)SH
+10 /Courier AF
+16506 XM
+(:is-a)SH
+11 /Times-Roman AF
+19781 XM
+(links and prints the resulting tree:)SH
+8 /Courier AF
+8040 63570 MT
+(* \050is-a-tree mytext\051)SH
+8040 64435 MT
+(#k<MYTEXT> is-a)SH
+9480 65300 MT
+(#k<CURSOR-MULTI-TEXT> is-a)SH
+10920 66165 MT
+(#k<MULTI-TEXT> is-a)SH
+12360 67030 MT
+(#k<TEXT> is-a)SH
+13800 67895 MT
+(#k<GRAPHICAL-OBJECT> is-a)SH
+15240 68760 MT
+(#k<VIEW-OBJECT>)SH
+8040 69625 MT
+(--> NIL)SH
+ES
+%%Page: 469 8
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(Section 2.5)
+SH( Finding)
+1800 W( Graphical Objects)SH
+51386 XM
+(Page 469)SH
+46800 50 8280 4486 UL
+14 /Times-Bold AF
+8280 8138 MT
+(2.5. Finding Graphical Objects)SH
+11 /Times-Roman AF
+8280 9334 MT
+(It is often necessary to locate a graphical object or figure)
+55 W( out why a graphical object is not visible.)
+56 W( The)718 W
+8280 10530 MT
+(function)SH
+8 /Courier AF
+10200 11743 MT
+(gd:Where)SH
+/Times-Italic SF
+14520 XM
+(object)SH
+/Courier SF
+49312 XM
+([)SH
+/Times-Italic SF
+(Function)SH
+/Courier SF
+(])SH
+11 /Times-Roman AF
+8280 13164 MT
+(prints out the)SH
+/Times-Italic SF
+14361 XM
+(object)SH
+/Times-Roman SF
+('s)SH
+10 /Courier AF
+18118 XM
+(:left)SH
+11 /Times-Roman AF
+(,)SH
+10 /Courier AF
+21668 XM
+(:top)SH
+11 /Times-Roman AF
+(,)SH
+10 /Courier AF
+24618 XM
+(:width)SH
+11 /Times-Roman AF
+(,)SH
+10 /Courier AF
+28768 XM
+(:height)SH
+11 /Times-Roman AF
+(, and)SH
+10 /Courier AF
+35381 XM
+(:window)SH
+11 /Times-Roman AF
+39856 XM
+(in a one-line format.)SH
+8 /Courier AF
+10200 14329 MT
+(* \050where mywindow\051)SH
+10200 15194 MT
+(#k<MYWINDOW> :TOP 43 :LEFT 160 :WIDTH 355 :HEIGHT 277)SH
+10200 16059 MT
+(--> NIL)SH
+10200 16924 MT
+(* \050where myagg\051)SH
+10200 17789 MT
+(#k<MYAGG> :TOP 20 :LEFT 80 :WIDTH 219 :HEIGHT 150 :WINDOW #k<MYWINDOW>)SH
+10200 18654 MT
+(--> NIL)SH
+11 /Times-Roman AF
+8280 20952 MT
+(If you are not sure which)
+194 W( screen image corresponds with a particular Opal object, use the following)193 W
+8280 22148 MT
+(function:)SH
+8 /Courier AF
+10200 23361 MT
+(gd:Flash)SH
+/Times-Italic SF
+14520 XM
+(object)SH
+/Courier SF
+49312 XM
+([)SH
+/Times-Italic SF
+(Function)SH
+/Courier SF
+(])SH
+11 /Times-Roman AF
+8280 24782 MT
+(The)SH
+10 /Courier AF
+10360 XM
+(flash)SH
+11 /Times-Roman AF
+13731 XM
+(function will invert the bounding box of)96 W
+/Times-Italic SF
+32338 XM
+(object)SH
+/Times-Roman SF
+35397 XM
+(making the object flash on and off.)96 W
+10 /Courier AF
+52080 XM
+(flash)SH
+11 /Times-Roman AF
+8280 25978 MT
+(has two interesting features:)SH
+10480 27431 MT
+(1.)SH
+11580 XM
+(You can)SH
+10 /Courier AF
+15550 XM
+(flash)SH
+11 /Times-Roman AF
+18825 XM
+(aggregates, which are otherwise invisible.)SH
+10480 29325 MT
+(2.)SH
+11580 XM
+(If the object is not visible,)213 W
+10 /Courier AF
+24621 XM
+(flash)SH
+11 /Times-Roman AF
+28109 XM
+(will try hard to tell you why not.  Possible reasons)213 W
+11580 30521 MT
+(include:)SH
+/Symbol SF
+13549 32099 MT
+(\267)SH
+/Times-Roman SF
+14330 XM
+(The object does not have a window,)SH
+/Symbol SF
+13549 33993 MT
+(\267)SH
+/Times-Roman SF
+14330 XM
+(The window does not have an aggregate,)SH
+/Symbol SF
+13549 35887 MT
+(\267)SH
+/Times-Roman SF
+14330 XM
+(The object is missing a critical slot \050e.g.)SH
+10 /Courier AF
+32172 XM
+(:left)SH
+11 /Times-Roman AF
+(\051,)SH
+/Symbol SF
+13549 37781 MT
+(\267)SH
+/Times-Roman SF
+14330 XM
+(The object is outside of its window,)SH
+/Symbol SF
+13549 39675 MT
+(\267)SH
+/Times-Roman SF
+14330 XM
+(The object's)SH
+10 /Courier AF
+20072 XM
+(:visible)SH
+11 /Times-Roman AF
+25147 XM
+(slot is)SH
+10 /Courier AF
+28021 XM
+(nil)SH
+11 /Times-Roman AF
+(,)SH
+/Symbol SF
+13549 41569 MT
+(\267)SH
+/Times-Roman SF
+14330 XM
+(The aggregate containing the object is not visible, or)SH
+/Symbol SF
+13549 43463 MT
+(\267)SH
+/Times-Roman SF
+14330 XM
+(The object is outside of its aggregate \050a problem with the aggregate\051.)SH
+10 /Courier AF
+8280 44916 MT
+(Flash)SH
+11 /Times-Roman AF
+11586 XM
+(does not test to see if the object is obscured by)
+31 W( another window.  If)32 W
+10 /Courier AF
+41748 XM
+(flash)SH
+11 /Times-Roman AF
+45055 XM
+(does not complain and)32 W
+8280 46112 MT
+(you do not see any blinking, use)7 W
+10 /Courier AF
+22811 XM
+(where)SH
+11 /Times-Roman AF
+26093 XM
+(to find the object's window.  Then use)7 W
+10 /Courier AF
+43348 XM
+(where)SH
+11 /Times-Roman AF
+46630 XM
+(\050or)SH
+10 /Courier AF
+48194 XM
+(flash)SH
+11 /Times-Roman AF
+(\051 applied)7 W
+8280 47308 MT
+(to the window to locate the window on your screen.  Bring the window to the front and try again.)SH
+8280 49606 MT
+(The)SH
+10 /Courier AF
+10304 XM
+(invert)SH
+11 /Times-Roman AF
+14218 XM
+(function is similar to)39 W
+10 /Courier AF
+23786 XM
+(flash)SH
+11 /Times-Roman AF
+(, but it leaves the object inverted.  The)39 W
+10 /Courier AF
+44274 XM
+(uninvert)SH
+11 /Times-Roman AF
+49388 XM
+(function will)39 W
+8280 50802 MT
+(undo the effect of)SH
+10 /Courier AF
+16342 XM
+(invert)SH
+11 /Times-Roman AF
+(:)SH
+8 /Courier AF
+10200 52015 MT
+(gd:Invert)SH
+/Times-Italic SF
+15000 XM
+(object)SH
+/Courier SF
+49312 XM
+([)SH
+/Times-Italic SF
+(Function)SH
+/Courier SF
+(])SH
+10200 52880 MT
+(gd:Uninvert)SH
+/Times-Italic SF
+15960 XM
+(object)SH
+/Courier SF
+49312 XM
+([)SH
+/Times-Italic SF
+(Function)SH
+/Courier SF
+(])SH
+10 SS 
+8280 54301 MT
+(invert)SH
+11 /Times-Roman AF
+12237 XM
+(uses a)
+82 W( single Opal rectangle to invert an area of the screen.  If the rectangle is in use, it is first)81 W
+8280 55497 MT
+(removed, so at most one region will be inverted at any given time.  Unlike,)3 W
+10 /Courier AF
+41564 XM
+(flash)SH
+11 /Times-Roman AF
+(,)SH
+10 /Courier AF
+45118 XM
+(invert)SH
+11 /Times-Roman AF
+48997 XM
+(depends upon)4 W
+8280 56693 MT
+(Opal, so if Opal encounters problems with redisplay,)159 W
+10 /Courier AF
+33074 XM
+(invert)SH
+11 /Times-Roman AF
+37108 XM
+(will not work \050see)159 W
+10 /Courier AF
+45991 XM
+(fix-up-window)SH
+11 /Times-Roman AF
+54224 XM
+(in)SH
+8280 57889 MT
+(Section 6\051.)SH
+8280 60187 MT
+(The previous functions are)
+7 W( only useful if you know the name of a graphical object.  To obtain the name of)8 W
+8280 61383 MT
+(an object that is visible on the screen, use:)SH
+8 /Courier AF
+10200 62596 MT
+(gd:Ident)SH
+49312 XM
+([)SH
+/Times-Italic SF
+(Function)SH
+/Courier SF
+(])SH
+10 SS 
+8280 64017 MT
+(Ident)SH
+11 /Times-Roman AF
+11613 XM
+(waits for the next input event and reports the object under the mouse at the time of the event.  In)58 W
+8280 65213 MT
+(addition to printing the leaf object under the mouse,)140 W
+10 /Courier AF
+32636 XM
+(ident)SH
+11 /Times-Roman AF
+36052 XM
+(runs up the)141 W
+10 /Courier AF
+41638 XM
+(:parent)SH
+11 /Times-Roman AF
+46254 XM
+(links and prints the)141 W
+8280 66409 MT
+(chain of aggregates up to the window.  Some interesting features to note are:)SH
+/Symbol SF
+10249 67987 MT
+(\267)SH
+10 /Courier AF
+11030 XM
+(ident)SH
+11 /Times-Roman AF
+14305 XM
+(will report a window if you do not select an object.)SH
+ES
+%%Page: 470 9
+BS
+0 SI
+10 /Times-Roman AF
+6120 4286 MT
+(Page 470)
+SH( Debugging)830 W
+39733 XM
+(Inspecting Objects)
+SH( Chapter)
+1550 W( 2)SH
+46800 50 6120 4486 UL
+9 SS 
+17751 7817 MT
+(1)SH
+11 /Symbol AF
+8089 8180 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(ident)SH
+11 /Times-Roman AF
+12201 XM
+(returns a list)56 W
+18532 XM
+(in the form \050)56 W
+/Times-Italic SF
+(object window x y code)56 W
+/Times-Roman SF
+(\051 so you can then use)
+56 W( the selection)57 W
+8870 9376 MT
+(in another expression, e.g.)142 W
+10 /Courier AF
+21676 XM
+(\050kr:ps \050car \050ident\051\051\051)142 W
+11 /Times-Roman AF
+(.)SH
+/Times-Italic SF
+35669 XM
+(Object)SH
+/Times-Roman SF
+39018 XM
+(will be)142 W
+10 /Courier AF
+42602 XM
+(nil)SH
+11 /Times-Roman AF
+44818 XM
+(if none was)141 W
+8870 10572 MT
+(selected.)SH
+/Symbol SF
+8089 12466 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(ident)SH
+11 /Times-Roman AF
+12208 XM
+(also prints)
+63 W( the input event and mouse location.  For instance, use)64 W
+10 /Courier AF
+41693 XM
+(ident)SH
+11 /Times-Roman AF
+45032 XM
+(if you want)64 W
+8870 13662 MT
+(to know the Lisp name for the character transmitted when you type the key)
+27 W( labeled ``Home'')26 W
+8870 14858 MT
+(on your keyboard or to tell you the window coordinates of the mouse.)SH
+6120 17156 MT
+(Another way to locate  a window is to use the function:)SH
+8 /Courier AF
+8040 18369 MT
+(gd:Windows)SH
+47152 XM
+([)SH
+/Times-Italic SF
+(Function)SH
+/Courier SF
+(])SH
+11 /Times-Roman AF
+6120 19790 MT
+(which prints a list of Opal windows and their locations.  The list of windows is returned.)
+72 W( Only)
+421 W( mapped)73 W
+6120 20986 MT
+(windows are listed, so)244 W
+10 /Courier AF
+17147 XM
+(windows)SH
+11 /Times-Roman AF
+21866 XM
+(will only)
+244 W( report a window that has been)243 W
+10 /Courier AF
+41529 XM
+(opal:update)SH
+11 /Times-Roman AF
+('d. For)1797 W
+6120 22182 MT
+(example:)SH
+8 /Courier AF
+8040 23347 MT
+(* \050windows\051)SH
+8040 24212 MT
+(#k<MYWINDOW> :TOP 43 :LEFT 160 :WIDTH 355 :HEIGHT 277)SH
+8040 25077 MT
+(#k<DEMO-GROW::VP> :TOP 23 :LEFT 528 :WIDTH 500 :HEIGHT 300)SH
+8040 25942 MT
+(--> \050#k<DEMO-GROW::VP> #k<MYWINDOW>\051)SH
+10800 50 6120 69158 UL
+7 /Times-Roman AF
+7020 70659 MT
+(1)SH
+9 SS 
+7370 70986 MT
+(A list is returned rather than a multiple value because multiple values print out on multiple)
+109 W( lines in CMU Common Lisp,)108 W
+6120 72000 MT
+(taking too much screen space when)SH
+10 /Courier AF
+19120 XM
+(ident)SH
+9 /Times-Roman AF
+22345 XM
+(is used interactively.)SH
+ES
+%%Page: 471 10
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(Chapter 3)
+SH( Inspecting)
+1550 W( Constraints)SH
+51386 XM
+(Page 471)SH
+46800 50 8280 4486 UL
+16 /Times-Bold AF
+8280 8272 MT
+(3. Inspecting Constraints)SH
+11 /Times-Roman AF
+8280 10524 MT
+(Formulas often have unexpected values, and program listings do not always help)
+181 W( when formulas and)182 W
+8280 11720 MT
+(objects are inherited and/or created at run time.  To make)
+176 W( dependencies explicit, the)175 W
+10 /Courier AF
+47880 XM
+(explain-slot)SH
+11 /Times-Roman AF
+8280 12916 MT
+(function can be used:)SH
+8 /Courier AF
+10200 14129 MT
+(gd:Explain-Slot)SH
+/Times-Italic SF
+17880 XM
+(object slot)SH
+/Courier SF
+49312 XM
+([)SH
+/Times-Italic SF
+(Function)SH
+/Courier SF
+(])SH
+10 SS 
+8280 15550 MT
+(explain-slot)SH
+11 /Times-Roman AF
+15788 XM
+(will track down all dependencies)
+33 W( of)34 W
+/Times-Italic SF
+31932 XM
+(object)SH
+/Times-Roman SF
+('s)SH
+/Times-Italic SF
+35723 XM
+(slot)SH
+/Times-Roman SF
+37622 XM
+(and prints them.  Indirect dependencies)34 W
+8280 16746 MT
+(that occur when a formula depends upon the value of)
+40 W( another formula are also printed.  The complete set)39 W
+8280 17942 MT
+(of dependencies is a directed graph, but the printout is tree-structured,)
+44 W( representing a depth-first traversal)45 W
+8280 19138 MT
+(of the graph.  The search is cut off whenever a previously visited node is encountered.  This can represent)15 W
+8280 20334 MT
+(either a cycle or two formulas with a common dependency.)SH
+8280 22632 MT
+(In the following example, the)20 W
+10 /Courier AF
+21638 XM
+(:top)SH
+11 /Times-Roman AF
+24333 XM
+(of)SH
+10 /Courier AF
+25544 XM
+(mytext)SH
+11 /Times-Roman AF
+29439 XM
+(depends upon the)20 W
+10 /Courier AF
+37472 XM
+(:top)SH
+11 /Times-Roman AF
+40167 XM
+(of)SH
+10 /Courier AF
+41378 XM
+(myrect)SH
+11 /Times-Roman AF
+45273 XM
+(which in)
+20 W( turn depends)21 W
+8280 23828 MT
+(upon its own)SH
+10 /Courier AF
+14239 XM
+(:box)SH
+11 /Times-Roman AF
+16914 XM
+(slot:)SH
+8 /Courier AF
+10200 24993 MT
+(* \050explain-slot mytext :top\051)SH
+10200 25858 MT
+(#k<MYTEXT>'s :TOP is #k<F2449> \05020 . T\051,)SH
+10200 26723 MT
+(which depends upon:)SH
+11640 27588 MT
+(#k<MYRECT>'s :TOP is #k<F2439> \05020 . T\051,)SH
+11640 28453 MT
+(which depends upon:)SH
+13080 29318 MT
+(#k<MYRECT>'s :BOX is \05080 20 100 150\051)SH
+10200 30183 MT
+(--> NIL)SH
+11 /Times-Roman AF
+8280 32481 MT
+(When)SH
+10 /Courier AF
+11181 XM
+(explain-slot)SH
+11 /Times-Roman AF
+18656 XM
+(is too verbose, a non-recursive version can be used:)SH
+8 /Courier AF
+10200 33694 MT
+(gd:Explain-Short)SH
+/Times-Italic SF
+18360 XM
+(object slot)SH
+/Courier SF
+49312 XM
+([)SH
+/Times-Italic SF
+(Function)SH
+/Courier SF
+(])SH
+11 /Times-Roman AF
+8280 35115 MT
+(For example:)SH
+8 /Courier AF
+10200 36280 MT
+(* \050explain-short mytext :top\051)SH
+10200 37145 MT
+(#k<MYTEXT>'s :TOP is #k<F2449> \05020 . T\051,)SH
+10200 38010 MT
+(which depends upon:)SH
+11640 38875 MT
+(#k<MYRECT>'s :TOP is #k<|1803-2439|> \05020 . T\051,)SH
+13080 39740 MT
+(...)SH
+10200 40605 MT
+(--> NIL)SH
+11 /Times-BoldItalic AF
+8280 42903 MT
+(Warning:)SH
+10 /Courier AF
+12957 XM
+(explain-slot)SH
+11 /Times-Roman AF
+20432 XM
+(and)SH
+10 /Courier AF
+22295 XM
+(explain-short)SH
+11 /Times-Roman AF
+30370 XM
+(may produce incorrect results in the following ways:)SH
+/Symbol SF
+10249 44481 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(Both)SH
+10 /Courier AF
+13703 XM
+(explain-slot)SH
+11 /Times-Roman AF
+21436 XM
+(and)SH
+10 /Courier AF
+23557 XM
+(explain-short)SH
+11 /Times-Roman AF
+31890 XM
+(rely on dependency pointers maintained)
+258 W( for)257 W
+11030 45677 MT
+(internal use by KR.  In the present version, KR sometimes leaves dependencies around that)83 W
+11030 46873 MT
+(are no longer current.  This is not a bug because, at worst, extra)
+140 W( dependencies only cause)139 W
+11030 48069 MT
+(formulas to be reevaluated unnecessarily.  However, this may cause)254 W
+10 /Courier AF
+43684 XM
+(explain-slot)SH
+11 /Times-Roman AF
+51414 XM
+(or)SH
+10 /Courier AF
+11030 49265 MT
+(explain-short)SH
+11 /Times-Roman AF
+19105 XM
+(to print extra dependencies.)SH
+/Symbol SF
+10249 51159 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(Formulas may access slots but not)
+209 W( use the values.  This will create the appearance of a)208 W
+11030 52355 MT
+(dependency when none actually exists.)SH
+/Symbol SF
+10249 54249 MT
+(\267)SH
+/Times-Roman SF
+11030 XM
+(Formulas that that try to follow a null link,)
+192 W( e.g.)193 W
+10 /Courier AF
+34351 XM
+(\050gv :self :feedback-obj :top\051)193 W
+11 /Times-Roman AF
+11030 55445 MT
+(where)SH
+10 /Courier AF
+14109 XM
+(:feedback-obj)SH
+11 /Times-Roman AF
+22301 XM
+(is)SH
+10 /Courier AF
+23427 XM
+(nil)SH
+11 /Times-Roman AF
+(, may be marked as invalid and have their dependency lists)117 W
+11030 56641 MT
+(cleared.)SH
+10 /Courier AF
+15513 XM
+(explain-slot)SH
+11 /Times-Roman AF
+23230 XM
+(and)SH
+10 /Courier AF
+25335 XM
+(explain-short)SH
+11 /Times-Roman AF
+33652 XM
+(will detect this case and warn you)
+242 W( if it)243 W
+11030 57837 MT
+(happens.)SH
+ES
+%%Page: 472 11
+BS
+0 SI
+10 /Times-Roman AF
+6120 4286 MT
+(Page 472)
+SH( Debugging)830 W
+37313 XM
+(Choosing Constant Slots)
+SH( Chapter)
+1550 W( 4)SH
+46800 50 6120 4486 UL
+16 /Times-Bold AF
+6120 8272 MT
+(4. Choosing Constant Slots)SH
+11 /Times-Roman AF
+6120 10524 MT
+(Since the use of constants)
+162 W( can significantly reduce the storage requirements and execution time of an)161 W
+6120 11720 MT
+(application, we have provided several new functions that help you to choose which slots)
+228 W( should be)229 W
+6120 12916 MT
+(declared constant.)
+3 W( The)
+279 W( following functions are used in conjunction to identify slots that are candidates for)2 W
+6120 14112 MT
+(constant declarations.)SH
+14 /Times-Bold AF
+6120 17930 MT
+(4.1. Suggest-Constants)SH
+8 /Courier AF
+8040 19143 MT
+(gd:Record-From-Now)SH
+47152 XM
+([)SH
+/Times-Italic SF
+(Function)SH
+/Courier SF
+(])SH
+8040 20873 MT
+(gd:Suggest-Constants)SH
+/Times-Italic SF
+18120 XM
+(object)SH
+/Courier SF
+20554 XM
+(&key)SH
+/Times-Italic SF
+22954 XM
+(max)SH
+/Courier SF
+24767 XM
+(\050)SH
+/Times-Italic SF
+(recompute-p)SH
+/Courier SF
+29769 XM
+(T\051 \050)SH
+/Times-Italic SF
+(level)SH
+/Courier SF
+33678 XM
+(1\051)SH
+47152 XM
+([)SH
+/Times-Italic SF
+(Function)SH
+/Courier SF
+(])SH
+11 /Times-Roman AF
+6120 23171 MT
+(To use these functions,)
+105 W( bring up the application you want to analyze, and execute)106 W
+10 /Courier AF
+43645 XM
+(record-from-now)SH
+11 /Times-Roman AF
+(.)SH
+6120 24367 MT
+(Exercise all the parts and gadgets of the interface that)
+30 W( are expected to be operated during normal use, and)29 W
+6120 25563 MT
+(then call)96 W
+10 /Courier AF
+10344 XM
+(suggest-constants)SH
+11 /Times-Roman AF
+(. Information)
+467 W( will be printed out that identifies slots which,)
+96 W( if declared)97 W
+6120 26759 MT
+(constant, would cause dependent formulas to be replaced by their actual values.)SH
+6120 29057 MT
+(Keep in)
+40 W( mind that it is usually not necessary to declare every reported slot constant.  Many formulas will)39 W
+6120 30253 MT
+(become constant if they depend on constant slots.  For example, declaring many of the parameters)
+99 W( of a)100 W
+3420 50 6120 30453 UL
+10 /Courier AF
+6120 31449 MT
+(gg:text-button-panel)SH
+11 /Times-Roman AF
+18424 XM
+(constant in the top-level)
+29 W( gadget is sufficient to eliminate the internal formulas)28 W
+6120 32645 MT
+(that depend on them.)SH
+6120 34943 MT
+(Also, it is important to exercise all parts of the application in order to get an)
+44 W( accurate list of constant slot)45 W
+1100 50 20469 35143 UL
+6120 36139 MT
+(candidates. If)
+417 W( you forget to)
+71 W( operate a certain button while recording, slots may be suggested that would)70 W
+6120 37335 MT
+(cause the button to become inoperable, since)SH
+10 /Courier AF
+26096 XM
+(suggest-constants)SH
+11 /Times-Roman AF
+36571 XM
+(would assume it was a static object.)SH
+10 /Courier AF
+6120 39633 MT
+(Suggest-constants)SH
+11 /Times-Roman AF
+16691 XM
+(will tell you if a potential slot is in the object's)96 W
+10 /Courier AF
+38557 XM
+(:maybe-constant)SH
+11 /Times-Roman AF
+47929 XM
+(list. When)469 W
+6120 40829 MT
+(the slot is in this list, then it can be declared constant by supplying the value)
+41 W( of T in the)40 W
+10 /Courier AF
+45584 XM
+(:constant)SH
+11 /Times-Roman AF
+51299 XM
+(list.)SH
+6120 42025 MT
+(As you add constants, though, you may)
+55 W( want to carefully name each slot individually in the)56 W
+10 /Courier AF
+47520 XM
+(:constant)SH
+11 /Times-Roman AF
+6120 43221 MT
+(list to avoid erroneous constant declarations.)SH
+6120 45519 MT
+(The parameters to)SH
+10 /Courier AF
+14335 XM
+(suggest-constants)SH
+11 /Times-Roman AF
+24810 XM
+(are used as follows:)SH
+/Times-Italic SF
+8620 47470 MT
+(object)SH
+/Times-Roman SF
+11682 XM
+(- This can be any Garnet object, but it)
+99 W( is usually a window or its top-level aggregate.  The)98 W
+9720 48666 MT
+(function examines formulas in)SH
+/Times-Italic SF
+23406 XM
+(object)SH
+/Times-Roman SF
+26369 XM
+(and all its children.)SH
+/Times-Italic SF
+8620 50361 MT
+(max)SH
+/Times-Roman SF
+10774 XM
+(- This parameter controls how many constant slot candidates are printed out.  The)
+47 W( default is to)48 W
+9720 51557 MT
+(print all potential constant slots that are found in)SH
+/Times-Italic SF
+31321 XM
+(object)SH
+/Times-Roman SF
+34284 XM
+(and all its children.)SH
+/Times-Italic SF
+8620 53252 MT
+(recompute-p)SH
+/Times-Roman SF
+14576 XM
+(- Set this parameter to NIL if you do not need to)
+123 W( reexamine all the objects and you)122 W
+9720 54448 MT
+(trust what was computed earlier \050the same information that was printed out before will be printed)27 W
+9720 55644 MT
+(out again, without checking that it is still valid\051.)SH
+/Times-Italic SF
+8620 57339 MT
+(level)SH
+/Times-Roman SF
+10991 XM
+(- The default value of)20 W
+/Times-Italic SF
+20894 XM
+(level)SH
+/Times-Roman SF
+(, which is 1, causes the)
+20 W( function to print only slots which would, by)19 W
+9720 58535 MT
+(themselves, eliminate some formula.  If)101 W
+/Times-Italic SF
+28044 XM
+(level)SH
+/Times-Roman SF
+30496 XM
+(is made higher, slots will)
+101 W( be printed that may not)102 W
+9720 59731 MT
+(eliminate formulas by themselves, but will at least)
+324 W( eliminate some dependencies from the)323 W
+9720 60927 MT
+(formulas that remain.)SH
+9720 62622 MT
+(For example, consider a formula that depends on slots)
+34 W( A and B. Declaring constant either A or B)35 W
+9720 63818 MT
+(alone would not eliminate the formula, so with)238 W
+/Times-Italic SF
+32491 XM
+(level)SH
+/Times-Roman SF
+35080 XM
+(set to)
+238 W( 1, slots A and B would not be)237 W
+9720 65014 MT
+(suggested by)22 W
+10 /Courier AF
+15752 XM
+(suggest-constants)SH
+11 /Times-Roman AF
+(. Setting)319 W
+/Times-Italic SF
+30237 XM
+(level)SH
+/Times-Roman SF
+32611 XM
+(to 2, however, will printe both A and B, since)23 W
+9720 66210 MT
+(the combination)
+49 W( of the two slots would indeed eliminate a formula.  Higher values of)48 W
+/Times-Italic SF
+48139 XM
+(level)SH
+/Times-Roman SF
+50538 XM
+(make)SH
+10 /Courier AF
+9720 67406 MT
+(suggest-constants)SH
+11 /Times-Roman AF
+20195 XM
+(print out formulas that are less and less likely to eliminate formulas.)SH
+ES
+%%Page: 473 12
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(Section 4.3)
+SH( Count-Formulas)
+1800 W( and Why-Not-Constant)SH
+51386 XM
+(Page 473)SH
+46800 50 8280 4486 UL
+14 /Times-Bold AF
+8280 8138 MT
+(4.2. Explain-Formulas and Find-Formulas)SH
+8 /Courier AF
+10200 9351 MT
+(gd:Explain-Formulas)SH
+/Times-Italic SF
+19800 XM
+(aggregate)SH
+/Courier SF
+23523 XM
+(&optional \050)SH
+/Times-Italic SF
+(limit)SH
+/Courier SF
+30749 XM
+(50\051)SH
+/Times-Italic SF
+32669 XM
+(eliminate-useless-p)SH
+/Courier SF
+49312 XM
+([)SH
+/Times-Italic SF
+(Function)SH
+/Courier SF
+(])SH
+10 SS 
+8280 11649 MT
+(Explain-formulas)SH
+11 /Times-Roman AF
+18311 XM
+(is used to analyze all the formulas that were not evaluated since)
+156 W( the last call to)157 W
+1406 50 39294 11849 UL
+10 /Courier AF
+8280 12845 MT
+(record-from-now)SH
+11 /Times-Roman AF
+(. These)
+419 W( formulas might have been evaluated when the application was first)
+72 W( created,)71 W
+8280 14041 MT
+(to position the objects appropriately, but are not a dynamic part)
+70 W( of the interface, and are thus candidates)71 W
+8280 15237 MT
+(for constant declarations.  If the)174 W
+/Times-Italic SF
+23587 XM
+(eliminate-useless-p)SH
+/Times-Roman SF
+32527 XM
+(option is non-NIL, then formulas that are in fact)173 W
+8280 16433 MT
+(unnecessary \050i.e., would go away if they were recomputed\051 are actually eliminated immediately.)SH
+8 /Courier AF
+10200 17646 MT
+(gd:Find-Formulas)SH
+/Times-Italic SF
+18360 XM
+(aggregate)SH
+/Courier SF
+22083 XM
+(&optional \050)SH
+/Times-Italic SF
+(only-totals-p)SH
+/Courier SF
+31929 XM
+(T\051 \050)SH
+/Times-Italic SF
+(limit)SH
+/Courier SF
+35795 XM
+(50\051)SH
+/Times-Italic SF
+37715 XM
+(from)SH
+/Courier SF
+49312 XM
+([)SH
+/Times-Italic SF
+(Function)SH
+/Courier SF
+(])SH
+11 /Times-Roman AF
+8280 19944 MT
+(If the function)86 W
+10 /Courier AF
+15105 XM
+(find-formulas)SH
+11 /Times-Roman AF
+23267 XM
+(is called with a non-NIL)87 W
+/Times-Italic SF
+34729 XM
+(only-totals-p)SH
+/Times-Roman SF
+40713 XM
+(option, it will print out the total)87 W
+8280 21140 MT
+(number of formulas that have not been reevaluated since the last)
+309 W( call to)308 W
+10 /Courier AF
+43907 XM
+(record-from-now)SH
+11 /Times-Roman AF
+(. If)891 W
+/Times-Italic SF
+8280 22336 MT
+(only-totals-p)SH
+/Times-Roman SF
+14188 XM
+(is NIL and)11 W
+/Times-Italic SF
+19200 XM
+(limit)SH
+/Times-Roman SF
+21504 XM
+(is specified, it will print out at most)11 W
+/Times-Italic SF
+37513 XM
+(limit)SH
+/Times-Roman SF
+39817 XM
+(formula names.  If)11 W
+/Times-Italic SF
+48260 XM
+(limit)SH
+/Times-Roman SF
+50565 XM
+(is NIL, all)12 W
+8280 23532 MT
+(formula names will be printed out.)SH
+8280 25830 MT
+(You will seldom need)
+4 W( to specify the)3 W
+/Times-Italic SF
+24465 XM
+(from)SH
+/Times-Roman SF
+26821 XM
+(parameter. This)
+281 W( allows you to print out formulas that have been)3 W
+8280 27026 MT
+(unevaluated since)31 W
+/Times-Italic SF
+16466 XM
+(from)SH
+/Times-Roman SF
+(. The)
+337 W( default value is the number)
+31 W( returned by the last call to)32 W
+10 /Courier AF
+45774 XM
+(record-from-now)SH
+11 /Times-Roman AF
+(;)SH
+8280 28222 MT
+(specifying a smaller number)
+7 W( reduces the number of formulas that are printed out, since formulas that were)6 W
+8280 29418 MT
+(evaluated earlier are discarded.)SH
+14 /Times-Bold AF
+8280 33236 MT
+(4.3. Count-Formulas and Why-Not-Constant)SH
+8 /Courier AF
+10200 34449 MT
+(gd:Count-Formulas)SH
+/Times-Italic SF
+18840 XM
+(object)SH
+/Courier SF
+49312 XM
+([)SH
+/Times-Italic SF
+(Function)SH
+/Courier SF
+(])SH
+10 SS 
+8280 36747 MT
+(Count-formulas)SH
+11 /Times-Roman AF
+16978 XM
+(will print a list of all)
+23 W( existing formulas in)24 W
+/Times-Italic SF
+35554 XM
+(object)SH
+/Times-Roman SF
+38541 XM
+(and all its children.  It is important to)24 W
+8280 37943 MT
+(note that)
+47 W( formulas are not copied down into an object until they are specifically requested by a)46 W
+10 /Courier AF
+50880 XM
+(g-value)SH
+11 /Times-Roman AF
+8280 39139 MT
+(or)SH
+10 /Courier AF
+9494 XM
+(gv)SH
+11 /Times-Roman AF
+10992 XM
+(call. Thus,)
+321 W( you may not get an accurate count of the real)
+23 W( number of formulas in an object until you)24 W
+8280 40335 MT
+(exercise the object in its intended way.  For example, if a prototype)28 W
+10 /Courier AF
+38549 XM
+(A)SH
+11 /Times-Roman AF
+39452 XM
+(has a formula in its)28 W
+10 /Courier AF
+48298 XM
+(:left)SH
+11 /Times-Roman AF
+51600 XM
+(slot and)27 W
+8280 41531 MT
+(you count the formulas in)56 W
+10 /Courier AF
+20139 XM
+(B)SH
+11 /Times-Roman AF
+(, an instance of)56 W
+10 /Courier AF
+27896 XM
+(A)SH
+11 /Times-Roman AF
+(, before asking)
+56 W( for)57 W
+10 /Courier AF
+37059 XM
+(B)SH
+11 /Times-Roman AF
+('s)SH
+10 /Courier AF
+38785 XM
+(:left)SH
+11 /Times-Roman AF
+42117 XM
+(slot, then)57 W
+10 /Courier AF
+46540 XM
+(B)SH
+11 /Times-Roman AF
+('s)SH
+10 /Courier AF
+48266 XM
+(:left)SH
+11 /Times-Roman AF
+51598 XM
+(formula)SH
+8280 42727 MT
+(will not be counted, because it has not been copied down yet.)SH
+8 /Courier AF
+10200 45377 MT
+(gd:Why-Not-Constant)SH
+/Times-Italic SF
+19800 XM
+(object slot)200 W
+/Courier SF
+49312 XM
+([)SH
+/Times-Italic SF
+(Function)SH
+/Courier SF
+(])SH
+11 /Times-Roman AF
+8280 47675 MT
+(This function is extremely useful when you are trying to get rid of formulas by declaring constant slots.  If)SH
+10 /Courier AF
+8280 48871 MT
+(count-formulas)SH
+11 /Times-Roman AF
+17076 XM
+(tells you that formulas still)
+121 W( exist in your application that you think should go away)122 W
+8280 50067 MT
+(due to propagation of constants, then)
+109 W( you can call)108 W
+10 /Courier AF
+31373 XM
+(why-not-constant)SH
+11 /Times-Roman AF
+41356 XM
+(on a particular slot to find out)108 W
+8280 51263 MT
+(what its formula depends on.  The function will print out a list of dependencies for the formula in)
+12 W( the)13 W
+/Times-Italic SF
+53215 XM
+(slot)SH
+/Times-Roman SF
+(,)SH
+8280 52459 MT
+(which will give you a hint about what other slot could be declared constant to make this formula go away.)SH
+ES
+%%Page: 474 13
+BS
+0 SI
+10 /Times-Roman AF
+6120 4286 MT
+(Page 474)
+SH( Debugging)830 W
+36038 XM
+(Noticing when Slots are Set)
+SH( Chapter)
+1550 W( 5)SH
+46800 50 6120 4486 UL
+16 /Times-Bold AF
+6120 8272 MT
+(5. Noticing when Slots are Set)SH
+11 /Times-Roman AF
+6120 10524 MT
+(It is often useful to be notified when a slot of an object is set, so)
+135 W( now we provide a set of debugging)134 W
+6120 11720 MT
+(functions that do this.)
+50 W( There)
+376 W( is also an interface to these functions through the)51 W
+10 /Courier AF
+41645 XM
+(Inspector)SH
+11 /Times-Roman AF
+47371 XM
+(\050section 2.1\051)51 W
+6120 12916 MT
+(which makes them more convenient to use.)SH
+6120 15214 MT
+(Note that)
+16 W( the implementation of this is)15 W
+/Times-Italic SF
+23429 XM
+(very)SH
+/Times-Roman SF
+25611 XM
+(inefficient and is intended only for debugging.  Don't use this)15 W
+6120 16410 MT
+(as general-purpose demon technique since a search is performed for)75 W
+/Times-Italic SF
+37042 XM
+(every)SH
+/Times-Roman SF
+39773 XM
+(formula evaluation and every)76 W
+6120 17606 MT
+(slot setting when any notifies or breaks are set.)SH
+8 /Courier AF
+8040 18819 MT
+(gd:Notify-On-Slot-Set &key)SH
+/Times-Italic SF
+21000 XM
+(object slot value)200 W
+/Courier SF
+47152 XM
+([)SH
+/Times-Italic SF
+(Function)SH
+/Courier SF
+(])SH
+11 /Times-Roman AF
+6120 21117 MT
+(This will)
+30 W( print out a message in the Lisp Listener window whenever the appropriate slot is set.  If a value)29 W
+6120 22313 MT
+(is supplied, then only notifies when the slot)
+74 W( is set to that particular value.  If an object is provided, then)75 W
+6120 23509 MT
+(only notifies when a slot of)
+5 W( that object is set.  If no object is supplied, then notifies whenever)4 W
+/Times-Italic SF
+47352 XM
+(any)SH
+/Times-Roman SF
+49219 XM
+(object is)4 W
+6120 24705 MT
+(set. If)
+563 W( a slot is provided, then only notifies when that slot is set.  If no slot is supplied, then notifies)144 W
+6120 25901 MT
+(whenever)SH
+/Times-Italic SF
+10858 XM
+(any)SH
+/Times-Roman SF
+12910 XM
+(slot is set.  If object)
+189 W( is NIL, then clears all breaks and notifies.  If all parameters are)188 W
+6120 27097 MT
+(missing, then shows current status.  For example,)SH
+8 /Courier AF
+8040 28310 MT
+(\050gd:Notify-On-Slot-Set :object obj :slot :left\051)SH
+/Times-Italic SF
+31080 XM
+(;notify when :left of obj set)SH
+/Courier SF
+8040 29175 MT
+(\050gd:Notify-On-Slot-Set :object obj :slot :left :value 0\051)SH
+/Times-Italic SF
+35400 XM
+(;notify when :left of obj set to 0)SH
+/Courier SF
+8040 30040 MT
+(\050gd:Notify-On-Slot-Set :value NIL\051)SH
+/Times-Italic SF
+24840 XM
+(;notify when any slot of any obj set to NIL)SH
+/Courier SF
+8040 30905 MT
+(\050gd:Notify-On-Slot-Set :object obj\051)SH
+/Times-Italic SF
+25320 XM
+(;notify when any slot of obj set)SH
+11 /Times-Roman AF
+6120 33203 MT
+(Each call to)71 W
+10 /Courier AF
+11800 XM
+(Notify-On-Slot-Set)SH
+11 /Times-Roman AF
+22946 XM
+(adds to the previous list of)
+71 W( breaks and notifies, unless the object is)72 W
+6120 34399 MT
+(NIL. You)
+275 W( can use)SH
+10 /Courier AF
+14488 XM
+(clear-slot-set)SH
+11 /Times-Roman AF
+23163 XM
+(to remove a break or notify \050see below\051.)SH
+8 /Courier AF
+8040 35612 MT
+(gd:Break-On-Slot-Set &key)SH
+/Times-Italic SF
+20520 XM
+(object slot value)200 W
+/Courier SF
+47152 XM
+([)SH
+/Times-Italic SF
+(Function)SH
+/Courier SF
+(])SH
+11 /Times-Roman AF
+6120 37910 MT
+(Same as)SH
+10 /Courier AF
+10030 XM
+(Notify-On-Slot-Set)SH
+11 /Times-Roman AF
+(, but breaks into the debugger when the appropriate slot is set.)SH
+8 /Courier AF
+8040 39123 MT
+(gd:Call-Func-On-Slot-Set)SH
+/Times-Italic SF
+20040 XM
+(object slot value fnc extra-val)200 W
+/Courier SF
+47152 XM
+([)SH
+/Times-Italic SF
+(Function)SH
+/Courier SF
+(])SH
+11 /Times-Roman AF
+6120 40544 MT
+(This gives)
+50 W( you more control, since you get to supply the function that is called when the appropriate slot)49 W
+6120 41740 MT
+(is set.  The parameters here are not optional, so if you don't want to specify the object, slot)
+48 W( or value, use)49 W
+6120 42936 MT
+(the special keyword)SH
+10 /Courier AF
+15191 XM
+(:*any*)SH
+11 /Times-Roman AF
+(. The)
+275 W( function)SH
+10 /Courier AF
+25542 XM
+(fnc)SH
+11 /Times-Roman AF
+27617 XM
+(is called as:)SH
+8 /Courier AF
+8040 44101 MT
+(\050lambda \050obj slot val reason extra-val\051\051)SH
+11 /Times-Roman AF
+6120 45522 MT
+(where the)45 W
+/Times-Italic SF
+10790 XM
+(slot)SH
+/Times-Roman SF
+12700 XM
+(of)SH
+/Times-Italic SF
+13936 XM
+(obj)SH
+/Times-Roman SF
+15662 XM
+(is being set with)45 W
+/Times-Italic SF
+23298 XM
+(val)SH
+/Times-Roman SF
+(. The)365 W
+/Times-Italic SF
+27587 XM
+(reason)SH
+/Times-Roman SF
+30901 XM
+(explains why the slot is being set and will be)
+45 W( one)44 W
+6120 46718 MT
+(of)SH
+9 SS 
+7327 XM
+(:S-VALUE)SH
+11 SS 
+(,)SH
+9 SS 
+11993 XM
+(:FORMULA-EVALUATION)SH
+11 SS 
+(,)SH
+9 SS 
+23359 XM
+(:INHERITANCE-PROPAGATION)SH
+11 SS 
+36601 XM
+(or)SH
+9 SS 
+37809 XM
+(:DESTROY-SLOT)SH
+11 SS 
+(.)SH
+/Times-Italic SF
+45618 XM
+(Extra-val)SH
+/Times-Roman SF
+50064 XM
+(can be)17 W
+6120 47914 MT
+(anything and is the same value passed into)SH
+10 /Courier AF
+25122 XM
+(Call-Func-On-Slot-Set)SH
+11 /Times-Roman AF
+(.)SH
+8 /Courier AF
+8040 49127 MT
+(gd:Clear-Slot-Set &key)SH
+/Times-Italic SF
+19080 XM
+(object slot value)200 W
+/Courier SF
+47152 XM
+([)SH
+/Times-Italic SF
+(Function)SH
+/Courier SF
+(])SH
+11 /Times-Roman AF
+6120 50548 MT
+(Clear the break or notify for the object, slot and value.  If nothing is specified or object is NIL, then)
+9 W( clears)8 W
+6120 51744 MT
+(all breaks and notifies.)SH
+ES
+%%Page: 475 14
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(Chapter 6)
+SH( Opal)
+1550 W( Update Failures)SH
+51386 XM
+(Page 475)SH
+46800 50 8280 4486 UL
+16 /Times-Bold AF
+8280 8272 MT
+(6. Opal Update Failures)SH
+11 /Times-Roman AF
+8280 10524 MT
+(Opal assumes that graphical objects have valid display parameters such as)257 W
+10 /Courier AF
+44004 XM
+(:top)SH
+11 /Times-Roman AF
+46937 XM
+(or)SH
+10 /Courier AF
+48386 XM
+(:width)SH
+11 /Times-Roman AF
+(. If)
+791 W( a)258 W
+8280 11720 MT
+(parameter is computed by)
+30 W( formula and there is a bug, the problem will often cause an error within Opal's)29 W
+10 /Courier AF
+8280 12916 MT
+(update)SH
+11 /Times-Roman AF
+12155 XM
+(function.)SH
+8280 15214 MT
+(A "quarantine slot" named)41 W
+10 /Courier AF
+20400 XM
+(:in-progress)SH
+11 /Times-Roman AF
+27916 XM
+(exists in all Garnet windows.)
+41 W( If)
+358 W( there was a crash during the)42 W
+8280 16410 MT
+(last update of the window, then the window will stop being updated automatically along with the)
+101 W( other)100 W
+8280 17606 MT
+(Garnet windows, until)
+45 W( you can fix the problem and update the window successfully.  The quarantine slot)46 W
+8280 18802 MT
+(is discussed in detail in the Opal Manual.)SH
+8280 21100 MT
+(There are several ways to proceed after an update failure.  The first and)
+298 W( easiest action is to run)297 W
+10 /Courier AF
+8280 22296 MT
+(opal:update)SH
+11 /Times-Roman AF
+15155 XM
+(with the optional parameter)SH
+10 /Courier AF
+27557 XM
+(t)SH
+11 /Times-Roman AF
+(:)SH
+8 /Courier AF
+10200 23461 MT
+(\050opal:update window t\051)SH
+11 /Times-Roman AF
+8280 24882 MT
+(This forces)7 W
+10 /Courier AF
+13486 XM
+(opal:update)SH
+11 /Times-Roman AF
+20368 XM
+(to do a complete update of)7 W
+10 /Courier AF
+32385 XM
+(window)SH
+11 /Times-Roman AF
+36268 XM
+(as opposed to an incremental update.  This)8 W
+8280 26078 MT
+(may fix your problem by bringing all slots up-to-date and expunging previous display parameters.)SH
+8280 28376 MT
+(Another possibility is, after entering the debugger, call)SH
+8 /Courier AF
+10200 29589 MT
+(gd:Explain-NIL)SH
+49312 XM
+([)SH
+/Times-Italic SF
+(Function)SH
+/Courier SF
+(])SH
+11 /Times-Roman AF
+8280 31010 MT
+(This functionwill check to see if a formula tried to follow a null link \050a)
+40 W( typical cause of Opal object slots)39 W
+8280 32206 MT
+(becoming)SH
+10 /Courier AF
+12925 XM
+(nil)SH
+11 /Times-Roman AF
+(\051. If)
+339 W( so, the object and slot associated with the formula)
+32 W( will be printed followed by objects)33 W
+9 SS 
+25778 33064 MT
+(2)SH
+11 SS 
+8280 33427 MT
+(and slots on which the formula depends)4 W
+26228 XM
+(. One)
+282 W( of the slots depended upon will be the null link that caused)3 W
+8280 34623 MT
+(the formula to fail.)SH
+/Times-BoldItalic SF
+8280 36921 MT
+(Warning:)SH
+10 /Courier AF
+13078 XM
+(explain-nil)SH
+11 /Times-Roman AF
+20074 XM
+(will always attempt)
+121 W( to describe the last formula that failed due to a null link)122 W
+/Times-Italic SF
+8280 38117 MT
+(since the last time)113 W
+10 /Courier AF
+16920 XM
+(explain-nil)SH
+11 /Times-Italic AF
+23908 XM
+(was evaluated)113 W
+/Times-Roman SF
+(. This)
+501 W( may or may not be relevant to the bug you are)112 W
+8280 39313 MT
+(searching for.  The last error)
+82 W( is cleared every time)83 W
+10 /Courier AF
+31306 XM
+(explain-nil)SH
+11 /Times-Roman AF
+38264 XM
+(is evaluated to reduce confusion over)83 W
+8280 40509 MT
+(old errors.  If there has been no failure,)SH
+10 /Courier AF
+25717 XM
+(explain-nil)SH
+11 /Times-Roman AF
+32592 XM
+(will print)SH
+8 /Courier AF
+10200 41674 MT
+(No errors in formula evaluation detected)SH
+11 /Times-Roman AF
+8280 43972 MT
+(A third possibility is to run)SH
+8 /Courier AF
+10200 45185 MT
+(gd:Fix-Up-Window)SH
+/Times-Italic SF
+18360 XM
+(window)SH
+/Courier SF
+49312 XM
+([)SH
+/Times-Italic SF
+(Function)SH
+/Courier SF
+(])SH
+11 /Times-Roman AF
+8280 46606 MT
+(on the window in question.  \050You)
+494 W( may want to use)493 W
+10 /Courier AF
+36195 XM
+(windows)SH
+11 /Times-Roman AF
+41163 XM
+(to find the window object.\051)493 W
+10 /Courier AF
+8280 47802 MT
+(fix-up-window)SH
+11 /Times-Roman AF
+16714 XM
+(will do type checking without attempting a redisplay.)
+359 W( If)
+995 W( an error is detected,)360 W
+10 /Courier AF
+8280 48998 MT
+(fix-up-window)SH
+11 /Times-Roman AF
+16355 XM
+(will allow you to interactively remove objects with problems from the window.)SH
+8280 51296 MT
+(After fixing the problem that caused)50 W
+10 /Courier AF
+24830 XM
+(update)SH
+11 /Times-Roman AF
+28755 XM
+(to crash, you should be)
+50 W( able to do a successful total update)49 W
+8280 52492 MT
+(on the window \050discussed)
+37 W( above\051.  A successful total update will clear the quarantine slot, and will allow)38 W
+8280 53688 MT
+(interactions to take place in the window normally.)SH
+10800 50 8280 66116 UL
+7 SS 
+9180 67617 MT
+(2)SH
+10 /Courier AF
+9530 67944 MT
+(Explain-nil)SH
+9 /Times-Roman AF
+16504 XM
+(does not use)
+149 W( the same technique for finding dependencies as)148 W
+10 /Courier AF
+39936 XM
+(explain-slot)SH
+9 /Times-Roman AF
+(, which uses forward)148 W
+8280 68958 MT
+(pointers from the formula's)10 W
+10 /Courier AF
+18470 XM
+(:depends-on)SH
+9 /Times-Roman AF
+25305 XM
+(slot. Since)245 W
+10 /Courier AF
+29535 XM
+(:depends-on)SH
+9 /Times-Roman AF
+36370 XM
+(is currently cleared when)
+10 W( a null link is encountered,)11 W
+10 /Courier AF
+8280 69972 MT
+(explain-nil)SH
+9 /Times-Roman AF
+15246 XM
+(uses back pointers from the)
+141 W( objects back to the formula.  These are in the)140 W
+10 /Courier AF
+43900 XM
+(:depended-upon)SH
+9 /Times-Roman AF
+52665 XM
+(slot of)140 W
+8280 70986 MT
+(objects. To)
+519 W( locate the back pointers,)147 W
+10 /Courier AF
+22734 XM
+(explain-nil)SH
+9 /Times-Roman AF
+29706 XM
+(searches for all components of)
+147 W( all Opal windows.  Only objects in)148 W
+8280 72000 MT
+(windows are searched, so dependencies on non-graphical objects will be missed.)SH
+ES
+%%Page: 476 15
+BS
+0 SI
+10 /Times-Roman AF
+6120 4286 MT
+(Page 476)
+SH( Debugging)830 W
+38512 XM
+(Inspecting Interactors)
+SH( Chapter)
+1550 W( 7)SH
+46800 50 6120 4486 UL
+16 /Times-Bold AF
+6120 8272 MT
+(7. Inspecting Interactors)SH
+14 SS 
+6120 13146 MT
+(7.1. Tracing)SH
+11 /Times-Roman AF
+6120 14342 MT
+(A common problem is to create some graphical objects and an)
+157 W( interactor but to discover that nothing)156 W
+6120 15538 MT
+(happens when you try to interact with the program.  If you know)
+54 W( what interactor is not functioning, then)55 W
+6120 16734 MT
+(you can trace its behavior using the function)SH
+8 /Courier AF
+8040 17947 MT
+(inter:Trace-Inter)SH
+/Times-Italic SF
+16680 XM
+(interactor)SH
+/Courier SF
+47152 XM
+([)SH
+/Times-Italic SF
+(Function)SH
+/Courier SF
+(])SH
+11 /Times-Roman AF
+6120 19368 MT
+(This function enables some debugging printouts in the interactors package that should help you determine)13 W
+6120 20564 MT
+(what is wrong.  A set of things to trace is maintained internally, so you)
+88 W( can call)89 W
+10 /Courier AF
+42720 XM
+(inter:trace-inter)SH
+11 /Times-Roman AF
+6120 21760 MT
+(several times to trace several things.  In addition to interactors, the parameter can be one of:)SH
+/Symbol SF
+8089 23338 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(t)SH
+11 /Times-Roman AF
+9745 XM
+(\320 trace everything.)SH
+/Symbol SF
+8089 25232 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(NIL)SH
+11 /Times-Roman AF
+10945 XM
+(\320 untrace everything, same as calling)SH
+10 /Courier AF
+28080 XM
+(inter:untrace-inter)SH
+11 /Times-Roman AF
+(.)SH
+/Symbol SF
+8089 27126 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(:window)SH
+11 /Times-Roman AF
+13345 XM
+(\320 trace things about interactor windows such as)SH
+10 /Courier AF
+35033 XM
+(create)SH
+11 /Times-Roman AF
+38908 XM
+(and)SH
+10 /Courier AF
+40771 XM
+(destroy)SH
+11 /Times-Roman AF
+45246 XM
+(operations.)SH
+/Symbol SF
+8089 29020 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(:priority-level)SH
+11 /Times-Roman AF
+18145 XM
+(\320 trace changes to priority levels.)SH
+/Symbol SF
+8089 30914 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(:mouse)SH
+11 /Times-Roman AF
+12745 XM
+(\320 trace)SH
+10 /Courier AF
+16531 XM
+(set-interested-in-moved)SH
+11 /Times-Roman AF
+30606 XM
+(and)SH
+10 /Courier AF
+32469 XM
+(ungrab-mouse)SH
+11 /Times-Roman AF
+(.)SH
+/Symbol SF
+8089 32808 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(:event)SH
+11 /Times-Roman AF
+12745 XM
+(\320 show all events that come in.)SH
+/Symbol SF
+8089 34702 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(:next)SH
+11 /Times-Roman AF
+12145 XM
+(\320 start tracing when the next interactor runs, and trace that interactor.)SH
+/Symbol SF
+8089 36596 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(:short)SH
+11 /Times-Roman AF
+12846 XM
+(\320 report only the name of the interactor that runs, so that)
+101 W( the output is much less)100 W
+8870 37792 MT
+(verbose. This)
+665 W( is very useful if)
+195 W( you suspect that more than one interactor is accidentally)196 W
+8870 38988 MT
+(running at a time.)SH
+6120 40441 MT
+(Tracing any)
+399 W( interactor will turn on)398 W
+10 /Courier AF
+23965 XM
+(:event)SH
+11 /Times-Roman AF
+28238 XM
+(tracing by default.  Call)398 W
+10 /Courier AF
+40920 XM
+(\050inter:untrace-inter)SH
+6120 41637 MT
+(:event\051)SH
+11 /Times-Roman AF
+10595 XM
+(\050see below\051 to stop)SH
+10 /Courier AF
+19209 XM
+(:event)SH
+11 /Times-Roman AF
+23084 XM
+(tracing.)SH
+6120 43935 MT
+(Just typing)SH
+8 /Courier AF
+8040 45100 MT
+(\050inter:trace-inter\051)SH
+11 /Times-Roman AF
+6120 46521 MT
+(will print out the interactors currently being traced.)SH
+8 /Courier AF
+8040 47734 MT
+(inter:Untrace-Inter)SH
+/Times-Italic SF
+17640 XM
+(interactor)SH
+/Courier SF
+47152 XM
+([)SH
+/Times-Italic SF
+(Function)SH
+/Courier SF
+(])SH
+11 /Times-Roman AF
+6120 49155 MT
+(can be used to selectively stop tracing a single interactor or other category.)
+51 W( You)
+379 W( can also pass)52 W
+10 /Courier AF
+48675 XM
+(t)SH
+11 /Times-Roman AF
+49602 XM
+(or)SH
+10 /Courier AF
+50845 XM
+(nil)SH
+11 /Times-Roman AF
+(,)SH
+6120 50351 MT
+(or no argument to)SH
+10 /Courier AF
+14246 XM
+(untrace)SH
+11 /Times-Roman AF
+18721 XM
+(to stop all tracing:)SH
+8 /Courier AF
+8040 51516 MT
+(\050inter:untrace-inter\051)SH
+14 /Times-Bold AF
+6120 55334 MT
+(7.2. Describing Interactors)SH
+11 /Times-Roman AF
+6120 56530 MT
+(If you are not debugging a particular interactor, there are a few)
+206 W( ways to proceed other than wading)205 W
+6120 57726 MT
+(through a complete interactor trace.  First, you can find out what interactors are active by calling:)SH
+8 /Courier AF
+8040 58939 MT
+(gd:Look-Inter &optional)SH
+/Times-Italic SF
+19560 XM
+(interactor-or-object detail)280 W
+/Courier SF
+47152 XM
+([)SH
+/Times-Italic SF
+(Function)SH
+/Courier SF
+(])SH
+11 /Times-Roman AF
+6120 61237 MT
+(The parameter)SH
+/Times-Italic SF
+12776 XM
+(interactor-or-object)SH
+/Times-Roman SF
+21849 XM
+(can be:)SH
+/Symbol SF
+8089 62815 MT
+(\267)SH
+/Times-Roman SF
+8870 XM
+(NIL to list all active interactors \050see below\051,)SH
+/Symbol SF
+8089 64709 MT
+(\267)SH
+/Times-Roman SF
+8870 XM
+(an interactor to describe,)SH
+/Symbol SF
+8089 66603 MT
+(\267)SH
+/Times-Roman SF
+8870 XM
+(a window, to list all active interactors on that window,)SH
+/Symbol SF
+8089 68497 MT
+(\267)SH
+/Times-Roman SF
+8870 XM
+(an interactor priority-level, to list all active interactors on that level,)SH
+/Symbol SF
+8089 70391 MT
+(\267)SH
+/Times-Roman SF
+8870 XM
+(a graphical object, to try to find all interactors that affect that object,)SH
+ES
+%%Page: 477 16
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(Section 7.2)
+SH( Describing)
+1800 W( Interactors)SH
+51386 XM
+(Page 477)SH
+46800 50 8280 4486 UL
+11 /Symbol AF
+10249 8080 MT
+(\267)SH
+10 /Courier AF
+11030 XM
+(:next)SH
+11 /Times-Roman AF
+14305 XM
+(to wait and describe the next interactor that runs)SH
+8280 10378 MT
+(With no arguments)
+141 W( \050or NIL as an argument\051,)142 W
+10 /Courier AF
+29359 XM
+(look-inter)SH
+11 /Times-Roman AF
+35776 XM
+(will print all active interactors \050those with)142 W
+8280 11574 MT
+(their)SH
+10 /Courier AF
+10571 XM
+(:active)SH
+11 /Times-Roman AF
+15046 XM
+(and)SH
+10 /Courier AF
+16909 XM
+(:window)SH
+11 /Times-Roman AF
+21384 XM
+(slots set to something\051 sorted by priority level :)SH
+8 /Courier AF
+10200 12739 MT
+(* \050look-inter\051)SH
+10200 13604 MT
+(Interactors that are :ACTIVE and have a :WINDOW are:)SH
+10200 14469 MT
+(Level #k<RUNNING-PRIORITY-LEVEL>:)SH
+10200 15334 MT
+(Level #k<HIGH-PRIORITY-LEVEL>: #k<DEMO-GROW::INTER2>)SH
+10200 16199 MT
+(Level #k<NORMAL-PRIORITY-LEVEL>: #k<MYTYPER> #k<MYMOVER> #k<DEMO-GROW::INTER3>)SH
+10680 17064 MT
+(#k<DEMO-GROW::INTER4> #k<DEMO-GROW::INTER1>)SH
+10200 17929 MT
+(--> NIL)SH
+11 /Times-Roman AF
+8280 20227 MT
+(If)SH
+/Times-Italic SF
+9287 XM
+(detail)SH
+/Times-Roman SF
+12068 XM
+(is 1,)SH
+10 /Courier AF
+14177 XM
+(look-inter)SH
+11 /Times-Roman AF
+20452 XM
+(will show the)SH
+10 /Courier AF
+26655 XM
+(:start-event)SH
+11 /Times-Roman AF
+34130 XM
+(and)SH
+10 /Courier AF
+35993 XM
+(:start-where)SH
+11 /Times-Roman AF
+43468 XM
+(of each active interactor:)SH
+8 /Courier AF
+10200 21392 MT
+(* \050look-inter 1\051)SH
+10200 22257 MT
+(Interactors that are :ACTIVE and have a :WINDOW are:)SH
+10200 23122 MT
+(Level #k<RUNNING-PRIORITY-LEVEL>:)SH
+10200 23987 MT
+(Level #k<HIGH-PRIORITY-LEVEL>: #k<DEMO-GROW::INTER2>)SH
+10200 24852 MT
+(Level #k<NORMAL-PRIORITY-LEVEL>: #k<MYTYPER> #k<MYMOVER> #k<DEMO-GROW::INTER3>)SH
+10680 25717 MT
+(#k<DEMO-GROW::INTER4> #k<DEMO-GROW::INTER1>)SH
+10200 26582 MT
+(#k<DEMO-GROW::INTER2> \050MOVE-GROW-INTERACTOR\051)SH
+11640 27447 MT
+(starts when :LEFTDOWN \050:ELEMENT-OF #k<AGGREGATE-164>\051)SH
+10200 28312 MT
+(#k<MYTYPER> \050TEXT-INTERACTOR\051)SH
+11640 29177 MT
+(starts when :RIGHTDOWN \050:IN #k<MYTEXT>\051)SH
+10200 30042 MT
+(#k<MYMOVER> \050MOVE-GROW-INTERACTOR\051)SH
+11640 30907 MT
+(starts when :LEFTDOWN \050:IN #k<MYRECT>\051)SH
+10200 31772 MT
+(#k<DEMO-GROW::INTER3> \050MOVE-GROW-INTERACTOR\051)SH
+11640 32637 MT
+(starts when :MIDDLEDOWN \050:ELEMENT-OF #k<AGGREGATE-136>\051)SH
+10200 33502 MT
+(#k<DEMO-GROW::INTER4> \050MOVE-GROW-INTERACTOR\051)SH
+11640 34367 MT
+(starts when :RIGHTDOWN \050:ELEMENT-OF #k<AGGREGATE-136>\051)SH
+10200 35232 MT
+(#k<DEMO-GROW::INTER1> \050BUTTON-INTERACTOR\051)SH
+11640 36097 MT
+(starts when :LEFTDOWN \050:ELEMENT-OF-OR-NONE #k<AGGREGATE-136>\051)SH
+10200 36962 MT
+(--> NIL)SH
+11 /Times-Roman AF
+8280 38383 MT
+(To get information about a single interactor, pass the interactor as a parameter:)SH
+8 /Courier AF
+10200 39548 MT
+(* \050look-inter mymover\051)SH
+10200 40413 MT
+(#k<MYMOVER>'s :ACTIVE is T, :WINDOW is #k<MYWINDOW>)SH
+10200 41278 MT
+(#k<MYMOVER> is on the #k<NORMAL-PRIORITY-LEVEL> level)SH
+10200 42143 MT
+(#k<MYMOVER> \050MOVE-GROW-INTERACTOR\051)SH
+11640 43008 MT
+(starts when :LEFTDOWN \050:IN #k<MYRECT>\051)SH
+10200 43873 MT
+(--> NIL)SH
+11 /Times-Roman AF
+8280 46171 MT
+(In some cases you need to know what interactor will affect a given object)
+157 W( \050perhaps located using the)156 W
+10 /Courier AF
+8280 47367 MT
+(ident)SH
+11 /Times-Roman AF
+11812 XM
+(function\051. This)
+789 W( is not possible in)
+257 W( general since the object\050s\051 an interactor changes may be)258 W
+8280 48563 MT
+(referenced by arbitrary application code.  However, if you use interactors in fairly generic)
+45 W( ways, you can)44 W
+8280 49759 MT
+(call)SH
+10 /Courier AF
+10143 XM
+(look-inter)SH
+11 /Times-Roman AF
+16418 XM
+(with a graphical object as argument to search for relevant interactors:)SH
+8 /Courier AF
+10200 50924 MT
+(* \050look-inter myrect\051)SH
+10200 51789 MT
+(#k<MYMOVER>'s :start-where is \050:IN #k<MYRECT>\051)SH
+10200 52654 MT
+(--> NIL)SH
+10200 53519 MT
+(* \050look-inter mytext\051)SH
+10200 54384 MT
+(#k<MYTYPER>'s :start-where is \050:IN #k<MYTEXT>\051)SH
+10200 55249 MT
+(--> NIL)SH
+11 /Times-Roman AF
+8280 57547 MT
+(The search)
+291 W( algorithm used by look-inter is fairly simple:  the current value of)292 W
+10 /Courier AF
+46579 XM
+(:start-where)SH
+11 /Times-Roman AF
+54346 XM
+(is)SH
+8280 58743 MT
+(interpreted to see if it could refer to the argument.  Then the)122 W
+10 /Courier AF
+36500 XM
+(:feedback-obj)SH
+11 /Times-Roman AF
+44696 XM
+(and)SH
+10 /Courier AF
+46680 XM
+(:obj-to-change)SH
+11 /Times-Roman AF
+8280 59939 MT
+(slots are examined for an exact match with the argument.)
+81 W( If)
+439 W( formulas are encountered, only the current)82 W
+8280 61135 MT
+(value is considered, so there are a number of ways in which)SH
+10 /Courier AF
+34821 XM
+(look-inter)SH
+11 /Times-Roman AF
+41096 XM
+(can fail to find an interactor.)SH
+ES
+%%Page: 478 17
+BS
+0 SI
+10 /Times-Roman AF
+6120 4286 MT
+(Page 478)
+SH( Debugging)830 W
+40705 XM
+(Sizes of Objects)
+SH( Chapter)
+1550 W( 8)SH
+46800 50 6120 4486 UL
+16 /Times-Bold AF
+6120 8272 MT
+(8. Sizes of Objects)SH
+11 /Times-Roman AF
+6120 10524 MT
+(Several functions are provided to help make size measurements of Opal objects and aggregates.)SH
+8 /Courier AF
+8040 11737 MT
+(gd:ObjBytes)SH
+/Times-Italic SF
+13800 XM
+(object)SH
+/Courier SF
+47152 XM
+([)SH
+/Times-Italic SF
+(Function)SH
+/Courier SF
+(])SH
+11 /Times-Roman AF
+6120 13158 MT
+(will measure the size of a single Opal object or interactor in bytes.)SH
+8 /Courier AF
+8040 14371 MT
+(gd:AggBytes)SH
+/Times-Italic SF
+13800 XM
+(aggregate)SH
+/Courier SF
+17523 XM
+(&optional)SH
+/Times-Italic SF
+22323 XM
+(verbose)SH
+/Courier SF
+47152 XM
+([)SH
+/Times-Italic SF
+(Function)SH
+/Courier SF
+(])SH
+11 /Times-Roman AF
+6120 15792 MT
+(will measure the size of an Opal aggregate and all of its components)
+97 W( in bytes.  The first argument may)96 W
+6120 16988 MT
+(also be a list of aggregates, a window, or a list of windows.  For example, to compute the total size)
+36 W( of all)37 W
+6120 18184 MT
+(graphical objects, you can type this:)SH
+8 /Courier AF
+8040 19349 MT
+(\050aggbytes \050windows\051\051)SH
+11 /Times-Roman AF
+6120 20770 MT
+(The output will include various)
+38 W( statistics on size according to object type.  Sizes are printed in bytes, and)37 W
+6120 21966 MT
+(the returned value will)
+96 W( be the total size in bytes.  The size information)97 W
+/Times-Italic SF
+38542 XM
+(does not)97 W
+/Times-Roman SF
+42708 XM
+(include any interactors)97 W
+6120 23162 MT
+(because interactors can exist independent of the aggregate)
+69 W( hierarchy.  The optional)68 W
+/Times-Italic SF
+43622 XM
+(verbose)SH
+/Times-Roman SF
+47385 XM
+(flag defaults)68 W
+6120 24358 MT
+(to)SH
+10 /Courier AF
+7251 XM
+(t)SH
+11 /Times-Roman AF
+(; setting it to nil will reduce the detail of the printed information.)SH
+8 /Courier AF
+8040 25571 MT
+(gd:InterBytes &interactor)SH
+/Times-Italic SF
+20520 XM
+(window verbose)280 W
+/Courier SF
+47152 XM
+([)SH
+/Times-Italic SF
+(Function)SH
+/Courier SF
+(])SH
+11 /Times-Roman AF
+6120 26992 MT
+(will report size information on)
+252 W( the interactors whose)253 W
+10 /Courier AF
+31478 XM
+(:window)SH
+11 /Times-Roman AF
+36206 XM
+(slot)SH
+/Times-Italic SF
+38324 XM
+(currently)SH
+/Times-Roman SF
+42884 XM
+(contains the specified)253 W
+6120 28188 MT
+(window. If)
+335 W( the)30 W
+/Times-Italic SF
+13235 XM
+(window)SH
+/Times-Roman SF
+16964 XM
+(parameter is omitted,)30 W
+10 /Courier AF
+26646 XM
+(t)SH
+11 /Times-Roman AF
+27551 XM
+(or)SH
+10 /Courier AF
+28772 XM
+(nil)SH
+11 /Times-Roman AF
+(, then the size of)
+30 W( all interactors is computed.  \050Use)29 W
+10 /Courier AF
+6120 29384 MT
+(objsize)SH
+11 /Times-Roman AF
+10642 XM
+(for a single interactor.\051  Note that an interactor may operate in more than one window and)
+47 W( that)48 W
+6120 30580 MT
+(interactors can follow objects from window to)
+52 W( window.  As with)51 W
+10 /Courier AF
+35403 XM
+(aggbytes)SH
+11 /Times-Roman AF
+(, the)51 W
+/Times-Italic SF
+42474 XM
+(verbose)SH
+/Times-Roman SF
+46220 XM
+(flag defaults to)51 W
+10 /Courier AF
+6120 31776 MT
+(t)SH
+11 /Times-Roman AF
+(; setting it to nil will reduce the detail of the printed information.)SH
+8 /Courier AF
+8040 32989 MT
+(gd:*Avoid-Shared-Values*)SH
+47241 XM
+([)SH
+/Times-Italic SF
+(Variable)SH
+/Courier SF
+(])SH
+11 /Times-Roman AF
+6120 34410 MT
+(Normally,)SH
+10 /Courier AF
+11002 XM
+(aggbytes)SH
+11 /Times-Roman AF
+16193 XM
+(does not consider the fact that list structures may)
+116 W( be shared, so shared storage is)117 W
+6120 35606 MT
+(counted multiple times.  To avoid this)
+581 W( \050at the expense of using a large hash table\051, set)580 W
+10 /Courier AF
+6120 36802 MT
+(avoid-shared-values)SH
+11 /Times-Roman AF
+17795 XM
+(to)SH
+10 /Courier AF
+18926 XM
+(t)SH
+11 /Times-Roman AF
+(.)SH
+8 /Courier AF
+8040 38015 MT
+(gd:*Avoid-Equal-Values*)SH
+47241 XM
+([)SH
+/Times-Italic SF
+(Variable)SH
+/Courier SF
+(])SH
+11 /Times-Roman AF
+6120 39436 MT
+(To measure the potential)
+63 W( for sharing, set this variable to)64 W
+10 /Courier AF
+31592 XM
+(t)SH
+11 /Times-Roman AF
+(. This)
+403 W( will do hashing using)64 W
+10 /Courier AF
+45414 XM
+(#'equal)SH
+11 /Times-Roman AF
+49953 XM
+(so that)64 W
+6120 40632 MT
+(equal values will be counted as shared instead of)SH
+10 /Courier AF
+27837 XM
+(#'eq)SH
+11 /Times-Roman AF
+(, which measures actual sharing.)SH
+8 /Courier AF
+8040 41845 MT
+(gd:*Count-Symbols*)SH
+47241 XM
+([)SH
+/Times-Italic SF
+(Variable)SH
+/Courier SF
+(])SH
+11 /Times-Roman AF
+6120 43266 MT
+(Ordinarily, storage for object names is not counted as part of)
+160 W( the storage for objects.  By setting this)159 W
+6120 44462 MT
+(variable for true, the sizes reported by)180 W
+10 /Courier AF
+24360 XM
+(objbytes)SH
+11 /Times-Roman AF
+29616 XM
+(and)SH
+10 /Courier AF
+31660 XM
+(aggbytes)SH
+11 /Times-Roman AF
+36916 XM
+(will include this additional symbol)181 W
+6120 45658 MT
+(storage overhead.)SH
+/Times-Bold SF
+6120 47956 MT
+(Note:)SH
+/Times-Roman SF
+9005 XM
+(Size information for an)
+46 W( object includes the size of any attached formulas.  At present, only objects)45 W
+6120 49152 MT
+(and cons cells are counted.  Storage for structures \050other than KR schema\051,)
+169 W( strings, and arrays is)170 W
+/Times-Italic SF
+51514 XM
+(not)SH
+/Times-Roman SF
+6120 50348 MT
+(counted.)SH
+ES
+%%Page: 479 18
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(References)SH
+51386 XM
+(Page 479)SH
+46800 50 8280 4486 UL
+16 /Times-Bold AF
+8280 8272 MT
+(References)SH
+11 /Times-Roman AF
+8280 11279 MT
+([Giuse 89])SH
+16530 XM
+(Dario Giuse.)SH
+/Times-Italic SF
+16530 12475 MT
+(KR: Constraint-Based Knowledge Representation)SH
+/Times-Roman SF
+(.)SH
+16530 13671 MT
+(Technical Report CMU-CS-89-142, Carnegie Mellon University Computer Science)SH
+18180 14867 MT
+(Department, April, 1989.)SH
+8280 16818 MT
+([Marchal 89])SH
+16530 XM
+(Philippe Marchal and Andrew Mickish.)SH
+16530 18014 MT
+(Aggregadgets and AggreLists Reference Manual.)SH
+/Times-Italic SF
+16530 19210 MT
+(The Garnet Toolkit Reference Manuals: Support for Highly-Interactive, Graphical)SH
+18180 20406 MT
+(User Interfaces in Lisp.)SH
+/Times-Roman SF
+16530 21602 MT
+(Carnegie Mellon University Computer Science Department Technical Report CMU-)SH
+18180 22798 MT
+(CS-89-196, 1989, pages 179-200.)SH
+8280 24749 MT
+([Myers 89a])SH
+16530 XM
+(Brad A. Myers, John A. Kolojejchick, and Edward Pervin.)SH
+16530 25945 MT
+(Opal Reference Manual; The Garnet Graphical Object System.)SH
+/Times-Italic SF
+16530 27141 MT
+(The Garnet Toolkit Reference Manuals: Support for Highly-Interactive, Graphical)SH
+18180 28337 MT
+(User Interfaces in Lisp.)SH
+/Times-Roman SF
+16530 29533 MT
+(Carnegie Mellon University Computer Science Department Technical Report CMU-)SH
+18180 30729 MT
+(CS-89-196, 1989, pages 85-126.)SH
+8280 32680 MT
+([Myers 89b])SH
+16530 XM
+(Brad A. Myers.)SH
+16530 33876 MT
+(Interactors Reference Manual: Encapsulating Mouse and Keyboard Behaviors.)SH
+/Times-Italic SF
+16530 35072 MT
+(The Garnet Toolkit Reference Manuals: Support for Highly-Interactive, Graphical)SH
+18180 36268 MT
+(User Interfaces in Lisp.)SH
+/Times-Roman SF
+16530 37464 MT
+(Carnegie Mellon University Computer Science Department Technical Report CMU-)SH
+18180 38660 MT
+(CS-89-196, 1989, pages 126-178.)SH
+ES
+%%Page: 480 19
+BS
+0 SI
+10 /Times-Roman AF
+6120 4286 MT
+(Page 480)
+SH( Debugging)830 W
+50643 XM
+(Index)SH
+46800 50 6120 4486 UL
+16 /Times-Bold AF
+6120 8272 MT
+(Index)SH
+8 /Times-Roman AF
+6120 11525 MT
+(*avoid-equal-values* 478)400 W
+21720 XM
+(Type checking)
+SH( 475)400 W
+6120 12449 MT
+(*avoid-shared-values* 478)400 W
+6120 13373 MT
+(*count-symbols* 478)400 W
+21720 XM
+(Uninvert 469)400 W
+21720 14297 MT
+(Untrace-inter 476)400 W
+6120 15221 MT
+(Break-On-Slot-Set 474)400 W
+21720 XM
+(Update 470,)
+400 W( 475)SH
+6120 17069 MT
+(Call-Func-On-Slot-Set 474)400 W
+21720 XM
+(Visibility 469)400 W
+6120 17993 MT
+(Character code)
+SH( 470)400 W
+6120 18917 MT
+(Clear-Slot-Set 474)400 W
+21720 XM
+(What 468)400 W
+6120 19841 MT
+(Constraint 471)400 W
+21720 XM
+(Where 469)400 W
+6120 20765 MT
+(Coordinates 470)400 W
+21720 XM
+(Why-not-constant 473)400 W
+6120 21689 MT
+(Count-formulas 473)400 W
+21720 XM
+(Windows \050debugging function\051)
+SH( 470)400 W
+6120 23537 MT
+(Dependencies 471)400 W
+6120 24461 MT
+(Dependency View \050in Inspector\051)
+SH( 466)400 W
+6120 25385 MT
+(Detail 468)400 W
+6120 27233 MT
+(Explain-formulas 473)400 W
+6120 28157 MT
+(Explain-nil 475)400 W
+6120 29081 MT
+(Explain-short 471)400 W
+6120 30005 MT
+(Explain-slot 471)400 W
+6120 31853 MT
+(Find-formulas 473)400 W
+6120 32777 MT
+(Fix-up-window 475)400 W
+6120 33701 MT
+(Flash 469)400 W
+6120 34625 MT
+(Formula 471)400 W
+6120 36473 MT
+(Garnet-debug \050package\051)
+SH( 463)400 W
+6120 38321 MT
+(HELP key)
+SH( 464)400 W
+6120 40169 MT
+(Ident 469)400 W
+6120 41093 MT
+(Inspect-next-inter 464)400 W
+6120 42017 MT
+(Inspector 464)400 W
+6120 42941 MT
+(Inspector-key 464)400 W
+6120 43865 MT
+(Inspector-next-inter-key 465)400 W
+6120 44789 MT
+(Interactors 476)400 W
+6120 45713 MT
+(Invert 469)400 W
+6120 46637 MT
+(Is-a-tree 468)400 W
+6120 48485 MT
+(Kids 468)400 W
+6120 50333 MT
+(Leaf 469)400 W
+6120 51257 MT
+(Loading 463)400 W
+6120 52181 MT
+(Locate 469,)
+400 W( 470)SH
+6120 53105 MT
+(Look 468)400 W
+6120 54029 MT
+(Look-inter 476)400 W
+6120 55877 MT
+(Notify-On-Slot-Set 474)400 W
+6120 56801 MT
+(Null link)
+SH( 471,)
+400 W( 475)SH
+6120 58649 MT
+(Object View \050in Inspector\051)
+SH( 465)400 W
+6120 60497 MT
+(Priority level)
+SH( 477)400 W
+6120 61421 MT
+(Ps 468)400 W
+6120 63269 MT
+(Record-from-now 472)400 W
+6120 65117 MT
+(Show-object-key 465)400 W
+6120 66041 MT
+(Size 478)400 W
+6120 66965 MT
+(Slot 471)400 W
+6120 67889 MT
+(Standard parent)
+SH( 468)400 W
+6120 68813 MT
+(Suggest-constants 472)400 W
+6120 70661 MT
+(Trace-inter 476)400 W
+6120 71585 MT
+(Tracing 476)400 W
+ES
+%%Page: i 20
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(Debugging)SH
+47914 XM
+(Table of Contents)SH
+46800 50 8280 4486 UL
+16 /Times-Bold AF
+25591 8272 MT
+(Table of Contents)SH
+12 SS 
+8280 9796 MT
+(1. Introduction)SH
+53280 XM
+(463)SH
+10 SS 
+9780 11186 MT
+(1.1. Notation in this Manual)SH
+53580 XM
+(463)SH
+9780 12266 MT
+(1.2. Loading and Using Debugging Tools)SH
+53580 XM
+(463)SH
+12 SS 
+8280 13790 MT
+(2. Inspecting Objects)SH
+53280 XM
+(464)SH
+10 SS 
+9780 15180 MT
+(2.1. Inspector)SH
+53580 XM
+(464)SH
+11780 16260 MT
+(2.1.1. Invoking the Inspector)SH
+53580 XM
+(464)SH
+11780 17340 MT
+(2.1.2. Schema View)SH
+53580 XM
+(465)SH
+11780 18420 MT
+(2.1.3. Object View)SH
+53580 XM
+(465)SH
+11780 19500 MT
+(2.1.4. Formula Dependencies View)SH
+53580 XM
+(466)SH
+11780 20580 MT
+(2.1.5. Summary of Commands)SH
+53580 XM
+(467)SH
+9780 21660 MT
+(2.2. PS -- Print Schema)SH
+53580 XM
+(468)SH
+9780 22740 MT
+(2.3. Look, What, and Kids)SH
+53580 XM
+(468)SH
+9780 23820 MT
+(2.4. Is-A-Tree)SH
+53580 XM
+(468)SH
+9780 24900 MT
+(2.5. Finding Graphical Objects)SH
+53580 XM
+(469)SH
+12 SS 
+8280 26424 MT
+(3. Inspecting Constraints)SH
+53280 XM
+(471)SH
+8280 27948 MT
+(4. Choosing Constant Slots)SH
+53280 XM
+(472)SH
+10 SS 
+9780 29338 MT
+(4.1. Suggest-Constants)SH
+53580 XM
+(472)SH
+9780 30418 MT
+(4.2. Explain-Formulas and Find-Formulas)SH
+53580 XM
+(473)SH
+9780 31498 MT
+(4.3. Count-Formulas and Why-Not-Constant)SH
+53580 XM
+(473)SH
+12 SS 
+8280 33022 MT
+(5. Noticing when Slots are Set)SH
+53280 XM
+(474)SH
+8280 34546 MT
+(6. Opal Update Failures)SH
+53280 XM
+(475)SH
+8280 36070 MT
+(7. Inspecting Interactors)SH
+53280 XM
+(476)SH
+10 SS 
+9780 37460 MT
+(7.1. Tracing)SH
+53580 XM
+(476)SH
+9780 38540 MT
+(7.2. Describing Interactors)SH
+53580 XM
+(476)SH
+12 SS 
+8280 40064 MT
+(8. Sizes of Objects)SH
+53280 XM
+(478)SH
+8280 41588 MT
+(References)SH
+53280 XM
+(479)SH
+8280 43112 MT
+(Index)SH
+53280 XM
+(480)SH
+ES
+%%Trailer
+%%Pages: 20
+%%DocumentFonts: Times-Roman Times-Bold Symbol Courier Times-Italic Times-BoldItalic

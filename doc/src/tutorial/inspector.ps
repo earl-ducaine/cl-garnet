@@ -1,0 +1,623 @@
+%!PS-Adobe-2.0 EPSF-2.0
+%%Title: Showing #k<R3>
+%%Creator: Make-PS-File -- Garnet Version 2.2
+%%CreationDate: Sep 28, 1993, 2:30 PM
+%%For: 
+%%This file does not use real color
+%%DocumentFonts: (atend)
+%%BoundingBox: 72 278 540 515
+%%Pages: 1
+%%EndComments
+
+
+/AdjustLineDict 20 dict def
+/AdjustLine { % x1 y1 x2 y2 width => x1 y1 x2 y2
+  AdjustLineDict begin
+    /width exch cvi def
+    /hw width 2 div def
+    /oddwidth? width 1 and 1 eq def
+    /y2 exch def /x2 exch def /y1 exch def /x1 exch def
+    /dx x2 x1 sub def /dy y2 y1 sub def
+    dy 0 eq {
+      dx 0 eq {
+	% point
+	oddwidth? {
+	  /x1 x1 .5 add def /y1 y1 .5 sub def
+	  /x2 x2 .5 add def /y2 y2 .5 sub def
+	} if
+      } {
+	% horizontal
+	oddwidth? {
+	  /y1 y1 .5 sub def
+	  /y2 y2 .5 sub def
+	} if
+      } ifelse
+    } {
+      dx 0 eq {
+	% vertical
+	oddwidth? {
+	  /x1 x1 .5 add def
+	  /x2 x2 .5 add def
+	} if
+      } {
+	% diagonal
+	oddwidth? {
+	  /x1 x1 .5 add def /y1 y1 .5 sub def
+	  /x2 x2 .5 add def /y2 y2 .5 sub def
+	} if
+      } ifelse
+    } ifelse
+    x1 y1 x2 y2
+  end
+} def
+
+/DrawLineDict 20 dict def
+/DrawLine { % line-color cap join dash thickness x2 y2 x1 y1 => -
+    gsave DrawLineDict begin
+	4 index AdjustLine
+	moveto lineto
+	StrokeShape
+    end grestore
+} def
+
+/TextDict 40 dict def
+/DrawText { % left top base-y opal-width height fill-p
+	    % fore-color back-color string size font-name => -
+    TextDict begin
+	gsave
+	    findfont exch scalefont setfont
+	    /s exch def
+	    /back-color exch def /fore-color exch def /fill-p exch def
+	    /height exch def  /opal-width exch def
+	    /base-y exch def  /top exch def
+	    /left exch 1 sub def % XXX: I don't know why!
+
+	    % Calculate distance to add between each character, based on the 
+	    % width expected by Opal, the width expected by postscript, and 
+	    % the number of characters to distribute the change over.
+	    /x-dist opal-width s stringwidth pop sub s length div def
+
+	    % Draw background of text if appropriate
+	    fill-p {
+		gsave
+		    newpath
+		    left top opal-width height RectanglePath
+		    back-color FillShape
+		grestore
+	    } if
+
+	    % Draw text in the appropriate color
+	    newpath
+	    s length 0 ne {
+		left base-y moveto
+		fore-color aload length 3 eq {
+		    setrgbcolor
+		    x-dist 0 s ashow
+		} { % Halftone pattern:
+		    %   fgR fgG fgB bgR bgG bgB top pattern
+		    %   fgR fgG fgB false top pattern
+		    /pattern exch def /top exch def /opaque? exch def
+		    opaque? not { .5 .5 .5 } if
+		    /bgB exch def /bgG exch def /bgR exch def
+		    /fgB exch def /fgG exch def /fgR exch def
+
+		    fgR bgR add 2 div
+		    fgG bgG add 2 div
+		    fgB bgB add 2 div
+		    setrgbcolor
+
+		    opaque? {
+			x-dist 0 s ashow
+		    } {
+			mark
+			/ch 1 string def
+			/space { /space { x-dist 0 rmoveto } def } def
+%			/jt statusdict begin jobtimeout end def
+			gsave { % try really hard to do it right
+			    s {
+				% don't take more than 2 seconds a character
+%				statusdict begin 2 setjobtimeout end
+				space
+				ch 0 3 -1 roll put
+				ch true charpath
+				currentpoint /yy exch def /xx exch def
+				fgR fgG fgB false top pattern FillPattern
+				newpath xx yy moveto
+			    } forall
+			} stopped grestore { % fall back in case we fail
+			    x-dist 0 s ashow
+			} if
+%			statusdict begin jt setjobtimeout end
+			cleartomark
+		    } ifelse
+		} ifelse
+	    } if
+	grestore
+    end
+} def
+
+/RectanglePath { % left top width height => -
+    /h exch def  /w exch def
+    moveto			% Go to the left,top corner
+    w 0 rlineto			% top side
+    0 h neg rlineto		% right side
+    w neg 0 rlineto		% bottom side
+    closepath			% left side
+} def
+
+/RectangleDict 21 dict def
+/DrawRectangle { % left top width height line-color
+		 % cap join dash thickness fill-color => -
+    RectangleDict begin
+	/fill-color exch def  /thickness exch def /dash-pattern exch def
+	/line-join exch def  /line-cap exch def /line-color exch def
+	/height exch def /width exch def  /top exch def  /left exch def
+        /thickness-for-fill thickness 0 lt {0} {thickness} ifelse def
+	% Draw filling
+	newpath
+	left thickness-for-fill add top thickness-for-fill sub
+        width thickness-for-fill 2 mul sub height thickness-for-fill 2 mul sub
+	RectanglePath
+	fill-color FillShape
+	% Draw border
+	newpath
+	left thickness 2 div add  top thickness 2 div sub
+	width thickness sub  height thickness sub
+	RectanglePath
+	line-color line-cap line-join dash-pattern thickness StrokeShape
+    end
+} def
+
+/DrawMotifWindowFrame { % label left top w h 
+			% leftmargin topmargin rightmargin bottommargin => -
+  30 dict begin
+
+  { % setup
+    /bottommargin exch def /rightmargin exch def
+    /topmargin exch def /leftmargin exch def
+    /h exch def /w exch def /y exch h sub def /x exch def
+    /label exch def
+
+    /bottom y bottommargin sub def
+    /top y h add topmargin add def
+    /left x leftmargin sub def
+    /right x w add rightmargin add def
+
+    /light .9 def
+    /medium .7 def
+    /dark .4 def
+
+    1 setlinewidth
+    0 setlinecap
+  } exec
+
+  { % background
+    left bottom moveto
+    left top lineto
+    right top lineto
+    right bottom lineto
+    closepath
+    medium setgray fill
+  } exec
+
+  { % outer upper left edges
+    left bottom moveto
+    right bottom lineto
+    right top lineto
+    right 2 sub top 2 sub lineto
+    right 2 sub bottom 2 add lineto
+    left 2 add bottom 2 add lineto
+    closepath
+    dark setgray fill
+  } exec
+
+  { % outer lower right edges
+    left bottom moveto
+    left top lineto
+    right top lineto
+    right 2 sub top 2 sub lineto
+    left 2 add top 2 sub lineto
+    left 2 add bottom 2 add lineto
+    closepath
+    light setgray fill
+  } exec
+
+  { % inner lower right edges
+    left 9 add bottom 9 add moveto
+    right 9 sub bottom 9 add lineto
+    right 9 sub top 25 sub lineto
+    right 11 sub top 27 sub lineto
+    right 11 sub bottom 11 add lineto
+    left 11 add bottom 11 add lineto
+    closepath
+    light setgray fill
+  } exec
+
+  { % inner upper left edges
+    left 9 add bottom 9 add moveto
+    left 9 add top 25 sub lineto
+    right 9 sub top 25 sub lineto
+    right 11 sub top 27 sub lineto
+    left 11 add top 27 sub lineto
+    left 11 add bottom 11 add lineto
+    closepath
+    dark setgray fill
+  } exec
+
+  { % top rut above label
+    left 9 add top 9.5 sub moveto
+    right 9.01 sub top 9.5 sub lineto
+    dark setgray stroke
+    left 10 add top 10.5 sub moveto
+    right 9.01 sub top 10.5 sub lineto
+    light setgray stroke
+  } exec
+
+  { % left edge of left button
+    left 9.5 add top 9 sub moveto
+    left 9.5 add top 25.99 sub lineto
+    dark setgray stroke
+    left 10.5 add top 10 sub moveto
+    left 10.5 add top 25.99 sub lineto
+    light setgray stroke
+  } exec
+
+  { % right edge of big right button
+    right 10.5 sub top 11 sub moveto
+    right 10.5 sub top 25.99 sub lineto
+    dark setgray stroke
+    right 9.5 sub top 11 sub moveto
+    right 9.5 sub top 25.99 sub lineto
+    light setgray stroke
+  } exec
+
+  { % right edge of left button
+    left 26.5 add top 11 sub moveto
+    left 26.5 add top 25.99 sub lineto
+    dark setgray stroke
+    left 27.5 add top 11 sub moveto
+    left 27.5 add top 25.99 sub lineto
+    light setgray stroke
+  } exec
+
+  { % edge between small and big right buttons
+    right 27.5 sub top 11 sub moveto
+    right 27.5 sub top 25.99 sub lineto
+    dark setgray stroke
+    right 26.5 sub top 11 sub moveto
+    right 26.5 sub top 25.99 sub lineto
+    light setgray stroke
+  } exec
+
+  { % left edge of small right button
+    right 44.5 sub top 11 sub moveto
+    right 44.5 sub top 25.99 sub lineto
+    dark setgray stroke
+    right 43.5 sub top 11 sub moveto
+    right 43.5 sub top 25.99 sub lineto
+    light setgray stroke
+  } exec
+
+  { % top left resize corner
+    left 26.5 add top 1 sub moveto
+    left 26.5 add top 9.99 sub lineto
+    dark setgray stroke
+    left 27.5 add top 1 sub moveto
+    left 27.5 add top 9.99 sub lineto
+    light setgray stroke
+
+    left 1 add top 26.5 sub moveto
+    left 9.99 add top 26.5 sub lineto
+    dark setgray stroke
+    left 1 add top 27.5 sub moveto
+    left 9.99 add top 27.5 sub lineto
+    light setgray stroke
+  } exec
+
+  { % top right resize corner
+    right 27.5 sub top 1 sub moveto
+    right 27.5 sub top 9.99 sub lineto
+    dark setgray stroke
+    right 26.5 sub top 1 sub moveto
+    right 26.5 sub top 9.99 sub lineto
+    light setgray stroke
+
+    right 1.01 sub top 26.5 sub moveto
+    right 9 sub top 26.5 sub lineto
+    dark setgray stroke
+    right 1.01 sub top 27.5 sub moveto
+    right 9 sub top 27.5 sub lineto
+    light setgray stroke
+  } exec
+
+  { % bottom left resize corner
+    left 26.5 add bottom 1.01 add moveto
+    left 26.5 add bottom 9 add lineto
+    dark setgray stroke
+    left 27.5 add bottom 1.01 add moveto
+    left 27.5 add bottom 9 add lineto
+    light setgray stroke
+
+    left 1 add bottom 27.5 add moveto
+    left 9.99 add bottom 27.5 add lineto
+    dark setgray stroke
+    left 1 add bottom 26.5 add moveto
+    left 9.99 add bottom 26.5 add lineto
+    light setgray stroke
+  } exec
+
+  { % bottom right resize corner
+    right 27.5 sub bottom 1.01 add moveto
+    right 27.5 sub bottom 9 add lineto
+    dark setgray stroke
+    right 26.5 sub bottom 1.01 add moveto
+    right 26.5 sub bottom 9 add lineto
+    light setgray stroke
+
+    right 1.01 sub bottom 27.5 add moveto
+    right 9 sub bottom 27.5 add lineto
+    dark setgray stroke
+    right 1.01 sub bottom 26.5 add moveto
+    right 9 sub bottom 26.5 add lineto
+    light setgray stroke
+  } exec
+
+  { % upper left button
+    left 14.5 add top 19.99 sub moveto
+    left 14.5 add top 16.5 sub lineto
+    left 22.99 add top 16.5 sub lineto
+    light setgray stroke
+    left 15 add top 19.5 sub moveto
+    left 22.5 add top 19.5 sub lineto
+    left 22.5 add top 17 sub lineto
+    dark setgray stroke
+  } exec
+
+  { % upper right big button
+    right 14.01 sub top 14.5 sub moveto
+    right 22.5 sub top 14.5 sub lineto
+    right 22.5 sub top 22.99 sub lineto
+    light setgray stroke
+    right 14.5 sub top 15 sub moveto
+    right 14.5 sub top 22.5 sub lineto
+    right 22 sub top 22.5 sub lineto
+    dark setgray stroke
+  } exec
+
+  { % upper right small button
+    right 34.01 sub top 16.5 sub moveto
+    right 37.5 sub top 16.5 sub lineto
+    right 37.5 sub top 19.99 sub lineto
+    light setgray stroke
+    right 34.5 sub top 17 sub moveto
+    right 34.5 sub top 19.5 sub lineto
+    right 37 sub top 19.5 sub lineto
+    dark setgray stroke
+  } exec
+
+  { % label
+    /Helvetica-Bold findfont 10 scalefont setfont
+    label stringwidth pop
+    left 28 add right 44 sub add 2 div
+    1 index 2 div sub
+    dup 2 sub top 24 sub
+    moveto
+    1 index 4 add 0 rlineto
+    0 12 rlineto
+    exch 4 add neg 0 rlineto
+    closepath
+    1 setgray fill
+    top 21 sub moveto
+    0 setgray
+    label show
+  } exec
+
+  end
+} def
+
+/DrawGenericWindowFrame { % label left top w h
+			  % leftmargin topmargin rightmargin bottommargin => -
+  30 dict begin
+
+  { % setup
+    /bottommargin exch def /rightmargin exch def
+    /topmargin exch def /leftmargin exch def
+    /h exch def /w exch def /y exch h sub def /x exch def
+    /label exch def
+    /pointsize
+      topmargin 1 sub
+      dup 1 lt { pop 1 } if
+      dup 12 gt { 12 sub 3 div 12 add } if
+    def
+
+    /bottom y def /top y h add def
+    /left x def /right  x w add def
+    1 setlinewidth
+    0 setlinecap
+  } exec
+
+  { % background
+    newpath
+    left leftmargin sub bottom bottommargin sub moveto
+    left leftmargin sub top topmargin add lineto
+    right rightmargin add top topmargin add lineto
+    right rightmargin add bottom bottommargin sub lineto
+    closepath
+    0 setgray fill
+
+    left bottom moveto
+    left top lineto
+    right top lineto
+    right bottom lineto
+    closepath
+    1 setgray fill
+  } exec
+
+  topmargin 8 ge {
+    /Helvetica-Bold findfont pointsize scalefont setfont
+    label stringwidth pop
+    left right add 2 div
+    exch 2 div sub
+    top topmargin 2 div add pointsize 2 div sub 2 add moveto
+    1 setgray
+    label show
+  } if
+
+  end
+} def
+
+/FillShape { % [halftone] | [r g b] | null => -
+    gsave
+        dup null eq { pop } {
+	  aload length 3 eq { setrgbcolor fill } {
+	      FillPattern
+	  } ifelse
+        } ifelse
+    grestore
+    newpath
+} def
+
+/StrokeShape { % line-color cap join dash thickness => -
+    % If no line is desired, pass -1 for line-thickness
+    dup 0 ge 5 index null ne and {
+	% if line-thickness >= 0, then draw the outline
+	gsave
+	    setlinewidth 0 setdash setlinejoin setlinecap
+	    aload length 3 eq { setrgbcolor stroke } {
+		strokepath FillPattern
+	    } ifelse
+	grestore
+    } {
+	pop pop pop pop pop
+    } ifelse
+    newpath
+} def
+
+/ClipDict 2 dict def
+/ClipToRectangle { % left top width height => -
+    ClipDict begin
+	/height exch def  /width exch def
+        newpath
+	    moveto			% Go to the left,top corner
+	    width 0 rlineto		% top side
+	    0 height neg rlineto	% right side
+	    width neg 0 rlineto		% bottom side
+	    closepath			% left side
+	gsave 1 setgray fill grestore
+	clip newpath
+    end
+} def
+
+
+%%EndProlog
+%%Page: 1 1
+
+gsave
+72 72 translate
+0.97 0.97 scale
+0 456 translate
+
+%
+% Begin new window
+%
+gsave
+0 0 482 244 ClipToRectangle
+gsave
+0 0 482 244 [0 0 0] 0 0 [] -1 [1 1 1] DrawRectangle
+grestore
+
+
+%
+% Begin new window
+%
+gsave
+11 -27 translate
+(Showing #k<R3>) 0 0 460 206 11 27 11 11 DrawMotifWindowFrame
+0 0 460 206 ClipToRectangle
+gsave
+4 -4 81 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+3 -3 81 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+4 -4 79 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+5 -5 -16 76 14 false [0 0 0] [1 1 1] (Show Object) 12 /Courier DrawText
+91 -4 81 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+90 -3 81 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+91 -4 79 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+92 -5 -16 76 14 false [0 0 0] [1 1 1] (Show in New) 12 /Courier DrawText
+178 -4 60 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+177 -3 60 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+178 -4 58 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+179 -5 -16 56 14 false [0 0 0] [1 1 1] (Re-Fetch) 12 /Courier DrawText
+244 -4 87 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+243 -3 87 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+244 -4 85 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+245 -5 -16 83 14 false [0 0 0] [1 1 1] (Dependencies) 12 /Courier DrawText
+337 -4 31 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+336 -3 31 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+337 -4 29 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+338 -5 -16 27 14 false [0 0 0] [1 1 1] (Done) 12 /Courier DrawText
+374 -4 60 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+373 -3 60 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+374 -4 58 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+375 -5 -16 56 14 false [0 0 0] [1 1 1] (Done All) 12 /Courier DrawText
+4 -28 39 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+3 -27 39 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+4 -28 37 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+5 -29 -40 35 14 false [0 0 0] [1 1 1] (Flash) 12 /Courier DrawText
+49 -28 46 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+48 -27 46 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+49 -28 44 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+50 -29 -40 41 14 false [0 0 0] [1 1 1] (Search) 12 /Courier DrawText
+101 -28 46 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+100 -27 46 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+101 -28 44 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+102 -29 -40 42 14 false [0 0 0] [1 1 1] (Notify) 12 /Courier DrawText
+153 -28 39 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+152 -27 39 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+153 -28 37 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+154 -29 -40 35 14 false [0 0 0] [1 1 1] (Break) 12 /Courier DrawText
+198 -28 87 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+197 -27 87 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+198 -28 85 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+199 -29 -40 82 14 false [0 0 0] [1 1 1] (Clear Breaks) 12 /Courier DrawText
+291 -28 108 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+290 -27 108 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+291 -28 106 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+292 -29 -40 103 14 false [0 0 0] [1 1 1] (Inherited Slots) 12 /Courier DrawText
+405 -28 52 18 [0 0 0] 0 0 [] 1 [0 0 0] DrawRectangle
+404 -27 52 18 [0 0 0] 0 0 [] 1 [0.50 dup dup] DrawRectangle
+405 -28 50 16 [0 0 0] 0 0 [] 1 [1 dup dup] DrawRectangle
+406 -29 -40 47 14 false [0 0 0] [1 1 1] (Objects) 12 /Courier DrawText
+2 -47 -62 64 20 false [0 0 0] [1 1 1] (#k<R3>) 18 /Courier-Bold DrawText
+5 -77 -88 35 14 true [0 0 0] [1 1 1] (:IS-A) 12 /Courier DrawText
+40 -77 -88 140 14 true [0 0 0] [1 1 1] ( = \050#k<PROTO-RECT>\051 ) 12 /Courier-Bold DrawText
+5 -91 -102 35 14 true [0 0 0] [1 1 1] (:LEFT) 12 /Courier DrawText
+40 -91 -102 42 14 true [0 0 0] [1 1 1] ( = 60 ) 12 /Courier-Bold DrawText
+5 -105 -116 28 14 true [0 0 0] [1 1 1] (:TOP) 12 /Courier DrawText
+33 -105 -116 42 14 true [0 0 0] [1 1 1] ( = 40 ) 12 /Courier-Bold DrawText
+5 -119 -130 42 14 true [0 0 0] [1 1 1] (:WIDTH) 12 /Courier DrawText
+47 -119 -130 49 14 true [0 0 0] [1 1 1] ( = 100 ) 12 /Courier-Bold DrawText
+5 -133 -144 56 14 true [0 0 0] [1 1 1] (:VISIBLE) 12 /Courier DrawText
+61 -133 -144 156 14 true [0 0 0] [1 1 1] ( - #k<F16-259-260-261-264>) 10 /Courier DrawText
+217 -133 -144 28 14 true [0 0 0] [1 1 1] ( \050V\051) 12 /Courier-BoldOblique DrawText
+245 -133 -144 35 14 true [0 0 0] [1 1 1] ( = T ) 12 /Courier-Bold DrawText
+5 -147 -158 98 14 true [0 0 0] [1 1 1] (:FILLING-STYLE) 12 /Courier DrawText
+103 -147 -158 161 14 true [0 0 0] [1 1 1] ( = #k<OPAL:BLACK-FILL> ) 12 /Courier-Bold DrawText
+5 -161 -172 49 14 true [0 0 0] [1 1 1] (:PARENT) 12 /Courier DrawText
+54 -161 -172 105 14 true [0 0 0] [1 1 1] ( = #k<TOP-AGG> ) 12 /Courier-Bold DrawText
+5 -175 -186 84 14 true [0 0 0] [1 1 1] (:UPDATE-INFO) 12 /Courier DrawText
+89 -175 -186 308 14 true [0 0 0] [1 1 1] ( = #<Update-Info dirty-p NIL invalid-p NIL> ) 12 /Courier-Bold DrawText
+5 -189 -200 49 14 true [0 0 0] [1 1 1] (:WINDOW) 12 /Courier DrawText
+54 -189 -200 77 14 true [0 0 0] [1 1 1] ( = #k<WIN> ) 12 /Courier-Bold DrawText
+grestore
+
+grestore
+
+grestore
+
+grestore
+
+
+showpage
+%%Trailer
+%%DocumentFonts: /Courier-BoldOblique /Courier-Bold /Courier Helvetica-Bold 
+%%BoundingBox: 72 278 540 515

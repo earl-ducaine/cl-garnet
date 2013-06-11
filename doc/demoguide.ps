@@ -1,0 +1,2240 @@
+%!PS-Adobe-2.0
+%%Title: demos/demoguide.mss
+%%DocumentFonts: (atend)
+%%Creator: Andrew Mickish and Scribe 7(1700)
+%%CreationDate: 12 December 1994 15:22
+%%Pages: (atend)
+%%EndComments
+% PostScript Prelude for Scribe.
+/BS {/SV save def 0.0 792.0 translate .01 -.01 scale} bind def
+/ES {showpage SV restore} bind def
+/SC {setrgbcolor} bind def
+/FMTX matrix def
+/RDF {WFT SLT 0.0 eq 
+  {SSZ 0.0 0.0 SSZ neg 0.0 0.0 FMTX astore}
+  {SSZ 0.0 SLT neg sin SLT cos div SSZ mul SSZ neg 0.0 0.0 FMTX astore}
+  ifelse makefont setfont} bind def
+/SLT 0.0 def
+/SI { /SLT exch cvr def RDF} bind def
+/WFT /Courier findfont def
+/SF { /WFT exch findfont def RDF} bind def
+/SSZ 1000.0 def
+/SS { /SSZ exch 100.0 mul def RDF} bind def
+/AF { /WFT exch findfont def /SSZ exch 100.0 mul def RDF} bind def
+/MT /moveto load def
+/XM {currentpoint exch pop moveto} bind def
+/UL {gsave newpath moveto dup 2.0 div 0.0 exch rmoveto
+   setlinewidth 0.0 rlineto stroke grestore} bind def
+/LH {gsave newpath moveto setlinewidth
+   0.0 rlineto
+   gsave stroke grestore} bind def
+/LV {gsave newpath moveto setlinewidth
+   0.0 exch rlineto
+   gsave stroke grestore} bind def
+/BX {gsave newpath moveto setlinewidth
+   exch
+   dup 0.0 rlineto
+   exch 0.0 exch neg rlineto
+   neg 0.0 rlineto
+   closepath
+   gsave stroke grestore} bind def
+/BX1 {grestore} bind def
+/BX2 {setlinewidth 1 setgray stroke grestore} bind def
+/PB {/PV save def newpath translate
+    100.0 -100.0 scale pop /showpage {} def} bind def
+/PE {PV restore} bind def
+/GB {/PV save def newpath translate rotate
+    div dup scale 100.0 -100.0 scale
+    /showpage {} def
+    /letter {} def
+    /lettersmall {} def
+    /note {} def
+    } bind def
+/GE {PV restore} bind def
+/FB {dict dup /FontMapDict exch def begin} bind def
+/FM {cvn exch cvn exch def} bind def
+/FE {end /original-findfont /findfont load def  /findfont
+   {dup FontMapDict exch known{FontMapDict exch get} if
+   original-findfont} def} bind def
+/BC {gsave moveto dup 0 exch rlineto exch 0 rlineto neg 0 exch rlineto closepath clip} bind def
+/EC /grestore load def
+/SH /show load def
+/MX {exch show 0.0 rmoveto} bind def
+/W {0 32 4 -1 roll widthshow} bind def
+/WX {0 32 5 -1 roll widthshow 0.0 rmoveto} bind def
+/RC {100.0 -100.0 scale
+612.0 0.0 translate
+-90.0 rotate
+.01 -.01 scale} bind def
+/URC {100.0 -100.0 scale
+90.0 rotate
+-612.0 0.0 translate
+.01 -.01 scale} bind def
+/RCC {100.0 -100.0 scale
+0.0 -792.0 translate 90.0 rotate
+.01 -.01 scale} bind def
+/URCC {100.0 -100.0 scale
+-90.0 rotate 0.0 792.0 translate
+.01 -.01 scale} bind def
+%%EndProlog
+%%Page: 0 1
+BS
+0 SI
+11 SS 
+1 1 0 8280 7200 GB 
+%%BeginDocument: single-sided.ps
+%!PS-Adobe-2.0
+%
+%  This PostScript code turns off double-sided printing,
+%  which is desirable since we want to be able to move the
+%  Tables of Contents by hand after the manuals are printed.
+%
+statusdict begin
+   false setduplexmode
+end
+
+%%EndDocument
+ GE 16 /Times-Bold AF
+19127 18976 MT
+(Demonstration Programs for Garnet)SH
+11 SS 
+28182 21368 MT
+(Brad A. Myers)SH
+27753 22564 MT
+(Andrew Mickish)SH
+/Times-Roman SF
+28183 24490 MT
+(December 1994)SH
+/Times-Bold SF
+29634 46606 MT
+(Abstract)SH
+/Times-Roman SF
+8280 48358 MT
+(This file)
+66 W( contains an overview of the demonstration programs distributed with the Garnet toolkit.  These)65 W
+8280 49654 MT
+(programs serve as examples of what Garnet can do, and also of how to write Garnet programs.)SH
+21010 55372 MT
+(Copyright)SH
+/Symbol SF
+25747 XM
+(\323)SH
+/Times-Roman SF
+26891 XM
+(1994 - Carnegie Mellon University)SH
+8280 62155 MT
+(This research was sponsored by NCCOSC under Contract No.  N66001-94-C-6037, Arpa Order)
+207 W( No.)208 W
+8280 63451 MT
+(B326. The)
+381 W( views and conclusions contained in this document)
+53 W( are those of the authors and should not be)52 W
+8280 64747 MT
+(interpreted as representing the official policies, either expressed or implied, of NCCOSC or)
+192 W( the U.S.)193 W
+8280 66043 MT
+(Government.)SH
+ES
+%%Page: 483 2
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(Section 3)
+SH( Running)
+1800 W( Demo Programs)SH
+51386 XM
+(Page 483)SH
+46800 50 8280 4486 UL
+14 /Times-Bold AF
+8280 8138 MT
+(1. Introduction)SH
+11 /Times-Roman AF
+8280 9334 MT
+(Probably the best way to learn about how to)
+255 W( code using the Garnet Toolkit is to look at example)254 W
+8280 10530 MT
+(programs. Therefore,)
+357 W( we have provided a number of them with the Toolkit release.  In addition,)
+41 W( you can)42 W
+8280 11726 MT
+(load and run the demos to see what kinds of things Garnet can do.)SH
+8280 14024 MT
+(The ``best'' example program is)145 W
+10 /Courier AF
+23512 XM
+(demo-editor)SH
+11 /Times-Roman AF
+(, which is included in this technical)
+145 W( report.  The other)144 W
+8280 15220 MT
+(example programs serve mainly to show how particular special features of Garnet can be used.)SH
+8280 17518 MT
+(Unfortunately, many of the demonstration programs)
+211 W( were implemented before important parts of the)212 W
+8280 18714 MT
+(Garnet Toolkit were implemented.  For)
+235 W( example, many of the demos do not use Aggregadgets and)234 W
+8280 19910 MT
+(Aggrelists. These)
+375 W( particular demos are)50 W
+/Times-Italic SF
+26081 XM
+(not)SH
+/Times-Roman SF
+27812 XM
+(good examples of how we would code today.  Hopefully, we)51 W
+8280 21106 MT
+(will soon re-code all of)
+201 W( these old demos using the newest features, but for the time being, you will)200 W
+8280 22302 MT
+(probably only want to look at the code of the newer demos.)SH
+8280 24600 MT
+(This document provides a guide to the demo programs, what)
+5 W( they are supposed to show, and whether they)6 W
+8280 25796 MT
+(are written with the latest style or not.)SH
+14 /Times-Bold AF
+8280 29614 MT
+(2. Loading and Compiling Demos)SH
+11 /Times-Roman AF
+8280 30810 MT
+(If for some reason the demos were not compiled during the standard installation)
+88 W( procedure discussed in)87 W
+8280 32006 MT
+(the Overview Manual, you can)
+199 W( compile just the demos by executing \050garnet-load "demos-src:demos-)200 W
+8280 33202 MT
+(compiler"\051. This)
+731 W( will)
+228 W( generate new binaries for the demos, which will need to be copied from the)227 W
+10 /Courier AF
+8280 34398 MT
+(src/demos/)SH
+11 /Times-Roman AF
+14555 XM
+(directory into your)SH
+10 /Courier AF
+23078 XM
+(bin/demos)SH
+11 /Times-Roman AF
+28753 XM
+(directory.)SH
+8280 36696 MT
+(Normally, the demonstration programs are)130 W
+/Times-Italic SF
+27930 XM
+(not)SH
+/Times-Roman SF
+29741 XM
+(loaded by the standard Garnet loader.  The best)
+130 W( way to)131 W
+8280 37892 MT
+(view the demos is to load the)SH
+10 /Courier AF
+21387 XM
+(garnet-loader)SH
+11 /Times-Roman AF
+29462 XM
+(as usual and then load the Demos Controller:)SH
+8 /Courier AF
+10200 39057 MT
+(\050garnet-load "demos:demos-controller"\051)SH
+10200 39922 MT
+(\050demos-controller:do-go\051)SH
+11 /Times-Roman AF
+8280 42220 MT
+(This will load the controller itself, but not any of the demos.  It will display a window with)
+25 W( a set of check)24 W
+8280 43416 MT
+(buttons in it.  Just click with the)
+155 W( mouse on a button, and the corresponding demo will be loaded and)156 W
+8280 44612 MT
+(started. Clicking)
+287 W( on the check box again will stop the demo.  Clicking again will restart it \050but)
+6 W( not re-load)5 W
+8280 45808 MT
+(it\051. An)
+351 W( instruction window will appear at the bottom of the)
+38 W( screen with the instructions for the last demo)39 W
+8280 47004 MT
+(started.)SH
+8280 49302 MT
+(The)SH
+10 /Courier AF
+10391 XM
+(demos-controller)SH
+11 /Times-Roman AF
+20392 XM
+(application features)
+126 W( the)125 W
+10 /Courier AF
+31305 XM
+(gg:mouseline)SH
+11 /Times-Roman AF
+38905 XM
+(gadget. When)
+525 W( you keep the mouse)125 W
+8280 50498 MT
+(still over one of the x-buttons for about 2 seconds,)
+68 W( a window will pop up with a short description of the)69 W
+8280 51694 MT
+(corresponding demo.  For more information about this gadget, see the appropriate section of the Gadgets)47 W
+8280 52890 MT
+(Manual.)SH
+8280 55188 MT
+(Using the)22 W
+10 /Courier AF
+12846 XM
+(demos-controller)SH
+11 /Times-Roman AF
+22743 XM
+(causes each demo file to be loaded as it is needed.)
+22 W( If)
+321 W( you wanted to load)23 W
+8280 56384 MT
+(all of the demos at once)
+113 W( \050whether you eventually planned to use the)112 W
+10 /Courier AF
+39706 XM
+(demos-controller)SH
+11 /Times-Roman AF
+49693 XM
+(or not\051, you)112 W
+1100 50 8280 56584 UL
+8280 57580 MT
+(could set)90 W
+10 /Courier AF
+12676 XM
+(user::load-demos-p)SH
+11 /Times-Roman AF
+23841 XM
+(to be T before)
+90 W( loading)91 W
+10 /Courier AF
+34342 XM
+(garnet-loader)SH
+11 /Times-Roman AF
+(, or execute)91 W
+10 /Courier AF
+47789 XM
+(load Garnet-)91 W
+8280 58776 MT
+(Demos-Loader)SH
+11 /Times-Roman AF
+(.)SH
+8280 61074 MT
+(All of the demos described here are in the sub-directory)SH
+10 /Courier AF
+33080 XM
+(demos)SH
+11 /Times-Roman AF
+(.)SH
+14 /Times-Bold AF
+8280 64892 MT
+(3. Running Demo Programs)SH
+11 /Times-Roman AF
+8280 66088 MT
+(To see a particular demo program, it is not necessary to use the Demos Controller described in)
+41 W( section 2.)40 W
+8280 67284 MT
+(Instead, the file can be loaded and executed by itself.)SH
+8280 69582 MT
+(Almost all of the demonstration programs operate the same way.  Once a file)167 W
+10 /Courier AF
+44737 XM
+(demo-)SH
+11 /Times-Italic AF
+(xxx)SH
+/Times-Roman SF
+49643 XM
+(is loaded, it)167 W
+8280 70778 MT
+(creates a package called)87 W
+10 /Courier AF
+19496 XM
+(demo-)SH
+11 /Times-Italic AF
+(xxx)SH
+/Times-Roman SF
+(. In)
+449 W( this package are two procedures --)87 W
+10 /Courier AF
+42149 XM
+(do-go)SH
+11 /Times-Roman AF
+45510 XM
+(to start the demo and)86 W
+10 /Courier AF
+8280 71974 MT
+(do-stop)SH
+11 /Times-Roman AF
+12939 XM
+(to stop it.  Therefore, to begin a demo of)184 W
+/Times-Italic SF
+32864 XM
+(xxx)SH
+/Times-Roman SF
+(, you would type:)185 W
+10 /Courier AF
+43043 XM
+(\050demo-)SH
+/Times-Italic SF
+(xxx)SH
+/Courier SF
+(:do-go\051)SH
+11 /Times-Roman AF
+(. The)645 W
+ES
+%%Page: 484 3
+BS
+0 SI
+10 /Times-Roman AF
+6120 4286 MT
+(Page 484)
+SH( Demonstration)
+830 W( Programs)SH
+41398 XM
+(Best Examples)
+SH( Section)
+1550 W( 5)SH
+46800 50 6120 4486 UL
+/Courier SF
+6120 7955 MT
+(do-stop)SH
+11 /Times-Roman AF
+10697 XM
+(procedure destroys the window that the demo is running in.  You can load and start as many)101 W
+6120 9151 MT
+(demos as you like at the same time.  Each will run in its own separate window.)SH
+6120 11449 MT
+(The)SH
+10 /Courier AF
+8163 XM
+(do-go)SH
+11 /Times-Roman AF
+11496 XM
+(procedure will print instructions in the Lisp)
+58 W( window about how to operate the demonstration)59 W
+6120 12645 MT
+(program.)SH
+6120 14943 MT
+(Demos for the individual)
+215 W( gadgets are all in the)214 W
+10 /Courier AF
+28730 XM
+(garnet-gadgets)SH
+11 /Times-Roman AF
+37619 XM
+(package and have unique names.)214 W
+6120 16139 MT
+(Section 5.19 describes how to see these demos.)SH
+14 /Times-Bold AF
+6120 19957 MT
+(4. Double-Buffered Windows)SH
+11 /Times-Roman AF
+6120 21153 MT
+(All the demos can take advantage of the Opal feature for double-buffered windows.  The)67 W
+10 /Courier AF
+46461 XM
+(do-go)SH
+11 /Times-Roman AF
+49804 XM
+(routine)SH
+6120 22349 MT
+(for each demo has an optional)101 W
+10 /Courier AF
+20226 XM
+(:double-buffered-p)SH
+11 /Times-Roman AF
+31402 XM
+(argument that defaults to NIL.  For)
+101 W( instance, to)100 W
+6120 23545 MT
+(run)SH
+10 /Courier AF
+7861 XM
+(demo-3d)SH
+11 /Times-Roman AF
+12336 XM
+(on a double-buffered window, say:)SH
+8 /Courier AF
+8040 24710 MT
+(\050demo-3d:do-go :double-buffered-p T\051)SH
+11 /Times-Roman AF
+6120 26131 MT
+(and to run it normally, say:)SH
+8 /Courier AF
+8040 27296 MT
+(\050demo-3d:do-go\051)SH
+14 /Times-Bold AF
+6120 31114 MT
+(5. Best Examples)SH
+12 SS 
+6120 34798 MT
+(5.1. GarnetDraw)SH
+11 /Times-Roman AF
+6120 35994 MT
+(There a useful)
+151 W( utility called)152 W
+10 /Courier AF
+19249 XM
+(GarnetDraw)SH
+11 /Times-Roman AF
+25676 XM
+(which is a relatively simple drawing program written using)152 W
+6120 37190 MT
+(Garnet. Since)
+901 W( the file format for storing the created objects is simply a Lisp file which)
+313 W( creates)312 W
+6120 38386 MT
+(aggregadgets, you)
+176 W( might be able to use GarnetDraw to prototype application objects \050but Lapidary is)177 W
+6120 39582 MT
+(probably better for this\051.)SH
+6120 41880 MT
+(GarnetDraw uses many features of Garnet including gridding, PostScript printing,)
+45 W( selection of all objects)44 W
+6120 43076 MT
+(in a region, moving and growing)
+502 W( of multiple objects, menubars, and the)503 W
+10 /Courier AF
+43954 XM
+(save-gadget)SH
+11 /Times-Roman AF
+51332 XM
+(and)SH
+10 /Courier AF
+6120 44272 MT
+(load-gadget)SH
+11 /Times-Roman AF
+13044 XM
+(dialog boxes.  The editing functions)
+49 W( like Cut, Copy, and Paste are implemented using the)48 W
+10 /Courier AF
+6120 45468 MT
+(Standard-Edit)SH
+11 /Times-Roman AF
+14666 XM
+(module from)471 W
+10 /Courier AF
+21596 XM
+(garnet-gadgets)SH
+11 /Times-Roman AF
+(, and)
+471 W( objects can be cut and pasted between)472 W
+10 /Courier AF
+6120 46664 MT
+(GarnetDraw)SH
+11 /Times-Roman AF
+12447 XM
+(and)SH
+10 /Courier AF
+14362 XM
+(Gilt)SH
+11 /Times-Roman AF
+17089 XM
+(\050since they share the same clipboard\051.  Accelerators are defined for)
+52 W( the menubar)51 W
+6120 47860 MT
+(commands, like)SH
+10 /Courier AF
+13361 XM
+(META-x)SH
+11 /Times-Roman AF
+17236 XM
+(for Cut and)SH
+10 /Courier AF
+22521 XM
+(META-v)SH
+11 /Times-Roman AF
+26396 XM
+(for Paste.)SH
+6120 50158 MT
+(GarnetDraw works like most Garnet programs:)
+135 W( select in the palette with any button, draw in the main)136 W
+6120 51354 MT
+(window with the right button, and select objects with the left button.  Select)
+77 W( multiple objects with shift-)76 W
+6120 52550 MT
+(left or the middle)
+28 W( mouse button.  Change the size of objects by pressing on black handles and move them)29 W
+6120 53746 MT
+(by pressing on white handles.)
+75 W( The)
+423 W( line style and color and filling color can be changed for the selected)74 W
+6120 54942 MT
+(object and for further drawing by clicking on the icons at the bottom of the palette.)
+26 W( You)
+329 W( can also edit the)27 W
+6120 56138 MT
+(shape of polylines:  create a polyline, select it, and choose "Reshape" from the "Edit" menu.)SH
+12 /Times-Bold AF
+6120 59822 MT
+(5.2. Demo-Editor)SH
+11 /Times-Roman AF
+6120 61018 MT
+(Probably the best example program is the)
+163 W( sample graphics editor in the file)162 W
+10 /Courier AF
+41499 XM
+(demo-editor.lisp)SH
+11 /Times-Roman AF
+(. It)599 W
+6120 62214 MT
+(demonstrates many of the basic components when building a Garnet application.)
+465 W( This)
+1207 W( demo)466 W
+6120 63410 MT
+(automatically loads and uses the)291 W
+10 /Courier AF
+22086 XM
+(text-button-panel)SH
+11 /Times-Roman AF
+(,)SH
+10 /Courier AF
+33127 XM
+(graphics-selection)SH
+11 /Times-Roman AF
+(, and)290 W
+10 /Courier AF
+46920 XM
+(arrow-line)SH
+11 /Times-Roman AF
+6120 64606 MT
+(gadgets.)SH
+ES
+%%Page: 485 4
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(Section 5)
+SH( Best)
+1800 W( Examples)SH
+51386 XM
+(Page 485)SH
+46800 50 8280 4486 UL
+12 /Times-Bold AF
+8280 8004 MT
+(5.3. Demo-Arith)SH
+10 /Courier AF
+8280 9200 MT
+(Demo-arith)SH
+11 /Times-Roman AF
+14666 XM
+(is a)
+111 W( simple visual programming interface for constructing arithmetic expressions.  It uses)112 W
+8280 10396 MT
+(constraints to solve the expressions.  There are buttons for producing PostScript output from the picture.)63 W
+8280 11592 MT
+(Also, you can create)
+89 W( new objects using gestures by dragging with the middle mouse button \050rather than)90 W
+8280 12788 MT
+(selecting them from the palette\051.  The instructions are printed when the program is started.)SH
+12 /Times-Bold AF
+8280 16472 MT
+(5.4. Demo-Grow)SH
+10 /Courier AF
+8280 17668 MT
+(Demo-grow)SH
+11 /Times-Roman AF
+14110 XM
+(shows how)
+155 W( to use the)154 W
+10 /Courier AF
+24566 XM
+(graphics-selection)SH
+11 /Times-Roman AF
+35795 XM
+(gadget. It)
+583 W( uses the same techniques as in)154 W
+10 /Courier AF
+8280 18864 MT
+(demo-editor)SH
+11 /Times-Roman AF
+15155 XM
+(\050section 5.2\051.)SH
+12 /Times-Bold AF
+8280 22548 MT
+(5.5. Multifont and Multi-Line Text Input)SH
+10 /Courier AF
+8280 23744 MT
+(Demo-text)SH
+11 /Times-Roman AF
+13983 XM
+(shows how)
+28 W( multi-line, multi-font text input can be handled.  It does not use Aggregadgets or)29 W
+8280 24940 MT
+(any gadgets, but none are necessary.)SH
+12 /Times-Bold AF
+8280 28624 MT
+(5.6. Demo-Multifont)SH
+11 /Times-Roman AF
+8280 29820 MT
+(To see how to effectively use the multifont text object, along with)
+377 W( its interactors, examine the)376 W
+10 /Courier AF
+8280 31016 MT
+(demo-multifont)SH
+11 /Times-Roman AF
+16986 XM
+(demo. Most)
+337 W( of the code is actually a good)
+31 W( demonstration of how to use the)32 W
+10 /Courier AF
+50880 XM
+(menubar)SH
+11 /Times-Roman AF
+8280 32212 MT
+(and)SH
+10 /Courier AF
+10800 XM
+(motif-scrolling-window-with-bars)SH
+11 /Times-Roman AF
+30932 XM
+(gadgets, but the)657 W
+10 /Courier AF
+40113 XM
+(multifont-text)SH
+11 /Times-Roman AF
+49445 XM
+(objects and)656 W
+8280 33408 MT
+(interactors are in there.  Features)
+14 W( demonstrated include word wrap and how to changing the fonts with the)15 W
+8280 34604 MT
+(special multifont accelerators.)SH
+8280 36902 MT
+(The)SH
+10 /Courier AF
+10361 XM
+(lisp-mode)SH
+11 /Times-Roman AF
+16132 XM
+(feature of)96 W
+10 /Courier AF
+20842 XM
+(multifont-text)SH
+11 /Times-Roman AF
+29613 XM
+(is also shown in this demo.  Select "Toggle Lisp Mode")95 W
+8280 38098 MT
+(from the "Edit" menu, and type in a lisp expression)
+32 W( \050like a)33 W
+10 /Courier AF
+34524 XM
+(defun)SH
+11 /Times-Roman AF
+37832 XM
+(definition\051. As)
+341 W( you hit return, the next)33 W
+8280 39294 MT
+(line will be automatically indented according to standard lisp conventions.)
+220 W( Hitting)
+713 W( the tab key will)219 W
+8280 40490 MT
+(re-indent the current line.)SH
+12 /Times-Bold AF
+8280 44174 MT
+(5.7. Creating New Objects)SH
+10 /Courier AF
+8280 45370 MT
+(Demo-twop)SH
+11 /Times-Roman AF
+14081 XM
+(shows how new lines and new rectangles can be input.  It uses the same)
+126 W( techniques as in)127 W
+10 /Courier AF
+8280 46566 MT
+(demo-editor)SH
+11 /Times-Roman AF
+15155 XM
+(\050section 5.2\051.)SH
+12 /Times-Bold AF
+8280 50250 MT
+(5.8. Angles)SH
+11 /Times-Roman AF
+8280 51446 MT
+(There are two programs that)
+33 W( demonstrate how to use the angle interactor.)32 W
+10 /Courier AF
+41442 XM
+(Demo-angle)SH
+11 /Times-Roman AF
+47749 XM
+(contains circular)32 W
+8280 52642 MT
+(gauges \050but see the)80 W
+10 /Courier AF
+17274 XM
+(gauge)SH
+11 /Times-Roman AF
+20630 XM
+(gadget\320section 5.19\051, as well as a demonstration of how to use the ``angle-)81 W
+8280 53838 MT
+(increment'' parameter to the angle)SH
+10 /Courier AF
+23763 XM
+(:running-action)SH
+11 /Times-Roman AF
+33038 XM
+(procedure.)SH
+10 /Courier AF
+8280 56136 MT
+(Demo-clock)SH
+11 /Times-Roman AF
+14555 XM
+(shows a clock face with hands that can be rotated with the mouse.)SH
+12 /Times-Bold AF
+8280 59820 MT
+(5.9. Aggregraphs)SH
+11 /Times-Roman AF
+8280 61016 MT
+(The)SH
+10 /Courier AF
+10265 XM
+(demo-graph)SH
+11 /Times-Roman AF
+16540 XM
+(file is an example of many features of Aggregraphs.)SH
+12 /Times-Bold AF
+8280 64700 MT
+(5.10. Scroll Bars)SH
+11 /Times-Roman AF
+8280 65896 MT
+(Although sliders and scroll)
+104 W( bars are provided in the Garnet Gadget set \050the)103 W
+10 /Courier AF
+42641 XM
+(gadgets)SH
+11 /Times-Roman AF
+47219 XM
+(subdirectory\051, the)103 W
+8280 67092 MT
+(file)SH
+10 /Courier AF
+10204 XM
+(demo-scrollbar)SH
+11 /Times-Roman AF
+19062 XM
+(contains some alternative scroll bar objects.  The)
+183 W( Macintosh scroll bar in this)184 W
+8280 68288 MT
+(demo was written in the old Garnet style, but there are new versions)
+7 W( of scroll bars in the OpenLook, Next,)6 W
+8280 69484 MT
+(and Motif style.)SH
+8280 71782 MT
+(To see the demo of all four scroll bars, use the)
+609 W( functions)610 W
+10 /Courier AF
+40607 XM
+(demo-scrollbar:do-go)SH
+11 /Times-Roman AF
+53492 XM
+(and)SH
+ES
+%%Page: 486 5
+BS
+0 SI
+10 /Times-Roman AF
+6120 4286 MT
+(Page 486)
+SH( Demonstration)
+830 W( Programs)SH
+41398 XM
+(Best Examples)
+SH( Section)
+1550 W( 5)SH
+46800 50 6120 4486 UL
+/Courier SF
+6120 7955 MT
+(demo-scrollbar:do-stop)SH
+11 /Times-Roman AF
+19670 XM
+(as usual.  There are also functions that display the scroll bars)
+75 W( individually)74 W
+6120 9151 MT
+(called)SH
+10 /Courier AF
+9021 XM
+(mac-go)SH
+11 /Times-Roman AF
+(,)SH
+10 /Courier AF
+13171 XM
+(open-go)SH
+11 /Times-Roman AF
+(,)SH
+10 /Courier AF
+17921 XM
+(next-go)SH
+11 /Times-Roman AF
+(, and)SH
+10 /Courier AF
+24534 XM
+(motif-go)SH
+11 /Times-Roman AF
+(.)SH
+12 /Times-Bold AF
+6120 12835 MT
+(5.11. Menus)SH
+10 /Courier AF
+6120 14031 MT
+(Demo-menu)SH
+11 /Times-Roman AF
+11873 XM
+(shows a number of different)
+78 W( kinds of menus that can be created using Garnet.  All of them)79 W
+6120 15227 MT
+(were implemented using Aggregadgets and Aggrelists.)SH
+12 /Times-Bold AF
+6120 18911 MT
+(5.12. Animation)SH
+10 /Courier AF
+6120 20107 MT
+(Demo-animator)SH
+11 /Times-Roman AF
+14221 XM
+(uses background animation processes to move several objects in a window.  One of the)26 W
+6120 21303 MT
+(objects is a walking figure which moves across the screen by rapidly redrawing a pixmap.)SH
+10 /Courier AF
+6120 23601 MT
+(Demo-fade)SH
+11 /Times-Roman AF
+11795 XM
+(shows a simple animation for the Garnet acronym.)SH
+10 /Courier AF
+6120 25899 MT
+(Demo-logo)SH
+11 /Times-Roman AF
+11795 XM
+(performs the same animation as)SH
+10 /Courier AF
+26060 XM
+(demo-fade)SH
+11 /Times-Roman AF
+(, but it also includes the Garnet logo.)SH
+12 /Times-Bold AF
+6120 29583 MT
+(5.13. Garnet-Calculator)SH
+11 /Times-Roman AF
+6120 30779 MT
+(The)SH
+10 /Courier AF
+8150 XM
+(garnet-calculator)SH
+11 /Times-Roman AF
+18670 XM
+(has the look and feel)
+45 W( of)46 W
+10 /Courier AF
+29510 XM
+(xcalc)SH
+11 /Times-Roman AF
+(, the calculator supplied by X windows, but it)46 W
+6120 31975 MT
+(is more robust.  The calculator is a self-contained tool, and can be integrated inside a larger)
+200 W( Garnet)199 W
+6120 33171 MT
+(application.)SH
+6120 35469 MT
+(You can load the)
+175 W( demo with)176 W
+10 /Courier AF
+19881 XM
+(\050garnet-load "demos:garnet-calculator"\051)176 W
+11 /Times-Roman AF
+(. To)
+627 W( run it, execute)176 W
+10 /Courier AF
+6120 36665 MT
+(\050garnet-calculator:do-go\051)SH
+11 /Times-Roman AF
+(.)SH
+8 /Courier AF
+8040 39315 MT
+(garnet-calculator:Start-Calc &key)SH
+/Times-Italic SF
+24360 XM
+(double-buffered-p)SH
+/Courier SF
+47152 XM
+([)SH
+/Times-Italic SF
+(Function)SH
+/Courier SF
+(])SH
+8040 41045 MT
+(garnet-calculator:Stop-Calc)SH
+/Times-Italic SF
+21480 XM
+(app-object)SH
+/Courier SF
+25380 XM
+(&optional \050)SH
+/Times-Italic SF
+(destroy-app-object?)SH
+/Courier SF
+37580 XM
+(T\051)SH
+47152 XM
+([)SH
+/Times-Italic SF
+(Function)SH
+/Courier SF
+(])SH
+11 /Times-Roman AF
+6120 43343 MT
+(The function)166 W
+10 /Courier AF
+12378 XM
+(start-calc)SH
+11 /Times-Roman AF
+18819 XM
+(creates and returns a calculator "application object" that can be used by)
+166 W( a)165 W
+6120 44539 MT
+(larger interface, and this object should be passed as the)SH
+/Times-Italic SF
+30585 XM
+(app-object)SH
+/Times-Roman SF
+35564 XM
+(parameter to)SH
+10 /Courier AF
+41366 XM
+(stop-calc)SH
+11 /Times-Roman AF
+(.)SH
+12 /Times-Bold AF
+6120 48223 MT
+(5.14. Browsers)SH
+11 /Times-Roman AF
+6120 49419 MT
+(The files)SH
+10 /Courier AF
+10274 XM
+(demo-schema-browser)SH
+11 /Times-Roman AF
+21949 XM
+(and)SH
+10 /Courier AF
+23812 XM
+(demo-file-browser)SH
+11 /Times-Roman AF
+34287 XM
+(show two uses of the)SH
+10 /Courier AF
+43788 XM
+(browser-gadget)SH
+11 /Times-Roman AF
+(.)SH
+12 /Times-Bold AF
+6120 53103 MT
+(5.15. Demo-Virtual-Agg)SH
+11 /Times-Roman AF
+6120 54299 MT
+(To show off an example of virtual-aggregates, load Demo-Virtual-Agg and say:)SH
+8 /Courier AF
+8040 55464 MT
+(\050demo-virtual-agg:do-go :num-dots 1000\051)SH
+10 SS 
+6120 57762 MT
+(Demo-virtual-agg:do-go)SH
+11 /Times-Roman AF
+19623 XM
+(takes a single optional keyed parameter)28 W
+10 /Courier AF
+37445 XM
+(:num-dots)SH
+11 /Times-Roman AF
+43148 XM
+(which tells how many)29 W
+6120 58958 MT
+(circles should appear in a window.  The default is 1000.)SH
+6120 61256 MT
+(The first)
+348 W( 1000 circles are read in from circles.data in the)347 W
+10 /Courier AF
+34920 XM
+(user::Garnet-DataFile-PathName)SH
+11 /Times-Roman AF
+6120 62452 MT
+(directory \050because that's faster\051 and the rest are chosen)
+180 W( randomly.  A '.' is printed out for every ten)181 W
+6120 63648 MT
+(circles.)SH
+6120 65946 MT
+(You will also)
+47 W( see a little star in the upper left on the screen, in front of the)46 W
+10 /Courier AF
+39727 XM
+(virtual-aggregate)SH
+11 /Times-Roman AF
+(, and a)46 W
+6120 67142 MT
+(big gray rectangle underneath the)299 W
+10 /Courier AF
+22610 XM
+(virtual-aggregate)SH
+11 /Times-Roman AF
+(. These)
+873 W( are just to show that the update)300 W
+6120 68338 MT
+(algorithm is working reasonably well.)SH
+8320 70289 MT
+(Clicking with the left button creates a new circle \050of random radius and color\051 where you clicked.)SH
+8320 71984 MT
+(Clicking with the right button "destroys" the top-most circle underneath)
+30 W( where you clicked, or beeps)29 W
+ES
+%%Page: 487 6
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(Section 5)
+SH( Best)
+1800 W( Examples)SH
+51386 XM
+(Page 487)SH
+46800 50 8280 4486 UL
+11 SS 
+13780 7955 MT
+(if there was nothing under there.)SH
+10480 9650 MT
+(Clicking on the little star and dragging moves the little star.)SH
+10480 11345 MT
+(Clicking shift-middle causes the circle underneath the cursor to change to a different random)
+68 W( color.)69 W
+13780 12541 MT
+(\050This shows off)SH
+10 /Courier AF
+20959 XM
+(change-item)SH
+11 /Times-Roman AF
+(.\051)SH
+10480 14236 MT
+(Clicking shift-right causes the entire)SH
+10 /Courier AF
+26763 XM
+(virtual-aggregate)SH
+11 /Times-Roman AF
+37238 XM
+(to disappear or reappear.)SH
+12 /Times-Bold AF
+8280 17920 MT
+(5.16. Demo-Pixmap)SH
+11 /Times-Roman AF
+8280 19116 MT
+(This new demo shows a two-dimensional)831 W
+10 /Courier AF
+31780 XM
+(virtual-aggregate)SH
+11 /Times-Roman AF
+43086 XM
+(in action.  Here, the)830 W
+10 /Courier AF
+8280 20312 MT
+(virtual-aggregate)SH
+11 /Times-Roman AF
+18849 XM
+(is a 50 X 50 array of 5 X 5 rectangles.  Each rectangle can be colored from the)94 W
+8280 21508 MT
+(color palette, and the pattern of colored rectangles is reflected in a pixmap.)SH
+8280 23806 MT
+(You can load a pixmap into the demo \050e.g., from the directory)131 W
+10 /Courier AF
+37435 XM
+(Garnet-Pixmap-PathName)SH
+11 /Times-Roman AF
+(\051, edit the)130 W
+8280 25002 MT
+(pixmap with the color palette and virtual-aggregate, and then save)
+11 W( the pixmap to a new file.  You can also)12 W
+8280 26198 MT
+(generate PostScript files from this demo, though you)
+166 W( have to have a Level 2 printer \050that defines the)165 W
+8280 27394 MT
+(PostScript function)SH
+10 /Courier AF
+17020 XM
+(colorimage)SH
+11 /Times-Roman AF
+(\051 to print a color pixmap image.)SH
+12 /Times-Bold AF
+8280 31078 MT
+(5.17. Demo-Gesture)SH
+10 /Courier AF
+8280 32274 MT
+(Demo-gesture)SH
+11 /Times-Roman AF
+15907 XM
+(is an example of how the new gesture-interactor can be used in an interface.  In this)152 W
+8280 33470 MT
+(demo, you can create perfect circles and rectangles by drawing rough approximations with)
+136 W( the mouse,)135 W
+8280 34666 MT
+(which are interpreted by the gesture recognizer.  Gestures may also be used to copy and delete the)
+26 W( shapes)27 W
+8280 35862 MT
+(you have created.)SH
+12 /Times-Bold AF
+8280 39546 MT
+(5.18. Demo-Unidraw)SH
+10 /Courier AF
+8280 40742 MT
+(Demo-Unidraw)SH
+11 /Times-Roman AF
+16043 XM
+(is a gesture-based text editor, which allows you to enter characters with freehand)288 W
+8280 41938 MT
+(drawing using the mouse.  The gestures that this demo understands are)
+17 W( comprised of a shorthand alphabet)18 W
+8280 43134 MT
+(devised by David Goldberg)
+125 W( at Xerox Parc.  The gesture patterns are shown in the middle of the demo)124 W
+8280 44330 MT
+(window, and the)
+57 W( canvas for drawing gestures is at the bottom.  As the demo recognizes the gestures you)58 W
+8280 45526 MT
+(draw, it selects the corresponding gesture and puts the new character in the text window.)SH
+12 /Times-Bold AF
+8280 49210 MT
+(5.19. Gadget Demos)SH
+11 /Times-Roman AF
+8280 50406 MT
+(There are separate demo programs of some of the gadgets in the files)37 W
+10 /Courier AF
+39394 XM
+(demo-gadgets)SH
+11 /Times-Roman AF
+46906 XM
+(and)SH
+10 /Courier AF
+48805 XM
+(demo-motif)SH
+11 /Times-Roman AF
+(.)SH
+8280 51602 MT
+(Each of these)
+25 W( packages export the usual)26 W
+10 /Courier AF
+26265 XM
+(do-go)SH
+11 /Times-Roman AF
+29566 XM
+(and)SH
+10 /Courier AF
+31455 XM
+(do-stop)SH
+11 /Times-Roman AF
+35956 XM
+(procedures, and can be found in the)26 W
+10 /Courier AF
+52080 XM
+(demos)SH
+11 /Times-Roman AF
+8280 52798 MT
+(directory.)SH
+8280 55096 MT
+(Other good examples are the)
+208 W( Garnet Gadgets, stored in the)207 W
+10 /Courier AF
+36407 XM
+(gadgets)SH
+11 /Times-Roman AF
+41089 XM
+(sub-directory. These)
+689 W( were)207 W
+/Times-Italic SF
+53918 XM
+(all)SH
+/Times-Roman SF
+8280 56292 MT
+(written using the latest Garnet features.  At the end of almost all)
+109 W( gadget files is a small demo program)110 W
+8280 57488 MT
+(showing how to use)
+55 W( that gadget.  Since all the gadgets are in the same package \050)54 W
+10 /Courier AF
+(garnet-gadgets)SH
+11 /Times-Roman AF
+(\051, the)54 W
+8280 58684 MT
+(gadget demos all have different names.  They are:)SH
+/Symbol SF
+10249 60262 MT
+(\267)SH
+10 /Courier AF
+11030 XM
+(Arrow-line-go, Arrow-line-stop)SH
+11 /Times-Roman AF
+29305 XM
+(- to demonstrate arrow-lines)SH
+/Symbol SF
+10249 61458 MT
+(\267)SH
+10 /Courier AF
+11030 XM
+(Error-gadget-go, Error-gadget-stop)22 W
+11 /Times-Roman AF
+32048 XM
+(- to demonstrate both the error gadget and the)23 W
+11030 62654 MT
+(query gadget)SH
+/Symbol SF
+10249 63850 MT
+(\267)SH
+10 /Courier AF
+11030 XM
+(Gauge-go, Gauge-stop)SH
+11 /Times-Roman AF
+23580 XM
+(- to demonstrate circular gauges)SH
+/Symbol SF
+10249 65046 MT
+(\267)SH
+10 /Courier AF
+11030 XM
+(H-scroll-go, H-scroll-stop)SH
+11 /Times-Roman AF
+26905 XM
+(- to demonstrate standard horizontal scroll bars)SH
+/Symbol SF
+10249 66242 MT
+(\267)SH
+10 /Courier AF
+11030 XM
+(H-slider-go, H-slider-stop)SH
+11 /Times-Roman AF
+26905 XM
+(- to demonstrate standard horizontal sliders)SH
+/Symbol SF
+10249 67438 MT
+(\267)SH
+10 /Courier AF
+11030 XM
+(Labeled-box-go, Labeled-box-stop)SH
+11 /Times-Roman AF
+30505 XM
+(- to demonstrate labeled text-type-in objects)SH
+/Symbol SF
+10249 68634 MT
+(\267)SH
+10 /Courier AF
+11030 XM
+(Menu-go, Menu-stop)SH
+11 /Times-Roman AF
+22105 XM
+(- to demonstrate a standard menu)SH
+/Symbol SF
+10249 69830 MT
+(\267)SH
+10 /Courier AF
+11030 XM
+(Menubar-go, Menubar-stop)SH
+11 /Times-Roman AF
+25705 XM
+(- to demonstrate pull-down menus)SH
+/Symbol SF
+10249 71026 MT
+(\267)SH
+10 /Courier AF
+11030 XM
+(Motif-Check-Buttons-go, Motif-Check-Buttons-stop)460 W
+11 /Times-Roman AF
+41024 XM
+(- to demonstrate Motif)459 W
+ES
+%%Page: 488 7
+BS
+0 SI
+10 /Times-Roman AF
+6120 4286 MT
+(Page 488)
+SH( Demonstration)
+830 W( Programs)SH
+41398 XM
+(Best Examples)
+SH( Section)
+1550 W( 5)SH
+46800 50 6120 4486 UL
+11 SS 
+8870 7955 MT
+(style check buttons)SH
+/Symbol SF
+8089 9151 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(Motif-Error-Gadget-go, Motif-Error-Gadget-stop)307 W
+11 /Times-Roman AF
+37941 XM
+(- to)
+307 W( demonstrate both the)308 W
+8870 10347 MT
+(motif error gadget and the motif query gadget)SH
+/Symbol SF
+8089 11543 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(Motif-Gauge-go, Motif-Gauge-stop)SH
+11 /Times-Roman AF
+28345 XM
+(- to demonstrate the Motif style gauge)SH
+/Symbol SF
+8089 12739 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(Motif-H-Scroll-go, Motif-H-Scroll-stop)173 W
+11 /Times-Roman AF
+32291 XM
+(- to demonstrate)
+173 W( Motif style horizontal)172 W
+8870 13935 MT
+(scroll bars)SH
+/Symbol SF
+8089 15131 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(Motif-Menu-go, Motif-Menu-stop)SH
+11 /Times-Roman AF
+27145 XM
+(- to demonstrate the Motif style menus)SH
+/Symbol SF
+8089 16327 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(Motif-Menubar-go, Motif-Menubar-stop)140 W
+11 /Times-Roman AF
+31025 XM
+(- to demonstrate the Motif style menubar,)141 W
+8870 17523 MT
+(with accelerators)SH
+/Symbol SF
+8089 18719 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(Motif-Option-Button-go, Motif-Option-Button-stop)113 W
+11 /Times-Roman AF
+38171 XM
+(- to demonstrate the)
+113 W( Motif)112 W
+8870 19915 MT
+(style version)
+36 W( of this popup menu gadget, whose button changes labels according to the menu)37 W
+8870 21111 MT
+(selection)SH
+/Symbol SF
+8089 22307 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(Motif-Radio-Buttons-go, Motif-Radio-Buttons-stop)460 W
+11 /Times-Roman AF
+38864 XM
+(- to demonstrate Motif)459 W
+8870 23503 MT
+(style radio buttons)SH
+/Symbol SF
+8089 24699 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(Motif-Scrolling-Labeled-Box-go, Motif-Scrolling-Labeled-Box-stop)376 W
+11 /Times-Roman AF
+48297 XM
+(- to)376 W
+8870 25895 MT
+(demonstrate the Motif style text-type-in field)SH
+/Symbol SF
+8089 27091 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(Motif-Scrolling-Window-With-Bars-go,)SH
+8870 28287 MT
+(Motif-Scrolling-Window-With-Bars-stop)SH
+11 /Times-Roman AF
+31459 XM
+(- to demonstrate the Motif style)
+114 W( scrolling)115 W
+8870 29483 MT
+(window gadget)SH
+/Symbol SF
+8089 30679 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(Motif-Slider-go, Motif-Slider-stop)SH
+11 /Times-Roman AF
+29545 XM
+(- to demonstrate the vertical Motif slider)SH
+/Symbol SF
+8089 31875 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(Motif-Text-Buttons-go, Motif-Text-Buttons-stop)191 W
+11 /Times-Roman AF
+37127 XM
+(- to)
+191 W( demonstrate Motif style)190 W
+8870 33071 MT
+(text buttons)SH
+/Symbol SF
+8089 34267 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(Motif-Trill-go, Motif-Trill-stop)SH
+11 /Times-Roman AF
+28345 XM
+(- to demonstrate the Motif style trill device)SH
+/Symbol SF
+8089 35463 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(Motif-V-Scroll-go, Motif-V-Scroll-stop)48 W
+11 /Times-Roman AF
+32041 XM
+(- to demonstrate the Motif vertical)
+48 W( scroll)49 W
+8870 36659 MT
+(bar)SH
+/Symbol SF
+8089 37855 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(Mouseline-go, Mouseline-stop)240 W
+11 /Times-Roman AF
+26425 XM
+(- to demonstrate the)
+240 W( mouseline and "balloon help")239 W
+8870 39051 MT
+(string)SH
+/Symbol SF
+8089 40247 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(Multifont-Gadget-go, Multifont-Gadget-stop)126 W
+11 /Times-Roman AF
+34598 XM
+(- to demonstrate the gadget which)127 W
+8870 41443 MT
+(is a conglomeration of a multifont-text, a focus-multifont-textinter, and a selection-interactor)SH
+/Symbol SF
+8089 42639 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(Option-Button-go, Option-Button-stop)139 W
+11 /Times-Roman AF
+31023 XM
+(- to demonstrate)
+139 W( this kind of popup menu)138 W
+8870 43835 MT
+(gadget, whose button label changes according to the menu selection)SH
+/Symbol SF
+8089 45031 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(Popup-Menu-Button-go, Popup-Menu-Button-stop)312 W
+11 /Times-Roman AF
+36170 XM
+(- to demonstrate this kind of)313 W
+8870 46227 MT
+(popup menu gadget, whose button label is fixed and may be a bitmap or other object)SH
+/Symbol SF
+8089 47423 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(Prop-Sheet-For-Obj-go, Prop-Sheet-For-Obj-stop)242 W
+11 /Times-Roman AF
+37229 XM
+(- to demonstrate how)
+242 W( prop-)241 W
+8870 48619 MT
+(sheets can be used to change slot values of Garnet objects)SH
+/Symbol SF
+8089 49815 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(Radio-Buttons-go, Radio-Buttons-stop)SH
+11 /Times-Roman AF
+30745 XM
+(- to demonstrate radio buttons)SH
+/Symbol SF
+8089 51011 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(Scrolling-Input-String-go, Scrolling-Input-String-stop)369 W
+11 /Times-Roman AF
+42283 XM
+(- to)
+369 W( demonstrate)370 W
+8870 52207 MT
+(the scrolling input string gadget)SH
+/Symbol SF
+8089 53403 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(Scrolling-Labeled-Box-go, Scrolling-Labeled-Box-stop)212 W
+11 /Times-Roman AF
+40769 XM
+(- to)
+212 W( demonstrate the)211 W
+8870 54599 MT
+(standard scrolling labeled box)SH
+/Symbol SF
+8089 55795 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(Scrolling-Menu-go, Scrolling-Menu-stop)373 W
+11 /Times-Roman AF
+32691 XM
+(- to demonstrate)
+373 W( the scrolling menu)374 W
+8870 56991 MT
+(gadget)SH
+/Symbol SF
+8089 58187 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(Scrolling-Window-go, Scrolling-Window-stop)510 W
+11 /Times-Roman AF
+35365 XM
+(- to)
+510 W( demonstrate the standard)509 W
+8870 59383 MT
+(scrolling window)SH
+/Symbol SF
+8089 60579 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(Scrolling-Window-With-Bars-go, Scrolling-Window-With-Bars-stop)776 W
+11 /Times-Roman AF
+47897 XM
+(- to)776 W
+8870 61775 MT
+(demonstrate the scrolling window with attached vertical and horizontal scroll bars)SH
+/Symbol SF
+8089 62971 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(Text-Buttons-go, Text-Buttons-stop)SH
+11 /Times-Roman AF
+29545 XM
+(- to demonstrate buttons with labels inside)SH
+/Symbol SF
+8089 64167 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(Trill-go, Trill-stop)SH
+11 /Times-Roman AF
+21145 XM
+(- to demonstrate the trill-device gadget)SH
+/Symbol SF
+8089 65363 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(V-scroll-go, V-scroll-stop)SH
+11 /Times-Roman AF
+24745 XM
+(- to demonstrate standard vertical scroll bars)SH
+/Symbol SF
+8089 66559 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(V-slider-go, V-slider-stop)SH
+11 /Times-Roman AF
+24745 XM
+(- to demonstrate standard vertical sliders)SH
+/Symbol SF
+8089 67755 MT
+(\267)SH
+10 /Courier AF
+8870 XM
+(X-Buttons-go, X-Buttons-stop)SH
+11 /Times-Roman AF
+25945 XM
+(- to demonstrate X buttons)SH
+6120 70053 MT
+(Each of these has its own loader file, named something like)15 W
+/Times-Italic SF
+32739 XM
+(xxx)SH
+10 /Courier AF
+(-loader)SH
+11 /Times-Roman AF
+38693 XM
+(for gadget)15 W
+/Times-Italic SF
+43487 XM
+(xxx)SH
+/Times-Roman SF
+(. See)
+305 W( the Gadgets)14 W
+6120 71249 MT
+(manual for a table of loader file names.)SH
+ES
+%%Page: 489 8
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(Section 7)
+SH( Demos)
+1800 W( of Advanced Features)SH
+51386 XM
+(Page 489)SH
+46800 50 8280 4486 UL
+12 /Times-Bold AF
+8280 8004 MT
+(5.20. Real-Time Constraints and Performance)SH
+11 /Times-Roman AF
+8280 9200 MT
+(The program)23 W
+10 /Courier AF
+14312 XM
+(demo-manyobjs)SH
+11 /Times-Roman AF
+22410 XM
+(was written as a test of how fast the system can evaluate constraints.)
+23 W( The)322 W
+10 /Courier AF
+8280 10396 MT
+(do-go)SH
+11 /Times-Roman AF
+11667 XM
+(procedure takes an optional parameter of how many boxes)
+112 W( to create.  Each box is composed of)111 W
+8280 11592 MT
+(four Opal objects.)SH
+14 /Times-Bold AF
+8280 15410 MT
+(6. Old Demos)SH
+12 SS 
+8280 19094 MT
+(6.1. Moving and Growing Objects)SH
+11 /Times-Roman AF
+8280 20290 MT
+(The best example of moving and growing objects is)SH
+10 /Courier AF
+31345 XM
+(demo-grow)SH
+11 /Times-Roman AF
+37020 XM
+(\050section 5.4\051.)SH
+8280 22588 MT
+(In addition,)51 W
+10 /Courier AF
+13729 XM
+(demo-moveline)SH
+11 /Times-Roman AF
+21855 XM
+(shows how the)51 W
+10 /Courier AF
+28821 XM
+(move-grow-interactor)SH
+11 /Times-Roman AF
+41147 XM
+(can be)
+51 W( used to move either end)52 W
+8280 23784 MT
+(of a line.)SH
+12 /Times-Bold AF
+8280 27468 MT
+(6.2. Menus)SH
+10 /Courier AF
+8280 28664 MT
+(Demo-3d)SH
+11 /Times-Roman AF
+12853 XM
+(shows some menus and buttons where the item itself moves when the user presses over)
+98 W( it, in)97 W
+8280 29860 MT
+(order to simulate a floating button.)SH
+14 /Times-Bold AF
+8280 33678 MT
+(7. Demos of Advanced Features)SH
+12 SS 
+8280 37362 MT
+(7.1. Using Multiple Windows)SH
+10 /Courier AF
+8280 38558 MT
+(Demo-multiwin)SH
+11 /Times-Roman AF
+16367 XM
+(shows how an interactor can be used to move objects from one window to another.)
+12 W( For)301 W
+8280 39754 MT
+(more information, see the Interactors manual.)SH
+12 /Times-Bold AF
+8280 43438 MT
+(7.2. Modes)SH
+10 /Courier AF
+8280 44634 MT
+(Demo-mode)SH
+11 /Times-Roman AF
+13962 XM
+(shows how you can use the)7 W
+10 /Courier AF
+26284 XM
+(:active)SH
+11 /Times-Roman AF
+30766 XM
+(slot of an interactor to)
+7 W( implement different modes.  For)6 W
+8280 45830 MT
+(more information, see the Interactors manual.)SH
+12 /Times-Bold AF
+8280 49514 MT
+(7.3. Using Start-Interactor)SH
+10 /Courier AF
+8280 50710 MT
+(Demo-sequence)SH
+11 /Times-Roman AF
+16542 XM
+(shows how to)
+187 W( use the)188 W
+10 /Courier AF
+27165 XM
+(inter:start-interactor)SH
+11 /Times-Roman AF
+40828 XM
+(function to have one interactor)188 W
+8280 51906 MT
+(start another interactor without waiting for the second one's start event.)
+87 W( Another)
+447 W( example of the use of)86 W
+10 /Courier AF
+8280 53102 MT
+(inter:start-interactor)SH
+11 /Times-Roman AF
+21759 XM
+(is in)4 W
+10 /Courier AF
+23907 XM
+(demo-editor)SH
+11 /Times-Roman AF
+30786 XM
+(\050section 5.2\051 to start editing the)
+4 W( text label after drawing)5 W
+8280 54298 MT
+(a box.  For more information on)SH
+10 /Courier AF
+22700 XM
+(start-interactor)SH
+11 /Times-Roman AF
+(, see the Interactors manual.)SH
+ES
+%%Page: 490 9
+BS
+0 SI
+10 /Times-Roman AF
+6120 4286 MT
+(Page 490)
+SH( Demonstration)
+830 W( Programs)SH
+50643 XM
+(Index)SH
+46800 50 6120 4486 UL
+16 /Times-Bold AF
+6120 8272 MT
+(Index)SH
+8 /Times-Roman AF
+6120 11525 MT
+(Active slot)
+SH( 489)400 W
+21720 XM
+(Motif-Gauge-go 488)400 W
+6120 12449 MT
+(Aggregraphs 485)400 W
+21720 XM
+(Motif-H-Scroll-go 488)400 W
+6120 13373 MT
+(Angle-Interactor 485)400 W
+21720 XM
+(Motif-Menu-go 488)400 W
+6120 14297 MT
+(Animation 486)400 W
+21720 XM
+(Motif-Menubar-go 488)400 W
+6120 15221 MT
+(Arrow-line-go 487)400 W
+21720 XM
+(Motif-option-button-go 488)400 W
+21720 16145 MT
+(Motif-query-gadget 488)400 W
+6120 17069 MT
+(Browser-gadget 486)400 W
+21720 XM
+(Motif-Radio-Buttons-go 488)400 W
+21720 17993 MT
+(Motif-Scrolling-Labeled-Box-go 488)400 W
+6120 18917 MT
+(Calculator 486)400 W
+21720 XM
+(Motif-Scrolling-Window-go 488)400 W
+6120 19841 MT
+(Clock 485)400 W
+21720 XM
+(Motif-Slider-go 488)400 W
+6120 20765 MT
+(Compiling demos)
+SH( 483)400 W
+21720 XM
+(Motif-Text-Buttons-go 488)400 W
+6120 21689 MT
+(Creating new objects)
+SH( 485)400 W
+21720 XM
+(Motif-trill-go 488)400 W
+21720 22613 MT
+(Motif-V-Scroll-go 488)400 W
+6120 23537 MT
+(Demo-3d 489)400 W
+21720 XM
+(Mouseline-go 488)400 W
+6120 24461 MT
+(Demo-angle 485)400 W
+21720 XM
+(Move-grow-interactor 489)400 W
+6120 25385 MT
+(Demo-animator 486)400 W
+21720 XM
+(Multi-line text input)
+SH( 485)400 W
+6120 26309 MT
+(Demo-arith 485)400 W
+21720 XM
+(Multifont text input)
+SH( 485)400 W
+6120 27233 MT
+(Demo-calculator 486)400 W
+21720 XM
+(Multifont-gadget-go 488)400 W
+6120 28157 MT
+(Demo-clock 485)400 W
+21720 XM
+(Multiple Windows)
+SH( 489)400 W
+6120 29081 MT
+(Demo-editor 484)400 W
+6120 30005 MT
+(Demo-fade 486)400 W
+21720 XM
+(Option-button-go 488)400 W
+6120 30929 MT
+(Demo-file-browser 486)400 W
+6120 31853 MT
+(Demo-gadgets 487)400 W
+21720 XM
+(Popup-menu-button-go 488)400 W
+6120 32777 MT
+(Demo-gesture 487)400 W
+21720 XM
+(Postscript in demo-arith)
+SH( 485)400 W
+6120 33701 MT
+(Demo-graph 485)400 W
+21720 XM
+(Prop-sheet-for-obj-go 488)400 W
+6120 34625 MT
+(Demo-grow 485)400 W
+6120 35549 MT
+(Demo-menu 486)400 W
+21720 XM
+(Query-gadget 487)400 W
+6120 36473 MT
+(Demo-mode 489)400 W
+6120 37397 MT
+(Demo-motif 487)400 W
+21720 XM
+(Radio-Buttons-go 488)400 W
+6120 38321 MT
+(Demo-moveline 489)400 W
+21720 XM
+(Running demos)
+SH( 483)400 W
+6120 39245 MT
+(Demo-multifont 485)400 W
+6120 40169 MT
+(Demo-multiwin 489)400 W
+21720 XM
+(Scroll bars)
+SH( 485)400 W
+6120 41093 MT
+(Demo-pixmap 487)400 W
+21720 XM
+(Scrolling-Input-String-go 488)400 W
+6120 42017 MT
+(Demo-schema-browser 486)400 W
+21720 XM
+(Scrolling-Labeled-Box-go 488)400 W
+6120 42941 MT
+(Demo-sequence 489)400 W
+21720 XM
+(Scrolling-Menu-go 488)400 W
+6120 43865 MT
+(Demo-text 485)400 W
+21720 XM
+(Scrolling-Window-go 488)400 W
+6120 44789 MT
+(Demo-twop 485)400 W
+21720 XM
+(Start-calc 486)400 W
+6120 45713 MT
+(Demo-unidraw 487)400 W
+21720 XM
+(Start-interactor 489)400 W
+6120 46637 MT
+(Demo-Virtual-Agg 486)400 W
+21720 XM
+(Starting demos)
+SH( 483)400 W
+6120 47561 MT
+(Do-go 483)400 W
+21720 XM
+(Stop-calc 486)400 W
+6120 48485 MT
+(Do-stop 483)400 W
+21720 XM
+(Stopping demos)
+SH( 483)400 W
+6120 49409 MT
+(Double-buffered windows)
+SH( 484)400 W
+6120 50333 MT
+(Drawing program)
+SH( 484)400 W
+21720 XM
+(Text-Buttons-go 488)400 W
+21720 51257 MT
+(Text-interactor 485)400 W
+6120 52181 MT
+(Error-gadget 487)400 W
+21720 XM
+(Trill-go 488)400 W
+6120 53105 MT
+(Error-gadget-go 487)400 W
+21720 XM
+(Two-point-interactor 485)400 W
+6120 54953 MT
+(Gadgets 487)400 W
+21720 XM
+(V-scroll-go 488)400 W
+6120 55877 MT
+(Garnet-calculator 486)400 W
+21720 XM
+(V-slider-go 488)400 W
+6120 56801 MT
+(Garnetdraw 484)400 W
+6120 57725 MT
+(Gauge 485,)
+400 W( 487)SH
+21720 XM
+(Windows 489)400 W
+6120 58649 MT
+(Gauge-go 487)400 W
+6120 59573 MT
+(Gestures in demo-arith)
+SH( 485)400 W
+21720 XM
+(X-Buttons-go 488)400 W
+6120 60497 MT
+(Graphics-selection 485)400 W
+6120 62345 MT
+(H-scroll-go 487)400 W
+6120 63269 MT
+(H-slider-go 487)400 W
+6120 65117 MT
+(Labeled-Box-go 487)400 W
+6120 66965 MT
+(Menu-go 487)400 W
+6120 67889 MT
+(Menubar-go 487)400 W
+6120 68813 MT
+(Modes 489)400 W
+6120 69737 MT
+(Motif-Check-Buttons-go 487)400 W
+6120 70661 MT
+(Motif-error-gadget 488)400 W
+6120 71585 MT
+(Motif-error-gadget-go 488)400 W
+ES
+%%Page: i 10
+BS
+0 SI
+10 /Times-Roman AF
+8280 4286 MT
+(Demonstration Programs)SH
+47914 XM
+(Table of Contents)SH
+46800 50 8280 4486 UL
+16 /Times-Bold AF
+25591 8272 MT
+(Table of Contents)SH
+10 SS 
+9780 9352 MT
+(1. Introduction)SH
+53580 XM
+(483)SH
+9780 10432 MT
+(2. Loading and Compiling Demos)SH
+53580 XM
+(483)SH
+9780 11512 MT
+(3. Running Demo Programs)SH
+53580 XM
+(483)SH
+9780 12592 MT
+(4. Double-Buffered Windows)SH
+53580 XM
+(484)SH
+9780 13672 MT
+(5. Best Examples)SH
+53580 XM
+(484)SH
+11780 14752 MT
+(5.1. GarnetDraw)SH
+53580 XM
+(484)SH
+11780 15832 MT
+(5.2. Demo-Editor)SH
+53580 XM
+(484)SH
+11780 16912 MT
+(5.3. Demo-Arith)SH
+53580 XM
+(485)SH
+11780 17992 MT
+(5.4. Demo-Grow)SH
+53580 XM
+(485)SH
+11780 19072 MT
+(5.5. Multifont and Multi-Line Text Input)SH
+53580 XM
+(485)SH
+11780 20152 MT
+(5.6. Demo-Multifont)SH
+53580 XM
+(485)SH
+11780 21232 MT
+(5.7. Creating New Objects)SH
+53580 XM
+(485)SH
+11780 22312 MT
+(5.8. Angles)SH
+53580 XM
+(485)SH
+11780 23392 MT
+(5.9. Aggregraphs)SH
+53580 XM
+(485)SH
+11780 24472 MT
+(5.10. Scroll Bars)SH
+53580 XM
+(485)SH
+11780 25552 MT
+(5.11. Menus)SH
+53580 XM
+(486)SH
+11780 26632 MT
+(5.12. Animation)SH
+53580 XM
+(486)SH
+11780 27712 MT
+(5.13. Garnet-Calculator)SH
+53580 XM
+(486)SH
+11780 28792 MT
+(5.14. Browsers)SH
+53580 XM
+(486)SH
+11780 29872 MT
+(5.15. Demo-Virtual-Agg)SH
+53580 XM
+(486)SH
+11780 30952 MT
+(5.16. Demo-Pixmap)SH
+53580 XM
+(487)SH
+11780 32032 MT
+(5.17. Demo-Gesture)SH
+53580 XM
+(487)SH
+11780 33112 MT
+(5.18. Demo-Unidraw)SH
+53580 XM
+(487)SH
+11780 34192 MT
+(5.19. Gadget Demos)SH
+53580 XM
+(487)SH
+11780 35272 MT
+(5.20. Real-Time Constraints and Performance)SH
+53580 XM
+(489)SH
+9780 36352 MT
+(6. Old Demos)SH
+53580 XM
+(489)SH
+11780 37432 MT
+(6.1. Moving and Growing Objects)SH
+53580 XM
+(489)SH
+11780 38512 MT
+(6.2. Menus)SH
+53580 XM
+(489)SH
+9780 39592 MT
+(7. Demos of Advanced Features)SH
+53580 XM
+(489)SH
+11780 40672 MT
+(7.1. Using Multiple Windows)SH
+53580 XM
+(489)SH
+11780 41752 MT
+(7.2. Modes)SH
+53580 XM
+(489)SH
+11780 42832 MT
+(7.3. Using Start-Interactor)SH
+53580 XM
+(489)SH
+12 SS 
+8280 44356 MT
+(Index)SH
+53280 XM
+(490)SH
+ES
+%%Trailer
+%%Pages: 10
+%%DocumentFonts: Times-Roman Times-Bold Symbol Courier Times-Italic

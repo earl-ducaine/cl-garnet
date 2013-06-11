@@ -1,0 +1,124 @@
+#!/bin/csh -f
+# garnet-after-compile
+# by David S. Kosbie, Garnet Project, CMU
+
+# This file contains a "csh" shell script to be invoked *after* you have
+# compiled Garnet from Lisp.  This script will create the bin directories,
+# move all the compiled files there, copy all appropriate loader files there,
+# and remove all ".err" files if you prefer.  The following variables should
+# be set by the user, unless default actions are preferred...
+
+#########################  User-Settable Variables  ########################
+#set GarnetDir                             # Home directory for Garnet (only
+                                           # needed if this is not run from
+                                           # your top-level garnet directory)
+#set GarnetSrcDir                          # Set this only if it is different
+                                           # from $GarnetDir/src
+#set GarnetBinDir                          # Set this only if it is different
+                                           # from $GarnetDir/bin
+#set CompilerExtension                     # The script will try to figure this
+                                           # out, but if it's not ".fasl" nor
+                                           # ".lbin", you must enter it here.
+set RemoveErrFiles                         # "unset" this here if you do not
+                                           # want the ".err" files removed
+set Verbose                                # "set" this here if you want (very)
+                                           # verbose output from this script
+####################### End User-Settable Variables  #######################
+
+# set GarnetDir = "/homes/gilham/garnet"
+# set CompilerExtension = ".x86f"
+# set CompilerExtension = ".sparcf"
+#set CompilerExtension = ".sse2f"
+# set CompilerExtension = ".fasl"
+
+# CHANGE LOG
+#
+# 5/28/93 Andrew Mickish - Used FIND when mv'ing and cp'ing files from src/
+#
+
+echo "***  Beginning garnet-after-compile ***"
+
+if ( (! $?GarnetDir) && ( $cwd:t == "garnet") ) set GarnetDir = "."
+
+if ( (! $?GarnetDir) && ((! $?GarnetSrcDir) || (! $?GarnetBinDir)) ) then
+  echo "  **** You must first set the GarnetDir variable in the shell script,"
+  echo "  **** or run this from the default top-level Garnet directory."
+  echo "  **** Garnet-After-Compile ABORTED..."
+  exit(1)
+endif
+
+if (! $?GarnetSrcDir) set GarnetSrcDir = "$GarnetDir/src"
+if (! $?GarnetBinDir) set GarnetBinDir = "$GarnetDir/bin"
+
+set SrcDirs = (utils kr gworld gem opal inter gesture ps aggregadgets gadgets protected-eval debug lapidary demos gilt c32)
+set DirCnt  = $#SrcDirs
+set ThisDir = 0
+
+if !($?CompilerExtension) then
+  if (-e $GarnetSrcDir/kr/kr.fasl) then
+	set CompilerExtension = ".fasl"
+  else if (-e $GarnetSrcDir/kr/kr.lbin) then
+	set CompilerExtension = ".lbin"
+  else if (-e $GarnetSrcDir/kr/kr.sbin) then
+	set CompilerExtension = ".sbin"
+  else if (-e $GarnetSrcDir/kr/kr.hbin) then
+	set CompilerExtension = ".hbin"
+  else if (-e $GarnetSrcDir/kr/kr.sparcf) then
+	set CompilerExtension = ".sparcf"
+  else if (-e $GarnetSrcDir/kr/kr.x86f) then
+	set CompilerExtension = ".x86f"
+  else if (-e $GarnetSrcDir/kr/kr.sse2f) then
+	set CompilerExtension = ".sse2f"
+  else if (-e $GarnetSrcDir/kr/kr.afasl) then
+        set CompilerExtension = ".afasl"
+  else if (-e $GarnetSrcDir/kr/kr.fas) then
+        set CompilerExtension = ".fas"
+  else
+	echo "  *** Could not determine Compiler Extension ***"
+	echo "  *** Please set the CompilerExtension variable in the"
+	echo "      garnet-after-compile shell script ***"
+	echo "      Garnet-After-Compile ABORTED"
+	exit(1)
+  endif
+endif
+
+if !(-d $GarnetBinDir) then
+  if ($?Verbose) echo "  Creating bin directory $GarnetBinDir"
+  mkdir $GarnetBinDir
+  if !(-d $GarnetBinDir) then
+    echo "    **** mkdir $GarnetBinDir FAILED.  ABORTING CLEANUP ****"
+    exit(1)
+  endif
+endif
+
+foreach dir ( $SrcDirs )
+  set SubDir = $dir:t
+  @ ThisDir++
+  if ($?Verbose) echo "  Sub-Directory:  $SubDir [ $ThisDir of $DirCnt ]"
+  set SubDir = $GarnetBinDir/$SubDir
+  if !(-d $SubDir) then
+	if ($?Verbose) echo "    Creating $SubDir"
+	mkdir $SubDir
+	if !(-d $SubDir) then
+	  echo "    **** mkdir $SubDir FAILED.  ABORTING CLEANUP ****"
+	  exit(1)
+	endif
+  else
+	if ($?Verbose) echo "    Bin subdirectory already created."
+  endif
+  if ($?Verbose) echo "    Moving $CompilerExtension files from src to bin"
+  find $GarnetSrcDir/$dir -name "*$CompilerExtension" -exec mv {} $SubDir \;
+  if ($?RemoveErrFiles) then
+	if ($?Verbose) then
+	  echo "    Removing .err files from src"
+	endif
+	find $GarnetSrcDir/$dir -name '*.err' -exec rm {} \;
+  endif
+  if ($?Verbose) echo "    Copying loader files from src to bin"
+  find $GarnetSrcDir/$dir -name "*-loader.lisp" -exec cp {} $SubDir \;
+end
+
+unset SrcDirs DirCnt ThisDir SubDir CompilerExtension RemoveErrFiles
+unset GarnetDir GarnetSrcDir GarnetBinDir Verbose
+
+echo "***  garnet-after-compile completed ***"

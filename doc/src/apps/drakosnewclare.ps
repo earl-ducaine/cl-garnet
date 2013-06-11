@@ -1,0 +1,656 @@
+%!PS-Adobe-2.0
+%%Title: Database Display
+%%Creator: Make-PS-File -- Garnet Version 2.1
+%%CreationDate: Feb 9, 1993, 1:43 PM
+%%For: 
+%%This file does not use real color
+%%DocumentFonts: (atend)
+%%BoundingBox: 72 220 540 573
+%%Pages: 1
+%%EndComments
+
+
+/EllipseDict 23 dict def
+EllipseDict /mtrx matrix put
+/DrawEllipse
+   {    EllipseDict begin
+        /fill-color-p exch def  /fill-blue exch def  /fill-green exch def
+        /fill-red exch def  /fill-halftone exch def  /lt exch def
+        /dash-pattern exch def  /line-join exch def  /line-cap exch def
+        /line-color-p exch def  /line-blue exch def  /line-green exch def
+        /line-red exch def  /line-halftone exch def  /endangle exch def
+        /startangle exch def  /yrad exch def  /xrad exch def  /y exch def
+        /x exch def  /savematrix mtrx currentmatrix def  /lt-by-2 lt 2 div def
+        % Draw the filling
+        newpath
+	  x y translate
+          gsave
+	    xrad lt-by-2 sub  yrad lt-by-2 sub scale
+            0 0 1 startangle endangle arc
+            savematrix setmatrix
+	    fill-halftone fill-red fill-green fill-blue fill-color-p FillShape
+          grestore
+        % Draw the border
+        newpath
+          xrad yrad scale
+          0 0 1 startangle endangle arc
+	  savematrix setmatrix
+          line-halftone line-red line-green line-blue line-color-p
+          line-cap line-join dash-pattern lt StrokeShape
+        end
+   } def
+
+/RoundtanglePath
+   {    % stack: left, top, width, height, radius
+        /r exch def  /h exch def  /w exch def  /t exch def  /l exch def
+        /right l w add def  /bottom t h sub def
+          l r add t moveto                         % origin
+          right t right t r sub r arcto            % top side
+          right bottom right r sub bottom r arcto  % right side
+          l bottom l bottom r add r arcto          % bottom side
+          l t l r add t r arcto                    % left side
+          16 {pop} repeat  % each arcto accumulates 4 stack parameters
+   } def
+
+/RoundtangleDict 27 dict def
+/DrawRoundtangle
+   {    % stack: left, top, width, height, radius, line-halftone,
+        %        line-red, line-green, line-blue, line-color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness,
+        %        fill-halftone, fill-red, fill-green, fill-blue, fill-color-p
+        
+        RoundtangleDict begin
+        /fill-color-p exch def  /fill-blue exch def  /fill-green exch def
+        /fill-red exch def  /fill-halftone exch def  /lt exch def
+        /dash-pattern exch def  /line-join exch def  /line-cap exch def
+        /line-color-p exch def  /line-blue exch def  /line-green exch def
+        /line-red exch def  /line-halftone exch def  /radius exch def
+        /height exch def  /width exch def  /top exch def  /left exch def
+        /lt-by-2 lt 2 div def
+        % Draw filling
+        newpath
+          left lt-by-2 add  top lt-by-2 sub  width lt sub  height lt sub
+          radius lt sub RoundtanglePath
+          fill-halftone fill-red fill-green fill-blue fill-color-p FillShape
+        % Draw border
+        newpath
+          left top width height radius lt-by-2 sub RoundtanglePath
+          line-halftone line-red line-green line-blue line-color-p
+          line-cap line-join dash-pattern lt StrokeShape
+        end
+   } def
+
+/DrawLine
+   {    % stack: line-halftone, red, green, blue, color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness
+        %        x2, y2, x1, y1
+        newpath
+          moveto
+          lineto
+          StrokeShape
+   } def
+
+/PolylineDict 15 dict def
+/DrawPolyline
+   {	% stack: x1, y1, ..., xn, yn, n, line-halftone, line-red, line-blue,
+        %        line-green, line-join, line-cap, dash-pattern,
+        %        line-thickness, fill-halftone
+        PolylineDict begin
+        /fill-color-p exch def  /fill-blue exch def  /fill-green exch def
+        /fill-red exch def  /fill-halftone exch def  /lt exch def
+        /dash-pattern exch def  /line-join exch def  /line-cap exch def
+        /line-color-p exch def  /line-blue exch def  /line-green exch def
+        /line-red exch def  /line-halftone exch def  /num-points exch 4 sub def
+	newpath
+	  moveto
+	  num-points -2 0 {pop lineto} for
+	  fill-halftone fill-red fill-green fill-blue fill-color-p FillShape
+          line-halftone line-red line-green line-blue line-color-p
+          line-cap line-join dash-pattern lt StrokeShape
+        end
+   } def
+
+/BitmapDict 9 dict def
+/DrawBitmap
+   {    % stack: left top width height pattern transparent-p
+        %        red green blue color-p
+        BitmapDict begin
+        /picstr 256 string def
+	/color-p exch def  /blue exch def  /green exch def /red exch def
+        /transparent-p exch def
+        /pattern exch def  /height exch def  /width exch def
+        gsave
+          translate
+          width height scale
+	  color-p {red green blue setrgbcolor} if
+          transparent-p
+	  % The case where the background is not drawn
+	  { width height false
+            [ width 0 0 height 0 height ]
+            {pattern} imagemask }
+	  % The case where the background is drawn
+          { width height 1
+            [ width 0 0 height 0 height ]
+            {pattern} image } ifelse
+        grestore
+        end
+   } def
+
+/TextDict 19 dict def
+/DrawText
+   {	% stack: left top base-y opal-width height line-halftone fill-p
+        %        fore-red fore-green fore-blue fore-color-p
+        %        back-red back-green back-blue back-color-p
+        %        string size font-name
+        TextDict begin
+        gsave
+	findfont exch scalefont setfont
+	/s exch def
+        /back-color-p exch def  /back-blue exch def  /back-green exch def
+        /back-red exch def  /fore-color-p exch def  /fore-blue exch def
+        /fore-green exch def  /fore-red exch def  /fill-p exch def
+        /line-halftone exch def /height exch def  /opal-width exch def
+        /base-y exch def  /top exch def  /left exch def
+
+        % Calculate distance to add between each character, based on the width
+        % expected by Opal, the width expected by postscript, and the number
+        % of characters to distribute the change over
+	/x-dist opal-width s stringwidth pop sub s length div def
+
+        % Draw background of text if appropriate
+        fill-p
+        { gsave
+            newpath
+            left top opal-width height RectanglePath
+            1 back-red back-green back-blue back-color-p
+            FillShape
+          grestore } if
+
+        % Draw text in the appropriate color
+	newpath
+          fore-color-p
+          { fore-red fore-green fore-blue setrgbcolor }
+          { line-halftone setgray } ifelse
+	  left base-y moveto
+	  x-dist 0 s ashow
+        grestore
+        end
+   } def
+
+/RectanglePath
+   {    % stack: left, top, width, height
+        /h exch def  /w exch def
+	moveto		        % Go to the left,top corner
+	w 0 rlineto	        % top side
+	0 h neg rlineto		% right side
+	w neg 0 rlineto		% bottom side
+	closepath		% left side
+   } def
+
+/RectangleDict 21 dict def
+/DrawRectangle
+   {	% stack: left, top, width, height, line-halftone, line-red, line-green,
+        %        line-blue, line-color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness,
+        %        fill-halftone, fill-red, fill-green, fill-blue, fill-color-p
+        RectangleDict begin
+        /fill-color-p exch def  /fill-blue exch def  /fill-green exch def
+        /fill-red exch def /fill-halftone exch def  /lt exch def
+        /dash-pattern exch def  /line-join exch def  /line-cap exch def
+        /line-color-p exch def  /line-blue exch def  /line-green exch def
+        /line-red exch def  /line-halftone exch def  /height exch def
+        /width exch def  /top exch def  /left exch def  /lt-by-2 lt 2 div def
+        % Draw filling
+        newpath
+          left lt-by-2 add  top lt-by-2 sub   width lt sub  height lt sub
+          RectanglePath
+	  fill-halftone fill-red fill-green fill-blue fill-color-p FillShape
+        % Draw border
+        newpath
+          left top width height RectanglePath
+          line-halftone line-red line-green line-blue line-color-p
+          line-cap line-join dash-pattern lt StrokeShape
+        end
+   } def
+
+/ClipDict 2 dict def
+/ClipToRectangle
+   {    % stack: left, top, width, height
+        ClipDict begin
+	/height exch def  /width exch def
+        newpath
+	  moveto		% Go to the left,top corner
+	  width 0 rlineto	% top side
+	  0 height neg rlineto	% right side
+	  width neg 0 rlineto	% bottom side
+	  closepath		% left side
+	gsave 1 setgray fill grestore
+	clip newpath
+        end
+   } def
+
+/FillShape
+   {	% stack: fill-halftone, red, green, blue, color-p
+        %   Color-p should be true or false - false means ignore the three vals
+        %   Use -1 for fill-halftone to mean NIL, 0 = black, 1 = white
+        %   Use -2 for fill-halftone to indicate there is an arbitrary filling
+        % style on the stack
+        gsave
+        { setrgbcolor fill pop }
+	{ pop pop pop 
+	  dup 0 ge
+	    % if fill-halftone >= 0, then fill the shape with a halftone
+	    { setgray fill}
+            % else, if there is an arbitrary filling style, then fill
+            { -2 eq
+              {SetPattern fill} if
+            } ifelse } ifelse
+        grestore
+   } def
+
+/StrokeShape
+   {	% stack: line-halftone, red, green, blue, color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness
+	% If no line is desired, pass -1 for line-thickness
+        % Halftones: 0 = black, 1 = white
+	dup 0 ge
+	  % if line-thickness >= 0, then draw the outline
+	  {gsave
+	   setlinewidth 0 setdash setlinejoin setlinecap
+             { setrgbcolor pop }
+             { pop pop pop setgray } ifelse
+	   stroke
+	   grestore}
+	  {pop pop pop pop pop pop pop pop pop newpath} ifelse
+   } def
+
+/image-12
+<FFFFF80000003FFFFF FFFFC7FFFFFFC7FFFF FFFE3FFFFFFFF8FFFF FFF9FFFFFFFFFF3FFF
+FFF7FFFFFFFFFFDFFF FFEFFFFFFFFFFFEFFF FF9FFFFFFFFFFFF3FF FF7FFFFFFFFFFFFDFF
+FEFFFFFFFFFFFFFEFF FDFFFFFFFFFFFFFF7F FDFFFFFFFFFFFFFF7F FBFFFFFFFFFFFFFFBF
+F7FFFFFFFFFFFFFFDF EFFFFFFFFFFFFFFFEF EFFFFFFFFFFFFFFFEF DFFFFFFFFFFFFFFFF7
+DFFFFFFFFFFFFFFFF7 DFFFFFFFFFFFFFFFF7 BFFFFFFFFFFFFFFFFB BFFFFFFFFFFFFFFFFB
+BFFFFFFFFFFFFFFFFB 7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD
+7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD
+7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD
+7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD
+7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD
+7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD
+7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD
+7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD
+7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD
+7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD
+7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD
+7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD
+7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD
+7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD
+7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD
+7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD
+7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD
+7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD
+7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD 7FFFFFFFFFFFFFFFFD BFFFFFFFFFFFFFFFFB
+BFFFFFFFFFFFFFFFFB BFFFFFFFFFFFFFFFFB DFFFFFFFFFFFFFFFF7 DFFFFFFFFFFFFFFFF7
+DFFFFFFFFFFFFFFFF7 EFFFFFFFFFFFFFFFEF EFFFFFFFFFFFFFFFEF F7FFFFFFFFFFFFFFDF
+FBFFFFFFFFFFFFFFBF FDFFFFFFFFFFFFFF7F FDFFFFFFFFFFFFFF7F FEFFFFFFFFFFFFFEFF
+FF7FFFFFFFFFFFFDFF FF9FFFFFFFFFFFF3FF FFEFFFFFFFFFFFEFFF FFF7FFFFFFFFFFDFFF
+FFF9FFFFFFFFFF3FFF FFFE3FFFFFFFF8FFFF FFFFC7FFFFFFC7FFFF FFFFF80000003FFFFF>
+def
+
+/image-11
+<FFFFFFFFFF001FFFFFFFFFFF FFFFFFFFC0FFE07FFFFFFFFF FFFFFFFE3FFFFF8FFFFFFFFF
+FFFFFFF1FFFFFFF1FFFFFFFF FFFFFF8FFFFFFFFE3FFFFFFF FFFFFE7FFFFFFFFFCFFFFFFF
+FFFFF9FFFFFFFFFFF3FFFFFF FFFFF7FFFFFFFFFFFDFFFFFF FFFFCFFFFFFFFFFFFE7FFFFF
+FFFFBFFFFFFFFFFFFFBFFFFF FFFE7FFFFFFFFFFFFFCFFFFF FFFDFFFFFFFFFFFFFFF7FFFF
+FFFBFFFFFFFFFFFFFFFBFFFF FFF7FFFFFFFFFFFFFFFDFFFF FFEFFFFFFFFFFFFFFFFEFFFF
+FFDFFFFFFFFFFFFFFFFF7FFF FFBFFFFFFFFFFFFFFFFFBFFF FF7FFFFFFFFFFFFFFFFFDFFF
+FEFFFFFFFFFFFFFFFFFFEFFF FDFFFFFFFFFFFFFFFFFFF7FF FDFFFFFFFFFFFFFFFFFFF7FF
+FBFFFFFFFFFFFFFFFFFFFBFF F7FFFFFFFFFFFFFFFFFFFDFF F7FFFFFFFFFFFFFFFFFFFDFF
+EFFFFFFFFFFFFFFFFFFFFEFF DFFFFFFFFFFFFFFFFFFFFF7F DFFFFFFFFFFFFFFFFFFFFF7F
+BFFFFFFFFFFFFFFFFFFFFFBF BFFFFFFFFFFFFFFFFFFFFFBF 7FFFFFFFFFFFFFFFFFFFFFDF
+7FFFFFFFFFFFFFFFFFFFFFDF 7FFFFFFFFFFFFFFFFFFFFFDF 7FFFFFFFFFFFFFFFFFFFFFDF
+7FFFFFFFFFFFFFFFFFFFFFDF 7FFFFFFFFFFFFFFFFFFFFFDF 7FFFFFFFFFFFFFFFFFFFFFDF
+7FFFFFFFFFFFFFFFFFFFFFDF 7FFFFFFFFFFFFFFFFFFFFFDF 7FFFFFFFFFFFFFFFFFFFFFDF
+7FFFFFFFFFFFFFFFFFFFFFDF 7FFFFFFFFFFFFFFFFFFFFFDF 7FFFFFFFFFFFFFFFFFFFFFDF
+7FFFFFFFFFFFFFFFFFFFFFDF 7FFFFFFFFFFFFFFFFFFFFFDF 7FFFFFFFFFFFFFFFFFFFFFDF
+7FFFFFFFFFFFFFFFFFFFFFDF 7FFFFFFFFFFFFFFFFFFFFFDF 7FFFFFFFFFFFFFFFFFFFFFDF
+7FFFFFFFFFFFFFFFFFFFFFDF 7FFFFFFFFFFFFFFFFFFFFFDF 7FFFFFFFFFFFFFFFFFFFFFDF
+7FFFFFFFFFFFFFFFFFFFFFDF 7FFFFFFFFFFFFFFFFFFFFFDF 7FFFFFFFFFFFFFFFFFFFFFDF
+7FFFFFFFFFFFFFFFFFFFFFDF 7FFFFFFFFFFFFFFFFFFFFFDF 7FFFFFFFFFFFFFFFFFFFFFDF
+7FFFFFFFFFFFFFFFFFFFFFDF 7FFFFFFFFFFFFFFFFFFFFFDF 7FFFFFFFFFFFFFFFFFFFFFDF
+7FFFFFFFFFFFFFFFFFFFFFDF 7FFFFFFFFFFFFFFFFFFFFFDF 7FFFFFFFFFFFFFFFFFFFFFDF
+7FFFFFFFFFFFFFFFFFFFFFDF 7FFFFFFFFFFFFFFFFFFFFFDF 7FFFFFFFFFFFFFFFFFFFFFDF
+7FFFFFFFFFFFFFFFFFFFFFDF 7FFFFFFFFFFFFFFFFFFFFFDF 7FFFFFFFFFFFFFFFFFFFFFDF
+7FFFFFFFFFFFFFFFFFFFFFDF 7FFFFFFFFFFFFFFFFFFFFFDF 7FFFFFFFFFFFFFFFFFFFFFDF
+7FFFFFFFFFFFFFFFFFFFFFDF 7FFFFFFFFFFFFFFFFFFFFFDF 7FFFFFFFFFFFFFFFFFFFFFDF
+7FFFFFFFFFFFFFFFFFFFFFDF 7FFFFFFFFFFFFFFFFFFFFFDF 7FFFFFFFFFFFFFFFFFFFFFDF
+7FFFFFFFFFFFFFFFFFFFFFDF 7FFFFFFFFFFFFFFFFFFFFFDF 7FFFFFFFFFFFFFFFFFFFFFDF
+7FFFFFFFFFFFFFFFFFFFFFDF 7FFFFFFFFFFFFFFFFFFFFFDF 7FFFFFFFFFFFFFFFFFFFFFDF
+7FFFFFFFFFFFFFFFFFFFFFDF 7FFFFFFFFFFFFFFFFFFFFFDF 7FFFFFFFFFFFFFFFFFFFFFDF
+7FFFFFFFFFFFFFFFFFFFFFDF 7FFFFFFFFFFFFFFFFFFFFFDF 7FFFFFFFFFFFFFFFFFFFFFDF
+7FFFFFFFFFFFFFFFFFFFFFDF 7FFFFFFFFFFFFFFFFFFFFFDF 7FFFFFFFFFFFFFFFFFFFFFDF
+7FFFFFFFFFFFFFFFFFFFFFDF 7FFFFFFFFFFFFFFFFFFFFFDF 3FFFFFFFFFFFFFFFFFFFFF9F
+CFFFFFFFFFFFFFFFFFFFFE7F F3FFFFFFFFFFFFFFFFFFF9FF FCFFFFFFFFFFFFFFFFFFE7FF
+FF3FFFFFFFFFFFFFFFFF9FFF FFDFFFFFFFFFFFFFFFFF7FFF>
+def
+
+/image-10
+<00000FFF 80001FFF C0003FFF E0007FFF F000FFFF F801FC7F FC03FDBF FE07FDDF
+FF0FFDEF FF9001EF FF8FFDEF FF07FDEF FE03FDEF FC01FDDF F800FDBF F0007C7F
+E0003FFF C0001FFF 80000FFF>
+def
+
+/image-9
+<00000FFF 80001FFF C0003FFF E0007FFF F000F00F F801F76F FC03F76F FE07F76F
+FF0FF76F FF90016F FF8FF76F FF07F76F FE03F76F FC01F76F F800F76F F000700F
+E0003FFF C0001FFF 80000FFF>
+def
+
+/image-8
+<00000FFF 80001FFF C0003FFF E0007FFF F000F00F F801F76F FC03F76F FE07F76F
+FF0FF76F FF90016F FF8FF76F FF07F76F FE03F76F FC01F76F F800F76F F000700F
+E0003FFF C0001FFF 80000FFF>
+def
+
+/image-7
+<00000FFF BFFFDFFF DFFFBFFF EFFF7FFF F7FEF00F FBFDF76F FDFBF76F FEF7F76F
+FF6FF76F FF90016F FFAFF76F FF77F76F FEFBF76F FDFDF76F FBFEF76F F7FF700F
+EFFFBFFF DFFFDFFF 80000FFF>
+def
+
+/image-6
+<00000FFF 80001FFF C0003FFF E0007FFF F000F00F F801F76F FC03F76F FE07F76F
+FF0FF76F FF90016F FF8FF76F FF07F76F FE03F76F FC01F76F F800F76F F000700F
+E0003FFF C0001FFF 80000FFF>
+def
+
+/image-5
+<00000FFF 80001FFF C0003FFF E0007FFF F000F00F F801F76F FC03F76F FE07F76F
+FF0FF76F FF90016F FF8FF76F FF07F76F FE03F76F FC01F76F F800F76F F000700F
+E0003FFF C0001FFF 80000FFF>
+def
+
+/image-4
+<00000FFF 80001FFF C0003FFF E0007FFF F000F00F F801F76F FC03F76F FE07F76F
+FF0FF76F FF90016F FF8FF76F FF07F76F FE03F76F FC01F76F F800F76F F000700F
+E0003FFF C0001FFF 80000FFF>
+def
+
+/image-3
+<00000FFF BFFFDFFF DFFFBFFF EFFF7FFF F7FEF00F FBFDF76F FDFBF76F FEF7F76F
+FF6FF76F FF90016F FFAFF76F FF77F76F FEFBF76F FDFDF76F FBFEF76F F7FF700F
+EFFFBFFF DFFFDFFF 80000FFF>
+def
+
+/image-2
+<00 00 00 00>
+def
+
+/image-1
+<FFFFFFFFFFFFFFFF FFFFFFFFFFFFFFFF FFFFFFFFFFFFFFFF FFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFF F3E01E0000F00FFF E3E00C7FFC63EFFF C3E0007FFC03EFFF
+E0E00C7FFC63EFFF 05E01C0380F0EFFF 35E0FFFBBFFEEFFF 47E0FFFBBFFEEFFF
+F7E0FFF83FFEEFFF FFC07FF7DFFCE7FF BF803FEFEFF9F3FF FF001FE00FF3F9FF
+FE000FE82FE7FCFF FC0007EC6FCFFE7F F80003EC6F9FFF3F 700001F45F3FFF9F
+E00000F83E7FFFCF A00000FABEFFFFEF E00000FBBEFFFFEF E00000FBBEFFFFEF
+A00000FBBEFFFFEF A00000FBBEFFFFEF 200000FBBEFFFFEF E00000BBBEFFFFEF
+E00000FBBEFFFFEF 600000BBBEFFFFEF 600000BBBEFFFFEF E00000FBBEFFFFEF
+E000009BBEFFFFEF E000001BBEFFFFEF E000003BBEFFFFEF A000003BBEFFFFEF
+2000003BBEFFFFEF 6000003BBEFFFFEF 0000007BBEFFFFEF 0000007BBEFFFFEF
+8000003BBEFFFFEF A00000FBBEFFFFEF 800000BBBEFFFFEF 81C0003BBEFFFFEF
+82C000BBBEFFFFEF 6148401BBEFFFFEF A1C8427BBEFFFFEF A58C603BBEFFFFEF
+25EE607BBEFFFFEF 266FF0FBBEFFFFEF 0F4FF6FBBEFFFFEF 8F6FFAFBBEFFFFEF
+826E00FBBE00E00F 82AEFFFBBFFEEFFF C42EFFFBBFFEEFFF C42EFFFBBFFEEFFF
+C1AE1E0380F0EFFF E0AF8C7FFC63EFFF E02F807FFC03EFFF EE2F8C7FFC63EFFF
+E9601E0000F00FFF EFFFFFFFFFFFFFFF E77FFFFFFFFFFFFF FFFFFFFFFFFFFFFF>
+def
+
+
+%%EndProlog
+%%Page: 1 1
+
+gsave
+72 72 translate
+0.7069486404833837 0.7069486404833837 scale
+
+%
+% Begin new window
+%
+0 -208 translate
+gsave
+0 917 662 500 ClipToRectangle
+0 0 translate
+gsave
+16 783 766 68 22 0 false 0 0 0 false 0 0 0 false ( Object:) 18 /Helvetica-BoldOblique DrawText
+21 757 132 18 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+30 755 744 62 14 0 false 0 0 0 false 0 0 0 false (demo-unit) 12 /Courier DrawText
+26 894 64 64 image-1 false 0 0 0 false DrawBitmap
+25 835 818 62 22 0 false 0 0 0 false 0 0 0 false (CLARE) 18 /Helvetica-BoldOblique DrawText
+21 897 70 86 0 0 0 0 false 0 0 [] 4 -1 0 0 0 false DrawRectangle
+23 670 112 30 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawRectangle
+16 677 112 30 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+20 673 104 22 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRectangle
+27 669 658 90 14 0 false 0 0 0 false 0 0 0 false (Show Taxonomy) 12 /Courier DrawText
+23 629 112 30 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawRectangle
+16 636 112 30 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+20 632 104 22 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRectangle
+24 628 617 96 14 0 false 0 0 0 false 0 0 0 false (Show Relations) 12 /Courier DrawText
+23 588 112 30 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawRectangle
+16 595 112 30 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+20 591 104 22 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRectangle
+31 587 576 82 14 0 false 0 0 0 false 0 0 0 false (Go Backwards) 12 /Courier DrawText
+23 547 112 30 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawRectangle
+16 554 112 30 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+20 550 104 22 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRectangle
+41 546 535 63 14 0 false 0 0 0 false 0 0 0 false (Run Model) 12 /Courier DrawText
+grestore
+
+gsave
+
+%
+% Begin new window
+%
+190 0 translate
+gsave
+0 917 472 500 ClipToRectangle
+0 0 translate
+gsave
+0 877 20 400 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+0 917 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+10 914 3 907 7 907 7 900 13 900 13 907 17 907 10 914 16 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+0 457 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+10 440 3 447 7 447 7 454 13 454 13 447 17 447 10 440 16 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+0 897 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+10 893 3 886 17 886 10 893 8 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+10 889 3 882 17 882 10 889 8 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+0 477 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+10 461 3 468 17 468 10 461 8 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+10 465 3 472 17 472 10 465 8 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+1 877 18 18 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRectangle
+60 437 372 20 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawRectangle
+20 437 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+23 427 30 420 30 424 37 424 37 430 30 430 30 434 23 427 16 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+452 437 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+469 427 462 420 462 424 455 424 455 430 462 430 462 434 469 427 16 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+40 437 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+44 427 51 434 51 420 44 427 8 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+48 427 55 434 55 420 48 427 8 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+432 437 20 20 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+448 427 441 434 441 420 448 427 8 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+444 427 437 434 437 420 444 427 8 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawPolyline
+60 436 18 18 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRectangle
+grestore
+
+gsave
+
+%
+% Begin new window
+%
+20 0 translate
+gsave
+0 917 452 480 ClipToRectangle
+0 0 translate
+gsave
+grestore
+
+gsave
+
+%
+% Begin new window
+%
+0 0 translate
+gsave
+0 917 1500 3000 ClipToRectangle
+0 0 translate
+gsave
+0 0 0 0 false 0 0 [] 1 276 866 194 866 DrawLine
+0 0 0 0 false 0 0 [] 1 85 705 194 866 DrawLine
+28 897 61 15 5 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRoundtangle
+28 897 4 4 image-2 false 0 0 0 false DrawBitmap
+32 893 884 53 11 0 false 0 0 0 false 0 0 0 false (DEMO-UNIT) 10 /Courier DrawText
+28 638 623 141 20 0 false 0 0 0 false 0 0 0 false (Control Panel) 18 /Courier-Bold DrawText
+28 613 602 42 14 0 false 0 0 0 false 0 0 0 false (PS15  ) 12 /Courier-Bold DrawText
+126.5 603.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawEllipse
+121.5 608.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawEllipse
+121.5 608.5 8.5 8.5 0 360 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawEllipse
+70 613 602 35 14 0 false 0 0 0 false 0 0 0 false (Empty) 12 /Courier DrawText
+227.5 603.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawEllipse
+222.5 608.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawEllipse
+222.5 608.5 8.5 8.5 0 360 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawEllipse
+143 613 602 63 14 0 false 0 0 0 false 0 0 0 false (Not-Empty) 12 /Courier DrawText
+222.5 608.5 5.5 5.5 0 360 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawEllipse
+28 580 569 42 14 0 false 0 0 0 false 0 0 0 false (KV50  ) 12 /Courier-Bold DrawText
+118.5 570.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawEllipse
+113.5 575.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawEllipse
+113.5 575.5 8.5 8.5 0 360 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawEllipse
+70 580 569 27 14 0 false 0 0 0 false 0 0 0 false (Open) 12 /Courier DrawText
+189.5 570.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawEllipse
+184.5 575.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawEllipse
+184.5 575.5 8.5 8.5 0 360 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawEllipse
+135 580 569 33 14 0 false 0 0 0 false 0 0 0 false (Close) 12 /Courier DrawText
+113.5 575.5 5.5 5.5 0 360 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawEllipse
+28 547 536 42 14 0 false 0 0 0 false 0 0 0 false (KV40  ) 12 /Courier-Bold DrawText
+118.5 537.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawEllipse
+113.5 542.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawEllipse
+113.5 542.5 8.5 8.5 0 360 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawEllipse
+70 547 536 27 14 0 false 0 0 0 false 0 0 0 false (Open) 12 /Courier DrawText
+189.5 537.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawEllipse
+184.5 542.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawEllipse
+184.5 542.5 8.5 8.5 0 360 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawEllipse
+135 547 536 33 14 0 false 0 0 0 false 0 0 0 false (Close) 12 /Courier DrawText
+113.5 542.5 5.5 5.5 0 360 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawEllipse
+28 514 503 42 14 0 false 0 0 0 false 0 0 0 false (KV76  ) 12 /Courier-Bold DrawText
+118.5 504.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawEllipse
+113.5 509.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawEllipse
+113.5 509.5 8.5 8.5 0 360 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawEllipse
+70 514 503 27 14 0 false 0 0 0 false 0 0 0 false (Open) 12 /Courier DrawText
+189.5 504.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawEllipse
+184.5 509.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawEllipse
+184.5 509.5 8.5 8.5 0 360 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawEllipse
+135 514 503 33 14 0 false 0 0 0 false 0 0 0 false (Close) 12 /Courier DrawText
+184.5 509.5 5.5 5.5 0 360 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawEllipse
+28 481 470 42 14 0 false 0 0 0 false 0 0 0 false (TV31  ) 12 /Courier-Bold DrawText
+118.5 471.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawEllipse
+113.5 476.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawEllipse
+113.5 476.5 8.5 8.5 0 360 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawEllipse
+70 481 470 27 14 0 false 0 0 0 false 0 0 0 false (Open) 12 /Courier DrawText
+189.5 471.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawEllipse
+184.5 476.5 11.5 11.5 0 360 0 0 0 0 false 0 0 [] 1 0.50 0 0 0 false DrawEllipse
+184.5 476.5 8.5 8.5 0 360 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawEllipse
+135 481 470 33 14 0 false 0 0 0 false 0 0 0 false (Close) 12 /Courier DrawText
+184.5 476.5 5.5 5.5 0 360 0 0 0 0 false 0 0 [] -1 0 0 0 0 false DrawEllipse
+192 760 31 30 5 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRoundtangle
+192 760 28 19 image-3 false 0 0 0 false DrawBitmap
+196 741 732 23 11 0 false 0 0 0 false 0 0 0 false (KV40) 10 /Courier DrawText
+70 760 31 30 5 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRoundtangle
+70 760 28 19 image-4 false 0 0 0 false DrawBitmap
+74 741 732 23 11 0 false 0 0 0 false 0 0 0 false (KV41) 10 /Courier DrawText
+134 759 31 30 5 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRoundtangle
+134 759 28 19 image-5 false 0 0 0 false DrawBitmap
+138 740 731 23 11 0 false 0 0 0 false 0 0 0 false (KV76) 10 /Courier DrawText
+377 649 28 19 image-6 false 0 0 0 false DrawBitmap
+381 630 621 23 11 0 false 0 0 0 false 0 0 0 false (KV46) 10 /Courier DrawText
+317 884 31 30 5 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRoundtangle
+317 884 28 19 image-7 false 0 0 0 false DrawBitmap
+321 865 856 23 11 0 false 0 0 0 false 0 0 0 false (KV50) 10 /Courier DrawText
+36 803 31 30 5 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRoundtangle
+36 803 28 19 image-8 false 0 0 0 false DrawBitmap
+40 784 775 23 11 0 false 0 0 0 false 0 0 0 false (KV75) 10 /Courier DrawText
+294 650 31 30 5 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRoundtangle
+294 650 28 19 image-9 false 0 0 0 false DrawBitmap
+298 631 622 23 11 0 false 0 0 0 false 0 0 0 false (KV45) 10 /Courier DrawText
+70 720 31 30 5 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRoundtangle
+70 720 28 19 image-10 false 0 0 0 false DrawBitmap
+74 701 692 23 11 0 false 0 0 0 false 0 0 0 false (TV31) 10 /Courier DrawText
+293 698 31 15 5 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRoundtangle
+293 698 4 4 image-2 false 0 0 0 false DrawBitmap
+297 694 685 23 11 0 false 0 0 0 false 0 0 0 false (PS15) 10 /Courier DrawText
+274 612 66 15 5 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRoundtangle
+274 612 4 4 image-2 false 0 0 0 false DrawBitmap
+278 608 599 58 11 0 false 0 0 0 false 0 0 0 false (STEAM-TRAP) 10 /Courier DrawText
+286 575 43 15 5 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRoundtangle
+286 575 4 4 image-2 false 0 0 0 false DrawBitmap
+290 571 562 35 11 0 false 0 0 0 false 0 0 0 false (DRAIN1) 10 /Courier DrawText
+313 905 37 15 5 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRoundtangle
+313 905 4 4 image-2 false 0 0 0 false DrawBitmap
+317 901 892 29 11 0 false 0 0 0 false 0 0 0 false (VENT1) 10 /Courier DrawText
+331.0 850.0 5.0 5.0 0 360 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawEllipse
+390.0 670.0 5.0 5.0 0 360 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawEllipse
+307.0 671.0 5.0 5.0 0 360 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawEllipse
+308.0 726.0 5.0 5.0 0 360 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawEllipse
+85.0 787.0 5.0 5.0 0 360 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawEllipse
+149.0 786.0 5.0 5.0 0 360 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawEllipse
+269.0 786.0 5.0 5.0 0 360 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawEllipse
+207.0 786.0 5.0 5.0 0 360 0 0 0 0 false 0 0 [] 1 0 0 0 0 false DrawEllipse
+269 826 91 101 image-11 true 0 0 0 false DrawBitmap
+261 873 31 15 5 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRoundtangle
+261 873 4 4 image-2 false 0 0 0 false DrawBitmap
+265 869 860 23 11 0 false 0 0 0 false 0 0 0 false (TT10) 10 /Courier DrawText
+379 611 24 15 5 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRoundtangle
+379 611 4 4 image-2 false 0 0 0 false DrawBitmap
+383 607 598 16 11 0 false 0 0 0 false 0 0 0 false (CWS) 10 /Courier DrawText
+199 667 19 15 5 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRoundtangle
+199 667 4 4 image-2 false 0 0 0 false DrawBitmap
+203 663 654 11 11 0 false 0 0 0 false 0 0 0 false (CA) 10 /Courier DrawText
+136 669 25 15 5 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRoundtangle
+136 669 4 4 image-2 false 0 0 0 false DrawBitmap
+140 665 656 17 11 0 false 0 0 0 false 0 0 0 false (CWR) 10 /Courier DrawText
+72 667 25 15 5 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRoundtangle
+72 667 4 4 image-2 false 0 0 0 false DrawBitmap
+76 663 654 17 11 0 false 0 0 0 false 0 0 0 false (LPS) 10 /Courier DrawText
+179 873 31 15 5 0 0 0 0 false 0 0 [] 1 1 0 0 0 false DrawRoundtangle
+179 873 4 4 image-2 false 0 0 0 false DrawBitmap
+183 869 860 23 11 0 false 0 0 0 false 0 0 0 false (TC10) 10 /Courier DrawText
+308 726 308 691 307 671 309 635 307 605 307 568 12 0 0 0 0 false 0 0 [] 2 -1 0 0 0 false DrawPolyline
+269 786 207 786 149 786 85 787 8 0 0 0 0 false 0 0 [] 2 -1 0 0 0 false DrawPolyline
+85 787 85 745 85 705 84 660 8 0 0 0 0 false 0 0 [] 2 -1 0 0 0 false DrawPolyline
+149 786 149 744 148 662 6 0 0 0 0 false 0 0 [] 2 -1 0 0 0 false DrawPolyline
+207 786 207 745 208 660 6 0 0 0 0 false 0 0 [] 2 -1 0 0 0 false DrawPolyline
+331 850 332 869 331 898 6 0 0 0 0 false 0 0 [] 2 -1 0 0 0 false DrawPolyline
+307 671 390 670 391 634 391 604 8 0 0 0 0 false 0 0 [] 2 -1 0 0 0 false DrawPolyline
+85 787 51 788 4 0 0 0 0 false 0 0 [] 2 -1 0 0 0 false DrawPolyline
+279 851 71 116 image-12 true 0 0 0 false DrawBitmap
+grestore
+
+grestore
+
+grestore
+
+grestore
+
+grestore
+
+grestore
+
+0 917 472 500 0 0 0 0 false 0 0 [] 2 -1 0 0 0 false DrawRectangle
+grestore
+
+grestore
+
+0 917 662 500 0 0 0 0 false 0 0 [] 2 -1 0 0 0 false DrawRectangle
+grestore
+
+
+showpage
+%%Trailer
+%%DocumentFonts: /Courier-Bold /Courier /Helvetica-BoldOblique 
+%%BoundingBox: 72 220 540 573

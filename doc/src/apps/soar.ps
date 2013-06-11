@@ -1,0 +1,1275 @@
+%!PS-Adobe-2.0
+%%Title: Opal 2
+%%Creator: Make-PS-File -- Garnet Version 1.4
+%%CreationDate: August  24, 1992
+%%For:  originally 72 104 540 689
+%%This file does not use real color
+%%DocumentFonts: (atend)
+%%BoundingBox: 72 334 540 689
+%%Pages: 1
+%%EndComments
+
+
+/DrawLine
+   {    % stack: line-halftone, red, green, blue, color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness
+        %        x2, y2, x1, y1
+        newpath
+          moveto
+          lineto
+          StrokeShape
+   } def
+
+/PolylineDict 15 dict def
+/DrawPolyline
+   {	% stack: x1, y1, ..., xn, yn, n, line-halftone, line-red, line-blue,
+        %        line-green, line-join, line-cap, dash-pattern,
+        %        line-thickness, fill-halftone
+        PolylineDict begin
+        /fill-color-p exch def  /fill-blue exch def  /fill-green exch def
+        /fill-red exch def  /fill-halftone exch def  /lt exch def
+        /dash-pattern exch def  /line-join exch def  /line-cap exch def
+        /line-color-p exch def  /line-blue exch def  /line-green exch def
+        /line-red exch def  /line-halftone exch def  /num-points exch 4 sub def
+	newpath
+	  moveto
+	  num-points -2 0 {pop lineto} for
+	  fill-halftone fill-red fill-green fill-blue fill-color-p FillShape
+          line-halftone line-red line-green line-blue line-color-p
+          line-cap line-join dash-pattern lt StrokeShape
+        end
+   } def
+
+/SetUserScreenDict 22 dict def
+SetUserScreenDict begin
+  /tempctm matrix def
+  /temprot matrix def
+  /tempscale matrix def
+  /ConcatProcs
+   {/proc2 exch cvlit def
+    /proc1 exch cvlit def
+    /newproc proc1 length proc2 length add
+      array def
+    newproc 0 proc1 putinterval
+    newproc proc1 length proc2 putinterval
+    newproc cvx
+   } def
+  /resmatrix matrix def
+  /findresolution
+   { 72 0 resmatrix defaultmatrix dtransform
+     /yres exch def /xres exch def
+     xres dup mul yres dup mul add sqrt
+   } def
+end
+
+/SetUserScreen
+  { SetUserScreenDict begin
+    /spotfunction exch def
+    /cellsize exch def
+    /m tempctm currentmatrix def
+    /rm 0 temprot rotate def
+    /sm cellsize dup tempscale scale def
+    sm rm m m concatmatrix m concatmatrix pop
+    1 0 m dtransform /y1 exch def /x1 exch def
+    /veclength x1 dup mul y1 dup mul add sqrt def
+    /frequency findresolution veclength div def
+    /newscreenangle y1 x1 atan def
+    m 2 get m 1 get mul m 0 get m 3 get mul sub
+     0 gt
+     { { neg } /spotfunction load ConcatProcs
+         /spotfunction exch def
+     } if
+    frequency newscreenangle /spotfunction load setscreen
+  end
+} def
+
+/SetPatternDict 18 dict def
+SetPatternDict begin
+  /bitison
+   { /ybit exch def /xbit exch def
+     /bytevalue bstring ybit bwidth mul xbit 8 idiv
+       add get def
+     /mask 1 7 xbit 8 mod sub bitshift def
+     bytevalue mask and 0 ne
+    } def
+end
+
+/BitPatternSpotFunction
+  { SetPatternDict begin
+     /y exch def /x exch def
+     /xindex x 1 add 2 div bpside mul cvi def
+     /yindex y 1 add 2 div bpside mul cvi def
+     xindex yindex bitison
+      { /onbits onbits 1 add def 1 }
+      { /offbits offbits 1 add def 0 }
+      ifelse
+    end
+  } def
+
+/SetPattern
+  { SetPatternDict begin
+    /cellsz exch def
+    /bwidth exch def
+    /bpside exch def
+    /bstring exch def
+    /onbits 0 def /offbits 0 def
+    cellsz /BitPatternSpotFunction load
+     SetUserScreen
+    {} settransfer
+    offbits offbits onbits add div setgray
+    end
+  } def
+
+/TextDict 19 dict def
+/DrawText
+   {	% stack: left top base-y opal-width height line-halftone fill-p
+        %        fore-red fore-green fore-blue fore-color-p
+        %        back-red back-green back-blue back-color-p
+        %        string size font-name
+        TextDict begin
+        gsave
+	findfont exch scalefont setfont
+	/s exch def
+        /back-color-p exch def  /back-blue exch def  /back-green exch def
+        /back-red exch def  /fore-color-p exch def  /fore-blue exch def
+        /fore-green exch def  /fore-red exch def  /fill-p exch def
+        /line-halftone exch def /height exch def  /opal-width exch def
+        /base-y exch def  /top exch def  /left exch def
+
+        % Calculate distance to add between each character, based on the width
+        % expected by Opal, the width expected by postscript, and the number
+        % of characters to distribute the change over
+	/x-dist opal-width s stringwidth pop sub s length div def
+
+        % Draw background of text if appropriate
+        fill-p
+        { gsave
+            newpath
+            left top opal-width height RectanglePath
+            1 back-red back-green back-blue back-color-p
+            FillShape
+          grestore } if
+
+        % Draw text in the appropriate color
+	newpath
+          fore-color-p
+          { fore-red fore-green fore-blue setrgbcolor }
+          { line-halftone setgray } ifelse
+	  left base-y moveto
+	  x-dist 0 s ashow
+        grestore
+        end
+   } def
+
+/RectanglePath
+   {    % stack: left, top, width, height
+        /h exch def  /w exch def
+	moveto		        % Go to the left,top corner
+	w 0 rlineto	        % top side
+	0 h neg rlineto		% right side
+	w neg 0 rlineto		% bottom side
+	closepath		% left side
+   } def
+
+/RectangleDict 21 dict def
+/DrawRectangle
+   {	% stack: left, top, width, height, line-halftone, line-red, line-green,
+        %        line-blue, line-color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness,
+        %        fill-halftone, fill-red, fill-green, fill-blue, fill-color-p
+        RectangleDict begin
+        /fill-color-p exch def  /fill-blue exch def  /fill-green exch def
+        /fill-red exch def /fill-halftone exch def  /lt exch def
+        /dash-pattern exch def  /line-join exch def  /line-cap exch def
+        /line-color-p exch def  /line-blue exch def  /line-green exch def
+        /line-red exch def  /line-halftone exch def  /height exch def
+        /width exch def  /top exch def  /left exch def  /lt-by-2 lt 2 div def
+        % Draw filling
+        newpath
+          left lt-by-2 add  top lt-by-2 sub   width lt sub  height lt sub
+          RectanglePath
+	  fill-halftone fill-red fill-green fill-blue fill-color-p FillShape
+        % Draw border
+        newpath
+          left top width height RectanglePath
+          line-halftone line-red line-green line-blue line-color-p
+          line-cap line-join dash-pattern lt StrokeShape
+        end
+   } def
+
+/ClipDict 2 dict def
+/ClipToRectangle
+   {    % stack: left, top, width, height
+        ClipDict begin
+	/height exch def  /width exch def
+        newpath
+	  moveto		% Go to the left,top corner
+	  width 0 rlineto	% top side
+	  0 height neg rlineto	% right side
+	  width neg 0 rlineto	% bottom side
+	  closepath		% left side
+	gsave 1 setgray fill grestore
+	clip newpath
+        end
+   } def
+
+/FillShape
+   {	% stack: fill-halftone, red, green, blue, color-p
+        %   Color-p should be true or false - false means ignore the three vals
+        %   Use -1 for fill-halftone to mean NIL, 0 = black, 1 = white
+        %   Use -2 for fill-halftone to indicate there is an arbitrary filling
+        % style on the stack
+        gsave
+        { setrgbcolor fill pop }
+	{ pop pop pop 
+	  dup 0 ge
+	    % if fill-halftone >= 0, then fill the shape with a halftone
+	    { setgray fill}
+            % else, if there is an arbitrary filling style, then fill
+            { -2 eq
+              {SetPattern fill} if
+            } ifelse } ifelse
+        grestore
+   } def
+
+/StrokeShape
+   {	% stack: line-halftone, red, green, blue, color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness
+	% If no line is desired, pass -1 for line-thickness
+        % Halftones: 0 = black, 1 = white
+	dup 0 ge
+	  % if line-thickness >= 0, then draw the outline
+	  {gsave
+	   setlinewidth 0 setdash setlinejoin setlinecap
+             { setrgbcolor pop }
+             { pop pop pop setgray } ifelse
+	   stroke
+	   grestore}
+	  {pop pop pop pop pop pop pop pop pop newpath} ifelse
+   } def
+
+/image-1
+<00 00 00 00>
+def
+
+
+%%EndProlog
+%%Page: 1 1
+
+gsave
+72 72 translate
+0.39 0.39 scale
+
+%
+% Begin new window
+%
+0 -81 translate
+gsave
+0 1662 1200 1500 ClipToRectangle
+0 0 translate
+gsave
+image-1 4 1 7.68
+805 1278 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+361 949 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+438 942 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+424 942 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+410 942 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+396 942 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+382 942 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+368 942 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+354 942 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+431 935 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+417 935 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+308 805 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+294 805 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+371 798 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+357 798 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+343 798 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+329 798 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+315 798 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+301 798 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+378 791 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+364 791 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+350 791 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+336 791 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+322 791 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+308 791 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+294 791 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+217 1477 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+403 935 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+389 935 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+375 935 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+361 935 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+176 814 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+162 814 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+148 814 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+134 814 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+120 814 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+106 814 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+203 1477 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+438 928 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+424 928 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+586 771 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+572 771 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+558 771 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+544 771 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+530 771 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+516 771 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+189 1477 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+410 928 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+396 928 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+382 928 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+368 928 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+649 891 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+635 891 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+621 891 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+175 1477 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+354 928 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+431 921 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+417 921 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+403 921 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+389 921 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+375 921 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+161 1477 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+649 891 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+635 891 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+621 891 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+238 1470 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+716 1006 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+702 1006 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+688 1006 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+224 1470 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+570 1145 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+556 1145 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+542 1145 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+210 1470 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+196 1470 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+182 1470 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+168 1470 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+245 1463 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+231 1463 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+217 1463 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+203 1463 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+189 1463 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+175 1463 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+161 1463 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+238 1456 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+224 1456 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+507 1260 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+493 1260 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+570 1253 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+556 1253 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+361 921 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+438 914 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+424 914 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+410 914 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+396 914 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+382 914 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+368 914 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+354 914 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+210 1456 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+196 1456 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+836 1197 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+133 1039 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+822 1197 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+899 1190 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+885 1190 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+871 1190 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+857 1190 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+843 1190 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+829 1190 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+815 1190 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+892 1183 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+878 1183 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+161 1240 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+147 1240 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+141 1337 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+127 1337 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+295 1579 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+791 1278 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+777 1278 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+763 1278 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+749 1278 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+735 1278 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+812 1271 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+798 1271 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+784 1271 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+770 1271 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+756 1271 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+742 1271 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+728 1271 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+805 1264 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+791 1264 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+777 1264 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+763 1264 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+749 1264 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+735 1264 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+812 1257 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+798 1257 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+784 1257 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+770 1257 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+756 1257 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+742 1257 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+864 1183 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+850 1183 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+836 1183 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+822 1183 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+899 1176 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+885 1176 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+871 1176 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+857 1176 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+843 1176 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+829 1176 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+815 1176 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+892 1169 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+878 1169 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+864 1169 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+850 1169 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+836 1169 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+822 1169 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+899 1162 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+885 1162 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+871 1162 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+857 1162 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+843 1162 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+829 1162 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+815 1162 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+892 1155 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+878 1155 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+864 1155 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+850 1155 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+836 1155 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+822 1155 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+899 1148 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+885 1148 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+871 1148 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+857 1148 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+843 1148 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+829 1148 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+815 1148 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+892 1141 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+878 1141 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+864 1141 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+850 1141 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+836 1141 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+822 1141 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+899 1134 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+885 1134 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+871 1134 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+857 1134 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+843 1134 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+829 1134 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+815 1134 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+892 1127 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+878 1127 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+864 1127 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+850 1127 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+836 1127 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+822 1127 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+899 1120 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+885 1120 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+871 1120 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+857 1120 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+843 1120 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+829 1120 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+815 1120 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+210 1032 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+196 1032 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+182 1032 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+168 1032 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+154 1032 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+140 1032 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+126 1032 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+203 1025 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+189 1025 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+175 1025 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+161 1025 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+147 1025 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+133 1025 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+210 1018 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+196 1018 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+182 1018 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+168 1018 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+154 1018 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+140 1018 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+126 1018 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+203 1011 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+189 1011 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+175 1011 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+161 1011 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+147 1011 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+133 1011 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+210 1004 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+196 1004 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+182 1004 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+168 1004 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+154 1004 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+140 1004 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+126 1004 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+203 997 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+189 997 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+175 997 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+161 997 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+147 997 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+133 997 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+210 990 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+196 990 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+182 990 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+168 990 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+154 990 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+140 990 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+126 990 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+203 983 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+189 983 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+175 983 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+161 983 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+147 983 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+133 983 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+210 976 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+196 976 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+182 976 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+168 976 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+154 976 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+140 976 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+126 976 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+203 969 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+189 969 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+175 969 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+161 969 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+147 969 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+133 969 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+210 962 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+196 962 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+182 962 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+168 962 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+154 962 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+140 962 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+126 962 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+203 955 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+189 955 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+175 955 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+161 955 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+147 955 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+133 955 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+210 948 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+196 948 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+182 948 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+168 948 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+154 948 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+140 948 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+126 948 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+324 1102 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+728 1257 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+310 1102 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+296 1102 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+282 1102 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+268 1102 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+254 1102 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+331 1095 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+317 1095 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+303 1095 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+289 1095 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+275 1095 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+261 1095 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+247 1095 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+324 1088 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+310 1088 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+296 1088 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+282 1088 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+268 1088 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+254 1088 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+331 1081 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+317 1081 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+303 1081 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+289 1081 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+275 1081 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+261 1081 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+247 1081 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+182 1456 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+542 1253 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+528 1253 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+514 1253 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+500 1253 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+577 1246 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+563 1246 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+549 1246 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+535 1246 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+521 1246 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+507 1246 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+493 1246 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+133 1240 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+119 1240 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+196 1233 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+182 1233 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+168 1233 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+154 1233 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+140 1233 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+126 1233 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+203 1226 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+189 1226 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+175 1226 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+161 1226 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+147 1226 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+133 1226 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+113 1337 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+190 1330 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+176 1330 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+162 1330 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+148 1330 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+134 1330 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+120 1330 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+197 1323 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+183 1323 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+169 1323 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+155 1323 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+141 1323 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+127 1323 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+113 1323 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+190 1316 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+176 1316 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+162 1316 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+148 1316 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+134 1316 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+120 1316 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+197 1309 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+183 1309 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+169 1309 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+155 1309 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+141 1309 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+127 1309 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+490 1418 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+476 1418 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+462 1418 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+448 1418 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+525 1411 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+511 1411 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+497 1411 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+483 1411 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+469 1411 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+455 1411 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+441 1411 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+518 1404 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+504 1404 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+490 1404 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+476 1404 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+462 1404 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+448 1404 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+525 1397 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+511 1397 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+497 1397 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+483 1397 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+469 1397 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+455 1397 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+441 1397 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+518 1390 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+504 1390 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+490 1390 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+476 1390 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+462 1390 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+448 1390 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+525 1383 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+511 1383 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+497 1383 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+483 1383 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+168 1456 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+469 1383 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+455 1383 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+441 1383 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+518 1376 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+245 1449 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+504 1376 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+490 1376 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+476 1376 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+462 1376 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+231 1449 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+448 1376 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+217 1449 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+525 1369 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+511 1369 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+203 1449 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+497 1369 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+483 1369 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+469 1369 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+455 1369 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+441 1369 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+189 1449 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+511 1479 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+497 1479 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+483 1479 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+469 1479 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+455 1479 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+441 1479 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+175 1449 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+281 1579 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+161 1449 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+119 1226 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+image-1 4 1 7.68
+113 1309 14 7 0 0 0 0 false 0 0 [] 1 -2 0 0 0 false DrawRectangle
+161 1524 1509 120 20 0 true 0 0 0 false 0 0 0 false (EVERY-SPACE) 18 /Courier-Bold DrawText
+image-1 4 1 7.68
+60 1477 150 1444 150 1510 60 1477 8 0 0 0 0 false 0 0 [] 2 -2 0 0 0 false DrawPolyline
+141 1458 1443 11 20 0 false 0 0 0 false 0 0 0 false ( ) 18 /Courier-Bold DrawText
+281 1654 1639 98 20 0 true 0 0 0 false 0 0 0 false (TOP-SPACE) 18 /Courier-Bold DrawText
+image-1 4 1 7.68
+180 1607 270 1574 270 1640 180 1607 8 0 0 0 0 false 0 0 [] 2 -2 0 0 0 false DrawPolyline
+261 1588 1573 11 20 0 false 0 0 0 false 0 0 0 false ( ) 18 /Courier-Bold DrawText
+0 0 0 0 false 0 0 [4 1] 3 420 1547 270 1571 DrawLine
+421 1552 430 1545 419 1542 6 0 0 0 0 false 0 0 [4 1] 3 0 0 0 0 false DrawPolyline
+441 1554 1539 88 20 0 true 0 0 0 false 0 0 0 false (BROWSING) 18 /Courier-Bold DrawText
+image-1 4 1 7.68
+340 1507 430 1474 430 1540 340 1507 8 0 0 0 0 false 0 0 [] 2 -2 0 0 0 false DrawPolyline
+421 1488 1473 11 20 0 false 0 0 0 false 0 0 0 false ( ) 18 /Courier-Bold DrawText
+0 0 0 0 false 0 0 [4 1] 3 430 1445 430 1471 DrawLine
+435 1445 430 1435 425 1445 6 0 0 0 0 false 0 0 [4 1] 3 0 0 0 0 false DrawPolyline
+441 1444 1429 230 20 0 true 0 0 0 false 0 0 0 false (FIND-APPROPRIATE-HELP) 18 /Courier-Bold DrawText
+image-1 4 1 7.68
+340 1397 430 1364 430 1430 340 1397 8 0 0 0 0 false 0 0 [] 2 -2 0 0 0 false DrawPolyline
+421 1378 1363 11 20 0 false 0 0 0 false 0 0 0 false ( ) 18 /Courier-Bold DrawText
+0 0 0 0 false 0 0 [4 1] 3 112 1375 430 1361 DrawLine
+112 1370 102 1375 112 1380 6 0 0 0 0 false 0 0 [4 1] 3 0 0 0 0 false DrawPolyline
+113 1384 1369 252 20 0 true 0 0 0 false 0 0 0 false (DEFINE-SEARCH-CRITERION) 18 /Courier-Bold DrawText
+image-1 4 1 7.68
+12 1337 102 1304 102 1370 12 1337 8 0 0 0 0 false 0 0 [] 2 -2 0 0 0 false DrawPolyline
+93 1318 1303 11 20 0 false 0 0 0 false 0 0 0 false ( ) 18 /Courier-Bold DrawText
+0 0 0 0 false 0 0 [4 1] 3 118 1294 430 1361 DrawLine
+119 1289 108 1292 117 1299 6 0 0 0 0 false 0 0 [4 1] 3 0 0 0 0 false DrawPolyline
+119 1301 1286 296 20 0 true 0 0 0 false 0 0 0 false (DEFINE-EVALUATION-CRITERION) 18 /Courier-Bold DrawText
+image-1 4 1 7.68
+18 1254 108 1221 108 1287 18 1254 8 0 0 0 0 false 0 0 [] 2 -2 0 0 0 false DrawPolyline
+99 1235 1220 11 20 0 false 0 0 0 false 0 0 0 false ( ) 18 /Courier-Bold DrawText
+0 0 0 0 false 0 0 [4 1] 3 475 1319 430 1361 DrawLine
+478 1323 482 1312 472 1315 6 0 0 0 0 false 0 0 [4 1] 3 0 0 0 0 false DrawPolyline
+493 1321 1306 163 20 0 true 0 0 0 false 0 0 0 false (SEARCH-FOR-HELP) 18 /Courier-Bold DrawText
+image-1 4 1 7.68
+392 1274 482 1241 482 1307 392 1274 8 0 0 0 0 false 0 0 [] 2 -2 0 0 0 false DrawPolyline
+473 1255 1240 11 20 0 false 0 0 0 false 0 0 0 false ( ) 18 /Courier-Bold DrawText
+0 0 0 0 false 0 0 [4 1] 3 245 1150 482 1238 DrawLine
+247 1145 236 1147 243 1155 6 0 0 0 0 false 0 0 [4 1] 3 0 0 0 0 false DrawPolyline
+247 1156 1141 153 20 0 true 0 0 0 false 0 0 0 false (FIND-CRITERION) 18 /Courier-Bold DrawText
+image-1 4 1 7.68
+146 1109 236 1076 236 1142 146 1109 8 0 0 0 0 false 0 0 [] 2 -2 0 0 0 false DrawPolyline
+227 1090 1075 11 20 0 false 0 0 0 false 0 0 0 false ( ) 18 /Courier-Bold DrawText
+0 0 0 0 false 0 0 [4 1] 3 124 1018 236 1073 DrawLine
+126 1014 115 1014 122 1022 6 0 0 0 0 false 0 0 [4 1] 3 0 0 0 0 false DrawPolyline
+0 0 0 0 false 0 0 [4 1] 3 124 1018 236 1073 DrawLine
+126 1014 115 1014 122 1022 6 0 0 0 0 false 0 0 [4 1] 3 0 0 0 0 false DrawPolyline
+0 0 0 0 false 0 0 [4 1] 3 124 1018 236 1073 DrawLine
+126 1014 115 1014 122 1022 6 0 0 0 0 false 0 0 [4 1] 3 0 0 0 0 false DrawPolyline
+0 0 0 0 false 0 0 [4 1] 3 124 1018 236 1073 DrawLine
+126 1014 115 1014 122 1022 6 0 0 0 0 false 0 0 [4 1] 3 0 0 0 0 false DrawPolyline
+126 1023 1008 265 20 0 true 0 0 0 false 0 0 0 false (EVALUATE-ITEMS-IN-WINDOW) 18 /Courier-Bold DrawText
+image-1 4 1 7.68
+25 976 115 943 115 1009 25 976 8 0 0 0 0 false 0 0 [] 2 -2 0 0 0 false DrawPolyline
+106 957 942 11 20 0 false 0 0 0 false 0 0 0 false ( ) 18 /Courier-Bold DrawText
+0 0 0 0 false 0 0 [4 1] 3 335 987 236 1073 DrawLine
+338 991 343 980 332 983 6 0 0 0 0 false 0 0 [4 1] 3 0 0 0 0 false DrawPolyline
+0 0 0 0 false 0 0 [4 1] 3 351 986 717 1249 DrawLine
+354 982 343 980 348 990 6 0 0 0 0 false 0 0 [4 1] 3 0 0 0 0 false DrawPolyline
+354 989 974 408 20 0 true 0 0 0 false 0 0 0 false (MAC-METHODS-FOR-CHANGE-CURRENT-WINDOW) 18 /Courier-Bold DrawText
+image-1 4 1 7.68
+253 942 343 909 343 975 253 942 8 0 0 0 0 false 0 0 [] 2 -2 0 0 0 false DrawPolyline
+334 923 908 11 20 0 false 0 0 0 false 0 0 0 false ( ) 18 /Courier-Bold DrawText
+0 0 0 0 false 0 0 [4 1] 3 291 863 343 906 DrawLine
+294 859 283 857 288 867 6 0 0 0 0 false 0 0 [4 1] 3 0 0 0 0 false DrawPolyline
+294 866 851 219 20 0 true 0 0 0 false 0 0 0 false (MAC-METHOD-OF-SCROLL) 18 /Courier-Bold DrawText
+image-1 4 1 7.68
+193 819 283 786 283 852 193 819 8 0 0 0 0 false 0 0 [] 2 -2 0 0 0 false DrawPolyline
+274 800 785 11 20 0 false 0 0 0 false 0 0 0 false ( ) 18 /Courier-Bold DrawText
+0 0 0 0 false 0 0 [4 1] 3 522 1216 482 1238 DrawLine
+524 1220 531 1211 520 1212 6 0 0 0 0 false 0 0 [4 1] 3 0 0 0 0 false DrawPolyline
+542 1220 1205 297 20 0 true 0 0 0 false 0 0 0 false (MAC-METHODS-FOR-ACCESS-ITEM) 18 /Courier-Bold DrawText
+image-1 4 1 7.68
+441 1173 531 1140 531 1206 441 1173 8 0 0 0 0 false 0 0 [] 2 -2 0 0 0 false DrawPolyline
+522 1154 1139 11 20 0 false 0 0 0 false 0 0 0 false ( ) 18 /Courier-Bold DrawText
+0 0 0 0 false 0 0 [4 1] 3 668 1076 531 1137 DrawLine
+670 1081 677 1072 666 1071 6 0 0 0 0 false 0 0 [4 1] 3 0 0 0 0 false DrawPolyline
+688 1081 1066 297 20 0 true 0 0 0 false 0 0 0 false (MAC-METHOD-OF-CLICK-ON-ITEM) 18 /Courier-Bold DrawText
+image-1 4 1 7.68
+587 1034 677 1001 677 1067 587 1034 8 0 0 0 0 false 0 0 [] 2 -2 0 0 0 false DrawPolyline
+668 1015 1000 11 20 0 false 0 0 0 false 0 0 0 false ( ) 18 /Courier-Bold DrawText
+0 0 0 0 false 0 0 [4 1] 3 105 881 343 906 DrawLine
+106 876 95 880 104 886 6 0 0 0 0 false 0 0 [4 1] 3 0 0 0 0 false DrawPolyline
+106 889 874 198 20 0 true 0 0 0 false 0 0 0 false (MAC-METHOD-OF-DRAG) 18 /Courier-Bold DrawText
+image-1 4 1 7.68
+5 842 95 809 95 875 5 842 8 0 0 0 0 false 0 0 [] 2 -2 0 0 0 false DrawPolyline
+86 823 808 11 20 0 false 0 0 0 false 0 0 0 false ( ) 18 /Courier-Bold DrawText
+0 0 0 0 false 0 0 [4 1] 3 496 841 343 906 DrawLine
+498 846 505 837 494 836 6 0 0 0 0 false 0 0 [4 1] 3 0 0 0 0 false DrawPolyline
+516 846 831 197 20 0 true 0 0 0 false 0 0 0 false (MAC-METHOD-OF-PAGE) 18 /Courier-Bold DrawText
+image-1 4 1 7.68
+415 799 505 766 505 832 415 799 8 0 0 0 0 false 0 0 [] 2 -2 0 0 0 false DrawPolyline
+496 780 765 11 20 0 false 0 0 0 false 0 0 0 false ( ) 18 /Courier-Bold DrawText
+0 0 0 0 false 0 0 [4 1] 3 707 1324 430 1361 DrawLine
+708 1329 717 1323 706 1319 6 0 0 0 0 false 0 0 [4 1] 3 0 0 0 0 false DrawPolyline
+728 1332 1317 197 20 0 true 0 0 0 false 0 0 0 false (EVALUATE-HELP-TEXT) 18 /Courier-Bold DrawText
+image-1 4 1 7.68
+627 1285 717 1252 717 1318 627 1285 8 0 0 0 0 false 0 0 [] 2 -2 0 0 0 false DrawPolyline
+708 1266 1251 11 20 0 false 0 0 0 false 0 0 0 false ( ) 18 /Courier-Bold DrawText
+0 0 0 0 false 0 0 [4 1] 3 796 1192 717 1249 DrawLine
+799 1196 804 1186 793 1188 6 0 0 0 0 false 0 0 [4 1] 3 0 0 0 0 false DrawPolyline
+815 1195 1180 265 20 0 true 0 0 0 false 0 0 0 false (EVALUATE-PROSE-IN-WINDOW) 18 /Courier-Bold DrawText
+image-1 4 1 7.68
+714 1148 804 1115 804 1181 714 1148 8 0 0 0 0 false 0 0 [] 2 -2 0 0 0 false DrawPolyline
+795 1129 1114 11 20 0 false 0 0 0 false 0 0 0 false ( ) 18 /Courier-Bold DrawText
+0 0 0 0 false 0 0 [4 1] 3 118 1200 482 1238 DrawLine
+119 1195 108 1199 117 1205 6 0 0 0 0 false 0 0 [4 1] 3 0 0 0 0 false DrawPolyline
+119 1208 1193 97 20 0 true 0 0 0 false 0 0 0 false (SELECTION) 18 /Courier-Bold DrawText
+image-1 4 1 7.68
+18 1161 108 1128 108 1194 18 1161 8 0 0 0 0 false 0 0 [] 2 -2 0 0 0 false DrawPolyline
+99 1142 1127 11 20 0 false 0 0 0 false 0 0 0 false ( ) 18 /Courier-Bold DrawText
+0 0 0 0 false 0 0 [4 1] 3 606 966 531 1137 DrawLine
+611 968 610 957 601 964 6 0 0 0 0 false 0 0 [4 1] 3 0 0 0 0 false DrawPolyline
+621 966 951 329 20 0 true 0 0 0 false 0 0 0 false (MAC-METHOD-OF-CLICK-PREV-INDEX) 18 /Courier-Bold DrawText
+image-1 4 1 7.68
+520 919 610 886 610 952 520 919 8 0 0 0 0 false 0 0 [] 2 -2 0 0 0 false DrawPolyline
+601 900 885 11 20 0 false 0 0 0 false 0 0 0 false ( ) 18 /Courier-Bold DrawText
+0 0 0 0 false 0 0 [4 1] 3 606 966 531 1137 DrawLine
+611 968 610 957 601 964 6 0 0 0 0 false 0 0 [4 1] 3 0 0 0 0 false DrawPolyline
+621 966 951 374 20 0 true 0 0 0 false 0 0 0 false (MAC-METHOD-OF-DOUBLE-CLICK-ON-ITEM) 18 /Courier-Bold DrawText
+image-1 4 1 7.68
+520 919 610 886 610 952 520 919 8 0 0 0 0 false 0 0 [] 2 -2 0 0 0 false DrawPolyline
+601 900 885 11 20 0 false 0 0 0 false 0 0 0 false ( ) 18 /Courier-Bold DrawText
+grestore
+
+grestore
+
+grestore
+
+
+showpage
+%%Trailer
+%%DocumentFonts: /Courier-Bold 
+%%BoundingBox: 72 104 540 689

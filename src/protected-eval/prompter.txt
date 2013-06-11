@@ -1,0 +1,331 @@
+******************************************************************************
+***
+***  The prompter and protected-eval module consists of the following files:
+***  (FMG updated to reflect new reality of my changes.)
+
+abstract-errors.lisp                   protected-eval-compiler.lisp
+error.lisp                             protected-eval-loader.lisp
+garnet-errors.lisp                     protected-eval.lisp
+prompter.lisp                          protected-process.lisp
+
+(in kr directory)
+kr-doc.lisp 
+
+(in gadgets directory)
+scrolling-unlabeled-box-loader.lisp
+scrolling-unlabeled-box.lisp
+
+The documentation for the system is in this file (prompter.txt) and in the
+comments in the lisp files.
+
+******************************************************************************
+
+$Id$
+
+Date: Thu, 25 Jun 92 12:55:51 PDT
+From: "Russell G. Almond" <almond@statsci.com>
+To: garnet-users@cs.cmu.edu
+Subject: Error Handling
+Status: R
+
+I just sent some code off to CMU (which I hope should appear shortly
+in the contrib library) which uses Garnet gadgets to do lisp error
+handling.
+
+The problem is as follows:  Suppose you have an application in which
+you wish to allow the user to read and eval an arbitrary lisp
+expression, and that expression generates an error.  Who should handle
+the error?  Throwing the user into the Lisp debugger, which is the
+default behavior, is almost certainly unacceptable for a user
+application.  Therefore, it is necessary to create contexts in which
+expressions can be evaluated or read (remember reading can cause an
+error) and in which the error is handled by some convenient mechanism.
+
+Ignore-errors, the default common lisp mechanism is a little bit
+blunt.  You probably at least want to report the error, and if the
+application is written with a garnet user interface, this should be
+done in the garnet style:  I.e., pop up an error window with an error
+message.  
+
+The way to do this (without getting into horrible messy details of the
+Common Lisp Condition system, which are far too likely to change
+anyway) is to create a specific garnet error handler and evaluate in a
+context where that error handler works.
+
+In the contributed software, I've created two error handlers:
+garnet-error-handler and garnet-user-error-handler.  The garnet error
+handler, puts up a gadget with two or three buttons "Abort", "Debug"
+and "Continue."  "Abort" returns the user to a restart named abort
+(more about that later), "Debug" throws the user into the debugger.
+The "Continue" button only appears if the error is continuable, and
+continues from the error.  The garnet-user-error-handler is the same
+except it doesn't allow the "Debug" option.  Thus user level code can
+generate errors with the normal "error" and "cerror" commands and
+garnet will handle them in an approximately reasonable way.
+
+
+About restarts (in particular abort).  If the user wants to abandon
+the computation, the program needs to know where to return to.  (This
+is usually the routine in which the protected evaluation first started,
+but the program needs to be told.)  The way to do this is to set up
+a restart named "abort" in the appropriate place, which performs the
+appropriate abort clean-up, usually to return from a given
+selection-function without performing the action.  If there is no
+restart named "abort" the error handler tries to throw the user back
+to the lisp-top-level, or restart the garnet-event-loop.  This is
+handled through a routine called do-abort.  As I've only tested this
+on Allegro CL 4.1, users of other Lisps are going to need to hack that
+function to make it behave properly.  
+
+I've provided an number of functions and macros in the distribution to
+try and hide the details of the Condition System.  I've currently put
+all of the stuff in the garnet-gadget package, but that may be changed
+by the library maintainers.
+
+PROTECTED-EVAL-ERROR-GADGET [gg:query-gadget]
+	--- special error gadget which displays the lisp errors.
+
+GARNET-ERROR-HANDLER (context condition) [Function]
+GARNET-USER-ERROR-HANDLER (context condition) [Function]
+  --- These are the error handlers and are meant to be used with 
+      handler-bind or some similar mechanism.  Note that handlers
+      usually take one arg, and that these take an extra arg, the
+      <context>. <context> is meant to be a string describing the a
+      user meaningful context in which the error happened:  
+
+      (handler-bind ((frobbing-error #,(lambda (condition)
+				   (garnet-error-handler "Frobnacating"
+							 condition))))
+          (frob widget))
+
+WITH-GARNET-ERROR-HANDLING (context &body forms)  [Macro]
+WITH-GARNET-USER-ERROR-HANDLING (context &body forms) [Macro]
+ --- These macros execute forms which binding the error handler to the
+     appropriate garnet error handler.  <context> should be a litteral 
+     string describing the context of the evaluation in a what
+     meaningful to the user.  Try:
+
+     (with-garnet-error-handling "Running" (/ 0 0))
+
+WITH-ABORT (&body forms) [Macro]
+ --- This macro creates an abort restart which will abandon the
+     computation of forms and return the two values nil and :abort.
+     It is thus a simple way of setting up an abort restart.
+
+The following two functions are probably the most useful.  They are
+meant to eval and read user expressions.  Thus you can use them to set
+up a protected read-eval-print loop.
+
+GARNET-PROTECTED-EVAL (arg &key (default-value nil) (allow-debug t)
+                                (local-abort nil) (abort-val nil))  [Function]
+ --- This is a function which behaves very much like eval, except that
+     while it evaluates its arg, the error handler is bound to the
+     appropriate garnet error handler (with context "Evaluating
+     <arg>").  Note that as garnet-protected-eval is a function <arg>
+     is evaluated twice, once during the function call (and hence
+     outside of the scope of the garnet-error-handler) and once in the
+     scope of the function (and hence in the context of the
+     garnet-error-handler).  This is usually what you want (i.e.,
+     first eval fetches the expression from the gadget, the second
+     evaluates it.)
+     
+     :default-value (if supplied) allows a "continue" which returns
+     this value.
+
+     :allow-debug (default t) if nil uses the
+     garnet-user-error-handler instead (no "Debug")
+
+     :local-abort (if t) sets up a local abort.  the local abort
+     return two values <abort-val> (default nil) and :abort.
+
+
+GARNET-PROTECTED-READ-FROM-STRING (string &key start end read-package
+                                               read-bindings
+					       default-value
+					       allow-debug local-abort
+					       abort-val)             [Function]
+  --- Like read-from-string (without the optional args) except read is
+      done in a context where the garnet user error handler is active.
+     
+      :start and :end allow substring selection.
+      
+      :read-package (default (find-package :user)) controls the
+      package newly read symbols are interred in.  NOTE:  the default
+      is (find-package :user), not *package*.  This is because with
+      multiprocessing and whatnot, I don't want to make any rash
+      assumptions about the binding of *package*, thus I do it
+      explicitly.  
+
+      :read-bindings (default nil)  This expression should be a list
+      of the type ((<var1> <exp1>) (<var2> <exp2>)) like the variable
+      bindings in a let statement.  These are bindings are put in
+      place while the read is being done.  This allows you to bind
+      readtable or some other special variable during the course of
+      the read.
+
+      :default-value (default nil) As for garnet-protected-eval,
+      except the continue, return nil (or other value) is always
+      present.
+
+      :allow-debug (default nil) As before, except defaults to nil
+
+      :local-abort (default nil), :abort-val (default nil) as before.
+
+
+
+There are a couple of known bugs with this system, which I hope
+somebody will be able to help me out with:
+
+(1)  Sometimes, I get an error:
+"Attempt to throw to the non-existent tag
+INTERACTORS::EXIT-WAIT-INTERACTION-COMPLETE"
+This is a problem somewhere in the Garnet internals that I don't fully
+understand.
+
+(2) The gadget is supposed to run at an extra high recursive
+error-priority.  This doesn't seem to work.  This means the gadget
+will not lock out other gadgets running at the error priority level.
+
+(3) If the first time the gadget is drawn, it doesn't have a
+"continue" button, the buttons will be too narrow.  Functionality
+works, but it is esthetically un-appealing.
+
+(4) Lisps are not guarenteed to have an "abort" restart at the top
+level.  What happens if you press <abort> and there is no abort
+restart is system dependent.  I've added a function in do-abort which
+handles the situaltion gracefully in Allegro CL 4.1.  Users of other
+CL's will need to figure this out for themselves.
+
+Needless to say, this code requires a fair amount of compliance to the
+draft standard on the condition system.  Thus it will probably not work
+in a lot of older lisps.
+
+Good Luck, and let me know what you think.
+
+
+			Russell Almond			   
+Statistical Sciences, Inc.		U. Washington
+1700 Westlake Ave., N Suite 500		Statistics, GN-22
+Seattle, WA  98109			Seattle, WA  98195
+(206) 283-8802				
+almond@statsci.com			almond@stat.washington.edu
+
+
+
+
+
+Date: Thu, 25 Jun 92 14:03:30 PDT
+From: "Russell G. Almond" <almond@statsci.com>
+To: garnet-users@CS.CMU.EDU
+Subject: Prompter Gadget
+Status: R
+
+As a sort of an application of the error handling stuff (in fact, why
+I got into it in the first place), I've created and just submitted to
+the contrib library a prompter gadget which works sort of like the
+existing query gadget, except that it reads an arbitrary lisp
+expression as its response, and it even allows the user to eval the
+expression first.
+
+There are three files that go with the prompter stuff:
+
+protected-eval.lisp --- (See my previous message)  this does the error
+    handling inside the prompter gadget
+scrolling-unlabeled-box.lisp --- The obvious hack of
+     scrolling-labeled-box to remove the label.
+prompter.lisp --- The prompter stuff.
+
+It defines a prompter-gadget (which is a kind of query-gadget).  It
+operates the same way, except:
+
+(1) the appropriate functions are DISPLAY-PROMPT and
+DISPLAY-PROMPT-AND-WAIT 
+
+(2) DISPLAY-PROMPT-AND-WAIT returns two values:  the value typed in
+and the button pressed to end the dialog (should be checked to see if
+it is :cancel or :abort)
+
+(3) The :selection-function takes three args, the gadget, the value
+read and the button pressed.
+
+There are a number of customizeable slots to control both the obvious
+garnet things and special features such as the "EVAL" button and the
+binding of *package* and other reader variables during the read.
+
+
+I'm currently having a problem with it generating:
+
+WARNING: Interaction-Complete called but not inside Wait-Interaction-Complete
+
+error.  (If you generate an error during the execution of this dialog
+in the modal mode, it should put two wait-interaction-complete
+requests on the stack, but my LISP only seems to see one).  If anybody
+can figure out what is going on here, I would be grateful.
+
+Thanks,
+
+
+			Russell Almond			   
+Statistical Sciences, Inc.		U. Washington
+1700 Westlake Ave., N Suite 500		Statistics, GN-22
+Seattle, WA  98109			Seattle, WA  98195
+(206) 283-8802				
+almond@statsci.com			almond@stat.washington.edu
+
+
+
+
+Date: Thu, 1 Dec 94 13:01 PST
+From: "Russell G. Almond" <almond@statsci.com>
+To: garnet-bugs@cs.cmu.edu
+Subject: New prompter stuff
+Status: RO
+
+I've made some changes to the prompter stuff to adapt it to Garnet
+3.0a (mostly these are just correcting in-package statements).  I've
+also added a new file protected-process which is a hack to the main
+event loop to make all garnet interactions protected.
+
+I'm not sure that the prompter-compiler file works properly.  It
+should work alright if you are in garnet-prepare-compile mode or if
+you have already compiled them once, but otherwise it fails.
+
+I'll send them as following files.
+
+	--Russell
+
+
+
+Date: Thu, 1 Dec 94 13:31 PST
+From: "Russell G. Almond" <almond@statsci.com>
+To: garnet-users@cs.cmu.edu
+Subject: Error handling in the Main Event Loop
+Status: RO
+
+For a long time, I've been bothered by the issue of how to avoid
+throwing the user into the Lisp debugger from a Garnet UI.  Presuming
+that the UI is complete, the user need never know that the system was
+built in Lisp.  
+
+To that end, I built the protected-eval code (which is in
+contrib/prompter in the 3.0 alpha release) and produced some
+protected-evaluation macros which would execute expressions in an
+environment where Lisp would use a graphic pop-up error handler
+instead of throwing the user rudely into the Lisp debugger.  
+
+This didn't work very consistently, because very often the errors
+would occur when Garnet was trying to redraw a section of window which
+was somehow incorrect.  Thus, sometimes I'd get thrown into the
+debugger anyway.
+
+The solution is to put the (gg:with-protected-errors) call just around
+the main event loop.  I've done this for Allegro CL 4.2, and will
+put the code in the file contrib/prompter/protected-process.lisp for
+the 3.0 final distribution.  If anybody wants to try hacking the main
+event loop for other Lisp versions, please do.  I don't have access to
+them for testing.
+
+			Russell Almond			   
+StatSci (a division of MathSoft)
+1700 Westlake Ave., N Suite 500, Seattle, WA  98109		
+(206) 283-8802 x234 FAX:  (206) 283-6310  Email: almond@statsci.com	

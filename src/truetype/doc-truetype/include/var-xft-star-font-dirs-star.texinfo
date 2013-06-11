@@ -1,0 +1,5 @@
+@vindex @earmuffs{font-dirs}
+@anchor{Variable *font-dirs*}
+@defvr {Variable} {@earmuffs{font-dirs}}
+List of directories, which contain TrueType fonts.
+@end defvr

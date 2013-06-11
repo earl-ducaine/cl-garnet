@@ -1,0 +1,953 @@
+%!PS-Adobe-2.0
+%%Title: Electronic Encyclopedia Exploratorium
+%%Creator: Make-PS-File -- Garnet Version 2.1
+%%CreationDate: Sep 24, 1992, 11:03 AM
+%%For: 
+%%This file uses real color
+%%DocumentFonts: (atend)
+%%BoundingBox: 72 221 540 572
+%%Pages: 1
+%%EndComments
+
+
+/PolylineDict 15 dict def
+/DrawPolyline
+   {	% stack: x1, y1, ..., xn, yn, n, line-halftone, line-red, line-blue,
+        %        line-green, line-join, line-cap, dash-pattern,
+        %        line-thickness, fill-halftone
+        PolylineDict begin
+        /fill-color-p exch def  /fill-blue exch def  /fill-green exch def
+        /fill-red exch def  /fill-halftone exch def  /thickness exch def
+        /dash-pattern exch def  /line-join exch def  /line-cap exch def
+        /line-color-p exch def  /line-blue exch def  /line-green exch def
+        /line-red exch def  /line-halftone exch def  /num-points exch 4 sub def
+	newpath
+	  moveto
+	  num-points -2 0 {pop lineto} for
+	  fill-halftone fill-red fill-green fill-blue fill-color-p FillShape
+          line-halftone line-red line-green line-blue line-color-p
+          line-cap line-join dash-pattern thickness StrokeShape
+        end
+   } def
+
+/ArcDict 23 dict def
+ArcDict /mtrx matrix put
+/DrawArc
+   {
+        ArcDict begin
+        /fill-color-p exch def  /fill-blue exch def  /fill-green exch def
+        /fill-red exch def  /fill-halftone exch def  /thickness exch def
+        /dash-pattern exch def  /line-join exch def  /line-cap exch def
+        /line-color-p exch def  /line-blue exch def  /line-green exch def
+        /line-red exch def  /line-halftone exch def  /endangle exch def
+        /startangle exch def  /yrad exch def  /xrad exch def  /y exch def
+        /x exch def  /savematrix mtrx currentmatrix def
+        /thickness-by-2 thickness 2 div def
+        newpath
+	  x y translate
+          % Fill the arc
+          gsave
+	    xrad thickness-by-2 sub  yrad thickness-by-2 sub scale
+            newpath
+            0 0 moveto  0 0 1 startangle endangle arc  closepath
+            fill-halftone fill-red fill-green fill-blue fill-color-p FillShape
+          grestore
+          % Draw the border
+	  xrad yrad scale
+          newpath
+            0 0 1 startangle endangle arc
+            savematrix setmatrix
+            line-halftone line-red line-green line-blue line-color-p
+            line-cap line-join dash-pattern thickness StrokeShape
+        end
+   } def
+
+/DrawLine
+   {    % stack: line-halftone, red, green, blue, color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness
+        %        x2, y2, x1, y1
+        newpath
+          moveto
+          lineto
+          StrokeShape
+   } def
+
+/EllipseDict 23 dict def
+EllipseDict /mtrx matrix put
+/DrawEllipse
+   {    EllipseDict begin
+        /fill-color-p exch def  /fill-blue exch def  /fill-green exch def
+        /fill-red exch def  /fill-halftone exch def  /thickness exch def
+        /dash-pattern exch def  /line-join exch def  /line-cap exch def
+        /line-color-p exch def  /line-blue exch def  /line-green exch def
+        /line-red exch def  /line-halftone exch def  /endangle exch def
+        /startangle exch def  /yrad exch def  /xrad exch def  /y exch def
+        /x exch def  /savematrix mtrx currentmatrix def
+        /thickness-by-2 thickness 2 div def
+        % Draw the filling
+        newpath
+	  x y translate
+          gsave
+	    xrad thickness-by-2 sub  yrad thickness-by-2 sub scale
+            0 0 1 startangle endangle arc
+            savematrix setmatrix
+	    fill-halftone fill-red fill-green fill-blue fill-color-p FillShape
+          grestore
+        % Draw the border
+        newpath
+          xrad yrad scale
+          0 0 1 startangle endangle arc
+	  savematrix setmatrix
+          line-halftone line-red line-green line-blue line-color-p
+          line-cap line-join dash-pattern thickness StrokeShape
+        end
+   } def
+
+/TextDict 19 dict def
+/DrawText
+   {	% stack: left top base-y opal-width height line-halftone fill-p
+        %        fore-red fore-green fore-blue fore-color-p
+        %        back-red back-green back-blue back-color-p
+        %        string size font-name
+        TextDict begin
+        gsave
+	findfont exch scalefont setfont
+	/s exch def
+        /back-color-p exch def  /back-blue exch def  /back-green exch def
+        /back-red exch def  /fore-color-p exch def  /fore-blue exch def
+        /fore-green exch def  /fore-red exch def  /fill-p exch def
+        /line-halftone exch def /height exch def  /opal-width exch def
+        /base-y exch def  /top exch def  /left exch def
+
+        % Calculate distance to add between each character, based on the width
+        % expected by Opal, the width expected by postscript, and the number
+        % of characters to distribute the change over
+	/x-dist opal-width s stringwidth pop sub s length div def
+
+        % Draw background of text if appropriate
+        fill-p
+        { gsave
+            newpath
+            left top opal-width height RectanglePath
+            1 back-red back-green back-blue back-color-p
+            FillShape
+          grestore } if
+
+        % Draw text in the appropriate color
+	newpath
+          fore-color-p
+          { fore-red fore-green fore-blue setrgbcolor }
+          { line-halftone setgray } ifelse
+	  left base-y moveto
+	  x-dist 0 s ashow
+        grestore
+        end
+   } def
+
+/BitmapDict 9 dict def
+/DrawBitmap
+   {    % stack: left top width height pattern transparent-p
+        %        red green blue color-p
+        BitmapDict begin
+        /picstr 256 string def
+	/color-p exch def  /blue exch def  /green exch def /red exch def
+        /transparent-p exch def
+        /pattern exch def  /height exch def  /width exch def
+        gsave
+          translate
+          width height scale
+	  color-p {red green blue setrgbcolor} if
+          transparent-p
+	  % The case where the background is not drawn
+	  { width height false
+            [ width 0 0 height 0 height ]
+            {pattern} imagemask }
+	  % The case where the background is drawn
+          { width height 1
+            [ width 0 0 height 0 height ]
+            {pattern} image } ifelse
+        grestore
+        end
+   } def
+
+/RectanglePath
+   {    % stack: left, top, width, height
+        /h exch def  /w exch def
+	moveto		        % Go to the left,top corner
+	w 0 rlineto	        % top side
+	0 h neg rlineto		% right side
+	w neg 0 rlineto		% bottom side
+	closepath		% left side
+   } def
+
+/RectangleDict 21 dict def
+/DrawRectangle
+   {	% stack: left, top, width, height, line-halftone, line-red, line-green,
+        %        line-blue, line-color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness,
+        %        fill-halftone, fill-red, fill-green, fill-blue, fill-color-p
+        RectangleDict begin
+        /fill-color-p exch def  /fill-blue exch def  /fill-green exch def
+        /fill-red exch def /fill-halftone exch def  /thickness exch def
+        /dash-pattern exch def  /line-join exch def  /line-cap exch def
+        /line-color-p exch def  /line-blue exch def  /line-green exch def
+        /line-red exch def  /line-halftone exch def  /height exch def
+        /width exch def  /top exch def  /left exch def
+        /thickness-by-2 thickness 2 div def
+        % Draw filling
+        newpath
+          left thickness-by-2 add  top thickness-by-2 sub
+          width thickness sub  height thickness sub
+          RectanglePath
+	  fill-halftone fill-red fill-green fill-blue fill-color-p FillShape
+        % Draw border
+        newpath
+          left top width height RectanglePath
+          line-halftone line-red line-green line-blue line-color-p
+          line-cap line-join dash-pattern thickness StrokeShape
+        end
+   } def
+
+/ClipDict 2 dict def
+/ClipToRectangle
+   {    % stack: left, top, width, height
+        ClipDict begin
+	/height exch def  /width exch def
+        newpath
+	  moveto		% Go to the left,top corner
+	  width 0 rlineto	% top side
+	  0 height neg rlineto	% right side
+	  width neg 0 rlineto	% bottom side
+	  closepath		% left side
+	gsave 1 setgray fill grestore
+	clip newpath
+        end
+   } def
+
+/FillShape
+   {	% stack: fill-halftone, red, green, blue, color-p
+        %   Color-p should be true or false - false means ignore the three vals
+        %   Use -1 for fill-halftone to mean NIL, 0 = black, 1 = white
+        %   Use -2 for fill-halftone to indicate there is an arbitrary filling
+        % style on the stack
+        gsave
+        { setrgbcolor fill pop }
+	{ pop pop pop 
+	  dup 0 ge
+	    % if fill-halftone >= 0, then fill the shape with a halftone
+	    { setgray fill}
+            % else, if there is an arbitrary filling style, then fill
+            { -2 eq
+              {SetPattern fill} if
+            } ifelse } ifelse
+        grestore
+   } def
+
+/StrokeShape
+   {	% stack: line-halftone, red, green, blue, color-p,
+        %        line-cap, line-join, dash-pattern, line-thickness
+	% If no line is desired, pass -1 for line-thickness
+        % Halftones: 0 = black, 1 = white
+	dup 0 ge
+	  % if line-thickness >= 0, then draw the outline
+	  {gsave
+	   setlinewidth 0 setdash setlinejoin setlinecap
+             { setrgbcolor pop }
+             { pop pop pop setgray } ifelse
+	   stroke
+	   grestore}
+	  {pop pop pop pop pop pop pop pop pop newpath} ifelse
+   } def
+
+/image-36
+<0001 7ffd 4fe5 47c5 638d 711d 783d 7c7d 783d 711d 638d 47c5 4fe5 7ffd 0001>
+def
+
+/image-35
+<00000f 7ffbef 7ff9ef 7ff8ef 6c086f 7ff82f 60c80f 7fffef 63306f 7fffef 6c0c6f
+7fffef 60c66f 7fffef 63306f 7fffef 6c0c6f 7fffef 7fffef 00000f>
+def
+
+/image-34
+<0001 7ffd 7ffd 7ffd 001d 7fdd 7fdd 7fdd 01dd 7ddd 7ddd 7ddd 7ddd 7ddd 0001>
+def
+
+/image-33
+<0001 7ffd 57d5 67cd 4385 739d 7ffd 7ffd 7ffd 739d 4385 67cd 57d5 7ffd 0001>
+def
+
+/image-32
+<ffffffffffffff ffffffffffffff ffffffffffffff fe000000001fff ffffffffffffff
+ffe7fffff9ffff ff87fffff87fff fe000ffc001fff ff87fffff87fff ffe7fffff9ffff
+ffffffffffffff fe000000001fff ffffffffffffff ffe7fffff9ffff ff87fffff87fff
+fe000ffc001fff ff87fffff87fff ffe7fffff9ffff ffffffffffffff fe000000001fff
+ffffffffffffff ffe7fffff9ffff ff87fffff87fff fe000ffc001fff ff87fffff87fff
+ffe7fffff9ffff ffffffffffffff fe000000001fff ffffffffffffff ffe7fffff9ffff
+ff87fffff87fff fe000ffc001fff ff87fffff87fff ffe7fffff9ffff ffffffffffffff
+fe000000001fff ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff
+ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff
+ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff>
+def
+
+/image-31
+<ffffffffffffff ffffffffffffff ffffffffffffff fe000000001fff fe000000001fff
+fe000000001fff fe000000001fff fe000000001fff fe000000001fff fe000000001fff
+fe000000001fff fe000000001fff fe000000001fff fe000000001fff fe000000001fff
+fe000000001fff fe000000001fff fe000000001fff fe000000001fff fe000000001fff
+fe000000001fff fe000000001fff fe000000001fff fe000000001fff fe000000001fff
+fe000000001fff fe000000001fff fe000000001fff fe000000001fff fe000000001fff
+fe000000001fff fe000000001fff fe000000001fff fe000000001fff fe000000001fff
+fe000000001fff ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff
+ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff
+ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff>
+def
+
+/image-30
+<ffff ffff fbff fbff fbff fbff fbff fbff e0ff ffff ffff>
+def
+
+/image-29
+<ffff ffff efff efff efff e1ff efff efff e0ff ffff ffff>
+def
+
+/image-28
+<ffff ffff e0ff efff efff e1ff efff efff e0ff ffff ffff>
+def
+
+/image-27
+<c07f 803f 001f 001f 001f 001f 001f 001f 001f 803f c07f>
+def
+
+/image-26
+<ffffffffffffff ffffffffffffff ffffffffffffff ffffffffff7fff fffffffffe3fff
+fffffffffc1fff fffffffff83fff fffffffff07fff ffffffffe0ffff ffffffffc1ffff
+ffffffff83ffff ffffffff07ffff fffffffe0fffff fffffffc1fffff fffffff83fffff
+fffffff07fffff ffffffe0ffffff ffffffc1ffffff ffffff83ffffff ffffff07ffffff
+fffffe0fffffff fffffc1fffffff fffff83fffffff fffff07fffffff ffffe0ffffffff
+ffffc1ffffffff ffff83ffffffff ffff07ffffffff fffe0fffffffff fffc1fffffffff
+fff83fffffffff fff07fffffffff ffe0ffffffffff ffc1ffffffffff ff83ffffffffff
+ff07ffffffffff ff8fffffffffff ffdfffffffffff ffffffffffffff ffffffffffffff
+ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff
+ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff>
+def
+
+/image-25
+<ffffffffffffff ffffffffffffff ffffffffffffff ffffffffff7fff fffffffffe3fff
+fffffffffc1fff fffffffff83fff fffffffff07fff ffffffffe0ffff ffffffffc1ffff
+ffffffff83ffff ffffffff07ffff fffffffe0fffff fffffffc1fffff fffffff83fffff
+fffffff07fffff ffffffe0ffffff ffffffc1ffffff ffffff83ffffff ffffff07ffffff
+fffffe0fffffff fffffc1fffffff fffff83fffffff fffff07fffffff ffffe0ffffffff
+ffffc1ffffffff ffff83ffffffff ffff07ffffffff fffe0fffffffff fffc1fffffffff
+fff83fffffffff fff07fffffffff ffe0ffffffffff ffc1ffffffffff ff83ffffffffff
+ff07ffffffffff ff8fffffffffff ffdfffffffffff ffffffffffffff ffffffffffffff
+ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff
+ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff>
+def
+
+/image-24
+<ffffffffffffff ffffffffffffff ffffffffffffff ffffffffff7fff fffffffffe3fff
+fffffffffc1fff fffffffff83fff fffffffff07fff ffffffffe0ffff ffffffffc1ffff
+ffffffff83ffff ffffffff07ffff fffffffe0fffff fffffffc1fffff fffffff83fffff
+fffffff07fffff ffffffe0ffffff ffffffc1ffffff ffffff83ffffff ffffff07ffffff
+fffffe0fffffff fffffc1fffffff fffff83fffffff fffff07fffffff ffffe0ffffffff
+ffffc1ffffffff ffff83ffffffff ffff07ffffffff fffe0fffffffff fffc1fffffffff
+fff83fffffffff fff07fffffffff ffe0ffffffffff ffc1ffffffffff ff83ffffffffff
+ff07ffffffffff ff8fffffffffff ffdfffffffffff ffffffffffffff ffffffffffffff
+ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff
+ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff>
+def
+
+/image-23
+<ffffffffffffff ffffffffffffff ffffffffffffff ffffffffff7fff fffffffffe3fff
+fffffffffc1fff fffffffff83fff fffffffff07fff ffffffffe0ffff ffffffffc1ffff
+ffffffff83ffff ffffffff07ffff fffffffe0fffff fffffffc1fffff fffffff83fffff
+fffffff07fffff ffffffe0ffffff ffffffc1ffffff ffffff83ffffff ffffff07ffffff
+fffffe0fffffff fffffc1fffffff fffff83fffffff fffff07fffffff ffffe0ffffffff
+ffffc1ffffffff ffff83ffffffff ffff07ffffffff fffe0fffffffff fffc1fffffffff
+fff83fffffffff fff07fffffffff ffe0ffffffffff ffc1ffffffffff ff83ffffffffff
+ff07ffffffffff ff8fffffffffff ffdfffffffffff ffffffffffffff ffffffffffffff
+ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff
+ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff>
+def
+
+/image-22
+<ffffffffffffff ffffffffffffff ffffffffffffff ffffffffff7fff fffffffffe3fff
+fffffffffc1fff fffffffff83fff fffffffff07fff ffffffffe0ffff ffffffffc1ffff
+ffffffff83ffff ffffffff07ffff fffffffe0fffff fffffffc1fffff fffffff83fffff
+fffffff07fffff ffffffe0ffffff ffffffc1ffffff ffffff83ffffff ffffff07ffffff
+fffffe0fffffff fffffc1fffffff fffff83fffffff fffff07fffffff ffffe0ffffffff
+ffffc1ffffffff ffff83ffffffff ffff07ffffffff fffe0fffffffff fffc1fffffffff
+fff83fffffffff fff07fffffffff ffe0ffffffffff ffc1ffffffffff ff83ffffffffff
+ff07ffffffffff ff8fffffffffff ffdfffffffffff ffffffffffffff ffffffffffffff
+ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff
+ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff>
+def
+
+/image-21
+<ffffffffffffff ffffffffffffff ffffffffffffff ffffffffff7fff fffffffffe3fff
+fffffffffc1fff fffffffff83fff fffffffff07fff ffffffffe0ffff ffffffffc1ffff
+ffffffff83ffff ffffffff07ffff fffffffe0fffff fffffffc1fffff fffffff83fffff
+fffffff07fffff ffffffe0ffffff ffffffc1ffffff ffffff83ffffff ffffff07ffffff
+fffffe0fffffff fffffc1fffffff fffff83fffffff fffff07fffffff ffffe0ffffffff
+ffffc1ffffffff ffff83ffffffff ffff07ffffffff fffe0fffffffff fffc1fffffffff
+fff83fffffffff fff07fffffffff ffe0ffffffffff ffc1ffffffffff ff83ffffffffff
+ff07ffffffffff ff8fffffffffff ffdfffffffffff ffffffffffffff ffffffffffffff
+ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff
+ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff>
+def
+
+/image-20
+<ffffffffffffff ffffffffffffff ffffffffffffff ffff00007fffff ffff00007fffff
+ffff00007fffff ffff00007fffff ffff0ff87fffff ffff3ffe7fffff fffcffff9fffff
+fffbffffefffff fff7fffff7ffff ffedffffdbffff ffecffff9bffff ffdeffffbdffff
+ffdffffffdffff ffbffffffeffff ffbffffffeffff ff4ffffff97fff ff67fffff37fff
+ff7fffffff7fff ff7fffffff7fff ff7fff3fff7fff ff7ffe3fff7fff ff7ffc7fff7fff
+ff67f8fff37fff ff4ff1fff97fff ffbfe3fffeffff ffbfc7fffeffff ffdf8ffffdffff
+ffdf1ffffdffff ffee3fffbbffff ffec7fff9bffff fff4ffffd7ffff fffbfbefefffff
+fffcf3e79fffff ffff37f67fffff ffffcff9ffffff fffff007ffffff ffffffffffffff
+ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff
+ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff>
+def
+
+/image-19
+<ffffffffffffff ffffffffffffff ffffffffffffff ffff00007fffff ffff00007fffff
+ffff00007fffff ffff00007fffff ffff00007fffff ffff00007fffff fffc00001fffff
+fff800000fffff fff0000007ffff ffe0000003ffff ffe0000003ffff ffc0000001ffff
+ffc0000001ffff ff80000000ffff ff80000000ffff ff000000007fff ff000000007fff
+ff000000007fff ff000000007fff ff000000007fff ff000000007fff ff000000007fff
+ff000000007fff ff000000007fff ff80000000ffff ff80000000ffff ffc0000001ffff
+ffc0000001ffff ffe0000003ffff ffe0000003ffff fff0000007ffff fff800000fffff
+fffc00001fffff ffff00007fffff ffffc001ffffff fffff007ffffff ffffffffffffff
+ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff
+ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff>
+def
+
+/image-18
+<ffffffffffffff ffffffffffffff ffffffffffffff fffffe3fffffff fffff1c7ffffff
+ffffcff9ffffff ffffb80effffff ffff70077fffff ffff60037fffff fffec001bfffff
+fffec001bfffff fffec001bfffff fffec001bfffff fffec001bfffff ffff60037fffff
+ffff70077fffff ffffb80effffff ffffcc19ffffff ffffec1bffffff ffffec1bffffff
+ffffec1bffffff ffffec1bffffff ffffec1bffffff ffffec1bffffff ffffec1bffffff
+ffffec1bffffff ffffec1bffffff ffffec1bffffff ffffec1bffffff ffffeffbffffff
+ffffeffbffffff ffffeffbffffff ffffeffbffffff ffffeffbffffff ffffeffbffffff
+ffffeffbffffff ffffeffbffffff ffffeffbffffff ffffeffbffffff ffffeffbffffff
+ffffeffbffffff ffffeffbffffff fffff7f7ffffff fffff7f7ffffff fffff7f7ffffff
+fffffbefffffff fffffc1fffffff ffffffffffffff ffffffffffffff ffffffffffffff>
+def
+
+/image-17
+<ffffffffffffff ffffffffffffff ffffffffffffff fffffe3fffffff fffff007ffffff
+ffffc001ffffff ffff8000ffffff ffff00007fffff ffff00007fffff fffe00003fffff
+fffe00003fffff fffe00003fffff fffe00003fffff fffe00003fffff ffff00007fffff
+ffff00007fffff ffff8000ffffff ffffc001ffffff ffffe003ffffff ffffe003ffffff
+ffffe003ffffff ffffe003ffffff ffffe003ffffff ffffe003ffffff ffffe003ffffff
+ffffe003ffffff ffffe003ffffff ffffe003ffffff ffffe003ffffff ffffe003ffffff
+ffffe003ffffff ffffe003ffffff ffffe003ffffff ffffe003ffffff ffffe003ffffff
+ffffe003ffffff ffffe003ffffff ffffe003ffffff ffffe003ffffff ffffe003ffffff
+ffffe003ffffff ffffe003ffffff fffff007ffffff fffff007ffffff fffff007ffffff
+fffff80fffffff fffffc1fffffff ffffffffffffff ffffffffffffff ffffffffffffff>
+def
+
+/image-16
+<ffffffffffffff ffffffffffffff ffffffffffffff fffcffffcfffff fffcffffcfffff
+ffc0000000ffff fc3cffffcf0fff f2a8aaaa8aa3ff effcffffcffdff caa8aaaa8aaaff
+dffcffffcffeff caa8aaaa8aaaff bffcffffcfff7f aaa8aaaa8aaa7f bffcffffcfff7f
+aaa8aaaa8aaa7f bffcffffcfff7f aaa8aaaa8aaa7f bffcffffcfff7f aaa8aaaa8aaa7f
+bffcffffcfff7f caa8aaaa8aaaff dffcffffcffeff caa8aaaa8aaaff effcffffcffdff
+f2a8aaaa8aa3ff fc3cffffcf0fff ffc0000000ffff fffcffffcfffff fffcffffcfffff
+ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff
+ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff
+ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff
+ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff>
+def
+
+/image-15
+<ffffffffffffff ffffffffffffff ffffffffffffff fffcffffcfffff fffcffffcfffff
+ffc0000000ffff fc000000000fff f00000000003ff e00000000001ff c00000000000ff
+c00000000000ff c00000000000ff 8000000000007f 8000000000007f 8000000000007f
+8000000000007f 8000000000007f 8000000000007f 8000000000007f 8000000000007f
+8000000000007f c00000000000ff c00000000000ff c00000000000ff e00000000001ff
+f00000000003ff fc000000000fff ffc0000000ffff fffcffffcfffff fffcffffcfffff
+ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff
+ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff
+ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff
+ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff>
+def
+
+/image-14
+<ffffffffffffff ffffffffffffff ffffffffffffff ff7fffffffbfff ff1ffffffe3fff
+ff07fffff83fff ff01ffffe03fff ff007fff803fff ff001ffe003fff ff000ffc003fff
+ff0003f0003fff ff0000c0003fff ff000000003fff ff0000c0003fff ff0003f0003fff
+ff000ffc003fff ff001ffe003fff ff007fff803fff ff01ffffe03fff ff07fffff83fff
+ff1ffffffe3fff ff7fffffffbfff ffffffffffffff ffffffffffffff ffffffffffffff
+ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff
+ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff
+ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff
+ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff
+ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff>
+def
+
+/image-13
+<ffffffffffffff ffffffffffffff ffffffffffffff ff7fffffffbfff ff1ffffffe3fff
+ff07fffff83fff ff01ffffe03fff ff007fff803fff ff001ffe003fff ff000ffc003fff
+ff0003f0003fff ff0000c0003fff ff000000003fff ff0000c0003fff ff0003f0003fff
+ff000ffc003fff ff001ffe003fff ff007fff803fff ff01ffffe03fff ff07fffff83fff
+ff1ffffffe3fff ff7fffffffbfff ffffffffffffff ffffffffffffff ffffffffffffff
+ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff
+ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff
+ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff
+ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff
+ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff>
+def
+
+/image-12
+<ffffffffffffff ffffffffffffff ffffffffffffff fe000000001fff ffffffffffffff
+ffe7fffff9ffff ff87fffff87fff fe000ffc001fff ff87fffff87fff ffe7fffff9ffff
+ffffffffffffff fe000000001fff ffffffffffffff ffe7fffff9ffff ff87fffff87fff
+fe000ffc001fff ff87fffff87fff ffe7fffff9ffff ffffffffffffff fe000000001fff
+ffffffffffffff ffe7fffff9ffff ff87fffff87fff fe000ffc001fff ff87fffff87fff
+ffe7fffff9ffff ffffffffffffff fe000000001fff ffffffffffffff ffe7fffff9ffff
+ff87fffff87fff fe000ffc001fff ff87fffff87fff ffe7fffff9ffff ffffffffffffff
+fe000000001fff ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff
+ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff
+ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff>
+def
+
+/image-11
+<ffffffffffffff ffffffffffffff ffffffffffffff fe000000001fff fe000000001fff
+fe000000001fff fe000000001fff fe000000001fff fe000000001fff fe000000001fff
+fe000000001fff fe000000001fff fe000000001fff fe000000001fff fe000000001fff
+fe000000001fff fe000000001fff fe000000001fff fe000000001fff fe000000001fff
+fe000000001fff fe000000001fff fe000000001fff fe000000001fff fe000000001fff
+fe000000001fff fe000000001fff fe000000001fff fe000000001fff fe000000001fff
+fe000000001fff fe000000001fff fe000000001fff fe000000001fff fe000000001fff
+fe000000001fff ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff
+ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff
+ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff>
+def
+
+/image-10
+<ffffffffffffff ffffffffffffff ffffffffffffff f00000000003ff f7fffffffffbff
+f7fffffffffbff f7fffffffffbff f7fffffffffbff f6000000001bff f7fffffffffbff
+f7fcffffcffbff f7fc3fff0ffbff f6000ffc001bff f7fc3fff0ffbff f7fcffffcffbff
+f7fffffffffbff f6000000001bff f7fffffffffbff f7fcffffcffbff f7fc3fff0ffbff
+f6000ffc001bff f7fc3fff0ffbff f7fcffffcffbff f7fffffffffbff f6000000001bff
+f7fffffffffbff f7fcffffcffbff f7fc3fff0ffbff f6000ffc001bff f7fc3fff0ffbff
+f7fcffffcffbff f7fffffffffbff f6000000001bff f7fffffffffbff f7fcffffcffbff
+f7fc3fff0ffbff f6000ffc001bff f7fc3fff0ffbff f7fcffffcffbff f7fffffffffbff
+f6000000001bff f7fffffffffbff f7fffffffffbff f7fffffffffbff f7fffffffffbff
+f00000000003ff ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff>
+def
+
+/image-9
+<ffffffffffffff ffffffffffffff ffffffffffffff f00000000003ff f00000000003ff
+f00000000003ff f00000000003ff f00000000003ff f00000000003ff f00000000003ff
+f00000000003ff f00000000003ff f00000000003ff f00000000003ff f00000000003ff
+f00000000003ff f00000000003ff f00000000003ff f00000000003ff f00000000003ff
+f00000000003ff f00000000003ff f00000000003ff f00000000003ff f00000000003ff
+f00000000003ff f00000000003ff f00000000003ff f00000000003ff f00000000003ff
+f00000000003ff f00000000003ff f00000000003ff f00000000003ff f00000000003ff
+f00000000003ff f00000000003ff f00000000003ff f00000000003ff f00000000003ff
+f00000000003ff f00000000003ff f00000000003ff f00000000003ff f00000000003ff
+f00000000003ff ffffffffffffff ffffffffffffff ffffffffffffff ffffffffffffff>
+def
+
+/image-8
+<ffffffffff ffffffffff ffffffffff ffffffffff fffe01ffff f9fefdf87f f6fdfe7b3f
+eefd877d9f eefd8779df ef79ff77ef df9bff642f ddeb87199f e2eb8733ff ff73cf67ff
+ffb7cf5fff ffcfdf9fff ffe871bfff ffe8709fff ffe860dfff ffd870cfff ffdfffefff
+ffdfffefff ffdfffefff ff9fffefff fe3fffe7ff e1bfffea7f ef9fffedbf ef5fffefbf
+e6cfffc77f f6efffdb7f f6f3ff9aff f2f8ff3aff f8fe00fdff ffffffffff ffffffffff
+ffffffffff ffffffffff>
+def
+
+/image-7
+<ffffffffff ffffffffff ffffffffff ffffffffff ffffffffff ffffffffff fffffff7ff
+ffffffe3ff ffffffc7ff ffffff8fff ffff9f1fff ffff1e3fff ffff1c7fff fffe18ffff
+fffe11ffff fffc03ffff fffc07ffff fff8001fff fff8003fff fff000ffff fff001ffff
+ffe007ffff ffe01fffff ffc03fffff ffc0ffffff ff81ffffff ff87ffffff ff1fffffff
+ff3fffffff feffffffff ffffffffff ffffffffff ffffffffff ffffffffff ffffffffff
+ffffffffff ffffffffff>
+def
+
+/image-6
+<ffffffffffffffffffff ffffffffffffffffffff ffffffffffffffffffff
+ffffffffffffffffffff ffffffffffffffffffff ffffffffffffffffffff
+ffffffffffffffffffff ffffffffffffffffffff ffffffffffffffffffff
+ffffffffc0ffffffffff ffffffff807fffffffff ffffffff003fffffffff
+ffffffff003fffffffff ffffffff003fffffffff ffffffff003fffffffff
+ffffffff003fffffffff ffffffff807fffffffff ffffffffc0ffffffffff
+ffffffffffffffffffff ffffffffffffffffffff ffffffffffffffffffff
+ffffffff003fffffffff ffffffff003fffffffff ffffffff003fffffffff
+ffffffff003fffffffff ffffffff003fffffffff ffffffff003fffffffff
+ffffffff003fffffffff ffffffff003fffffffff ffffffff001fffffffff
+ffffffff001fffffffff ffffffff800fffffffff ffffffff8007ffffffff
+ffffffff8003ffffffff ffffffffc001ffffffff ffffffffe000ffffffff
+fffffffff0007fffffff fffffffff8003fffffff fffffffffc001fffffff
+fffffffffe000fffffff ffffffffff0007ffffff ffffffffff8007ffffff
+ffffffffffc003ffffff ffffe007ffe003ffffff ffffe007fff001ffffff
+ffffe007fff001ffffff ffffe007fff801ffffff ffffe003fff800ffffff
+ffffe003fff800ffffff ffffe003fff800ffffff ffffe003fff800ffffff
+ffffe001fff801ffffff fffff000fff001ffffff fffff0003fe001ffffff
+fffff8000f8001ffffff fffff800000003ffffff fffffc00000003ffffff
+fffffc00000007ffffff fffffe00000007ffffff ffffff0000000fffffff
+ffffff8000001fffffff ffffffe000003fffffff fffffff000007fffffff
+fffffffc0000ffffffff ffffffff8003ffffffff fffffffff03fffffffff
+ffffffffffffffffffff ffffffffffffffffffff ffffffffffffffffffff
+ffffffffffffffffffff ffffffffffffffffffff ffffffffffffffffffff
+ffffffffffffffffffff ffffffffffffffffffff ffffffffffffffffffff>
+def
+
+/image-5
+<ffffffffffffffffffff ffffffffffffffffffff ffffffffffffffffffff
+ffffffffffffffffffff ffffffffffffffffffff ffffffffffffffffffff
+ffffffffffffffffffff ffffffffffffffffffff ffffffffffffffffffff
+ffffffffffffffffffff ffe000000000000003ff ffdffffffffffffff3ff
+ff800000000000000bff ff7fffffffffffffcbff fe000000000000002bff
+fefffffffffff7ffabff fefbfbfbfbfbf3bfabff fefffffffffff9ffabff
+fefffffffffffaffabff fefffffffffffd7fabff febfbfbfbfbfbdbbabff
+feffe1f3fffffddfabff feffe1e1fffffdefabff fefff3e5fffffdf7abff
+fefbf3e7fbfbfbfbabff fefff3e7fffffb05abff fefff3e7fffff4f8abff
+fefff9f3fffff3fe2bff febfb9b3bfbfbfbfabff fefff9f3ffffffffabff
+fefff9f3ffffffffabff fefff9f3ffffffffabff fefbfcc07bfbfbfbabff
+fefffcc07fffffffabff fefffcf9fb5fffffabff fefffcf9fb5fffffabff
+febfb87dbb1fbfbfabff fefff87df15fffffabff feffffffffffffffabff
+feffffffffffffffabff fefbfbfbfbfbfbfbabff feffffffffffffffabff
+fefe7ffc3c3e7fffabff fefe7ff9181c3fffabff febe3fb39bccbfbfabff
+fefe7ff38fccffffabff feff3ff3cf0cffffabff feff3ff1cc1cffffabff
+fefb0039ccfe3bfbabff feff0019ccf67fffabff feff3fcc9e067fffabff
+feff3fce3f0e7fffabff febf9fa7bfbe3fbfabff feff9fe7fff80fffabff
+feff9fe7fff80fffabff feff9fe7ffff3fffabff fefb9be3fbfb3bfbabff
+feffcfe7ffffbfffabff feffcfcfffffbfffabff feffc01fffffffffabff
+febfc03fbfbfbfbfabff feffffffffffffffabff feffffffffffffffabff
+feffffffffffffffa7ff fefbfbfbfbfbfbfbafff feffffffffffffff9fff
+fe000000000000003fff ffffffffffffffffffff ffffffffffffffffffff
+ffffffffffffffffffff ffffffffffffffffffff ffffffffffffffffffff
+ffffffffffffffffffff ffffffffffffffffffff ffffffffffffffffffff>
+def
+
+/image-4
+<ffffffffffffffffffff ffffffffffffffffffff ffffffffffffffffffff
+ffffffffffffffffffff ffffffffffffffffffff ffffffffffffffffffff
+ffffffffffffffffffff ffffffffffffffffffff ffffffffffffffffffff
+ffffffffffffffffffff ffffffffffffffffffff ffffffffffff3fffffff
+fffffffffffe1fffffff fffffffffffe1fffffff fffffffffffe0fffffff
+ffffffffffff0fffffff ffffffffffffcfffffff ffffffffffffe7ffffff
+ffffffffffffe7ffffff fffffffffffff3ffffff fffffffffffff3ffffff
+fffffffffffff3ffffff fffffffffffff9ffffff fffffffffffff9ffffff
+fffffffffffffcffffff fffffffffffffcffffff fffffffffffffc7fffff
+fffffffffffff87fffff fff1ff3ffffff87fffff ffe0fe1ffffff83fffff
+ffe07c1ffffff83fffff fff27c4ffffff81fffff ffff386ffffff09fffff
+ffff98ffc00ff19fffff ffffc8ffc00ff1cfffff ffffc0fffffff1cfffff
+ffffe1ffffffe1e7ffff ffffe1ffffffe1e7ffff ffffe1ffffffe3f3ffff
+ffffe1ffffffe3f3ffff ffffc0ffc00fc3f3ffff ffffc47fc00fc3f9ffff
+ffffc67fffffc3f9ffff ffffc73fffffc7fcffff fffd8f1ffffec7fcffff
+fffc8f93fffe47fcffff fffc0fc1fffe07fe7fff fffe1fc1ffff0ffe3fff
+fffe3fe3ffff1fff3fff ffffffffffffffffffff ffffffffffffffffffff
+ffffffffffffffffffff ffffffffffffffffffff ffffffffffffffffffff
+ffffffffffffffffffff ffffffffffffffffffff ffffffffffffffffffff
+ffffffffffffffffffff ffffffffffffffffffff ffffffffffffffffffff
+ffffffffffffffffffff ffffffffffffffffffff ffffffffffffffffffff
+ffffffffffffffffffff ffffffffffffffffffff ffffffffffffffffffff
+ffffffffffffffffffff ffffffffffffffffffff ffffffffffffffffffff
+ffffffffffffffffffff ffffffffffffffffffff ffffffffffffffffffff
+ffffffffffffffffffff ffffffffffffffffffff ffffffffffffffffffff>
+def
+
+/image-3
+<ffffffffffffffffffff ffffffffffffffffffff ffffffffffffffffffff
+ffffffffffffffffffff ffffffffffffffffffff fff00fffffffffffffff
+ffc003ffffffffffffff ff0f90ffffffffffffff fe1fe47fffffffffffff
+fe67f87fffffffffffff fe79fe7fffffffffffff fe7e7e7fffffffffffff
+fe7f9e7fffffffffffff fe1fe67fffffffffffff fe67f87fffffffffffff
+fe79fe7ff9ff3039e7ff fe7e7e7ff9ff3038c7ff fe7f9e7ff9ff279807ff
+fe1fe67ff9ff279213ff fe67f87e79ff279333ff fe79fe7e79ff279333ff
+fe7e7e7e79ff279333ff fe7f9e7e79ff2793f3ff fe1fe67e780f3033f3ff
+fe67f87e780f3033f3ff fe79fe7e79ff3fffffff fe7e7e7e79ff3fffffff
+fe7f9e7e79ff3fffffff fe1fe67e79ff3fffffff fe67f87e79ff3fffffff
+fe79fe7e79ff3fffffff fe7e7e7e79ff3fffffff fe7f9e7e78013fffffff
+fe1fe67e78013fffffff fe67f87e7fffffffffff fe79fe7e7fffffffffff
+fe7e7e7e7fffffffffff fe7f9e7e7fffffffffff fe1fe67e7fffffffffff
+fe67f87e7fffffffffff fe79fe7e7fffffffffff fe7e7e7e7fffffffffff
+fe7f9e7e7fffffffffff fe1fe67e7fffffffffff fe67f87e7fffffffffff
+fe79fe7e7fffffffffff fe7e7e7e7fffffffffff fe7f9e7e7fffffffffff
+fe1fe67e7fffffffffff fe67f8700fffffffffff fe79fe700fffffffffff
+fe7e7e700fffffffffff fe7f9e781fffffffffff fe1fe6781fffffffffff
+fe67f8781fffffffffff fe79fe7c3fffffffffff fe7e7e7c3fffffffffff
+fe7f9e7c3fffffffffff fe1fe67e7fffffffffff fe67f87e7fffffffffff
+fe79fe7e7fffffffffff fe7e7e7fffffffffffff fe7f9e7fffffffffffff
+fe1fe67fffffffffffff fe40027fffffffffffff fe00007fffffffffffff
+fe0ff07fffffffffffff fe3ffc7fffffffffffff ff0ff0ffffffffffffff
+ffc003ffffffffffffff fff00fffffffffffffff ffffffffffffffffffff
+ffffffffffffffffffff ffffffffffffffffffff ffffffffffffffffffff>
+def
+
+/image-2
+<ffffffffffffffffffff ffffffffffffffffffff ffffffffffffffffffff
+ffffffffffffffffffff ffffffffffffffffffff ffffffff01ffffffffff
+fffffffc007fffffffff fffffff8001fffffffff fffffff0781fffffffff
+ffffffe0fc0fffffffff ffffffc1fe0fffffffff ffffffc3ff07ffffffff
+ffffffc3ff87ffffffff ffffffc3ff87ffffffff ffffffc7ff83ffffffff
+ffffffefffc3ffffffff ffffffffffc1ffffffff ffffffffffe0ffffffff
+ffffffffffe0ffffffff fffffffffff07fffffff fffffffffff87fffffff
+fffffffffff87fffffff fffffffffffc3fffffff fffffffffffe1fffffff
+fffffffffffe1fffffff fffffffffffe0fffffff ffffffffffff0fffffff
+fffffffe3fff0fffffff fffffffe1fff87ffffff fffffffe0fff87ffffff
+fffffffe07ff87ffffff ffffffff03ff87ffffff ffffffffc3ffc3ffffff
+ffffffffe1ffc3ffffff fffffffff0ffe1ffffff fffffffff07fe1ffffff
+fffffffff87fe1ffffff fffffffff87ff0ffffff fffffffffc3ff8ffffff
+fffffffffc3ff87fffff fffffffffc3ff87fffff fffffffffc3ff87fffff
+fffffffffc3ff87fffff ffffffe3fc3ff87fffff ffffffe3fc3ffc3fffff
+ffffffe1fc3ffc3fffff ffffffe0783ffc3fffff fffffff0007ffc3fffff
+fffffff000fffc3fffff fffffffc01fffc3fffff ffffffff8ffffc3fffff
+fffffffffffffc3fffff fffffffffffffc3fffff fffffffffffffc3fffff
+fffffffffffffc3fffff fffe3ffffffffc3fffff fffc1ffffffffc7fffff
+fffc1ffffffffc7fffff fffc0ffffffff87fffff fffe07fffffff87fffff
+ffff03fffffff07fffff ffff80fffffff0ffffff ffffc03fffffe0ffffff
+ffffe00fffffc1ffffff fffff001ffff81ffffff fffff8003fc001ffffff
+fffffe00000003ffffff ffffff00000007ffffff ffffffc000000fffffff
+fffffff800007fffffff fffffffff81fffffffff ffffffffffffffffffff
+ffffffffffffffffffff ffffffffffffffffffff ffffffffffffffffffff>
+def
+
+/image-1
+<ffffffffffffffffffff ffffffffffffffffffff ffffffffffffffffffff
+ffffffffffffffffe7ff ffffffffffffffffc3ff ffffffffffffffff99ff
+ffffffffffffffff30ff fffffffffffffffe60ff fffffffffffffffcc1ff
+fffffffffffffff983ff fffffffffffffff307ff ffffffffffffffe60fff
+ffffffffffffffcc1fff ffffffffffffff983fff ffffffffffffff307fff
+fffffffffffffe60ffff fffffffffffffcc1ffff ffffffc007fff983ffff
+fffffe0000fff307ffff fffff03ff01fe60fffff ffffc1ffff07cc1fffff
+ffff87ffffc3983fffff fffe3ffffff0307fffff fffc7ffffffc60ffffff
+fff8fffffffe01ffffff fff1ffffffff03ffffff ffe3ffffffff87ffffff
+ffc7ffffffffc7ffffff ffcfffffffffe3ffffff ff8ffffffffff1ffffff
+ff1ffffffffff9ffffff ff3ffffffffff9ffffff fe3ffffffffffcffffff
+fe3ffffffffffcffffff fe7ffffffffffcffffff fcfffffffffffc7fffff
+fcfffffffffffe7fffff fcfffffffffffe7fffff f9ffffffffffff3fffff
+f9ffffffffffff3fffff f9ffffffffffff3fffff f9ffffffffffff3fffff
+f9ffffffffffff3fffff f9ffffffffffff3fffff f9ffffffffffff3fffff
+f9ffffffffffff3fffff f9ffffffffffff3fffff f9ffffffffffff3fffff
+f8ffffffffffff3fffff fcfffffffffffe7fffff fcfffffffffffe7fffff
+fcfffffffffffe7fffff fe7ffffffffffcffffff fe7ffffffffffcffffff
+fe3ffffffffffcffffff ff3ffffffffff9ffffff ff1ffffffffff9ffffff
+ff9ffffffffff3ffffff ffcfffffffffe7ffffff ffc7ffffffffc7ffffff
+ffe3ffffffff8fffffff fff1ffffffff1fffffff fff8fffffffe3fffffff
+fffc7ffffffc7fffffff fffe1ffffff8ffffffff ffff8fffffe3ffffffff
+ffffc1ffff07ffffffff fffff03ff81fffffffff fffffe0000ffffffffff
+ffffffc007ffffffffff ffffffffffffffffffff ffffffffffffffffffff
+ffffffffffffffffffff ffffffffffffffffffff ffffffffffffffffffff>
+def
+
+
+%%EndProlog
+%%Page: 1 1
+
+gsave
+72 72 translate
+0.585 0.585 scale
+
+%
+% Begin new window
+%
+0 -254 translate
+gsave
+0 1108 800 600 ClipToRectangle
+0 0 translate
+gsave
+grestore
+
+gsave
+
+%
+% Begin new window
+%
+650 1 translate
+gsave
+0 1108 149 422 ClipToRectangle
+0 0 translate
+gsave
+0 1108 75 75 0 0 0 0 false 0 0 [] 1 0 0.90 0.90 0.90 true DrawRectangle
+0 1108 75 75 image-1 true 0 0 0 false DrawBitmap
+75 1108 75 75 0 0 0 0 false 0 0 [] 1 0 0.90 0.90 0.90 true DrawRectangle
+75 1108 75 75 image-2 true 0 0 0 false DrawBitmap
+0 1033 75 75 0 0 0 0 false 0 0 [] 1 0 0.90 0.90 0.90 true DrawRectangle
+0 1033 75 75 image-3 true 0 0 0 false DrawBitmap
+75 1033 75 75 0 0 0 0 false 0 0 [] 1 0 0.90 0.90 0.90 true DrawRectangle
+75 1033 75 75 image-4 true 0 0 0 false DrawBitmap
+0 958 75 75 0 0 0 0 false 0 0 [] 1 0 0.90 0.90 0.90 true DrawRectangle
+0 958 75 75 image-5 true 0 0 0 false DrawBitmap
+75 958 75 75 0 0 0 0 false 0 0 [] 1 0 0.90 0.90 0.90 true DrawRectangle
+75 958 75 75 image-6 true 0 0 0 false DrawBitmap
+0 883 37 37 0 0 0 0 false 0 0 [] 1 0 0.50 0.50 0.50 true DrawRectangle
+0 883 37 37 image-7 true 0 0 0 false DrawBitmap
+113 883 37 37 0 0 0 0 false 0 0 [] 1 0 0.90 0.90 0.90 true DrawRectangle
+113 883 37 37 image-8 true 0 0 0 false DrawBitmap
+0 846 150 40 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+50 837 819 50 22 0 false 0 0 0 false 0 0 0 false (Model) 18 /Helvetica DrawText
+0 806 150 40 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+55 797 779 40 22 0 false 0 0 0 false 0 0 0 false (View) 18 /Helvetica DrawText
+0 766 150 40 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+37 757 739 76 22 0 false 0 0 0 false 0 0 0 false (Hierarchy) 18 /Helvetica DrawText
+0 726 150 40 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+61 717 699 27 22 0 false 0 0 0 false 0 0 0 false (File) 18 /Helvetica DrawText
+grestore
+
+grestore
+
+0 1108 149 422 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+grestore
+
+gsave
+
+%
+% Begin new window
+%
+-1 -422 translate
+gsave
+0 1108 800 177 ClipToRectangle
+0 0 translate
+gsave
+0 1108 800 26 0 0 0 0 false 0 0 [] -1 0 0.80 0.80 0.80 true DrawRectangle
+346 1106 1088 105 22 0 false 0 0 0 false 0 0 0 false (Lab Supplies) 18 /Helvetica DrawText
+30 1058 50 50 image-9 true 0.95 0.95 0.95 true DrawBitmap
+30 1058 50 50 image-10 true 0 0 0 false DrawBitmap
+30 1008 997 51 13 0 false 0 0 0 false 0 0 0 false (Evaporator) 10 /Helvetica DrawText
+91 1058 50 50 image-11 true 0.95 0.95 0.95 true DrawBitmap
+91 1058 50 50 image-12 true 0 0 0 false DrawBitmap
+92 1008 997 49 13 0 false 0 0 0 false 0 0 0 false (Condenser) 10 /Helvetica DrawText
+151 1058 50 50 image-13 true 0.95 0.95 0.95 true DrawBitmap
+151 1058 50 50 image-14 true 0 0 0 false DrawBitmap
+153 1008 997 47 13 0 false 0 0 0 false 0 0 0 false (Expansion) 10 /Helvetica DrawText
+164 995 984 24 13 0 false 0 0 0 false 0 0 0 false (Valve) 10 /Helvetica DrawText
+211 1058 50 50 image-15 true 0.95 0.95 0.95 true DrawBitmap
+211 1058 50 50 image-16 true 0 0 0 false DrawBitmap
+209 1008 997 55 13 0 false 0 0 0 false 0 0 0 false (Compressor) 10 /Helvetica DrawText
+276 1058 50 50 image-17 true 0.95 0.95 0.95 true DrawBitmap
+276 1058 50 50 image-18 true 0 0 0 false DrawBitmap
+272 1008 997 59 13 0 false 0 0 0 false 0 0 0 false (Thermometer) 10 /Helvetica DrawText
+345 1058 50 50 image-19 true 0.95 0.95 0.95 true DrawBitmap
+345 1058 50 50 image-20 true 0 0 0 false DrawBitmap
+351 1008 997 38 13 0 false 0 0 0 false 0 0 0 false (Pressure) 10 /Helvetica DrawText
+356 995 984 27 13 0 false 0 0 0 false 0 0 0 false (Gauge) 10 /Helvetica DrawText
+405 1058 50 50 image-21 true 0.95 0.95 0.95 true DrawBitmap
+405 1058 50 50 image-22 true 0 0 0 false DrawBitmap
+421 1008 997 18 13 0 false 0 0 0 false 0 0 0 false (Pipe) 10 /Helvetica DrawText
+465 1058 50 50 image-23 true 0.95 0.95 0.95 true DrawBitmap
+465 1058 50 50 image-24 true 0 0 0 false DrawBitmap
+481 1008 997 19 13 0 false 0 0 0 false 0 0 0 false (Wire) 10 /Helvetica DrawText
+525 1058 50 50 image-25 true 0.95 0.95 0.95 true DrawBitmap
+525 1058 50 50 image-26 true 0 0 0 false DrawBitmap
+520 1008 997 61 13 0 false 0 0 0 false 0 0 0 false (Thermo-Tube) 10 /Helvetica DrawText
+grestore
+
+grestore
+
+0 1108 800 177 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+grestore
+
+gsave
+
+%
+% Begin new window
+%
+-1 1 translate
+gsave
+0 1108 650 422 ClipToRectangle
+0 0 translate
+gsave
+266 1035 50 50 image-15 true 0.95 0.95 0.95 true DrawBitmap
+266 1035 50 50 image-16 true 0 0 0 false DrawBitmap
+261 1007 11 11 image-27 true 0.00 0.60 0.60 true DrawBitmap
+261 1007 11 11 image-28 true 0 0 0 false DrawBitmap
+311 1007 11 11 image-27 true 0.00 0.60 0.60 true DrawBitmap
+311 1007 11 11 image-28 true 0 0 0 false DrawBitmap
+266 874 50 50 image-13 true 0.95 0.95 0.95 true DrawBitmap
+266 874 50 50 image-14 true 0 0 0 false DrawBitmap
+268 842 11 11 image-27 true 0.00 0.60 0.60 true DrawBitmap
+268 842 11 11 image-29 true 0 0 0 false DrawBitmap
+304 842 11 11 image-27 true 0.00 0.60 0.60 true DrawBitmap
+304 842 11 11 image-30 true 0 0 0 false DrawBitmap
+358 945 50 50 image-31 true 0.95 0.95 0.95 true DrawBitmap
+358 945 50 50 image-32 true 0 0 0 false DrawBitmap
+378 902 11 11 image-27 true 0.00 0.60 0.60 true DrawBitmap
+378 902 11 11 image-30 true 0 0 0 false DrawBitmap
+378 937 11 11 image-27 true 0.00 0.60 0.60 true DrawBitmap
+378 937 11 11 image-28 true 0 0 0 false DrawBitmap
+155 947 50 50 image-9 true 0.95 0.95 0.95 true DrawBitmap
+155 947 50 50 image-10 true 0 0 0 false DrawBitmap
+175 949 11 11 image-27 true 0.00 0.60 0.60 true DrawBitmap
+175 949 11 11 image-28 true 0 0 0 false DrawBitmap
+175 904 11 11 image-27 true 0.00 0.60 0.60 true DrawBitmap
+175 904 11 11 image-29 true 0 0 0 false DrawBitmap
+0 0.50 0.50 0.60 true 0 0 [] 3 266 1002 180 944 DrawLine
+175 949 11 11 image-27 true 0.00 0.60 0.60 true DrawBitmap
+175 949 11 11 image-28 true 0 0 0 false DrawBitmap
+261 1007 11 11 image-27 true 0.00 0.60 0.60 true DrawBitmap
+261 1007 11 11 image-28 true 0 0 0 false DrawBitmap
+0 0.50 0.50 0.60 true 0 0 [] 3 383 932 316 1002 DrawLine
+311 1007 11 11 image-27 true 0.00 0.60 0.60 true DrawBitmap
+311 1007 11 11 image-28 true 0 0 0 false DrawBitmap
+378 937 11 11 image-27 true 0.00 0.60 0.60 true DrawBitmap
+378 937 11 11 image-28 true 0 0 0 false DrawBitmap
+0 0.50 0.50 0.60 true 0 0 [] 3 309 837 383 897 DrawLine
+378 902 11 11 image-27 true 0.00 0.60 0.60 true DrawBitmap
+378 902 11 11 image-30 true 0 0 0 false DrawBitmap
+304 842 11 11 image-27 true 0.00 0.60 0.60 true DrawBitmap
+304 842 11 11 image-30 true 0 0 0 false DrawBitmap
+179.0 837.0 5.0 5.0 0 360 0 0 0 0 false 0 0 [] -1 0 1.00 1.00 0.00 true DrawEllipse
+0 0.50 0.50 0.60 true 0 0 [] 3 195 838 273 837 DrawLine
+0 0.50 0.50 0.60 true 0 0 [] 3 180 853 180 899 DrawLine
+195.0 853.0 15.5 15.5 179 270 0 0.50 0.50 0.60 true 0 0 [] 3 -1 0 0 0 false DrawArc
+268 842 11 11 image-27 true 0.00 0.60 0.60 true DrawBitmap
+268 842 11 11 image-29 true 0 0 0 false DrawBitmap
+175 904 11 11 image-27 true 0.00 0.60 0.60 true DrawBitmap
+175 904 11 11 image-29 true 0 0 0 false DrawBitmap
+175 949 11 11 image-27 true 0.94 0.79 0.50 true DrawBitmap
+175 949 11 11 image-28 true 0 0 0 false DrawBitmap
+261 1007 11 11 image-27 true 0.94 0.79 0.50 true DrawBitmap
+261 1007 11 11 image-28 true 0 0 0 false DrawBitmap
+311 1007 11 11 image-27 true 0.94 0.79 0.50 true DrawBitmap
+311 1007 11 11 image-28 true 0 0 0 false DrawBitmap
+378 937 11 11 image-27 true 0.94 0.79 0.50 true DrawBitmap
+378 937 11 11 image-28 true 0 0 0 false DrawBitmap
+378 902 11 11 image-27 true 0.94 0.79 0.50 true DrawBitmap
+378 902 11 11 image-30 true 0 0 0 false DrawBitmap
+304 842 11 11 image-27 true 0.94 0.79 0.50 true DrawBitmap
+304 842 11 11 image-30 true 0 0 0 false DrawBitmap
+268 842 11 11 image-27 true 0.94 0.79 0.50 true DrawBitmap
+268 842 11 11 image-29 true 0 0 0 false DrawBitmap
+175 904 11 11 image-27 true 0.94 0.79 0.50 true DrawBitmap
+175 904 11 11 image-29 true 0 0 0 false DrawBitmap
+410 923 150 77 0 0 0 0 false 0 0 [] 1 0 1.00 1.00 0.75 true DrawRectangle
+415 903 891 138 15 0 false 0 0 0 false 0 0 0 false (This is a sample note.    ) 12 /Helvetica DrawText
+410 923 15 15 image-33 false 0 0 0 false DrawBitmap
+424 923 136 15 0 0 0 0 false 0 0 [] 1 0 1.00 1.00 0.75 true DrawRectangle
+545 861 15 15 image-34 false 0 0 0 false DrawBitmap
+123 930 20 20 image-35 false 0 0 0 false DrawBitmap
+0 0 0 0 false 0 0 [] 1 359 788 291 825 DrawLine
+259 818 200 60 0 0 0 0 false 0 0 [] 1 0 0.90 0.90 1.00 true DrawRectangle
+264 798 786 170 15 0 false 0 0 0 false 0 0 0 false (The expansion valve reduces ) 12 /Helvetica DrawText
+264 783 771 170 15 0 false 0 0 0 false 0 0 0 false (the pressure of the refrigerant.) 12 /Helvetica DrawText
+434 783 771 7 15 0 false 0 0 0 false 0 0 0 false ( ) 12 /Courier DrawText
+259 818 186 15 0 0 0 0 false 0 0 [] 1 0 0.90 0.90 1.00 true DrawRectangle
+264 817 806 83 13 0 false 0 0 0 false 0 0 0 false (Expansion Valve) 10 /Helvetica-Bold DrawText
+444 818 15 15 image-36 false 0 0 0 false DrawBitmap
+0 1108 650 26 0 0 0 0 false 0 0 [] -1 0 0.80 0.80 0.80 true DrawRectangle
+289 1106 1088 70 22 0 false 0 0 0 false 0 0 0 false (Lab Area) 18 /Helvetica DrawText
+grestore
+
+grestore
+
+0 1108 650 422 0 0 0 0 false 0 0 [] 1 -1 0 0 0 false DrawRectangle
+grestore
+
+grestore
+
+0 1108 800 600 0 0 0 0 false 0 0 [] 2 -1 0 0 0 false DrawRectangle
+grestore
+
+
+showpage
+%%Trailer
+%%DocumentFonts: /Helvetica-Bold /Courier /Helvetica 
+%%BoundingBox: 72 221 540 572

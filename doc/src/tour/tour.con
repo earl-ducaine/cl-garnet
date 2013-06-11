@@ -1,0 +1,48 @@
+@Comment{CONTENTS of tour/tour.mss by Scribe 7(1700) on 30 November 1994 at 21:39}
+@PrefaceSection(Table of Contents)
+@Set(Page=1)@Style(PageNumber <@i>)
+@define(foot,invisible)
+@begin(TC1)@rfstr(29)1.@ @$Introduction@end(TC1)
+
+@begin(TC1)@rfstr(30)2.@ @$Getting Started@end(TC1)
+
+@begin(TC2)@rfstr(30)2.1.@ @$Typing@end(TC2)
+
+@begin(TC2)@rfstr(30)2.2.@ @$Garbage Collection@end(TC2)
+
+@begin(TC2)@rfstr(30)2.3.@ @$Errors, etc.@end(TC2)
+
+@begin(TC1)@rfstr(32)3.@ @$Learning Garnet@end(TC1)
+
+@begin(TC2)@rfstr(32)3.1.@ @$A Note on Packages@end(TC2)
+
+@begin(TC2)@rfstr(32)3.2.@ @$A Note on Refresh@end(TC2)
+
+@begin(TC2)@rfstr(33)3.3.@ @$Loading Garnet and the Tour@end(TC2)
+
+@begin(TC2)@rfstr(33)3.4.@ @$Basic Objects@end(TC2)
+
+@begin(TC2)@rfstr(35)3.5.@ @$Formulas@end(TC2)
+
+@begin(TC2)@rfstr(35)3.6.@ @$Interaction@end(TC2)
+
+@begin(TC2)@rfstr(37)3.7.@ @$Higher-level Objects@end(TC2)
+
+@begin(TC3)@rfstr(37)3.7.1.@ @$Buttons@end(TC3)
+
+@begin(TC3)@rfstr(38)3.7.2.@ @$Slider@end(TC3)
+
+@begin(TC1)@rfstr(39)4.@ @$Playing Othello@end(TC1)
+
+@begin(TC1)@rfstr(40)5.@ @$Modifying Othello@end(TC1)
+
+@begin(TC1)@rfstr(41)6.@ @$Using GarnetDraw@end(TC1)
+
+@begin(TC1)@rfstr(42)7.@ @$Cleanup@end(TC1)
+
+@begin(TC1)@rfstr(43)8.@ @$Conclusion@end(TC1)
+
+@begin(TC1)@rfstr(44)Appendix: List of commands@end(TC1)
+
+@begin(TC1)@rfstr(46)Index@end(TC1)
+

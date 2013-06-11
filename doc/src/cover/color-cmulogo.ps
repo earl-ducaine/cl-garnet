@@ -1,0 +1,118 @@
+%!PS-Adobe-2.0 EPSF-1.2
+%%Title: CMULogo.PS
+%%Creator: Dale Moore CMU-CS/RI 
+%%CreationDate: 14-APR-1987
+%%DocumentFonts: Times-Bold
+%%Pages: 1
+%%BoundingBox: (atend)
+%%EndComments
+
+%++
+% Color-CMULOGO.PS
+% Created by Brad Myers from Black and white logo that was in 
+%        /usr/misc/.scribe/lib/database.v7/cmulogo.ps
+%
+% Description:
+%
+%	This is the PostScript version of the CMU Logo.  It
+%	attempts to follow as closely as possible the standard
+%	for the logo as set forth in the "Carnegie Mellon
+%	Logo and Graphics Standard".  It is available from
+%	campus printing.
+%
+%	The execeptions to the logo standard as published 
+%	are that the font Time-Bold (ITC) is used in place of the
+%	standard of Bauer Bodini Bold (Compugraphic).  Both
+%	the Bauer Bodini Bold font and Times-Bold font are
+%	Serif fonts and very similar in design.  The Bauer font
+%	is slightly more condensed than the Times font.  The
+%	same text set in the same pt size will use approx 10% less
+%	horizontal space in a Bauer font that the same text set in Times.
+%
+%	This implementation does not enforce the standard that
+%	minimum point size of the Carnegie Mellon name is
+%	12 points.
+%
+%	The logo is printed at the origin (0,0), on the current page.
+%	Many printers can not print near the border of the page.
+%	This will cause the output to be clipped.  .i.e the entire
+%	logo will not appear when this document is printed by itself.
+%
+%	We print the logo at the origin for backward compatability.
+%	Scribe files that do not use BoundingBox=File, (.i.e those
+%	that use "Height=x, Width=y" expect the lower left x and
+%	lower left y to be at the origin.  By printing at the origin
+%	we can satisfy both styles of use of @Graphic, at the expense
+%	of having the diagram clipped.
+%
+%	This PostScript program also executes the showpage operator.
+%	V5(1500) of Scribe does not disable the showpage operator
+%	by temporarily binding it to a noop.  Using this PostScript
+%	program inside of V5 of scribe will not produce the expected
+%	results.  This problem was fixed in V6(1600) of scribe.
+%
+%	Also be aware of psrev and included documents.  Many printers
+%	produce pages in the "wrong" order.  Due to the way these
+%	printers stack paper on output, the first page printed ends
+%	up on the bottom, face up.  The last page printed ends up on top,
+%	face up.  Because of this, many spoolers pipe their PostScript
+%	through the psrev utility.  The psrev utility uses the %%Page:
+%	comments to reverse the order of the pages in a PostScript
+%	document.  When a PostScript file is included in a another
+%	there will be two page ones.  Some versions of the psrev utility
+%	do not correctly handle the included PostScript file and fail to
+%	reverse the pages.  Causing included PostScript files that
+%	include other PostScript files to fail.
+%
+% Modifications:
+%
+%	20-OCT-1988	Dale Moore	CMU-CS
+%	Removed /inch def.  No Longer needed.  
+%	Added %%EndProlog, part of Document Structuring Convention.
+%	Changed dict size to 1, no longer need dict of size 2.
+%--
+
+1 dict begin
+
+/cmulogo
+{
+    % do the cmu logo at the currentpoint.
+    % The text of the logo will be in a 1 point font.
+    % the lower left of the logo will be at the currentpoint
+    gsave
+	% move the coordinate system to current x y
+	currentpoint translate
+	
+	% First the tilted square
+        gsave
+            1 0 0 setrgbcolor
+	    0.8700 0.0544 moveto
+	    14.0 rotate
+	    0.0272 setlinewidth
+	    0.0 3.4286 rlineto
+	    3.4286 0.0 rlineto
+	    0.0 -3.4286 rlineto
+	    closepath stroke
+	grestore
+
+	% now the Carnegie-Mellon
+	/Times-Bold findfont setfont
+	1.638 2.5573 moveto (Carnegie) show
+	1.638 1.5973 moveto (Mellon) show
+    grestore
+} bind def
+
+%%EndProlog
+%%Page: 1 1
+%%PageBoundingBox: (atend)
+gsave
+    18 18 scale
+    0 0 moveto
+    cmulogo
+grestore
+
+showpage
+%%PageBoundingBox: 0 0 100 79
+%%Trailer
+end
+%%BoundingBox: 0 0 100 79
