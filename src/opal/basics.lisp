@@ -135,7 +135,7 @@
 ;;; This sets up the update-info slot (allocates memory for it), and then
 ;;; copies down the :update-slots value to make it local.
 ;;; -- dzg,amickish -- removed copy-down of :update-slots and :fast-redraw-p
-(define-method :initialize opal:view-object (gob)
+(define-method :initialize view-object (gob)
   (let ((temp-info (make-update-info)))
     (setf (update-info-bits temp-info) 0)
     (setf (update-info-old-bbox temp-info) (make-bbox))
@@ -145,12 +145,12 @@
 ;;; Methods on graphical objects
 
 ;;; Initialize sets up the default values of objects
-(define-method :initialize opal:graphical-object (gob)
+(define-method :initialize graphical-object (gob)
   (call-prototype-method gob)
   ;; This is not an aggregate!  Used by update algorithm for efficiency
   (setf (update-info-aggregate-p (g-local-value gob :update-info)) NIL))
 
-(define-method :point-in-gob opal:view-object (gob x y)
+(define-method :point-in-gob view-object (gob x y)
  (and (g-value gob :visible)
   (let ((top (g-value gob :top))
 	(left (g-value gob :left))
@@ -163,30 +163,43 @@
 	 (< y (+ top height hit))))))
 
 (defun assign-draw-function (f n)
-  (let ((pair (assoc f *function-alist*)))
+  (let ((pair (assoc f gem:*function-alist*)))
     (when pair
 	(setf (get f :x-draw-function) n)
 	(rplacd pair n))))
 
+
+(defun color-to-index (root-window a-color)
+  (declare (ignore root-window))
+  (if a-color
+      (if (g-value a-color :color-p)
+	  (g-value a-color :colormap-index)
+	  (if (eq a-color BLACK)
+	      gem:*black*
+	      gem:*white*))
+      gem:*white*)
+  )
+
+
 
 ;;; Halftone creation functions
-(defun halftone (percent &key (foreground-color opal:black)
-			      (background-color opal:white))
+(defun halftone (percent &key (foreground-color black)
+			      (background-color white))
   (let* ((halftone (aref *halftone-table* (find-halftone percent)))
 	 (fstyle (halftone-filling-style halftone)))
     (unless fstyle
       (setf (halftone-filling-style halftone)
         (setq fstyle
-          (create-instance NIL opal:filling-style
+          (create-instance NIL filling-style
             (:fill-style :opaque-stippled)
             (:stipple
-	      (create-instance NIL opal:bitmap
+	      (create-instance NIL bitmap
 	        (:percent (halftone-percent halftone))
 	        (:image (halftone-device-image halftone))))))))
     (values
       ;; the filling-style
-      (if (and (eq foreground-color opal:black)
-	       (eq background-color opal:white))
+      (if (and (eq foreground-color black)
+	       (eq background-color white))
 	fstyle
         (create-instance NIL fstyle
 	   (:foreground-color foreground-color)
@@ -196,8 +209,8 @@
 
 
 
-(defun halftone-darker (percent &key (foreground-color opal:black)
-                                     (background-color opal:white))
+(defun halftone-darker (percent &key (foreground-color black)
+                                     (background-color white))
   (halftone (halftone-percent
                (aref *halftone-table*
 		     (min (1- *halftone-table-size*)
@@ -206,8 +219,8 @@
             :background-color background-color))
 
 
-(defun halftone-lighter (percent &key (foreground-color opal:black)
-                                      (background-color opal:white))
+(defun halftone-lighter (percent &key (foreground-color black)
+                                      (background-color white))
   (halftone (halftone-percent
                (aref *halftone-table*
 		     (max 0 (1- (find-halftone percent)))))

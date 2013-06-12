@@ -563,9 +563,9 @@ ChangeLog:
            (when (opal:main-event-loop-process-running-p)
 	     (setf suspend-process T)
 	     (opal:kill-main-event-loop-process))
-	   (setf opal-display (the opal::DISPLAY-INFO
+	   (setf opal-display (the gem:DISPLAY-INFO
 				   (g-value a-window :display-info)))
-	   (setf display-info (opal::display-info-display
+	   (setf display-info (gem:display-info-display
 			       opal-display))
          #+apple
          (unwind-protect
@@ -618,8 +618,8 @@ ChangeLog:
 	     (setf loc-x x)
 	     (setf loc-y y)
 	     (setf garnet-code (interactors::translate-character
-				(opal::display-info-display
-				 (the opal::DISPLAY-INFO
+				(gem:display-info-display
+				 (the gem:DISPLAY-INFO
 				      (g-value window :display-info)))
 				code state))
 	     (cond (garnet-code
@@ -746,7 +746,7 @@ ChangeLog:
 	    (and (schema-p value)
 	         (is-a-p value opal:filling-style))))
     (:draw-function
-	(assoc value opal::*function-alist*))
+	(assoc value gem:*function-alist*))
     ((:angle1 :angle2)
 	(numberp value))
     (:point-list

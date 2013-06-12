@@ -50,12 +50,6 @@
 (defparameter *main-event-loop-process* nil
   "The variable which is a handle to the main-event-loop process.")
 
-(defparameter *update-lock*
-  #+ALLEGRO (mp:make-process-lock :name "UPDATE-LOCK")
-  #+(and cmu mp) (mp:make-lock "UPDATE-LOCK")
-  #+sb-thread (sb-thread:make-mutex :name "UPDATE-LOCK")
-  #-(or ALLEGRO (and cmu mp) sb-thread) NIL)
-
 
 ;;; Define opal:launch-main-event-loop-process
 ;;
@@ -146,7 +140,17 @@
   (setf lisp::*max-event-to-sec* 0)
   *main-event-loop-process*)
 
-#-(or allegro (and cmu mp) sb-thread)
+#+ccl
+(defun launch-main-event-loop-process ()
+  "Spawn a process which is doing Garnet interaction all of the time.
+   RETURN the process."
+  (when (ccl::processp *main-event-loop-process*)
+    (ccl:process-kill *main-event-loop-process*))
+  (setf *main-event-loop-process*
+	(ccl:process-run-function "Garnet event loop" #'m-e-l))
+  *main-event-loop-process*)
+
+#-(or allegro (and cmu mp) ccl sb-thread)
 (defun launch-main-event-loop-process ())
 
 
@@ -181,8 +185,16 @@
       (setf *main-event-loop-process* nil)
       (sb-thread:terminate-thread p))))
 
+#+ccl
+(defun kill-main-event-loop-process ()
+  "Kill the current main-event-loop process."
+  (let ((p *main-event-loop-process*))
+    (when (and p (ccl::processp p))
+      (setf *main-event-loop-process* nil)
+      (ccl:process-kill p))))
 
-#-(or allegro (and cmu mp) sb-thread)
+
+#-(or allegro (and cmu mp) ccl sb-thread)
 (defun kill-main-event-loop-process ())
 
 ;;; Define running-p functions
@@ -204,8 +216,10 @@
        (not (mp:process-runnable-p
 		*main-event-loop-process*))
        #+(and cmu mp)
-       (not (equal "Run"
-		   (mp:process-whostate *main-event-loop-process*)))
+       (equal "Run"
+	      (mp:process-whostate *main-event-loop-process*))
+       #+ccl
+       (ccl::process-active-p *main-event-loop-process*)
        #+sb-thread
        (sb-thread:thread-alive-p *main-event-loop-process*)
        ))
@@ -215,7 +229,8 @@
        (not (eq *main-event-loop-process*
 		#+(or allegro (and cmu mp)) mp:*current-process*
 		#+sb-thread sb-thread:*current-thread*
-		#-(or allegro (and cmu mp) sb-thread) T)
+		#+ccl ccl:*current-process*
+		#-(or allegro (and cmu mp) ccl sb-thread) T)
 	    )))
 
 
@@ -229,6 +244,11 @@
       (unless (eq (mp:process-lock-locker *update-lock*) mp:*current-process*)
 	;; Lock only if lock is held by a different process, or unlocked.
 	(mp:process-lock *update-lock*)))
+  #+ccl
+  (when common-lisp-user::update-locking-p
+    (ccl:without-interrupts
+      (unless (eq (ccl::%%lock-owner *update-lock*) ccl:*current-process*)
+	(ccl:grab-lock *update-lock*))))
   #+sb-thread
   (when common-lisp-user::update-locking-p
     (sb-sys:without-interrupts
@@ -243,6 +263,11 @@
   (if (and common-lisp-user::update-locking-p
 	   (eq (mp:process-lock-locker *update-lock*) mp:*current-process*))
       (mp:process-unlock *update-lock*))
+  #+ccl
+  (when common-lisp-user::update-locking-p
+    (ccl:without-interrupts
+      (when (eq (ccl::%%lock-owner *update-lock*) ccl:*current-process*)
+	(ccl:release-lock *update-lock*))))
   #+sb-thread
   (when common-lisp-user::update-locking-p
     (sb-sys:without-interrupts

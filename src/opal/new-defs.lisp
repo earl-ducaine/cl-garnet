@@ -171,64 +171,13 @@
      (win-update-info-fix-update-slots-objects struct)
      ))
 
-(defstruct (opal-gc (:print-function opal-gc-print-function))
-	gcontext
-	opal-style		; This is either a line or filling style
-
-	function
-	foreground
-	background
-	line-width
-	line-style
-	cap-style
-	join-style
-	dashes		;; do not set to NIL
-	font		;; do not set to NIL
-	fill-style
-	fill-rule
-	stipple
-	clip-mask
-        stored-clip-mask  ;; The clip-mask actually stored in
-                          ;; the xlib:gcontext -- except if the
-                          ;; clip-mask is :none, in which case
-                          ;; this contains a list like '(nil 0 0 0)
-                          ;; (to avoid unnecessary consing)
-)
-
-(defun opal-gc-print-function (gc stream depth)
-  (declare (ignore depth))
-  (format stream "#<Opal-GC function ~A clip-mask ~A>"
-	  (opal-gc-function gc)
-	  (opal-gc-clip-mask gc)))
-
 (defvar *free-cons* NIL)
 
 (defvar *font-hash-table* (make-hash-table 
 			   :test #'equal
 			   #+sb-thread :synchronized #+sb-thread t))
 
-;; This exists expressly to convert paths using CMU's
-;; ext:search-list keys into normal paths.  Not robust, but better than
-;; what used to be done...
-(defun fix-font-path (path-argument)
-  (when path-argument
-    (let* ((path path-argument)
-	   (colon-posn (position #\: path))
-	   (search-path (when colon-posn
-			  #+cmu (ext:search-list
-				 (subseq path 0 (1+ colon-posn)))
-			  #-cmu nil)))
-      (if search-path
-	  (concatenate 'string (car search-path) (subseq path (1+ colon-posn)))
-	  (if (eq (position #\/ path :from-end t) (1- (length path)))
-	      path
-	      (concatenate 'string path "/"))))))
 
-;; Hack used in font-to-xfont to counteract ridiculous tendency
-;; of CLX to tack on #\null characters at the end of font paths.
-(defun remove-null-char (s)
-  #+kcl (remove #\^@   s :start (1- (length s)))
-  #-kcl (remove #\null s :start (1- (length s))))
 
 (defmacro merge-bbox (dest-bbox source-bbox)
   `(when (bbox-valid-p ,source-bbox)

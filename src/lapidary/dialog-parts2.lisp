@@ -55,11 +55,10 @@
 ;  processed from oldest to newest (some of the older ones may be superceded
 ;  by some of the newer ones)
 ;
-
-(defmacro DIALOG-ENQUEUE (slot value queue)
-  `(progn
-     (setf ,queue (delete ,slot ,queue :key #'car))
-     (push (cons ,slot ,value) ,queue)))
+(declaim (inline dialog-enqueue))
+(defun DIALOG-ENQUEUE (slot value queue)
+  (setf queue (delete slot queue :key #'car))
+  (push (cons slot value) queue))
 
 ;;;******************
 ;;;  UNCONSTRAIN-FN
@@ -211,9 +210,9 @@
 	 ,#'(lambda (interactor bound-box)
 	      (declare (ignore bound-box))
 	      (let* ((button (g-value interactor :operates-on)))
-		; Toggle selection of button
+		;; Toggle selection of button
 		(s-value button :selected T)
-		; Execute selection function
+		;; Execute selection function
 		(kr-send button :selection-function
 			 button (g-value button :string)))))))))
 
@@ -228,7 +227,7 @@
    (:value (o-formula (gvl :parent :value)))
    (:field-string (o-formula (gvl :parent :field-string))) 
    (:min-frame-width 125)
-   (:selected NIL)  ; Set by interactor
+   (:selected NIL)			; Set by interactor
    (:item-prototype
     `(,SELECT-BOX
       (:floating-left ,(o-formula (+ (gvl :button-left)
@@ -259,19 +258,18 @@
 	(:final-function ,#'(lambda (interactor button)
 			      (let ((panel (g-value interactor :operates-on))
 				    (value (g-value button :string)))
-				; set the :value field of the parent
+				;; set the :value field of the parent
 				(s-value panel :value value)
-				; Global function
+				;; Global function
 				(kr-send panel :selection-function
 					 panel value)
-				; Item function
+				;; Item function
 				(kr-send button :action
 					 button value))))))))
 
 
-;;;***************
 ;;;  ACT BUTTONS
-;;;***************
+;;
 
 (create-instance 'ACT-BUTTONS garnet-gadgets:text-button-panel
    (:top (o-formula (gvl :parent :top)))
@@ -408,8 +406,8 @@
 		(:string ,(o-formula (if (gvl :parent :other-button :selected)
 					       (gvl :parent :select-box-panel :field-string)))))
 	    (:type-restrict ,garnet-gadgets:x-button
-;		(:constant ,(o-formula (when (gvl :parent :parent :constant)
-;					     '(t :queue))))
+;;;		(:constant ,(o-formula (when (gvl :parent :parent :constant)
+;;;					     '(t :queue))))
 		(:constant (t))
 		(:value ,(o-formula (gvl :parent :select-box-panel :type)))
 	        (:left ,(o-formula (+ 10 (opal:gv-right

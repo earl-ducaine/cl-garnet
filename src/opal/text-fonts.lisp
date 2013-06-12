@@ -22,21 +22,6 @@
 
 (in-package "OPAL")
 
-(defvar *Fixed-Font-Family*      "courier")
-(defvar *Serif-Font-Family*      "times")
-(defvar *Sans-Serif-Font-Family* "helvetica")
-
-(defvar *Small-Font-Size*      10)
-(defvar *Medium-Font-Size*     12)
-(defvar *Large-Font-Size*      18)
-(defvar *Very-Large-Font-Size* 24)
-
-(defvar *Small-Font-Point-Size*      100)
-(defvar *Medium-Font-Point-Size*     120)
-(defvar *Large-Font-Point-Size*      180)
-(defvar *Very-Large-Font-Point-Size* 240)
-
-
 ;; "/Courier", etc. are names of postscript fonts used by the printer.
 ;;
 (defun ps-font-name (family face)

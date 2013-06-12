@@ -100,7 +100,7 @@ debugger, otherwise NIL"
 
 #-garnet-processes			; not possible in other lisps
 (defun launch-timer-process (inter time once)
-  "This only works in Allegro, CMUCL, and SBCL"
+  "This only works in Allegro, CMUCL, CCL, and SBCL"
   (declare (ignore inter time once))
   )
   
@@ -128,6 +128,12 @@ debugger, otherwise NIL"
 	   #'(lambda ()
 	       (Timer-Process-Main-Loop inter time once))
 	   :name "Garnet Timer")
+	  #+ccl
+	  (ccl:process-run-function 
+	   "Garnet Timer"
+	   ;; Use a lambda to pass the parameters.
+	   #'(lambda ()
+	       (Timer-Process-Main-Loop inter time once)))
 	  #+sb-thread
 	  (sb-thread:make-thread 
 	   #'(lambda ()

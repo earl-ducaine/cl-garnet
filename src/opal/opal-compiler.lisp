@@ -78,7 +78,7 @@
         "virtual-aggregates"
 	"pixmaps"
         "open-and-close"
-        "x"
+;;;        "x"
     ))
 
 #+ALLEGRO

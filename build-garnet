@@ -10,6 +10,7 @@
 SBCL=/usr/local/bin/sbcl
 CMUCL=/usr/local/bin/lisp
 ACL=/usr/local/allegro/8.1/alisp
+CCL=/usr/local/bin/ccl
 
 usage()
 {
@@ -37,6 +38,12 @@ case $1 in
     sbcl)
 	BUILD="$SBCL --disable-debugger"
 	LOAD=$SBCL
+	QUIT="(quit)"
+	IMAGE=garnet
+	;;
+    ccl)
+	BUILD="$CCL --batch"
+	LOAD=$CCL
 	QUIT="(quit)"
 	IMAGE=garnet
 	;;

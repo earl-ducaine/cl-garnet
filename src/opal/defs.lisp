@@ -119,6 +119,22 @@
 
 ;;; This is the export list for *some* of OPAL
 (eval-when (:execute :load-toplevel :compile-toplevel)
+  (import '(gem:Display-Info
+	    gem:Make-Display-Info gem:Copy-Display-Info
+	    gem:Display-Info-Display gem:Display-Info-Screen gem:Display-Info-Root-Window
+	    gem:Display-Info-Line-Style-GC gem:Display-Info-Filling-Style-GC
+	    gem:*update-lock* gem:*screen-width* gem:*screen-height*
+
+	    gem:*Fixed-Font-Family* gem:*Serif-Font-Family* gem:*Sans-Serif-Font-Family*
+	    gem:*Small-Font-Size* gem:*Medium-Font-Size*
+	    gem:*Large-Font-Size* gem:*Very-Large-Font-Size*
+	    gem:*Small-Font-Point-Size* gem:*Medium-Font-Point-Size* 
+	    gem:*Large-Font-Point-Size* gem:*Very-Large-Font-Point-Size*
+	    gem:default-font-from-file
+	    ) (find-package "OPAL"))
+)
+
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(bottom right center-x center-y
 	    gv-bottom gv-right gv-center-x gv-center-y
 	    gv-center-x-is-center-of gv-center-y-is-center-of
@@ -152,9 +168,10 @@
 	    hourglass-cursor hourglass-cursor-mask hourglass-pair
 	    garbage-cursor garbage-cursor-mask garbage-pair
 	    with-hourglass-cursor with-cursor default-font
-	    display-info-display display-info-screen
-	    display-info-root-window display-info-line-style-gc
-	    display-info-filling-style-gc
+;;;	    display-info-display display-info-screen
+;;;	    display-info-root-window display-info-line-style-gc
+;;	    display-info-filling-style-gc
+	    device-info
 	    convert-coordinates get-cursor-index string-width string-height
 	    change-cursors restore-cursors char-width
 	    move-cursor-down-one-line
@@ -189,6 +206,7 @@
 	    color white black red green blue cyan yellow orange purple
 	    motif-gray motif-blue motif-orange motif-green motif-light-gray
 	    motif-light-blue motif-light-orange motif-light-green
+	    color-to-index
 	    
 	    ;; From Clean-Up.Lisp
 	    clean-up change-garnet-display update-all reset-cursor
@@ -206,6 +224,7 @@
 	    virtual-aggregate remove-item add-item change-item point-to-rank
 	    recalculate-virtual-aggregate-bboxes do-in-clip-rect
 	    do-items ;; [2003/09/16:rpg]
+
 	    
 	    get-standard-font
 
@@ -222,62 +241,7 @@
 
 ;;; DefParameters
 
-;; Added :button-press and :key-press so garnet-debug:ident will work.
-(defparameter *exposure-event-mask* nil)
 
-;; These two 2x2x2 arrays are used as a correction to a flaw in xlib:draw-arc
-(defparameter *left-adjustment*
-  (make-array '(2 2 2) :initial-contents '(((0 1) (0 1)) ((0 1) (0 1)))))
-(defparameter *top-adjustment*
-  (make-array '(2 2 2) :initial-contents '(((0 1) (0 0)) ((0 0) (0 1)))))
-(defparameter *width-adjustment*
-  (make-array '(2 2 2) :initial-contents '(((0 1) (0 1)) ((0 1) (0 1)))))
-(defparameter *height-adjustment*
-  (make-array '(2 2 2) :initial-contents '(((0 1) (1 1)) ((1 1) (0 1)))))
-
-
-
-;;; Routines used to get name of display, and extract
-;;  display number and screen number.
-;;  Normally, the name of a display is of the form
-;;  "displayname:displaynumber.screennumber"
-;; 
-(defun get-full-display-name ()
-   #+cmu
-   (cdr (assoc :DISPLAY lisp::*environment-list*))
-   #+(or allegro lispworks kcl clisp)
-   (sys::getenv "DISPLAY")
-   #+sbcl
-   (sb-posix:getenv "DISPLAY")
-   )
-
-
-;; FMG Rewrote the following three functions just to make
-;; them lispier.
-;;
-(defun get-display-name (display)
-  "This function takes a full display name and, somewhat misleadingly, 
-returns the HOST name, stripping off the display number."
-  (subseq display 0 (position #\: display :test #'char=)))
-
-(defun get-display-number (display)
-  (declare (type string display))
-  (let ((dnum-start (position #\: display)))
-    (unless dnum-start
-      ;; assume it's display zero
-      (return-from get-display-number 0))
-    (incf dnum-start)
-    (let ((dnum-end (position #\. display :start dnum-start)))
-      ;; Subseq will take nil as the "end" parameter 
-      ;; and just use the whole string.
-      (parse-integer (subseq display dnum-start dnum-end)))))
-
-(defun get-screen-number (display)
-  (let ((dot (position #\. display)))
-    (if dot
-	(or (parse-integer (subseq display (1+ dot)) :junk-allowed t) 0)
-	0)))
-	       
 ;; The :current-root slot of the following schema indicates the current
 ;; device.  This is used for all calls to Gem which occur in places where
 ;; explicit device information is not available.
@@ -289,95 +253,41 @@ returns the HOST name, stripping off the display number."
   (:active-devices NIL))
 
 
-(defvar *default-x-display-name*)
-(setf (documentation '*default-x-display-name* 'variable)
-      "This is an unfortunately misnamed entity, since it is
-actually an X HOSTNAME and not a display name in the sense of
-being a string display designator.")
-(defvar *default-x-display*)
-(defvar *default-x-display-number*)
-(defvar *default-x-screen-number*)
-(defvar *default-x-screen*)
-(defvar *default-x-root*)
-(defvar *default-x-colormap*)
-(defvar *screen-width*)
-(defvar *screen-height*)
-(defvar *white*)
-(defvar *black*)
-(defvar *function-alist*)
-(defvar *copy*)
 
+;;; Moved all the X display / screen / etc. stuff into x.lisp to
+;;  respect the modularity of the code.
+
+;; (defvar *default-x-display-name*)
+;; (setf (documentation '*default-x-display-name* 'variable)
+;;       "This is an unfortunately misnamed entity, since it is
+;; actually an X HOSTNAME and not a display name in the sense of
+;; being a string display designator.")
+;; (defvar *default-x-display*)
+;; (defvar *default-x-display-number*)
+;; (defvar *default-x-screen-number*)
+;; (defvar *default-x-screen*)
+;; (defvar *default-x-root*)
+;; (defvar *default-x-colormap*)
+;; (defvar *screen-width*)
+;; (defvar *screen-height*)
+;; (defvar *white*)
+;; (defvar *black*)
+;; (defvar *function-alist*)
 
 (defvar *colormap-index-table*
   ;;arguments to make-hash-table NOT well thought out! [1995/09/12:goldman]
   (make-hash-table :size 256))
 
-(defvar *is-this-a-color-screen?* nil)
-(defvar *read-write-colormap-cells-p* nil
-  "This variable will be t if the screen type is :direct-color or :pseudo-color.")
-(defvar *HP-display-type?* nil)
-
-
-(defun set-draw-functions ()
-  "Create Alist since CLX likes to get the draw function in the form of an
-integer.  We want to specify nice keywords instead of those silly
- numbers."
-  (gem:set-draw-function-alist (gv DEVICE-INFO :current-root))
-  (dolist (fn-pair *function-alist*)
-    (setf (get (car fn-pair) :x-draw-function) (cdr fn-pair))))
-
-
 ;;; This is also called in reconnect-garnet.
 ;;;
-(defun initialize-x11-values (full-display-name root-window)
-  (setq *default-x-display-name*
-	(if full-display-name
-	    (get-display-name full-display-name)
-	    #-allegro (machine-instance)
-	    #+allegro (short-site-name)))
-  (setf *default-x-display-number* 
-        (if full-display-name 
-            (get-display-number full-display-name)
-            0))
-  (setq *default-x-screen-number* (get-screen-number full-display-name))
-
+(defun initialize-device-values (full-display-name root-window)
   ;; Set up all the Opal variables used to identify display, screen, etc.
   ;; Unfortunately, these are needed by discard-all-pending-events (in
   ;; process.lisp), which is called by launch-main-event-loop-process.
-  (gem:set-device-variables root-window)
-
-  ;; This is really dumb, but it's the only way I can think of
-  ;; to find out if the screen is color or not.
-;;;		(let* ((*print-pretty* NIL)
-;;;		       (colormap-string (string-upcase
-;;;					 (princ-to-string opal::*default-x-colormap*))))
-;;;		  (if (or (search "PSEUDO-COLOR" colormap-string)
-;;;			  (search "DIRECT-COLOR" colormap-string)
-;;;			  (search "GRAY-SCALE" colormap-string))
-;;;		      (setq *is-this-a-color-screen?* t)
-;;;		      (setq *is-this-a-color-screen?* nil)))
-  ;;incorporated Nick Levine's patch into the code.
-  ;;[1995/09/11:goldman]
-  ;;further patched this to add *read-write-colormap-cells-p* [1995/12/08:goldman]
-  (let ((color-screen-types '(:pseudo-color 
-			      :direct-color
-			      :static-color
-			      :true-color
-			      :quickdraw))
-	(screen-type (xlib::visual-info-class
-		      (xlib::screen-root-visual-info
-		       *default-x-screen*))))
-    (setq *is-this-a-color-screen?*
-	  (if (member screen-type color-screen-types :test #'eq)
-	      screen-type
-	      nil))
-    (setq *read-write-colormap-cells-p* 
-	  (and *is-this-a-color-screen?*
-	       (member screen-type '(:direct-color :pseudo-color) :test #'eq))))
-    
+  (gem:set-device-variables root-window full-display-name)
+  (gem:set-screen-color-attribute-variables root-window)
   (with-constants-disabled
-    (s-value opal::COLOR :color-p *is-this-a-color-screen?*))
-  (setq *HP-display-type?* (and *is-this-a-color-screen?* (zerop *black*)))
+    (s-value opal::COLOR :color-p gem:*color-screen-p*))
   )
   
 
@@ -415,16 +325,6 @@ integer.  We want to specify nice keywords instead of those silly
   (percent 0)
   (device-image nil)
   (filling-style nil))
-
-;;; This defstruct generates the functions Make-Display-Info, Copy-Display-Info,
-;;; Display-Info-Display, Display-Info-Screen, Display-Info-Root-Window,
-;;; Display-Info-Line-Style-GC, and Display-Info-Filling-Style-GC.
-(defstruct (DISPLAY-INFO (:print-function display-info-printer))
-  display
-  screen
-  root-window
-  line-style-gc
-  filling-style-gc)
 
 ;;; This defstruct generates the functions Make-Cut-String, Copy-Cut-String,
 ;;; Cut-String-String, Cut-String-Width, and Cut-String-Left-Bearing.
