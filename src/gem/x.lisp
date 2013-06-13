@@ -198,8 +198,11 @@ being a string display designator.")
 
 (defun x-color-to-index (root-window a-color)
   (declare (ignore root-window))
-  (when a-color
-    (g-value a-color :colormap-index)))
+  (if *color-screen-p*
+      (if a-color (g-value a-color :colormap-index) *white*)
+      (if (eq a-color opal::black) 	; XXX this breaks modularity.
+	  *black*
+          *white*)))
 
 
 ;; The following two variables used to be in Inter/i-windows.lisp; they
