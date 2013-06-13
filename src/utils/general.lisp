@@ -8,6 +8,8 @@
 ;;  domain.                                                          ;;
 ;;*******************************************************************;;
 
+;;; $Id$
+;;
 
 ;;; Change log:
 ;;   12/06/94 Bruno Haible   - Named package in system::*error-handler*
@@ -201,10 +203,8 @@ or the symbol name if called where the first character is a colon."
 ;;; (end) Verify-Binding
 
 
-
-;; Lucid thinks NIL and keywords are functions!
 (defun safe-functionp (fn)
-  (or (and fn (not (keywordp fn)) (functionp fn))
+  (or (functionp fn)
       (and (symbolp fn) (fboundp fn))))
 
 (defun probe-directory (filename)

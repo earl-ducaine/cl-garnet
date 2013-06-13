@@ -1131,8 +1131,9 @@ running Garnet."
 				       :wait NIL :output :stream))
 
   #+ccl
-  (external-process-output-stream (run-program "/bin/sh" (list "-c" command)
-					       :wait NIL :output :stream))
+  (ccl:external-process-output-stream 
+   (ccl:run-program "/bin/sh" (list "-c" command)
+		    :wait NIL :output :stream))
   #+sbcl
   (sb-ext:process-output (sb-ext:run-program "/bin/sh" (list "-c" command)
 				       :wait NIL :output :stream)))

@@ -169,16 +169,7 @@
 	(rplacd pair n))))
 
 
-(defun color-to-index (root-window a-color)
-  (declare (ignore root-window))
-  (if a-color
-      (if (g-value a-color :color-p)
-	  (g-value a-color :colormap-index)
-	  (if (eq a-color BLACK)
-	      gem:*black*
-	      gem:*white*))
-      gem:*white*)
-  )
+
 
 
 

@@ -77,9 +77,18 @@
 	(values (sb-ext:process-output process)
 		(sb-ext:process-error process)))
       #+cmu
-      (ext:process-output (ext:run-program "/bin/sh" (list "-c" command)
-					   :wait NIL :output :stream))
-      #-(or allegro cmu sbcl)
+      (let ((p
+	     (ext:run-program "/bin/sh" (list "-c" command)
+			  :wait NIL :output :stream :error :stream)))
+	(values (ext:process-output p) (ext:process-error p)))
+      #+ccl
+      (let ((p
+	     (ccl:run-program "/bin/sh" (list "-c" command)
+			      :wait NIL :output :stream :error :stream)))
+	(values (ccl:external-process-output-stream p)
+		(ccl:external-process-error-stream p)))
+      
+      #-(or allegro cmu ccl sbcl)
       (error "Don't know how to execute shell functions in this lisp")
       
       (let ((output-string (make-array '(0)
@@ -155,7 +164,7 @@
 
 
 (defun make-image (filename &rest args)
-  #-(or cmu allegro sbcl)
+  #-(or allegro ccl cmu sbcl)
     (error "Don't know how to automatically save an image for this lisp.
 Please consult your lisp's user manual for instructions.~%")
 
@@ -190,13 +199,19 @@ Please consult your lisp's user manual for instructions.~%")
     (excl:discard-all-source-file-info)
     (format t "Fssssh-gurgle-hisss!~%"))
 
-  #+(or allegro cmu sbcl)
+  #+(or allegro cmu ccl sbcl)
   (when gc
     (if verbose (format t "Garbage collecting..."))
     #+allegro (excl:gc T)
     #+(and cmu (not gencgc)) (ext:gc T)
     #+(and cmu gencgc) (ext:gc :full t)
     #+sbcl (sb-ext:gc :full t)
+    #+ccl
+    (progn
+      (ccl::impurify)
+      (ccl:gc)
+      (ccl::purify))
+
     (if verbose (format t "collected.~%")))
 
   (if verbose (format t "Saving image..."))
@@ -215,6 +230,12 @@ Please consult your lisp's user manual for instructions.~%")
     (setf ext:*after-save-initializations*
  	  (append  ext:*after-save-initializations* (list #'garnet-restart-function))) 
     (apply #'ext:save-lisp filename extra-args))
+
+  #+ccl
+  (progn
+    (pushnew #'garnet-restart-function ccl:*lisp-startup-functions*)
+    (apply #'ccl:save-application filename extra-args))
+
   
   #+sbcl
   (progn
