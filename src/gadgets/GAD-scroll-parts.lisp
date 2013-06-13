@@ -34,7 +34,7 @@
 ;;   11/30/90  Pavan Reddy - used "format" instead of "prin1-to-string" in
 ;;             INDICATOR-TEXT to allow use of floats.
 
-(declaim (optimize (speed 2) (safety 3) (debug 3)))
+;; (declaim (optimize (speed 2) (safety 3) (debug 3)))
 
 
 (in-package "GARNET-GADGETS")

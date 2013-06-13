@@ -1,7 +1,7 @@
 #!/bin/sh
 
 #
-# $Id: build-garnet 83 2013-05-16 22:13:14Z fred $
+# $Id$
 #
 
 #
@@ -10,6 +10,7 @@
 SBCL=/usr/local/bin/sbcl
 CMUCL=/usr/local/bin/lisp
 ACL=/usr/local/allegro/8.1/alisp
+CCL=/usr/local/bin/ccl
 
 usage()
 {
@@ -38,13 +39,19 @@ case $1 in
 	BUILD="$SBCL --disable-debugger"
 	LOAD=$SBCL
 	QUIT="(quit)"
-	IMAGE=garnet
+	IMAGE=garnet-sbcl
+	;;
+    ccl)
+	BUILD="$CCL --batch"
+	LOAD=$CCL
+	QUIT="(quit)"
+	IMAGE=garnet-ccl
 	;;
     cmucl)
 	BUILD="$CMUCL -batch"
 	LOAD=$CMUCL
 	QUIT="(quit)"
-	IMAGE=garnet.image
+	IMAGE=garnet-cmucl
 	;;
     acl)
 	BUILD="$ACL -batch -backtrace-on-error"
@@ -69,5 +76,10 @@ EOF
 
 [ $? -eq 0 ] && $LOAD << EOF
 (load "garnet-loader")
-(opal:make-image "$IMAGE" #+sbcl :executable #+sbcl t)
+
+(let ((args (list "$IMAGE"
+                  #+sbcl :executable #+sbcl t
+                  #+cmu :executable #+cmu t
+                  #+ccl :prepend-kernel #+ccl t)))
+ (apply #'opal:make-image args))
 EOF

@@ -543,7 +543,7 @@
   (kr-send inter :after-cursor-moves-func inter string-object)) 
 
 (defparameter Shift-Bit
-  (gem:create-state-mask (g-value opal::device-info :current-root) :shift))
+  (gem:create-state-mask (g-value opal:device-info :current-root) :shift))
 
 ;; event is a mouse event, not a move, see if down or shift-down
 (defun Handle-Move-Cursor (an-interactor string-object event)

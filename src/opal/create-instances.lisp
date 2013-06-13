@@ -95,17 +95,6 @@
 ;; 			instance from all the Opal files.  No modifications
 ;; 			were made to them.
 
-
-(in-package "OPAL")
-
-;; I *hate* to do this, but this function needs to go here so that the
-;; the reference to it below doesn't generate a warning at compile time.  Of
-;; course, we *should* be able to just declare it, but no...  Bug in compiler!
-;;
-(defun build-pixmap (a-window image width height bitmap-p)
-  (gem:create-pixmap a-window width height 1 image bitmap-p))
-
-
 ;;; The Opal Hierarchy
 ;;
 
@@ -193,23 +182,24 @@
 ;; 		opal:VIRTUAL-AGGREGATE
 ;; 	opal:WINDOW
 
-
 
+(in-package "OPAL")
+
 ;;; Graphic-Quality Hierarchy
 ;;
 
-(create-instance 'opal:GRAPHIC-QUALITY NIL)
+(create-instance 'GRAPHIC-QUALITY NIL)
 
-(define-method :destroy-me opal:graphic-quality (quality)
+(define-method :destroy-me graphic-quality (quality)
   (destroy-schema quality))
 
-(define-method :destroy opal:graphic-quality (quality)
+(define-method :destroy graphic-quality (quality)
   (dolist (instance (copy-list (g-local-value quality :is-a-inv)))
     (destroy instance))
   (destroy-me quality))
 			   
 
-(create-instance 'opal::FONT-FROM-FILE opal:graphic-quality
+(create-instance 'FONT-FROM-FILE graphic-quality
   :declare ((:parameters :font-path :font-name)
 	    (:type ((or string cons) :font-name)
 		   ((or null string) :font-path))
@@ -231,11 +221,11 @@
   (:ps-font-size (o-formula (gvl :font-height))))
 
 
-(define-method :initialize opal:font-from-file (fff)
+(define-method :initialize font-from-file (fff)
   (s-value fff :font-from-file fff))
 
 (setf (gethash '(:fixed :roman :medium) *font-hash-table*)
-      (create-instance 'opal::default-font-from-file opal:font-from-file
+      (create-instance 'default-font-from-file font-from-file
 	(:font-name (o-formula (gem:make-font-name
 				(gv DEVICE-INFO :current-device)
 				'(:fixed :roman :medium))))))
@@ -244,7 +234,7 @@
   (gem:font-to-internal root-window fff))
 
 
-(create-instance 'opal:FONT opal:graphic-quality
+(create-instance 'FONT graphic-quality
   :declare ((:type (font-family :family)
 		   (font-face :face)
 		   (font-size :size))
@@ -274,18 +264,18 @@
                  (font-name (gem:make-font-name root-window key)))
 	    (if (gem:font-name-p root-window font-name)
                 (setf (gethash key *font-hash-table*)
-		      (create-instance NIL opal:font-from-file
+		      (create-instance NIL font-from-file
 		        (:font-name font-name)))
 	        (progn
 		  (warn "~A not allowed for :~A slot of font; substituting default-font." 
 			(car font-name)
 			(cdr font-name))
-		  opal::default-font-from-file))))))))
+		  default-font-from-file))))))))
 
-(create-instance 'opal:DEFAULT-FONT opal:FONT
+(create-instance 'DEFAULT-FONT FONT
    (:constant T))
 
-(create-instance 'opal::CURSOR-FONT opal:FONT-FROM-FILE
+(create-instance 'CURSOR-FONT FONT-FROM-FILE
   (:constant T)
   (:font-name "cursor"))
 
@@ -328,14 +318,14 @@ avoiding wasted objects.
 		    (t (error "Invalid font size -- ~S" size)))))
     (or (aref *Font-Table* family-num face-num size-num)
 	(setf (aref *Font-Table* family-num face-num size-num)
-	      (create-instance nil opal:font
+	      (create-instance nil FONT
 		(:constant T)
 		(:standard-p T)
 		(:family family)
 		(:face face)
 		(:size size))))))
 
-(setf (aref *Font-Table* 0 0 1) opal:default-font)
+(setf (aref *Font-Table* 0 0 1) default-font)
 
 
 (let ((first-time T)
@@ -346,7 +336,7 @@ avoiding wasted objects.
       ;; Find out the first colormap index that you are actually allowed to
       ;; allocate and deallocate.
       ;;THIS WON'T WORK ON A TRUE-COLOR SCREEN! [1995/12/08:goldman]
-      (when *read-write-colormap-cells-p*
+      (when gem:*read-write-colormap-cells-p*
 	(setq *first-allocatable-colormap-index*
 	      (gem:colormap-property root-window :FIRST-ALLOCATABLE-INDEX)))
       (setf first-time NIL))
@@ -362,7 +352,7 @@ avoiding wasted objects.
 
 
 
-(create-instance 'opal:COLOR opal:graphic-quality
+(create-instance 'COLOR GRAPHIC-QUALITY
   :declare ((:parameters :red :green :blue :color-name)
 	    (:type ((real 0 1) :red :green :blue)
 		   ((or string atom) :color-name))
@@ -370,7 +360,7 @@ avoiding wasted objects.
   (:red 1.0)
   (:green 1.0)
   (:blue 1.0)
-  (:color-p *is-this-a-color-screen?*)  ; Set by initialize-x11-values
+  (:color-p gem:*color-screen-p*)  ; Set by initialize-x11-values
   (:xcolor (o-formula
 	    (let ((name (gvl :color-name)))
 	      (if name
@@ -392,7 +382,7 @@ avoiding wasted objects.
 	   (new-index (gem:colormap-property root-window :ALLOC-COLOR
 					     (gvl :xcolor))))
       ;;changed the following [1995/12/08:goldman]
-      (when *read-write-colormap-cells-p*
+      (when gem:*read-write-colormap-cells-p*
 	(when (and old-index
 		   (>= old-index
 		       (first-allocatable-colormap-index root-window))
@@ -402,8 +392,8 @@ avoiding wasted objects.
       new-index))))
 	
 
-(define-method :destroy-me opal:color (hue)
-  (when *is-this-a-color-screen?*
+(define-method :destroy-me COLOR (hue)
+  (when gem:*color-screen-p*
     (let ((index (g-cached-value hue :colormap-index)))
       (dolist (device (g-value DEVICE-INFO :active-devices))
 	(let ((root-window (g-value device :root-window)))
@@ -416,37 +406,37 @@ avoiding wasted objects.
   (destroy-schema hue))
 
 				    
-(create-instance 'opal:RED opal:color
+(create-instance 'RED color
   (:red 1.0) (:green 0.0) (:blue 0.0))
 
-(create-instance 'opal:GREEN opal:color
+(create-instance 'GREEN color
   (:red 0.0) (:green 1.0) (:blue 0.0))
 
-(create-instance 'opal:BLUE opal:color
+(create-instance 'BLUE color
   (:red 0.0) (:green 0.0) (:blue 1.0))
 
-(create-instance 'opal:YELLOW opal:color
+(create-instance 'YELLOW color
   (:red 1.0) (:green 1.0) (:blue 0.0))
 
-(create-instance 'opal:CYAN opal:color
+(create-instance 'CYAN color
   (:red 0.0) (:green 1.0) (:blue 1.0))
 
-(create-instance 'opal:PURPLE opal:color
+(create-instance 'PURPLE color
   (:red 1.0) (:green 0.0) (:blue 1.0))
 
-(create-instance 'opal:ORANGE opal:color
+(create-instance 'ORANGE color
   (:red 1.0) (:green 0.65) (:blue 0.0))
 
-(create-instance 'opal:WHITE opal:color
+(create-instance 'WHITE color
   (:red 1.0) (:green 1.0) (:blue 1.0))
 
-(create-instance 'opal:BLACK opal:color
+(create-instance 'BLACK color
   (:red 0.0) (:green 0.0) (:blue 0.0))
 
-(create-instance 'opal:LINE-STYLE opal:graphic-quality
+(create-instance 'LINE-STYLE graphic-quality
   :declare ((:type (fixnum :line-thickness) ;(integer :line-thickness)
 		   (keyword :line-style :cap-style :join-style)
-		   ((is-a-p opal:color) :foreground-color :background-color))
+		   ((is-a-p color) :foreground-color :background-color))
 	    (:maybe-constant :line-thickness :line-style :cap-style :join-style
 			     :dash-pattern :foreground-color :background-color
 			     :stipple))
@@ -455,83 +445,83 @@ avoiding wasted objects.
   (:cap-style :butt)			; or :not-last, :round or :projecting
   (:join-style :miter)			; or :round or :bevel
   (:dash-pattern nil)
-  (:foreground-color opal::black)
-  (:background-color opal::white)
+  (:foreground-color black)
+  (:background-color white)
   (:stipple nil))
 
 
-(create-instance 'opal:DEFAULT-LINE-STYLE opal:line-style
+(create-instance 'DEFAULT-LINE-STYLE line-style
   (:constant T))
 
 
-(create-instance 'opal::LINE-0 opal:line-style
+(create-instance 'LINE-0 line-style
   (:constant T))
-(defvar opal::THIN-LINE opal::LINE-0)
-(create-instance 'opal::LINE-1 opal:line-style
+(defvar THIN-LINE LINE-0)
+(create-instance 'LINE-1 line-style
   (:constant T)
   (:line-thickness 1))
-(create-instance 'opal::LINE-2 opal:line-style
+(create-instance 'LINE-2 line-style
   (:constant T)
   (:line-thickness 2))
-(create-instance 'opal::LINE-4 opal:line-style
+(create-instance 'LINE-4 line-style
   (:constant T)
   (:line-thickness 4))
-(create-instance 'opal::LINE-8 opal:line-style
+(create-instance 'LINE-8 line-style
   (:constant T)
   (:line-thickness 8))
 
-(create-instance 'opal:RED-LINE opal:line-style
+(create-instance 'RED-LINE line-style
   (:constant T)
-  (:foreground-color opal:red))
-(create-instance 'opal:GREEN-LINE opal:line-style
+  (:foreground-color red))
+(create-instance 'GREEN-LINE line-style
   (:constant T)
-  (:foreground-color opal:green))
-(create-instance 'opal:BLUE-LINE opal:line-style
+  (:foreground-color green))
+(create-instance 'BLUE-LINE line-style
   (:constant T)
-  (:foreground-color opal:blue))
-(create-instance 'opal:CYAN-LINE opal:line-style
+  (:foreground-color blue))
+(create-instance 'CYAN-LINE line-style
   (:constant T)
-  (:foreground-color opal:cyan))
-(create-instance 'opal:YELLOW-LINE opal:line-style
+  (:foreground-color cyan))
+(create-instance 'YELLOW-LINE line-style
   (:constant T)
-  (:foreground-color opal:yellow))
-(create-instance 'opal:ORANGE-LINE opal:line-style
+  (:foreground-color yellow))
+(create-instance 'ORANGE-LINE line-style
   (:constant T)
-  (:foreground-color opal:orange))
-(create-instance 'opal:PURPLE-LINE opal:line-style
+  (:foreground-color orange))
+(create-instance 'PURPLE-LINE line-style
   (:constant T)
-  (:foreground-color opal:purple))
-(create-instance 'opal:WHITE-LINE opal:line-style
+  (:foreground-color purple))
+(create-instance 'WHITE-LINE line-style
   (:constant T)
-  (:foreground-color opal:white))
+  (:foreground-color white))
 
-(create-instance 'opal::DOTTED-LINE opal:line-style
+(create-instance 'DOTTED-LINE line-style
   (:constant T)
   (:line-style :dash)
   (:line-thickness 1)
   (:dash-pattern '(1 1)))
 
 
-(create-instance 'opal::DASHED-LINE opal:line-style
+(create-instance 'DASHED-LINE line-style
   (:constant T)
   (:line-style :dash)
   (:dash-pattern '(4 4)))
 
 
-(create-instance 'opal:FILLING-STYLE opal:graphic-quality
+(create-instance 'FILLING-STYLE graphic-quality
   :declare ((:parameters :foreground-color :background-color :fill-style
 			 :fill-rule :stipple)
 	    (:type (fill-style :fill-style)
 		   ((member :even-odd :winding) :fill-rule)
-		   ((is-a-p opal:color) :foreground-color :background-color)))
+		   ((is-a-p color) :foreground-color :background-color)))
   (:fill-style :solid)    ;; or :opaque-stippled or :stippled
   (:fill-rule :even-odd)  ;; or :winding
-  (:foreground-color opal::black)
-  (:background-color opal::white)
+  (:foreground-color black)
+  (:background-color white)
   (:stipple nil))
 
 
-(create-instance 'opal:DEFAULT-FILLING-STYLE opal:filling-style)
+(create-instance 'DEFAULT-FILLING-STYLE filling-style)
 
 ;; For the *-FILL schemas, please see the end of this file (to avoid
 ;; forward references, they had to be put there)....
@@ -540,7 +530,7 @@ avoiding wasted objects.
 ;;; View-Object Hierarchy
 ;;
 
-(create-instance 'opal:VIEW-OBJECT NIL
+(create-instance 'VIEW-OBJECT NIL
   :declare ((:type (fixnum :left :top) ; (integer :left :top)
 		   (#-(and) (integer 0) #+(and) fixnum :width :height :hit-threshold)
 		   (known-as-type :known-as)
@@ -571,7 +561,7 @@ avoiding wasted objects.
 ;; The children of a gob are stored in a list from bottom most to top
 ;; most, since we want to redraw fastest and redraws occur from bottom to
 ;; top.
-(create-instance 'opal:AGGREGATE opal:view-object
+(create-instance 'AGGREGATE view-object
   :declare (:type (list :components))
   (:components)
   (:update-slots NIL) ; New update does not use AGGREGATE'S visible!
@@ -627,9 +617,9 @@ avoiding wasted objects.
 
 
 ;; Class Graphical-object
-(create-instance 'opal:GRAPHICAL-OBJECT opal:view-object
-  :declare ((:type ((or (is-a-p opal:line-style) null) :line-style)
-		   ((or (is-a-p opal:filling-style) null) :filling-style)
+(create-instance 'GRAPHICAL-OBJECT view-object
+  :declare ((:type ((or (is-a-p line-style) null) :line-style)
+		   ((or (is-a-p filling-style) null) :filling-style)
 		   ((member :copy :xor :no-op :or :clear :set :copy-inverted
 			    :invert :and :equiv :nand :nor :and-inverted
 			    :and-reverse :or-inverted :or-reverse)
@@ -641,7 +631,7 @@ avoiding wasted objects.
   (:width 20)
   (:height 20)
   (:draw-function :copy)
-  (:line-style opal:default-line-style)
+  (:line-style default-line-style)
   (:filling-style nil)
   (:select-outline-only nil)
 

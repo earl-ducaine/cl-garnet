@@ -59,6 +59,9 @@
 (gem-method :CREATE-PIXMAP (root-window width height depth
 					&optional image bitmap-p data-array))
 
+(gem-method :BUILD-PIXMAP (window image width height bitmap-p))
+
+
 (gem-method :CREATE-STATE-MASK (root-window modifier))
 
 (gem-method :CREATE-WINDOW
@@ -109,6 +112,8 @@
 
 (gem-method :FLUSH-OUTPUT (window))
 
+(gem-method :FONT-EXISTS-P (root-window name))
+
 (gem-method :FONT-MAX-MIN-WIDTH (root-window font min-too))
 
 (gem-method :FONT-NAME-P (root-window arg))
@@ -154,11 +159,17 @@
 
 (gem-method :SET-CUT-BUFFER (root-window string))
 
-(gem-method :SET-DEVICE-VARIABLES (root-window))
+(gem-method :SET-DEVICE-VARIABLES (root-window full-display-name))
+
+(gem-method :SET-DRAW-FUNCTION-ALIST (root-window))
+
+(gem-method :SET-DRAW-FUNCTIONS (root-window))
 
 (gem-method :SET-DRAWABLE-TO-WINDOW (window drawable))
 
 (gem-method :SET-INTEREST-IN-MOVED (window interestedp))
+
+(gem-method :SET-SCREEN-COLOR-ATTRIBUTE-VARIABLES (root-window))
 
 (gem-method :SET-WINDOW-PROPERTY (window property value))
 
@@ -190,9 +201,6 @@
 
 (gem-method :WRITE-AN-IMAGE (root-window pathname image))
 
-(gem-method :FONT-EXISTS-P (root-window name))
-
-(gem-method :SET-DRAW-FUNCTION-ALIST (root-window))
 
 
 ;;; This ends up being a macro, not a function; therefore, it is handled

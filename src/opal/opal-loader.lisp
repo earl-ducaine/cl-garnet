@@ -71,7 +71,8 @@
     "virtual-aggregates"
     "pixmaps"
     "open-and-close"
-    "x"))
+;;;    "x"
+    ))
 
 (dolist (file Garnet-Opal-Files)
   (load (merge-pathnames file Garnet-Opal-PathName)

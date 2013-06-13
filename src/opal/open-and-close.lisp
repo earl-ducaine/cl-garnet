@@ -212,11 +212,11 @@
     (setf root-window (g-value device-info :current-root))
 
     ;; Should be called in X-Init-Device?
-    (set-draw-functions)		; defined in defs.lisp
+    (gem:set-draw-functions root-window)
 
     ;; you can't call alloc-color-cells on a :true-color or :static-color
     ;; screen...conditionalized it. [1995/12/08:goldman]
-    (when *read-write-colormap-cells-p*
+    (when gem:*read-write-colormap-cells-p*
       (let ((indices (gem:colormap-property root-window :ALLOC-COLOR-CELLS)))
 	(reset-first-allocatable-colormap-index root-window)
 	(set-first-allocatable-colormap-index root-window (car indices))

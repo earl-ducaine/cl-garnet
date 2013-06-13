@@ -489,9 +489,10 @@ directory."
 (defun Get-Garnet-Binary-Pathname ()
   (let ((directory-name
 	 #+sbcl "bin.sbcl"
+	 #+ccl "bin.ccl"
 	 #+cmu "bin.cmu"
 	 #+allegro "bin.allegro"
-	 #-(or sbcl cmu allegro) (error "~S is an invalid garnet-version" version)))
+	 #-(or sbcl ccl cmu allegro) (error "~S is an invalid garnet-version" version)))
     (unless multiple-garnet-bin-dirs (setq directory-name "bin"))
     (append-directory Your-Garnet-Pathname directory-name)))
 
@@ -887,6 +888,7 @@ directory."
    #+cmu (cdr (assoc :DISPLAY lisp::*environment-list*))
    #+allegro (sys::getenv "DISPLAY")
    #+sbcl (sb-posix:getenv "DISPLAY")
+   #+ccl (ccl:getenv "DISPLAY")
    ;; RGA hope this works as a sensible default.  Need a new function to
    ;; support other Lisp.
    ":0"
@@ -1127,6 +1129,11 @@ running Garnet."
   #+cmu
   (ext:process-output (ext:run-program "/bin/sh" (list "-c" command)
 				       :wait NIL :output :stream))
+
+  #+ccl
+  (ccl:external-process-output-stream 
+   (ccl:run-program "/bin/sh" (list "-c" command)
+		    :wait NIL :output :stream))
   #+sbcl
   (sb-ext:process-output (sb-ext:run-program "/bin/sh" (list "-c" command)
 				       :wait NIL :output :stream)))

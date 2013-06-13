@@ -18,7 +18,7 @@
 
 (in-package "COMMON-LISP-USER")
 
-(defvar *debug-gem-mode* nil)
+(defvar *debug-gem-mode* t)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (proclaim
@@ -34,6 +34,7 @@
   '(
     "gem"
     "define-methods"
+    "x"
     ))
 
 (eval-when (:execute :load-toplevel :compile-toplevel)

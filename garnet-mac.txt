@@ -1,4 +1,6 @@
 
+XXX FMG This no longer is maintained and won't work with the current code.
+
                     MACINTOSH INSTRUCTIONS FOR GARNET 3.0
                                December 10, 1994
 

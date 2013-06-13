@@ -235,8 +235,8 @@ Change log:
 	 (clip-mask (list 0 0 (g-value current-window :width)
 			  (g-value current-window :height)))
 	 (display-info (g-value current-window :display-info))
-	 (line-style-gc (opal::display-info-line-style-gc display-info))
-	 (filling-style-gc (opal::display-info-filling-style-gc display-info)))
+	 (line-style-gc (gem:display-info-line-style-gc display-info))
+	 (filling-style-gc (gem:display-info-filling-style-gc display-info)))
 
     (gem:set-clip-mask current-window clip-mask 
 		       line-style-gc filling-style-gc))

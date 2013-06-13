@@ -177,22 +177,6 @@
 ;;; For "objects.lisp"
 ;;
 
-;;; The HP has a non-traditional assignment of black=0 and white=1, but to
-;;; get XOR to work correctly, we have to draw black objects as 1 and white
-;;; objects as 0.  This macro checks whether the display is an HP, and then
-;;; flips the black and white indices for XOR.
-;;;
-(defmacro HP-XOR-hack (x-draw-function index)
-  `(if *HP-display-type?*
-    (if (eq ,x-draw-function ,boole-xor)
-      (if (eql *black* ,index)
-	*white*
-	(if (eql *white* ,index)
-	  *black*
-	  ,index))
-      ,index)
-    ,index))
-
 
 (declaim (inline get-thickness))	   
 (defun get-thickness (gob)

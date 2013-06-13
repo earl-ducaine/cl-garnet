@@ -256,7 +256,7 @@
 ;;; to it.
 ;;;
 (defmacro the-display (window)
-  `(opal::display-info-display (g-value ,window :display-info)))
+  `(display-info-display (g-value ,window :display-info)))
 
 ;;; RETURNS: the buffer for the <window>, if this is a double-buffered
 ;;; window, or the main drawable otherwise.

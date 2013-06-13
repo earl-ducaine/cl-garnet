@@ -28,6 +28,7 @@
   '(
     "gem"
     "define-methods"
+    "x"
     ))
 
 (unless (get :garnet-modules :gem)

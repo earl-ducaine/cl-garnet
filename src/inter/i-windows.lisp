@@ -302,8 +302,8 @@
 
 ;; read the events
 (defun Read-All-Transcript-Events ()
-  (let ((display (opal::display-info-display
-		  (the opal::DISPLAY-INFO
+  (let ((display (gem:display-info-display
+		  (the gem:DISPLAY-INFO
 		       (g-value (car *transcript-window-list*)
 				:display-info))))
 	(start-time (get-internal-real-time))
@@ -374,7 +374,7 @@
   (declare (ignore display))
   (let ((result
 	 (gem:event-handler
-	  (g-value opal::device-info :current-root) 
+	  (g-value opal:device-info :current-root) 
 	  T)))
     (if (eq result :abort)
 	result
@@ -478,7 +478,7 @@
 		       (if want-enter-leave :E-K :K)))))
 	(gem:set-window-property window :EVENT-MASK em)
 	(s-value window :event-mask em)))
-    (if (and drawable (eq event-mask opal::*exposure-event-mask*))
+    (if (and drawable (eq event-mask gem:*exposure-event-mask*))
         (gem:set-interest-in-moved window NIL))))
 
 
@@ -724,6 +724,24 @@
 (defun do-unmap-notify (a-window)
   (opal::Unmap-Notify (debug-p :event) a-window))
 
+(defun do-client-message (event-window type data format display)
+  (cond ((and (eq format 32)
+	      (eq type :WM_PROTOCOLS)
+	      (eq (xlib:atom-name 
+		   display
+		   (aref (the (simple-array (unsigned-byte 32) (5)) data) 0))
+		  :WM_DELETE_WINDOW))
+	 (opal::Delete-Notify NIL event-window))
+	((and (eq format 32)
+	      (eq type :TIMER_EVENT))
+	 (if interactors::*trans-from-file*
+	   T
+	   ;; ignore events when read transcript
+	   (interactors::Queue-Timer-Event
+	    (aref (the (simple-array (unsigned-byte 32) (5)) data) 0)))))
+  NIL)
+
+
 ;; We want this to run once and then exit.  (We used to want this to
 ;; run forever until exit-main-event-loop is called, but now we are
 ;; introducing a parellel process to run the event handler.
@@ -752,7 +770,7 @@
 	(format t "Cannot call main-event-loop when no window is visible~%")
 	;; else do real work
 	(unless opal::*inside-main-event-loop*
-	  (let ((root-window (g-value opal::device-info :current-root)))
+	  (let ((root-window (g-value opal:device-info :current-root)))
 	    (if (eq exit-when-no-window-visible :on)
 		(setq opal::*inside-main-event-loop* t)
 		(setq opal::*inside-main-event-loop* :dont-care))
@@ -793,7 +811,7 @@ by the protected-eval code."
 	(catch 'exit-main-loop-exception
 	  (loop
 	     (default-event-handler
-		 (g-value opal::DEVICE-INFO :current-root)))
+		 (g-value opal:DEVICE-INFO :current-root)))
 	  ))))
   
 (defun Wait-Interaction-Complete (&optional window-to-raise)
@@ -819,7 +837,7 @@ by the protected-eval code."
       ;; unwind-protect cleanups.
       (setf *waiting-for-exit-wait-interaction-complete* old-count)
       ;; discard current event which was the one that caused the exit
-      (gem:discard-pending-events (g-value opal::device-info :current-root) 0)
+      (gem:discard-pending-events (g-value opal:device-info :current-root) 0)
       (when running-mel-process-elsewhere
 	(opal:launch-main-event-loop-process)))
     ))

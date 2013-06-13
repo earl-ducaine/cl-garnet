@@ -261,7 +261,7 @@ The variable is set by turn-on{off}-mouse-moved.")
 ;;
 (defun Beep ()
   "Causes a beep or bell to sound"
-  (gem:beep (g-value opal::DEVICE-INFO :current-root)))
+  (gem:beep (g-value opal:DEVICE-INFO :current-root)))
 
 (defun Warp-Pointer (window x y)
   "Move the cursor to the specified x y position in the window."
