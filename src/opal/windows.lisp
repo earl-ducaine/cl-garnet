@@ -721,7 +721,7 @@
 			 ;; current device.
 			 (g-value device-info :current-root)))
              ;; NIL background-color means white
-	     (background (color-to-index a-window
+	     (background (gem:color-to-index a-window
                           (g-value a-window :background-color)))
 	     (drawable (gem:create-window
 			parent
