@@ -13,17 +13,6 @@
 ;; multi-font text object with the mouse.
 ;;
 
-
-;;; Change log:
-;;   06/23/93 Matt Goldberg       - Added double-, triple-, (etc.) click mode
-;;   05/26/93 Mickish/Goldberg    - Added lisp mode
-;;   03/19/93 Brad Myers          - call :after-cursor-moves-func called
-;;                                  whenever anything to the left of the
-;;                                  cursor changes
-;;   06/23/92 Rajan Parthasarathy - Added :saved-window slot
-;;   06/16/92 Rajan Parthasarathy - Added auto-scroll
-;;   02/13/92 Rich McDaniel       - started
-
 
 
 (in-package "INTERACTORS")

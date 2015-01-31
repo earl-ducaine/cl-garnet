@@ -20,9 +20,7 @@
 
 (in-package :COMMON-LISP-USER)
 
-(let* ((display-name #+cmu (cdr (assoc :DISPLAY lisp::*environment-list*))
-                     #+allegro (sys::getenv "DISPLAY")
-		     #+sbcl (posix-getenv "DISPLAY"))
+(let* ((display-name (xlib::getenv "DISPLAY"))
        (colon-posn (position #\: display-name)))
   (when colon-posn (setq display-name (subseq display-name 0 colon-posn)))
   (setq display-name (or display-name
@@ -51,11 +49,13 @@
     (format t "~%")
     (format t "Get out of this by clicking any mouse button while in the window.~%")
     (format t "~%")
+    (force-output)
     (xlib:event-case (display :discard-p t)
 		     (:key-press (code)
 				 (format t "keysym = ~a  ~a~%"
 					 (xlib:keycode->keysym display code 0)
 					 (xlib:keycode->keysym display code 1))
+				 (force-output)
 				 nil)
 		     (:button-press () t)
 		     (t () nil))

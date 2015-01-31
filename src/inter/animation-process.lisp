@@ -47,8 +47,20 @@ debugger, otherwise NIL"
     (not (zerop (multiprocessing:symeval-in-process
 		 'tpl::*break-level*
 		 *Process-With-Main-Event-Loop*)))
-    #+sb-thread (not (sb-thread:thread-alive-p *process-with-main-event-loop*))
-    #-(or allegro sb-thread) NIL
+    #+ccl
+    ;; Modeled after allegro code above (fmg)
+    (not (zerop (ccl::symbol-value-in-process
+		 'ccl::*break-level*
+		 opal::*main-event-loop-process*)))
+    #+sb-thread
+    ;; A thread that is broken will bind the variable
+    ;; sb-debug:*debug-condition* whereas in a running
+    ;; thread it will be unbound.
+    (ignore-errors
+      (sb-thread:symbol-value-in-thread
+       'sb-debug:*debug-condition*
+       *process-with-main-event-loop*))
+    #-(or allegro ccl sb-thread) NIL
     ))
 
 (defun send-timer-event (inter)
@@ -58,11 +70,7 @@ debugger, otherwise NIL"
     (when win
       (let ((indx (g-value inter :timer-array-index)))
 	(unless indx
-	  (vector-push-extend inter *Inters-With-Timers* 10)
-	  ;; vector-push-extend is supposed to return the old value of
-	  ;; the fill-pointer but under HP Lucid it doesn't, so just
-	  ;; explicitly use the new value of the fill pointer to be safe.
-	  (setq indx (1- (fill-pointer *Inters-With-Timers*)))
+	  (setq indx (vector-push-extend inter *Inters-With-Timers* 10))
 	  (s-value inter :timer-array-index indx))
 	#+garnet-debug			; only test when debugging
 	(unless (eq (g-value inter :timer-array-index)
@@ -75,9 +83,10 @@ debugger, otherwise NIL"
 (defun Timer-Process-Main-Loop (inter time once)
   "Sleep for appropriate time (in seconds), and then wake up and send event"
   (loop
-     #-(and cmu mp) (sleep time)
-     #+(and cmu mp) (mp:process-wait-with-timeout
-		     "Timer Sleep" time (constantly nil))
+     ;; All the process-wait-with-timeout implementations seem
+     ;; eventually to boil down to calls to some version of sleep, so
+     ;; this should be OK.
+     (sleep time)
      (unless (schema-p inter)		; if inter destroyed somehow
        (return))
      (when (Listener-Process-Broken-P)	; if main-event-loop crashed
@@ -86,10 +95,13 @@ debugger, otherwise NIL"
        (return))
      (send-timer-event inter)
      (when once (return))
-     ;; now, make sure other processes run
-     #+allegro   (mp:process-allow-schedule)  
-     #+sb-thread (sb-thread:thread-yield)
-     #+(and cmu mp) (mp:process-yield)
+     ;; now, make sure other processes run 
+     #+allegro      (mp:process-allow-schedule)  
+     #+ccl          (ccl:process-allow-schedule)
+     #+sb-thread    (sb-thread:thread-yield)
+     ;; This causes CMUCL to give an error when it kills the main
+     ;; event loop process.
+     #+(and nil cmu mp) (mp:process-yield)
      ))
 
 (defun kill-timer-process (inter)
@@ -115,23 +127,18 @@ debugger, otherwise NIL"
 	  #+allegro
 	  (mp:process-run-function
 	   "Garnet Timer"
-	   ;; Use a lambda to pass the parameters.
 	   ;; This runs at priority 0, so it will be
 	   ;; lower than main-event-loop-process.
 	   #'(lambda ()
 	       (Timer-Process-Main-Loop inter time once)))
 	  #+(and cmu mp)
 	  (mp:make-process
-	   ;; Use a lambda to pass the parameters.
-	   ;; This runs at priority 200, so it will be
-	   ;; lower than main-event-loop-process.
 	   #'(lambda ()
 	       (Timer-Process-Main-Loop inter time once))
 	   :name "Garnet Timer")
 	  #+ccl
 	  (ccl:process-run-function 
 	   "Garnet Timer"
-	   ;; Use a lambda to pass the parameters.
 	   #'(lambda ()
 	       (Timer-Process-Main-Loop inter time once)))
 	  #+sb-thread
@@ -175,6 +182,14 @@ debugger, otherwise NIL"
     (deleteplace timer-process *All-Timer-Processes*)
     (mp:process-yield)))
 
+
+#+ccl
+(defun internal-kill-timer-process (timer-process)
+  (when (eq (type-of timer-process) 'ccl:process)
+    (ccl:process-kill timer-process)
+    (deleteplace timer-process *All-Timer-Processes*)
+    ))
+
 #+sb-thread
 (defun internal-kill-timer-process (timer-process)
   (when (and (typep timer-process 'sb-thread:thread)
@@ -182,7 +197,7 @@ debugger, otherwise NIL"
     (deleteplace timer-process *All-Timer-Processes*)
     (sb-thread:terminate-thread timer-process)))
 
-#-(or allegro sb-thread (and cmu mp))
+#-(or allegro sb-thread ccl (and cmu mp))
 (defun internal-kill-timer-process (timer-process)
   (declare (ignore timer-process))
   )

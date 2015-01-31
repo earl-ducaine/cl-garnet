@@ -218,7 +218,10 @@
 	    ;; the various exported interactor types
 	    interactor interactor-window button-interactor text-interactor
 	    two-point-interactor move-grow-interactor menu-interactor
-	    angle-interactor)))
+	    angle-interactor
+	    ;; Export these if debugging is enabled.
+	    #+garnet-debug *int-debug* #+garnet-debug *int-trace*
+	    )))
 
 
 ;;; Variables used for noticing changed slots
@@ -288,20 +291,23 @@ The variable is set by turn-on{off}-mouse-moved.")
 (defparameter *Special-Trace-Values* '(:window :priority-level :mouse :event
 				       :next :short))
 
-(defmacro if-debug (inter &rest body)
-  "Test for selective tracing. Put this around any print-out statements
-**Only generates code if #+garnet-debug feature is present at compile time
 
-NOTE: inter is an interactor or may be one of: 
-      :window -- trace things about interactor windows (create, destroy, etc.)
-      :priority-level -- trace changes to priority levels
-      :mouse -- trace set-interested-in-moved and ungrab-mouse
-      :event -- show all events that come in
-      :next -- trace the next interactor to run"
+;; Test for selective tracing. Put this around any print-out statements
+;; ** Only generates code if #+garnet-debug feature is present at compile time
+;;
+;; NOTE: inter is an interactor or may be one of: 
+;;       :window -- trace things about interactor windows (create, destroy, etc.)
+;;       :priority-level -- trace changes to priority levels
+;;       :mouse -- trace set-interested-in-moved and ungrab-mouse
+;;       :event -- show all events that come in
+;;       :next -- trace the next interactor to run"
+(defmacro if-debug (inter &rest body)
   #+garnet-debug
-    `(when (and *int-debug* (trace-test ,inter))
-    (let ((*print-pretty* NIL))
-      ,@body))
+  `(when (and *int-debug* (trace-test ,inter))
+     (let ((*print-pretty* NIL))
+       ,@body))
+  #-garnet-debug
+  (declare (ignore inter body))
   )
   
 (defmacro debug-p (inter)
@@ -311,6 +317,7 @@ If no debug (because :garnet-debug is not on *features*), just generate NIL"
   #+garnet-debug
   `(and *int-debug* (trace-test ,inter))
   #-garnet-debug
+  (declare (ignore inter))
   nil)
 
 (defun trace-test (inter)
@@ -367,7 +374,8 @@ If no debug (because :garnet-debug is not on *features*), just generate NIL"
 
 #-garnet-debug
 (defun trace-inter (&optional (trace-what :status))
-    (format T "** Can't debug since Interactors was compiled with
+  (declare (ignore trace-what))
+  (format T "** Can't debug since Interactors was compiled with
         :garnet-debug not in the *features* list (see garnet-loader.lisp)."))
 
 #+garnet-debug
@@ -386,6 +394,7 @@ If no debug (because :garnet-debug is not on *features*), just generate NIL"
 
 #-garnet-debug
 (defun untrace-inter (&optional untrace-what)
+  (declare (ignore untrace-what))
   (format T "** Can't debug since Interactors was compiled with
         :garnet-debug not in the *features* list (see garnet-loader.lisp)."))
 
@@ -416,7 +425,7 @@ If no debug (because :garnet-debug is not on *features*), just generate NIL"
     (values total inactive)))
 
 (declaim (inline  Check-and-handle-debug-next-inter))
-(defun Check-and-handle-debug-next-inter ()
+(defun Check-and-handle-debug-next-inter (an-interactor)
   "This is called by General-Go when there is a value in
 *debug-next-inter*.  Calls the function in *debug-next-inter* and
 clears the variable."
@@ -437,21 +446,17 @@ clears the variable."
 	  (if feedbackp " (Feedback-Obj)" "")
 	  val))
 
-(declaim (inline dbprint))
-(defun dbprint (slot obj val inter) 
-  (if-debug inter (dbprinter slot obj val NIL)))
+(defmacro dbprint (slot obj val inter) 
+  `(if-debug ,inter (dbprinter ,slot ,obj ,val NIL)))
 
-(declaim (inline dbprint-either))
 (defun dbprint-either (slot obj val inter feedbackp) 
-  (if-debug inter (dbprinter slot obj val feedbackp))) 
+  `(if-debug ,inter (dbprinter ,slot ,obj ,val ,feedbackp))) 
 
-(declaim (inline dbprint-sel))
-(defun dbprint-sel (slot obj val inter) 
-  (if-debug inter (dbprinter slot obj val NIL)))
+(defmacro dbprint-sel (slot obj val inter) 
+  `(if-debug ,inter (dbprinter ,slot ,obj ,val NIL)))
 
-(declaim (inline dbprint-feed))
-(defun dbprint-feed (slot obj val inter) 
-  (if-debug inter (dbprinter slot obj val T)))
+(defmacro dbprint-feed (slot obj val inter) 
+  `(if-debug ,inter (dbprinter ,slot ,obj ,val T)))
 
 (defun dbstrprinter (obj feedbackp)
   (format T "  * Setting :string of ~s~a to ~s and :cursor-index to ~s~%" obj
@@ -459,9 +464,8 @@ clears the variable."
 	  (g-value obj :string)
 	  (g-value obj :cursor-index)))
 
-(declaim (inline dbprint-str))
-(defun dbprint-str (obj inter feedbackp) 
-  (if-debug inter (dbstrprinter obj feedbackp)))
+(defmacro dbprint-str (obj inter feedbackp) 
+  `(if-debug ,inter (dbstrprinter ,obj ,feedbackp)))
 
 
 ;;; Priority levels
@@ -1290,7 +1294,7 @@ but already there~%" inter level win)
 			  ;; first make a copy of the level since
 			  ;; might be modified
 			  (when (> len (array-dimension *copy-array* 0))
-			    (adjust-array *copy-array* len))
+			    (setf *copy-array* (adjust-array *copy-array* len)))
 			  (dotimes (i len)
 			    (setf (aref *copy-array* i)
 				  (aref inter-array i)))
@@ -1826,7 +1830,7 @@ and stop. We cannot count on getting different events for this."
 		    (progn
 		      (if-debug :short
 				(format T "starting ~s~%" an-interactor))
-		      (Check-and-handle-debug-next-inter)
+		      (Check-and-handle-debug-next-inter an-interactor)
 		      ;; these next two slots might be used in formulas
 		      (s-value an-interactor :first-obj-over obj)
 		      (s-value an-interactor :current-obj-over obj)
@@ -1835,7 +1839,7 @@ and stop. We cannot count on getting different events for this."
 						an-interactor obj event)))
 		    ;; else exit and return NIL
 		    (return-from general-go NIL)))
-	(:running (Check-and-handle-debug-next-inter)
+	(:running (Check-and-handle-debug-next-inter an-interactor)
 		  (s-value an-interactor :current-window event-window)
 		  (if (check-event event :abort-event an-interactor)
 		      (progn
@@ -1874,7 +1878,7 @@ and stop. We cannot count on getting different events for this."
 				    (setq return-val 
 					  (Kr-Send an-interactor
 						   :Do-running an-interactor obj event)))))))))
-	(:outside (Check-and-handle-debug-next-inter)
+	(:outside (Check-and-handle-debug-next-inter an-interactor)
 		  (s-value an-interactor :current-window event-window)
 		  (if (check-event event :abort-event an-interactor)
 		      (progn

@@ -189,11 +189,18 @@
     (if prefix
       (intern (concatenate 'simple-string
 			    prefix
+			    ;; Unicode broke me. At least with cmucl and sbcl.
+			    #-(and)
 			    (if (characterp symbol)
 				(let ((name (char-name symbol)))
 				  (if name
 				      (string-upcase name)
 				      (string symbol)))
+				(symbol-name symbol))
+			    (if (characterp symbol)
+				(if (standard-char-p symbol)
+				    (string symbol)
+				    (string-upcase (char-name symbol)))
 				(symbol-name symbol)))
 	      'keyword)
       symbol)))

@@ -51,30 +51,6 @@
 ;;     ^1 ^2 ^3 ^4  = small, medium, large, and very-large fonts
 
 
-;;; CHANGE LOG:
-;;   22-july-93 Brad Myers - Make sure that don't have selection visible
-;;                           in more than one string (e.g. in demo-text)
-;;   13-July-93 Goldberg - Added lisp-mode-p conditional calls to opal:add-char
-;;                         or opal:add-lisp-char and to opal:delete-selection or
-;;                         inter:delete-lisp-region.
-;;   15-june-93 Brad Myers - safe-functionp
-;;   26-May-93 Mickish/Goldberg - Added lisp mode
-;;   21-May-93 Brad Myers - added more key bindings, allow drag-through
-;;                         selection if :drag-through-selection?
-;;   19-Mar-93 Brad Myers - :after-cursor-moves-func called whenever
-;;                          anything to the left of the cursor changes
-;;   24-Feb-93 Brad Myers - new (better) key bindings, and more keywords
-;;   10-Feb-93 RGM - Fixed bug in Control-\k key binding.
-;;                   (converted text to string.)
-;;   01-Feb-93 Andrew Mickish  opal:Set-Strings ---> opal:Set-Text
-;;   25-dec-92 Brad Myers  Allowed mapping of mouse events (double-click, etc.)
-;;                         Added mappings for new functions (paste X, etc.)
-;;    9-Apr-92 ECP Changed defvar to proclaim special.
-;;    2-Apr-92 ECP Changed #\control-\k to :control-\k
-;;   31-Jan-92 RGM Modified to be compatible with new mulifont-text.
-
-
-
  (in-package "INTERACTORS")
 
 (eval-when (:execute :load-toplevel :compile-toplevel)

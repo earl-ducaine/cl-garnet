@@ -15,25 +15,6 @@
 ;;  text line using a noncontinuous mode.
 ;;  It should be loaded after multifont-textinter
 
-;;; Change log:
-;;   13-Jul-93 Matt Goldberg    - Added conditional call to
-;;                                inter:delete-lisp-region in Cut-Selection.
-;;   26-May-93 Mickish/Goldberg - Added lisp mode
-;;   21-may-93 Brad Myers       - new (better) key bindings, and more keywords.
-;;                                most are in the file multifont-textinter.lisp
-;;   19-Mar-93 Brad Myers       - :after-cursor-moves-func called whenever
-;;                                anything to the left of the cursor changes
-;;    3/10/93 Andrew Mickish    - When checking whether to kr-send the
-;;                                :final-function, call Compare-And-Get-Possible-Stop-Event
-;;    2/01/93 Andrew Mickish    - opal:Set-Strings ---> opal:Set-Text
-;;    8/20/92 Andrew Mickish    - Added kr-send of :final-function
-;;    5/13/92 Rich McDaniel     - Made SET-FOCUS using NIL as the multifont
-;;                                parameter turn off the focus.
-;;    4/6/92  Ed Pervin         - Renamed opal:copy-selection to
-;; 			          opal:copy-selected-text so as not conflict
-;;			          with inter:copy-selection.
-;;    2/11/92 Rich McDaniel     - started
-
 
 
 (in-package "INTERACTORS")
@@ -52,7 +33,7 @@
 ;; Helper procedures for the default procedure to go into the slots
 
 (defun Focus-Interactor-Initialize (new-Text-schema)
-   (if-debug new-Text-schema (format T "Text initialize ~s~%" new-Text-schema))
+  (if-debug new-Text-schema (format T "Text initialize ~s~%" new-Text-schema))
    (Check-Interactor-Type new-Text-schema inter:focus-multifont-textinter)
    (Check-Required-Slots new-Text-schema)
    (Set-Up-Defaults new-Text-schema)
@@ -64,12 +45,12 @@
 ;;; Go procedure utilities
 
 (defun Focus-Do-Start (an-interactor obj-over event)
-   (if-debug an-interactor (format T "Text starting over ~s~%" obj-over))
-   ;; if obj-to-change supplied, then use that, otherwise use whatever was
-   ;; under the mouse when started
-   (let ((obj (g-value an-interactor :obj-to-change)))
-      (when obj
-	(kr-send an-interactor :stop-action an-interactor obj event))))
+  (if-debug an-interactor (format T "Text starting over ~s~%" obj-over))
+  ;; if obj-to-change supplied, then use that, otherwise use whatever was
+  ;; under the mouse when started
+  (let ((obj (g-value an-interactor :obj-to-change)))
+    (when obj
+      (kr-send an-interactor :stop-action an-interactor obj event))))
 
 
 (defun Focus-Error (an-interactor &rest args)

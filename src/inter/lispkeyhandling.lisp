@@ -151,7 +151,8 @@
 	(let ((prev-char
 	       (do* ((my-frag frag (opal::frag-prev frag))
 		     (pos frag-pos (opal::frag-length frag)))
-		    ((> pos 0) (schar (opal::frag-string frag) (1- pos)))))
+		    ((> pos 0) (schar (opal::frag-string frag) (1- pos)))
+		 (declare (ignore my-frag))))
 	      char)
 	  (if (member prev-char '(#\\ #\-))
 	      (progn
@@ -910,7 +911,7 @@
 	     (push (list (subseq string char-pos string-length)
 			 (opal:get-standard-font :fixed :italic :medium))
 		   new-line)
-	     (setq char-pos string-length
+	     (setq char-pos string-length     ; XXX
 		   frag-string ""))
 	    ((and (eq char #\|) (eq prev-char #\#))
 	     (push (concatenate 'string frag-string (string char)) new-line)
