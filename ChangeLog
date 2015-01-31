@@ -1,4 +1,4 @@
-;; $Id::$
+;; $Id$
 ;;;; garnet-prepare-compile.lisp
 ;;; Change log:
 ;;    10/02/03 Russell Almond - Added compile-kr-doc-p
