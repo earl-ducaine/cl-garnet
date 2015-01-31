@@ -1,0 +1,8 @@
+
+;;;; angle-inter.lisp
+;;; CHANGE LOG
+;;;
+;;; 07/14/93 amickish - Declared ANGLE-INTER-MENU special in
+;;;                     Angle-Feedback-Obj-Fn
+;;; 08/25/92 amickish - Added proclaim
+

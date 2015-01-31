@@ -13,12 +13,6 @@
 ;;; This file contains many of the schemas, defconstants, defvars, defmacros, 
 ;;; and defstructs which are used by Constraint Gadget.  
 ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Change Log
-;;;
-;;; 5/10/93 bvz Created
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (in-package "GARNET-GADGETS")
 
@@ -51,9 +45,10 @@
 ;;; should only be done if there is one primary and one secondary selection
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defmacro apply-box-constraint-p ()
-  `(and (g-value *constraint-gadget* :obj-to-constrain)
-	(g-value *constraint-gadget* :obj-to-reference)))
+(declaim (inline apply-box-constraint-p))
+(defun apply-box-constraint-p ()
+  (and (g-value *constraint-gadget* :obj-to-constrain)
+       (g-value *constraint-gadget* :obj-to-reference)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -61,10 +56,11 @@
 ;;; gadget considers this object an instance of a line
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defmacro is-a-line-p (obj)
-  `(or (is-a-p ,obj opal:line)
-       (is-a-p ,obj garnet-gadgets:arrow-line)
-       (is-a-p ,obj garnet-gadgets:double-arrow-line)))
+(declaim (inline is-a-line-p))
+(defun is-a-line-p (obj)
+  (or (is-a-p obj opal:line)
+      (is-a-p obj garnet-gadgets:arrow-line)
+      (is-a-p obj garnet-gadgets:double-arrow-line)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

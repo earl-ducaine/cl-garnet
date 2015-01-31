@@ -15,12 +15,6 @@
 
 ;;;  Note: This file needs parts from the file  dialog-parts.lisp
 
-;;; CHANGE LOG
-;;;
-;;  07/14/93 amickish - Removed declare ignore of button-panel in HOW-SET-FN
-;;; 08/25/92 amickish - Removed declare ignore of label in AGG-OF-ITEMS-FN and
-;;;                     SINGLE-ITEM-FN, added proclaim
-
 (in-package "LAPIDARY")
 
 (declaim (special choice-menu *by-demo-copy*))
@@ -29,18 +23,20 @@
 ;; accessor functions for various aggregates in the choice interactor
 ;; menu
 
-(defmacro CHOICE-START-WHERE ()
-  `(g-value CHOICE-MENU :start-where))
-(defmacro CHOICE-FEEDBACK-OBJ ()
-  `(g-value CHOICE-MENU :feedback-obj))
-(defmacro CHOICE-FINAL-FEEDBACK ()
-  `(g-value CHOICE-MENU :final-feedback-obj))
-(defmacro CHOICE-HOW-SET ()
-  `(g-value CHOICE-MENU :how-set))
-(defmacro CHOICE-OTHER-BOX ()
-  `(g-value CHOICE-MENU :start-where :contents :other-box))
-(defmacro CHOICE-OTHER-BUTTON ()
-  `(g-value CHOICE-MENU :start-where :contents :other-button))
+(declaim (inline choice-start-where choice-feedback-obj choice-final-feedback
+		 choice-how-set choice-other-box choice-other-button))
+(defun CHOICE-START-WHERE ()
+  (g-value CHOICE-MENU :start-where))
+(defun CHOICE-FEEDBACK-OBJ ()
+  (g-value CHOICE-MENU :feedback-obj))
+(defun CHOICE-FINAL-FEEDBACK ()
+  (g-value CHOICE-MENU :final-feedback-obj))
+(defun CHOICE-HOW-SET ()
+  (g-value CHOICE-MENU :how-set))
+(defun CHOICE-OTHER-BOX ()
+  (g-value CHOICE-MENU :start-where :contents :other-box))
+(defun CHOICE-OTHER-BUTTON ()
+  (g-value CHOICE-MENU :start-where :contents :other-button))
 
 ;;; *********************************
 ;;; Change the name of the interactor

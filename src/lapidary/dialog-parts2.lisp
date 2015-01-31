@@ -13,6 +13,8 @@
 ;;; interactor menus and font menus
 ;;;
 
+(declaim (optimize (speed 1) (safety 3) (debug 3)))
+
 ;;; CHANGE LOG
 ;;;
 ;;; 08/24/92 amickish - Added defvars and proclaim
@@ -239,11 +241,11 @@
 					(gvl :shadow-offset)
 					0))))
       (:min-frame-width ,(o-formula (gvl :parent :min-frame-width)))
-      (:string ,(o-formula (let* ((p (kr-path 0 :parent))
-				  (item (nth (gvl :rank) (gv p :items))))
+      (:string ,(o-formula (let* ((items (gv (kr-path 0 :parent) :items))
+				  (item (nth (gvl :rank) items)))
 			     (if (listp item) (first item) item))))
-      (:action ,(o-formula (let* ((p (kr-path 0 :parent))
-				  (item (nth (gvl :rank) (gv p :items))))
+      (:action ,(o-formula (let* ((items (gv (kr-path 0 :parent) :items))
+				  (item (nth (gvl :rank) items)))
 			     (if (listp item) (second item)))))
       (:interactors
        ((:select-box-press :omit)))))

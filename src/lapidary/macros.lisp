@@ -38,8 +38,10 @@
      (:large :|large|)))
 
 ;;; Makes a keyword from a string: "foo" -> :foo
-(defmacro keyword-from-string (string)
-  `(read-from-string (concatenate 'string ":" ,string)))
+(declaim (inline keyword-from-string))
+(defun keyword-from-string (string)
+  ;;  `(read-from-string (concatenate 'string ":" ,string)))
+  (intern (string-upcase string) :keyword))
 
 ;;; determines whether lapidary considers this object an instance of a line
 (defmacro is-a-line-p (obj)

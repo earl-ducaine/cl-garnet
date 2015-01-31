@@ -27,7 +27,8 @@ Change log:
 ;;; Load the gadgets that the constraint gadget needs
 ;;;
 (unless (get :garnet-modules :constraint-gadget)
-  (format t "Loading Constraint Gadget...~%")
+  (force-output *error-output*)
+  (format t "~&Loading Constraint Gadget...~%")
   (dolist (pair '((:error-gadget "error-gadget-loader")
 		  (:arrow-line "arrow-line-loader")
 		  (:labeled-box "labeled-box-loader")))
