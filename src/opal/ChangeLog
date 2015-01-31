@@ -1,0 +1,591 @@
+
+
+;;;; multifont.lisp
+;;; CHANGE LOG:
+;; 22-May-94 Mickish  Commented out mysterious g-value of :colormap-index slot
+;;                    in :draw method because the :colormap-index formula is
+;;                    still buggy in the Mac version
+;; 14-Dec-93 Mickish  Ignored variables to eliminate compiler warnings
+;; 27-Oct-93 Mickish  Copy-Frag ---> Copy-The-Frag
+;; 24-Sep-93 McDaniel Removed some unnecessary checks from width-break.
+;;                    Changed test in wrap-line from >= to just >.
+;;                    Fixed break-line to better handle breaking lines
+;;                    next to object fragments.
+;;                    Rewrote calculate-cursor-x.  It was getting out
+;;                    of hand and needed to be simplified.
+;;                    Changed add-newline to comply with the new version
+;;                    of break-line.
+;; 20-Sep-93 Fernando Renamed "position" variables to "frag-position"
+;; 15-Sep-93 McDaniel Fixed bug in Merge-Lines.  Calculate-Cursor-Pos was
+;;                    being called with the wrong line.
+;; 20-Aug-93 Goldberg Added :write-slots mf-specific function.
+;;                    Fixed add-space-to-line so that objects are valid lines.
+;; 06-Aug-93 Goldberg Added lisp-mode-p parameters to ADD-CHAR and DELETE-
+;;                    SELECTION
+;; 02-Aug-93 Mickish  Resize-Object ---> Notice-Resize-Object
+;; 20-Jul-93 Goldberg Moved call to set-line-style in multifont-line
+;;                    draw-method so that it is set for frag colors.
+;; 16-Jul-93 Goldberg Put Cursor at the front of the multifont-text
+;;                    aggregate rather than at the back so that it
+;;                    does not get drawn over.
+;; 23-Jun-93 Goldberg Added Marks
+;;  6-Jun-93 Goldberg Fixed bugs in adding objects as frags.
+;;                    Added Color.
+;; 31-May-93 Mickish Added :force-update slot to cursor (see note in
+;;                   TOGGLE-SELECTION).
+;;  3-May-93 RGM fixed syntax error in merge-frags that caused certain
+;;               problems with updating fonts.
+;;  3-May-93 RGM converted some g-value's in the line draw method to
+;;               be aref's from the update-values array.
+;; 23-Apr-93 Mickish Added :do-not-dump-slots and :do-not-dump-objects
+;; 20-Apr-93 Mickish Fixed to work with opal:font-from-files; Modified
+;;                   Check-Text to print the offending fragment.
+;;  6-Apr-93 koz Converted with-*-styles macros to set-*-style fns
+;;               And omitted "clip-mask" as argument to draw function.
+;; 10-Mar-93 Mickish Restored Extract-Key-From-Font which was deleted from
+;;                   multifont-textinter.lisp
+;;  9-Mar-93 RGM Fixed return value for functions Delete-Word,
+;;               Delete-Prev-Word, Go-To-Next-Word, and Go-To-Prev-Word.
+;;  5-Mar-93 Mickish Added parameter and type declarations
+;; 10-Feb-93 RGM Added function EMPTY-TEXT-P to check for blank text formats.
+;; 02-Feb-93 Mickish Implemeted :force-update slot for fast-redraw; finished
+;;                   Reset-Multifont-Sizes for changing displays
+;; 12-Jan-93 RGM Changed allocation of fragments so that they are allocated
+;;               off of a free list, *Free-Frag-Head*.  Renamed :string
+;;               slot to :initial-text; Set-Strings ---> Set-Text
+;; 11-Jan-93 RGM Added check-text function to provide better error checking
+;;               in input strings.
+;; 03-Dec-92 Mickish Reordered :update-slots, added :set-frr-bbox method
+;;                   so MULTIFONT-LINE's can be fast redraw objects;
+;;                   Added :fix-update-slots method to replace the call to
+;;                   Update-Text-Width from the formula in :text-toggle;
+;;                   Made :draw method slightly more efficient.
+;; 22-Oct-92 RGM Fixed format bug in INSERT-TEXT procedure.
+;; 23-Sep-92 Mickish/koz Pushed some :update-slots slots from MULTIFONT-TEXT
+;;           down into MULTIFONT-LINE instances (partial fix -- remaining
+;;           slots must be dealt with).
+;; 27-Aug-92 Mickish G-value --> gv in :width formula of multifont-text
+;; 26-Jun-92 Mickish Replaced calls to opal::*-method-aggregate with kr-sends
+;;                   of the corresponding methods.
+;; 18-May-92 ECP Added hack to update-text-width to make cursor valid.
+;; 12-May-92 RGM Fixed initialization so that last-line's next-line is NIL.
+;;  7-Apr-92 ECP Moved declaration of frag-height to after defstruct of frag.
+;;  6-Apr-92 Mickish Fixed a typo and missing parameter in a call to
+;;                   calculate-size-of-line in ADD-CHAR
+;;  6-Apr-92 ECP Renamed copy-selection to copy-selected-text so as not
+;;		  to collide with the name of inter:copy-selection.
+;;  2-Apr-92 RGM Released new version.  Made major changes.  Added word wrap
+;;           and the ability to select text.
+;; 21-Oct-91 ECP Implemented :fill-background-p for multifont-text.
+;; 11-Jun-91 ECP Released to test version
+;;
+
+;;;; create-instances.lisp
+;;; Change Log:
+;;      date     who    what
+;;      ----     ---    ----
+;;    12-Sep-95  goldman   Changed the way colormap entries are tracked in
+;;                         from using a fixed-size array to using a hash-table.
+;;    25-May-94  amickish  New :max-char-ascent/descent formulas for fonts
+;;    19-Apr-94  amickish  Reset first-time in first-allocatable-colormap-index
+;;     5-Mar-94  amickish  Used names for font slot type declarations
+;;    17-Dec-93  amickish  Gem'ified :font-from-file formula
+;;    15-Dec-93  amickish  :active-devices slot now contains ?-DEVICE objects
+;;    23-Aug-93  amickish  Changed default hit-threshold to 0
+;;    24-May-93  amickish  Changed :width and :height formulas of aggregate to
+;;                         depend on aggregate's own :left and :top
+;;     3-May-93  amickish  Added s-value's in :xcolor formula of opal:COLOR;
+;;                         added :ps-font-name/size to opal::FONT-FROM-FILE
+;;    19-Apr-93  amickish  Added formulas to opal::FONT-FROM-FILE; added
+;;                         opal:CURSOR-FONT
+;;     3-Mar-93  amickish  Added :visible type declaration to VIEW-OBJECT
+;;    10-Feb-93  amickish  Added :known-as type declaration to VIEW-OBJECT
+;;    13-Jan-93  amickish  Added :xfont, :max-char-ascent, :max-char-descent,
+;;                         :font-height, and :char-width slots to opal:font;
+;;                         added parameter declarations
+;;    30-Dec-92  amickish  Set :standard-p in get-standard-font for save-agg
+;;     3-Jun-92  amickish  Added opal:white-line
+;;     7-Apr-92  amickish  Made Get-Standard-Font use default values if NIL
+;;                         parameters were supplied and added error checking.
+;;     2-Apr-92  rgm    new multifont
+;;    25-Mar-92  amickish  Get-Values ---> G-Value
+;;    26-Feb-92  ecp    An opal:color may have a :color-name slot with a
+;; 			string like "pink".
+;;    21-Jan-92  amickish  Made opal:default-font an instance of opal:font,
+;;                      added constant formula lists.
+;;     6-Aug-91  dzg    Added extra error checking in formulas for :width
+;; 			and height of aggregate.
+;;     6-Aug-91  amickish  Added :ps-font-name and :ps-font-size to opal:font
+;;     5-Aug-91  ecp    Made opal:default-font be same as opal:font.
+;;    26-Mar-91  ecp    Added :components to :local-only-slots slot of
+;; 			opal:aggregate.
+;;     7-Mar-91  ecp    The question of whether the screen is color or
+;; 			black-and-white is now determined in defs.lisp.
+;;    22-Feb-91  amickish  New exported motif colors and filling styles.
+;;    14-Feb-91  ecp    Yet more changes to color so that colors are
+;;                      deallocated when they are not used anymore.
+;;     8-Feb-91  ecp    Added :color-p slot to opal:color to tell if
+;;                      screen is black-and-white or color.
+;;    10-Aug-90  loyall Made :width, :height of aggregate not depend
+;;                      directly on :top, :left.
+;;     1-Aug-90  dzg    New :local-only-slots slot in opal:view-object
+;;    19-Jul-90  ecp    Made thickness of line-1 be 1.
+;;    20-Jun-90  ecp    Temporarily made thickness of dotted-line be 1,
+;; 			due to new CLX bug.
+;;     4-Jun-90  ecp    Removed inverse relation between :parent and :child
+;;    16-Apr-90  ecp    Moved creation of default-font earlier.
+;;    27-Mar-90  ecp    In build-pixmap, changed 0 and 1 to *black*
+;; 			and *white*.
+;;    19-Mar-90  ecp    Got rid of Garnet-Font-Pathname.
+;; 			Changed :tile to :stipple
+;;     1-Mar-90  ecp    In build-pixmap, changed the :bitmap-p argument
+;; 			to xlib:put-image from t to nil.
+;;    13-Feb-90  ecp    Implemented color.
+;;    25-Jan-90  ecp    Changes to fonts.
+;;     5-Dec-89  ecp    Moved create-instance of FONT-FROM-FILE earlier.
+;;      ******* SEE OPAL CHANGE.LOG ********
+;;    15-Jun-89  koz	Placed Graphic-Quality hierarchy before View-Object
+;; 			to resolve forward references (instead of s-value).
+;; 			This should fix bug that made Cursor-Text not inherit
+;; 			the right slots at creation time.
+;;    15-Jun-89  koz	Converted from kr:formula to kr:o-formula.
+;;    15-Jun-89  koz	Extracted all forward references and placed them all
+;; 			in S-VALUEs at the end of this file, or in other files
+;; 			if they needed functions not yet defined...
+;;    14-Jun-89  koz    Created.  Simply extracted all the calls to kr:create-
+;; 			instance from all the Opal files.  No modifications
+;; 			were made to them.
+
+
+;;;; create-instances2.lisp
+;;; Changes:
+;;; 25-Jan-94 amickish  Changed opal:white-fill to be a solid fill, instead of
+;;;                     an opaque stippled fill
+;;; 04-Dec-93 amickish  Do not maintain :display of opal::window
+;;; 20-Aug-93 rajan     Added MOTIF-LIGHT-xxx and MOTIF-LIGHT-xxx-FILL
+;;; 06-Aug-93 amickish  Added opal:Arrow-Pair
+;;; 28-Jul-93 amickish  Moved multi-text objects to multi-text.lisp
+;;; 30-Jun-93 amickish  Superceded opal:text and opal:cursor-text definitions
+;;;                with new cursor-text.lisp
+;;; 11-Jun-93 amickish  Added initial values to opal:line's :left and :top
+;;;  6-Jun-93 amickish  Added type restrictions on :width and :height of window
+;;; 22-Apr-93 amickish  Added HourGlass cursor; used Get-Garnet-Bitmap
+;;; 13-Jan-93 amickish  Utilized new :font-height slot in text formulas;
+;;;                added parameter declarations.
+;;; 10-Dec-92 amickish  Fixed :height formulas of text objects to not depend
+;;;                on :text-extents or :string if :actual-heightp is NIL.
+;;; 09-Dec-92 dzg  Added type declarations
+;;; 25-Nov-92 amickish  Added opal:gray-line
+;;; 20-Nov-92 amickish  Fixed dimension formulas of MULTIPOINT to return 0
+;;;                when :point-list is NIL
+;;; 11-Jun-92 ecp  Added slot to polyline to allow genuine :point-in-gob
+;;; 27-May-92 ecp  Added :save-under to the update-slots list of opal:window.
+;;; 26-May-92 ecp  Added :modal-p to the update-slots list of opal:window.
+;;; 16-Apr-92 amickish :ignored-slots value: :buffer-gc ===> (list :buffer-gc)
+;;; 13-Apr-92 ecp  Must say :initial-element nil in make-array, since
+;;;		   the default for CMUCL is 0.
+;;; 10-Apr-92 ecp  Made :point-list of multipoint default to be
+;;;		   a roughly equilateral triangle.
+;;; 31-Mar-92 ecp  Added :draw-on-children and :icon-bitmap to
+;;;		   :update-slots of window.
+;;; 30-Mar-92 Duchier  Gv the :font-from-file of :font in the formula for
+;;;		 :xfont of text, so that :xfont is recomputed whenever
+;;;		 :family or :face of :font changes.
+;;; 21-Jan-91 amickish  Added constant formula lists
+;;;  9-Dec-91 ecp  Rewrote :text-extents formula of text to use
+;;;		   multiple-value-bind instead of multiple-value-list.
+;;; 25-Nov-91 koz  added init of update-slots-vals for fast-redraw-rectangle
+;;; 18-Nov-91 Pervin  Added :background-color to windows.
+;;;  4-Oct-91 amickish  Added fast-redraw-rectangle
+;;; 10-Sep-91 ecp  Simplified :xfont formula of opal:text.
+;;;  6-Aug-91 dzg  Safe versions of min, max in formulas of opal:line.
+;;;  1-Aug-91 ecp  Made bitmap use filling-style instead of line-style.
+;;; 20-May-91 ecp  Gray bitmaps now have :percent slot telling what percent
+;;;		   of bits are filled.
+;;;  4-Apr-91 ecp  New slot :omit-title-bar-p for windows.
+;;; 22-Feb-91 amickish  New exported motif colors and filling styles.
+;;; 22-Oct-90 ecp  New improved formulae for top, left, width, height of line.
+;;; 17-Oct-90 ecp  In formula for :width of text, allowed string to be nil.
+;;;  5-Oct-90 ecp  More work on formula for :width of text.
+;;; 11-Sep-90 ecp  Changed formula for :width of text.
+;;; 30-Aug-90 ecp  Multipoints whose line-thicknesses are 0 must be
+;;;                treated as if their line-thicknesses were 1 (since
+;;;                they're drawn that way).
+;;; 14-Aug-90 bam  Added :local-only-slots slot to opal:window.
+;;;  1-Aug-90 dzg  New :local-only-slots slot in opal:cursor-text.
+;;; 27-Jun-90 bam  Made :buffer-gc be :ignored-slot of opal:window.
+;;;  4-Jun-90 dzg  Removed (:parent NIL) from opal:window.
+;;;  1-May-90 ecp  If :image of bitmap is nil, width and height are 0.
+;;; 16-Apr-90 ecp  Moved defun of font-to-xfont from new-defs.lisp to
+;;;		   create-instances2.lisp
+;;; 23-Mar-90 ecp  New slot :fill-background-p for text objects.
+;;; 19-Mar-90 ecp  Changed :tile to :stipple
+;;; 12-Mar-90 ecp  Setting :title and :icon-title of windows
+;;;		   in :initialize method.
+;;; 13-Feb-90 ecp Implemented color.
+
+;;;; utils.lisp
+;;; CHANGE LOG:
+;;
+;;  29/05/01 gilham   - Fix for cmucl 18 removing cmu17 from *features*.
+;;  12/06/94 haible   - Referenced :SYSTEM package in CLISP instructions
+;;  12/06/94 amickish - Added Russell Almond's libfile and flush-source-info?
+;;             parameters to opal:make-image
+;;  05/25/94 amickish - Bound and closed error-stream in opal:shell-exec
+;;  05/05/94 amickish - Added Mac version of Directory-P
+;;  01/16/94 amickish - Added :init-file argument to Mac's make-image command
+;;  01/12/94 amickish - Added Drawable-To-Window
+;;  01/08/94 amickish - Added Clip-And-Map (from movegrowinter.lisp)
+;;  12/14/93 amickish - Added Mac version of Make-Image
+;;  10/18/93 dzg - replaced 'string-char (which is obsolete in CLtL 2) with
+;; 	       'character
+;;  10/03/93 amickish - Added Extract-Image-Args so that opal:Make-Image can
+;;             take arbitrary arguments
+;;  09/30/93 amickish - Added Bruno Haible's industrial-strength DIRECTORY-P.
+;;  09/22/93 amickish - In opal:make-image, (1) ignored gc for LispWorks
+;;             and CLISP, (2) only copied readtable for Allegro
+;;  09/20/93 amickish - Called system:os-wait for Allegro in opal:shell-exec
+;;  09/06/93 amickish - Changed opal:directory-p's command-string to use
+;;             TEST -d; Changed shell for opal:shell-exec to /bin/sh
+;;  09/03/93 Bruno Haible - Added #+clisp switches
+;;  08/17/93 amickish - Removed redundant "csh" from directory-p; added
+;;             lispworks switches for opal:make-image
+;;  08/15/93 rajan - Added directory-p
+;;  08/13/93 amickish - When saving Allegro image, *do* read init file;
+;;             copied *readtable* into user::Garnet-Readtable and used
+;;             value in excl:*cl-default-special-bindings*
+;;  05/04/93 amickish - Removed "total" GC for Lucid in opal:make-image
+;;  04/22/93 amickish - Added Get-Garnet-Bitmap
+;;  04/20/93 amickish - Added GC option to make-image
+;;  03/30/93 amickish - Added RETURN-FROM in make-image to jump out of save
+;;             function in CMUCL when restarting
+;;  03/05/93 amickish - Created with shell-exec and make-image
+
+
+;;;; new-defs.lisp
+;;; Changes:
+;;; 17-Feb-93 Dzg/Mickish  Fixed bug in Free-List
+;;; 20-Sep-93 Fernando  Renamed "position" variables to "bit-position"
+;;; 15-Jun-93 Changed Set-Line/Filling-Style to always call set-gc with the
+;;;                :function parameter, even when the draw function is :no-op
+;;; 21-May-93 Andrew Mickish -- Renamed black-xor-hack to HP-XOR-Hack
+;;; 17-May-93 koz  Added "exposed-bbox" to the ever-growing win-update-info
+;;; 16-May-93 amickish Added fix-update-slots-objects cell to win-update-info
+;;; 12-Apr-93 koz  Moved set-*-style functions from macros.lisp to here
+;;;                because they use macros defined in this file.
+;;;  5-Mar-93 amickish moved shell-exec to utils.lisp
+;;; 24-Feb-93 amickish moved *auxilliary-reconnect-routines* here from
+;;;                open-and-close
+;;; 22-Feb-93 koz/amickish Added Aggregate-Invalidate to Make-Object-Invalid
+;;;                to properly handle :fix-update-slots in add-component
+;;;  3-Feb-93 koz  Removed "last-invalid-obj", added "invalid-*-fastdraws"
+;;;                from win-update-info struct.  Also, added 3 new macros,
+;;;                "get-cons", "free-cons", and "free-list"
+;;; 10-Dec-92 amickish  Removed *windows-that-have-never-been-updated*
+;;;  6-Oct-92 koz  Added invalid-view-objects to win-update-info struct
+;;; 26-May-92 ecp  Added new constant number-of-slots-of-update-info-struct.
+;;; 01-Apr-92 amickish  Added copy-bbox-fn
+;;; 11-Mar-92 ecp  Added two new fields width and height to win-update-info.
+;;; 19-Feb-92 koz  Eliminated extra non-printable object at end of
+;;;		   invalid-objects list.
+;;;  9-Dec-91 ecp  opal-gc has new stored-clip-mask field
+;;; 26-Nov-91 ecp  changed erase-bbox to correctly handle double-buffered
+;;;		   windows with background color.
+;;; 26-Mar-91 sylvain  #+kcl patches
+;;;  1-Oct-90 ecp  Made the print function for opal-gc not print font.
+;;; 18-Jun-90 ecp  Added *clear* for erasing buffers.
+;;;  5-Jun-90 dzg  Changed update-info structure to reduce storage allocation.
+;;;  4-Jun-90 ecp  Altered erase-bbox to handle double buffering.
+;;; 16-Apr-90 ecp  Moved defun of font-to-xfont from new-defs.lisp to
+;;;		   create-instances2.lisp
+;;; 19-Mar-90  Changed tile to stipple
+;;;  9-Mar-90  Moved a bunch of defvars to defs.lisp.
+;;;  5-Dec-89  Moved definition of new-garnet-window-name here from windows.lisp,
+;;;            Added "#-cmu nil" to fix-font-path.
+;;;
+
+;;;; defs.lisp
+;;; Change Log:
+;;      date     who    what
+;;      ----     ---    ----
+;;     4-Oct-03  almond  Patched goldman's fix to work under OSX.
+;;     8-Dec-95  goldman Added variable *read-write-colormap-cells-p*
+;;                         See documentation string thereof.
+;;    12-Sep-95  goldman   Changed the way colormap entries are tracked in
+;;                         from using a fixed-size array to using a hash-table.
+;;                         Applied a patch from Nick Levine that makes it
+;;                         possible for garnet to deal with True Color displays.
+;;    25-May-94  amickish Made setf of *function-alist* a GEM method
+;;    17-Dec-93  amickish :x-image ---> :device-image in HALFTONE defstruct
+;;     5-Dec-93  amickish Removed Do-Defs-Initializations (temporary GEM fn)
+;;    30-Sep-93  amickish Supported gray-scale screens in initialize-x11-values
+;;    30-Aug-93  amickish Moved defvar of *cursor-width* to text.lisp
+;;    20-Aug-93  rajan    Exported motif-light-xxx and motif-light-xxx-fill
+;;     6-Aug-93  amickish Added opal:Arrow-Pair
+;;    16-Jul-93  amickish Moved Set-Draw-Functions here from basics.lisp
+;;    10-Jun-93  Jim Davis  Bound *print-pretty* to NIL while calling princ-to-
+;;                          string when trying to determine if screen is color.
+;;    10-Jun-93  amickish Set *HP-display-type?* for HP-XOR-Hack
+;;    20-May-93  amickish restored conditional definition of *function-alist*
+;;     6-Apr-93  koz    removed defunct with-*-styles
+;;    18-Jan-93  amickish Added char-width, change-cursors, and restore-cursors
+;;                        to export list
+;;     5-Jan-93  amickish Removed *is-this-a-color-screen-and-is-black-zero*
+;;    15-Dec-92  amickish Unexported opal:type-check and opal:window
+;;    10-Dec-92  amickish *drawable-to-window-mapping* ---> *garnet-windows*
+;;    25-Nov-92  amickish Exported gray-line
+;;    22-Oct-92  koz    added zoom-window and fullzoom-window to exports
+;;    11-Jun-92  ecp    Altered *twopi* due to bug in CMUCL 16.
+;;     9-Jun-92  amickish Exported white-line
+;;    29-May-92  ecp/ky Determine display number and screen number from
+;; 			full display name.
+;;    21-Apr-92  ecp    Added main-event-loop-process-running-p
+;;    20-Apr-92  Poelman added string-upcase calls when checking color screen
+;;     2-Apr-92  rgm    added set-standard-font; moved export of multifont
+;; 			routines to multifont.lisp
+;;     1-Apr-92  ecp    Must undo change of 26-Feb-92 in CMUCL.
+;;    31-Mar-92  ecp    It is necessary to have a third case when declaring
+;; 			*function-alist*, for color screens where white=1,
+;; 			such as the HP machine.
+;;    31-Mar-92  bam    Renamed initialize-virtual-aggregate-bboxes to be
+;; 			       recalculate-virtual-aggregate-bboxes
+;;    20-Mar-92  ecp    Moved exports here from virtual-aggregates and multifont.
+;;    10-Mar-92  ecp    Gave halftone new filling-style field.
+;;    27-Feb-92  ecp    Added deiconify-window.
+;;    26-Feb-92  ecp    Must call xlib:open-display a second time when getting
+;; 			*default-x-colormap*.
+;;     6-Feb-92  ecp    Added leaf-objects-in-rectangle, components-in-rectangle,
+;;                      and obj-in-rectangle.
+;;    31-Jan-92  ecp    Eliminated *display-name-to-display-mapping*
+;;    26-Nov-91  ecp    Use *copy* instead of *clear* for erasing buffers.
+;;    26-Mar-91  ecp    kcl patch
+;;     7-Mar-91  ecp    The question of whether the screen is color or
+;;                      black-and-white is now determined inside
+;; 			initialize-default-x-values.
+;;    22-Feb-91  amickish  New exported motif colors and filling styles.
+;;    21-Feb-91  ecp    New exported variables *screen-width* and
+;; 			*screen-height*, which are the width and height
+;; 			of the screen.  Also iconify-window.
+;;    25-Oct-90  ecp    New exported commands opal:raise-window and
+;; 		        opal:lower-window which move window to front or
+;; 			back of screen.
+;;    11-Sep-90  ecp    Get display name in allegro by (sys::getenv "DISPLAY").
+;;                      Use (short-site-name) as an #+allegro alternative to
+;;                      (machine-instance).
+;;    15-Aug-90  ecp    Exporting destroy-me.
+;;                      Moved lots of initialization stuff
+;; 			into new function initialize-default-x-values.
+;;     8-Aug-90  ecp    Use #+(and allegro clx-mit-r4) "" in
+;; 			*default-x-display-name*
+;;    26-Jun-90  ecp    Due to temporary bug in clx, had to
+;; 			coerce *twopi* to an short-float.
+;;    21-Jun-90  nesmith
+;; 			Use #+allegro (short-site-name) in
+;; 			*default-x-display-name*
+;;    19-Jun-90  ecp    New functions gv-center-x-is-center-of,
+;; 			gv-center-y-is-center-of,
+;; 			gv-right-is-left-of, gv-bottom-is-top-of.
+;;    18-Jun-90  ecp    Added *clear* for erasing buffers.
+;;     5-Jun-90  chris  Added lispworks.
+;;    14-Mar-90  ecp    Move-cursor-* functions added.
+;;     9-Mar-90  ecp    Changed *function-alist* again to try
+;; 			to deal with "xor problem".
+;; 			Moved lots of defvars here from new-defs.
+;; 			New variables *white* and *black*.
+;;    13-Feb-90  ecp    Implemented color.
+;;    26-Jan-90  bam    Added :key-press and :button-press to
+;;                      *exposure-event-mask*
+;;    13-Dec-89  ecp    Changed #+lucid to #-cmu in declaration of
+;;                      *function-alist*
+;;    14-Jun-89  koz    Created.  Simply extracted all the def* from all the
+;; 			Opal files.  No modifications were made to them.
+;;; Local changes
+;;  [1995/09/11:goldman] incorporated Nick Levine's patch to determine
+;;                       whether we have a color screen.
+
+;;;; windows.lisp
+;;; Changes:
+;;;
+;;; 20-Aug-98 Gilham  Setting :very-first-exposure slot to t seems to
+;;;                   cause problems with windows not properly displaying
+;;;                   when first created. Eliminate it for CMUCL at least.
+;;; 10-Jun-94 Mickish Don't set :very-first-exposure slot for Mac
+;;; 05-May-94 Mickish Raise-window and lower-window now signal an error if
+;;;                   their arugment is not a real window
+;;; 14-Apr-94 Mickish Special Mac stuff in Configure-Notify
+;;; 15-Jan-94 Mickish Called gem:color-to-index in Create-X-Drawable
+;;;  9-Jan-94 Mickish New function Install-Bitmap-Images now called from
+;;;                   Initialize-Display
+;;; 15-Dec-93 Mickish Commented out body of Set-Window-Cursor for Mac
+;;; 27-Oct-93 Mickish Only set :title of window if appropriate
+;;; 06-Sep-93 Clive Tong  Use special Map-Window-And-Wait for LispWorks
+;;; 03-Aug-93 Mickish Destroyed drawables that have title bars when reparenting
+;;; 28-Jul-93 Mickish Removed title bars when reparenting top-level windows
+;;; 20-May-93 Mickish Fixed left-border-width for DECwindows
+;;; 17-May-93  koz    On an exposure with count>0, just merge the exposed
+;;;                   bbox into the window's win-update-info-exposed-bbox
+;;;                   (so we get only one update call per exposure).
+;;; 22-Apr-93 Mickish Added With-Cursor and With-HourGlass-Cursor
+;;; 19-Apr-93 Mickish Added font-from-file and :CURSOR to Set-Window-Cursor
+;;; 24-Mar-93  koz    Better window reparenting: rewrote fix-window-properties
+;;;                   for slot :parent (also, create-x-drawable now sets
+;;;                   the :old-parent slot of the window)
+;;; 18-Jan-93 Mickish Added Change-Cursors and Restore-Cursors
+;;; 16-Jan-93 Mickish In Fix-Window-Properties, compensate for border widths
+;;;                   when setting :left and :top of windows; in delete-notify,
+;;;                   destroy orphaned drawables when appropriate
+;;;  4-Jan-93 Mickish Added checks for NIL drawables to event functions (like
+;;;                   opal::Exposure) since opal:clean-up destroys drawables.
+;;; 21-Dec-92 Mickish Added display-force-output calls to raise-window and
+;;;                   lower-window; rewrote Set-Window-Cursor to reuse old
+;;;                   xlib:cursor objects.
+;;; 10-Dec-92 Mickish *drawable-to-window-mapping* ---> *garnet-windows*
+;;; 28-Oct-92 hopkins In Initialize-Window-Border-Widths, changed border-width
+;;;                   computations for TVTWM
+;;; 22-Oct-92  koz    Added #'zoom-window and #'fullzoom-window
+;;;  6-Oct-92  koz    Changed #'update-slot-invalidated to a g-value
+;;;                   of opal:WINDOW :invalidate-demon
+;;; 11-Sep-92 Duchier Changed "(4 6)" clauses in Configure-Notify and
+;;;                   Initialize-Window-Border-Widths for tvtwm
+;;; 24-Jun-92 Pervin  Add #-clx-cl-error test before xlib:drawable-root.
+;;; 29-May-92 Pervin  Lispworks switch
+;;; 27-May-92 Pervin  Added :save-under slot to windows.
+;;; 18-May-92 Pervin  In configure-notify, check that windows are not destroyed.
+;;; 13-May-92 Pervin  Only do map-window-and-wait if xlib:window-map-state
+;;;		      of window is :unmapped.  Do map-window-and-wait in
+;;;		      Allegro version 4 after all.
+;;;  4-May-92 Almond  Allegro-v4.1 switches
+;;; 29-Apr-92 Pervin  Reduced :timeout in map-window-and-wait to 5 sec.
+;;;		      Only do wait in map-window-and-wait in Lucid and Allegro <4.0.
+;;; 21-Apr-92 Pervin  Using new function main-event-loop-process-running-p
+;;; 20-Apr-92 Pervin  Fixed minor bug in raise-window.
+;;; 16-Apr-92 Pervin  At end of Configure-notify, do not update windows that have
+;;;		      never been updated before. (see change of 6-Sep-90).
+;;;		      Also, need special case for if xlib:query-tree doesn't work.
+;;; 14-Apr-92 Pervin  Uncommented out process code.  Got multiprocess to work on HP.
+;;;  8-Apr-92 Davis   In fix-window-properties, when changed slot is :aggregate,
+;;;		      check that old-agg is not destroyed.
+;;;  8-Apr-92 Pervin  On a black-and-white screen, draw background-color white
+;;;		      except when background-color is actually opal:black.
+;;; 31-Mar-92 Pervin  New :draw-on-children slot of window.
+;;; 31-Mar-92 Szekely New :icon-bitmap slot of window holds pixmap of icon.
+;;; 30-Mar-92 Pervin  Temporarily commenting out process code.
+;;; 25-Mar-92 Pervin  Make default-event-handler be only defined in i-windows.lisp.
+;;;		      Use switch #+clx-cl-error to check for query-tree bug.
+;;; 20-Mar-92 Pervin  Use launch-main-event-loop-process.
+;;; 19-Mar-92 Mickish Bound a-window-update-info in :initialize method for
+;;;                   windows to eliminate CMUCL compiler warnings
+;;; 18-Mar-92 Pervin  Map-window-and-wait no longer needed now that we
+;;;		      have main event loop process.
+;;; 11-Mar-92 Pervin  New width and height fields of win-update-info.
+;;;  5-Mar-92 Pervin  If a window is iconified before it is first updated,
+;;;		      its initial state should be :iconic.
+;;;		      Also, should use xlib:withdraw-window, not xlib:unmap-window
+;;; 27-Feb-92 Pervin  Added deiconify-window.
+;;; 19-Feb-92 Pervin  Implemented double-clip-mask as list of length 8.
+;;; 11-Feb-92 Pervin  Vastly simplified expand-buffer to just create new buffer
+;;; 03-Jan-92 Mickish Changed to call with-demon-disabled.
+;;; 31-Jan-92 Pervin  Eliminated *display-name-to-display-mapping*.
+;;;		      Rewrote initialize-display to take no arguments,
+;;;		      and always set display-info-display to be default.
+;;;		      This was needed for conversion to CMUCL.
+;;; 23-Jan-92 Pervin  Call *exit-main-event-loop-function* instead of throwing
+;;;                   exception.
+;;; 21-Jan-91 Pervin  Remove subwindow from parent when it is destroyed.
+;;;  9-Jan-91 Pervin  Map-window-and-wait routine.
+;;; 16-Dec-91 Pervin  Removed the section of Exposure that merged several
+;;;		      exposure events.
+;;;  9-Dec-91 Pervin  opal-gc has new stored-clip-mask field
+;;;  5-Dec-91 Pervin  In Exposure, do not re-update window that has been
+;;;                   exposed for the very first time.
+;;; 26-Nov-91 Pervin  changed clear-buffer to correctly handle double-buffered
+;;;		      windows with background color.
+;;; 25-Nov-91 koz     changed fix-properties method to fix-window-properties
+;;;                   function and altered # of args to it (it's only called
+;;;                   from within update-windows, and this is more efficient)
+;;; 18-Nov-91 Pervin  Added :background-color to windows.
+;;;  5-Nov-91 Irwin   You may now destroy a window using f.delete or f.kill.
+;;;		      Also, a window can have :min-width, :min-height,
+;;;		      :max-width, and :max-height.
+;;; 24-Oct-91 Pervin  Exit main-event-loop automatically if no windows visible
+;;;                   Also :visible is set to :iconified if you iconify by hand
+;;;  9-Oct-91 Szekely Fixed OpenWindows bug in Configure-notify.
+;;; 25-Jun-91 Meltsner  Fixed :lineage of DECWindows.
+;;;  7-Jun-91 Pervin  Added kr:with-demons-disabled inside map-notify and
+;;;		      unmap-notify.
+;;; 30-May-91 Pervin  Fixed bug so window will not de-iconify if you
+;;;		      call inter:main-event-loop after calling iconify-window.
+;;;  4-Apr-91 Pervin  New slot :omit-title-bar-p for windows.
+;;; 18-Mar-91 Pervin  Xlib:query-tree seems to have been fixed in
+;;;		      Allegro Version 4.0.
+;;; 21-Feb-91 Pervin  New exported routine iconify-window.
+;;; 31-Jan-91 Pervin  In fix-properties, when a window is made visible,
+;;;                   call xlib:map-window last.
+;;; 12-Nov-90 Pervin  Made first argument to convert-coordinates optional.
+;;;  9-Nov-90 Pervin  Made second argument to convert-coordinates optional.
+;;; 31-Oct-90 Pervin  Finally added convert-coordinates, which I'd
+;;;                   forgotten before.
+;;; 29-Oct-90 Pervin  Fixed bug found by Brad VanderZanden involving
+;;;                   expanding a double-buffered window (caused by
+;;;                   misprint in Configure-Notify).
+;;; 25-Oct-90 Pervin  New exported commands opal:raise-window and
+;;;                     opal:lower-window which move window to front or
+;;;                     back of screen.
+;;; 22-Oct-90 Pervin  Changed #+pmax to #+allegro since I found that
+;;;		      xlib:query-tree no longer works on the Sun Allegro
+;;;		      at CMU either.  This is a TEMPORARY change.  In time
+;;;		      I hope whoever is responsible can get xlib:query-tree
+;;;                   working.
+;;; 10-Sep-90 Meltsner Fixed bug in initialize-window-border-widths of
+;;;		      DECWindow users.     w5 --> p5
+;;;  6-Sep-90 Pervin  Added an update-all at the end of Configure-Notify.
+;;; 24-Aug-90 Pervin  You can now reset the :title and :icon-title
+;;;		      of a window.
+;;; 15-Aug-90 Pervin  Removed :display branch of case statement
+;;;		      in fix-properties.
+;;; 13-Aug-90 Pervin  Added code to handle DECWindows window manager.
+;;; 10-Aug-90 Pervin  It turns out that I did need that event-case at
+;;;		      the end of create-x-drawable after all (see 2-Aug-90).
+;;;  9-Aug-90 Pervin  Added temporary #+pmax stuff because currently
+;;;		      xlib:query-tree does not work on the Pmax.
+;;;  3-Aug-90 Pervin  In Configure-Notify, check is window has parent.
+;;;  2-Aug-90 Pervin  Reparent-notify must reset :lineage slot.
+;;;		      Also, didn't need event-case at end of create-x-drawable.
+;;;  1-Aug-90 Pervin  Made it so that the :width and :height slots of
+;;;		      windows are based on the inside, rather than the
+;;;		      outside of the window.
+;;; 30-Jul-90 Pervin  Big changes in initialize-window-border-widths
+;;;		      and Configure-Notify to handle MWM window manager.
+;;;		      Got rid of :just-did-configure slot, but added
+;;;		      new :lineage slot.
+;;; 18-Jul-90 Pervin  Moved the call to initialize-window-border-widths
+;;;		      yet again -- this time, to inside Configure-Notify.
+;;;		      Also, expand-buffer uses :width, :height slots of
+;;;		      window being expanded.
+;;; 13-Jul-90 Pervin  New :destroy-me method for windows.
+;;;		      I had to remove the optional erase argument.
+;;;  5-Jul-90 Pervin  In Exposure, don't need special case for
+;;;		      double-buffered window.
+;;;  2-Jul-90 Pervin  If an expose event occurs, just refresh the parts
+;;;                   of the window that were exposed.
+;;; 26-Jun-90 Pervin  Extended :just-did-configure test to :width and
+;;;                   :height slots, as well as :top and :left.
+;;; 18-Jun-90 Pervin  Variable *clear* for erasing buffers.
+;;;  5-Jun-90 Pervin  Implemented double-buffering.
+;;;  4-Jun-90 Myers   Added :just-did-configure slot to windows
+;;;		      in order to get rid of *twm-bug*
+;;; 25-May-90 Pervin  Call initialize-window-border-widths only at the
+;;;		      very end of create-x-drawable.
+;;;  8-May-90 Sannella/Pervin
+;;;                   The way of specifying a user-positioned window
+;;;                   has changed.  Now we use the :user-specified-position-p
+;;;                   argument to xlib:set-standard-properties.
+;;; 19-Mar-90 Pervin  Changed :tile to :stipple.  Added reference to *twm-bug*
+;;; 12-Mar-90 Pervin  Setting :title and :icon-title of windows
+;;;		      in :initialize method.
+;;; 28-Feb-90 Pervin  Fixed bug in set-window-cursor.
+;;;		      Now it works in Lucid and Allegro too!
+;;; 14-Feb-90 Pervin  Commented out body of set-window-cursor.
+;;; 13-Feb-90 Pervin  Implemented color.
+;;;  5-Dec-89 Pervin  Moved new-garnet-window-name to new-defs.lisp
+;;;

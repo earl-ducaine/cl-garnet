@@ -33,16 +33,16 @@
 
 (in-package "COMMON-LISP-USER")
 
-(defvar *debug-opal-mode* t)
+(defvar *debug-opal-mode* nil)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (proclaim
    (if *debug-opal-mode*
-       (and (boundp '*garnet-compile-debug-settings*)
-	    *garnet-compile-debug-settings*)
+       (and (boundp 'Garnet-Compile-Debug-Settings)
+	    Garnet-Compile-Debug-Settings)
        ;; Global default settings.
-       (and (boundp '*default-garnet-proclaim*) 
-	    *default-garnet-proclaim*))))
+       (and (boundp 'Default-Garnet-Proclaim) 
+	    Default-Garnet-Proclaim))))
 
 
 (eval-when (:execute :load-toplevel :compile-toplevel)
@@ -58,7 +58,7 @@
         "utils"
 	"text-fonts"
 	"create-instances"
-	"create-instances2"
+;;	"create-instances2"
         "text-functions"
         "text"
 

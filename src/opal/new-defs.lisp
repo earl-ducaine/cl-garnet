@@ -8,46 +8,7 @@
 ;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Changes:
-;;; 17-Feb-93 Dzg/Mickish  Fixed bug in Free-List
-;;; 20-Sep-93 Fernando  Renamed "position" variables to "bit-position"
-;;; 15-Jun-93 Changed Set-Line/Filling-Style to always call set-gc with the
-;;;                :function parameter, even when the draw function is :no-op
-;;; 21-May-93 Andrew Mickish -- Renamed black-xor-hack to HP-XOR-Hack
-;;; 17-May-93 koz  Added "exposed-bbox" to the ever-growing win-update-info
-;;; 16-May-93 amickish Added fix-update-slots-objects cell to win-update-info
-;;; 12-Apr-93 koz  Moved set-*-style functions from macros.lisp to here
-;;;                because they use macros defined in this file.
-;;;  5-Mar-93 amickish moved shell-exec to utils.lisp
-;;; 24-Feb-93 amickish moved *auxilliary-reconnect-routines* here from
-;;;                open-and-close
-;;; 22-Feb-93 koz/amickish Added Aggregate-Invalidate to Make-Object-Invalid
-;;;                to properly handle :fix-update-slots in add-component
-;;;  3-Feb-93 koz  Removed "last-invalid-obj", added "invalid-*-fastdraws"
-;;;                from win-update-info struct.  Also, added 3 new macros,
-;;;                "get-cons", "free-cons", and "free-list"
-;;; 10-Dec-92 amickish  Removed *windows-that-have-never-been-updated*
-;;;  6-Oct-92 koz  Added invalid-view-objects to win-update-info struct
-;;; 26-May-92 ecp  Added new constant number-of-slots-of-update-info-struct.
-;;; 01-Apr-92 amickish  Added copy-bbox-fn
-;;; 11-Mar-92 ecp  Added two new fields width and height to win-update-info.
-;;; 19-Feb-92 koz  Eliminated extra non-printable object at end of 
-;;;		   invalid-objects list.
-;;;  9-Dec-91 ecp  opal-gc has new stored-clip-mask field
-;;; 26-Nov-91 ecp  changed erase-bbox to correctly handle double-buffered
-;;;		   windows with background color.
-;;; 26-Mar-91 sylvain  #+kcl patches
-;;;  1-Oct-90 ecp  Made the print function for opal-gc not print font.
-;;; 18-Jun-90 ecp  Added *clear* for erasing buffers.
-;;;  5-Jun-90 dzg  Changed update-info structure to reduce storage allocation.
-;;;  4-Jun-90 ecp  Altered erase-bbox to handle double buffering.
-;;; 16-Apr-90 ecp  Moved defun of font-to-xfont from new-defs.lisp to
-;;;		   create-instances2.lisp
-;;; 19-Mar-90  Changed tile to stipple
-;;;  9-Mar-90  Moved a bunch of defvars to defs.lisp.
-;;;  5-Dec-89  Moved definition of new-garnet-window-name here from windows.lisp,
-;;;            Added "#-cmu nil" to fix-font-path.
-;;;             
+
 (in-package "OPAL")
 
 (defstruct bbox

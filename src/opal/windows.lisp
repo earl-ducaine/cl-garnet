@@ -8,191 +8,6 @@
 ;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Changes:
-;;;
-;;; 20-Aug-98 Gilham  Setting :very-first-exposure slot to t seems to
-;;;                   cause problems with windows not properly displaying
-;;;                   when first created. Eliminate it for CMUCL at least.
-;;; 10-Jun-94 Mickish Don't set :very-first-exposure slot for Mac
-;;; 05-May-94 Mickish Raise-window and lower-window now signal an error if
-;;;                   their arugment is not a real window
-;;; 14-Apr-94 Mickish Special Mac stuff in Configure-Notify
-;;; 15-Jan-94 Mickish Called gem:color-to-index in Create-X-Drawable
-;;;  9-Jan-94 Mickish New function Install-Bitmap-Images now called from
-;;;                   Initialize-Display
-;;; 15-Dec-93 Mickish Commented out body of Set-Window-Cursor for Mac
-;;; 27-Oct-93 Mickish Only set :title of window if appropriate
-;;; 06-Sep-93 Clive Tong  Use special Map-Window-And-Wait for LispWorks
-;;; 03-Aug-93 Mickish Destroyed drawables that have title bars when reparenting
-;;; 28-Jul-93 Mickish Removed title bars when reparenting top-level windows
-;;; 20-May-93 Mickish Fixed left-border-width for DECwindows
-;;; 17-May-93  koz    On an exposure with count>0, just merge the exposed
-;;;                   bbox into the window's win-update-info-exposed-bbox
-;;;                   (so we get only one update call per exposure).
-;;; 22-Apr-93 Mickish Added With-Cursor and With-HourGlass-Cursor
-;;; 19-Apr-93 Mickish Added font-from-file and :CURSOR to Set-Window-Cursor
-;;; 24-Mar-93  koz    Better window reparenting: rewrote fix-window-properties
-;;;                   for slot :parent (also, create-x-drawable now sets
-;;;                   the :old-parent slot of the window)
-;;; 18-Jan-93 Mickish Added Change-Cursors and Restore-Cursors
-;;; 16-Jan-93 Mickish In Fix-Window-Properties, compensate for border widths
-;;;                   when setting :left and :top of windows; in delete-notify,
-;;;                   destroy orphaned drawables when appropriate
-;;;  4-Jan-93 Mickish Added checks for NIL drawables to event functions (like
-;;;                   opal::Exposure) since opal:clean-up destroys drawables.
-;;; 21-Dec-92 Mickish Added display-force-output calls to raise-window and
-;;;                   lower-window; rewrote Set-Window-Cursor to reuse old
-;;;                   xlib:cursor objects.
-;;; 10-Dec-92 Mickish *drawable-to-window-mapping* ---> *garnet-windows*
-;;; 28-Oct-92 hopkins In Initialize-Window-Border-Widths, changed border-width
-;;;                   computations for TVTWM
-;;; 22-Oct-92  koz    Added #'zoom-window and #'fullzoom-window
-;;;  6-Oct-92  koz    Changed #'update-slot-invalidated to a g-value
-;;;                   of opal:WINDOW :invalidate-demon
-;;; 11-Sep-92 Duchier Changed "(4 6)" clauses in Configure-Notify and
-;;;                   Initialize-Window-Border-Widths for tvtwm
-;;; 24-Jun-92 Pervin  Add #-clx-cl-error test before xlib:drawable-root.
-;;; 29-May-92 Pervin  Lispworks switch
-;;; 27-May-92 Pervin  Added :save-under slot to windows.
-;;; 18-May-92 Pervin  In configure-notify, check that windows are not destroyed.
-;;; 13-May-92 Pervin  Only do map-window-and-wait if xlib:window-map-state
-;;;		      of window is :unmapped.  Do map-window-and-wait in
-;;;		      Allegro version 4 after all.
-;;;  4-May-92 Almond  Allegro-v4.1 switches
-;;; 29-Apr-92 Pervin  Reduced :timeout in map-window-and-wait to 5 sec.
-;;;		      Only do wait in map-window-and-wait in Lucid and Allegro <4.0.
-;;; 21-Apr-92 Pervin  Using new function main-event-loop-process-running-p
-;;; 20-Apr-92 Pervin  Fixed minor bug in raise-window.
-;;; 16-Apr-92 Pervin  At end of Configure-notify, do not update windows that have
-;;;		      never been updated before. (see change of 6-Sep-90).
-;;;		      Also, need special case for if xlib:query-tree doesn't work.
-;;; 14-Apr-92 Pervin  Uncommented out process code.  Got multiprocess to work on HP.
-;;;  8-Apr-92 Davis   In fix-window-properties, when changed slot is :aggregate,
-;;;		      check that old-agg is not destroyed.
-;;;  8-Apr-92 Pervin  On a black-and-white screen, draw background-color white
-;;;		      except when background-color is actually opal:black.
-;;; 31-Mar-92 Pervin  New :draw-on-children slot of window.
-;;; 31-Mar-92 Szekely New :icon-bitmap slot of window holds pixmap of icon.
-;;; 30-Mar-92 Pervin  Temporarily commenting out process code.
-;;; 25-Mar-92 Pervin  Make default-event-handler be only defined in i-windows.lisp.
-;;;		      Use switch #+clx-cl-error to check for query-tree bug.
-;;; 20-Mar-92 Pervin  Use launch-main-event-loop-process.
-;;; 19-Mar-92 Mickish Bound a-window-update-info in :initialize method for
-;;;                   windows to eliminate CMUCL compiler warnings
-;;; 18-Mar-92 Pervin  Map-window-and-wait no longer needed now that we
-;;;		      have main event loop process.
-;;; 11-Mar-92 Pervin  New width and height fields of win-update-info.
-;;;  5-Mar-92 Pervin  If a window is iconified before it is first updated,
-;;;		      its initial state should be :iconic.
-;;;		      Also, should use xlib:withdraw-window, not xlib:unmap-window
-;;; 27-Feb-92 Pervin  Added deiconify-window.
-;;; 19-Feb-92 Pervin  Implemented double-clip-mask as list of length 8.
-;;; 11-Feb-92 Pervin  Vastly simplified expand-buffer to just create new buffer
-;;; 03-Jan-92 Mickish Changed to call with-demon-disabled.
-;;; 31-Jan-92 Pervin  Eliminated *display-name-to-display-mapping*.
-;;;		      Rewrote initialize-display to take no arguments,
-;;;		      and always set display-info-display to be default.
-;;;		      This was needed for conversion to CMUCL.
-;;; 23-Jan-92 Pervin  Call *exit-main-event-loop-function* instead of throwing
-;;;                   exception.
-;;; 21-Jan-91 Pervin  Remove subwindow from parent when it is destroyed.
-;;;  9-Jan-91 Pervin  Map-window-and-wait routine.
-;;; 16-Dec-91 Pervin  Removed the section of Exposure that merged several
-;;;		      exposure events.
-;;;  9-Dec-91 Pervin  opal-gc has new stored-clip-mask field
-;;;  5-Dec-91 Pervin  In Exposure, do not re-update window that has been
-;;;                   exposed for the very first time.
-;;; 26-Nov-91 Pervin  changed clear-buffer to correctly handle double-buffered
-;;;		      windows with background color.
-;;; 25-Nov-91 koz     changed fix-properties method to fix-window-properties
-;;;                   function and altered # of args to it (it's only called
-;;;                   from within update-windows, and this is more efficient)
-;;; 18-Nov-91 Pervin  Added :background-color to windows.
-;;;  5-Nov-91 Irwin   You may now destroy a window using f.delete or f.kill.
-;;;		      Also, a window can have :min-width, :min-height,
-;;;		      :max-width, and :max-height.
-;;; 24-Oct-91 Pervin  Exit main-event-loop automatically if no windows visible
-;;;                   Also :visible is set to :iconified if you iconify by hand
-;;;  9-Oct-91 Szekely Fixed OpenWindows bug in Configure-notify.
-;;; 25-Jun-91 Meltsner  Fixed :lineage of DECWindows.
-;;;  7-Jun-91 Pervin  Added kr:with-demons-disabled inside map-notify and
-;;;		      unmap-notify.
-;;; 30-May-91 Pervin  Fixed bug so window will not de-iconify if you
-;;;		      call inter:main-event-loop after calling iconify-window.
-;;;  4-Apr-91 Pervin  New slot :omit-title-bar-p for windows.
-;;; 18-Mar-91 Pervin  Xlib:query-tree seems to have been fixed in
-;;;		      Allegro Version 4.0.
-;;; 21-Feb-91 Pervin  New exported routine iconify-window.
-;;; 31-Jan-91 Pervin  In fix-properties, when a window is made visible,
-;;;                   call xlib:map-window last.
-;;; 12-Nov-90 Pervin  Made first argument to convert-coordinates optional.
-;;;  9-Nov-90 Pervin  Made second argument to convert-coordinates optional.
-;;; 31-Oct-90 Pervin  Finally added convert-coordinates, which I'd
-;;;                   forgotten before.
-;;; 29-Oct-90 Pervin  Fixed bug found by Brad VanderZanden involving
-;;;                   expanding a double-buffered window (caused by
-;;;                   misprint in Configure-Notify).
-;;; 25-Oct-90 Pervin  New exported commands opal:raise-window and
-;;;                     opal:lower-window which move window to front or
-;;;                     back of screen.
-;;; 22-Oct-90 Pervin  Changed #+pmax to #+allegro since I found that
-;;;		      xlib:query-tree no longer works on the Sun Allegro
-;;;		      at CMU either.  This is a TEMPORARY change.  In time
-;;;		      I hope whoever is responsible can get xlib:query-tree
-;;;                   working.
-;;; 10-Sep-90 Meltsner Fixed bug in initialize-window-border-widths of
-;;;		      DECWindow users.     w5 --> p5
-;;;  6-Sep-90 Pervin  Added an update-all at the end of Configure-Notify.
-;;; 24-Aug-90 Pervin  You can now reset the :title and :icon-title
-;;;		      of a window.
-;;; 15-Aug-90 Pervin  Removed :display branch of case statement
-;;;		      in fix-properties.
-;;; 13-Aug-90 Pervin  Added code to handle DECWindows window manager.
-;;; 10-Aug-90 Pervin  It turns out that I did need that event-case at
-;;;		      the end of create-x-drawable after all (see 2-Aug-90).
-;;;  9-Aug-90 Pervin  Added temporary #+pmax stuff because currently
-;;;		      xlib:query-tree does not work on the Pmax.
-;;;  3-Aug-90 Pervin  In Configure-Notify, check is window has parent.
-;;;  2-Aug-90 Pervin  Reparent-notify must reset :lineage slot.
-;;;		      Also, didn't need event-case at end of create-x-drawable.
-;;;  1-Aug-90 Pervin  Made it so that the :width and :height slots of
-;;;		      windows are based on the inside, rather than the
-;;;		      outside of the window.
-;;; 30-Jul-90 Pervin  Big changes in initialize-window-border-widths
-;;;		      and Configure-Notify to handle MWM window manager.
-;;;		      Got rid of :just-did-configure slot, but added
-;;;		      new :lineage slot.
-;;; 18-Jul-90 Pervin  Moved the call to initialize-window-border-widths
-;;;		      yet again -- this time, to inside Configure-Notify.
-;;;		      Also, expand-buffer uses :width, :height slots of
-;;;		      window being expanded.
-;;; 13-Jul-90 Pervin  New :destroy-me method for windows.
-;;;		      I had to remove the optional erase argument.
-;;;  5-Jul-90 Pervin  In Exposure, don't need special case for
-;;;		      double-buffered window.
-;;;  2-Jul-90 Pervin  If an expose event occurs, just refresh the parts
-;;;                   of the window that were exposed.
-;;; 26-Jun-90 Pervin  Extended :just-did-configure test to :width and
-;;;                   :height slots, as well as :top and :left.
-;;; 18-Jun-90 Pervin  Variable *clear* for erasing buffers.
-;;;  5-Jun-90 Pervin  Implemented double-buffering.
-;;;  4-Jun-90 Myers   Added :just-did-configure slot to windows
-;;;		      in order to get rid of *twm-bug*
-;;; 25-May-90 Pervin  Call initialize-window-border-widths only at the
-;;;		      very end of create-x-drawable.
-;;;  8-May-90 Sannella/Pervin
-;;;                   The way of specifying a user-positioned window
-;;;                   has changed.  Now we use the :user-specified-position-p
-;;;                   argument to xlib:set-standard-properties.
-;;; 19-Mar-90 Pervin  Changed :tile to :stipple.  Added reference to *twm-bug*
-;;; 12-Mar-90 Pervin  Setting :title and :icon-title of windows
-;;;		      in :initialize method.
-;;; 28-Feb-90 Pervin  Fixed bug in set-window-cursor.
-;;;		      Now it works in Lucid and Allegro too!
-;;; 14-Feb-90 Pervin  Commented out body of set-window-cursor.
-;;; 13-Feb-90 Pervin  Implemented color.
-;;;  5-Dec-89 Pervin  Moved new-garnet-window-name to new-defs.lisp
-;;;
 
 (in-package "OPAL")
 
@@ -253,8 +68,6 @@
   t)
 
 (defvar *exit-main-event-loop-function* NIL)
-
-(defvar *inside-main-event-loop* nil)
 
 ;; returns t if any top level window is visible
 (defun any-top-level-window-visible ()
@@ -645,7 +458,18 @@
 		     (change-cursors HourGlass-Pair)
 		     ,@body)
     (restore-cursors)))
-  
+
+;;;
+;; Cosmetic application of cursors.
+(defun set-gc-cursor ()
+  (opal:change-cursors garbage-pair))
+
+(defun unset-gc-cursor ()
+  (opal:restore-cursors))
+
+#+cmu (pushnew #'set-gc-cursor ext:*before-gc-hooks*)
+#+cmu (pushnew #'unset-gc-cursor ext:*after-gc-hooks*)
+#+cmu (setf ext:*gc-verbose* nil)
 
 ;;; Set the :window slot of the window to be the window itself!
 ;;;

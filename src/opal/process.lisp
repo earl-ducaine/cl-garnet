@@ -45,11 +45,10 @@
 
 ;;;  Global variables
 ;;
-
-
 (defparameter *main-event-loop-process* nil
   "The variable which is a handle to the main-event-loop process.")
 
+(defvar *inside-main-event-loop* nil)
 
 ;;; Define opal:launch-main-event-loop-process
 ;;
@@ -233,9 +232,26 @@
 		#-(or allegro (and cmu mp) ccl sb-thread) T)
 	    )))
 
-
 ;;;  Define process lock functions
 ;;
+
+#-(and) ;;ccl version; doesn't seem to work
+(defmacro with-update-lock-held (&body body)
+  `(ccl:with-lock-grabbed (*update-lock*)
+     ,@body))
+
+#-(and) ;; cmu verstion also doesn't seem to work right
+(defmacro with-update-lock-held (&body body)
+  `(mp:with-lock-held (*update-lock*)
+     ,@body))
+
+#+(and)
+(defmacro with-update-lock-held (&body body)
+  `(unwind-protect
+	(progn
+	  (update-start-fn nil)
+	  ,@body)
+     (update-stop-fn nil)))
 
 (defun update-start-fn (win)
   (declare (ignore win))

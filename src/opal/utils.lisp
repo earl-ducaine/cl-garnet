@@ -10,48 +10,12 @@
 ;;; $Id$	
 ;;
 
-;;; CHANGE LOG:
-;; 
-;;  29/05/01 gilham   - Fix for cmucl 18 removing cmu17 from *features*.
-;;  12/06/94 haible   - Referenced :SYSTEM package in CLISP instructions
-;;  12/06/94 amickish - Added Russell Almond's libfile and flush-source-info?
-;;             parameters to opal:make-image
-;;  05/25/94 amickish - Bound and closed error-stream in opal:shell-exec
-;;  05/05/94 amickish - Added Mac version of Directory-P
-;;  01/16/94 amickish - Added :init-file argument to Mac's make-image command
-;;  01/12/94 amickish - Added Drawable-To-Window
-;;  01/08/94 amickish - Added Clip-And-Map (from movegrowinter.lisp)
-;;  12/14/93 amickish - Added Mac version of Make-Image
-;;  10/18/93 dzg - replaced 'string-char (which is obsolete in CLtL 2) with
-;; 	       'character
-;;  10/03/93 amickish - Added Extract-Image-Args so that opal:Make-Image can
-;;             take arbitrary arguments
-;;  09/30/93 amickish - Added Bruno Haible's industrial-strength DIRECTORY-P.
-;;  09/22/93 amickish - In opal:make-image, (1) ignored gc for LispWorks
-;;             and CLISP, (2) only copied readtable for Allegro
-;;  09/20/93 amickish - Called system:os-wait for Allegro in opal:shell-exec
-;;  09/06/93 amickish - Changed opal:directory-p's command-string to use
-;;             TEST -d; Changed shell for opal:shell-exec to /bin/sh
-;;  09/03/93 Bruno Haible - Added #+clisp switches
-;;  08/17/93 amickish - Removed redundant "csh" from directory-p; added
-;;             lispworks switches for opal:make-image
-;;  08/15/93 rajan - Added directory-p
-;;  08/13/93 amickish - When saving Allegro image, *do* read init file;
-;;             copied *readtable* into user::Garnet-Readtable and used
-;;             value in excl:*cl-default-special-bindings*
-;;  05/04/93 amickish - Removed "total" GC for Lucid in opal:make-image
-;;  04/22/93 amickish - Added Get-Garnet-Bitmap
-;;  04/20/93 amickish - Added GC option to make-image
-;;  03/30/93 amickish - Added RETURN-FROM in make-image to jump out of save
-;;             function in CMUCL when restarting
-;;  03/05/93 amickish - Created with shell-exec and make-image
-
 (in-package "COMMON-LISP")
 
 (in-package "OPAL")
 
 (eval-when (:execute :load-toplevel :compile-toplevel)
-  (export '(shell-exec make-image get-garnet-bitmap directory-p
+  (export '(make-image get-garnet-bitmap directory-p
             time-to-string clip-and-map drawable-to-window)))
 
 (defvar garnet-image-date NIL)
@@ -62,47 +26,6 @@
 (defun drawable-to-window (device-drawable)
   (gem:window-from-drawable (g-value DEVICE-INFO :current-root)
 			    device-drawable))
-
-(defun shell-exec (command)
-  ;; Alas, can't use with-open-file because there are two streams returned
-  ;; by most of the lisp-specific commands.  Must close both streams.
-  (multiple-value-bind (the-stream error-stream)
-      #+allegro (excl:run-shell-command command :wait NIL :output :stream
-					:error-output :stream)
-      #+sbcl
-      (let ((process
-	     (sb-ext:run-program "/bin/sh" (list "-c" command)
-				 :wait t :output :stream
-				 :error :stream)))
-	(values (sb-ext:process-output process)
-		(sb-ext:process-error process)))
-      #+cmu
-      (let ((p
-	     (ext:run-program "/bin/sh" (list "-c" command)
-			  :wait NIL :output :stream :error :stream)))
-	(values (ext:process-output p) (ext:process-error p)))
-      #+ccl
-      (let ((p
-	     (ccl:run-program "/bin/sh" (list "-c" command)
-			      :wait NIL :output :stream :error :stream)))
-	(values (ccl:external-process-output-stream p)
-		(ccl:external-process-error-stream p)))
-      
-      #-(or allegro cmu ccl sbcl)
-      (error "Don't know how to execute shell functions in this lisp")
-      
-      (let ((output-string (make-array '(0)
-				       :element-type 'character
-				       :fill-pointer 0 :adjustable T)))
-	(do ((next-char (read-char the-stream NIL :eof)
-			(read-char the-stream NIL :eof)))
-	    ((eq next-char :eof)
-	     (close the-stream)
-	     (if (streamp error-stream) (close error-stream))
-	     #+allegro (system:os-wait))
-	  (vector-push-extend next-char output-string))
-	output-string)))
-
 
 (defparameter *util_month-list*
   '("" "Jan" "Feb" "Mar" "Apr" "May" "Jun" "Jul" "Aug" "Sep" "Oct" "Nov" "Dec"))
@@ -125,12 +48,24 @@
                (princ-to-string minute) savingsp)))
 
 
+(defun announce-debug-state ()
+  (when (boundp 'cl-user::garnet-garnet-debug)
+    (format t "*** Built with debugging")
+    (if  cl-user::garnet-garnet-debug
+	 (format t " *ON* (debugging version)")
+	 (format t " *OFF* (production version)")
+	 )
+    (format t " ***~%")
+    (format t "*** using the following compiler policy: ***~%")
+    (format t "~A~%" cl-user::default-garnet-proclaim)))
+
 #-cmu
 (defun garnet-restart-function ()
   (format t "*** Restarting Garnet ~A image created with opal:make-image ***~%"
 	  common-lisp-user::Garnet-Version-Number)
-  (if (boundp 'garnet-image-date)
-      (format t "*** Image creation date: ~A ***~%" garnet-image-date))
+  (when (boundp 'garnet-image-date)
+    (format t "*** Image creation date: ~A ***~%" garnet-image-date))
+  (announce-debug-state)
   (opal:reconnect-garnet))
 
 
@@ -139,6 +74,7 @@
   (format t "*** Restarting Garnet ~A image created on ~A ***~%"
 	  common-lisp-user::Garnet-Version-Number
 	  garnet-image-date)
+  (announce-debug-state)
   (opal:reconnect-garnet))
 
 
@@ -261,54 +197,6 @@ Please consult your lisp's user manual for instructions.~%")
 (defun Get-Garnet-Bitmap (bitmapname)
   (opal:read-image (merge-pathnames bitmapname cl-user::Garnet-Bitmap-PathName)))
 
-;; If the -d test is true, shell-exec returns "1".  Otherwise, it returns "".
-;; This syntax works for all kinds of Unix shells: sh, csh, ksh, tcsh, ...
-;;
-(defun directory-p (pathname)
-  #+(or sbcl allegro)
-  ;; 1. Needn't call a shell if we can do the test ourselves.
-  ;; 2. In case pathname contains Latin-1 characters. clisp is 8 bit clean,
-  ;;    while most Unix shells aren't.
-  (garnet-utils:probe-directory pathname)
-
-  #-(or sbcl allegro)
-  ;; command-string is the string that's going to be executed.
-  (let ((command-string
-	 (concatenate 'string "test -d " pathname " && echo 1")))
-    (unless (equal "" (shell-exec command-string))
-	    T))
-)
-
-
-;; This is an industrial-strength version of opal:directory-p.  The difference
-;; is that extra work is done to ensure that single and double quotes are
-;; passed to the shell correctly.  Since it does more work, only use this
-;; version if you find you really need it.  This code was contributed by
-;; Bruno Haible.
-#+comment
-(defun directory-p (pathname)
-  ;; Must quote the pathname since Unix shells interpret characters like
-  ;; #\Space, #\', #\<, #\>, #\$ etc. in a special way. This kind of quoting
-  ;; should work unless the pathname contains #\Newline and we call csh.
-  (flet ((shell-quote (string) ; surround a string by single quotes
-	   (let ((qchar nil) ; last quote character: nil or #\' or #\"
-		 (qstring (make-array 10 :element-type 'character
-				      :adjustable t :fill-pointer 0)))
-	     (map nil #'(lambda (c)
-			  (let ((q (if (eql c #\') #\" #\')))
-			    (unless (eql qchar q)
-			      (when qchar (vector-push-extend qchar qstring))
-			      (vector-push-extend (setq qchar q) qstring))
-			    (vector-push-extend c qstring)))
-		  string)
-	     (when qchar (vector-push-extend qchar qstring))
-	     qstring)))
-    ;; command-string is the string that's going to be executed.
-    (let ((command-string
-	   (concatenate 'string "test -d " (shell-quote pathname) " && echo 1")))
-      (unless (equal "" (shell-exec command-string))
-	T))))
-		   
 
 ;;;============================================================
 ;;; Clip-and-Map

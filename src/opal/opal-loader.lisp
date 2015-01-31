@@ -52,7 +52,7 @@
     "utils"
     "text-fonts"
     "create-instances"
-    "create-instances2"
+;;    "create-instances2"
     "text-functions"
     "text"
 

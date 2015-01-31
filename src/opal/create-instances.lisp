@@ -19,81 +19,6 @@
 ;;  NOTE:  the first entry of ":update-slots" MUST be :visible (unless the
 ;;    value is NIL), elsewise the update algorithm will break!
 
-
-;;; Change Log:
-;;      date     who    what
-;;      ----     ---    ----
-;;    12-Sep-95  goldman   Changed the way colormap entries are tracked in
-;;                         from using a fixed-size array to using a hash-table.
-;;    25-May-94  amickish  New :max-char-ascent/descent formulas for fonts
-;;    19-Apr-94  amickish  Reset first-time in first-allocatable-colormap-index
-;;     5-Mar-94  amickish  Used names for font slot type declarations
-;;    17-Dec-93  amickish  Gem'ified :font-from-file formula
-;;    15-Dec-93  amickish  :active-devices slot now contains ?-DEVICE objects
-;;    23-Aug-93  amickish  Changed default hit-threshold to 0
-;;    24-May-93  amickish  Changed :width and :height formulas of aggregate to
-;;                         depend on aggregate's own :left and :top
-;;     3-May-93  amickish  Added s-value's in :xcolor formula of opal:COLOR;
-;;                         added :ps-font-name/size to opal::FONT-FROM-FILE
-;;    19-Apr-93  amickish  Added formulas to opal::FONT-FROM-FILE; added
-;;                         opal:CURSOR-FONT
-;;     3-Mar-93  amickish  Added :visible type declaration to VIEW-OBJECT
-;;    10-Feb-93  amickish  Added :known-as type declaration to VIEW-OBJECT
-;;    13-Jan-93  amickish  Added :xfont, :max-char-ascent, :max-char-descent,
-;;                         :font-height, and :char-width slots to opal:font;
-;;                         added parameter declarations
-;;    30-Dec-92  amickish  Set :standard-p in get-standard-font for save-agg
-;;     3-Jun-92  amickish  Added opal:white-line
-;;     7-Apr-92  amickish  Made Get-Standard-Font use default values if NIL
-;;                         parameters were supplied and added error checking.
-;;     2-Apr-92  rgm    new multifont
-;;    25-Mar-92  amickish  Get-Values ---> G-Value
-;;    26-Feb-92  ecp    An opal:color may have a :color-name slot with a
-;; 			string like "pink".
-;;    21-Jan-92  amickish  Made opal:default-font an instance of opal:font,
-;;                      added constant formula lists.
-;;     6-Aug-91  dzg    Added extra error checking in formulas for :width
-;; 			and height of aggregate.
-;;     6-Aug-91  amickish  Added :ps-font-name and :ps-font-size to opal:font
-;;     5-Aug-91  ecp    Made opal:default-font be same as opal:font.
-;;    26-Mar-91  ecp    Added :components to :local-only-slots slot of
-;; 			opal:aggregate.
-;;     7-Mar-91  ecp    The question of whether the screen is color or
-;; 			black-and-white is now determined in defs.lisp.
-;;    22-Feb-91  amickish  New exported motif colors and filling styles.
-;;    14-Feb-91  ecp    Yet more changes to color so that colors are
-;;                      deallocated when they are not used anymore.
-;;     8-Feb-91  ecp    Added :color-p slot to opal:color to tell if
-;;                      screen is black-and-white or color.
-;;    10-Aug-90  loyall Made :width, :height of aggregate not depend
-;;                      directly on :top, :left.
-;;     1-Aug-90  dzg    New :local-only-slots slot in opal:view-object
-;;    19-Jul-90  ecp    Made thickness of line-1 be 1.
-;;    20-Jun-90  ecp    Temporarily made thickness of dotted-line be 1,
-;; 			due to new CLX bug.
-;;     4-Jun-90  ecp    Removed inverse relation between :parent and :child
-;;    16-Apr-90  ecp    Moved creation of default-font earlier.
-;;    27-Mar-90  ecp    In build-pixmap, changed 0 and 1 to *black*
-;; 			and *white*.
-;;    19-Mar-90  ecp    Got rid of Garnet-Font-Pathname.
-;; 			Changed :tile to :stipple
-;;     1-Mar-90  ecp    In build-pixmap, changed the :bitmap-p argument
-;; 			to xlib:put-image from t to nil.
-;;    13-Feb-90  ecp    Implemented color.
-;;    25-Jan-90  ecp    Changes to fonts.
-;;     5-Dec-89  ecp    Moved create-instance of FONT-FROM-FILE earlier.
-;;      ******* SEE OPAL CHANGE.LOG ********
-;;    15-Jun-89  koz	Placed Graphic-Quality hierarchy before View-Object
-;; 			to resolve forward references (instead of s-value).
-;; 			This should fix bug that made Cursor-Text not inherit
-;; 			the right slots at creation time.
-;;    15-Jun-89  koz	Converted from kr:formula to kr:o-formula.
-;;    15-Jun-89  koz	Extracted all forward references and placed them all
-;; 			in S-VALUEs at the end of this file, or in other files
-;; 			if they needed functions not yet defined...
-;;    14-Jun-89  koz    Created.  Simply extracted all the calls to kr:create-
-;; 			instance from all the Opal files.  No modifications
-;; 			were made to them.
 
 ;;; The Opal Hierarchy
 ;;
@@ -185,6 +110,25 @@
 
 (in-package "OPAL")
 
+
+;;; Some premature optimization.
+(defun q-min (x y)
+  "Two-argument fixnum version of min."
+  (declare (fixnum x y))
+  (if (< x y) x y))
+
+
+(defun q-max (x y)
+  "Two-argument fixnum version of max."
+  (declare (fixnum x y))
+  (if (< x y) y x))
+
+
+(defun q-abs (x)
+  "Fixnum version of abs."
+  (declare (fixnum x))
+  (if (< x 0) (- x) x))
+
 ;;; Graphic-Quality Hierarchy
 ;;
 
@@ -202,7 +146,8 @@
 (create-instance 'FONT-FROM-FILE graphic-quality
   :declare ((:parameters :font-path :font-name)
 	    (:type ((or string cons) :font-name)
-		   ((or null string) :font-path))
+		   ((or null string) :font-path)
+		   (fixnum :max-char-ascent :max-char-descent :font-height))
 	    (:ignored-slots :display-xfont-plist))
   (:xfont (o-formula (fff-to-xfont (gvl :font-from-file)
 				   (gv DEVICE-INFO :current-root))))
@@ -212,7 +157,8 @@
   (:max-char-descent
    (o-formula (let ((root (gv DEVICE-INFO :current-root)))
                 (if root (gem:max-character-descent root (gv :self)) 0))))
-  (:font-height (o-formula (+ (gvl :max-char-ascent) (gvl :max-char-descent))))
+  (:font-height (o-formula (+ (the fixnum (gvl :max-char-ascent))
+			      (the fixnum (gvl :max-char-descent)))))
   (:display-xfont-plist NIL)
   (:font-path NIL)
   (:font-name "")
@@ -238,6 +184,7 @@
   :declare ((:type (font-family :family)
 		   (font-face :face)
 		   (font-size :size))
+	    (:type (fixnum :max-char-ascent :max-char-descent :font-height))
 	    (:maybe-constant :family :face :size))
   (:ps-font-name (o-formula (ps-font-name (gvl :family) (gvl :face))))
   (:ps-font-size (o-formula (ps-font-size (gvl :size))))
@@ -255,7 +202,8 @@
   (:max-char-descent
    (o-formula (let ((root (gv DEVICE-INFO :current-root)))
                 (if root (gem:max-character-descent root (gv :self)) 0))))
-  (:font-height (o-formula (+ (gvl :max-char-ascent) (gvl :max-char-descent))))
+  (:font-height (o-formula (+ (the fixnum (gvl :max-char-ascent))
+			      (the fixnum (gvl :max-char-descent)))))
   (:font-from-file
    (o-formula
     (let ((key (list (gvl :family) (gvl :face) (gvl :size))))
@@ -381,14 +329,16 @@ avoiding wasted objects.
 	   (old-index (g-cached-value (gv :self) :colormap-index))
 	   (new-index (gem:colormap-property root-window :ALLOC-COLOR
 					     (gvl :xcolor))))
+      (declare (fixnum old-index new-index))
       ;;changed the following [1995/12/08:goldman]
       (when gem:*read-write-colormap-cells-p*
 	(when (and old-index
 		   (>= old-index
-		       (first-allocatable-colormap-index root-window))
-		   (zerop (decf (gethash old-index *colormap-index-table*))))
+		       (the fixnum (first-allocatable-colormap-index root-window)))
+		   (zerop (the fixnum
+			       (decf (the fixnum (gethash old-index *colormap-index-table*))))))
 	  (gem:colormap-property root-window :FREE-COLORS (list old-index)))
-	(incf (gethash new-index *colormap-index-table* 0)))
+	(incf (the fixnum (gethash new-index *colormap-index-table* 0))))
       new-index))))
 	
 
@@ -440,7 +390,7 @@ avoiding wasted objects.
 	    (:maybe-constant :line-thickness :line-style :cap-style :join-style
 			     :dash-pattern :foreground-color :background-color
 			     :stipple))
-  (:line-thickness 0)
+  (:line-thickness (the fixnum 0))
   (:line-style :solid)			; or :dash or :double-dash
   (:cap-style :butt)			; or :not-last, :round or :projecting
   (:join-style :miter)			; or :round or :bevel
@@ -531,8 +481,8 @@ avoiding wasted objects.
 ;;
 
 (create-instance 'VIEW-OBJECT NIL
-  :declare ((:type (fixnum :left :top) ; (integer :left :top)
-		   (#-(and) (integer 0) #+(and) fixnum :width :height :hit-threshold)
+  :declare ((:type (fixnum :left :top)
+		   (fixnum :width :height :hit-threshold)
 		   (known-as-type :known-as)
 		   (kr-boolean :visible))
 	    (:update-slots :visible :fast-redraw-p)
@@ -567,38 +517,34 @@ avoiding wasted objects.
   (:update-slots NIL) ; New update does not use AGGREGATE'S visible!
   (:left (o-formula
           (let ((min-x 999999))
-	    (declare (fixnum min-x))
 	    (dolist (child (gv-local (gv :self) :components))
 	      (when (gv child :visible)
-		(setf min-x (min min-x (gv child :left)))))
+		(setf min-x (q-min min-x (gv child :left)))))
 	    (if (= min-x 999999) 0 min-x))
 	  0))
   (:top (o-formula
 	 (let ((min-y 999999))
-	   (declare (fixnum min-y))
 	   (dolist (child (gv-local (gv :self) :components))
 	     (when (gv child :visible)
-	       (setf min-y (min min-y (gv child :top)))))
+	       (setf min-y (q-min min-y (gv child :top)))))
 	   (if (= min-y 999999) 0 min-y))
 	 0))
   (:width (o-formula
 	   (let ((max-x -999999)
 		 (min-x (gvl :left)))
-	     (declare (fixnum max-x min-x))
 	     (dolist (child (gv-local (gv :self) :components))
 	       (when (gv child :visible)
-		 (setf max-x (max max-x (+ (or (gv child :left) 0)
+		 (setf max-x (q-max max-x (+ (or (gv child :left) 0)
 					   (or (gv child :width) 0))))))
-	     (max 0 (- max-x min-x)))))
+	     (q-max 0 (- max-x min-x)))))
   (:height (o-formula
 	    (let ((max-y -999999)
 		  (min-y (gvl :top)))
-	      (declare (fixnum max-y min-y))
 	      (dolist (child (gv-local (gv :self) :components))
                  (when (gv child :visible)
-                   (setf max-y (max max-y (+ (or (gv child :top) 0)
+                   (setf max-y (q-max max-y (+ (or (gv child :top) 0)
 					     (or (gv child :height) 0))))))
-	      (max 0 (- max-y min-y)))))
+	      (q-max 0 (- max-y min-y)))))
 
   (:visible (o-formula (let ((parent (gvl :parent)))
 			    (or (null parent) (gv parent :visible)))
@@ -644,3 +590,477 @@ avoiding wasted objects.
  ;;; 	    (and parent (gv parent :toa)))))
 
   )
+
+
+;;; Apparently in the days of the Pharaohs, scribes processing long
+;;  Lisp files had problems because the stones containing the object
+;;  code they generated were very large and heavy. For this reason,
+;;  the original "create-instances.lisp" file was broken into two
+;;  pieces, thereby preventing the scribes from getting hernias. Or
+;;  something like that.
+;;
+;;  At any rate, modern Lisp implementations no longer have this
+;;  problem.
+;;
+;; The code from the former create-instances2.lisp follows.
+
+(create-instance 'opal:LINE opal:graphical-object
+  :declare ((:parameters :x1 :y1 :x2 :y2 :line-style :draw-function :visible)
+	    (:type (fixnum :x1 :y1 :x2 :y2))
+	    (:maybe-constant :x1 :y1 :x2 :y2 :line-style :line-p :visible)
+	    (:update-slots :visible :fast-redraw-p :x1 :x2 :y1 :y2 :line-style
+			   :filling-style :draw-function))
+
+  (:x1 0)
+  (:y1 0)
+  (:x2 0)
+  (:y2 0)
+  (:left
+   (o-formula (- (q-min (the fixnum (gvl :x1)) (the fixnum (gvl :x2)))
+		 (if (eq (gvl :line-style :cap-style) :projecting)
+		     (q-max 1 (the fixnum (or (gvl :line-style :line-thickness) 0)))
+		     (the fixnum (floor (or (gvl :line-style :line-thickness) 0) 2))))
+	      0))
+  (:top
+   (o-formula  (- (q-min (the fixnum (gvl :y1)) (the fixnum (gvl :y2)))
+		  (if (eq (gvl :line-style :cap-style) :projecting)
+		      (q-max 1 (the fixnum (gvl :line-style :line-thickness)))
+		      (the fixnum (floor (or (gvl :line-style :line-thickness) 0) 2))))
+	       0))
+  (:width
+   (o-formula (+ (q-abs (- (or (the fixnum (gvl :x1)) 0) (or (the fixnum (gvl :x2)) 0)))
+		 (* (if (eq (gvl :line-style :cap-style) :projecting) 2 1)
+		    (q-max 1 (the fixnum (or (gvl :line-style :line-thickness) 0)))))))
+  (:height
+   (o-formula (+ (q-abs (- (or (the fixnum (gvl :y1)) 0) (or (the fixnum (gvl :y2)) 0)))
+		 (* (if (eq (gvl :line-style :cap-style) :projecting) 2 1)
+		    (q-max 1 (the fixnum (or (gvl :line-style :line-thickness) 0)))))))
+  (:line-p T))
+
+(create-instance 'opal:RECTANGLE opal:graphical-object
+  :declare ((:parameters :left :top :width :height :line-style :filling-style
+			 :draw-function :visible)
+	    (:type (fixnum :left :top :width :height))
+	    (:maybe-constant :left :top :width :height :line-style
+			     :filling-style :draw-function :visible)
+	    (:update-slots :visible :fast-redraw-p :top :left :width :height
+			   :line-style :filling-style :draw-function))
+  )
+
+
+(create-instance 'opal::FAST-REDRAW-RECTANGLE opal:rectangle
+   (:line-style NIL))
+
+(let ((update-vals (s-value opal::FAST-REDRAW-RECTANGLE :update-slots-values
+			(make-array 9 :initial-element nil))))
+  (setf (aref update-vals +rect-draw-function+) :copy)
+  (setf (aref update-vals 0) T)
+  (setf (aref update-vals 1) :rectangle))
+
+(create-instance 'opal:ROUNDTANGLE opal:rectangle
+  :declare ((:parameters :left :top :width :height :radius :line-style
+			 :filling-style :draw-function :visible)
+	    (:type ((or keyword (integer 0)) :radius))
+	    (:maybe-constant :left :top :width :height :radius :line-style
+			     :filling-style :visible)
+	    (:update-slots :visible :fast-redraw-p :top :left :width :height
+			   :radius :draw-radius :line-style :filling-style
+			   :draw-function))
+  (:radius :small)
+  (:draw-radius (o-formula (let ((r (gvl :radius))
+				 (smaller-side (q-min (gvl :width)
+						    (gvl :height))))
+			     (if (numberp r)
+				 (q-min (q-max r 0) (floor smaller-side 2))
+				 (case r
+				   (:small (floor smaller-side 5))
+				   (:medium (floor smaller-side 4))
+				   (:large (floor smaller-side 3))
+				   (t 0)))))))
+
+
+(create-instance 'opal:ARC opal:graphical-object
+  :declare ((:parameters :left :top :width :height :angle1 :angle2
+			 :line-style :filling-style :draw-function :visible)
+	    (:type (number angle1 angle2)
+		   (fixnum :left :top :width :height))
+	    (:maybe-constant :left :top :width :height :line-style
+			     :filling-style :draw-function :angle1 :angle2
+			     :visible)
+	    (:update-slots :visible :fast-redraw-p :left :top :width :height
+                           :angle1 :angle2
+			   :line-style :filling-style :draw-function))
+  (:angle1 0)
+  (:angle2 (/ pi 4)))
+
+
+(create-instance 'opal:OVAL opal:arc
+  :declare ((:parameters :left :top :width :height
+			 :line-style :filling-style :draw-function :visible))
+  )
+
+
+(create-instance 'opal:CIRCLE opal:arc
+  :declare ((:parameters :left :top :width :height
+			 :line-style :filling-style :draw-function :visible)))
+
+
+(create-instance 'opal:MULTIPOINT opal:graphical-object
+  :declare ((:parameters :point-list :line-style :filling-style :draw-function
+			 :visible)
+	    (:type (list :point-list))
+	    (:maybe-constant :point-list :line-style :filling-style
+			     :draw-function :visible)
+	    (:update-slots :visible :fast-redraw-p :point-list
+			   :line-style :filling-style :draw-function))
+  (:point-list '(18 10 10 24 26 24 18 10))  ;; a roughly equilateral triangle.
+  (:left (o-formula
+	  (let ((point-list (gvl :point-list)))
+	    (if point-list
+		(let* ((min-x 9999)
+		       (line-style (gvl :line-style))
+		       (lsthickness (if line-style
+					(* 2 (q-max 1 (gv line-style 
+							:line-thickness)))
+					0)))
+		  (do ((point point-list (cddr point)))
+		      ((null point) (- min-x lsthickness))
+		    (setf min-x (q-min min-x (car point)))))
+		0))))
+  (:top (o-formula
+	 (let ((point-list (gvl :point-list)))
+	   (if point-list
+	       (let* ((min-y 9999)
+		      (line-style (gvl :line-style))
+		      (lsthickness (if line-style
+				       (* 2 (q-max 1 (gv line-style
+						       :line-thickness)))
+				       0)))
+		 (do ((point point-list (cddr point)))
+		     ((null point) (- min-y lsthickness))
+		   (setf min-y (q-min min-y (cadr point)))))
+	       0))))
+  (:width (o-formula
+	   (let ((point-list (gvl :point-list)))
+	     (if point-list
+		 (let* ((min-x 9999)
+			(max-x 0)
+			(line-style (gvl :line-style))
+			(lsthickness (if line-style
+					 (* 4 (q-max 1 (gv line-style
+							 :line-thickness)))
+					 0)))
+		   (do ((point point-list (cddr point)))
+		       ((null point) (+ (- max-x min-x) lsthickness))
+		     (setf min-x (q-min min-x (car point)))
+		     (setf max-x (q-max max-x (car point)))))
+		 0))))
+  (:height (o-formula
+	    (let ((point-list (gvl :point-list)))
+	      (if point-list
+		  (let* ((min-y 9999)
+			 (max-y 0)
+			 (line-style (gvl :line-style))
+			 (lsthickness (if line-style
+					  (* 4 (q-max 1 (gv line-style
+							  :line-thickness)))
+					  0)))
+		    (do ((point point-list (cddr point)))
+			((null point) (+ (- max-y min-y) lsthickness))
+		      (setf min-y (q-min min-y (cadr point)))
+		      (setf max-y (q-max max-y (cadr point)))))
+		  0)))))
+
+
+(create-instance 'opal:POLYLINE opal:multipoint
+  :declare ((:parameters :point-list :hit-full-interior-p :line-style
+			 :filling-style :draw-function :visible))
+  (:hit-full-interior-p nil))
+
+
+#|
+;;; 11/4/1993	dzg & amickish -- commented out.
+;;; (defun font-to-xfont (opal-font display)
+;;;   (gem:font-to-internal gem::*root-window*
+;;; 			(g-value opal-font :font-from-file)))
+|#
+
+
+(create-instance 'opal:BITMAP opal:graphical-object
+  :declare ((:parameters :left :top :image :filling-style
+			 :draw-function :visible)
+	    (:maybe-constant :left :top :image :filling-style :visible)
+	    (:ignored-slots :depended-slots :update-slots :update-slots-values
+			    :root-pixmap-plist :image)
+	    (:update-slots :visible :fast-redraw-p :image :top :left
+			   :line-style :filling-style :draw-function))
+  (:image nil)
+  (:width (o-formula (let ((image (gvl :image)))
+		       (if image
+			   (gem:image-size
+			    (or (gvl :window)
+				(gv DEVICE-INFO :current-root))
+			    image)
+			   0))))
+  (:height (o-formula
+	    (let ((image (gvl :image)))
+	      (if image
+		  (multiple-value-bind (width height)
+		      (gem:image-size
+		       (or (gvl :window)
+			   (gv DEVICE-INFO :current-root))
+		       image)
+		    (declare (ignore width))
+		    height)
+		  0))))
+  (:filling-style opal:default-filling-style))
+
+
+;;; All the *-FILL-BITMAPs will have their :image slot set once the function
+;;; "halftone-image" is defined...
+
+(create-instance 'opal::WHITE-FILL-BITMAP opal:bitmap
+  (:percent 0)
+  (:image))   ;;; will be (halftone-image 0)
+
+(create-instance 'opal::LIGHT-GRAY-FILL-BITMAP opal:bitmap
+  (:percent 25)
+  (:image))   ;;; will be (halftone-image 25)
+
+(create-instance 'opal::GRAY-FILL-BITMAP opal:bitmap
+  (:percent 50)
+  (:image))   ;;; will be (halftone-image 50)
+
+(create-instance 'opal::DARK-GRAY-FILL-BITMAP opal:bitmap
+  (:percent 75)
+  (:image))   ;;; will be (halftone-image 75)
+
+;; Have to define GRAY-LINE here instead of in create-instances.lisp with
+;; the other line styles because gray-fill-bitmap is defined in this file.
+(create-instance 'opal::GRAY-LINE opal:line-style
+  (:constant T)
+  (:stipple opal::gray-fill-bitmap))
+
+;;; Colors and filling-styles for Motif
+
+;;;  Orange, Green, Blue lists for defining colors
+(defvar MOTIF-GRAY-VALUE (float (/ #xd3d3 #xffff)))
+
+(defvar MOTIF-BLUE-VALUES
+  (list (float (/ #x7272 #xffff)) (float (/ #x9f9f #xffff)) 1))
+
+(defvar MOTIF-GREEN-VALUES
+  (list (float (/ #x5f5f #xffff)) (float (/ #x9e9e #xffff))
+        (float (/ #xa0a0 #xffff))))
+
+(defvar MOTIF-ORANGE-VALUES (list 1 .6 .4))
+
+;;;  Lite values:  Most of the values are just the outline colors
+;;;  of a MOTIF-xxx colored object, with some slight modifications.
+
+(defvar MOTIF-LIGHT-GRAY-VALUE .9)
+(defvar MOTIF-LIGHT-BLUE-VALUES (list 0.7217459 0.8998047 1))
+(defvar MOTIF-LIGHT-GREEN-VALUES (list 0.61834437 0.8660691 0.7))
+(defvar MOTIF-LIGHT-ORANGE-VALUES (list 1 0.9129001 0.71510005))
+
+
+(create-instance 'MOTIF-GRAY-FILL opal:default-filling-style
+   (:foreground-color (create-instance 'MOTIF-GRAY opal:color
+                         (:red MOTIF-GRAY-VALUE)
+                         (:green MOTIF-GRAY-VALUE)
+                         (:blue MOTIF-GRAY-VALUE))))
+
+(create-instance 'MOTIF-BLUE-FILL opal:default-filling-style
+   (:foreground-color (create-instance 'MOTIF-BLUE opal:color
+                         (:red (first MOTIF-BLUE-VALUES))
+                         (:green (second MOTIF-BLUE-VALUES))
+                         (:blue (third MOTIF-BLUE-VALUES)))))
+
+(create-instance 'MOTIF-ORANGE-FILL opal:default-filling-style
+   (:foreground-color (create-instance 'MOTIF-ORANGE opal:color
+                         (:red (first MOTIF-ORANGE-VALUES))
+                         (:green (second MOTIF-ORANGE-VALUES))
+                         (:blue (third MOTIF-ORANGE-VALUES)))))
+
+(create-instance 'MOTIF-GREEN-FILL opal:default-filling-style
+   (:foreground-color (create-instance 'MOTIF-GREEN opal:color
+                         (:red (first MOTIF-GREEN-VALUES))
+                         (:green (second MOTIF-GREEN-VALUES))
+                         (:blue (third MOTIF-GREEN-VALUES)))))
+
+(create-instance 'MOTIF-LIGHT-GRAY-FILL opal:filling-style
+  (:foreground-color (create-instance 'MOTIF-LIGHT-GRAY opal:color
+		       (:red MOTIF-LIGHT-GRAY-VALUE)
+		       (:green MOTIF-LIGHT-GRAY-VALUE)
+		       (:blue MOTIF-LIGHT-GRAY-VALUE))))
+
+(create-instance 'MOTIF-LIGHT-BLUE-FILL opal:filling-style
+  (:foreground-color (create-instance 'MOTIF-LIGHT-BLUE opal:color
+		       (:red (first MOTIF-LIGHT-BLUE-VALUES))
+		       (:green (second MOTIF-LIGHT-BLUE-VALUES))
+		       (:blue (third MOTIF-LIGHT-BLUE-VALUES)))))
+
+(create-instance 'MOTIF-LIGHT-ORANGE-FILL opal:filling-style
+  (:foreground-color (create-instance 'MOTIF-LIGHT-ORANGE opal:color
+		       (:red (first MOTIF-LIGHT-ORANGE-VALUES))
+		       (:green (second MOTIF-LIGHT-ORANGE-VALUES))
+		       (:blue (third MOTIF-LIGHT-ORANGE-VALUES)))))
+
+(create-instance 'MOTIF-LIGHT-GREEN-FILL opal:filling-style
+  (:foreground-color (create-instance 'MOTIF-LIGHT-GREEN opal:color
+		       (:red (first MOTIF-LIGHT-GREEN-VALUES))
+		       (:green (second MOTIF-LIGHT-GREEN-VALUES))
+		       (:blue (third MOTIF-LIGHT-GREEN-VALUES)))))
+
+
+
+(create-instance 'opal::ARROW-CURSOR opal:bitmap
+  (:constant :image)
+  ;; Have to delay Get-Garnet-Bitmap from being executed before device
+  ;; is initialized
+  (:image (o-formula (Get-Garnet-Bitmap "garnet.cursor"))))
+
+(create-instance 'opal::ARROW-CURSOR-MASK opal:bitmap
+  (:constant :image)
+  (:image (o-formula (Get-Garnet-Bitmap "garnet.mask"))))
+
+(defparameter Arrow-Pair (cons ARROW-CURSOR ARROW-CURSOR-MASK))
+
+
+(create-instance 'opal::HOURGLASS-CURSOR opal:bitmap
+  (:constant :image)
+  (:image (o-formula (Get-Garnet-Bitmap "hourglass.cursor"))))
+
+(create-instance 'opal::HOURGLASS-CURSOR-MASK opal:bitmap
+  (:constant :image)
+  (:image (o-formula (Get-Garnet-Bitmap "hourglass.mask"))))
+
+(defparameter HourGlass-Pair (cons HOURGLASS-CURSOR HOURGLASS-CURSOR-MASK))
+
+(create-instance 'opal::garbage-CURSOR opal:bitmap
+  (:constant :image)
+  (:image (o-formula (Get-Garnet-Bitmap "garbage.cursor"))))
+
+(create-instance 'opal::garbage-CURSOR-MASK opal:bitmap
+  (:constant :image)
+  (:image (o-formula (Get-Garnet-Bitmap "garbage.mask"))))
+
+;;; See windows.lisp for an application of these cursors.
+(defparameter garbage-Pair (cons garbage-CURSOR garbage-CURSOR-MASK))
+
+(create-instance 'opal:ARROWHEAD opal:polyline
+  :declare ((:parameters :head-x :head-y :from-x :from-y :length :diameter
+			 :open-p :line-style :filling-style :draw-function
+			 :visible)
+	    (:type (fixnum :head-x :head-y :from-x :from-y :dx :dy
+			    :connect-x :connect-y :ax :ay :cx :cy :length
+			    :diameter)
+		   (number :radius :ftlength :ux :uy))
+	    (:maybe-constant :line-style :filling-style :length :diameter
+			     :open-p :head-x :head-y :from-x :from-y :radius
+			     :visible)
+	    (:update-slots :visible :fast-redraw-p :point-list
+			   :line-style :filling-style :draw-function
+			   :head-x :head-y :from-x :from-y :length :diameter
+			   :open-p))
+  (:head-x 0)
+  (:head-y 0)
+  (:from-x 0)
+  (:from-y 0)
+  (:radius (o-formula (/ (the fixnum (gvl :diameter)) 2)))
+  (:dx (o-formula (- (the fixnum (gvl :from-x)) (the fixnum (gvl :head-x)))))
+  (:dy (o-formula (- (the fixnum (gvl :from-y)) (the fixnum (gvl :head-y)))))
+  (:ftlength (o-formula (let ((dx (gvl :dx))
+			      (dy (gvl :dy)))
+			  (max 1.0 (sqrt (+ (the fixnum (* dx dx)) (the fixnum (* dy dy))))))))
+  (:ux (o-formula (/ (gvl :dx) (gvl :ftlength))))
+  (:uy (o-formula (/ (gvl :dy) (gvl :ftlength))))
+  (:connect-x (o-formula (round (+ (gvl :head-x) (* (gvl :length) (gvl :ux))))))
+  (:connect-y (o-formula (round (+ (gvl :head-y) (* (gvl :length) (gvl :uy))))))
+  (:ax (o-formula (round (- (gvl :connect-x) (* (gvl :radius) (gvl :uy))))))
+  (:ay (o-formula (round (+ (gvl :connect-y) (* (gvl :radius) (gvl :ux))))))
+  (:cx (o-formula (round (+ (gvl :connect-x) (* (gvl :radius) (gvl :uy))))))
+  (:cy (o-formula (round (- (gvl :connect-y) (* (gvl :radius) (gvl :ux))))))
+  (:point-list (o-formula (let ((ax (gvl :ax)) (ay (gvl :ay))
+				(head-x (gvl :head-x))
+				(head-y (gvl :head-y))
+				(cx (gvl :cx)) (cy (gvl :cy)))
+			    (if (gvl :open-p)
+				(list ax ay head-x head-y cx cy)
+				(list ax ay head-x head-y cx cy ax ay)))))
+  (:length 10)
+  (:diameter 10)
+  (:open-p t)
+)
+
+;;; To create a window for displaying gobs, create a schema which is an
+;;; instance of the window class described below specifying slots as
+;;; needed. For example:
+;;;
+;;; (create-instance my-window opal:window
+;;;   (:width 100)
+;;;   (:height 100))
+;;;
+(create-instance 'opal::WINDOW opal:view-object
+  :declare ((:type ((or (is-a-p opal:aggregate) null) :aggregate)
+		   ((integer 1) :width :height)
+		   ((integer 0) :border-width))
+	    (:maybe-constant :left :top :width :height :visible)
+	    (:ignored-slots :buffer-gc)
+	    (:update-slots :visible :fast-redraw-p :aggregate :parent
+			   :top :left :width :height :cursor :title :icon-title
+			   :display :background-color :icon-bitmap
+			   :draw-on-children :modal-p :save-under)
+	    (:local-only-slots (:drawable nil) (:parent nil) (:window nil)))
+  (:left 0)
+  (:top 0)
+  (:width 355)
+  (:height 277)
+  (:omit-title-bar-p NIL)
+  (:aggregate)
+  (:title)       ; set in :initialize method
+  (:icon-title)  ; set in :initialize method
+  (:border-width 2)
+  (:cursor (o-formula
+	    (let ((parent (gvl :parent)))
+	      (if parent
+		  (gv parent :cursor)
+		  Arrow-Pair))))
+  )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;  *-FILL ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(create-instance 'opal::LIGHT-GRAY-FILL opal:filling-style
+  (:fill-style :opaque-stippled)
+  (:stipple opal::light-gray-fill-bitmap))
+
+(create-instance 'opal::GRAY-FILL opal:filling-style
+  (:fill-style :opaque-stippled)
+  (:stipple opal::gray-fill-bitmap))
+
+(create-instance 'opal::DARK-GRAY-FILL opal:filling-style
+  (:fill-style :opaque-stippled)
+  (:stipple opal::dark-gray-fill-bitmap))
+
+(create-instance 'opal::BLACK-FILL opal:filling-style
+  (:fill-style :solid))
+
+(create-instance 'opal::WHITE-FILL opal:filling-style
+  (:foreground-color opal:white))
+(create-instance 'opal::RED-FILL opal:filling-style
+  (:foreground-color opal:red))
+(create-instance 'opal::GREEN-FILL opal:filling-style
+  (:foreground-color opal:green))
+(create-instance 'opal::BLUE-FILL opal:filling-style
+  (:foreground-color opal:blue))
+(create-instance 'opal::YELLOW-FILL opal:filling-style
+  (:foreground-color opal:yellow))
+(create-instance 'opal::ORANGE-FILL opal:filling-style
+  (:foreground-color opal:orange))
+(create-instance 'opal::CYAN-FILL opal:filling-style
+  (:foreground-color opal:cyan))
+(create-instance 'opal::PURPLE-FILL opal:filling-style
+  (:foreground-color opal:purple))
+

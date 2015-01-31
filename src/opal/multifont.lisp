@@ -10,84 +10,6 @@
 
 ;; $Id$
 ;;
-;; CHANGE LOG:
-;; 22-May-94 Mickish  Commented out mysterious g-value of :colormap-index slot
-;;                    in :draw method because the :colormap-index formula is
-;;                    still buggy in the Mac version
-;; 14-Dec-93 Mickish  Ignored variables to eliminate compiler warnings
-;; 27-Oct-93 Mickish  Copy-Frag ---> Copy-The-Frag
-;; 24-Sep-93 McDaniel Removed some unnecessary checks from width-break.
-;;                    Changed test in wrap-line from >= to just >.
-;;                    Fixed break-line to better handle breaking lines
-;;                    next to object fragments.
-;;                    Rewrote calculate-cursor-x.  It was getting out
-;;                    of hand and needed to be simplified.
-;;                    Changed add-newline to comply with the new version
-;;                    of break-line.
-;; 20-Sep-93 Fernando Renamed "position" variables to "frag-position"
-;; 15-Sep-93 McDaniel Fixed bug in Merge-Lines.  Calculate-Cursor-Pos was
-;;                    being called with the wrong line.
-;; 20-Aug-93 Goldberg Added :write-slots mf-specific function.
-;;                    Fixed add-space-to-line so that objects are valid lines.
-;; 06-Aug-93 Goldberg Added lisp-mode-p parameters to ADD-CHAR and DELETE-
-;;                    SELECTION
-;; 02-Aug-93 Mickish  Resize-Object ---> Notice-Resize-Object
-;; 20-Jul-93 Goldberg Moved call to set-line-style in multifont-line
-;;                    draw-method so that it is set for frag colors.
-;; 16-Jul-93 Goldberg Put Cursor at the front of the multifont-text
-;;                    aggregate rather than at the back so that it
-;;                    does not get drawn over.
-;; 23-Jun-93 Goldberg Added Marks
-;;  6-Jun-93 Goldberg Fixed bugs in adding objects as frags.
-;;                    Added Color.
-;; 31-May-93 Mickish Added :force-update slot to cursor (see note in
-;;                   TOGGLE-SELECTION).
-;;  3-May-93 RGM fixed syntax error in merge-frags that caused certain
-;;               problems with updating fonts.
-;;  3-May-93 RGM converted some g-value's in the line draw method to
-;;               be aref's from the update-values array.
-;; 23-Apr-93 Mickish Added :do-not-dump-slots and :do-not-dump-objects
-;; 20-Apr-93 Mickish Fixed to work with opal:font-from-files; Modified
-;;                   Check-Text to print the offending fragment.
-;;  6-Apr-93 koz Converted with-*-styles macros to set-*-style fns
-;;               And omitted "clip-mask" as argument to draw function.
-;; 10-Mar-93 Mickish Restored Extract-Key-From-Font which was deleted from
-;;                   multifont-textinter.lisp
-;;  9-Mar-93 RGM Fixed return value for functions Delete-Word,
-;;               Delete-Prev-Word, Go-To-Next-Word, and Go-To-Prev-Word.
-;;  5-Mar-93 Mickish Added parameter and type declarations
-;; 10-Feb-93 RGM Added function EMPTY-TEXT-P to check for blank text formats.
-;; 02-Feb-93 Mickish Implemeted :force-update slot for fast-redraw; finished
-;;                   Reset-Multifont-Sizes for changing displays
-;; 12-Jan-93 RGM Changed allocation of fragments so that they are allocated
-;;               off of a free list, *Free-Frag-Head*.  Renamed :string
-;;               slot to :initial-text; Set-Strings ---> Set-Text
-;; 11-Jan-93 RGM Added check-text function to provide better error checking
-;;               in input strings.
-;; 03-Dec-92 Mickish Reordered :update-slots, added :set-frr-bbox method
-;;                   so MULTIFONT-LINE's can be fast redraw objects;
-;;                   Added :fix-update-slots method to replace the call to
-;;                   Update-Text-Width from the formula in :text-toggle;
-;;                   Made :draw method slightly more efficient.
-;; 22-Oct-92 RGM Fixed format bug in INSERT-TEXT procedure.
-;; 23-Sep-92 Mickish/koz Pushed some :update-slots slots from MULTIFONT-TEXT
-;;           down into MULTIFONT-LINE instances (partial fix -- remaining
-;;           slots must be dealt with).
-;; 27-Aug-92 Mickish G-value --> gv in :width formula of multifont-text
-;; 26-Jun-92 Mickish Replaced calls to opal::*-method-aggregate with kr-sends
-;;                   of the corresponding methods.
-;; 18-May-92 ECP Added hack to update-text-width to make cursor valid.
-;; 12-May-92 RGM Fixed initialization so that last-line's next-line is NIL.
-;;  7-Apr-92 ECP Moved declaration of frag-height to after defstruct of frag.
-;;  6-Apr-92 Mickish Fixed a typo and missing parameter in a call to
-;;                   calculate-size-of-line in ADD-CHAR
-;;  6-Apr-92 ECP Renamed copy-selection to copy-selected-text so as not
-;;		  to collide with the name of inter:copy-selection.
-;;  2-Apr-92 RGM Released new version.  Made major changes.  Added word wrap
-;;           and the ability to select text.
-;; 21-Oct-91 ECP Implemented :fill-background-p for multifont-text.
-;; 11-Jun-91 ECP Released to test version
-;;
 
 
 ;; Notes to maintainers:
@@ -206,14 +128,14 @@
   string
   fcolor
   bcolor
-  length          ; length of string in characters
   font
-  width           ; width of string in pixels
-  ascent
-  descent
+  (length  0 :type fixnum)          ; length of string in characters
+  (width   0 :type fixnum)          ; width of string in pixels
+  (ascent  0 :type fixnum)
+  (descent 0 :type fixnum)
   line-style
-  start-highlight ; character position to begin selection highlight
-  end-highlight   ; position to end highlight
+  (start-highlight 0 :type fixnum)  ; character position to begin selection highlight
+  (end-highlight   0 :type fixnum)  ; position to end highlight
   prev
   next
   break-p         ; T if end-of-line is a break, not a true \newline
@@ -257,6 +179,9 @@
 
 ;; INSTANCES
 
+(declaim (fixnum +multifont-top+ +multifont-left+
+		 +multifont-height+ +multifont-width+
+		 +multifont-lstyle+ +multifont-force-update+))
 (defconstant +multifont-top+ 2)
 (defconstant +multifont-left+ 3)
 (defconstant +multifont-height+ 4)
@@ -266,6 +191,7 @@
 
 ;; MULTIFONT-LINE : A single line of text
 (create-instance 'opal::MULTIFONT-LINE opal:graphical-object
+  :declare ((:type (fixnum :top :left :length :ascent :descent :width :height)))
   (:update-slots '(:visible :fast-redraw-p :top :left :height :width
                    :line-style :draw-function :fill-background-p
 		   :force-update :show-marks))
@@ -275,7 +201,7 @@
                          (o-formula (gvl :parent :fast-redraw-filling-style)))
   (:top (o-formula (let ((prev-line (gvl :prev-line)))
 		     (if prev-line
-			 (+ (gv prev-line :top) (gv prev-line :height))
+			 (+ (the fixnum (gv prev-line :top)) (the fixnum (gv prev-line :height)))
                      (gvl :parent :top)))))
   (:left (o-formula (gvl :parent :left)))
   (:line-style (o-formula (gvl :parent :line-style)))
@@ -287,7 +213,7 @@
   (:ascent 0)
   (:descent 0)
   (:width 0)
-  (:height (o-formula (+ (gvl :ascent) (gvl :descent))))
+  (:height (o-formula (+ (the fixnum (gvl :ascent)) (the fixnum (gvl :descent)))))
   (:first-frag nil)  ; points to beginning of doubly linked list of frags
   (:last-frag nil)
   (:prev-line nil)
@@ -300,7 +226,8 @@
 			 :line-style :show-marks)
 	    (:type ((or list string) :initial-text)
 		   (kr-boolean :word-wrap-p :fill-background-p)
-		   (integer :text-width)
+		   (fixnum :text-width :base-line)
+		   (fixnum :cursor-position :cursor-frag-pos :cursor-x-offset)
 		   ((or (is-a-p opal:font) (is-a-p opal:font-from-file))
 		    :current-font)
 		   ((or (is-a-p opal:line-style) null) :line-style)
@@ -327,8 +254,8 @@
   (:select-frag)			; frag that selection box is on
   (:select-frag-pos)			; character position of cursor within frag
   (:base-line (o-formula (let ((cursor-line (gvl :cursor-line)))
-			   (+ (gv cursor-line :top)
-			      (gv cursor-line :ascent)))))
+			   (+ (the fixnum (gv cursor-line :top))
+			      (the fixnum (gv cursor-line :ascent))))))
   (:CURRENT-FONT (o-formula (let ((cursor-frag (gvl :cursor-frag)))
 			      (if (frag-object-p cursor-frag)
 				  (search-for-font (gvl :cursor-line)
@@ -350,15 +277,16 @@
   (:LEFT 0)
   (:TOP 0)
   (:HEIGHT (o-formula (let ((last-line (gvl :last-line)))
-			(+ (- (gv last-line :top) (gvl :top))
-			   (gv last-line :height)))))
+			(+ (- (the fixnum (gv last-line :top)) (the fixnum (gvl :top)))
+			   (the fixnum (gv last-line :height))))))
   (:WIDTH (o-formula (if (gvl :word-wrap-p)
 			 (gvl :text-width)
 			 (let ((w 0))
+			   (declare (fixnum w))
 			   (do ((line (gvl :first-line)
 				      (g-value line :next-line)))
 			       ((null line))
-			     (setq w (max w (gv line :width))))
+			     (setq w (max w (the fixnum (gv line :width)))))
 			   w))))
   (:INITIAL-TEXT (list ""))
   (:WORD-WRAP-P NIL)
@@ -405,7 +333,7 @@
   (:left (o-formula (let ((parent (gvl :parent)))
 		      (+ (gv parent :left) (gv parent :cursor-x-offset)))))
   (:width 2)
-  (:height (o-formula (+ (gvl :ascent) (gvl :descent)))))
+  (:height (o-formula (+ (the fixnum (gvl :ascent)) (the fixnum (gvl :descent))))))
 
 
 (s-value MULTIFONT-TEXT :do-not-dump-slots
@@ -1125,8 +1053,8 @@
 	   (s-value frag :multifont-line new-line)
 	   (s-value frag :multifont-frag new-frag)
 	   (s-value frag :top (o-formula (gvl :multifont-line :top)))
-	   (s-value frag :left (o-formula (+ (gvl :multifont-line :left)
-					     (gvl :multifont-x-offset))))
+	   (s-value frag :left (o-formula (+ (the fixnum (gvl :multifont-line :left))
+					     (the fixnum (gvl :multifont-x-offset)))))
 	   (s-value frag :mf-prev-object prev-object)
 	   (if prev-object
 	     (s-value prev-object :mf-next-object frag)
@@ -3326,8 +3254,8 @@
       (s-value object :multifont-line my-line)
       (s-value object :multifont-frag frag)
       (s-value object :top (o-formula (gvl :multifont-line :top)))
-      (s-value object :left (o-formula (+ (gvl :multifont-line :left)
-	                                  (gvl :multifont-x-offset))))
+      (s-value object :left (o-formula (+ (the fixnum (gvl :multifont-line :left))
+	                                  (the fixnum (gvl :multifont-x-offset)))))
       (s-value object :mf-prev-object NIL)
       (let ((first-object (g-value gob :first-object)))
         (s-value object :mf-next-object first-object)

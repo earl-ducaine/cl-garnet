@@ -87,6 +87,7 @@
 ;; because spaces that are garbage and spaces that are data tend to look
 ;; similar.
 
+
 (defun read-xpm-file (pathname &optional root-window)
   (declare (type (or pathname string stream) pathname))
   (unless root-window
@@ -100,16 +101,15 @@
 	  (name-end nil)
 	  (meltsner-format nil)
 	  (pedro-format nil))
-      ;; DZG (declare				; (type string line)
-      ;; DZG  (type xlib:stringable name)
-      ;; DZG  (type list properties))
+      (declare (type string line)
+	       (type xlib:stringable name)
+	       (type list properties))
       ;; Get properties
-      (loop
-       (setq line (read-line fstream))
-       (unless (search "XPM" line) (return)))
+      (gu:until (not (search "XPM" line))
+	 (setq line (read-line fstream)))
       (setq meltsner-format (not (eq #\# (aref line 0))))
       ;; The pedro-format does not have a line that begins with "static char"
-      (setq pedro-format (not (search "static char" line)))
+      (setq pedro-format (not (search "char *" line)))
       (flet ((read-keyword (line start end)
 	       (intern
 		;; DZG  xlib::kintern
@@ -137,13 +137,12 @@
       ;; a #\".  In the pedro-format, the desired line is already current,
       ;; and #\" characters aren't used anyway.
       (when (and meltsner-format (not pedro-format))
-	(loop
-	 (when (char= (aref line 0) #\") (return))
-	 (setq line (read-line fstream)))
+	(gu:till (char= (aref line 0) #\")
+	  (setq line (read-line fstream)))
 	(setq line (read-from-string line)))
       (let ((bitmap-p (not (g-value color :color-p)))
-	    ;; RGA This next will loose on a Mac.  ***TODO:  Fix
-	    ;; this.*** 
+	    ;; RGA This next will lose on a Mac.  
+	    ;; ***TODO: Fix this.*** 
 	    (depth (gem::x-window-depth root-window))
 	    width height ncolors left-pad chars-per-pixel)
 	;; DZG (declare (type (or null xlib:card16) width height)
@@ -308,6 +307,7 @@
           (gem:create-image root-window width height depth T ; from data
                             data properties bits-per-pixel
                             left-pad data))))))
+
 
 
 (defun digit-to-hex (n)

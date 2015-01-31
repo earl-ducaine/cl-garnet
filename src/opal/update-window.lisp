@@ -529,142 +529,136 @@ This is done to avoid unnecessary total updates."
 
 (define-method :update opal::window (a-window &optional (total-p NIL))
   (declare (optimize (speed 3) (safety 1)))
-  (unwind-protect
-       (progn
-	 (update-start-fn a-window)
+  (with-update-lock-held
+    (let* ((win-info (g-local-value a-window :win-update-info))
+	   (drawable (g-local-value a-window :drawable))
+	   (window-agg (g-local-value a-window :aggregate))
+	   (invalid-slots (win-update-info-invalid-slots win-info))
+	   invalid-vobs)
 
-	 (let* ((win-info (g-local-value a-window :win-update-info))
-		(drawable (g-local-value a-window :drawable))
-		(window-agg (g-local-value a-window :aggregate))
-		(invalid-slots (win-update-info-invalid-slots win-info))
-		invalid-vobs)
+      (unless drawable
+	(setq drawable (install-drawable window-agg a-window win-info))
+	(setq total-p T))
 
-	   (unless drawable
-	     (setq drawable (install-drawable window-agg a-window win-info))
-	     (setq total-p T))
-
-	   (when invalid-slots
-	     (setq invalid-slots (fix-invalid-slots invalid-slots win-info a-window))
-	     (if (process-invalid-slots invalid-slots win-info a-window drawable)
-		 (setq total-p T)))
+      (when invalid-slots
+	(setq invalid-slots (fix-invalid-slots invalid-slots win-info a-window))
+	(if (process-invalid-slots invalid-slots win-info a-window drawable)
+	    (setq total-p T)))
    
-	   ;; If this is a total update, call the :fix-update-slots method on every
-	   ;; object in the window that has one.
-	   (when total-p
-	     (do-fix-update-slots win-info a-window))
+      ;; If this is a total update, call the :fix-update-slots method on every
+      ;; object in the window that has one.
+      (when total-p
+	(do-fix-update-slots win-info a-window))
 
-	   ;; The "invalid-view-objects" code iterates through all view-objects
-	   ;; which were invalidated and (if they are still in the window) calls
-	   ;; their :fix-update-slots method.  Since these can invalidate *other*
-	   ;; view-objects with their side-effects, this must loop until no more
-	   ;; view-objects are being invalidated.
-	   (loop
-	      (setq invalid-vobs (win-update-info-invalid-view-objects win-info))
-	      (unless invalid-vobs (return))
-	      (setf (win-update-info-invalid-view-objects win-info) NIL)
-	      (dolist (vob invalid-vobs)
-		(when (and (schema-p vob) (eq a-window (g-local-value vob :window)))
-		  (fix-update-slots vob)))
-	      (free-list invalid-vobs))
+      ;; The "invalid-view-objects" code iterates through all view-objects
+      ;; which were invalidated and (if they are still in the window) calls
+      ;; their :fix-update-slots method.  Since these can invalidate *other*
+      ;; view-objects with their side-effects, this must loop until no more
+      ;; view-objects are being invalidated.
+      (loop
+	 (setq invalid-vobs (win-update-info-invalid-view-objects win-info))
+	 (unless invalid-vobs (return))
+	 (setf (win-update-info-invalid-view-objects win-info) NIL)
+	 (dolist (vob invalid-vobs)
+	   (when (and (schema-p vob) (eq a-window (g-local-value vob :window)))
+	     (fix-update-slots vob)))
+	 (free-list invalid-vobs))
 	       
-	   (let* ((invalid-objects (win-update-info-invalid-objects win-info))
-		  (invalid-xors    (win-update-info-invalid-xor-fastdraws win-info))
-		  (invalid-copys   (win-update-info-invalid-copy-fastdraws win-info))
-		  (visible         (eq (g-value a-window :visible) T))
-		  (win-old-bbox    (update-info-old-bbox
-				    (the UPDATE-INFO
-					 (g-local-value a-window :update-info))))
-		  (partial-p       (and window-agg
-					(g-value window-agg :visible)
-					(or invalid-objects
-					    invalid-xors
-					    invalid-copys
-					    (bbox-valid-p win-old-bbox)))))
+      (let* ((invalid-objects (win-update-info-invalid-objects win-info))
+	     (invalid-xors    (win-update-info-invalid-xor-fastdraws win-info))
+	     (invalid-copys   (win-update-info-invalid-copy-fastdraws win-info))
+	     (visible         (eq (g-value a-window :visible) T))
+	     (win-old-bbox    (update-info-old-bbox
+			       (the UPDATE-INFO
+				    (g-local-value a-window :update-info))))
+	     (partial-p       (and window-agg
+				   (g-value window-agg :visible)
+				   (or invalid-objects
+				       invalid-xors
+				       invalid-copys
+				       (bbox-valid-p win-old-bbox)))))
 
-	     (when visible
-	       (setf (win-update-info-invalid-objects        win-info) nil
-		     (win-update-info-invalid-xor-fastdraws  win-info) nil
-		     (win-update-info-invalid-copy-fastdraws win-info) nil))
+	(when visible
+	  (setf (win-update-info-invalid-objects        win-info) nil
+		(win-update-info-invalid-xor-fastdraws  win-info) nil
+		(win-update-info-invalid-copy-fastdraws win-info) nil))
   
-	     ;; At this point, we try to abort if possible -- only do the main part
-	     ;; of update if something really has changed...
-	     (when (or total-p partial-p)
-	       (let* ((win-new-bbox (win-update-info-new-bbox win-info))
-		      (buffer (g-value a-window :buffer))
-		      (display-info (g-value a-window :display-info))
-		      (line-style-gc (display-info-line-style-gc display-info))
-		      (filling-style-gc (display-info-filling-style-gc display-info))
-		      fastdraw-objects
-		      obj-update-slots-values
-		      obj-update-info)
+	;; At this point, we try to abort if possible -- only do the main part
+	;; of update if something really has changed...
+	(when (or total-p partial-p)
+	  (let* ((win-new-bbox (win-update-info-new-bbox win-info))
+		 (buffer (g-value a-window :buffer))
+		 (display-info (g-value a-window :display-info))
+		 (line-style-gc (display-info-line-style-gc display-info))
+		 (filling-style-gc (display-info-filling-style-gc display-info))
+		 fastdraw-objects
+		 obj-update-slots-values
+		 obj-update-info)
 
-		 (if buffer
-		     (setf (bbox-valid-p newly-invisible-fastdraws-bbox) nil))
+	    (if buffer
+		(setf (bbox-valid-p newly-invisible-fastdraws-bbox) nil))
 
-		 (when (and window-agg visible)
-		   (if total-p
+	    (when (and window-agg visible)
+	      (if total-p
 
-		       ;; This is a TOTAL window update.
-		       (progn
-			 (do-total-update invalid-objects invalid-xors invalid-copys a-window
-					  window-agg buffer exposed-clip-mask
-					  line-style-gc filling-style-gc))
+		  ;; This is a TOTAL window update.
+		  (progn
+		    (do-total-update invalid-objects invalid-xors invalid-copys a-window
+				     window-agg buffer exposed-clip-mask
+				     line-style-gc filling-style-gc))
       
-		       ;;else this is a PARTIAL window update.
-		       (do-partial-update invalid-objects invalid-xors invalid-copys a-window
-					  window-agg buffer exposed-clip-mask
-					  line-style-gc filling-style-gc obj-update-info
-					  obj-update-slots-values win-info win-new-bbox
-					  win-old-bbox fastdraw-objects)))
+		  ;;else this is a PARTIAL window update.
+		  (do-partial-update invalid-objects invalid-xors invalid-copys a-window
+				     window-agg buffer exposed-clip-mask
+				     line-style-gc filling-style-gc obj-update-info
+				     obj-update-slots-values win-info win-new-bbox
+				     win-old-bbox fastdraw-objects)))
 
-		 ;; When using double-buffering, copy buffer into window.
-		 (when (and visible buffer)
-		   (if (or total-p (null win-new-bbox))
-		       (gem:bit-blit a-window buffer
-				     0 0 (g-value a-window :width) (g-value a-window :height)
-				     drawable 0 0)
-		       (progn
-			 (when win-new-bbox
-			   (merge-bbox newly-invisible-fastdraws-bbox win-new-bbox))
-			 (when win-old-bbox
-			   (merge-bbox newly-invisible-fastdraws-bbox win-old-bbox))
-			 (when (bbox-valid-p newly-invisible-fastdraws-bbox)
-			   (copy-from-buffer-to-drawable a-window
-							 newly-invisible-fastdraws-bbox
-							 buffer drawable)))))
+	    ;; When using double-buffering, copy buffer into window.
+	    (when (and visible buffer)
+	      (if (or total-p (null win-new-bbox))
+		  (gem:bit-blit a-window buffer
+				0 0 (g-value a-window :width) (g-value a-window :height)
+				drawable 0 0)
+		  (progn
+		    (when win-new-bbox
+		      (merge-bbox newly-invisible-fastdraws-bbox win-new-bbox))
+		    (when win-old-bbox
+		      (merge-bbox newly-invisible-fastdraws-bbox win-old-bbox))
+		    (when (bbox-valid-p newly-invisible-fastdraws-bbox)
+		      (copy-from-buffer-to-drawable a-window
+						    newly-invisible-fastdraws-bbox
+						    buffer drawable)))))
 
-		 (setf (bbox-valid-p win-old-bbox) NIL
-		       (bbox-valid-p win-new-bbox) NIL)
+	    (setf (bbox-valid-p win-old-bbox) NIL
+		  (bbox-valid-p win-new-bbox) NIL)
 
-		 )) ;; end of (when (or total-p partial-p) ...)
+	    )) ;; end of (when (or total-p partial-p) ...)
 
-	     (when (or total-p partial-p invalid-slots)
-	       (gem:flush-output a-window))
+	(when (or total-p partial-p invalid-slots)
+	  (gem:flush-output a-window))
 
-	     ;; Recursively update children
-	     (let ((base-children (g-value a-window :child)))
-	       (if (and base-children
-			(not (g-value a-window :exposed-bbox)))
-		   (do* ((children base-children    (rest children))
-			 (child    (first children) (first children)))
-			((null children))
-		     (unless (eq a-window (g-value child :parent))
-		       ;; this code is for when a sub-window is re-parented, but then the
-		       ;; old parent (ie, "a-window") is updated before the sub-window is.
+	;; Recursively update children
+	(let ((base-children (g-value a-window :child)))
+	  (if (and base-children
+		   (not (g-value a-window :exposed-bbox)))
+	      (do* ((children base-children    (rest children))
+		    (child    (first children) (first children)))
+		   ((null children))
+		(unless (eq a-window (g-value child :parent))
+		  ;; this code is for when a sub-window is re-parented, but then the
+		  ;; old parent (ie, "a-window") is updated before the sub-window is.
 
-		       ;; The pushnew of :parent makes sure the parent slot will be checked.
-		       ;; The copy-list is needed because the ensuing update will
-		       ;; destructively remove the sub-window from "a-window"'s :child list.
-		       (pushnew :parent (win-update-info-invalid-slots
-					 (g-value child :win-update-info)))
-		       (setq children (copy-list children))
-		       (unless (eq a-window (g-value child :old-parent))
-			 (s-value a-window :child (delete child (g-value a-window :child)))))
+		  ;; The pushnew of :parent makes sure the parent slot will be checked.
+		  ;; The copy-list is needed because the ensuing update will
+		  ;; destructively remove the sub-window from "a-window"'s :child list.
+		  (pushnew :parent (win-update-info-invalid-slots
+				    (g-value child :win-update-info)))
+		  (setq children (copy-list children))
+		  (unless (eq a-window (g-value child :old-parent))
+		    (s-value a-window :child (delete child (g-value a-window :child)))))
 
-		     (update child total-p)))))))
-
-    ;; Protect clause: release the process lock.
-    (update-stop-fn a-window))
+		(update child total-p)))))))
 
   ;; Mark that we are finished updating this window (it was set by update-all)
   (s-value a-window :in-progress NIL))

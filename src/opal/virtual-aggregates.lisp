@@ -57,13 +57,15 @@
    (kr-send the-schema :point-to-rank the-schema ,@args)))
 
 (create-instance 'opal:VIRTUAL-AGGREGATE opal:graphical-object
+  :declare ((:type (fixnum :array-length-increment
+			   :next-available-rank :gaps-in-arrays)))
   (:update-slots '(:visible :fast-redraw-p))
   (:ignored-slots '(:item-array :bbox-array))
   (:dummy-item)      ;; object that is actually drawn.
   (:invalid-object)  ;; invisible object to put in window's invalid object list
   (:item-prototype)
   (:item-array)
-  (:array-length 0)
+  (:array-length 0) ; This is actually the array dimensions and could be a list.
   (:array-length-increment 100)
   (:next-available-rank 0)
   (:gaps-in-arrays 0)
@@ -205,16 +207,19 @@
   `(let* ((agg* ,agg)
 	  (p-to-r (g-value agg* :point-to-rank))
 	  (r* ,rect)
-	  (array-size* (g-value agg* :array-length))
+	  (array-size* (g-value agg* :array-length)) ; list
 	  (max-x2* (1- (first array-size*)))
 	  (max-y2* (1- (second array-size*)))
 	  (first* (first r*))
 	  (second* (second r*)))
+     (declare (fixnum max-x2* max-y2* first* second*))
      (multiple-value-bind (x1* y1*)
        		          (funcall p-to-r agg* first* second*)
+       (declare (fixnum x1* y1*))
        (multiple-value-bind (x2* y2*)
 			    (funcall p-to-r agg* (+ first* (third r*) -1)
 						 (+ second* (fourth r*) -1))
+	 (declare (fixnum x2* y2*))
 	 (setq x1* (if x1* (max 0 x1*) 0))
 	 (setq y1* (if y1* (max 0 y1*) 0))
 	 (setq x2* (if x2* (min x2* max-x2*) max-x2*))
@@ -222,8 +227,10 @@
 	 (when (and (<= x1* x2*) (<= y1* y2*))
 	   (do ((,m x1* (1+ ,m)))
 	       ((> ,m x2*))
+	     (declare (fixnum ,m))
 	     (do ((,n y1* (1+ ,n)))
 	         ((> ,n y2*))
+	       (declare (fixnum ,n))
 	       ,@body)))))))
 
 
@@ -250,7 +257,7 @@
 	 (invalid-object (g-value gob :invalid-object))
 	 (dirty-p (update-info-dirty-p update-info))
 	 (agg-bbox (update-info-old-bbox update-info))
-	 (array-size (g-value gob :array-length))
+	 (array-size (g-value gob :array-length)) ; May be a list.
 	 (bbox-array (g-value gob :bbox-array))
 	 (item-array (g-value gob :item-array))
 	 (a-window (g-value gob :window))
@@ -324,8 +331,8 @@
       (if (zerop (g-value gob :gaps-in-arrays))
 	(progn                     ;; expand arrays
           (setq array-size (+ array-size (g-value gob :array-length-increment)))
-          (adjust-array item-array array-size :initial-element nil)
-          (adjust-array bbox-array array-size)
+          (setf item-array (adjust-array item-array array-size :initial-element nil))
+          (setf bbox-array (adjust-array bbox-array array-size))
           (s-value gob :array-length array-size))
 	(progn                     ;; compress arrays
 	  (setq rank 0)

@@ -42,7 +42,10 @@
 (def-kr-type KNOWN-AS-TYPE () '(or keyword null)
   "[keyword]")
 
-(def-kr-type FILENAME-TYPE () 'string
+(def-kr-type FILENAME-TYPE () '(or string pathname)
+  "[file namestring]")
+
+(def-kr-type PATHNAME () 'pathname
   "[pathname]")
 
 (def-kr-type FONT-FAMILY ()
@@ -146,10 +149,11 @@
 
 (def-kr-type FIXNUM ()
   '(satisfies
-    #+sbcl sb-int:fixnump
-    #+cmu ext:fixnump
     #+allegro excl:fixnump
-    #-(or sbcl cmu allegro) integerp)
+    #+ccl ccl:fixnump
+    #+cmu ext:fixnump
+    #+sbcl sb-int:fixnump
+    #-(or allegro ccl cmu sbcl) integerp)
   "Potential efficiency hack.")
 
 ;;;; Unnamed types used in Opal, Interactors, etc.
@@ -199,7 +203,6 @@
 (def-kr-type '(INTEGER 1))
 
 (def-kr-type '(INTEGER 2))
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

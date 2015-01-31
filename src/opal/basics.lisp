@@ -40,37 +40,37 @@
 ;;; Used to be macros, but were changed to defuns for efficiency.
 
 (defun bottom (gob)
-  (when gob (1- (+ (g-value gob :top) (g-value gob :height)))))
+  (when gob (1- (+ (the fixnum (g-value gob :top)) (the fixnum (g-value gob :height))))))
 
 (defun right (gob)
-  (when gob (1- (+ (g-value gob :left) (g-value gob :width)))))
+  (when gob (1- (+ (the fixnum (g-value gob :left)) (the fixnum (g-value gob :width))))))
 
 (defun gv-bottom (gob)
-  (if gob (1- (+ (gv gob :top) (gv gob :height)))
-          (kr::broken-link-throw nil :top)))
+  (if gob (1- (+ (the fixnum (gv gob :top)) (the fixnum (gv gob :height))))
+      (kr::broken-link-throw nil :top)))
 
 (defun gv-right (gob)
-  (if gob (1- (+ (gv gob :left) (gv gob :width)))
+  (if gob (1- (+ (the fixnum (gv gob :left)) (the fixnum (gv gob :width))))
           (kr::broken-link-throw nil :left)))
 
 (defun gv-center-x (gob)
-  (if gob (+ (gv gob :left) (truncate (gv gob :width) 2))
+  (if gob (+ (the fixnum (gv gob :left)) (truncate (the fixnum (gv gob :width)) 2))
           (kr::broken-link-throw nil :left)))
 
 (defun gv-center-y (gob)
-  (if gob (+ (gv gob :top) (truncate (gv gob :height) 2))
+  (if gob (+ (the fixnum (gv gob :top)) (truncate (the fixnum (gv gob :height)) 2))
           (kr::broken-link-throw nil :top)))
 
 ;;; For formulas that want to set an object's center, right or bottom.
 
 ; Gives the value for :left such that (gv-right :self) equals (gv gob :left)
 (defun gv-right-is-left-of (gob)
-  (if gob (- (gv gob :left) (gvl :width))
+  (if gob (- (the fixnum (gv gob :left)) (the fixnum (gvl :width)))
           (kr::broken-link-throw nil :left)))
 
 ; Gives the value for :top such that (gv-bottom :self) equals (gv gob :top)
 (defun gv-bottom-is-top-of (gob)
-  (if gob (- (gv gob :top) (gvl :height))
+  (if gob (- (the fixnum (gv gob :top)) (the fixnum (gvl :height)))
           (kr::broken-link-throw nil :top)))
 
 ; Gives the value for :left such that (gv-center-x :self) equals (gv-center-x 
@@ -82,8 +82,8 @@
 	  ;; If I am trying to center myself within a window, and I am going
 	  ;; to be drawn w.r.t the window's coordinate system (i.e., I am an
 	  ;; object or child in gob), then I want to ignore the window's :left
-	  (truncate (- (gv gob :width) (gvl :width)) 2)
-	  (- (gv-center-x gob) (truncate (gvl :width) 2)))
+	  (truncate (- (the fixnum (gv gob :width)) (the fixnum (gvl :width))) 2)
+	  (- (the fixnum (gv-center-x gob)) (truncate (the fixnum (gvl :width)) 2)))
       (kr::broken-link-throw nil :left)))
 
 ; Gives the value for :top such that (gv-center-y :self) equals (gv-center-y
@@ -95,15 +95,15 @@
 	  ;; If I am trying to center myself within a window, and I am going
 	  ;; to be drawn w.r.t the window's coordinate system (i.e., I am an
 	  ;; object or child in gob), then I want to ignore the window's :top
-	  (truncate (- (gv gob :height) (gvl :height)) 2)
-	  (- (gv-center-y gob) (truncate (gvl :height) 2)))
+	  (truncate (- (the fixnum (gv gob :height)) (the fixnum (gvl :height))) 2)
+	  (- (the fixnum (gv-center-y gob)) (truncate (the fixnum (gvl :height)) 2)))
       (kr::broken-link-throw nil :top)))
 
 ;;; bounding-box just returns the current cached value of the bounding box
 ;;; as four values (top left width height)
 (defun bounding-box (gob)
-  (values (g-value gob :left) (g-value gob :top)
-	  (g-value gob :width) (g-value gob :height)))
+  (values (the fixnum (g-value gob :left)) (the fixnum (g-value gob :top))
+	  (the fixnum (g-value gob :width)) (the fixnum (g-value gob :height))))
 
 ;;; Unified setting methods
 ;;;
@@ -114,19 +114,23 @@
 ;;; Currently they aren't.
 
 (defun set-center (gob x y)
+  (declare (fixnum x y))
   (setf (center-x gob) x)
   (setf (center-y gob) y))
 
 
 (defun set-position (gob left top)
+  (declare (fixnum left top))
   (setf (g-value gob :left) left)
   (setf (g-value gob :top) top))
 
 (defun set-size (gob width height)
+  (declare (fixnum width height))
   (setf (g-value gob :width) width)
   (setf (g-value gob :height) height))
 
 (defun set-bounding-box (gob left top width height)
+  (declare (fixnum left top width height))
   (set-size gob width height)
   (set-position gob left top))
 
@@ -157,6 +161,7 @@
 	(width (g-value gob :width))
 	(height (g-value gob :height))
 	(hit (g-value gob :hit-threshold)))
+    (declare (fixnum top left width height))
     (and (>= x (- left hit))
 	 (< x (+ left width hit))
 	 (>= y (- top hit))
@@ -167,10 +172,6 @@
     (when pair
 	(setf (get f :x-draw-function) n)
 	(rplacd pair n))))
-
-
-
-
 
 
 ;;; Halftone creation functions

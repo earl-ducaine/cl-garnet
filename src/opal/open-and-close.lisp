@@ -172,7 +172,7 @@
     #'(lambda (txt)
 	(if (g-cached-value txt :update-slots-values)
 	    (setf (aref (g-cached-value txt :update-slots-values)
-			*text-xfont*)
+			+text-xfont+)
 		  :closed))))
   
   ;; Remove all connections to X from the window objects.
@@ -227,8 +227,8 @@
 	(do-all-instances text
 	  #'(lambda (txt)
 	      (let ((vals (g-cached-value txt :update-slots-values)))
-		(if (and vals (eq (aref vals *text-xfont*) :closed))
-		  (setf (aref vals *text-xfont*)
+		(if (and vals (eq (aref vals +text-xfont+) :closed))
+		  (setf (aref vals +text-xfont+)
 			(s-value txt :xfont (g-value txt :font :xfont))))))))
 
     (dolist (f *auxilliary-reconnect-routines*)
