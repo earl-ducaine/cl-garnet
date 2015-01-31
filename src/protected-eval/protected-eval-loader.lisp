@@ -50,7 +50,7 @@
 ;; call-prompter
 ;; displayer call-displayer 
 ;; selector call-selector
-;; *application-long-name *application-short-name*
+;; *application-long-name* *application-short-name*
 ;; *user-type*
 
 

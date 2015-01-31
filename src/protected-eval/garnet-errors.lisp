@@ -86,6 +86,7 @@ This abtract function allows the type of error handler to be hidden
 from the routine which sets it up.  In particular, both
 promting-protected-eval and protected-eval could be bound to
 this symbol."
+  (declare (ignore default-value dv? context local-abort abort-val))
   (apply #'gg:garnet-protected-eval form :allow-debug allow-debug args))
 
 (defun protected-read (&optional (stream *standard-input*)
@@ -129,6 +130,9 @@ This abtract function allows the type of error handler to be hidden
 from the routine which sets it up.  In particular, both
 promting-protected-eval and protected-eval could be bound to
 this symbol."
+  (declare (ignore context read-package read-bindings
+		   default-value local-abort abort-val))
+
   (apply #'gg:garnet-protected-read stream :allow-debug allow-debug args))
 
 (defun protected-read-from-string (string
@@ -172,6 +176,10 @@ If <local-abort> is true (default nil), then a local restart is
 established for abort which returns (values <abort-val> :abort)
 where <abort-val> is another parameter. (Same as
 protected-eval)."
+
+  (declare (ignore start context end read-package read-bindings 
+		   default-value local-abort abort-val))
+
   (apply #'gg:garnet-protected-read-from-string string :allow-debug allow-debug args))
 
 
@@ -198,6 +206,9 @@ test fails, the user is prompted again.
 
 This is mostly a dummy function for hiding the prompter type from the
 implementation mechanism."
+
+  (declare (ignore stream local-abort default-value dv? abort-val
+		   eval-input? satisfy-test))
   (apply #'gg:do-prompt prompt :allow-other-keys t args))
 
 (kr:s-value (kr:g-value gg:Error-prompter-gadget :window)
@@ -235,6 +246,7 @@ location. <stream> indicates the stream to which the message is to be
 sent in the text based version.  <beep> is a logical value indicating
 whether or not the device should make some sort of alert signal.  This
 is meant to be called through call-displayer."
+    (declare (ignore keys stream))
     (kr:s-value message-display :beep-p beep)
     (if wait
 	(gg:display-error-and-wait message-display message)
@@ -268,7 +280,8 @@ is the list of options (default '(:yes no)).  <message> is displayed
 first on the stream as a prompt."
   (declare (type String message) (type Stream stream in-stream out-stream)
 	   (type List option-list)
-	   (:returns (type (Member option-list) option)))
+	   #-(and)(:returns (type (Member option-list) option)))
+  (declare (ignore keys in-stream out-stream))
   (kr:s-value selector-display :beep-p beep)
   (gg:display-query-and-wait selector-display message option-list))
 

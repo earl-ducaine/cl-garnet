@@ -28,7 +28,7 @@
 	    call-prompter
 	    displayer call-displayer 
 	    selector call-selector
-	    *application-long-name *application-short-name*
+	    *application-long-name* *application-short-name*
 	    )))
 
 
@@ -242,6 +242,7 @@ is returned; if not, the unevaluated expression is returned.
 
 The value supplied by the user is passed to <satisfy-test>.  If that
 test fails, the user is prompted again."
+
   (loop 
     (format stream "~A~%==>" prompt)
     (multiple-value-setq (form flag)
@@ -263,7 +264,7 @@ test fails, the user is prompted again."
 	(if test? (return-from prompter (values val :OK))
 	  (if (typep flag 'Condition)
 	      (format stream "~&Error: ~A~%" flag)))))
-    (format stream "~&Bad Input, try again~%" prompt)))
+    (format stream "~&Bad Input, try again~%")))
 
 
 
@@ -306,16 +307,15 @@ which error occured."
   `(handler-bind
        ((error 
 	 (lambda (condition)
-	   (protect-errors context condition))))
+	   (protect-errors ,context condition))))
      ,.forms))
 
 
 (defun protected-eval (form &rest args
-		       &key (default-value nil dv?)
-			    (context (format nil "Evaluating ~S" form))
-			    (allow-debug (eq *user-type* :programmer))
-			    (local-abort nil)
-			    (abort-val nil))
+		       &key (default-value nil dv?) (context (format
+			    nil "Evaluating ~S" form)) (allow-debug
+			    (eq *user-type* :programmer)) (local-abort
+			    nil) (abort-val nil))
   "This function executes a form in an environment where errors are
 caught and handled by a special protected-error.  This
 gadget prints the error message and allows for several different
@@ -339,6 +339,7 @@ This abtract function allows the type of error handler to be hidden
 from the routine which sets it up.  In particular, both
 promting-protected-eval and protected-eval could be bound to
 this symbol."
+  (declare (ignore default-value dv? context allow-debug local-abort abort-val))
   (apply #'prompting-protected-eval args))
 
 (defun protected-read (&optional (stream *standard-input*)
@@ -382,6 +383,11 @@ This abtract function allows the type of error handler to be hidden
 from the routine which sets it up.  In particular, both
 promting-protected-eval and protected-eval could be bound to
 this symbol."
+
+ (declare (ignore context read-package read-bindings
+		  default-value allow-debug local-abort
+		  abort-val))
+
   (apply #'prompting-protected-read stream args))
 
 (defun protected-read-from-string
@@ -427,6 +433,8 @@ where <abort-val> is another parameter. (Same as
 protected-eval).
 
 "
+  (declare (ignore start context end read-package read-bindings 
+		   default-value allow-debug local-abort abort-val))
   (apply #'prompting-protected-read-from-string string args))
 
 
@@ -453,6 +461,8 @@ test fails, the user is prompted again.
 
 This is mostly a dummy function for hiding the prompter type from the
 implementatoin mechanism."
+  (declare (ignore local-abort default-value dv? abort-val
+		   eval-input? satisfy-test))
   (apply #'prompter prompt stream :allow-other-keys t args))
 
 
@@ -469,6 +479,7 @@ location. <stream> indicates the stream to which the message is to be
 sent in the text based version.  <beep> is a logical value indicating
 whether or not the device should make some sort of alert signal.  This
 is meant to be called through call-displayer."
+  (declare (ignore beep))
   (princ  message stream))
 
 
@@ -482,6 +493,7 @@ sent in the text based version.  <beep> is a logical value indicating
 whether or not the device should make some sort of alert signal.  This
 is meant to abstract the means of sending the message from the sending
 program."
+    (declare (ignore stream beep))
     (apply #'displayer message :allow-other-keys t keys))
 
 
@@ -500,7 +512,7 @@ is the list of options (default '(:yes no)).  <message> is displayed
 first on the stream as a prompt."
   (declare (type String message) (type Stream stream in-stream out-stream)
 	   (type List option-list)
-	   (:returns (type (Member option-list) option)))
+	   #-(and)(:returns (type (Member option-list) option)))
   (loop
     (format out-stream  "~&;;;? ~A~%" message)
     (format out-stream ";;;? Select an option by name or number.:~%;;;?(")
@@ -527,9 +539,12 @@ keywords.  The user can either type the keword or select the option by
 number.  <stream> is the stream (default *query-io*) and <option-list>
 is the list of options (default '(:yes no)).  <message> is displayed
 first on the stream as a prompt."
-  (declare (type String message) (type Stream stream in-stream out-stream)
+  (declare (type String message)
+	   (type Stream stream in-stream out-stream)
 	   (type List option-list)
-	   (:returns (type (Member option-list) option)))
+	   ;; (:returns (type (Member option-list) option))
+	   )
+  (declare (ignore in-stream out-stream option-list))
   (apply #'selector message :allow-other-keys t keys))
 
 

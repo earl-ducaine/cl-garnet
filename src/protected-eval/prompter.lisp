@@ -91,29 +91,6 @@
 ;;  Wait-Interaction-Complete" And fail to pass back the proper abort
 ;;  message.  I don't know what causes this problem.
 
-
-
-;;; Change log:
-;;  09/03/92  RGA --- Removed priority levels
-;;  07/08/92  Russell Almond --- Fixed default value problems
-;;  06/23/92  Russell Almond --- Created file by hacking error-gadget.lisp  
-;; 
-;; Change Log for Error-Gadget.lisp:
-;;  04/8/92   Brad Myers     - added motif-error-gadget so moved some functions
-;;                             to error-gadget-utils
-;;  03/26/92  Brad Myers     - added query so have multiple buttons (OK, Cancel)
-;;                           - display-error-and-wait
-;;  09/23/91  Andrew Mickish - Added opal:update call to DISPLAY-ERROR;
-;;                             added defvar.
-;;  03/07/91  Andrew Mickish - Changed s-value's in DISPLAY-ERROR to take the
-;;                             place of formulas in the :left, :top, :width, and :height
-;;                             slots of the error window.
-;;  08/14/90  Pavan Reddy    - removed one error-priority-level since only a
-;;                             single level is needed.  Also, set :active slot of
-;;                             :text-button-press interactor to T to fix a bug that leaves
-;;                             the interactor inactive.
-;;  07/16/90  Andrew Mickish - Rewrote button part using new aggregadgets
-
 
 (in-package "GARNET-GADGETS")
 
@@ -138,23 +115,24 @@
 	 (* (g-value prompter :*))
 	 - new-val)
     (setq -
-      (restart-case
-	  (old-garnet-protected-read-from-string
-	   val :read-package (g-value prompter :read-package)
-	   :read-bindings (g-value prompter :default-bindings)
-	   :default-value (g-value prompter :default-value))
-	(abort () :report "Ignore Read/Eval request."
-	  (return-from prompter-gadget-eval-func))))
+	  (restart-case
+	      (garnet-protected-read-from-string
+	       val :read-package (g-value prompter :read-package)
+	       :read-bindings (g-value prompter :default-bindings)
+	       :default-value (g-value prompter :default-value))
+	    (abort () :report "Ignore Read/Eval request."
+		   (return-from prompter-gadget-eval-func))))
     (setq new-val
-      (restart-case
-	  (old-garnet-protected-eval -)
-	(abort () :report "Ignore Eval request."
-	  (return-from prompter-gadget-eval-func))))
+	  (restart-case
+	      (garnet-protected-eval -)
+	    (abort () :report "Ignore Eval request."
+		   (return-from prompter-gadget-eval-func))))
     (s-value prompter :+ -)
     (s-value prompter :* new-val)
     (s-value prompter :value (format nil "~S" new-val))
     (s-value prompter :modified? nil)
     (opal:update (g-value prompter :window))))
+
 
 (defun Prompter-Gadget-Sel-Func (button but-value)
   (let* ((window (g-value button :window))
@@ -162,7 +140,7 @@
 	 (waiting (g-value prompter :waiting))
 	 (value (if (g-value prompter :modified?)
 		    (restart-case
-			(old-garnet-protected-read-from-string
+			(garnet-protected-read-from-string
 			 (g-value prompter :value)
 			 :read-package (g-value prompter :read-package)
 			 :read-bindings (g-value prompter :read-bindings)
@@ -175,10 +153,8 @@
       (when (schema-p window)		; May have been destroyed by
 					; :selection-function! 
 	(s-value window :visible NIL)
-	(opal:update window))
-;;;     (s-value ERROR-PRIORITY-LEVEL :stop-when NIL)
-      )
-    (if waiting (inter:interaction-complete (list value but-value)))))	 
+	(opal:update window)))
+    (when waiting (inter:interaction-complete (list value but-value)))))
 
 
 (kr:def-kr-type Package () 'Package)
@@ -294,7 +270,8 @@
 		  (declare (ignore value))
 		  (Prompter-Gadget-Eval-Func button T))) ; always use the value T
 	       (:parts
-		(:shadow :gray-outline :white-field :text
+		(;; :shadow :gray-outline :white-field 
+		 :text
 		 (:feedback-obj :omit)))
 ;;;	       (:interactors
 ;;;		((:TEXT-BUTTON-PRESS :modify
@@ -316,33 +293,6 @@
 	       (:selection-function ,#'prompter-gadget-sel-func)
                (:items ,(o-formula (gvl :parent :button-names)))))))
 
-#|| ;; Not needed because its done in protected-eval
-(defun Add-error-input-priority-level ()
-(unless (and (boundp 'ERROR-INPUT-PRIORITY-LEVEL)
-	     (member ERROR-INPUT-PRIORITY-LEVEL inter:priority-level-list))
-  (push (create-instance 'ERROR-INPUT-PRIORITY-LEVEL inter:priority-level)
-	inter:priority-level-list)
-  (s-value ERROR-INPUT-PRIORITY-LEVEL :stop-when :if-any)))
-(add-error-input-priority-level)
-||#
-
-#||
-(s-value (g-value prompter-gadget :button :text-button-press)
-	 :waiting-priority ERROR-PRIORITY-LEVEL)
-(s-value (g-value prompter-gadget :button :text-button-press)
-	 :running-priority ERROR-PRIORITY-LEVEL)
-
-(s-value (g-value prompter-gadget :eval-but :text-button-press)
-	 :waiting-priority ERROR-PRIORITY-LEVEL)
-(s-value (g-value prompter-gadget :eval-but :text-button-press)
-	 :running-priority ERROR-PRIORITY-LEVEL)
-
-(s-value (g-value prompter-gadget :prompt :field-text :text-edit)
-	 :waiting-priority ERROR-PRIORITY-LEVEL)
-(s-value (g-value prompter-gadget :prompt :field-text :text-edit)
-	 :running-priority ERROR-INPUT-PRIORITY-LEVEL)
-
-||#
 
 (defun DISPLAY-Prompt (prompter string
 		      &key (label-list '(:ok :cancel))
@@ -350,11 +300,10 @@
 			   (default-value nil)
 			   (read-package (find-package :common-lisp-user))
 			   (read-bindings nil))
-  "Displays a prompter gadget in the modless form.  Assumes that
-there is a selection-function which takes three values:
-prompter-gadget value and button-val.  Probably should not use
-selection functions in the items with this one, as it won't apply read
-to the value."
+  "Displays a prompter gadget in the modless form. Assumes that there
+is a selection-function which takes three values: prompter-gadget,
+value, and button-val. Probably should not use selection functions in
+the items with this one, as it won't apply read to the value."
   (s-value prompter :eval? eval?)
   (s-value prompter :default-value default-value)
   (s-value prompter :* default-value)
@@ -370,10 +319,11 @@ to the value."
 				     (default-value nil)
 				     (read-package *package*)
 				     (read-bindings nil))
-  "Displays a prompter and then waits for the user response.  The
-prompter will catch user errors.  It returns two values, the first is
+  "Displays a prompter and then waits for the user response. The
+prompter will catch user errors. It returns two values, the first is
 the actual value, the second is the button pressed to terminate the
-request.  It could also be :abort if the gadget was terminated abnormally."
+request. It could also be :abort if the gadget was terminated
+abnormally."
   (s-value prompter :eval? eval?)
   (s-value prompter :default-value default-value)
   (s-value prompter :* default-value)
@@ -383,6 +333,14 @@ request.  It could also be :abort if the gadget was terminated abnormally."
   (s-value prompter :modal-p t)
   (values-list (internal-display-q-or-e prompter string T label-list)))
 
+
+(kr:s-value (kr:g-value Prompter-Gadget :eval-but) :selection-function
+  (lambda (button value)
+    (Prompter-Gadget-Eval-Func button value)))
+
+(kr:s-value (kr:g-value Prompter-Gadget :button) :selection-function
+  (lambda (button value)
+    (Prompter-Gadget-Sel-Func button value)))
 
 ;;; testing/demo function for error-gadgets and query gadgets
 #+garnet-test
@@ -401,17 +359,18 @@ latest value read from input.
 
 #+garnet-test
 (defun prompter-gadget-go ()
-  (let (agg egadget qgadget feed)
+  (let (agg egadget pgadget feed)
     (create-instance 'prompter-gadget-test-win inter:interactor-window
 		     (:title "test prompter gadget"))
     (s-value prompter-gadget-test-win :aggregate
 	     (setq agg (create-instance NIL opal:aggregate)))
-    (setq pgadget (create-instance nil prompter-gadget))
+    (setf pgadget (create-instance nil prompter-gadget))
     (opal:update-all)
-    (opal:add-component agg (setq feed (create-instance nil opal:text
-							(:string "")
-							(:left 10)
-							(:top 125))))
+    (opal:add-component agg
+			(setq feed (create-instance nil opal:text
+				     (:string "")
+				     (:left 10)
+				     (:top 125))))
     (opal:add-component agg
 	(create-instance nil motif-text-button-panel
 	  (:final-feedback-p NIL)

@@ -15,19 +15,6 @@
 ;;; $Id$
 
 
-;;; Change Log:
-;; 10/06/03  RGA Changed to use proper top-level export structures.
-;;           Changed #@ reader macro to ccl:make-point so properly ignored in 
-;;           Non MCL lisps.
-;; 05/06/97  RGA Having a lot of problems with modal dialogs in MCL, so changed 
-;;     to use native Mac versions under MCL.
-;; 08/19/93  RGA  Added declarations and documentation.
-;; 09/03/92  RGA  Commented out priority level stuff to adapt to Garnet 2.1
-;; 06/24/92  RGA  Added do-abort to handle abort action in case there
-;;                is no system defined abort to top level.
-;; 06/23/92  RGA  Created File
-
-
 ;;; This is a first pass at making some nice garnet macros for
 ;;  handling conditions (errors) using garnet tools rather than the
 ;;  ordinary way of handling errors.  There are several reasons for
@@ -150,7 +137,8 @@
 	    garnet-protected-eval garnet-protected-read-from-string
 	    garnet-protected-read do-prompt
 	    with-normal-cursor *normal-cursor-pair*
-	    prompting-error-handler))
+	    prompting-error-handler
+	    *user-type*))
   )
 
 
@@ -314,7 +302,7 @@ Note that this is like the garnet-error-handler without the option to
 continue."
   (declare (type String context)
 	   (type Condition condition))
-  (garnet-error-handler context condition :allow-debug nil))
+  (garnet-error-handler context condition :allow-debugger nil))
 
 
 (defmacro with-garnet-error-handling (context &body forms)
@@ -385,7 +373,7 @@ which error occured."
 
 (defun call-selector1 (message &rest keys
 		      &key (beep t)
-                           (font-spec '("Chicago" 12 :SRCOR :PLAIN (:COLOR-INDEX 0)))
+;;                           (font-spec '("Chicago" 12 :SRCOR :PLAIN (:COLOR-INDEX 0)))
 			   (option-list '(:yes :no))
 		      &allow-other-keys)
   "This function offers the user a choice of items from a menu of
@@ -393,37 +381,12 @@ which error occured."
   <message> is displayedfirst  as a prompt."
   (declare (type String message) 
 	   (type List option-list) (ignore keys)
-	   (:returns (type (Member option-list) option)))
+	   #-(and)(:returns (type (Member option-list) option)))
   (when beep (inter:beep))
   (display-query-and-wait PROTECTED-EVAL-ERROR-GADGET
                           message option-list))
 
 
-(defmacro with-garnet-error-handling (context &body forms)
-  "Executes forms in a protected environment where errors are handled
-by garnet-error-handler, which creates a widget with options to abort,
-debug and (if applicable) continue.
-
-<context> should be a string describing user meaningful context in
-which error occured. "
-  `(handler-bind 
-       ((error
-	 (lambda (condition)
-	   (garnet-error-handler ,context condition))))
-     ,.forms))
-
-(defmacro with-garnet-user-error-handling (context &body forms)
-  "Executes forms in a protected environment where errors are handled
-by garnet-user-error-handler, which creates a widget with options to
-abort and (if applicable) continue (no debug option).  
-
-<context> should be a string describing user meaningful context in
-which error occured."
-  `(handler-bind
-       ((error 
-	 (lambda (condition)
-	   (garnet-user-error-handler ,context condition))))
-     ,.forms))
 
 (defun garnet-protected-eval (form
 			      &key (default-value nil dv?)
@@ -542,8 +505,6 @@ garnet-protected-eval)."
     (eval handled-form)))
 
 
-
-
 (defun garnet-protected-read
     (&optional (stream *query-io*) &key
 	    (context (format nil "Reading from ~S" stream))
@@ -654,66 +615,4 @@ test fails, the user is prompted again."
      (with-normal-cursor
        (call-selector1 (format nil "Bad Input, Try Again~%")
 		       :option-list '(:OK)))))
-
-
-
-;;; Changes to protected eval gadget.
-;;
-					       
-(defun prompter-gadget-eval-func (button but-value)
-  (declare (ignore but-value))
-  (let* ((prompter (g-value button :parent))
-	 (val (g-value prompter :value))
-	 (+ (g-value prompter :+))
-	 (* (g-value prompter :*))
-	 - new-val)
-    (setq -
-	  (restart-case
-	      (garnet-protected-read-from-string
-	       val :read-package (g-value prompter :read-package)
-	       :read-bindings (g-value prompter :default-bindings)
-	       :default-value (g-value prompter :default-value))
-	    (abort () :report "Ignore Read/Eval request."
-		   (return-from prompter-gadget-eval-func))))
-    (setq new-val
-	  (restart-case
-	      (garnet-protected-eval -)
-	    (abort () :report "Ignore Eval request."
-		   (return-from prompter-gadget-eval-func))))
-    (s-value prompter :+ -)
-    (s-value prompter :* new-val)
-    (s-value prompter :value (format nil "~S" new-val))
-    (s-value prompter :modified? nil)
-    (opal:update (g-value prompter :window))))
-
-(kr:s-value (kr:g-value Prompter-Gadget :eval-but) :selection-function
-  (lambda (button value)
-    (Prompter-Gadget-Eval-Func button value)))
-
-(defun Prompter-Gadget-Sel-Func (button but-value)
-  (let* ((window (g-value button :window))
-	 (prompter (g-value button :parent))
-	 (waiting (g-value prompter :waiting))
-	 (value (if (g-value prompter :modified?)
-		    (restart-case
-			(garnet-protected-read-from-string
-			 (g-value prompter :value)
-			 :read-package (g-value prompter :read-package)
-			 :read-bindings (g-value prompter :read-bindings)
-			 :default-value (g-value prompter :default-value))
-		      (abort () :report "Abort Input"
-			(setq but-value :abort)))
-		  (g-value prompter :*))))
-    (kr-send prompter :selection-function prompter value but-value)
-    (unless (eql but-value :apply)
-      (when (schema-p window)		; May have been destroyed by
-					; :selection-function! 
-	(s-value window :visible NIL)
-	(opal:update window)))
-    (when waiting (inter:interaction-complete (list value but-value)))))
-
-
-(kr:s-value (kr:g-value Prompter-Gadget :button) :selection-function
-  (lambda (button value)
-    (Prompter-Gadget-Sel-Func button value)))
 
