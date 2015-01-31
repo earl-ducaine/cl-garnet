@@ -17,24 +17,9 @@
 ;;;
 ;;; Designed and implemented by Brad A. Myers
 
-#|
-============================================================
-Change log:
-       05/29/94 Marty Geier - Changed window position in do-go
-       05/27/92 Ed Pervin - The latest CMUCL requires that the
-                            argument to random be declared an integer.
-       03/25/92 Andrew Mickish - Get-Values ---> G-Value
-       12/05/91 Andrew Mickish - Added dzg's change to Move function, removed
-                  'time' calls apparently for debugging.
-	6/27/90 Ed Pervin - Made boxes not be scrambled when
-			    window changes size.
-        8/18/89 Brad Myers - Created
-============================================================
-|#
-
 (in-package :DEMO-MANYOBJS)
 
-(declaim (special BOXANDARROW))
+(declaim (special BOXANDARROW WIN AGG))
 
 (defvar *test-debug* NIL)
 
@@ -164,7 +149,11 @@ Good values of number-of-rectangles are 3..50"
 
 ;; dzg - for new version of KR
 (defun Move (n)
-  (let ((outline (g-value (third (g-value agg :components)) :outline)))
+  (let ((outline 
+	 (g-value
+	  (third
+	   (g-value agg :components)) 
+	  :outline)))
     (dotimes (i n)
       (s-value outline :left (* i 4))
       (opal:update win))))

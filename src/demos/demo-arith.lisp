@@ -714,10 +714,8 @@ Change log:
     ;;;create top-level window
     (create-instance 'TOP-WIN inter:interactor-window
        (:double-buffered-p double-buffered-p)
-       #+apple (:left 10) #+apple (:top 45)
-       #+apple (:width 600) #+apple (:height 300)
-       #-apple (:left 280) #-apple (:top 120)
-       #-apple (:width 700) #-apple (:height 400)
+       (:left 280) (:top 120)
+       (:width 700) (:height 400)
        (:title "GARNET Arithmetic Editor")
        (:icon-title "Arith"))
 

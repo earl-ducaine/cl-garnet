@@ -299,9 +299,7 @@ Change log:
 			     (:left 0) ; left is set below
 			     (:top init-y)
 			     (:font font)
-			     (:visible T)
-                             #+apple (:fast-redraw-p T)
-                             #+apple (:draw-function :xor)))
+			     (:visible T)))
       
       (when (> (setq h (g-value obj :height)) maxwh)
 	(setq maxwh h))
@@ -415,7 +413,7 @@ Change log:
   (Create-Lists strings) ; convert string list into appropriate form
   (setq win (create-instance NIL inter:interactor-window
 		      (:title "Garnet Logo")
-		      (:left 0)(:top #-apple 0 #+apple 45)
+		      (:left 0)(:top 0)
                       (:width 270)(:height 235)
 		      (:double-buffered-p double-buffered-p)
 		      (:aggregate (setq top-agg

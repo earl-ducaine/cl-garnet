@@ -162,15 +162,13 @@ Change log:
 
     ;; create top-level window
     (create-instance 'TOP-WIN inter:interactor-window
-      #-apple(:left 750)  #-apple(:top 80)
-      #-apple(:width 520) #-apple(:height 400)
-      #+apple(:left 350)  #+apple(:top 80)
-      #+apple(:width 275) #+apple(:height 275)
-        (:double-buffered-p double-buffered-p)
-        (:title "GARNET Gesture Recognition Demo")
-        (:icon-title "Gest-Demo")
-        (:background-color opal:motif-gray)
-    )
+      (:left 750) (:top 80)
+      (:width 520) (:height 400)
+      (:double-buffered-p double-buffered-p)
+      (:title "GARNET Gesture Recognition Demo")
+      (:icon-title "Gest-Demo")
+      (:background-color opal:motif-gray)
+      )
 
     ;; create the top level aggregate in the window
     (s-value TOP-WIN :aggregate

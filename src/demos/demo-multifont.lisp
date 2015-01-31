@@ -18,28 +18,6 @@
 ;;; Designed by Brad A. Myers
 ;;; Implemented by Richard McDaniel
 
-#|
-============================================================
-Change log:
-        5/29/94 Marty Geier - Changed load to garnet-load 
-                and made position of main window in do-go viewable.
-        9/22/93 Andrew Mickish - Ignored double-buffered-p in Do-Go
-        6/01/93 Matthew Goldberg - Added Toggle-Lisp-Mode option in Edit menu;
-                                   Added message which prints paren-match
-                                    in Lisp-mode.
-        2/24/93 Andrew Mickish - Removed references to compile-opal/inter-p
-        2/23/93 Andrew Mickish - Removed call to notice-items-changed for mbar
-        2/03/93 Rajan Parthasarathy - Switched to motif-menubar
-        2/01/93 Andrew Mickish - Made multifont text objects fast-redraw
-        6/19/92 Rajan Parthasarathy - Added auto-scroll
-        4/15/92 Andrew Mickish - Changed gv references of PULL-DOWN to g-value,
-                  made background of outer window black
-	4/12/92 Ed Pervin - destroy menubar in do-stop
-         4/9/92 Richard McDaniel - added instructions
-         3/5/92 Richard McDaniel - started
-============================================================
-|#
-
 
 (in-package :DEMO-MULTIFONT)
 
@@ -51,22 +29,19 @@ Change log:
 ;; First we load required gadgets.  In this demo, we use the menubar and the
 ;; motif-scrolling-window-with-bars gadgets.
 
-;; Only loads this file when not compiling all of Garnet.
-(unless (get :garnet-modules :multifont)
-  (common-lisp-user::garnet-load (concatenate 'string "opal:" "multifont-loader")))
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  ;; Only loads this file when not compiling all of Garnet.
 
-;; Load menubar gadget.
-(unless (get :garnet-modules :motif-menubar)
-   (common-lisp-user::garnet-load (concatenate 'string "gadgets:" "motif-menubar-loader")
-         
-))
+  (unless (get :garnet-modules :multifont)
+    (common-lisp-user::garnet-load "opal:multifont-loader"))
 
-;; Load scrolling window gadget.
-(unless (get :garnet-modules :motif-scrolling-window)
-   (common-lisp-user::garnet-load (concatenate 'string "gadgets:" "motif-scrolling-window-loader")
-        
-))
+  ;; Load menubar gadget.
+  (unless (get :garnet-modules :motif-menubar)
+    (common-lisp-user::garnet-load "gadgets:motif-menubar-loader"))
 
+  ;; Load scrolling window gadget.
+  (unless (get :garnet-modules :motif-scrolling-window)
+    (common-lisp-user::garnet-load "gadgets:motif-scrolling-window-loader")))
   
 ;;; ================================================================
 
@@ -240,142 +215,142 @@ Change log:
 (defun Do-Go (&key dont-enter-main-event-loop double-buffered-p)
   (declare (ignore double-buffered-p))
   
-   ; Create the main window.
-   (create-instance 'win inter:interactor-window
-      (:title "Multifont Demonstration")
-      (:top 100)
-      (:left 150)
-      (:height 254)
-      (:background-color opal:black)
-   )
-   (create-instance 'top opal:aggregate)
-   (s-value win :aggregate top)
-   (opal:update win)
+  ;; Create the main window.
+  (create-instance 'win inter:interactor-window
+    (:title "Multifont Demonstration")
+    (:top 100)
+    (:left 150)
+    (:height 254)
+    (:background-color opal:black)
+    )
+  (create-instance 'top opal:aggregate)
+  (s-value win :aggregate top)
+  (opal:update win)
 
-   ; Create the message bar
-   (create-instance 'message opal:multifont-text
-     (:left 0)
-     (:top (o-formula (- (gv win :height) 19)))
-     (:word-wrap-p nil)
-     (:auto-scroll-p nil)
-     (:text-width (o-formula (gv win :width)))
-     (:line-style opal:white-line)
-     (:fill-background-p nil)
-     )
+  ;; Create the message bar
+  (create-instance 'message opal:multifont-text
+    (:left 0)
+    (:top (o-formula (- (gv win :height) 19)))
+    (:word-wrap-p nil)
+    (:auto-scroll-p nil)
+    (:text-width (o-formula (gv win :width)))
+    (:line-style opal:white-line)
+    (:fill-background-p nil)
+    )
 
-   (opal:add-component top message)
+  (opal:add-component top message)
    
-   ; Create the menubar.
-
-   (create-instance 'pull-down garnet-gadgets:motif-menubar
-     (:foreground-color opal:motif-green)
-     (:items '(("File" nil
-		(("New" new-fn) ("Open") ("Save") ("Quit" quit-fn)))
-	       ("Edit" nil
-		(("Copy" copy-fn) ("Cut" cut-fn) ("Paste" paste-fn)
-		 ("Italic" italic-fn) ("Bold" bold-fn)
-		 ("Font Bigger" bigger-fn) ("Font Smaller" smaller-fn)
-		 ("Toggle Lisp Mode" lisp-fn)))
-	       ("Font" change-font
-		((:Fixed) (:Serif) (:Sans-Serif)))
-	       ("Size" change-size
-		((:Small) (:Medium)
-		 (:Large) (:Very-Large)))))
-     (:bar-above-these-items '(NIL ("Italic" "Toggle Lisp Mode") NIL NIL))
-     (:min-menubar-width (o-formula (gv win :width)))
-     )
+  ;; Create the menubar.
+  (create-instance 'pull-down garnet-gadgets:motif-menubar
+    (:foreground-color opal:motif-green)
+    (:items '(("File" nil
+	       (("New" new-fn) ("Open") ("Save") ("Quit" quit-fn)))
+	      ("Edit" nil
+	       (("Copy" copy-fn) ("Cut" cut-fn) ("Paste" paste-fn)
+		("Italic" italic-fn) ("Bold" bold-fn)
+		("Font Bigger" bigger-fn) ("Font Smaller" smaller-fn)
+		("Toggle Lisp Mode" lisp-fn)))
+	      ("Font" change-font
+	       ((:Fixed) (:Serif) (:Sans-Serif)))
+	      ("Size" change-size
+	       ((:Small) (:Medium)
+		(:Large) (:Very-Large)))))
+    (:bar-above-these-items '(NIL ("Italic" "Toggle Lisp Mode") NIL NIL))
+    (:min-menubar-width (o-formula (gv win :width)))
+    )
    
-   (opal:add-component top pull-down)
+  (opal:add-component top pull-down)
 
-   ; Create the top window of the demo.
-   (create-instance 'text1 opal:multifont-text ; This is the internal multifont
-      (:word-wrap-p t)                         ; text object.
-      (:auto-scroll-p T)
-      (:fast-redraw-p :rectangle)
-      (:fast-redraw-filling-style opal:motif-gray-fill)
-      )
+  ;; Create the top window of the demo.
+  (create-instance 'text1 opal:multifont-text ; This is the internal multifont
+    (:word-wrap-p t)			      ; text object.
+    (:auto-scroll-p T)
+    (:fast-redraw-p :rectangle)
+    (:fast-redraw-filling-style opal:motif-gray-fill)
+    )
    
-   (create-instance 'scroll-win1 gg:motif-scrolling-window-with-bars
-      (:left 0)
-      (:top (g-value pull-down :height))
-      (:width (o-formula (- (gv win :width) (* 2 (gvl :border-width)))))
-      (:height (o-formula (- (floor
-                  (/ (- (gv win :height)
-			23  ;; height of paren-matching message
-			(g-value pull-down :height)) 2))
-			     (* 2 (gvl :border-width)))))
-      (:parent-window win)
-      (:total-width (o-formula (+ (gv text1 :width) (gv text1 :left)) 200))
-      (:total-height (o-formula (+ (gv text1 :top) (gv text1 :height)) 200))
-      (:h-scroll-bar-p nil)
-      (:v-scroll-bar-p t)
-   )
-   (s-value text1 :text-width (o-formula (gv scroll-win1 :clip-window :width)))
-   (s-value text1 :scrolling-window scroll-win1)
-   
-   (opal:update scroll-win1)
-   (opal:add-component (g-value scroll-win1 :inner-aggregate) text1)
+  (create-instance 'scroll-win1 gg:motif-scrolling-window-with-bars
+    (:left 0)
+    (:top (g-value pull-down :height))
+    (:width (o-formula (- (gv win :width) (* 2 (gvl :border-width)))))
+    (:height (o-formula (- (floor
+			    (/ (- (gv win :height)
+				  23 ;; height of paren-matching message
+				  (g-value pull-down :height)) 2))
+			   (* 2 (gvl :border-width)))))
+    (:parent-window win)
+    (:total-width (o-formula (+ (gv text1 :width) (gv text1 :left)) 200))
+    (:total-height (o-formula (+ (gv text1 :top) (gv text1 :height)) 200))
+    (:h-scroll-bar-p nil)
+    (:v-scroll-bar-p t)
+    )
+  (s-value text1 :text-width (o-formula (gv scroll-win1 :clip-window :width)))
+  (s-value text1 :scrolling-window scroll-win1)
 
-   ; Create the lower window of the demo.
-   (create-instance 'text2 opal:multifont-text
-      (:word-wrap-p t)
-      (:auto-scroll-p T)
-      (:fast-redraw-p :rectangle)
-      (:fast-redraw-filling-style opal:motif-gray-fill)
-   )
-   (create-instance 'scroll-win2 gg:motif-scrolling-window-with-bars
-      (:left 0)
-      (:top (o-formula (+ (g-value pull-down :height) (gv scroll-win1 :height)
-                          (* 2 (gvl :border-width)))))
-      (:width (o-formula (- (gv win :width) (* 2 (gvl :border-width)))))
-      (:height (o-formula (- (gv win :height) (gvl :top)
-			     23  ;; height of paren-matching message
-			     (* 2 (gvl :border-width)))))
-      (:parent-window win)
-      (:total-width (o-formula (gv text2 :width) 200))
-      (:total-height (o-formula (gv text2 :height) 200))
-      (:h-scroll-bar-p nil)
-      (:v-scroll-bar-p t)
-   )
-   (s-value text2 :text-width (o-formula (gv scroll-win2 :clip-window :width)))
-   (s-value text2 :scrolling-window scroll-win2)
+  (opal:update scroll-win1)
+  (opal:add-component (g-value scroll-win1 :inner-aggregate) text1)
 
-   (opal:update scroll-win2)
-   (opal:add-component (g-value scroll-win2 :inner-aggregate) text2)
+  ;; Create the lower window of the demo.
+  (create-instance 'text2 opal:multifont-text
+    (:word-wrap-p t)
+    (:auto-scroll-p T)
+    (:fast-redraw-p :rectangle)
+    (:fast-redraw-filling-style opal:motif-gray-fill)
+    )
+  (create-instance 'scroll-win2 gg:motif-scrolling-window-with-bars
+    (:left 0)
+    (:top (o-formula (+ (g-value pull-down :height) (gv scroll-win1 :height)
+			(* 2 (gvl :border-width)))))
+    (:width (o-formula (- (gv win :width) (* 2 (gvl :border-width)))))
+    (:height (o-formula (- (gv win :height) (gvl :top)
+			   23 ;; height of paren-matching message
+			   (* 2 (gvl :border-width)))))
+    (:parent-window win)
+    (:total-width (o-formula (gv text2 :width) 200))
+    (:total-height (o-formula (gv text2 :height) 200))
+    (:h-scroll-bar-p nil)
+    (:v-scroll-bar-p t)
+    )
+  (s-value text2 :text-width (o-formula (gv scroll-win2 :clip-window :width)))
+  (s-value text2 :scrolling-window scroll-win2)
 
-   ; Create a focus interactor so that keyboard events may be entered into
-   ; the text objects.
-   (create-instance 'focus-inter inter:focus-multifont-textinter
-      (:window `(,win ,(g-value scroll-win1 :clip-window)
-                 ,(g-value scroll-win1 :inner-window)
-                 ,(g-value scroll-win2 :clip-window)
-                 ,(g-value scroll-win2 :inner-window)))
-      (:match-obj message))
+  (opal:update scroll-win2)
+  (opal:add-component (g-value scroll-win2 :inner-aggregate) text2)
 
-   ; Create a selection interactor to handle mouse events on the text objects.
-   (create-instance 'mouse-inter inter:selection-interactor
-      (:window `(,win ,(g-value scroll-win1 :clip-window)
-                 ,(g-value scroll-win1 :inner-window)
-                 ,(g-value scroll-win2 :clip-window)
-                 ,(g-value scroll-win2 :inner-window)))
-      (:focus-interactor focus-inter)
-      (:text-list `(,text2 ,text1))
-      (:start-where `(:list-element-of ,mouse-inter :text-list :type
-		      ,opal:multifont-text))
-      (:match-obj message))
+  ;; Create a focus interactor so that keyboard events may be entered
+  ;; into the text objects.
+  (create-instance 'focus-inter inter:focus-multifont-textinter
+    (:window `(,win ,(g-value scroll-win1 :clip-window)
+		    ,(g-value scroll-win1 :inner-window)
+		    ,(g-value scroll-win2 :clip-window)
+		    ,(g-value scroll-win2 :inner-window)))
+    (:match-obj message))
+
+  ;; Create a selection interactor to handle mouse events on the text
+  ;; objects.
+  (create-instance 'mouse-inter inter:selection-interactor
+    (:window `(,win ,(g-value scroll-win1 :clip-window)
+		    ,(g-value scroll-win1 :inner-window)
+		    ,(g-value scroll-win2 :clip-window)
+		    ,(g-value scroll-win2 :inner-window)))
+    (:focus-interactor focus-inter)
+    (:text-list `(,text2 ,text1))
+    (:start-where `(:list-element-of ,mouse-inter :text-list :type
+				     ,opal:multifont-text))
+    (:match-obj message))
       
-   (inter:set-focus focus-inter text1)
-   (opal:update win)
+  (inter:set-focus focus-inter text1)
+  (opal:update win)
 
-   ; Currently, open and save remain unimplemented.  Their corresponding
-   ; menubar entries have been grayed to reflect this.
-   (let ((bar (garnet-gadgets:get-bar-component pull-down "File")))
-      (garnet-gadgets:menubar-disable-component
-            (garnet-gadgets:get-submenu-component bar "Open"))
-      (garnet-gadgets:menubar-disable-component
-            (garnet-gadgets:get-submenu-component bar "Save"))
-   )
-   (Format T "~%Demo-Multifont:
+  ;; Currently, open and save remain unimplemented. Their
+  ;; corresponding menubar entries have been grayed to reflect this.
+  (let ((bar (garnet-gadgets:get-bar-component pull-down "File")))
+    (garnet-gadgets:menubar-disable-component
+     (garnet-gadgets:get-submenu-component bar "Open"))
+    (garnet-gadgets:menubar-disable-component
+     (garnet-gadgets:get-submenu-component bar "Save"))
+    )
+  (Format T "~%Demo-Multifont:
   This creates and edits two multifont text objects within two motif-scrolling-
   window-with-bars.
   Clicking the cursor in the text objects will set the cursor to that object
@@ -409,10 +384,10 @@ Font changing:
  ^1 ^2 ^3 ^4 = small, medium, large and very-large fonts~%")
 
 
-   (unless dont-enter-main-event-loop
-      #-cmu (inter:main-event-loop)
-   )
-)
+  (unless dont-enter-main-event-loop
+    #-cmu (inter:main-event-loop)
+    )
+  )
 
 
 ;; Do-stop kills the parent window which will destroy all internal garnet

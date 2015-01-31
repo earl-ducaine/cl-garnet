@@ -214,7 +214,7 @@
 				       (gvl :filling-style :foreground-color)
 				       opal:WHITE)))
      (:title "Demo-Motif")
-     (:left #-apple 650 #+apple 30)(:top 45)(:width 480)(:height 450)))
+     (:left 650)(:top 45)(:width 480)(:height 450)))
   (s-value DEMO-MOTIF-WIN
 	   :aggregate
 	   (create-instance 'DEMO-MOTIF-TOP-AGG opal:aggregate))

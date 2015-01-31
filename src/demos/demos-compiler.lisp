@@ -9,33 +9,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; $Id::                                                             $	
-
-;;; Changes:
-;;; 10/2/03 RGA --- New compile/load protocol
-;;;  7/28/96 RGA --- changed to use garnet-compile/load
-;;; 20-Oct-93 Mickish    Added Demo-Unistrokes
-;;; 24-Feb-93 Mickish    Removed references to compile-opal/inter-p
-;;; 19-Feb-93 Mickish    Demo-Circle ---> Demo-Virtual-Agg
-;;; 03-Feb-93 Mickish    Demo-Calculator ---> Garnet-Calculator
-;;;  4-Jun-92 Myers	 Added demo-animator
-;;; 30-Apr-92 Pervin     Removed demo-fade (it's now demo-logo).
-;;; 28-Apr-92 Mickish    Added garnetdraw
-;;; 13-Apr-92 Mickish    Added demo-logo.
-;;; 02-Mar-92 Mickish    Added load of gestures, demo-gesture.
-;;; 27-Mar-92 Pervin     Added demo-circle.
-;;; 27-Mar-91 Pervin     Only load aggregraphs and gadgets if not compiling
-;;;			 all of Garnet.
-;;; 22-Mar-91 Pervin	 Added load of aggregraphs and gadgets.
-;;; 15-Mar-91 Mickish    Added demo-graph, demo-truck
-;;; 14-Mar-91 Pervin     Added demo-motif.
-;;; 12-Oct-90 Osamu	 Added demo-xasperate, demo-calculator, demos-controller.
-;;;  3-Aug-90 Myers	 Added demo-fade.
-;;;  1-Aug-90 Pervin     Added demo-arith.
-;;; 16-Jul-90 Pervin     Added demo-file-browser and demo-schema-browser.
-;;; 12-Apr-90 Mitchell   Added #+allegro (gc t)
-;;; 2-Apr-90 Cook/Pervin Added #+explorer part.
-;;;
-
 (in-package "COMMON-LISP-USER")
 
 (defvar *debug-demos-mode* nil)
@@ -43,11 +16,11 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (proclaim
    (if *debug-demos-mode*
-       (and (boundp '*garnet-compile-debug-settings*)
-	    *garnet-compile-debug-settings*)
+       (and (boundp 'Garnet-Compile-Debug-Settings)
+	    Garnet-Compile-Debug-Settings)
        ;; Global default settings.
-       (and (boundp '*default-garnet-proclaim*) 
-	    *default-garnet-proclaim*))))
+       (and (boundp 'Default-Garnet-Proclaim) 
+	    Default-Garnet-Proclaim))))
 
 
 (unless (get :garnet-modules :multifont)

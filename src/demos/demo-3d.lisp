@@ -31,40 +31,44 @@
 (defparameter gray-size 6)
 (defparameter gray-size2 (* 2 gray-size))
 (defvar menu3 NIL)
-(defvar *color-p* (g-value opal:color :color-p))
 
 (declaim (special MENU-NAME))
 
 (defun make-fixed-menu3 (top-agg pairs x y)
-  (let (shadow outline outline2 this-item prev-item text-item inv-box fnt label color)
+  (let (shadow outline outline2
+	       this-item prev-item
+	       text-item inv-box
+	       fnt label color)
+
     (create-instance 'menu-name opal:aggregate
-					  (:left x)(:top y)(:width 500)
-					  (:height 500))
+      (:left x)(:top y)(:width 500)
+      (:height 500))
     (opal:add-components top-agg menu-name)
 
     ; create items
     (setq fnt (create-instance NIL opal:font
-			   (:size :large)
-			   (:family :serif)))
+		(:size :large)
+		(:family :serif)))
     (dolist (pair pairs)
       (setq label (car pair)
-	    color (if *color-p* (cdr pair) opal:black))
+	    color (cdr pair))
+
       (setq this-item
 	    (create-instance NIL opal:aggregate
-	                (:name (concatenate 'string label "-agg"))
-	                (:left x)
-			(:prev-item prev-item)
-			(:top (if prev-item (o-formula
-					      (+ (gvl :prev-item :top)
-						 (gvl :prev-item :height)
-						 10)
-					     0)
-				  y))
-			(:width (o-formula (+ shad-off gray-size2 white-off2
-						 (gvl :parent :max-width)) 0))
-			(:height (o-formula (+ shad-off gray-size2 white-off2
-						  (gvl :my-string :height))))))
-      (setf outline
+	      (:name (concatenate 'string label "-agg"))
+	      (:left x)
+	      (:prev-item prev-item)
+	      (:top (if prev-item (o-formula
+				   (+ (gvl :prev-item :top)
+				      (gvl :prev-item :height)
+				      10)
+				   0)
+			y))
+	      (:width (o-formula (+ shad-off gray-size2 white-off2
+				    (gvl :parent :max-width)) 0))
+	      (:height (o-formula (+ shad-off gray-size2 white-off2
+				     (gvl :my-string :height))))))
+      (setq outline
 	    (create-instance NIL opal:rectangle
 	      (:name (concatenate 'string label "-outline"))
 	      (:left (o-formula (+ (gvl :parent :left)
@@ -77,7 +81,7 @@
 	      (:height (o-formula (- (gvl :parent :height) shad-off) 0))
 	      (:filling-style (create-instance nil opal:gray-fill
 				(:foreground-color color)))))
-      (setf outline2
+      (setq outline2
 	    (create-instance NIL opal:rectangle
 	      (:name (concatenate 'string label "-outline2"))
 	      (:outline outline)
@@ -91,13 +95,17 @@
 	    (create-instance NIL opal:text
 	      (:string label)
 	      (:font fnt)
-	      (:line-style (create-instance nil opal:line-style
-			     (:constant T)
-			     (:line-thickness 2)
-			     (:foreground-color color)))
+	      (:unselected-line-style (create-instance nil opal:line-style
+					(:constant T)
+					(:line-thickness 2)
+					(:foreground-color color)))
+	      (:line-style (o-formula (if (gvl :parent :selected)
+					  opal:line-2
+					  (gvl :unselected-line-style))))
 	      (:outline2 outline2)
 	      (:left (o-formula (+ (gvl :outline2 :left) white-off) 0))
 	      (:top (o-formula (+ (gvl :outline2 :top) white-off) 0))))
+
       (setq inv-box
 	    (create-instance NIL opal:rectangle
 	      (:text-item text-item)
@@ -106,15 +114,13 @@
 	      (:width (o-formula (gvl :text-item :width)))
 	      (:height (o-formula (gvl :text-item :height)))
 	      (:visible (o-formula (eq (gvl :parent) (gv menu-name :selected))))
-	      (:draw-function :xor)
 	      (:filling-style (create-instance nil opal:black-fill
 				(:foreground-color color)))
-	      (:line-style opal:no-line)
-	      (:fast-redraw-p T)))
+	      (:line-style opal:no-line)))
 
       (s-value this-item :my-string text-item)
 
-      (setf shadow
+      (setq shadow
 	    (create-instance NIL opal:rectangle
 	      (:name (concatenate 'string label "-shadow"))
 	      (:outline outline)
@@ -126,16 +132,16 @@
 	      (:visible (o-formula (not (gvl :parent :interim-selected))))))
       
 
-      (opal:add-components this-item shadow outline outline2 text-item inv-box)
+      (opal:add-components this-item shadow outline outline2 inv-box text-item)
       (opal:add-components menu-name this-item)
 
-      (setf prev-item this-item))
+      (setq prev-item this-item))
 
     (s-value menu-name :max-width
 	     (o-formula 
 	       (let ((maxw 0))
 		 (dolist (item (g-value menu-name :components))
-		   (setf maxw (MAX maxw (gv item :my-string :width))))
+		   (setq maxw (MAX maxw (gv item :my-string :width))))
 		 maxw) 0))
 
     menu-name))
@@ -191,7 +197,7 @@
 					     (gvl :white-off2)
 					     circle-size)))))
     
-    (setf outline
+    (setq outline
 	  (kr:create-instance NIL shape
 			      (:name (concatenate 'string name "-outline"))
 			      (:left (o-formula
@@ -207,7 +213,7 @@
 			      (:height (o-formula
 					 (- (gvl :parent :height) (gvl :parent :shad-off)) 0))
 			      (:filling-style opal:gray-fill)))
-    (setf outline2
+    (setq outline2
 	  (kr:create-instance NIL shape
 			      (:name (concatenate 'string name "-outline2"))
 			      (:left (o-formula
@@ -229,7 +235,7 @@
     (s-value object-agg :inner-top
 		   (o-formula (+ (gvl :outline2 :top) (gvl :white-off)) 0))
     
-    (setf shadow
+    (setq shadow
 	  (kr:create-instance NIL shape
 			      (:name (concatenate 'string name "-shadow"))
 			      (:left (o-formula
@@ -265,14 +271,10 @@
                   (:x2 (o-formula (+ (gvl :x1) circle-size)))
                   (:y2 (o-formula (+ (gvl :y1) circle-size)))
                   ;; On Mac, XOR'ed objects appear black anyway
-                  (:line-style #+apple opal:line-2
-                               #-apple (o-formula (if (gv menu3 :selected)
-						      (gv menu3 :selected
-                                                                :my-string
-                                                                :line-style)
-						      opal:line-2)))
-                  (:fast-redraw-p T)
-                  (:draw-function :xor)
+                  (:line-style (o-formula (if (gv menu3 :selected)
+					      (gv menu3 :selected :my-string
+						  :unselected-line-style)
+					      opal:line-2)))
                   (:visible (o-formula (gvl :button :selected)))))
       (setq l2 (create-instance NIL opal:line (:name "X line 2")
 	          (:button button)
@@ -280,14 +282,14 @@
                   (:y1 (o-formula (gvl :button :inner-top) 1))
                   (:x2 (o-formula (gvl :button :inner-left) 1))
                   (:y2 (o-formula (+ (gvl :y1) circle-size)))
-                  (:line-style #+apple opal:line-2
-                               #-apple (o-formula (if (gv menu3 :selected)
-						      (gv menu3 :selected
-                                                                :my-string
-                                                                :line-style)
-						      opal:line-2)))
-                  (:fast-redraw-p T)
-                  (:draw-function :xor)
+		  ;; When selected, we get the unselected line style
+		  ;; from the text item because that will be the
+		  ;; right color.
+                  (:line-style (o-formula (if (gv menu3 :selected)
+					      (gv menu3 :selected
+						  :my-string
+						  :unselected-line-style)
+					      opal:line-2)))
                   (:visible (o-formula (gvl :button :selected)))))
       (opal:add-components agg l1 l2)
       (opal:add-components button agg))
@@ -300,25 +302,26 @@
      (:top (o-formula (gvl :button-agg :selected :inner-top) 0))
      (:width small-circle-size)
      (:height small-circle-size)
-     (:draw-function :xor)
-     (:fast-redraw-p T)
+;;     (:draw-function :xor)
+;;     (:fast-redraw-p T)
      ;; On Mac, XOR'ed objects appear black anyway
-     (:filling-style #+apple opal:black-fill
-                     #-apple (o-formula (if (kr:schema-p (gv menu3 :selected))
-                                            (gv menu3 :selected :components
-                                                      :filling-style)
-                                            opal:black-fill)))
+     (:filling-style (o-formula (if (kr:schema-p (gv menu3 :selected))
+				    ;; Get the filling style from the
+				    ;; selected item in the menu.
+				    (gv menu3 :selected :components
+					:filling-style)
+				    opal:black-fill)))
      (:line-style opal:no-line)
      (:visible (o-formula (gvl :button-agg :selected)))))
 
 (defun make-X-buttons (name string-list fnt left top grey-p)
   (let (agg allbuttons label-obj circle button (prev-item NIL) greyobj)
-    (setf allbuttons (create-instance nil opal:aggregate
+    (setq allbuttons (create-instance nil opal:aggregate
 			      (:name (concatenate 'string name "-allbuttons"))))
-    (setf agg (create-instance nil opal:aggregate (:name name)))
+    (setq agg (create-instance nil opal:aggregate (:name name)))
     (opal:add-component agg allbuttons)
     (dolist (str string-list)
-      (setf label-obj (create-instance nil opal:text
+      (setq label-obj (create-instance nil opal:text
 				 (:name (concatenate 'string name "-" str "-label"))
 				 (:string str)
 				 (:font fnt)
@@ -328,7 +331,7 @@
 					 left))
 				 ;; :top filled in after button created
 				 ))
-      (setf button (make-gray-floating-object
+      (setq button (make-gray-floating-object
 		    (concatenate 'string  name "-" str "-button")
 		    label-obj top))
       (setq prev-item button)
@@ -340,7 +343,7 @@
     (setq circle (make-Xs allbuttons))
     (unless (g-value circle :parent) (opal:add-component agg circle))
     (when grey-p
-      (setf greyobj (create-instance NIL opal:rectangle
+      (setq greyobj (create-instance NIL opal:rectangle
 				     (:line-style opal:no-line)
 				     (:filling-style opal:gray-fill)
 				     (:left left)(:top top)
@@ -355,12 +358,12 @@
 
 (defun make-radio-buttons (name string-list fnt left top)
   (let (agg allbuttons label-obj circle button (prev-item NIL))
-    (setf allbuttons (create-instance nil opal:aggregate
+    (setq allbuttons (create-instance nil opal:aggregate
 			      (:name (concatenate 'string name "-allbuttons"))))
-    (setf agg (create-instance nil opal:aggregate (:name name)))
+    (setq agg (create-instance nil opal:aggregate (:name name)))
     (opal:add-component agg allbuttons)
     (dolist (str string-list)
-      (setf label-obj (create-instance nil opal:text
+      (setq label-obj (create-instance nil opal:text
 				 (:name (concatenate 'string name "-" str "-label"))
 				 (:string str)
 				 (:font fnt)
@@ -370,7 +373,7 @@
 					 left))
 				 ;; :top filled in after button created
 				 ))
-      (setf button (make-gray-floating-object
+      (setq button (make-gray-floating-object
 		    (concatenate 'string  name "-" str "-button")
 		    label-obj top :shape opal:circle))
       (setq prev-item button)
@@ -391,7 +394,7 @@
 (defparameter agg NIL)
 (defvar inter3 NIL)
 (defvar circles NIL)
-(defvar circles2 NIL)
+(defvar boxes NIL)
 
 (defparameter fnt NIL)
 (defparameter fnti NIL)
@@ -401,7 +404,7 @@
 
 (defun do-go (&key dont-enter-main-event-loop double-buffered-p)
   (setq vp (kr:create-instance NIL inter:interactor-window
-                               (:left #-apple 600 #+apple 225)
+                               (:left 600)
 			       (:top 70)(:width 400)(:height 360)
                                (:double-buffered-p double-buffered-p)
 			       (:title "GARNET 3D") (:icon-title "3D")))
@@ -428,12 +431,12 @@
 
   (opal:update vp)
 
-  (setf circles (make-radio-buttons "radio" '("Left" "Middle" "Right") fnt
+  (setq circles (make-radio-buttons "radio" '("Left" "Middle" "Right") fnt
 				    150 10))
 
-  (setf circles2 (car (make-X-buttons "radio3" '("Bold" "Italic" "Underline") fnt
+  (setq boxes (car (make-X-buttons "radio3" '("Bold" "Italic" "Underline") fnt
 				 150 50 NIL)))
-  (opal:add-components agg circles circles2)
+  (opal:add-components agg circles boxes)
 
   (opal:update vp)
 

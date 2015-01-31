@@ -60,67 +60,55 @@
     (when selected-obj
       (let ((newfill  (g-value selected-obj :filling-style)))
 	(opal:do-in-clip-rect (x y the-array xy)
-	  (setf (aref pixarray x y)
-		(g-value newfill :foreground-color
-                         #-apple :colormap-index
-                         #+apple :xcolor))
+	  (setf (aref pixarray x y) (g-value newfill :foreground-color :colormap-index))
 	  (opal:change-item the-array newfill x y))
 	(opal:update *w3* t)))))
 
-;; The Mac implementation uses the actual color from the :xcolor slot, and
-;; does not consider at all what cell that color occupies in the colormap
-;; (which is how X does it).  Until we have color working more correctly on
-;; the Mac, do not even reference its :colormap-index slot.
+
 (defun find-fill-style (index)
   (do ((styles (g-value opal:filling-style :is-a-inv) (cdr styles)))
       ((or (null styles)
 	   (and (eq (g-value (car styles) :fill-style) :solid)
-	        (eq (g-value (car styles) :foreground-color
-                             #-apple :colormap-index
-                             #+apple :xcolor)
-                    index)))
+	        (eq (g-value (car styles) :foreground-color :colormap-index) index)))
        (or (car styles)
 	   (create-instance nil opal:filling-style
-	      (:foreground-color (create-instance nil opal:color
-                                    #-apple (:colormap-index index)
-                                    #+apple (:xcolor index))))))))
-
+	      (:foreground-color (create-instance nil opal:color (:colormap-index index))))))))
 
 (defun Do-Read (filename)
- (if (probe-file filename)
-   (progn
-     (format t "Reading ~A..." filename)
-     (s-value *pm* :image (opal:read-xpm-file filename))
-     (let* ((pixarray (g-value *pm* :pixarray))
-	    (dimensions (array-dimensions pixarray)))
-       (unless (equal dimensions (g-value the-array :array-length))
-         (s-value changer :window nil)
-         (opal:remove-component a feed-rect)
-         (opal:destroy *w*)
-         (setq the-array
-           (create-instance nil opal:virtual-aggregate
-             (:item-prototype my-square)
-             (:point-to-rank #'my-point-to-rank)
-             (:item-array (make-array dimensions :initial-element opal:white-fill))))
-         (setq *w*
-	   (create-instance 'w inter:interactor-window
-	     (:title "Virtual aggregate window")
-             (:left 320) (:top 5)
-	     (:width (g-value the-array :width))
-             (:height (g-value the-array :height))
-             (:aggregate (create-instance 'a opal:aggregate))))
-         (opal:add-component a feed-rect)
-         (opal:update *w*)
-         (s-value changer :window *w*)
-         (s-value changer :start-where (list :in the-array))
-         (opal:add-component (g-value *w* :aggregate) the-array))
-       (dotimes (j (second dimensions))
-         (dotimes (i (first dimensions))
-	   (opal:change-item the-array (find-fill-style (aref pixarray i j)) i j)))
-       (opal:update *w*)
-       (opal:update *w3*)
-       (format t " Done~%")))
-   (format t "File ~A does not exist.~%" filename)))
+  (if (probe-file filename)
+      (progn
+	(demos-controller:message "~%Reading ~A..." filename)
+	(s-value *pm* :image (opal:read-xpm-file filename))
+	(let* ((pixarray (g-value *pm* :pixarray))
+	       (dimensions (array-dimensions pixarray)))
+	  (unless (equal dimensions (g-value the-array :array-length))
+	    (s-value changer :window nil)
+	    (opal:remove-component a feed-rect)
+	    (opal:destroy *w*)
+	    (setq the-array
+		  (create-instance nil opal:virtual-aggregate
+		    (:item-prototype my-square)
+		    (:point-to-rank #'my-point-to-rank)
+		    (:item-array (make-array dimensions :initial-element opal:white-fill))))
+	    (setq *w*
+		  (create-instance 'w inter:interactor-window
+		    (:title "Virtual aggregate window")
+		    (:left 320) (:top 5)
+		    (:width (g-value the-array :width))
+		    (:height (g-value the-array :height))
+		    (:aggregate (create-instance 'a opal:aggregate))))
+	    (opal:add-component a feed-rect)
+	    (opal:update *w*)
+	    (s-value changer :window *w*)
+	    (s-value changer :start-where (list :in the-array))
+	    (opal:add-component (g-value *w* :aggregate) the-array))
+	  (dotimes (j (second dimensions))
+	    (dotimes (i (first dimensions))
+	      (opal:change-item the-array (find-fill-style (aref pixarray i j)) i j)))
+	  (opal:update *w*)
+	  (opal:update *w3*)
+	  (demos-controller:message " Done~%")))
+      (demos-controller:message "File ~A does not exist.~%" filename)))
 
 
 (defun Do-Go (&key dont-enter-main-event-loop double-buffered-p)
@@ -334,11 +322,13 @@
 	  (cond ((equal string "Read")
 		 (Do-Read (g-value *input-file-name-box* :value)))
 		((equal string "Save")
-		 (format t "Saving into ~A... "
-			 (g-value *output-file-name-box* :value))
-		 (opal::write-xpm-file *pm*
-				       (g-value *output-file-name-box* :value))
-		 (format t "Done~%"))
+		 (demos-controller:message 
+		  "Saving into ~A... "
+		  (g-value *output-file-name-box* :value))
+		 (opal::write-xpm-file
+		  *pm*
+		  (g-value *output-file-name-box* :value))
+		 (demos-controller:message "Done~%"))
 		((equal string "PS")
 		 (s-value read-save :visible nil)
 		 (s-value *output-file-name-box* :visible nil)

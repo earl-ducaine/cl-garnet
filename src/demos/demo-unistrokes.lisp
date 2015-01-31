@@ -359,7 +359,7 @@ Change log:
 ;;    double-buffered-p          - if T, use double buffered windows
 ;;  
 (defun do-go (&key dont-enter-main-event-loop
-                   (double-buffered-p #-apple T #+apple NIL))
+                   (double-buffered-p T))
     (if (and (boundp 'TOP-WIN) (schema-p TOP-WIN))
 	(do-stop))
 

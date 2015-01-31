@@ -233,7 +233,7 @@
       (:start-event (list :downscrollup :upscrollup))
       (:final-function
        #'(lambda (interactor final-obj-over)
-	   (declare (ignore interactor final-obj-over))
+	   (declare (ignore final-obj-over))
 	   (if (>= (g-value indicator :percent) 1)
 	       (incf (g-value indicator :percent)
 		     (if (eq (inter:event-char inter:*current-event*)

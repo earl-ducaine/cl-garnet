@@ -56,17 +56,16 @@
 	(if (or (null file) (string= file "")) ; then pathname is a directory.
                                         ; So strip off the "/", get the directory name,
                                         ; and restore the "/".
-            #+apple (file-namestring (string-right-trim ":" (namestring pathname)))
-	    #-apple (let ((directory (string-right-trim "/" (namestring pathname))))
-                      (concatenate 'string (file-namestring directory) "/"))
+	    (let ((directory (string-right-trim "/" (namestring pathname))))
+	      (concatenate 'string (file-namestring directory) "/"))
             file))                ; else we already got the file name.
       ""))
 
 
 (defun DIRECTORY-FN (namestring)
   (let ((dir (directory #+(or cmu) namestring
-			#+(or apple sbcl) (concatenate 'string (namestring namestring) "*")
-                        #-(or cmu apple sbcl) 
+			#+(or sbcl) (concatenate 'string (namestring namestring) "*")
+                        #-(or cmu sbcl) 
                         (concatenate 'string (namestring namestring) "/")
                         #-(or clisp cmu sbcl) :directories #-(or clisp cmu sbcl) t)))
     (if (or (null dir) (equal (car dir) namestring)) NIL dir)))
@@ -143,9 +142,7 @@
 		       (if items
 			   (let* ((new-top-level-namestring
 				   (directory-namestring
-                                     #+apple (namestring (car items))
-				     #-apple (string-right-trim "/"
-				                   (namestring (car items))))))
+				    (string-right-trim "/" (namestring (car items))))))
 			     (if (not (string= "" new-top-level-namestring))
 				 ;; Add the new item to the browser
 				 (progn
@@ -169,12 +166,8 @@
 		(:selection-function
 		 ,#'(lambda (gadget string)
 		      (declare (ignore gadget))
-		      (when (string= string (string-right-trim #+apple ":"
-                                                               #-apple "/" 
-                                                               string))
-			(setq string (concatenate 'string string #+apple ":"
-                                                                 #-apple "/"
-                                                                 )))
+		      (when (string= string (string-right-trim "/" string))
+			(setq string (concatenate 'string string "/")))
 		      (s-value STATUS :visible T)
 		      (opal:update FILE-BROWSER-WIN)
 		      (garnet-gadgets:set-first-item

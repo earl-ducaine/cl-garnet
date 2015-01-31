@@ -19,21 +19,9 @@
 ;;;
 ;;; Designed and implemented by Brad A. Myers (modified by Andrew Mickish)
 
-#|
-============================================================
-Change log:
-         5/29/94 Marty Geier - Changed main window position too be viewable
-	 4/07/92 Pervin - Change case to cond statement in make-gauge.
-	 6/20/89 Brad Myers - Fixed to work on Suns, etc.
-	 6/19/89 Andy Mickish - Revised to use aggregadgets, polylines, and
-		arrowhead
-============================================================
-|#
-
-
 (in-package :DEMO-ANGLE)
 
-(defparameter *test-debug* NIL)
+(defparameter *test-debug* t)
 (defparameter vp NIL)                  ;; window to be used for the display
 (defparameter top-agg4 NIL)            ;; top aggregate in window
 (defparameter fnt2 NIL)                ;; small, nice font
@@ -118,26 +106,22 @@ Change log:
 (defun make-gauge (x y label feedback-style)
   (let (feedback box int-feedback str str2 menu-name needle)
 
-
     (setq menu-name (create-instance NIL opal:aggregate))
     (when *test-debug* (format T "~%<><><><><><><><>~%created gauge named ~s~%"
 			       menu-name))
 
-
     ;; BOX is the gauge frame
     (setf box (make-semicircle-obj x y 160 80))
-
 
     ;; Coordinates of needle anchor
     (s-value box :center-rot (formula
 			      `(list (center-x ',box) (bottom ',box))))
     (when *test-debug* (format T "created box ~s~%" box))
 
-
     (setq needle 
      (cond
 
-      ;; Needle1 is an agregadget of a line with an arrowhead
+       ;; Needle1 is an agregadget of a line with an arrowhead
       ;;
       ((eq feedback-style 'needle1)
        (create-instance NIL opal:aggregadget

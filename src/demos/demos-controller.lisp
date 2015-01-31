@@ -14,31 +14,6 @@
 ;;;
 ;;; Designed and implemented by Osamu Hashimoto
 ;;;
-;;;
-;;; 29-Sep-93 Andrew Mickish - Added Demo-Unistrokes
-;;; 12-Aug-93 Andrew Mickish - Put garnet-processes switch on wait-amount
-;;; 16-Jul-93 Brad Myers - added mouseline popup
-;;; 17-Feb-93 Andrew Mickish - Removed demo-twop, demo-sequence, demo-moveline,
-;;;             and demo-array.  Changed demo-circle to demo-virtual-agg.
-;;; 02-Feb-93 Andrew Mickish - opal:set-strings ---> opal:set-text;
-;;;                            demo-calculator ---> garnet-calculator
-;;; 27-Oct-92 Mickish - Added export to work around CMUCL bug
-;;;  4-Jun-92 Myers/Pervin - Added demo-animator; changed "animate" to "logo".
-;;;  13-Apr-92 Brad Myers -  Changed demo-fade to demo-logo
-;;;  3-Apr-92 Mickish - Added Demo-Gesture
-;;;  2-Apr-92 McDaniel - New multifont
-;;; 30-Mar-92 Pervin - Added demo-circle, demo-array.
-;;; 25-Feb-92 Pervin - Removed some unnecessary demos like mode, clock, truck.
-;;;			Also, added some :constant slots.
-;;; 13-Feb-92 Pervin - Merged color and non-color versions of demos.
-;;; 10-Oct-91 Mickish - Added color-demo-fade
-;;; 14-Mar-91 Mickish - Added demo-graph
-;;; 13-Mar-91 Pervin Test whether using color screen.
-;;;           If so, use color versions of demos.
-;;; 13-Mar-91 Mickish - Added demo-motif and demo-truck
-;;; 15-Nov-90 Pervin In Do-Stop, added test that item is not "animate".
-;:;  5-Nov-90 Pervin In Garnet-Note-Quitted, added a test that win is boundp.
-
 
 (in-package :DEMOS-CONTROLLER)
 
@@ -61,7 +36,7 @@
 ;; export nothing, just work around a bug in CMUCL.
 ;; If didn't export here, CMUCL's overzealous optimizing compiler would
 ;; screw up the reference to demo-logo:do-go in the code below.
-#+cmu (export '())
+;;#+cmu (export '())
 
 (defparameter *package-list*
    '(("3d" DEMO-3D)("angle" DEMO-ANGLE)("animator" DEMO-ANIMATOR)("arith" DEMO-ARITH)
@@ -170,18 +145,16 @@ devised by David Goldberg at Xerox PARC.")
     (:help-string "Quits the demos-controller and all demos.")
     (:selection-function #'quit*))
 
-  #-(and apple (not ccl-3))
   (create-instance 'demos-mouseline gg:mouselinepopup
+    (:windows win1)
     #+garnet-processes (:wait-amount 2)
     #-garnet-processes (:wait-amount NIL))
 
-  (opal:add-components agg1 bt qbt 
-    #-(and apple (not ccl-3)) demos-mouseline)
+  (opal:add-components agg1 bt qbt demos-mouseline)
 
   (create-instance 'win2 garnet-gadgets:scrolling-window-with-bars
     (:constant T :except :top :left :width :height :title :total-height)
-    #-apple(:left 0) #-apple(:top 720)
-    #+apple(:left 300) #+apple(:top 50)
+    (:left 0) (:top 720)
     (:width 700)(:height 180)
     (:title "Instructions for Demos")
     (:h-scroll-bar-p NIL)
@@ -208,8 +181,14 @@ Click the button to start the demo."))
 (defun Do-Stop ()
     (dolist (item *running*)
       (unless (string= item "logo")
-        (funcall (intern "DO-STOP"
-            (cadar (member item *package-list* :key #'car :test #'string=))))))
+	(ignore-errors
+	  (funcall
+	   (intern "DO-STOP"
+		   (cadar
+		    (member item 
+			    *package-list*
+			    :key #'car
+			    :test #'string=)))))))
     (demo-logo:do-stop)
     (opal:destroy win1)
     (opal:destroy win2)
@@ -285,3 +264,13 @@ Click the button to start the demo."))
     (opal:update win1)
     T)))
 
+(defun Message (format &rest args)
+  (if text
+      (progn (opal:go-to-end-of-text text)
+	     (opal:insert-text 
+	      text
+	      (apply #'format nil format args))
+	     (opal:update win2))
+      (apply #'format t format args)))
+		    
+		     
