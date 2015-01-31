@@ -809,7 +809,7 @@ aggrelist.
        (tab)
        (format t "~S" (g-value obj :known-as)))
       (:name
-       (format *error-output* "output-finish not expecting :name state~%"
+       (format *error-output* "output-finish not expecting :name state ~A~%"
 	       state))
       (:class
        (write-char '#\) )
