@@ -1,0 +1,187 @@
+;; $Id$
+;;;; garnet-prepare-compile.lisp
+;;; Change log:
+;;    10/02/03 Russell Almond - Added compile-kr-doc-p
+;;    10/02/03 Russell Almond - Added Protected Eval.
+;;    11/10/93 Andrew Mickish - Added Gem
+;;    04/05/93 Dave Kosbie    - Added Garnet-Utils
+;;    06/24/92 Andrew Mickish - Added C32
+;;    05/14/92 Pedro Szekely  - Initialize launch-process-p to NIL.
+;;    05/04/92 Russell Almond - Added allegro-v4.1 switches
+;;    04/29/92 VanderZanden   - Released lapidary.
+;;    04/02/92 McDaniel       - New multifont.
+;;    03/19/92 Andrew Mickish - Changed setf's to defvar's
+;;    02/27/91 Dilip D'Souza  - added everything with #+allegro-v4.0 switches
+;;    12/5/89 Brad Myers      - Fixed so works by setting special flag for
+;; 				garnet-loader
+;;    10/30/89 Brad Myers     - Added Debug
+;;    08/18/89 Brad Myers     - Added Toolkit
+;;    06/21/89 Brad Myers     - Created
+
+
+;;;; garnet-loader.lisp
+;;; ============================================================
+;; Change log:
+;; 15-Feb-2010 Fred Gilham - Updates for SBCL, added Allegro 8.1.
+;; 10/04/03 Russell Almond - Changed #+garnet-protected-eval to
+;;                           (load-protected-eval-p) (Protected-eval
+;; 			     basically replaces code in processes.lisp
+;; 10/04/03 Russell Almond - Added fix for MCL #\return vs #\linefeed
+;;                           issue. (do-load function).
+;; 10/04/03 Russell Almond - Added new extensions for MCL-5.0
+;; 10/02/03 Russell Almond - Added KR-doc flags.
+;; 10/02/03 Russell Almond - Added support for Protected-Eval
+;; 29-sep-2003 Robert Goldman - Add trial version of Allegro-specific code to open
+;;                           display using Xauthorization information.
+;; 15-Nov-2002 Fred Gilham - Add protected-eval module (from contrib/prompter code).
+;;                           Added #+garnet-protected-eval feature to allow process
+;;                           code to be compiled appropriately.
+;; 08/20/98 Fred Gilham    - Auto-detect CMUCL binary name.  Make
+;;                           :external the default for garnet-version.
+;; ???????? Russell Almond - Changed to use (require :clx) instead of
+;;                           loading CLX explicitly.
+;; ???????? Russell Almond - Better support for multiple external
+;;                           versions of Garnet.
+;; 01/30/95 Andrew Mickish - New redefinitions of :CL and :CL-USER for CMUCL
+;; 01/05/95 Andrew Mickish - Added :CL-USER nickname in defpackage
+;;                           redefinition of :COMMON-LISP-USER package
+;;                           and reordered :USE arguments by suggestion
+;; 03/17/94 Andrew Mickish - Added Gworld for Mac
+;; 12/04/93 Andrew Mickish - Added Mac switches
+;; 11/01/93 Andrew Mickish - Added GEM
+;; 09/22/93 Bruno Haible   - Added FLET for merge-pathnames in CLISP
+;; 08/13/93 Andrew Mickish - Added user::Garnet-Readtable
+;; 08/12/93 Andrew Mickish - Closed display in Verify-Display-Can-Be-Opened;
+;;                           added #+garnet-processes to *features* list
+;; 05/17/93 Andrew Mickish - Added compiler optimization proclamation
+;; 05/13/93 Andrew Mickish - Removed commas from Garnet-Load-Alist so it notices
+;;                           changes in the values of the pathname variables
+;; 04/15/93 Andrew Mickish - Added lucid memory-management instruction
+;; 04/ 5/93 Dave Kosbie    - Added Garnet-Utils package (where Garnet-independent
+;;                           Lisp utilities will now reside)
+;; 03/25/93 Andrew Mickish - Made Garnet-Load use an association list
+;; 03/17/93 Andrew Mickish - Removed Motif-Gilt-Loader
+;; 10/23/92 Dave Kosbie    - Added KATIE package
+;; 08/17/92 Andrew Mickish - Added display check, changed names of switches,
+;;                           changed names of directories, changed method
+;;                           for determining Garnet pathnames
+;; 07/29/92 Andrew Mickish - :cmu-sparc now loads from cmu-bin, removed :cmu
+;;                           and :test versions.
+;; 07/23/92 Dario Giuse    - moved loading of C32 before Lapidary, which needs it.
+;; 05/27/92 Joly           - Interactors package should use kr package.
+;; 05/25/92 Joly/Pervin    - Package CLTL1 does not exist in LispWorks.
+;; 05/21/92 Dario Giuse    - Added load-c32-p.
+;; 05/14/92 Szekely/Pervin - Do not launch process if compiling.
+;; 05/04/92 Russell Almond - Added allegro-v4.1 switches.
+;; 04/22/92 Ed Pervin      - Added launch-process-p switch.
+;; 04/10/92 Andrew Mickish - Added "gg:" prefix to garnet-load and garnet-compile
+;; 04/02/92 Rich McDaniel  - Added load-multifont-p
+;; 03/13/92 Ed Pervin      - Added :cmu-test
+;; 03/11/92 Andrew Mickish - Removed unlesses from CMU ext:search-list setfs
+;; 03/06/92 Andrew Mickish - Added *compiler-extension* switches
+;; 02/20/92 Andrew Mickish - Added package definitions for Explorer lisp;
+;;                           Added gesture pathnames, etc.
+;; 02/11/92 Andrew Mickish - Added :garnet-debug to *features* list;  changed
+;;                           pathnames from /afs/cs/ to /afs/cs.cmu.edu/.
+;; 04/25/91 Ed Pervin      - Official release of version 1.4; alpha directory
+;;                           changed back to test.  No longer support
+;;                           :cmu-lucid3.1 and :cmu-lucid4.0.
+;; 04/19/91 Ed Pervin      - Added lispworks to switches.
+;; 04/15/91 Ed Pervin      - Changed (make-packages **) to
+;;                           (unless (find-package **) (make-package **)).
+;; 04/03/91 Ed Pervin      - Changed :sparc-test4.0 --> :sparc-test and
+;;                           added :pmax-test.
+;; 03/21/91 Ed Pervin      - Release 1.4; test directory changed to alpha.
+;; 03/07/91 Andrew Mickish - Added aggregraphs.
+;; 03/07/91 Brad Myers     - Made new motif-gilt-loader, and also garnet-load.
+;; 03/01/91 Ed Pervin      - Added :sparc-test for version compiled in Allegro 4.0.
+;; 02/27/91 Dilip D'Souza  - Added everything with #+allegro-v4.0 switches.
+;; 02/25/91 Ed Pervin      - Pushed :garnet on *features* list.
+;; 01/24/91 Andrew Mickish - Added Gilt.
+;; 01/02/90 Andrew Mickish - Added :rt-test and :sparc-test options.
+;; 11/29/90 Brad Myers     - Added :cmu-sparc option.
+;; 10/05/90 Ed Pervin      - New variables Your-Garnet-Pathname and Your-CLX-Pathname
+;;                           which determine all the :external pathnames.
+;; 08/09/90 Ed Pervin      - Release 1.3
+;; 08/07/90 Ed Pervin      - rbd --> ecp
+;; 07/25/90 Ed Pervin      - Added *dont-load-modules-twice*;  amickish --> preddy
+;; 04/02/90 Ed Pervin      - Call xlib:load-clx in Lucid explicitly.
+;; 03/19/90 Ed Pervin      - Got rid of Garnet-Font-Pathname
+;; 02/14/90 Ed Pervin      - Added color screen option
+;; 01/04/90 Ed Pervin      - Added :external option and version number
+;; 12/19/89 Ed Pervin      - Now loads CLX.
+;; 12/13/89 Ed Pervin      - Added :cmu-allegro option.
+;; 12/05/89 Brad Myers     - Fixed so works with garnet-compiler
+;; 10/30/89 Brad Myers     - New file structure and src directories;  changed
+;;                           dont-load-xx to load-xxx-p
+;; 10/17/89 Brad Myers     - Added debug
+;; 08/18/89 Brad Myers     - Added Toolkit
+;; 06/07/89 Brad Myers     - Created
+;; ============================================================
+;;
+;;; This is a table of various lisp flavors which Garnet has at one time
+;;  or another been compiled on:
+;;
+;; allegro (Allegro Common Lisp, Commercial). Starting with version
+;;         3.0 (currently at 6.2). Note that allegro has a special
+;;         switch (allegro>= x y) which allows one to test for a
+;;         specific version or later.
+;;
+;; lucid (Lucid Common Lisp, Commerical). Now out of business, bought
+;;       by Allegro.
+;;
+;; lispworks
+;;
+;; cmu (Carnegie Mellon Lisp, Free). Open source lisp. Later versions
+;;     support multiple processes (and cmu mp).
+;;
+;; clisp (C-Lisp, Free) Lisp to C compiler.
+;;
+;; kcl (Kyoto Common Lisp, Free).  Open source lisp.
+;;
+;; mcl (Macintosh Common Lisp, Commercial). Common Lisp for Macintosh.
+;;     Version 3 and later has multiprocess support. Note was
+;;     previously called "Coral Common Lisp" so uses abbreviations
+;;     ccl, ccl-3 &c.
+;;
+;; apple This nominally refers to lisps running on Apple Macintosh
+;;       computers. Apple paid for/assisted in support for porting
+;;       Garnet to Mac OS in early 90s. With Mac OS X, Apple provides
+;;       X windows support, so nominally we could run under CLX too.
+;;       Probably many of these switches need to be changed to (and
+;;       apple (not clx)). I'm still experimenting with Mac OS X
+;;       version of garnet.
+;;
+;; Note that nobody ever paid the CMU development team for Windows
+;; port. Contributions are welcome here. I am also working on an
+;; OpenGL port which may make it easier to run cross platform.
+;;
+;;      --Russell Almond 10/02/03
+
+
+;;;; garnet-compiler.lisp
+#|
+============================================================
+Change log:
+         10/05/03 Russell Almond - Changed to use
+                  garnet-compile/garnet-load so we can apply MCL
+                  #\linefeed bug workaround.
+         10/02/03 Russell Almond - Added Kr-Doc
+         10/02/03 Russell Almond - Added Protected Eval
+         03/16/94 Andrew Mickish - Added Gworld module for Mac
+         11/01/93 Andrew Mickish - Added GEM
+         10/14/93 Andrew Mickish - Removed Lucid compiler proclamation
+         05/12/93 Dave Kosbie - Moved gadgets before debug
+         04/15/93 Andrew Mickish - Added lucid memory-management instruction
+         04/05/93 Dave Kosbie - Added Garnet-Utils
+         07/23/92 Dario Giuse - Moved C32 before Lapidary
+         06/24/92 Andrew Mickish - Added C32
+	 04/02/92 McDaniel - new multifont
+         02/20/92 Andrew Mickish - Added gestures
+         03/11/91 Andrew Mickish - Added aggregraphs
+         12/5/89 Brad Myers - Fixed so works when files are in /src directories
+         10/30/89 Brad Myers - Added debug, changed names
+         8/18/89 Brad Myers - Added Gadgets
+         6/21/89 Brad Myers - Created
+============================================================
+|#

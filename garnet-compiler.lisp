@@ -19,32 +19,6 @@
 ;;;
 ;;;
 
-#|
-============================================================
-Change log:
-         10/05/03 Russell Almond - Changed to use
-                  garnet-compile/garnet-load so we can apply MCL
-                  #\linefeed bug workaround.
-         10/02/03 Russell Almond - Added Kr-Doc
-         10/02/03 Russell Almond - Added Protected Eval
-         03/16/94 Andrew Mickish - Added Gworld module for Mac
-         11/01/93 Andrew Mickish - Added GEM
-         10/14/93 Andrew Mickish - Removed Lucid compiler proclamation
-         05/12/93 Dave Kosbie - Moved gadgets before debug
-         04/15/93 Andrew Mickish - Added lucid memory-management instruction
-         04/05/93 Dave Kosbie - Added Garnet-Utils
-         07/23/92 Dario Giuse - Moved C32 before Lapidary
-         06/24/92 Andrew Mickish - Added C32
-	 04/02/92 McDaniel - new multifont
-         02/20/92 Andrew Mickish - Added gestures
-         03/11/91 Andrew Mickish - Added aggregraphs
-         12/5/89 Brad Myers - Fixed so works when files are in /src directories
-         10/30/89 Brad Myers - Added debug, changed names
-         8/18/89 Brad Myers - Added Gadgets
-         6/21/89 Brad Myers - Created
-============================================================
-|#
-
 (in-package "COMMON-LISP-USER")
 
 (unless (and (boundp 'load-utils-p-copy)        (boundp 'Garnet-Utils-Src)
@@ -52,7 +26,7 @@ Change log:
 	     (boundp 'load-gworld-p-copy)       (boundp 'Garnet-Gworld-Src)
 	     (boundp 'load-gem-p-copy)          (boundp 'Garnet-Gem-Src)
 	     (boundp 'load-opal-p-copy)         (boundp 'Garnet-Opal-Src)
-	     (boundp 'load-truetype-p-copy)     (boundp 'Garnet-Truetype-Src)
+#-(and)	     (boundp 'load-truetype-p-copy)     #-(and)(boundp 'Garnet-Truetype-Src)
 	     (boundp 'load-inter-p-copy)        (boundp 'Garnet-Inter-Src)
 	     (boundp 'load-multifont-p-copy)
 	     (boundp 'load-ps-p-copy)           (boundp 'Garnet-PS-Src)
@@ -71,7 +45,7 @@ Change log:
   loading this file"))
 
 ;;; RGA create bin directory if needed.
-(when Multiple-Garnet-Bin-Dirs
+(when Multiple-Garnet-Binary-Directories
   (garnet-mkdir-if-needed Garnet-Binary-Pathname))
 
 (when compile-utils-p
@@ -103,11 +77,11 @@ Change log:
 (unless compile-opal-p
   (load Garnet-Opal-Loader))
 
-#-(or allegro CMU)
+#-(and)
 (when compile-truetype-p
   (format T "~%  %%%%%%%%%%%%%%  Compiling Truetype %%%%%%%%%%%%%%% ~%")
   (garnet-load "truetype-src:truetype-compiler"))
-#-(or allegro CMU)
+#-(and)
 (unless compile-truetype-p
   (load Garnet-Truetype-Loader))
 

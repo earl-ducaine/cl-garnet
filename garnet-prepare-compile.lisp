@@ -59,25 +59,6 @@
 ;;  (since they are defined here using defvar, the old name will stay in affect). 
 ;; 
 
-;;; Change log:
-;;    10/02/03 Russell Almond - Added compile-kr-doc-p
-;;    10/02/03 Russell Almond - Added Protected Eval.
-;;    11/10/93 Andrew Mickish - Added Gem
-;;    04/05/93 Dave Kosbie    - Added Garnet-Utils
-;;    06/24/92 Andrew Mickish - Added C32
-;;    05/14/92 Pedro Szekely  - Initialize launch-process-p to NIL.
-;;    05/04/92 Russell Almond - Added allegro-v4.1 switches
-;;    04/29/92 VanderZanden   - Released lapidary.
-;;    04/02/92 McDaniel       - New multifont.
-;;    03/19/92 Andrew Mickish - Changed setf's to defvar's
-;;    02/27/91 Dilip D'Souza  - added everything with #+allegro-v4.0 switches
-;;    12/5/89 Brad Myers      - Fixed so works by setting special flag for
-;; 				garnet-loader
-;;    10/30/89 Brad Myers     - Added Debug
-;;    08/18/89 Brad Myers     - Added Toolkit
-;;    06/21/89 Brad Myers     - Created
-
-
 
 (in-package :COMMON-LISP-USER)
 
@@ -87,7 +68,7 @@
 (defvar compile-gworld-p T)
 (defvar compile-gem-p T)
 (defvar compile-opal-p T)
-#+cmu (defvar compile-truetype-p NIL) #-cmu (defvar compile-truetype-p t)
+#-(and)(defvar compile-truetype-p t)
 (defvar compile-inter-p T)
 (defvar compile-gesture-p T)
 (defvar compile-ps-p T)
@@ -108,7 +89,7 @@
 (defvar load-gworld-p NIL)
 (defvar load-gem-p NIL)
 (defvar load-opal-p NIL)
-(defvar load-truetype-p NIL)
+#-(and)(defvar load-truetype-p NIL)
 (defvar load-inter-p NIL)
 (defvar load-multifont-p NIL)
 (defvar load-gesture-p NIL)
@@ -134,6 +115,7 @@
 				  load-gem-p T))
 (defparameter load-opal-p-copy (if (boundp 'load-opal-p)
 				   load-opal-p T))
+#-(and)
 (defparameter load-truetype-p-copy (if (boundp 'load-truetype-p)
 				       load-truetype-p T))
 (defparameter load-inter-p-copy (if (boundp 'load-inter-p)
