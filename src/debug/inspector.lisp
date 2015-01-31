@@ -88,22 +88,47 @@
       (when (eq opal::*main-event-loop-process*
 		#+allegro mp:*current-process*
                 #+cmu mp:*current-process*
+		#+ccl ccl:*current-process*
 		#+sb-thread sb-thread:*current-thread*
-		#-(or allegro cmu sb-thread) T)
+		#-(or allegro cmu ccl sb-thread) T)
 	;; and if it is in the debugger...
 	;; the allegro code supplied by georgej@Franz.COM (George Jacob)
 	#+allegro
 	(not (zerop (multiprocessing:symeval-in-process
 		     'tpl::*break-level*
 		     opal::*main-event-loop-process*)))
-	#-allegro NIL
+	#+ccl
+	;; Modeled after allegro code above (fmg)
+	(not (zerop (ccl::symbol-value-in-process
+		     'ccl::*break-level*
+		     opal::*main-event-loop-process*)))
+	#+sbcl
+	;; A thread that is broken will bind the variable
+	;; sb-debug:*debug-condition* whereas in a running
+	;; thread it will be unbound.
+	(ignore-errors
+	  (sb-thread:symbol-value-in-thread
+	   'sb-debug:*debug-condition*
+	   *process-with-main-event-loop*))
+	#-(or allegro ccl sbcl) NIL
 	)
       ;; if not running the m-e-l process, then check if in debugger.
       ;; If so, then assume main-event-loop was in the process that crashed.
       ;; (This might be wrong if there are multiple processes in the
       ;; application, but the one that crashed is NOT the one running m-e-l).
       #+sb-thread
-      (not opal::*inside-main-event-loop*)
+      (if opal::*inside-main-event-loop*
+	  (ignore-errors
+	    (sb-thread:symbol-value-in-thread
+	     'sb-debug:*debug-condition*
+	     *process-with-main-event-loop*))
+	  t)
+      #+ccl
+      (if opal::*inside-main-event-loop*
+	  (not (zerop (ccl::symbol-value-in-process
+		       'ccl::*break-level*
+		       opal::*main-event-loop-process*)))
+	  t)
       #+allegro
       (if opal::*inside-main-event-loop*
 	  (not (zerop (mp:symeval-in-process 'tpl::*break-level* mp:*current-process*)))

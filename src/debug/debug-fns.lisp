@@ -598,7 +598,7 @@ ChangeLog:
          #-apple
          (progn
 	   ;; first, throw away any pending events
-	   (xlib:event-case (opal::*default-x-display* :discard-p t :timeout 1)
+	   (xlib:event-case (gem::*default-x-display* :discard-p t :timeout 1)
 			    (:destroy-notify () NIL)  ; get rid of warnings
 			    (otherwise () t))
 	   (xlib:event-case
@@ -613,15 +613,11 @@ ChangeLog:
 	     (setf obj (identify window x y garnet-code verbose))
 	     t)
 	    (key-press
-	     (event-window x y state code)
+	     (event-window x y state code time)
 	     (setf window (getf (xlib:drawable-plist event-window) :garnet))
 	     (setf loc-x x)
 	     (setf loc-y y)
-	     (setf garnet-code (interactors::translate-character
-				(gem:display-info-display
-				 (the gem:DISPLAY-INFO
-				      (g-value window :display-info)))
-				code state))
+	     (setf garnet-code (gem::translate-character event-window x y state code time))
 	     (cond (garnet-code
 		    (setf obj (identify window x y garnet-code verbose))
 		    t);; exit the event loop
@@ -775,7 +771,7 @@ ChangeLog:
 	     (not (dolist (cut-string-member value)
 		    (unless (opal::cut-string-p cut-string-member) (return T))))))
     (:image			;; bitmap
-     #-apple (xlib::image-p value)
+     #-apple (typep value 'xlib:image) ;; was (xlib::image-p value)
      #+apple (eq gem::*MAC-BUFFER* (class-of value)))
     (:aggregate
 	(or (null value)
