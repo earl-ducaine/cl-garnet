@@ -102,7 +102,7 @@
 	(oldn (car oldns)(car oldns))
 	(newns newnames (cdr newns))
 	(newn (write-obj (car newns))(write-obj (car newns)))
-	(gadgets (get-values aggrel :components) (cdr gadgets))
+	(gadgets (get-value aggrel :components) (cdr gadgets))
 	(gadget (car gadgets)(car gadgets))
 	)
        ((null oldns))
