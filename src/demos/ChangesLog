@@ -1,0 +1,108 @@
+
+;;;; demos-compiler.lisp
+;;; changes:
+;;; 10/2/03 RGA --- New compile/load protocol
+;;;  7/28/96 RGA --- changed to use garnet-compile/load
+;;; 20-Oct-93 Mickish    Added Demo-Unistrokes
+;;; 24-Feb-93 Mickish    Removed references to compile-opal/inter-p
+;;; 19-Feb-93 Mickish    Demo-Circle ---> Demo-Virtual-Agg
+;;; 03-Feb-93 Mickish    Demo-Calculator ---> Garnet-Calculator
+;;;  4-Jun-92 Myers	 Added demo-animator
+;;; 30-Apr-92 Pervin     Removed demo-fade (it's now demo-logo).
+;;; 28-Apr-92 Mickish    Added garnetdraw
+;;; 13-Apr-92 Mickish    Added demo-logo.
+;;; 02-Mar-92 Mickish    Added load of gestures, demo-gesture.
+;;; 27-Mar-92 Pervin     Added demo-circle.
+;;; 27-Mar-91 Pervin     Only load aggregraphs and gadgets if not compiling
+;;;			 all of Garnet.
+;;; 22-Mar-91 Pervin	 Added load of aggregraphs and gadgets.
+;;; 15-Mar-91 Mickish    Added demo-graph, demo-truck
+;;; 14-Mar-91 Pervin     Added demo-motif.
+;;; 12-Oct-90 Osamu	 Added demo-xasperate, demo-calculator, demos-controller.
+;;;  3-Aug-90 Myers	 Added demo-fade.
+;;;  1-Aug-90 Pervin     Added demo-arith.
+;;; 16-Jul-90 Pervin     Added demo-file-browser and demo-schema-browser.
+;;; 12-Apr-90 Mitchell   Added #+allegro (gc t)
+;;; 2-Apr-90 Cook/Pervin Added #+explorer part.
+;;;
+
+;;;; demo-multifont.lisp
+#|
+============================================================
+Change log:
+        5/29/94 Marty Geier - Changed load to garnet-load 
+                and made position of main window in do-go viewable.
+        9/22/93 Andrew Mickish - Ignored double-buffered-p in Do-Go
+        6/01/93 Matthew Goldberg - Added Toggle-Lisp-Mode option in Edit menu;
+                                   Added message which prints paren-match
+                                    in Lisp-mode.
+        2/24/93 Andrew Mickish - Removed references to compile-opal/inter-p
+        2/23/93 Andrew Mickish - Removed call to notice-items-changed for mbar
+        2/03/93 Rajan Parthasarathy - Switched to motif-menubar
+        2/01/93 Andrew Mickish - Made multifont text objects fast-redraw
+        6/19/92 Rajan Parthasarathy - Added auto-scroll
+        4/15/92 Andrew Mickish - Changed gv references of PULL-DOWN to g-value,
+                  made background of outer window black
+	4/12/92 Ed Pervin - destroy menubar in do-stop
+         4/9/92 Richard McDaniel - added instructions
+         3/5/92 Richard McDaniel - started
+============================================================
+|#
+
+
+
+;;;; demo-manyobjs.lisp
+#|
+============================================================
+Change log:
+       05/29/94 Marty Geier - Changed window position in do-go
+       05/27/92 Ed Pervin - The latest CMUCL requires that the
+                            argument to random be declared an integer.
+       03/25/92 Andrew Mickish - Get-Values ---> G-Value
+       12/05/91 Andrew Mickish - Added dzg's change to Move function, removed
+                  'time' calls apparently for debugging.
+	6/27/90 Ed Pervin - Made boxes not be scrambled when
+			    window changes size.
+        8/18/89 Brad Myers - Created
+============================================================
+|#
+
+
+;;;; demo-angle.lisp
+#|
+============================================================
+Change log:
+         5/29/94 Marty Geier - Changed main window position too be viewable
+	 4/07/92 Pervin - Change case to cond statement in make-gauge.
+	 6/20/89 Brad Myers - Fixed to work on Suns, etc.
+	 6/19/89 Andy Mickish - Revised to use aggregadgets, polylines, and
+		arrowhead
+============================================================
+|#
+
+;;;; demos-controller.lisp
+;;;
+;;; 29-Sep-93 Andrew Mickish - Added Demo-Unistrokes
+;;; 12-Aug-93 Andrew Mickish - Put garnet-processes switch on wait-amount
+;;; 16-Jul-93 Brad Myers - added mouseline popup
+;;; 17-Feb-93 Andrew Mickish - Removed demo-twop, demo-sequence, demo-moveline,
+;;;             and demo-array.  Changed demo-circle to demo-virtual-agg.
+;;; 02-Feb-93 Andrew Mickish - opal:set-strings ---> opal:set-text;
+;;;                            demo-calculator ---> garnet-calculator
+;;; 27-Oct-92 Mickish - Added export to work around CMUCL bug
+;;;  4-Jun-92 Myers/Pervin - Added demo-animator; changed "animate" to "logo".
+;;;  13-Apr-92 Brad Myers -  Changed demo-fade to demo-logo
+;;;  3-Apr-92 Mickish - Added Demo-Gesture
+;;;  2-Apr-92 McDaniel - New multifont
+;;; 30-Mar-92 Pervin - Added demo-circle, demo-array.
+;;; 25-Feb-92 Pervin - Removed some unnecessary demos like mode, clock, truck.
+;;;			Also, added some :constant slots.
+;;; 13-Feb-92 Pervin - Merged color and non-color versions of demos.
+;;; 10-Oct-91 Mickish - Added color-demo-fade
+;;; 14-Mar-91 Mickish - Added demo-graph
+;;; 13-Mar-91 Pervin Test whether using color screen.
+;;;           If so, use color versions of demos.
+;;; 13-Mar-91 Mickish - Added demo-motif and demo-truck
+;;; 15-Nov-90 Pervin In Do-Stop, added test that item is not "animate".
+;:;  5-Nov-90 Pervin In Garnet-Note-Quitted, added a test that win is boundp.
+
