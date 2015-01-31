@@ -1682,7 +1682,7 @@ TITLE, CREATOR, FOR, COMMENT - Strings for header comments.
 			      0
 			      (if flip-p 
 				  (aref a (- max-row row) col)
-				  (if (eq (aref a (- max-row row) col) *black*)
+				  (if (eq (aref a (- max-row row) col) gem::*black*)
 				      0 1)))
 			  (expt 2 power))))
 	(when (eq 0 power)
@@ -1773,7 +1773,7 @@ TITLE, CREATOR, FOR, COMMENT - Strings for header comments.
 	     (format T "~2,'0X" (second rgb))
 	     (format T "~2,'0X" (third rgb)))
 	    (t (let* ((xcolor (car (xlib:query-colors
-				    opal::*default-x-colormap* (list digit))))
+				    gem::*default-x-colormap* (list digit))))
 		      (red (inter:clip-and-map
 			    (xlib:color-red xcolor) 0 1 0 255))
 		      (green (inter:clip-and-map

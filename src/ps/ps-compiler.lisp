@@ -24,11 +24,11 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (proclaim
    (if *debug-ps-mode*
-       (and (boundp '*garnet-compile-debug-settings*)
-	    *garnet-compile-debug-settings*)
+       (and (boundp 'Garnet-Compile-Debug-Settings)
+	    Garnet-Compile-Debug-Settings)
        ;; Global default settings.
-       (and (boundp '*default-garnet-proclaim*) 
-	    *default-garnet-proclaim*))))
+       (and (boundp 'Default-Garnet-Proclaim) 
+	    Default-Garnet-Proclaim))))
 
 
 ;; Only loads this file when not compiling all of Garnet.
