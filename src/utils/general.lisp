@@ -11,19 +11,6 @@
 ;;; $Id$
 ;;
 
-;;; Change log:
-;;   12/06/94 Bruno Haible   - Named package in system::*error-handler*
-;;    1/08/94 Andrew Mickish - Added PI variables
-;;    9/22/93 Bruno Haible   - Ignored args in Probe-Directory
-;;    8/23/93 Andrew Mickish - Added probe-directory for CLISP
-;;    7/01/93 Andrew Mickish - Removed optimization proclamation
-;;    6/15/93 Andrew Mickish - Safe-functionp now checks whether the symbol
-;;                             is fbound -- so you can supply symbols that refer to fns.
-;;    6/10/93 Andrew Mickish - Moved safe-functionp here from aggrelists
-;;    6/ 3/93 Andrew Mickish - Moved verify-binding here from demo-graph
-;;                             and demo-schema-browser
-;;    4/ 5/93 Dave Kosbie    - created
-
 ;; general.lisp
 ;;
 ;; by David S. Kosbie
@@ -36,6 +23,7 @@
 (eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(WHILE
 	    UNTIL
+	    TILL
 	    DO2LISTS
 	    DOLIST2
 	    M
@@ -44,6 +32,8 @@
 	    ADD-TO-LIST
 	    VERIFY-BINDING
 	    SAFE-FUNCTIONP
+	    SHELL-EXEC
+	    DIRECTORY-P
 	    PROBE-DIRECTORY
 
             PI/2  PI3/2  2PI -2PI SHORT-PI
@@ -56,16 +46,23 @@
 (defconstant -2PI (- (* 2 PI)))
 (defconstant short-PI (coerce PI 'short-float))
 
-
 (defmacro while (test &rest body)
-  `(loop
-     (if (not ,test) (return))
+  "Loop while test is true. If already not true, don't loop at all."
+  `(do ()
+     ((not ,test))
      ,@body))
 
-(defmacro until (test &rest body)
-  `(loop
-     ,@body
-     (if ,test (return))))
+(defmacro till (test &body body)
+  "Loop until test is true. If already true, don't loop at all."
+  `(do ()
+       (,test)
+     ,@body))
+
+;; Original Garnet version (loops at least once).
+(defmacro until (test &body body)
+  "Loop until test is true. Loops at least once."
+  `(loop ,@body
+      (when ,test (return))))
 
 (defmacro do2lists ((var1 list1 var2 list2 &key either?) &rest body)
  (let ((list1var  (gensym))
@@ -141,7 +138,7 @@
 ;;; Verify-Binding implementation
 ;;
 
-;; Checking, it doesn't seem as if this is used any more.
+;; Keep --- a demo uses this
 (defun VERIFY-BINDING (string)
   "Takes a string and returns the symbol coercion of the string if the
 symbol is bound.  Note: The suffix of the string is converted to all
@@ -202,11 +199,14 @@ or the symbol name if called where the first character is a colon."
 ;;;
 ;;; (end) Verify-Binding
 
-
 (defun safe-functionp (fn)
   (or (functionp fn)
       (and (symbolp fn) (fboundp fn))))
 
+;;;
+;; Note that I'm trying to move away from ad-hoc string hacking and
+;; low-level approaches in the filesystem stuff in favor of the Lisp
+;; pathname facilities.
 (defun probe-directory (filename)
   #+clisp (let ((system::*error-handler*
 		 #'(lambda (&rest args)
@@ -222,5 +222,103 @@ or the symbol name if called where the first character is a colon."
   #+allegro
   (excl:file-directory-p filename)
 
-  #-(or clisp sbcl allegro) (probe-file filename)
+  #+(or cmucl ccl)
+  (let ((truename (probe-file filename)))
+    (and truename
+	 (not (pathname-name truename))
+	 (not (pathname-type truename))))
+
+  #-(or clisp ccl cmucl sbcl allegro) (probe-file filename)
   )
+
+(defun shell-exec (command)
+  ;; Alas, can't use with-open-file because there are two streams returned
+  ;; by most of the lisp-specific commands.  Must close both streams.
+  (multiple-value-bind (the-stream error-stream)
+      #+allegro (excl:run-shell-command command :wait NIL :output :stream
+					:error-output :stream)
+      #+sbcl
+      (let ((process
+	     (sb-ext:run-program "/bin/sh" (list "-c" command)
+				 :wait t :output :stream
+				 :error :stream)))
+	(values (sb-ext:process-output process)
+		(sb-ext:process-error process)))
+      #+cmu
+      (let ((p
+	     (ext:run-program "/bin/sh" (list "-c" command)
+			  :wait NIL :output :stream :error :stream)))
+	(values (ext:process-output p) (ext:process-error p)))
+      #+ccl
+      (let ((p
+	     (ccl:run-program "/bin/sh" (list "-c" command)
+			      :wait NIL :output :stream :error :stream)))
+	(values (ccl:external-process-output-stream p)
+		(ccl:external-process-error-stream p)))
+      
+      #-(or allegro cmu ccl sbcl)
+      (error "Don't know how to execute shell functions in this lisp")
+      
+      (let ((output-string (make-array '(0)
+				       :element-type 'character
+				       :fill-pointer 0 :adjustable T)))
+	(do ((next-char (read-char the-stream NIL :eof)
+			(read-char the-stream NIL :eof)))
+	    ((eq next-char :eof)
+	     (close the-stream)
+	     (if (streamp error-stream) (close error-stream))
+	     #+allegro (system:os-wait))
+	  (vector-push-extend next-char output-string))
+	output-string)))
+
+
+;; If the -d test is true, shell-exec returns "1". Otherwise, it
+;; returns "". This syntax works for all kinds of Unix shells: sh,
+;; csh, ksh, tcsh, ...
+;;
+;; Avoid the use of the shell if possible (use probe-directory above).
+(defun directory-p (pathname)
+  #+(or sbcl allegro ccl cmucl)
+  ;; 1. Needn't call a shell if we can do the test ourselves.
+  ;; 2. In case pathname contains Latin-1 characters. clisp is 8 bit clean,
+  ;;    while most Unix shells aren't.
+  (garnet-utils:probe-directory pathname)
+
+  #-(or sbcl allegro ccl cmucl)
+  ;; command-string is the string that's going to be executed.
+  (let ((command-string
+	 (concatenate 'string "test -d " pathname " && echo 1")))
+    (unless (equal "" (shell-exec command-string))
+	    T))
+)
+
+
+;; This is an industrial-strength version of opal:directory-p.  The difference
+;; is that extra work is done to ensure that single and double quotes are
+;; passed to the shell correctly.  Since it does more work, only use this
+;; version if you find you really need it.  This code was contributed by
+;; Bruno Haible.
+#+comment
+(defun directory-p (pathname)
+  ;; Must quote the pathname since Unix shells interpret characters like
+  ;; #\Space, #\', #\<, #\>, #\$ etc. in a special way. This kind of quoting
+  ;; should work unless the pathname contains #\Newline and we call csh.
+  (flet ((shell-quote (string) ; surround a string by single quotes
+	   (let ((qchar nil) ; last quote character: nil or #\' or #\"
+		 (qstring (make-array 10 :element-type 'character
+				      :adjustable t :fill-pointer 0)))
+	     (map nil #'(lambda (c)
+			  (let ((q (if (eql c #\') #\" #\')))
+			    (unless (eql qchar q)
+			      (when qchar (vector-push-extend qchar qstring))
+			      (vector-push-extend (setq qchar q) qstring))
+			    (vector-push-extend c qstring)))
+		  string)
+	     (when qchar (vector-push-extend qchar qstring))
+	     qstring)))
+    ;; command-string is the string that's going to be executed.
+    (let ((command-string
+	   (concatenate 'string "test -d " (shell-quote pathname) " && echo 1")))
+      (unless (equal "" (shell-exec command-string))
+	T))))
+		   
