@@ -44,7 +44,8 @@
 		   ((or null string) :window-title)
 		   (integer :window-left :window-top :button-panel-h-spacing)
 		   ((integer 0) :min-gadget-width :num-visible)
-		   (string :initial-directory :message-string)
+		   (string :message-string)
+		   (filename-type :initial-directory)
 		   (list :button-panel-items :query-buttons)
 		   ((or (is-a-p opal:font) (is-a-p opal:font-from-file))
 		    :dir-input-field-font :dir-input-label-font

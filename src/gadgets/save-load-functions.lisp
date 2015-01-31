@@ -132,7 +132,7 @@
 	 (qg (g-value save-gad :query-window))
 	 (dummy NIL))
     (if (AND ;;Already exists
-	     (gu:probe-directory (concatenate 'string PREV-DIR filename))
+	     (probe-file (merge-pathnames filename PREV-DIR))
 	     ;;User wants it checked
 	     (g-value save-gad :check-filenames-p))
 	(progn
@@ -185,7 +185,7 @@
 	 (save-win (g-value gadget :window))
 	 (prev-dir (g-value save-gad :prev-dir)))
   (UNLESS (string= "" value)
-    (when (OR (opal:directory-p (concatenate 'string PREV-DIR value))
+    (when (OR (gu:directory-p (concatenate 'string PREV-DIR value))
 	      (not (or (string= (directory-namestring value) ".")
 		       (string= (directory-namestring value) "./")
 		       (string= (directory-namestring value) ""))))
@@ -206,7 +206,7 @@
 
 
 
-#-(or cmu sbcl)
+#-(and)
 (defun real-path (path)
   (let* ((trimmed (string-right-trim "/" path))
          (len (length trimmed))
@@ -226,14 +226,12 @@
 			:end (length truncat))))))
 
 
-#+cmu
+#+(and)
 (defun real-path (path)
-  (cond ((or (string= path "") (string= path "."))
-	 (lisp::namestring (ext::default-directory)))
-	(t path)))
+  (namestring (or (ignore-errors (truename path))
+		  *default-pathname-defaults*)))
 
-
-#+sbcl
+#-(and)
 (defun real-path (path)
   (cond ((or (string= path "") (string= path "."))
 	 (namestring *default-pathname-defaults*))
@@ -251,7 +249,7 @@
 	 (val (real-path value)))
     (if (gu:probe-directory (directory-namestring val))
      	(let ((dir-name NIL))
-	  (if (opal:directory-p val)
+	  (if (gu:directory-p val)
 	      (progn
 		(setf dir-name (string-right-trim "/" val))
 		(setf dir-name (concatenate 'string
@@ -307,49 +305,36 @@
 ;;; menu.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-
-;;; SBCL adheres to a rather pedantic interpretation of the ANSI standard that sometimes
-;;; produces behavior that is not like other implementations.  This can be annoying at first
-;;; but eventually one gets the hang of it.
-#+SBCL
 (defparameter *wild-pathname* (make-pathname :name :wild :type :wild))
 
-
-#+SBCL
 (defun put-filenames-in-menu (save-gad dir-name)
-  (let ((file-list NIL)
-	(dir (directory (merge-pathnames dir-name *wild-pathname*)))
-	(save-win (g-value save-gad :window)))
-    (dolist (name dir)
-      (setf file-list 
-	    (cons 
-	     (string-left-trim '(#\/) (enough-namestring name (truename dir-name)))
-	     file-list)))
-    (setf file-list (sort file-list #'(lambda (x y) (string< x y))))
-    (push ".." file-list)
-    (s-value (g-value save-gad :file-menu) :items file-list)
-    (s-value (g-value save-gad :file-menu) :selected-ranks NIL)
-    (s-value (g-value save-gad :message) :string "")
-    (s-value (g-value save-gad :file-menu :scroll-bar) :value 0)
-    (opal:update save-win)))
-
-
-#-SBCL
-(defun put-filenames-in-menu (save-gad dir-name)
-  (let ((file-list NIL)
-	(dir (directory dir-name
+  (let ((dir-list nil)
+	(file-list NIL)
+	(dir (directory (merge-pathnames dir-name *wild-pathname*)
 			;; cmucl has a few keyword options that
 			;; default to values we might not like...
 			#+cmu :check-for-subdirs #+cmu NIL
-			#+cmu :truenamep #+cmu NIL
 			#+cmu :follow-links #+cmu NIL
-                        #-cmu :directories #-cmu t))
+			))
 	(save-win (g-value save-gad :window)))
-    (dolist (name dir)
-	    (setf file-list (cons (string-left-trim '(#\/)
-                                      (enough-namestring name (truename dir-name)))
-                                  file-list)))
-    (setf file-list (sort file-list #'(lambda (x y) (string< x y))))
+    (dolist (pathname dir)
+      (let ((filepart (make-pathname :directory nil :defaults pathname)))
+	(if (equal filepart #P"")
+	    ;; It's a directory. Extract the last component and
+	    ;; turn it into a relative directory pathname. This
+	    ;; will put a slash at the end of the namestring.
+	    ;; I'm hoping this will be portable.
+	    (push 
+	     (namestring
+	      (make-pathname
+	       :directory (cons :relative (last (pathname-directory pathname)))))
+	     dir-list)
+	    ;; It's a file.
+	    (push (namestring filepart) file-list))))
+    
+    (setf file-list
+	  (append(sort dir-list #'(lambda (x y) (string< x y)))
+		 (sort file-list #'(lambda (x y) (string< x y)))))
     (push ".." file-list)
     (s-value (g-value save-gad :file-menu) :items file-list)
     (s-value (g-value save-gad :file-menu) :selected-ranks NIL)
@@ -365,10 +350,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defun File-Menu-Selection (gadget value)
   (let ((prev-dir (g-value gadget :parent :prev-dir)))
-    (Update-File-Menu gadget
-		      (concatenate 'string
-				   (namestring (truename Prev-Dir))
-				   (g-value value :item)))))
+    (Update-File-Menu gadget (merge-pathnames (g-value value :item)
+					      (truename Prev-Dir)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; This function gets called whenever the user hits
@@ -423,8 +406,8 @@
     (when (g-value gadget :check-filenames-p)
       (let* ((load-win (g-value gadget :window)))
 	(UNLESS (string= "" value)
-	  (when (OR (opal:directory-p value)  ; this half of Or, MUST come 1st
-		    (not (probe-file (concatenate 'string dir value))))
+	  (when (OR (gu:directory-p value)  ; this half of Or, MUST come 1st
+		    (not (probe-file (merge-pathnames value dir))))
 	    (inter:beep)
 	    (setf valid-p NIL)
 	    (s-value gad :value "")

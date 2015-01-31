@@ -222,7 +222,8 @@ Change log:
 		    ;; then window is already visible, move it to the new obj
 		    (PopUp-MouseLine-Text inter new)
 		    ;; else window not yet displayed, so wait.
-		    (Launch-MouseLine-Process inter new wait-amount)))
+		    (Launch-MouseLine-Process inter new wait-amount)
+		    ))
 	      (progn
 		(when (and (setq win (g-value inter :operates-on :popupwin))
 			   (schema-p win))
@@ -270,10 +271,10 @@ Change log:
   ;; internal slots
   ;; RGA -- need to add popupwin to user supplied list of windows
   (:all-wins (o-formula (if (gvl :popupwin)
-                 (if (listp (gvl :windows))
-                     (cons (gvl :popupwin) (gvl :windows))
-                   (list (gvl :popupwin) (gvl :windows)))
-               (gvl :windows))))
+			    (if (listp (gvl :windows))
+				(cons (gvl :popupwin) (gvl :windows))
+				(list (gvl :popupwin) (gvl :windows)))
+			    (gvl :windows))))
   (:list-of-objects (o-formula (List-Of-Objects-Func)))
 
   (:string "<No info>") ; set directly by interactor
@@ -420,9 +421,9 @@ Change log:
 			 (:string "Push Me")
 			 (:help-string "Left Button Pushes Button"))
 		       (create-instance 'mouseline-subagg opal:aggregate)
-		       (create-instance 'MouseLine-obj MouseLine
+		       (create-instance 'MouseLine-obj gg:MouseLine
 			 (:windows (list Extra-MouseLine-Win MouseLine-Win)))
-		       (create-instance 'mouselinepopup-obj mouselinepopup
+		       (create-instance 'mouselinepopup-obj gg:mouselinepopup
 			 (:windows (list Extra-MouseLine-Win MouseLine-Win)))
 		       )
     (opal:add-components mouseline-subagg
