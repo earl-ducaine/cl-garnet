@@ -9,17 +9,24 @@
 #
 SBCL=/usr/local/bin/sbcl
 CMUCL=/usr/local/bin/lisp
-ACL=/usr/local/allegro/8.1/alisp
+ACL=/beta/homedir/brg/aic/allegro-cl-amd64-linux/8.1/alisp
 CCL=/usr/local/bin/ccl
+
+# Setting this to "T" turns on the debug flag, adding a lot of
+# checking and printing to the code. Generally don't do this in a
+# production version.
+DEBUG=NIL
 
 usage()
 {
 echo "
-  Usage: `basename $0` <platform>
+  Usage: `basename $0` [-d] <platform>
 
   where platform is one of:
 
 	sbcl	-- Steel Bank Common Lisp ($SBCL)
+
+	ccl	-- Clozure Common Lisp ($CCL)
 
 	cmucl	-- CMU Common Lisp ($CMUCL)
 
@@ -27,13 +34,30 @@ echo "
 
   (If the above paths aren't correct, they should be set at the beginning
   of the file $0).
+
+  If -d is given, build a debugging version of Garnet.
 "
 }
 
-if [ $# -ne 1 ]; then
-    usage; exit 0;
-fi
-
+case $# in
+    1)
+	DEBUG=NIL
+	;;
+    2)
+	if [ X"$1" = X"-d" ]; then
+	    DEBUG=T
+	    shift;
+	else
+	    usage;
+	    exit 1
+	fi
+	;;
+    *)
+	usage;
+	exit 1
+	;;
+esac
+    
 case $1 in
     sbcl)
 	BUILD="$SBCL --disable-debugger"
@@ -61,22 +85,25 @@ case $1 in
 	;;
     *)
 	usage;
-	exit -1
+	exit 1
 	;;
 esac
 
 
 $BUILD << EOF
+(require :clx)
 (load "garnet-prepare-compile")
-(defvar Garnet-Garnet-Debug NIL) ;; no debugging code
+(defvar Garnet-Garnet-Debug $DEBUG)
 (load "garnet-loader")
 (load "garnet-compiler")
 $QUIT
 EOF
 
 [ $? -eq 0 ] && $LOAD << EOF
-(load "garnet-loader")
 
+(require :clx)
+(defvar Garnet-Garnet-Debug $DEBUG) ; debugging version
+(load "garnet-loader")
 (let ((args (list "$IMAGE"
                   #+sbcl :executable #+sbcl t
                   #+cmu :executable #+cmu t
