@@ -32,7 +32,7 @@
 #|
 ============================================================
 Change log:
-        5/29/94 Marty Geier - Changed load to garnet-load 
+        5/29/94 Marty Geier - Changed load to garnet-load
                 and made position of main window in do-go viewable.
         9/22/93 Andrew Mickish - Ignored double-buffered-p in Do-Go
         6/01/93 Matthew Goldberg - Added Toggle-Lisp-Mode option in Edit menu;
@@ -138,7 +138,7 @@ Change log:
         04/19/90 Andrew Mickish - Rewrote to use aggregadgets, aggrelists, and
                                  polylines
 	10/10/89 Brad Myers - added fast redraw objects
-        06/19/89 Brad Myers - added printout and #cmu/#lucid 
+        06/19/89 Brad Myers - added printout and #cmu/#lucid
         04/07/89 Dario Giuse and Brad Myers - changed to work with new KR
 ============================================================
 |#

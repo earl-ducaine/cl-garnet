@@ -1,4 +1,4 @@
-
+;; $Id$
 ;;;; multifont-textinter.lisp
 ;;; CHANGE LOG:
 ;;   22-july-93 Brad Myers - Make sure that don't have selection visible

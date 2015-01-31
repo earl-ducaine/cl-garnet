@@ -1,4 +1,4 @@
-
+;; $Id$
 ;;;; kr-compiler.lisp
 ;;;  Changes:
 ;;   10/02/03 RGA --- New compile/load protocol

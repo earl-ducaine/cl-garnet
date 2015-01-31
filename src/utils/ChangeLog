@@ -1,4 +1,4 @@
-
+;; $Id$
 ;;;; general.lisp
 ;;; Change log:
 ;;   12/06/94 Bruno Haible   - Named package in system::*error-handler*

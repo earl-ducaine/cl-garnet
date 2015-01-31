@@ -1,4 +1,4 @@
-
+;; $Id$
 ;;;; prompter.lisp
 ;;; Change log:
 ;;  09/03/92  RGA --- Removed priority levels

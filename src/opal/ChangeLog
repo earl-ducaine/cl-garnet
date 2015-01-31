@@ -1,5 +1,4 @@
-
-
+;; $Id$
 ;;;; multifont.lisp
 ;;; CHANGE LOG:
 ;; 22-May-94 Mickish  Commented out mysterious g-value of :colormap-index slot

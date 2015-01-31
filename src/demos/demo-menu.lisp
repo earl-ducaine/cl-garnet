@@ -22,39 +22,6 @@
 ;;; Designed by Brad A. Myers
 ;;; Aggregadget Version Written by Andrew Mickish
 ;;; Color option added by Ed Pervin
-#|
-============================================================
-Change log:
-        05/29/94 Marty Geier - Changed main window position in do-go
-        05/29/94 Marty Geier - Changed maxwidth in menu6 to +5 so that
-                 largest string would not overlap with line.
-        07/22/93 Brad Myers - added test of new multi-feedback in menuinter
-        05/26/93 Andrew Mickish - Added more constants
-        05/20/93 Andrew Mickish - Added :height formula to MENU6-ITEM-PROTO;
-                  removed references to :number-of-comps; added :height formula
-                  in MENU2-ITEM-PROTOTYPE;  made RED-LINE-4, RED-GRAY-FILL, and
-                  RED-DASHED-LINE unnamed schemas; made :left and :top not
-                  constant in items of MENU5; added many new constant
-                  declarations; Made final-feedback of MENU5 fast-redraw;
-        04/09/92 Andrew Mickish - Changed create-instances of opal:default-
-                  line-styles to opal:line-styles
-        03/25/92 Andrew Mickish - Get-Values ---> G-Value
-	02/25/92 Pervin - Added many :constant slots
-	02/14/92 Pervin - Merged demo-menu and color-demo-menu
-	03/13/90 Ed Pervin - Changed package name back to demo-menu.
-			    Merged with demo-menu.
-	08/10/90 Ed Pervin - In MENU3-OBJ, :inv-obj no longer exists,
-			so I had to put a formula in the :final-feedback.
-	07/25/90 Roger Dannenberg - Changed :window slot of interactor
-				   to (gv-local :self ...)
-	04/24/90 Edward Pervin - Added color
-        04/19/90 Andrew Mickish - Rewrote to use aggregadgets, aggrelists, and
-                                 polylines
-	10/10/89 Brad Myers - added fast redraw objects
-        06/19/89 Brad Myers - added printout and #cmu/#lucid 
-        04/07/89 Dario Giuse and Brad Myers - changed to work with new KR
-============================================================
-|#
 
 
 (in-package :DEMO-MENU)
