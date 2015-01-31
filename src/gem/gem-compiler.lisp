@@ -10,24 +10,18 @@
 ;;;
 ;;; $Id::                                                             $
 
-;;; Changes:
-;;; 10/2/03 RGA --- New compile/load protocol
-;;;        7/28/96 RGA --- changed to use garnet-compile/load
-;;;  1-Nov-93 Mickish - Created
-
-
 (in-package "COMMON-LISP-USER")
 
-(defvar *debug-gem-mode* t)
+(defvar *debug-gem-mode* nil)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (proclaim
    (if *debug-gem-mode*
-       (and (boundp '*garnet-compile-debug-settings*)
-	    *garnet-compile-debug-settings*)
+       (and (boundp 'Garnet-Compile-Debug-Settings)
+	    Garnet-Compile-Debug-Settings)
        ;; Global default settings.
-       (and (boundp '*default-garnet-proclaim*) 
-	    *default-garnet-proclaim*))))
+       (and (boundp 'Default-Garnet-Proclaim) 
+	    Default-Garnet-Proclaim))))
 
 
 (Defvar Garnet-Gem-Files

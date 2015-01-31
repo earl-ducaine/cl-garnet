@@ -17,11 +17,6 @@
 ;; method for each device.
 
 
-;;; CHANGE LOG:
-;;  12/15/93 Andrew Mickish - Moved shared macros here from x.lisp
-;;  11/11/93 Andrew Mickish - Put into CLTL2 form
-
-
 (in-package "GEM")
 
 (eval-when (:execute :load-toplevel :compile-toplevel)

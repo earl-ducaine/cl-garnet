@@ -10,40 +10,6 @@
 
 ;;; $Id$
 
-
-;;; CHANGE LOG:
-;;  
-;;  [2003/11/20:rga]        - Added further patch to Robert's for same
-;;                            problem.
-;;  [2003/11/20:rpg]        - Fix remaining bugs in gem:create-image, where
-;;                            depth and bits-per-pixel don't match.
-;;  17-DEC-1999 Fred Gilham - Fix problem where pixmap format doesn't match
-;;                            valid pixmap formats in displays where `depth'
-;;                            and `bits-per-pixel' values differ
-;;                            (see also pixmap.lisp).
-;;  08/20/98 Fred Gilham    - Added CMU to x-map-and-wait conditioanl for
-;;                            better updating.
-;;  08/01/98 Fred Gilham    - Fixed problems with color displays deeper than
-;;                            8 bits.
-;;  01/30/95 Andrew Mickish - New destroy-notify-window for CMUCL
-;;  12/02/94 Andrew Mickish - Removed stippled-p parameter from draw-image
-;;  05/29/94 Andrew Mickish - Added ability to specify a list for font :face
-;;  05/25/94 Andrew Mickish - Added optional drawable parameter to X-Draw-Line
-;;  04/15/94 Andrew Mickish - Fixed tiny width and height for X-Draw-Arc
-;;  04/13/94 Andrew Mickish - Fixed :QUERY-COLORS branch of X-Colormap-Property
-;;  03/25/94 Andrew Mickish - Fixed title clause in x-set-window-property
-;;  03/21/94 Andrew Mickish - Fixed corner fill of roundtangles
-;;  01/21/94 Andrew Mickish - New Gem method color-to-index
-;;  01/12/94 Andrew Mickish - New window-from-drawable
-;;  01/07/94 Andrew Mickish - Fixed functions that destroy window from X menu
-;;  01/03/94 Andrew Mickish - Moved PI variables to utils/general.lisp
-;;  12/17/93 Andrew Mickish - New X-Device-Image
-;;  12/15/93 Andrew Mickish - Moved macros to macros.lisp
-;;  11/23/93 Andrew Mickish - Fixed line and fill placement in x-draw-arc,
-;;                            line placement in x-draw-rectangle, and fill
-;;                            placement in x-draw-roundtangle.
-;;  11/18/93 Andrew Mickish - Removed "list" from call to xlib:free-colors
-;;  11/11/93 Andrew Mickish - Put into CLTL2 form
 
 
 ;;; This is the device handler for the X window system.  It implements the
@@ -578,6 +544,7 @@ affects an area of <width> by <height>."
 (defun x-create-cursor (root-window source mask
 			foreground background
 			from-font-p x y)
+  (declare (ignore root-window))
   "If <from-font-p> is true, the <source> is a font; otherwise, it is
 a pixmap.  Same for the <mask>.  <x> and <y> are a position when the
 source is a pixmap; otherwise, they are the cursor-char and the mask-char
@@ -775,11 +742,8 @@ pixmap format in the list of valid formats."
 	   :user-specified-size-p user-specified-size-p))
 
     (xlib:set-wm-properties drawable
-;;;			    :client-machine
-;;;			    (or 
-;;;			     #+allegro
-;;;			     (sys:getenv "HOSTNAME")
-;;;			     "")
+			    :client-machine
+			    (machine-instance)
 			    :resource-name "Opal"
 			    :resource-class :opal
 			    :name title
@@ -793,9 +757,9 @@ pixmap format in the list of valid formats."
     ;;; :TRANSFORM #'xlib:char->card8. I guess it is related to missing error
     ;;; error checking in other implementations than clisp and lispworks.
     ;;; B. Haible 20.9.1993
-    (xlib:change-property drawable
-			  :WM_CLIENT_MACHINE (short-site-name)
-			  :STRING 8)
+;;    (xlib:change-property drawable
+;;			  :WM_CLIENT_MACHINE (short-site-name)
+;;			  :STRING 8)
     
     (xlib:change-property drawable :WM_PROTOCOLS
 			  (list (xlib:intern-atom
@@ -1301,23 +1265,22 @@ pixmap format in the list of valid formats."
      (:EXPOSURE
       (event-window x y width height count)
       (event-handler-debug :EXPOSURE x y width height count)
-      (if (connected-window-p event-window)
-	(interactors::do-exposure (x-window-from-drawable root-window
-							  event-window)
+      (when (connected-window-p event-window)
+	(interactors::do-exposure (x-window-from-drawable root-window event-window)
 	  x y width height count display)))
      (:KEY-PRESS
       (event-window x y state code time)
       (event-handler-debug :KEY-PRESS event-window x y state code time)
       (if ignore-keys
 	;; We don't want keys, but check if this is the abort key
-	(let ((c (x-translate-character *root-window* 0 0 state code 0)))
-	  (when (eq c interactors::*garnet-break-key*)
-	    (format T "~%**Aborting transcript due to user command**~%")
-	    (return-from x-event-handler :abort)))
-	;; Normal case: we do want keys
-	(interactors::do-key-press
-	  (x-window-from-drawable root-window
-				  event-window) x y state code time)))
+	  (let ((c (x-translate-character *root-window* 0 0 state code 0)))
+	    (when (eq c interactors::*garnet-break-key*)
+	      (format T "~%**Aborting transcript due to user command**~%")
+	      (return-from x-event-handler :abort)))
+	  ;; Normal case: we do want keys
+	  (interactors::do-key-press
+	      (x-window-from-drawable root-window event-window)
+	    x y state code time)))
      (:BUTTON-PRESS
       (event-window x y state code time event-key)
       (event-handler-debug :BUTTON-PRESS event-window x y state code time
@@ -1360,11 +1323,15 @@ pixmap format in the list of valid formats."
       (event-handler-debug :NO-EXPOSURE)
       (unless ignore-keys
 	t))
-     (OTHERWISE () (format t "illegal event") t))))
+     (OTHERWISE
+      ()
+      (event-handler-debug :UNKNOWN)
+      t))))
 
 
-#|
+
 ;;; Old version, for old-style interactors
+#-(and)
 (defun x-event-handler (root-window ignore-keys)
   (let ((display (the-display root-window)))
     (xlib:event-case
@@ -1465,7 +1432,6 @@ pixmap format in the list of valid formats."
       (unless ignore-keys
 	t))
      (OTHERWISE () (format t "illegal event") t))))
-|#
 
 
 (defun x-flush-output (window)
@@ -2028,9 +1994,14 @@ pixmap format in the list of valid formats."
 ;;; Move the <window> to the top (if <raise-p>) or to the bottom.
 ;;;
 (defun x-raise-or-lower (window raise-p)
+  #+(and)
   (setf (xlib:window-priority (g-value window :drawable))
-	(if raise-p :above :below)))
-
+	(if raise-p :above :below))
+  #-(and)
+  (if raise-p
+      (xlib:circulate-window-up (g-value window :drawable))
+      (xlib:circulate-window-down (g-value window :drawable)))
+  )
 
 
 (defun x-read-an-image (root-window pathname)
@@ -2080,8 +2051,10 @@ pixmap format in the list of valid formats."
 (defun get-full-display-name ()
    #+cmu
    (cdr (assoc :DISPLAY lisp::*environment-list*))
-   #+(or allegro lispworks kcl clisp)
+   #+allegro
    (sys::getenv "DISPLAY")
+   #+ccl
+   (ccl:getenv "DISPLAY")
    #+sbcl
    (sb-posix:getenv "DISPLAY")
    )
@@ -2116,9 +2089,8 @@ returns the HOST name, stripping off the display number."
 
 (defun x-set-device-variables (root-window full-display-name
 			       &aux auth-name auth-data)
-;;  (declare (ignore root-window)
-;;	   (ignore auth-name auth-data)
-;;	   )
+  (declare (ignore root-window)
+	   (ignore auth-name auth-data))
   (setf *default-x-display-number* 
         (if full-display-name 
             (get-display-number full-display-name)

@@ -10,8 +10,6 @@
 ;;;
 ;;; $Id::                                                             $
 
-;;; Changes:
-;;;  1-Nov-93 Mickish - Created
 
 (in-package "COMMON-LISP-USER")
 

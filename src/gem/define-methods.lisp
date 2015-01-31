@@ -8,17 +8,6 @@
 ;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; CHANGE LOG:
-;;; 12/02/94 Andrew Mickish - Removed stippled-p parameter from draw-image
-;;; 05/25/94 Andrew Mickish - New Set-Draw-Function-Alist; New data-array
-;;;            parameters to Create-Pixmap and Create-Image
-;;; 01/19/94 Andrew Mickish - New Translate-Character and Translate-Mouse-Character
-;;; 01/15/94 Andrew Mickish - New Color-To-Index
-;;; 01/12/94 Andrew Mickish - New Window-From-Drawable
-;;; 12/17/93 Andrew Mickish - New Device-Image
-;;; 12/04/93 Andrew Mickish - Added Mac version of BATCH-CHANGES
-;;; 11/11/93 Andrew Mickish - Put into CLTL2 form
-
 
 (in-package "GEM")
 
