@@ -27,51 +27,6 @@
 ;;;     - not clear if resizing windows does the right thing
 ;;;     - need to make more things constant (but VERY carefully.)
 
-#|
-==================================================================
-Change log:
-     07/26/93 James Landay - moved the structure definition for gesture
-                             examples to classify.lisp in Interactors package.
-     07/26/93 James Landay - made save & load dialogs always initialize
-                             to the last directory and filename used. Start
-                             with the Garnet-Gesture-Data-PathName.
-     07/20/93 James Landay - fixed bug where gesture icon moves up when 
-                             selected by adding initial values for left
-                             & top in the prototype.
-     07/06/93 James Landay - allow an optional classifier and final-function 
-                             to be passed into do-go.  
-     07/05/93 James Landay - adds a "prototype" icon to gesture class window
-                             as soon as you add the first example.
-     07/02/93 James Landay - waits to make sure you don't cancel saves before
-                             it will train.
-     06/25/93 James Landay - allow renaming of gesture classes
-     06/15/93 James Landay - display arrows to give gesture directions
-     06/14/93 James Landay - use save & load gadgets
-     06/11/93 James Landay - display an error if someone tries to load
-                             an Agate 1.0 classifier (it has no examples.)
-     06/10/93 James Landay - added hourglass cursor when training, saving, 
-                             and loading.
-     05/24/93 James Landay - added non-ambig prob. and distance fields
-     05/24/93 James Landay - added training dialog box
-     05/22/93 James Landay - made double-click do show class / show example
-     05/21/93 James Landay - made autoscrolling of gestures icons work
-     05/20/93 James Landay - fixed bug where deleting class or example
-                             with none selected crashed -- beep instead
-     05/20/93 James Landay - Added width and height formulas to 
-                             CLASS-ICON-PROTO and EXAMPLE-ICON-PROTO
-     04/18/93 James Landay - Retrain all gestures everytime swich
-                             to recognize mode
-     05/19/92 James Landay - Allow deletion of individual examples 
-                             and entire gestures
-     04/08/92 James Landay - use Motif error and query dialogs.
-     04/05/92 James Landay - made a query dialog for quit without saving
-     03/25/92 Andrew Mickish - Added instructions, replaced 
-                               motif-background with :background-color of
-                                window, added constants
-     02/25/92 James Landay   - started 
-==================================================================
-|#
-
 (in-package :AGATE)
 
 ;; Load motif stuff, unless already loaded

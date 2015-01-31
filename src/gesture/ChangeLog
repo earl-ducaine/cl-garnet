@@ -1,0 +1,89 @@
+;;;; agate.lisp
+#|
+==================================================================
+Change log:
+     07/26/93 James Landay - moved the structure definition for gesture
+                             examples to classify.lisp in Interactors package.
+     07/26/93 James Landay - made save & load dialogs always initialize
+                             to the last directory and filename used. Start
+                             with the Garnet-Gesture-Data-PathName.
+     07/20/93 James Landay - fixed bug where gesture icon moves up when
+                             selected by adding initial values for left
+                             & top in the prototype.
+     07/06/93 James Landay - allow an optional classifier and final-function
+                             to be passed into do-go.
+     07/05/93 James Landay - adds a "prototype" icon to gesture class window
+                             as soon as you add the first example.
+     07/02/93 James Landay - waits to make sure you don't cancel saves before
+                             it will train.
+     06/25/93 James Landay - allow renaming of gesture classes
+     06/15/93 James Landay - display arrows to give gesture directions
+     06/14/93 James Landay - use save & load gadgets
+     06/11/93 James Landay - display an error if someone tries to load
+                             an Agate 1.0 classifier (it has no examples.)
+     06/10/93 James Landay - added hourglass cursor when training, saving,
+                             and loading.
+     05/24/93 James Landay - added non-ambig prob. and distance fields
+     05/24/93 James Landay - added training dialog box
+     05/22/93 James Landay - made double-click do show class / show example
+     05/21/93 James Landay - made autoscrolling of gestures icons work
+     05/20/93 James Landay - fixed bug where deleting class or example
+                             with none selected crashed -- beep instead
+     05/20/93 James Landay - Added width and height formulas to
+                             CLASS-ICON-PROTO and EXAMPLE-ICON-PROTO
+     04/18/93 James Landay - Retrain all gestures everytime swich
+                             to recognize mode
+     05/19/92 James Landay - Allow deletion of individual examples
+                             and entire gestures
+     04/08/92 James Landay - use Motif error and query dialogs.
+     04/05/92 James Landay - made a query dialog for quit without saving
+     03/25/92 Andrew Mickish - Added instructions, replaced
+                               motif-background with :background-color of
+                                window, added constants
+     02/25/92 James Landay   - started
+==================================================================
+|#
+
+;;;; gesture-compiler.lisp
+;;;
+;;; Changes:
+;;; 10/2/03 RGA --- New compile/load protocol
+;;;  7/28/96 RGA --- changed to use garnet-compile/load
+;;; 09/21/92 Andrew Mickish - Added load of dependent gadgets
+;;; 04/01/92 Andrew Mickish - Renamed ggt to agate
+;;; 03/26/92 Ed Pervin - Don't load ggt, because that loads gesture-loader.
+;;; 03/24/92 James Landay   - added ggt (note: it doesn't auto load)
+;;; 02/21/92 James Landay   - added train (note: it doesn't auto load)
+;;; 02/20/92 Andrew Mickish - Created
+;;;
+
+;;;; gestureinter.lisp
+#|
+========================================================================
+Change log:
+    05/25/94 Andrew Mickish - New Mac and X versions of draw-gesture-line
+    04/04/94 James Landay - added a :line-style slot for gesture trace
+    04/04/94 James Landay - use gem stuff to draw instead of xlib and mac --
+                            also reset clip region in start-action
+    04/02/94 James Landay - changed :xwindow slot to :drawable
+    04/02/94 James Landay - added a new slot to the interactor, :erase.
+                            Don't erase the gesture trace if :erase is true
+    04/01/94 James Landay - don't use XOR -- instead invalidate and update
+                            bbox of gesture (so works on Mac also)
+    03/16/94 Andrew Mickish - #@(x y) ---> (ccl:make-point x y) because
+               Allegro parses it anyway, even though it's in a #+apple switch?!
+    02/16/94 Andrew Mickish - Fixed graphics routines for Mac
+    06/15/93 James Landay - use HP-XOR-Hack instead of explicit xor handling
+    04/03/92 James Landay - don't erase a point passed to stop-action,
+                            since we never draw this point.
+    02/19/92 James Landay - added gesture-fix-gc () to the
+                            opal::*auxilliary-reconnect-routines* so
+                            that if user switches monitors, get a new gc
+    02/13/92 James Landay - special case for color monitors
+                            to make xor drawing work properly
+    01/31/92 James Landay - moved all export declarations
+                            for gestures here.
+    12/21/91 James Landay - started
+
+========================================================================
+|#

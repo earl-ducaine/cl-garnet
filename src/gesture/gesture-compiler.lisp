@@ -9,17 +9,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 
-;;;
-;;; Changes:
-;;; 10/2/03 RGA --- New compile/load protocol
-;;;  7/28/96 RGA --- changed to use garnet-compile/load
-;;; 09/21/92 Andrew Mickish - Added load of dependent gadgets
-;;; 04/01/92 Andrew Mickish - Renamed ggt to agate
-;;; 03/26/92 Ed Pervin - Don't load ggt, because that loads gesture-loader.
-;;; 03/24/92 James Landay   - added ggt (note: it doesn't auto load)
-;;; 02/21/92 James Landay   - added train (note: it doesn't auto load)
-;;; 02/20/92 Andrew Mickish - Created
-;;;
 
 (in-package :COMMON-LISP-USER)
 
@@ -28,11 +17,11 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (proclaim
    (if *debug-gesture-mode*
-       (and (boundp '*garnet-compile-debug-settings*)
-	    *garnet-compile-debug-settings*)
+       (and (boundp 'Garnet-Compile-Debug-Settings)
+	    Garnet-Compile-Debug-Settings)
        ;; Global default settings.
-       (and (boundp '*default-garnet-proclaim*) 
-	    *default-garnet-proclaim*))))
+       (and (boundp 'Default-Garnet-Proclaim) 
+	    Default-Garnet-Proclaim))))
 
 (dolist (pair '((:motif-text-buttons "motif-text-buttons-loader")
 		(:motif-scrolling-labeled-box "motif-scrolling-labeled-box-loader")

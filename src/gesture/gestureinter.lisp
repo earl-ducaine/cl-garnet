@@ -15,36 +15,6 @@
 ;;;
 ;;; Designed and implemented by James A. Landay 
 
-#|
-========================================================================
-Change log:
-    05/25/94 Andrew Mickish - New Mac and X versions of draw-gesture-line
-    04/04/94 James Landay - added a :line-style slot for gesture trace
-    04/04/94 James Landay - use gem stuff to draw instead of xlib and mac --
-                            also reset clip region in start-action
-    04/02/94 James Landay - changed :xwindow slot to :drawable
-    04/02/94 James Landay - added a new slot to the interactor, :erase.  
-                            Don't erase the gesture trace if :erase is true
-    04/01/94 James Landay - don't use XOR -- instead invalidate and update
-                            bbox of gesture (so works on Mac also)
-    03/16/94 Andrew Mickish - #@(x y) ---> (ccl:make-point x y) because
-               Allegro parses it anyway, even though it's in a #+apple switch?!
-    02/16/94 Andrew Mickish - Fixed graphics routines for Mac
-    06/15/93 James Landay - use HP-XOR-Hack instead of explicit xor handling
-    04/03/92 James Landay - don't erase a point passed to stop-action,
-                            since we never draw this point.
-    02/19/92 James Landay - added gesture-fix-gc () to the 
-                            opal::*auxilliary-reconnect-routines* so
-                            that if user switches monitors, get a new gc
-    02/13/92 James Landay - special case for color monitors
-                            to make xor drawing work properly
-    01/31/92 James Landay - moved all export declarations
-                            for gestures here.
-    12/21/91 James Landay - started
-
-========================================================================
-|#
-
 (in-package "INTERACTORS")
 
 (eval-when (eval load compile)
