@@ -12,24 +12,6 @@
 ;;
 
 
-;;; Changes:
-;; RGA 3/28/95 --- Changed return values for s-value and g-value when
-;; type error occurs.  s-value now returns two values, the current
-;; value of the slot and t if an error occured during processing and
-;; nil if not.
-
-;;; TO DO:
-;;
-;; - *setting-formula-p* - does this still make sense???
-;;
-;; - check out direct dependency stuff (in DESTROY-CONSTRAINT).  Is it still
-;;   needed?
-;;
-;; - put inverse on slot keyword itself?
-;; - code in DELETE-SCHEMA for a formula: what to do with children formulas?
-;;
-
-
 ;;; Slot bits assignment:
 ;; 0-9 types encoding
 ;;   - inherited
@@ -41,18 +23,6 @@
 
 
 (in-package "KR")
-
-;; Unless the user explicitly overrides this, set for maximum execution
-;; speed.
-;;
-;;;        (eval-when (:execute :compile-toplevel :load-toplevel)
-;;;	     (proclaim '(special common-lisp-user::*default-garnet-proclaim*))
-;;;	     (if (boundp 'common-lisp-user::*default-garnet-proclaim*)
-;;;		 (when common-lisp-user::*default-garnet-proclaim*
-;;;		   (proclaim common-lisp-user::*default-garnet-proclaim*))
-;;;		 (proclaim '(optimize (safety 1) (space 0)
-;;;			     (speed 3) #+ALLEGRO (debug 3)))))
-
 
 ;; SCHEMA-P
 ;;
@@ -548,6 +518,20 @@ an inherited formula."
 
 (defparameter type-docs-array NIL
   "Array used to decode a number into its corresponding documentation string.")
+
+(declaim (inline code-to-type code-to-type-fn code-to-type-doc check-kr-type))
+
+(defun code-to-type (type-code)
+  (svref types-array type-code))
+
+(defun code-to-type-fn (type-code)
+  (svref type-fns-array type-code))
+
+(defun code-to-type-doc (type-code)
+  (svref type-docs-array type-code))
+
+(defun check-kr-type (value code)
+  (funcall (code-to-type-fn code) value))
 
 
 (declaim (inline find-lisp-predicate))

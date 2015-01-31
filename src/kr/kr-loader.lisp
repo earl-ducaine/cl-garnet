@@ -13,14 +13,6 @@
 ;;
 
 
-;;; Change log:
-;;  09/12/92 Dario Giuse     Added "kr-macros"
-;;  03/22/90 Robert Cook     Define the packages "KR" and
-;;                           "KR-DEBUG" for the TI Explorer
-;;  01/04/90 Ed Pervin       added version number
-;;  06/14/89 Dario Giuse     created
-
-
 (in-package "COMMON-LISP-USER")
 
 (defparameter KR-Version-Number "2.3.4")

@@ -1,0 +1,63 @@
+
+;;;; kr-compiler.lisp
+;;;  Changes:
+;;   10/02/03 RGA --- New compile/load protocol
+;;   07/28/96 RGA --- changed to use garnet-compile/load
+;;   12-Sep-92 Mickish    Added "kr-macros"
+;;   10-Apr-92 Pervin	 Added in-package.
+;;   20-Jan-92 Mickish    Moved make-package calls into garnet-loader
+;;   17-Jan-92 Pervin	 Load compiled files, but don't call provide, in CMUCL,
+;;   26-Mar-91 Pervin     Load compiled files in Lucid.
+;;   22-Mar-91 Pervin     Added provide and setf
+;;   05-Jun-90 Richardson  Added lispworks
+;;   12-Apr-90 Mitchell   Added #+allegro (gc t)
+;;   22-Mar-90 Robert Cook Define the "KR" and "KR-DEBUG" packages
+;; 			   for the TI Explorer
+
+;;;; kr-loader.lisp
+;;;  Change log:
+;;   09/12/92 Dario Giuse     Added "kr-macros"
+;;   03/22/90 Robert Cook     Define the packages "KR" and
+;;                            "KR-DEBUG" for the TI Explorer
+;;   01/04/90 Ed Pervin       added version number
+;;   06/14/89 Dario Giuse     created
+
+
+;;;; kr-doc.lisp
+;;;  Changes:
+;;   10/02/03 RGA --- Moved to KR package
+;;   08/19/93 RGA Extensions to KR to support Facets.
+;;  =======================================================
+
+
+;;;; constraints.lisp
+;;;  Changes:
+
+;;;; kr-macros.lisp
+;;;  Changes:
+;;   eliminate ugly (g-value-inherit-values schema slot T nil)
+;;                  (setf entry (slot-accessor schema slot))
+;;             from gv-value-fn (in constraints.lisp)
+;;   Merge formulas with structure slots.
+;;   reuse directory-slot for formulas.
+;;   reuse discarded slot structures in set-slot-accessor
+;;   reuse discarded slot structures in clear-schema-slots
+
+
+;;;; kr.lisp
+;;;  Changes:
+;;   RGA 3/28/95 --- Changed return values for s-value and g-value when
+;;   type error occurs.  s-value now returns two values, the current
+;;   value of the slot and t if an error occured during processing and
+;;   nil if not.
+;;
+;;; TO DO:
+;;
+;; - *setting-formula-p* - does this still make sense???
+;;
+;; - check out direct dependency stuff (in DESTROY-CONSTRAINT).  Is it still
+;;   needed?
+;;
+;; - put inverse on slot keyword itself?
+;; - code in DELETE-SCHEMA for a formula: what to do with children formulas?
+;;

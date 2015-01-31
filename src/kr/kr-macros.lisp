@@ -12,16 +12,6 @@
 ;;
 
 
-;;; Changes:
-;;   eliminate ugly (g-value-inherit-values schema slot T nil)
-;;                  (setf entry (slot-accessor schema slot))
-;;             from gv-value-fn (in constraints.lisp)
-;;   Merge formulas with structure slots.
-;;   reuse directory-slot for formulas.
-;;   reuse discarded slot structures in set-slot-accessor
-;;   reuse discarded slot structures in clear-schema-slots
-
-
 (in-package "KR")
 
 (eval-when (:execute :load-toplevel :compile-toplevel)
@@ -53,7 +43,13 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defvar *special-kr-optimization*
-    '(optimize (speed 3) (safety 0) (space 0) (debug 0) #+ALLEGRO (debug 0))))
+    '(optimize 
+      (speed 3)
+      #-allegro (safety 0) #+allegro (safety 1)
+      (space 0)
+      #-cmu (debug 0)
+      #+cmu (debug 0.5)
+      )))
 
 ;; This enables the eager-evaluation version.
 ;;  Currently turned off.
@@ -587,8 +583,7 @@
 
 (declaim (inline formula-p deleted-p not-deleted-p is-inherited is-parent is-constant
 		 is-update-slot set-is-update-slot is-local-only is-parameter
-		 extract-type-code get-entry-type-code code-to-type code-to-type-fn
-		 code-to-type-doc check-kr-type))
+		 extract-type-code get-entry-type-code))
 
 (defun formula-p (thing)
   (a-formula-p thing))
@@ -637,18 +632,7 @@
   (declare #.*special-kr-optimization*)
   (extract-type-code (sl-bits entry)))
 
-(defun code-to-type (type-code)
-  (svref types-array type-code))
-
-(defun code-to-type-fn (type-code)
-  (svref type-fns-array type-code))
-
-(defun code-to-type-doc (type-code)
-  (svref type-docs-array type-code))
-
-(defun check-kr-type (value code)
-  (funcall (code-to-type-fn code) value))
-
+;; Moved type functions to kr.lisp (to get rid of free variable warnings).
 
 ;;; DEF-KR-TYPE
 ;;

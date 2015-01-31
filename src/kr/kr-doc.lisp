@@ -16,12 +16,6 @@
 ;;
 
 
-;;; Changes:
-;;   10/02/03 RGA --- Moved to KR package
-;;   08/19/93 RGA Extensions to KR to support Facets.
-;;  =======================================================
-
-
 ;;; This package introduces a documentation convention for KR objects
 ;;  and provides some simple functions to read that documentation.
 ;;
