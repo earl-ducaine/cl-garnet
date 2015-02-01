@@ -8,9 +8,8 @@
 ;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Changes:
-;;; 10-Aug-93 Mickish - Created with methods taken from update-window.lisp
 
+
 (in-package "OPAL")
 
 ;;; NOTES ON FAST-REDRAW
@@ -29,6 +28,7 @@
 ;;; setting and resetting of the object's filling and line styles during
 ;;; this procedure.
 
+
 ;;;    SET-STYLES is a method which is called by the fast-redraw
 ;;; algorithm while erasing an object.  We need a method for this procedure
 ;;; because the update-slots-values array is different for every object.
@@ -84,8 +84,7 @@
     (setf (aref update-vals +circle-lstyle+) line-style)))
 
 
-
-
+
 ;;; This is the FAST-REDRAW-RECTANGLE's update-slots-values, and is
 ;;; used by the set-frr-bbox methods
 (defvar frr-update-vals
@@ -106,12 +105,12 @@
 	 (line-style (aref update-vals +line-lstyle+))
 	 (projecting-p (when line-style
 			 (eq (g-value line-style :cap-style) :projecting)))
-	 (line-thickness (safe-max 1 (and line-style
+	 (line-thickness (q-max 1 (and line-style
 				       (g-value line-style :line-thickness))))
 	 (lt/2 (floor line-thickness 2))
-	 (left (- (safe-min x1 x2)
+	 (left (- (q-min x1 x2)
 		  (if projecting-p line-thickness lt/2)))
-	 (top (- (safe-min y1 y2)
+	 (top (- (q-min y1 y2)
 		 (if projecting-p line-thickness lt/2)))
 	 (width (+ (abs (- (or x1 0) (or x2 0)))
 		   (* (if projecting-p 2 1) line-thickness)))
@@ -138,7 +137,7 @@
   (let* ((update-vals (g-local-value obj :update-slots-values))
 	 (point-list (aref update-vals +multi-point-list+))
 	 (line-style (g-value obj :line-style))
-	 (line-thickness (safe-max 1 (and line-style
+	 (line-thickness (q-max 1 (and line-style
 				       (g-value line-style :line-thickness))))
 	 (2lt (* line-thickness 2)) (4lt (* line-thickness 4))
 	 (left (do ((min-x 9999)
