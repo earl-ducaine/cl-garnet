@@ -164,7 +164,7 @@
   (when window-agg
     (set-display-slots window-agg a-window T)
     (setf (win-update-info-old-aggregate win-info) window-agg))
-  (create-x-drawable a-window))
+  (create-drawable a-window))
 
 
 (defun fix-invalid-slots (invalid-slots win-info a-window)

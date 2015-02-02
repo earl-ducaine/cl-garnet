@@ -155,7 +155,7 @@
 
 
 
-;;; Moved all the X display / screen / etc. stuff into x.lisp to
+;;; Moved all the X display / screen / etc. stuff into x.lisp (gem) to
 ;;  respect the modularity of the code.
 
 ;; (defvar *default-x-display-name*)

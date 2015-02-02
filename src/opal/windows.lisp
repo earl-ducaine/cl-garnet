@@ -31,7 +31,7 @@
 ;;; A couple routines useful for windows with backing store
 
 ;;; Create a buffer the same size as drawable.
-(defun create-x-buffer (a-window)
+(defun create-buffer (a-window)
   (let ((pixmap (gem:create-pixmap a-window
 				   (g-value a-window :width)
 				   (g-value a-window :height)
@@ -52,7 +52,7 @@
 ;;; Create new larger buffer.
 (defun expand-buffer (a-window)
   (gem:delete-pixmap a-window (g-value a-window :buffer))
-  (s-value a-window :buffer (create-x-buffer a-window)))
+  (s-value a-window :buffer (create-buffer a-window)))
 
 
 ;;; Map-notify is called when a :map-notify event occurs.
@@ -150,7 +150,7 @@
     ((is-a-p a-window window)
      (let ((drawable (g-value a-window :drawable)))
        (unless drawable
-	 (setq drawable (create-x-drawable a-window)))
+	 (setq drawable (create-drawable a-window)))
        (gem:raise-or-lower a-window NIL)
        (update a-window)
        ;; if there were no invalid objects in the window, update wouldn't
@@ -467,8 +467,9 @@
 (defun unset-gc-cursor ()
   (opal:restore-cursors))
 
-#+cmu (pushnew #'set-gc-cursor ext:*before-gc-hooks*)
-#+cmu (pushnew #'unset-gc-cursor ext:*after-gc-hooks*)
+;; Actually this seems to freeze up the lisp for some reason.
+#-(and)  (pushnew #'set-gc-cursor ext:*before-gc-hooks*)
+#-(and) (pushnew #'unset-gc-cursor ext:*after-gc-hooks*)
 #+cmu (setf ext:*gc-verbose* nil)
 
 ;;; Set the :window slot of the window to be the window itself!
@@ -528,7 +529,7 @@
 
 ;;; This now returns the drawable it creates.
 ;;;
-(defun create-x-drawable (a-window)
+(defun create-drawable (a-window)
   (let ((display-info (initialize-display a-window)))
     ;; Make sure the window has an attached display-info.
     (setf (g-value a-window :display-info) display-info)
@@ -573,7 +574,7 @@
 
 	(setf (g-value a-window :drawable) drawable)
 	(if (g-value a-window :double-buffered-p)
-	  (let ((buffer (create-x-buffer a-window)))
+	  (let ((buffer (create-buffer a-window)))
 	    (s-value a-window :buffer buffer)
 	    (gem:set-window-property a-window :BUFFER-GCONTEXT
 				     (list buffer black-pixel background))
@@ -764,6 +765,12 @@
 
 ;;; The following two functions have been added to be used by interactors.
 ;;; They are exported from Opal.
+;;;
+;;; XXX The name implies that this is X stuff. But there's also a mac
+;;; version. So this name should be changed and the code updated here
+;;; and elsewhere (interactor code). The only use of "X" in the Opal
+;;; code should be as a counterpart to "Y". But ... it opens up a big
+;;; can of worms and is not too important now.
 (defun Get-X-Cut-Buffer (window)
   (if window
     (gem:get-cut-buffer window)

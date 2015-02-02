@@ -1260,7 +1260,7 @@
     (when old-buffer
       (s-value window :buffer NIL)
       (ccl::dispose old-buffer))
-    (setf new-window (opal::create-x-drawable window))
+    (setf new-window (opal::create-drawable window))
     (dolist (child children)
       (ccl:set-view-container (g-value child :drawable) new-window))))
 
