@@ -21,7 +21,7 @@
 ;;    line below.  Each line contains a single linked list of "fragments."
 ;; C) A fragment is a structure (frag) that holds the actual strings.  There
 ;;    is exactly the number of fragments in a line as there are different
-;;    fonts.  If two lines are merges and the first and last fragments of
+;;    fonts.  If two lines are merged and the first and last fragments of
 ;;    corresponding lines contain the same font (which they must), the
 ;;    fragments must be merged to form one.  Also, there is not allowed to be
 ;;    a fragment of zero length with one exception.  If the first character
@@ -349,45 +349,48 @@
 ;; not it is syntactically correct.
 (defun check-text (text)
   (if (listp text)
-    (if (cdr (last text))
-      (error "Input text must be a string or a list of lines.")
-      (let ((lineno 0)
-	    (fragno 0))
-	(dolist (line text)
-	  (incf lineno)
-	  (if (listp line)
-	    (if (cdr (last line))
-	      (error "Line ~s must be a string, a view-object, or a list of fragments, but it was ~S" lineno line)
-	      (progn
-		(setq fragno 0)
-		(dolist (frag line)
-		  (incf fragno)
-		  (unless
-		      (or (stringp frag) (is-a-p frag opal:view-object)
-			  (mark-p frag) (eq (car frag) :mark)
-			  (and (stringp (car frag))
-			       (let ((specs-list (cdr frag)))
-				 (if (listp specs-list)
-				   (and  
-				    (let ((font (first specs-list)))
-				      (or (is-a-p font opal:font)
-					  (is-a-p font opal:font-from-file)))
-				    (let ((fcolor (second specs-list)))
-				      (or (null fcolor)
-					  (and (is-a-p fcolor opal:color)
-					       (let ((bcolor (third specs-list)))
-						 (or (null bcolor)
-						     (is-a-p bcolor
-							     opal:color)))))))
-				   (or (is-a-p specs-list opal:font)
-				       (is-a-p specs-list opal:font-from-file))))))
-		    (error "Fragment ~s of line ~s must be a string, a view-object, a mark, a cons of a string with a font, or a list of a string, font, and (optional) colors, but it was ~S"
-			   fragno lineno frag)))))
-	    (unless (or (stringp line) (is-a-p line opal:view-object))
-	      (error "Line ~s must be a string, a view-object, or a list of fragments, but it was ~S."
-		     lineno line))))))
-    (unless (stringp text)
-      (error "Input text must be a string or a list of lines."))))
+      (if (cdr (last text))
+	  (error "Input text must be a string or a list of lines.")
+	  (let ((lineno 0)
+		(fragno 0))
+	    (dolist (line text)
+	      (incf lineno)
+	      (if (listp line)
+		  (if (cdr (last line))
+		      (error "Line ~s must be a string, a view-object, or a list of fragments, but it was ~S" lineno line)
+		      (progn
+			(setq fragno 0)
+			(dolist (frag line)
+			  (incf fragno)
+			  (unless
+			      (or (stringp frag) (is-a-p frag opal:view-object)
+				  (mark-p frag) (eq (car frag) :mark)
+				  (and (stringp (car frag))
+				       (let ((specs-list (cdr frag)))
+					 (if (listp specs-list)
+					     (and  
+					      (let ((font (first specs-list)))
+						(or (is-a-p font opal:font)
+						    (is-a-p font opal:font-from-file)))
+					      (let ((fcolor (second specs-list)))
+						(or (null fcolor)
+						    (and (is-a-p fcolor opal:color)
+							 (let ((bcolor (third specs-list)))
+							   (or (null bcolor)
+							       (is-a-p bcolor
+								       opal:color)))))))
+					     (or (is-a-p specs-list opal:font)
+						 (is-a-p specs-list opal:font-from-file))))))
+			    (error "Fragment ~s of line ~s must be a string, a view-object, a mark, a cons of a string with a font, or a list of a string, font, and (optional) colors, but it was ~S"
+				   fragno lineno frag)))))
+		  (unless (or (stringp line) (is-a-p line opal:view-object))
+		    (error "Line ~s must be a string, a view-object, or a list of fragments, but it was ~S."
+			   lineno line))))))
+      (unless (stringp text)
+	(error "Input text must be a string or a list of lines."))))
+
+
+;;; XXX These resource lists are thread-unsafe.
 
 ;; If the *Free-Line-List* is non-nil, a line is fetched from it to be used
 ;; as a new line.  Otherwise create-instance is used to generate a new line.
@@ -455,9 +458,11 @@
 ;; Turns string str into a list of strings, split up at #\newlines.
 (defun break-at-newlines (str)
   (let ((ans nil))
-    (do ((pos (position #\newline str :from-end t :test #'eq)
-	      (position #\newline str :from-end t :test #'eq)))
-	((null pos) (push str ans))
+    (do ((pos (position #\newline str :from-end t :test #'eql)
+	      (position #\newline str :from-end t :test #'eql)))
+	((null pos)
+	 ;; Add space to first string as well.
+	 (push (concatenate 'string str " ") ans))
       (push (concatenate 'string (subseq str (1+ pos)) " ") ans)
       (setq str (subseq str 0 pos)))))
 
@@ -818,62 +823,78 @@
 ;;
 (defun break-line (gob my-line my-position break-p)
   (let ((length my-position)
-	(next-line (g-value my-line :next-line)) 
-	cut-frag new-frag new-line
+	(next-line (g-value my-line :next-line))
+	cut-frag
+	new-frag
+	new-line
 	(last-frag (g-value my-line :last-frag)))
+    
     (if (frag-break-p last-frag)
-      (progn
-	(merge-frags my-line last-frag (g-value next-line :first-frag))
-	(let ((my-length (g-value my-line :length)))
-	  (when (eq next-line (g-value gob :cursor-line))
-	    (s-value gob :cursor-line my-line)
-	    (incf (g-value gob :cursor-position) my-length))
-	  (when (and (g-value gob :selection-p)
-		     (eq next-line (g-value gob :select-line)))
-	    (s-value gob :select-line my-line)
-	    (incf (g-value gob :select-position) my-length)))
-	(setq new-line next-line))
-      (progn
-	(setq new-line (new-line))
-	(s-value new-line :prev-line my-line)
-	(s-value new-line :next-line next-line)
-	(if next-line
-	  (s-value next-line :prev-line new-line)
-	  (s-value gob :last-line new-line))
-	(s-value my-line :next-line new-line)
-	(opal:add-component gob new-line :behind (g-value gob :cursor))
-	(s-value new-line :last-frag last-frag)))
+
+	(progn
+	  (merge-frags my-line last-frag (g-value next-line :first-frag))
+	  (let ((my-length (g-value my-line :length)))
+	    (when (eq next-line (g-value gob :cursor-line))
+	      (s-value gob :cursor-line my-line)
+	      (incf (g-value gob :cursor-position) my-length))
+	    (when (and (g-value gob :selection-p)
+		       (eq next-line (g-value gob :select-line)))
+	      (s-value gob :select-line my-line)
+	      (incf (g-value gob :select-position) my-length)))
+	  (setq new-line next-line))
+
+	(progn
+	  (setq new-line (new-line))
+	  (s-value new-line :prev-line my-line)
+	  (s-value new-line :next-line next-line)
+	  (if next-line
+	      (s-value next-line :prev-line new-line)
+	      (s-value gob :last-line new-line))
+	  (s-value my-line :next-line new-line)
+	  (opal:add-component gob new-line :behind (g-value gob :cursor))
+	  (s-value new-line :last-frag last-frag)))
+
     (do* ((frag (g-value my-line :first-frag) (frag-next frag))
 	  (length-frag (frag-length frag) (frag-length frag)))
 	 ((> length-frag length) (setq cut-frag frag))
       (decf length length-frag))
+
     (if (zerop length)
-      (let ((prev-frag (frag-prev cut-frag)))
-	(if prev-frag
-	  (progn
-	    (do ((object (frag-object prev-frag) (frag-object prev-frag)))
-		((not (and (frag-object-p prev-frag) (mark-p object)
-			   (not (mark-sticky-left object)))))
-	      (setq cut-frag prev-frag)
-	      (setq prev-frag (frag-prev prev-frag)))
-	    (setf (frag-next prev-frag) NIL)
-	    (setf (frag-break-p prev-frag) break-p))
-	  (s-value my-line :first-frag NIL))
-	(s-value new-line :first-frag cut-frag)
-	(s-value my-line :last-frag prev-frag)
-	(setf (frag-prev cut-frag) NIL))
-      (progn
-	(setq new-frag (split-frag cut-frag length))
-	(s-value new-line :first-frag new-frag)
-	(s-value my-line :last-frag cut-frag)
-	(setf (frag-break-p cut-frag) break-p)
-	(let ((next-frag (frag-next new-frag)))
-	  (if next-frag
-	    (setf (frag-prev next-frag) new-frag)
-	    (s-value new-line :last-frag new-frag)))))
+
+	(let ((prev-frag (frag-prev cut-frag)))
+	  (if prev-frag
+
+	      (progn
+		(do ((object (frag-object prev-frag) (frag-object prev-frag)))
+		    ((not (and (frag-object-p prev-frag) (mark-p object)
+			       (not (mark-sticky-left object)))))
+		  (setq cut-frag prev-frag)
+		  (setq prev-frag (frag-prev prev-frag)))
+		(setf (frag-next prev-frag) NIL)
+		(setf (frag-break-p prev-frag) break-p))
+	      
+	      (s-value my-line :first-frag NIL))
+
+	  (s-value new-line :first-frag cut-frag)
+	  (s-value my-line :last-frag prev-frag)
+	  (setf (frag-prev cut-frag) NIL))
+
+	(progn
+	  (setq new-frag (split-frag cut-frag length))
+	  (s-value new-line :first-frag new-frag)
+	  (s-value my-line :last-frag cut-frag)
+	  (setf (frag-break-p cut-frag) break-p)
+
+	  (let ((next-frag (frag-next new-frag)))
+	    (if next-frag
+		(setf (frag-prev next-frag) new-frag)
+		(s-value new-line :last-frag new-frag)))))
+
     (when (g-value my-line :first-frag)
       (calculate-size-of-line gob my-line))
+
     (calculate-size-of-line gob new-line)
+
     (when (eq my-line (g-value gob :cursor-line))
       (when (<= my-position (g-value gob :cursor-position))
 	(decf (g-value gob :cursor-position) my-position)
@@ -884,6 +905,7 @@
 	(s-value gob :cursor-frag frag)
 	(s-value gob :cursor-frag-pos frag-pos)
 	(s-value gob :cursor-x-offset x-offset)))
+
     (when (and (g-value gob :selection-p)
 	       (eq my-line (g-value gob :select-line)))
       (when (<= my-position (g-value gob :select-position))
@@ -910,15 +932,18 @@
 (defun add-space-to-line (my-line)
   (let ((ans nil))
     (cond
+
       ((stringp my-line)
        (dolist (sub-my-line (break-at-newlines my-line) (reverse ans))
 	 (push (append (list sub-my-line) (list (list " "  opal:default-font
 						      *default-color* *default-color*)))
 	       ans)))
+
       ((is-a-p my-line opal:view-object)
        (push (append (list my-line) (list (list " " opal:default-font
 						*default-color* *default-color*)))
 	     ans))
+
       (T
        (let ((frags nil)
 	     (len (length my-line)))
@@ -937,7 +962,9 @@
 				 opal:default-font))
 		  (last-fcolor (if true-list (third frag) *default-color*))
 		  (last-bcolor (if true-list (fourth frag)  *default-color*)))
+
 	     (if (stringp string)
+
 		 (progn
 		   (dolist (sub-my-line (break-at-newlines string))
 		     (push (append (pop frags)
@@ -945,6 +972,7 @@
 					       last-fcolor last-bcolor)))
 			   ans))
 		   (push (pop ans) frags))
+
 		 (progn
 		   (when (eq string :mark)
 		     (let ((mark (new-mark)))
@@ -953,6 +981,7 @@
 		       (setf (mark-info mark) (third specs-list))
 		       (setq string mark)))
 		   (push (append (pop frags) (list string)) frags)))
+
 	     (when (= i (1- len))
 	       (push (append
 		      (pop frags)
