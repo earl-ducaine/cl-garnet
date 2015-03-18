@@ -10,77 +10,10 @@
 ;;;
 ;;;
 
-#|
-ChangeLog:
-  13 Oct 93 R J Williams - Look for inherited slots in DOSLOTS calls
-  14 Sep 93 Andrew Mickish - Removed :x-substr case from opal::legal-type-p
-  28 May 93 Dario Giuse - replace kr internals with calls to g-formula-value.
-  23 Mar 93 Brad Myers - added new debug functions break-on-slot-set and
-	  notify-on-slot-set and clear-slot-set, call-func-on-slot-set
-  20 Jan 93 Mickish Cleared input buffer before IDENT's real event-case;
-                    Added schema-p checks in IDENTIFY.
-  18 Jan 93 Brad Myers - fixed Look-inter and added :next option
-                       - changed output of std-proto to add package name
-  10 Dec 92 Mickish *drawable-to-window-mapping* ---> *garnet-windows*
-  21 Apr 92 Pervin Using new function opal:main-event-loop-process-running-p
-  14 Apr 92 Pervin Got multi-process stuff to work on HP.
-
-   6 Apr 92  DZG  Fixed explain-slot for release 2.0 of KR.
-
-  27 Mar 92 Pervin    In ident, kill and re-launch the main-event-loop-process.
-		      In std-proto, check that schema-name is symbol.
-
-  27 Mar 92 amickish  Removed format statements from tests for conditionals in
-                      flash because they rendered the code body unreachable;
-                      Added ~A in format string of explain-nil.
-
-  25 Mar 92 amickish  Get-Values--->G-Value;  Get-Local-Values--->G-Local-Value
-
-  30 Oct 89  RBD  added direct-clx versions of flash and ident
-
-  18 Oct 89  RBD  changed fix-up-aggregate and just-remove-component to
-                  test for null objects,
-                  fixed ident to return leaf elements (bug fix),
-                  test for null objects in :start-where in look-inter,
-                  declared flash-object.
-  11 Dec 89  ECP  uncommented create-flash-object
-
-  25 Jan 90  RBD  fixed code to use get-local-values to avoid "inheriting"
-                  components,
-                  print prompt to user when ident is started
-                  improved test for bad objects in fix-up-window
-
-  29 Jan 90  RBD  test for window in FLASH
-
-  12 Mar 90  RBD  modified IDENT to return list of useful values,
-                  fixed std-parent to take NIL, renamed to std-proto.
-
-  14 Mar 90  RBD  fixed IDENT to not return when user types shift or ctrl.
-
-  16 Apr 90  ECP  Got rid of defvars of previously defined objects
-		  like opal:aggregate.
-		  Took defun of fix-up-aggregate and fix-up-window
-		  out of let statement.
-
-  31 May 90  RBD  fixed explain-slot by properly accessing :kr-depends-on slot.
-                  look now prints interactors of aggregadgets and aggrelists
-
-  27 Jun 90  RBD  look-inter now prints all active interactors that operate
-                  in a window if the first argument is a window
-
-  12 Jul 90  RBD  minor change in output from IDENT
-
-  31 Jul 90  RBD  look-inter now looks at :final-feed-avail, -inuse, and -obj slots
-  
-  12 Mar 91  ECP  Gave flash an optional argument: the number of blinks
-
-  11 Dec 91  Amickish  Converted to new KR:  Added 'car' to :is-a references,
-                       changed kr::name-accessor to kr::schema-name
-|#
-
+
 (in-package "GARNET-DEBUG")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(explain-short explain-slot explain-nil
 	    fix-up-window flash ident invert 
 	    is-a-tree kids look look-inter 

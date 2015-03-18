@@ -10,44 +10,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 
-#|
-ChangeLog:
-  11 May 94  Mickish Put in correction for kr::*no-value* in Transitive-Closure
-  28 May 93  DZG  Converted to KR 2.3.
-  21 May 93  Brad Myers fixed interbytes.
-  26 May 92  ECP  In datasize, use opal constant to determine size of
-		  update-info struct, instead of calling length.
-  25 May 92  ECP  In formula-bytes, check if a-formula-depends-on
-		  returns a list.
-  9  Apr 92  DZG  Fixed compilation problems for 2.0.8.
-  1  Apr 92  DZG  Fixed compilation problems for 2.0.6.
-  31 Mar 92  DZG  Eliminated problem in AGGBYTES which caused the detailed
-		  breakdown to always show only one object per type.
-  27 Mar 92  Mickish  Put call to kr::schema-slots in-line in objbytes rather
-                  than binding the result in a let*.
-  18 Feb 92  DZG  added two new exported functions, COUNT-FORMULAS and
-		  WHY-NOT-CONSTANT.  The first can be used to tell how
-		  many formulas (evaluated or not) are left in an aggregate;
-		  it recursively prints the names of all slots that contain
-		  formulas.  The second function tells why a slot in a schema
-		  is not marked constant.		
-
-  10 Feb 92  DZG  rewrote objbytes, datasize, formula-bytes to work with
-		  KR 2.0.5
-
-  11 Jul 90  RBD  fixed code to work with latest KR
-
-  16 Apr 90  ECP  LISP::%LEXICAL-CLOSURE% only exists in CMU Common Lisp.
-		  In Allegro it's EXCL::.LEXICAL-CLOSURE.
-
-  14 Mar 90  RBD  added interbytes to find interactor sizes.
-
-  12 Mar 90  RBD  fixed code to work with latest KR: formulas and schema
-                     are now different.
-                  added *count-symbols* flag to measure symbol storage
-                  
-|#
-
+
 ;;; objsize.lisp -- compute the storage of a kr object including
 ;;; constraints.  Suggested use:
 ;;;     Type (objbytes <objname>) to see how big one object is.
@@ -63,7 +26,7 @@ ChangeLog:
 
 (in-package "GARNET-DEBUG")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(OBJBYTES AGGBYTES INTERBYTES
 	    *avoid-shared-values* *avoid-equal-values* *count-symbols*
 	    COUNT-FORMULAS WHY-NOT-CONSTANT)))

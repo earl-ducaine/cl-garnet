@@ -1,0 +1,132 @@
+;;; $Id$
+;;;; inspector.lisp
+;;; Change log:
+;;    11/08/93 Andrew Mickish - Moved load of dependent files to debug-loader
+;;    10/07/93 Andrew Mickish - Fixed typo in GO-TO-PREV-CHAR call, renamed
+;;               local COLOR variable to TEXT-COLOR to avoid name conflicts
+;;    09/06/93 Clive Tong - Added LispWorks stuff
+;;    07/26/93 Andrew Mickish - Proclaimed used-window-list special to avoid
+;;                              compiler warning
+;;    07/19/93 Brad Myers - Use color to show parameter slots
+;;    06/16/93 Brad Myers - Allow Break or Notify on Multiple slots
+;;    05/25/93 Brad Myers - Fixed for new KR, removed use of file kr-extra
+;;    05/21/93 Brad Myers - Run main-event-loop if invoked from debugger.
+;;                          Show slots that are constant.
+;;    05/4/93  Brad Myers - added trace of formula dependencies
+;;    03/23/93 Brad Myers - added break and notify on slot setting
+;;    03/11/93 Brad Myers - added Find-Slot-Starting-With and search
+;;    02/21/93 Brad Myers - made work better for inspecting interactors
+;;    02/19/93 Dario Giuse - moved internal functions into KR
+;;    02/02/93 Andrew Mickish - opal:set-strings ---> opal:set-text & fix
+;;     1/18/93 Brad Myers - use FIRST global accelerators.
+;;                        - Inspect-next-inter
+;;    12/28/92 Brad Myers - started
+
+
+;;;; objsize.lisp
+#|
+ChangeLog:
+  11 May 94  Mickish Put in correction for kr::*no-value* in Transitive-Closure
+  28 May 93  DZG  Converted to KR 2.3.
+  21 May 93  Brad Myers fixed interbytes.
+  26 May 92  ECP  In datasize, use opal constant to determine size of
+		  update-info struct, instead of calling length.
+  25 May 92  ECP  In formula-bytes, check if a-formula-depends-on
+		  returns a list.
+  9  Apr 92  DZG  Fixed compilation problems for 2.0.8.
+  1  Apr 92  DZG  Fixed compilation problems for 2.0.6.
+  31 Mar 92  DZG  Eliminated problem in AGGBYTES which caused the detailed
+		  breakdown to always show only one object per type.
+  27 Mar 92  Mickish  Put call to kr::schema-slots in-line in objbytes rather
+                  than binding the result in a let*.
+  18 Feb 92  DZG  added two new exported functions, COUNT-FORMULAS and
+		  WHY-NOT-CONSTANT.  The first can be used to tell how
+		  many formulas (evaluated or not) are left in an aggregate;
+		  it recursively prints the names of all slots that contain
+		  formulas.  The second function tells why a slot in a schema
+		  is not marked constant.
+
+  10 Feb 92  DZG  rewrote objbytes, datasize, formula-bytes to work with
+		  KR 2.0.5
+
+  11 Jul 90  RBD  fixed code to work with latest KR
+
+  16 Apr 90  ECP  LISP::%LEXICAL-CLOSURE% only exists in CMU Common Lisp.
+		  In Allegro it's EXCL::.LEXICAL-CLOSURE.
+
+  14 Mar 90  RBD  added interbytes to find interactor sizes.
+
+  12 Mar 90  RBD  fixed code to work with latest KR: formulas and schema
+                     are now different.
+                  added *count-symbols* flag to measure symbol storage
+
+|#
+
+;;;; debug-fns.lisp
+#|
+ChangeLog:
+  13 Oct 93 R J Williams - Look for inherited slots in DOSLOTS calls
+  14 Sep 93 Andrew Mickish - Removed :x-substr case from opal::legal-type-p
+  28 May 93 Dario Giuse - replace kr internals with calls to g-formula-value.
+  23 Mar 93 Brad Myers - added new debug functions break-on-slot-set and
+	  notify-on-slot-set and clear-slot-set, call-func-on-slot-set
+  20 Jan 93 Mickish Cleared input buffer before IDENT's real event-case;
+                    Added schema-p checks in IDENTIFY.
+  18 Jan 93 Brad Myers - fixed Look-inter and added :next option
+                       - changed output of std-proto to add package name
+  10 Dec 92 Mickish *drawable-to-window-mapping* ---> *garnet-windows*
+  21 Apr 92 Pervin Using new function opal:main-event-loop-process-running-p
+  14 Apr 92 Pervin Got multi-process stuff to work on HP.
+
+   6 Apr 92  DZG  Fixed explain-slot for release 2.0 of KR.
+
+  27 Mar 92 Pervin    In ident, kill and re-launch the main-event-loop-process.
+		      In std-proto, check that schema-name is symbol.
+
+  27 Mar 92 amickish  Removed format statements from tests for conditionals in
+                      flash because they rendered the code body unreachable;
+                      Added ~A in format string of explain-nil.
+
+  25 Mar 92 amickish  Get-Values--->G-Value;  Get-Local-Values--->G-Local-Value
+
+  30 Oct 89  RBD  added direct-clx versions of flash and ident
+
+  18 Oct 89  RBD  changed fix-up-aggregate and just-remove-component to
+                  test for null objects,
+                  fixed ident to return leaf elements (bug fix),
+                  test for null objects in :start-where in look-inter,
+                  declared flash-object.
+  11 Dec 89  ECP  uncommented create-flash-object
+
+  25 Jan 90  RBD  fixed code to use get-local-values to avoid "inheriting"
+                  components,
+                  print prompt to user when ident is started
+                  improved test for bad objects in fix-up-window
+
+  29 Jan 90  RBD  test for window in FLASH
+
+  12 Mar 90  RBD  modified IDENT to return list of useful values,
+                  fixed std-parent to take NIL, renamed to std-proto.
+
+  14 Mar 90  RBD  fixed IDENT to not return when user types shift or ctrl.
+
+  16 Apr 90  ECP  Got rid of defvars of previously defined objects
+		  like opal:aggregate.
+		  Took defun of fix-up-aggregate and fix-up-window
+		  out of let statement.
+
+  31 May 90  RBD  fixed explain-slot by properly accessing :kr-depends-on slot.
+                  look now prints interactors of aggregadgets and aggrelists
+
+  27 Jun 90  RBD  look-inter now prints all active interactors that operate
+                  in a window if the first argument is a window
+
+  12 Jul 90  RBD  minor change in output from IDENT
+
+  31 Jul 90  RBD  look-inter now looks at :final-feed-avail, -inuse, and -obj slots
+
+  12 Mar 91  ECP  Gave flash an optional argument: the number of blinks
+
+  11 Dec 91  Amickish  Converted to new KR:  Added 'car' to :is-a references,
+                       changed kr::name-accessor to kr::schema-name
+|#

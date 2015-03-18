@@ -13,7 +13,7 @@
 
 (in-package "GARNET-DEBUG")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(record-from-now suggest-constants find-formulas explain-formulas)))
 
 
