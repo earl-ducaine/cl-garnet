@@ -15,33 +15,9 @@
 ;; 
 ;;  Designed and implemented by Brad Myers
 
-
-
-;;; Change log:
-;;    11/08/93 Andrew Mickish - Moved load of dependent files to debug-loader
-;;    10/07/93 Andrew Mickish - Fixed typo in GO-TO-PREV-CHAR call, renamed
-;;               local COLOR variable to TEXT-COLOR to avoid name conflicts
-;;    09/06/93 Clive Tong - Added LispWorks stuff
-;;    07/26/93 Andrew Mickish - Proclaimed used-window-list special to avoid
-;;                              compiler warning
-;;    07/19/93 Brad Myers - Use color to show parameter slots
-;;    06/16/93 Brad Myers - Allow Break or Notify on Multiple slots
-;;    05/25/93 Brad Myers - Fixed for new KR, removed use of file kr-extra
-;;    05/21/93 Brad Myers - Run main-event-loop if invoked from debugger.
-;;                          Show slots that are constant.
-;;    05/4/93  Brad Myers - added trace of formula dependencies
-;;    03/23/93 Brad Myers - added break and notify on slot setting
-;;    03/11/93 Brad Myers - added Find-Slot-Starting-With and search
-;;    02/21/93 Brad Myers - made work better for inspecting interactors
-;;    02/19/93 Dario Giuse - moved internal functions into KR
-;;    02/02/93 Andrew Mickish - opal:set-strings ---> opal:set-text & fix
-;;     1/18/93 Brad Myers - use FIRST global accelerators.
-;;                        - Inspect-next-inter
-;;    12/28/92 Brad Myers - started
-
 
 (in-package "GARNET-DEBUG")
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(inspector inspect-next-inter Find-Slot-Starting-With
 	    *INSPECTOR-KEY* *SHOW-OBJECT-KEY* *INSPECTOR-NEXT-INTER-KEY*)))
 
@@ -75,7 +51,7 @@
   (terpri))
 
 
-;;*******************************************************************
+;;;*******************************************************************
 
 (defparameter debug-started-main-event-loop NIL)
 
@@ -116,25 +92,22 @@
       ;; If so, then assume main-event-loop was in the process that crashed.
       ;; (This might be wrong if there are multiple processes in the
       ;; application, but the one that crashed is NOT the one running m-e-l).
-      #+sb-thread
       (if opal::*inside-main-event-loop*
+	  #+sb-thread
 	  (ignore-errors
 	    (sb-thread:symbol-value-in-thread
 	     'sb-debug:*debug-condition*
-	     *process-with-main-event-loop*))
-	  t)
-      #+ccl
-      (if opal::*inside-main-event-loop*
+	     sb-thread:*current-thread*))
+	  #+ccl
 	  (not (zerop (ccl::symbol-value-in-process
 		       'ccl::*break-level*
-		       opal::*main-event-loop-process*)))
-	  t)
-      #+allegro
-      (if opal::*inside-main-event-loop*
-	  (not (zerop (mp:symeval-in-process 'tpl::*break-level* mp:*current-process*)))
-	  ;; if not in m-e-l, then need to run it
-	  T)
-      ))
+		       ccl:*current-process*)))
+	  #+allegro
+	  (not (zerop (mp:symeval-in-process 
+		       'tpl::*break-level* 
+		       mp:*current-process*)))
+	      ;; if not in m-e-l, then need to run it
+	  T)))
 
 (defun INSPECTOR (obj)
   (let ((new-win (Get-Window-For-pop-up-debug 30 30)))
@@ -442,19 +415,20 @@
 	     NIL)))))			; return NIL when all OK
 
 (defun Select-Word-Around-Cursor (gob)
-  (multiple-value-bind (orig-line orig-char)
-      (opal:get-cursor-line-char-position gob)
-    (do ((char (opal:FETCH-PREV-CHAR gob) (opal:FETCH-PREV-CHAR gob)))
-	((or (null char) (member char opal::*delim-chars*)))
-      (opal:GO-TO-PREV-CHAR gob))
-    (multiple-value-bind (start-line start-char)
+  (let ((our-delim-chars (append opal::*delim-chars* (list #\( #\)))))
+    (multiple-value-bind (orig-line orig-char)
 	(opal:get-cursor-line-char-position gob)
-      (opal:set-selection-to-line-char-position gob start-line start-char)
+      (do ((char (opal:FETCH-PREV-CHAR gob) (opal:FETCH-PREV-CHAR gob)))
+	  ((or (null char) (member char our-delim-chars)))
+	(opal:GO-TO-PREV-CHAR gob))
+      (multiple-value-bind (start-line start-char)
+	  (opal:get-cursor-line-char-position gob)
+	(opal:set-selection-to-line-char-position gob start-line start-char)
  
-      (opal:set-cursor-to-line-char-position gob orig-line orig-char)
-      (do ((char (opal:FETCH-NEXT-CHAR gob) (opal:FETCH-NEXT-CHAR gob)))
-	((or (null char) (member char opal::*delim-chars*)))
-	(opal:GO-TO-NEXT-CHAR gob)))))
+	(opal:set-cursor-to-line-char-position gob orig-line orig-char)
+	(do ((char (opal:FETCH-NEXT-CHAR gob) (opal:FETCH-NEXT-CHAR gob)))
+	    ((or (null char) (member char our-delim-chars)))
+	  (opal:GO-TO-NEXT-CHAR gob))))))
 
 
 
@@ -696,7 +670,7 @@
 			   (opal:string-height opal:default-font "]")))))
      (:string-obj ,opal:multifont-text
       (:left 5)
-      (:word-wrap-p T)
+      (:word-wrap-p t)
       (:text-width ,(o-formula (gvl :window :width) 460))
       (:top ,(o-formula (+ 2 (gvl :parent :error-string :top)
 		   (max (* 2 (opal:string-height opal:default-font "]"))
@@ -916,7 +890,7 @@
 		      bold-font))
 	   (list (cons (format NIL "Expression = ~a"
 			       (write-to-string (g-formula-value form :lambda)
-						:pretty T))
+						:pretty t))
 		       regular-font))
 	   (list (cons "Dependencies:" bold-font))))
 
@@ -1159,7 +1133,8 @@
 			  (write-to-string real-value
 					   :pretty T))
 		  ;; else regular
-		  (format NIL " = ~s" real-value)))
+		  ;;(format NIL " = ~s" real-value)
+		  (concatenate 'string " = " (write-to-string real-value))))
 	 (parameter? (unless (formula-p schema)
 		       (member slot (g-value schema :parameters))))
 	 (text-color (if parameter? opal:red opal:black))
@@ -1215,8 +1190,8 @@
 			     push-object)
       (opal:update window)
 
-      ;; XXX Work around --- somehow the height doesn't get set right in the above.
-      ;; Re-setting it after update corrects this.
+      ;; XXX Work around --- somehow the height doesn't get set right
+      ;; in the above. Re-setting it after update corrects this.
       (s-value window :height (+ (g-value string-obj :top)
 				 (g-value string-obj :height)
 				 5))
