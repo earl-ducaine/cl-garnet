@@ -15,27 +15,10 @@
 ;;; $Id::                                                             $
 
 
-#|
-======================================================================
-Change log:
-  01/14/97 Russell Almond --- Added last item right justified code.
-  09/17/93 Andrew Mickish - Do not declare :left and :top of component constant
-             just because it was generated from a :parts list
-  08/12/93 Andrew Mickish - Called Fix-Items at top of fix-update-slots method
-  07/26/93 Andrew Mickish - Called Set-Rank-Slots at beginning of :f-u-s method
-  07/14/93 Andrew Mickish - Made fix-update-slots only work on local aggrelist
-  06/22/93 Andrew Mickish - Notice-items-changed invokes fix-update-slots;
-             added Set-Rank-Slots
-  05/26/93 Andrew Mickish - Referenced :layout-fixed? in :fix-update-slots
-  05/20/93 Andrew Mickish - Declare maintenance slots of components constant
-             when the aggrelist is layed out for the first time
-  05/14/93 Andrew Mickish - Split off from add-agg.lisp and aggrelists.lisp
-======================================================================
-|#
-
+
 (in-package "OPAL")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(Set-Rank-Slots)))
 
 (defun same-type-p (item1 item2)
@@ -128,7 +111,7 @@ Change log:
 
     ;; Deal with changing components first
     (unless (equal (g-value the-lister :items)
-		   (aref us-vals *lister-items*))
+		   (aref us-vals +lister-items+))
       (Fix-Items the-lister))
     
     ;; Must set :rank slots before determining the dimensions of the aggrelist.
@@ -154,28 +137,28 @@ Change log:
       (s-value the-lister :force-computation? NIL))
     
     (when us-vals-changed?
-      (if (aref us-vals *lister-direction*)
+      (if (aref us-vals +lister-direction+)
 	  (let* ((components        (g-local-value the-lister :components))
-		 (max-width         (aref us-vals *lister-max-width*))
-		 (max-height        (aref us-vals *lister-max-height*))
-		 (left              (aref us-vals *lister-left*))
-		 (top               (aref us-vals *lister-top*))
-		 (direction         (aref us-vals *lister-direction*))
-		 (h-spacing         (aref us-vals *lister-h-spacing*))
-		 (v-spacing         (aref us-vals *lister-v-spacing*))
-		 (indent            (aref us-vals *lister-indent*))
-		 (h-align           (aref us-vals *lister-h-align*))
-		 (v-align           (aref us-vals *lister-v-align*))
-		 (fixed-width-p     (aref us-vals *lister-fixed-width-p*))
-		 (fixed-height-p    (aref us-vals *lister-fixed-height-p*))
-		 (fixed-width-size  (aref us-vals *lister-fixed-width-size*))
-		 (fixed-height-size (aref us-vals *lister-fixed-height-size*))
-		 (rank-margin       (aref us-vals *lister-rank-margin*))
-		 (pixel-margin      (aref us-vals *lister-pixel-margin*))
+		 (max-width         (aref us-vals +lister-max-width+))
+		 (max-height        (aref us-vals +lister-max-height+))
+		 (left              (aref us-vals +lister-left+))
+		 (top               (aref us-vals +lister-top+))
+		 (direction         (aref us-vals +lister-direction+))
+		 (h-spacing         (aref us-vals +lister-h-spacing+))
+		 (v-spacing         (aref us-vals +lister-v-spacing+))
+		 (indent            (aref us-vals +lister-indent+))
+		 (h-align           (aref us-vals +lister-h-align+))
+		 (v-align           (aref us-vals +lister-v-align+))
+		 (fixed-width-p     (aref us-vals +lister-fixed-width-p+))
+		 (fixed-height-p    (aref us-vals +lister-fixed-height-p+))
+		 (fixed-width-size  (aref us-vals +lister-fixed-width-size+))
+		 (fixed-height-size (aref us-vals +lister-fixed-height-size+))
+		 (rank-margin       (aref us-vals +lister-rank-margin+))
+		 (pixel-margin      (aref us-vals +lister-pixel-margin+))
 		 ;; RGA added these for right-justify-last
 		 ;; (help-style) mode layout  
-		 (right-justify-last (aref us-vals *lister-right-justify-last*))
-		 (bottom-justify-last (aref us-vals *lister-bottom-justify-last*))
+		 (right-justify-last (aref us-vals +lister-right-justify-last+))
+		 (bottom-justify-last (aref us-vals +lister-bottom-justify-last+))
 		 (lister-width (if right-justify-last
 				   (g-value the-lister :justify-width)))
 		 (lister-height (if bottom-justify-last
