@@ -112,7 +112,7 @@ to make it more debuggable.")
 
 (defvar Garnet-Compile-Debug-Settings
   '(optimize (speed 2) (safety 3) (debug 3) 
-    #-ccl (space 2.5) #+ccl (space 2)
+    #-(or ccl sbcl) (space 2.5) #+(or ccl sbcl) (space 2)
     #+ccl (compilation-speed 3))
   "Use these settings for globally debugging the system or for debugging
 a specific module. They emphasize debuggability at the cost of some speed.
@@ -129,12 +129,13 @@ With SBCL:
 
 (defvar Garnet-Compile-Production-Settings
   '(optimize (speed 3) 
-    (safety 1)
+    #+allegro (safety 1) #-allegro (safety 0)
     (space 1)
     #-cmu (debug 1) #+cmu (debug 0.5)
     (compilation-speed 0)
     #+cmu (ext:inhibit-warnings 3))
   "Production compiler policy settings. Emphasize speed, de-emphasize debugging.")
+
 #+(and sbcl (not garnet-debug))
 (declaim (sb-ext:muffle-conditions sb-ext:compiler-note))
 
@@ -306,7 +307,7 @@ if a user loads garnet-loader.lisp a second time.")
    (make-pathname
     :directory
     ;; Hard coded directory path example.
-    ;; (:ABSOLUTE "usr" "local" "lib" "lisp" "garnet")
+    ;; '(:ABSOLUTE "usr" "local" "lib" "lisp" "garnet")
     ;; Let system determine directory path.
     (pathname-directory *load-truename*)))
   "Root of the Garnet directory tree.")
@@ -722,6 +723,11 @@ Example:
 				      :type (or type "lisp")
 				      :device (pathname-device module-src-directory)
 				      :directory (pathname-directory module-src-directory)))
+	 #+cmu
+	 (err-pathname (make-pathname :name name
+				      :type (or type "err")
+				      :device (pathname-device module-src-directory)
+				      :directory (pathname-directory module-src-directory)))
 	 (bin-pathname (make-pathname :name name
 				      :type *compiler-extension*
 				      :device (pathname-device module-bin-directory)
@@ -736,7 +742,11 @@ Example:
 	  (*compile-print* Garnet-Garnet-Debug)
 	  #+cmu (*gc-verbose* nil)
 	  )
-      (compile-file src-pathname :output-file bin-pathname))))
+      (compile-file src-pathname
+		    :output-file bin-pathname
+		    #+cmu :error-file #+cmu err-pathname
+		    #+cmu :error-output #+cmu nil
+		    ))))
 
 
 ;;; ----------------------------------------
@@ -751,8 +761,10 @@ Example:
 ;;  Functions that will determine whether the display can be opened
 ;;
 (defun get-full-display-name ()
-  ;; If you have CLX, you most likely have this.
-  (xlib::getenv "DISPLAY"))
+  ;; If you have CLX, you most likely have this. (Except for allegro.)
+  #-allegro (xlib::getenv "DISPLAY")
+  #+allegro (sys:getenv "DISPLAY")
+  )
 
 (defun get-display-name (display)
   ;; The display name is everything up to the first colon.
@@ -988,30 +1000,25 @@ running Garnet."
 ;; Right now they are used to copy the xxx-loader files into the
 ;; target directories.
 ;;
-(defun garnet-shell-exec (command)
-  "This is a quick and dirty version of opal:shell-exec used just
-   for the compiler.  This currently looses on Mac OS."
-  #+allegro (excl:run-shell-command command :wait NIL :output :stream
-				    :error-output :stream)
-  #+cmu
-  (ext:process-output (ext:run-program "/bin/sh" (list "-c" command)
-				       :wait NIL :output :stream))
-
-  #+ccl
-  (ccl:external-process-output-stream 
-   (ccl:run-program "/bin/sh" (list "-c" command)
-		    :wait NIL :output :stream))
-  #+sbcl
-  (sb-ext:process-output (sb-ext:run-program "/bin/sh" (list "-c" command)
-				       :wait NIL :output :stream)))
-
+;; FMG Rewrote file copy function to use lisp facilities instead of
+;; calling out to the shell. Got rid of shell exec function (there is
+;; still one in the utils directory).
 (defun garnet-copy-files (src-dir bin-dir file-list)
   "Copies a list of files (usually loader files) from source directory
   to binary directory."
   (dolist (file file-list)
     (let ((src (merge-pathnames file src-dir))
 	  (dest (merge-pathnames file bin-dir)))
-      (garnet-shell-exec (format nil "cp ~A ~A~%" src dest)))))
+      ;; Yes this conses up the wazoo. But it's only used during builds.
+      (with-open-file (s src :element-type '(unsigned-byte 8))
+	(let ((buffer (make-array (file-length s) :element-type '(unsigned-byte 8))))
+	  (read-sequence buffer s)
+	  (with-open-file (d dest
+			     :direction :output
+			     :if-does-not-exist :create
+			     :if-exists :overwrite
+			     :element-type '(unsigned-byte 8))
+	    (write-sequence buffer d)))))))
 
 (format t "~%... Garnet Load Complete ...~%")
 
