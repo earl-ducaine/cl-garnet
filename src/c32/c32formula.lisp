@@ -11,33 +11,14 @@
 ;;;
 ;;; $Id::                                                             $
 
+
 ;;; C32 is a spreadsheet interface for Garnet constraints
 ;;;
 ;;; This file contains the code to deal with formula windows.
 
 ;;; Designed and implemented by Brad Myers
 
-#|
-============================================================
-Change log:
-  07/22/93 Dario Giuse - added Lisp Mode to formula window
-  07/15/93 Andrew Mickish - #+lcl3.0 ---> #+lucid
-  07/09/93 Andrew Mickish - Condition type is undefined for Lucid
-  03/11/93 Dario Giuse - fixed C32-Careful-String-Eval to work properly
-	   when *current-formula-obj* is nil.  This happens, for example,
-	   when editing a new slot name in a panel.
-  03/02/93 Andrew Mickish - Removed superfluous quote from :items list in
-             Form-Win-Header.
-  02/02/93 Andrew Mickish - opal:set-strings ---> opal:set-text
-  12/16/92 Giuse/Mickish - Careful-Read-From-String --> C32-Careful-String-Eval
-  10/01/92 Andrew Mickish - Only call Slot-Value if #+(or allegro-v4.0
-             allegro-v4.1)
-   9/01/92 Andrew Mickish - Moved defparameter of *c32-package* to c32.lisp;
-             for CMUCL, ext:ignore-errors ---> ignore-errors;
-   9/11/90 Brad Myers - Started
-============================================================
-|#
-
+
 (in-package "C32")
 
 (defparameter Formula-Win-Width 440)

@@ -17,13 +17,7 @@
 ;;;
 ;;; Designed and implemented by Brad Myers
 
-#|
-============================================================
-Change log:
-    4/11/91 Brad Myers - Started
-============================================================
-|#
-
+
 (in-package "C32")
 
 ;; l will be a list of 2 lists.  Returns them separately.

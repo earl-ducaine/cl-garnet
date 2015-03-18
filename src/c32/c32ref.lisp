@@ -11,20 +11,13 @@
 ;;;
 ;;; $Id::                                                             $
 
-
+
 ;;; C32 is a spreadsheet interface for Garnet constraints
 ;;; This file contains the code to show the uses of slots
 ;;;
 ;;; Designed and implemented by Brad Myers
 
-#|
-============================================================
-Change log:
-    9/11/90 Brad Myers - Started
-============================================================
-|#
-
-
+
 (in-package "C32")
 
 (defparameter *Trace-Lines* NIL)
