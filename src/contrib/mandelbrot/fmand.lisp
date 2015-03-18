@@ -6,8 +6,6 @@
 ;;;
 ;;; Written by Fred Gilham; this file is in the public domain.
 ;;;
-;;; Time-stamp: "Sunday 14-Feb-2010 08:55:02 PST"
-;;;
 ;;; $Id::                                                    $
 
 ;; (declaim (optimize (speed 2) (safety 3) (space 2) (debug 3) (compilation-speed 0)))
@@ -21,11 +19,14 @@
 (in-package "FMAND")
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-(defvar FMAND-INIT
-  (dolist (file '("motif-text-buttons-loader" "motif-save-gadget-loader"
-		  "motif-h-scroll-loader" "prop-sheet-win-loader"
-		  "mouseline-loader"))
-    (cl-user::garnet-load (concatenate 'string "gadgets:" file))))
+  (dolist (pair '((:motif-text-buttons "gg:motif-text-buttons-loader")
+		  (:motif-save-gadget "gg:motif-save-gadget-loader")
+		  (:motif-h-scroll "gg:motif-h-scroll-loader")
+		  (:prop-sheet-win "gg:prop-sheet-win-loader")
+		  (:mouseline "gg:mouseline-loader")
+		  ))
+    (unless (get :garnet-modules (first pair))
+      (cl-user::garnet-load (second pair))))
 )
 
 ;;;
