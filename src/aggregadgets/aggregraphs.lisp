@@ -16,39 +16,13 @@
 ;;; $Id::                                                             $
 
 
-#|
-======================================================================
-Change log:
-    6/17/04  Robert Goldman - The original version of aggregraphs 
-             crashed if the aggregraph was initially
-             created with no root nodes and nodes were later added.
-    6/01/93  Andrew Mickish - Added some macros
-    4/15/92  Martin Sjolin - Add #-cmu flags before :rehash-size 2.0
-   03/25/92  Andrew Mickish - Get-Values ---> G-Value
-   12/13/91  Dario Giuse - Removed (declare (ignore dummy)) from
-			:add-node of aggregraph.
-   11/27/91  Andrew Mickish - Added args parameter to initialize method
-               so that an aggregraph can be a part of an aggregadget
-    4/01/91  Bryan Loyall - Added cache for :add-node method to make
-               multiple node additions to the same set of parents and
-               children faster.
-    4/01/91  Bryan Loyall - Changed find-good-y-near-desired-y to
-               avoid spaces above the :top of the graph
-    3/13/91  Andrew Mickish - Added lines to :add-node that will put the
-               new node in the hash table in :source->graph-node-table
-    3/12/91  Andrew Mickish - :x-dist-between-nodes ==> :h-spacing,
-                              :y-dist-between-nodes ==> :v-spacing
-    3/11/91  Andrew Mickish - Merged into Opal/Aggregadgets format
-    3/09/91  Bryan Loyall - Created
-======================================================================
-|#
-
+
 ;; requires the file "rectangle-conflict-object.lisp" to be loaded.
 
 (in-package "OPAL")
 
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(AGGREGRAPH AGGREGRAPH-NODE-PROTOTYPE AGGREGRAPH-LINK-PROTOTYPE
 	    LAYOUT-TREE))
   (export '(source-to-graph-node remove-root make-root add-node layout-graph)))

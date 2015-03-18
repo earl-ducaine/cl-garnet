@@ -163,3 +163,224 @@ Change log:
            children graphic-qualities are now written out using create-instance
 ======================================================================
 |#
+
+;;;; aggrelists.lisp
+#|
+======================================================================
+Change log:
+01/14/97 Russell Almond --- Added last item right justified code.
+06/13/94 Mickish/Bolt - Referenced :indent slot inside Dimensions-Fn
+09/17/93 Andrew Mickish - Set :left and :top of item-prototype in Create-Items
+           to prevent inheritance of bogus formulas when IP is an aggregadget
+07/09/93 Andrew Mickish - Set :tail of aggrelist when only one component
+06/23/93 Andrew Mickish - Added :visible-components slot
+05/31/93 Andrew Mickish - New dimensions-fn that takes :rank-margin and
+           :pixel-margin into account
+05/26/93 Andrew Mickish - Added :layout-fixed? formula
+05/20/93 Andrew Mickish - Restored top-level :fixed-width/height formulas;
+           Removed :line-break-p references
+05/19/93 Andrew Mickish - Removed :internally-parented references; only set
+           :item-prototype-object in prototype aggrelist; removed definition
+           of opal::destroy-constraints
+05/14/93 Mickish/Kosbie - Removed aggrelist maintenance formulas from
+           components; now lay out components with :fix-update-slots method;
+           fixed Dimensions-Fn for aggrelists with NIL direction;
+           removed all references to :prev-visible
+03/30/93 Andrew Mickish - Used begin/end-c-i in Generate-Aggrelist-Components
+03/24/93 Dario Giuse - Adjusted scoping of with-constants-disabled in
+           Generate-Aggrelist-Components
+01/18/93 Andrew Mickish - In :initialize method of aggrelist, set :old-items;
+           made :items an update-slot for new :fix-update-slots method
+12/10/92 Andrew Mickish - Added type declarations
+11/06/92 Andrew Mickish - In :initialize method of aggrelist, do not call
+           create-items if a :parts list was supplied
+ 3/18/92 Conrad Poelman - Added :width and :height aggrelist formulas
+           that do not depend on the :left and :top of the aggrelist.
+ 3/10/92 Andrew Mickish - In :initialize method, declared :prev slot constant
+           in each component generated from a :parts list
+ 2/07/92 Andrew Mickish - Converted calls to aggrelist maintenance functions
+           (like base-left-fn, etc.) to be formulas.  Rewrote create-items
+           to declare constant slots.  Added maybe-constant list.
+10/10/91 Andrew Mickish - Fixed remove-local-component to remove the
+           component corresponding to the item being removed.
+ 8/26/91 Pervin/VanDerZanden - In :destroy method for aggrelist, don't
+           destroy item-prototype.
+ 4/22/91 Andrew Mickish - Added :notice-items-changed method for aggrelists
+           and changed n-i-c function
+ 7/13/89 Philippe Marchal - Reviewed, Changed to match KR V2.2
+ 5/24/89 David Kosbie  - Created
+======================================================================
+|#
+
+
+#| add-agg.lisp
+======================================================================
+Change log:
+  07/14/93 Andrew Mickish - Fixed :replace-item-prototype-object method to work
+             with new aggrelists;  New Remove-The-Component;
+             Eliminated recursive maintenance of components in add-item and
+             remove-item, since it will be taken care of by fix-update-slots
+  05/28/93 Dario Giuse    - Replaced bindings of kr::*constants-disabled* with
+	     calls to with-constants-disabled.
+  05/20/93 Andrew Mickish - Removed calls to opal::destroy-constraints
+  04/19/93 Andrew Mickish - Fixed Fix-Update-Slots method to handle change in
+             :items value from a list to a number and vice versa.
+  03/03/93 Andrew Mickish - Fixed Option-Button-String-Func to consider label;
+             Aggrelist-Edit-String-Func now calls :new-item-label method
+             (used by menubars)
+  03/01/93 Andrew Mickish - In add/remove-item methods, check whether items
+             is a number, not whether it is a cons (same effect without
+             crashing on NIL :items list)
+  02/24/93 Andrew Mickish - Added Aggrelist-Edit-String-Func
+  02/19/93 Andrew Mickish - Gadget-Add/Remove-Item slot parameter can be a list
+             for gadgets with aggrelists not at the top-level (option-button)
+  01/18/93 Andrew Mickish - Notice-items-changed --> :fix-update-slots
+  12/03/92 Andrew Mickish - Made item parameter optional for :add-item method;
+             Fixed :remove-nth-item method to remove nth component; Fixed
+             aggrelist methods to work when :items is a number
+  06/16/92 Andrew Mickish - New aggrelist and gadget methods (comments below)
+  04/13/92 Brad VanderZanden - In :remove-component, do not remove an instance
+	     from an aggregadget if in the same aggregadget as the prototype.
+  04/07/92 Andrew Mickish - Get-Local-Value ---> G-Local-Value
+  03/25/92 Andrew Mickish - Get-Values ---> G-Value
+  03/18/92 Andrew Mickish - Added condition to recursion in :remove-item method
+  11/06/91 Edward Pervin - Made move-component a method.
+  05/13/91 Edward Pervin - Add-item and remove-item had been defined
+	     in aggrelists.lisp.
+  04/22/91 Andrew Mickish - Added Gadget-Add-Item and Gadget-Remove-Item
+======================================================================
+|#
+
+;;;; agg-fix-slots.lisp
+#|
+======================================================================
+Change log:
+  01/14/97 Russell Almond --- Added last item right justified code.
+  09/17/93 Andrew Mickish - Do not declare :left and :top of component constant
+             just because it was generated from a :parts list
+  08/12/93 Andrew Mickish - Called Fix-Items at top of fix-update-slots method
+  07/26/93 Andrew Mickish - Called Set-Rank-Slots at beginning of :f-u-s method
+  07/14/93 Andrew Mickish - Made fix-update-slots only work on local aggrelist
+  06/22/93 Andrew Mickish - Notice-items-changed invokes fix-update-slots;
+             added Set-Rank-Slots
+  05/26/93 Andrew Mickish - Referenced :layout-fixed? in :fix-update-slots
+  05/20/93 Andrew Mickish - Declare maintenance slots of components constant
+             when the aggrelist is layed out for the first time
+  05/14/93 Andrew Mickish - Split off from add-agg.lisp and aggrelists.lisp
+======================================================================
+|#
+
+;;;; agg-labels.lisp
+#|
+======================================================================
+Change log:
+  05/14/93 Andrew Mickish - Split off from add-agg.lisp
+======================================================================
+|#
+
+;;;; aggregraphs.lisp
+#|
+======================================================================
+Change log:
+    6/17/04  Robert Goldman - The original version of aggregraphs
+             crashed if the aggregraph was initially
+             created with no root nodes and nodes were later added.
+    6/01/93  Andrew Mickish - Added some macros
+    4/15/92  Martin Sjolin - Add #-cmu flags before :rehash-size 2.0
+   03/25/92  Andrew Mickish - Get-Values ---> G-Value
+   12/13/91  Dario Giuse - Removed (declare (ignore dummy)) from
+			:add-node of aggregraph.
+   11/27/91  Andrew Mickish - Added args parameter to initialize method
+               so that an aggregraph can be a part of an aggregadget
+    4/01/91  Bryan Loyall - Added cache for :add-node method to make
+               multiple node additions to the same set of parents and
+               children faster.
+    4/01/91  Bryan Loyall - Changed find-good-y-near-desired-y to
+               avoid spaces above the :top of the graph
+    3/13/91  Andrew Mickish - Added lines to :add-node that will put the
+               new node in the hash table in :source->graph-node-table
+    3/12/91  Andrew Mickish - :x-dist-between-nodes ==> :h-spacing,
+                              :y-dist-between-nodes ==> :v-spacing
+    3/11/91  Andrew Mickish - Merged into Opal/Aggregadgets format
+    3/09/91  Bryan Loyall - Created
+======================================================================
+|#
+
+;;;; copy-agg.lisp
+;;; Change log:
+;; 07/26/93 Andrew Mickish - Moved defvar of *standard-element-slots* here from
+;;                           save-agg.lisp to avoid compiler warning
+;; 06/30/93 Andrew Mickish - Added :initialize-copy method
+;; 06/25/93 Andrew Mickish - Set slot type of :known-as after s-valuing it.
+;; 06/12/93 Andrew Mickish - Set :update-slots-values of aggrelists during
+;;                           initialization; Set name slot in aggregadget corres-
+;;                           ponding to copied behavior's :known-as.
+;; 05/28/93 Dario Giuse    - Eliminated kr::schema-slots, finished conversion to
+;; 			     KR 2.3.  Replaced quite a few bindings of
+;; 			     kr::*constants-disabled* with calls to the exported
+;; 			     macro with-constants-disabled.  Replaced internal
+;; 			     stuff to decide whether slot is constant with a
+;; 			     call to the exported function slot-constant-p.
+;; 			     Added a small amount of test code, at the end of
+;; 			     the file, inside a #| |# comment.
+;; 05/24/93 David Kosbie   - Added extra arg of NIL to kr::set-slot-accessor to
+;;                           run under new KR 2.3.  Also removed link-constants
+;;                           argument to process-constant-slots.
+;; 05/20/93 Andrew Mickish - Removed :internally-parented references
+;; 03/10/93 Andrew Mickish - Wrapped with-constants-disabled around add-component
+;;                           of copied components at end of Copy-Slots.
+;; 12/10/92 Dario Giuse    - Added copying of type declarations.
+;; 11/20/92 Andrew Mickish - At end of Copy-Slots, only set :behaviors if
+;;                           behaviors is non-NIL;  only copy the :item-prototype-
+;;                           object if the agget has a local :item-prototype
+;;                           description
+;; 06/22/92 Andrew Mickish - Added parameter to kr::process-constant-slots
+;; 04/09/92 Dario Guise    - Changed "ordinary copy" clause of Copy-Slots
+;;                           for compatibility with new version of KR
+;; 04/01/92 Andrew Mickish - Added parameter to kr::process-constant-slots
+;; 03/03/92 Andrew Mickish - Called Get-Inherited-Value instead of Inherit-Value
+;; 02/19/92 Dario Giuse    - Modified COPY-SLOTS to keep constant bits from the
+;; 			     source schema.  This means that COPY-GADGET preserves
+;; 			     constant information.
+;; 02/14/92 Dario Giuse    - Removed obsolete check for :DEPENDED-SLOTS.
+;; 			     Added some more kr::*constants-disabled* in
+;; 			     COPY-SLOTS.
+;; 02/14/92 Andrew Mickish - Bound kr::*constants-disabled* in COPY-SLOTS
+;; 02/04/92 Andrew Mickish - Added kr::process-constant-slots and new-parent
+;;			     parameter to COPY-SLOTS.
+;; 01/07/92 Andrew Mickish - Added progn in COPY-SLOTS to set variables properly
+;; 12/09/91 Andrew Mickish - Converted from multiple- to single-valued slots
+;; 01/17/91 Dario Giuse    - Added a condition to the COND in COPY-SLOTS
+
+
+;;;; scalable-aggregraph-image.lisp
+#|
+======================================================================
+Change log:
+   12/08/92  Andrew Mickish - Removed :x1,:y1,:x2,:y2 slot definitions from
+               scalable-aggregraph-image-link-prototype
+   11/27/91  Andrew Mickish - Added args parameter to initialize method
+               so that an aggregraph can be a part of an aggregadget
+    3/11/91  Andrew Mickish - Merged into Opal/Aggregadgets format
+    3/09/91  Bryan Loyall - Created
+======================================================================
+|#
+
+
+;;;; scalable-aggregraph.lisp
+#|
+======================================================================
+Change log:
+    4/15/92  Martin Sjolin - Add #-cmu flags before :rehash-size 2.0
+    3/25/92  Andrew Mickish - Get-Values ---> G-Value
+    4/01/91  Bryan Loyall - Changed find-good-y-near-desired-y to
+               avoid spaces above the :top of the graph
+    3/13/91  Andrew Mickish - Added lines to :add-node that will put the
+               new node in the hash table in :source->graph-node-table
+    3/12/91  Andrew Mickish - :x-dist-between-nodes ==> :h-spacing,
+                              :y-dist-between-nodes ==> :v-spacing
+    3/7/91  Andrew Mickish - Merged into Opal/Aggregadgets format
+    3/1/91  Bryan Loyall - Created
+======================================================================
+|#
+

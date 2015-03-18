@@ -17,16 +17,11 @@
 ;;;
 ;;; $Id::                                                             $
 
-#|
-======================================================================
-Change log:
-05/12/93 Andrew Mickish - Created
-======================================================================
-|#
 
+
 (in-package "OPAL")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(add-local-component add-local-interactor remove-local-component
 	    remove-local-interactor add-local-item
 	    remove-local-item remove-nth-item remove-nth-component

@@ -10,6 +10,7 @@
 ;;;
 ;;; $Id::                                                             $
 
+
 (in-package "COMMON-LISP-USER")
 
 (defvar *debug-aggregadgets-mode* nil)
@@ -42,7 +43,7 @@
     "scalable-aggregraph-image"
     ))
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (garnet-mkdir-if-needed Garnet-Aggregadgets-Pathname))
 
 (dolist (file Garnet-Aggregadgets-Files)

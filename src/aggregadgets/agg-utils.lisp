@@ -12,17 +12,10 @@
 ;;;
 ;;; $Id::                                                             $
 
-
-#|
-======================================================================
-Change log:
-05/14/93 Andrew Mickish - Split off from aggregadgets.lisp and aggrelists.lisp
-======================================================================
-|#
-
+
 (in-package "OPAL")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(no-func)))
 
 ;;; No-function: used as default value for the matching function.

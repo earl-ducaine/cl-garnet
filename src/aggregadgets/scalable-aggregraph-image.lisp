@@ -18,22 +18,10 @@
 ;;; $Id::                                                             $
 
 
-#|
-======================================================================
-Change log:
-   12/08/92  Andrew Mickish - Removed :x1,:y1,:x2,:y2 slot definitions from
-               scalable-aggregraph-image-link-prototype
-   11/27/91  Andrew Mickish - Added args parameter to initialize method
-               so that an aggregraph can be a part of an aggregadget
-    3/11/91  Andrew Mickish - Merged into Opal/Aggregadgets format
-    3/09/91  Bryan Loyall - Created
-======================================================================
-|#
-
-
+
 (in-package "OPAL")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(SCALABLE-AGGREGRAPH-IMAGE SCALABLE-AGGREGRAPH-IMAGE-NODE-PROTOTYPE
 	    SCALABLE-AGGREGRAPH-IMAGE-LINK-PROTOTYPE)))
 

@@ -24,57 +24,10 @@
 ;;;
 ;;; $Id::                                                             $
 
-
-#|
-======================================================================
-Change log:
-01/14/97 Russell Almond --- Added last item right justified code.
-06/13/94 Mickish/Bolt - Referenced :indent slot inside Dimensions-Fn
-09/17/93 Andrew Mickish - Set :left and :top of item-prototype in Create-Items
-           to prevent inheritance of bogus formulas when IP is an aggregadget
-07/09/93 Andrew Mickish - Set :tail of aggrelist when only one component
-06/23/93 Andrew Mickish - Added :visible-components slot
-05/31/93 Andrew Mickish - New dimensions-fn that takes :rank-margin and
-           :pixel-margin into account
-05/26/93 Andrew Mickish - Added :layout-fixed? formula
-05/20/93 Andrew Mickish - Restored top-level :fixed-width/height formulas;
-           Removed :line-break-p references
-05/19/93 Andrew Mickish - Removed :internally-parented references; only set
-           :item-prototype-object in prototype aggrelist; removed definition
-           of opal::destroy-constraints
-05/14/93 Mickish/Kosbie - Removed aggrelist maintenance formulas from
-           components; now lay out components with :fix-update-slots method;
-           fixed Dimensions-Fn for aggrelists with NIL direction;
-           removed all references to :prev-visible
-03/30/93 Andrew Mickish - Used begin/end-c-i in Generate-Aggrelist-Components
-03/24/93 Dario Giuse - Adjusted scoping of with-constants-disabled in
-           Generate-Aggrelist-Components
-01/18/93 Andrew Mickish - In :initialize method of aggrelist, set :old-items;
-           made :items an update-slot for new :fix-update-slots method
-12/10/92 Andrew Mickish - Added type declarations
-11/06/92 Andrew Mickish - In :initialize method of aggrelist, do not call
-           create-items if a :parts list was supplied
- 3/18/92 Conrad Poelman - Added :width and :height aggrelist formulas
-           that do not depend on the :left and :top of the aggrelist.
- 3/10/92 Andrew Mickish - In :initialize method, declared :prev slot constant
-           in each component generated from a :parts list
- 2/07/92 Andrew Mickish - Converted calls to aggrelist maintenance functions
-           (like base-left-fn, etc.) to be formulas.  Rewrote create-items
-           to declare constant slots.  Added maybe-constant list.
-10/10/91 Andrew Mickish - Fixed remove-local-component to remove the
-           component corresponding to the item being removed.
- 8/26/91 Pervin/VanDerZanden - In :destroy method for aggrelist, don't
-           destroy item-prototype.
- 4/22/91 Andrew Mickish - Added :notice-items-changed method for aggrelists
-           and changed n-i-c function
- 7/13/89 Philippe Marchal - Reviewed, Changed to match KR V2.2
- 5/24/89 David Kosbie  - Created
-======================================================================
-|#
-
+
 (in-package "OPAL")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(aggrelist null-object)))
 
 
@@ -316,30 +269,30 @@ Change log:
 			 (s-value (gv :self) :force-computation? T))))
  )
 
-(defconstant *lister-max-width*           0)
-(defconstant *lister-max-height*          1)
-(defconstant *lister-left*                2)
-(defconstant *lister-top*                 3)
-(defconstant *lister-direction*           4)
-(defconstant *lister-h-spacing*           5)
-(defconstant *lister-v-spacing*           6)
-(defconstant *lister-indent*              7)
-(defconstant *lister-h-align*             8)
-(defconstant *lister-v-align*             9)
-(defconstant *lister-fixed-width-p*      10)
-(defconstant *lister-fixed-height-p*     11)
-(defconstant *lister-fixed-width-size*   12)
-(defconstant *lister-fixed-height-size*  13)
-(defconstant *lister-rank-margin*        14)
-(defconstant *lister-pixel-margin*       15)
-(defconstant *lister-items*              16)
-(defconstant *lister-height*             17)
-(defconstant *lister-width*              18)
-(defconstant *lister-visible-components* 19)
-(defconstant *lister-right-justify-last* 20)
-(defconstant *lister-bottom-justify-last* 21)
-(defconstant *lister-justify-width* 22)
-(defconstant *lister-justify-heigh* 23)
+(defconstant +lister-max-width+           0)
+(defconstant +lister-max-height+          1)
+(defconstant +lister-left+                2)
+(defconstant +lister-top+                 3)
+(defconstant +lister-direction+           4)
+(defconstant +lister-h-spacing+           5)
+(defconstant +lister-v-spacing+           6)
+(defconstant +lister-indent+              7)
+(defconstant +lister-h-align+             8)
+(defconstant +lister-v-align+             9)
+(defconstant +lister-fixed-width-p+      10)
+(defconstant +lister-fixed-height-p+     11)
+(defconstant +lister-fixed-width-size+   12)
+(defconstant +lister-fixed-height-size+  13)
+(defconstant +lister-rank-margin+        14)
+(defconstant +lister-pixel-margin+       15)
+(defconstant +lister-items+              16)
+(defconstant +lister-height+             17)
+(defconstant +lister-width+              18)
+(defconstant +lister-visible-components+ 19)
+(defconstant +lister-right-justify-last+ 20)
+(defconstant +lister-bottom-justify-last+ 21)
+(defconstant +lister-justify-width+ 22)
+(defconstant +lister-justify-heigh+ 23)
 
 
 ;;;--------------------------------------------------------------------------

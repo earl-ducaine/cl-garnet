@@ -16,27 +16,10 @@
 ;;;
 ;;; $Id::                                                             $
 
-
-#|
-======================================================================
-Change log:
-    4/15/92  Martin Sjolin - Add #-cmu flags before :rehash-size 2.0
-    3/25/92  Andrew Mickish - Get-Values ---> G-Value
-    4/01/91  Bryan Loyall - Changed find-good-y-near-desired-y to
-               avoid spaces above the :top of the graph
-    3/13/91  Andrew Mickish - Added lines to :add-node that will put the
-               new node in the hash table in :source->graph-node-table
-    3/12/91  Andrew Mickish - :x-dist-between-nodes ==> :h-spacing,
-                              :y-dist-between-nodes ==> :v-spacing
-    3/7/91  Andrew Mickish - Merged into Opal/Aggregadgets format
-    3/1/91  Bryan Loyall - Created
-======================================================================
-|#
-
-
+
 (in-package "OPAL")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(SCALABLE-AGGREGRAPH SCALABLE-AGGREGRAPH-NODE-PROTOTYPE
 	    SCALABLE-AGGREGRAPH-LINK-PROTOTYPE)))
 
