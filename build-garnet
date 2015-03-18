@@ -9,7 +9,7 @@
 #
 SBCL=/usr/local/bin/sbcl
 CMUCL=/usr/local/bin/lisp
-ACL=/beta/homedir/brg/aic/allegro-cl-amd64-linux/8.1/alisp
+ACL=/usr/local/allegro-cl-amd64-linux/8.2/alisp
 CCL=/usr/local/bin/ccl
 
 # Setting this to "T" turns on the debug flag, adding a lot of
@@ -72,8 +72,8 @@ case $1 in
 	IMAGE=garnet-ccl
 	;;
     cmucl)
-	BUILD="$CMUCL -batch"
-	LOAD=$CMUCL
+	BUILD="$CMUCL -noinit -batch"
+	LOAD="$CMUCL -noinit"
 	QUIT="(quit)"
 	IMAGE=garnet-cmucl
 	;;
@@ -94,6 +94,7 @@ $BUILD << EOF
 (require :clx)
 (load "garnet-prepare-compile")
 (defvar Garnet-Garnet-Debug $DEBUG)
+;;#+cmu (setf c:*record-xref-info* $DEBUG)
 (load "garnet-loader")
 (load "garnet-compiler")
 $QUIT
@@ -108,5 +109,6 @@ EOF
                   #+sbcl :executable #+sbcl t
                   #+cmu :executable #+cmu t
                   #+ccl :prepend-kernel #+ccl t)))
- (apply #'opal:make-image args))
+(apply #'opal:make-image args))
+#+allegro $QUIT
 EOF
