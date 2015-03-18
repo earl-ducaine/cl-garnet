@@ -14,45 +14,7 @@
 ;;;
 ;;; $Id::                                                             $
 
-
-#|
-======================================================================
-Change log:
-  07/14/93 Andrew Mickish - Fixed :replace-item-prototype-object method to work
-             with new aggrelists;  New Remove-The-Component;
-             Eliminated recursive maintenance of components in add-item and
-             remove-item, since it will be taken care of by fix-update-slots
-  05/28/93 Dario Giuse    - Replaced bindings of kr::*constants-disabled* with
-	     calls to with-constants-disabled.
-  05/20/93 Andrew Mickish - Removed calls to opal::destroy-constraints
-  04/19/93 Andrew Mickish - Fixed Fix-Update-Slots method to handle change in
-             :items value from a list to a number and vice versa.
-  03/03/93 Andrew Mickish - Fixed Option-Button-String-Func to consider label;
-             Aggrelist-Edit-String-Func now calls :new-item-label method
-             (used by menubars)
-  03/01/93 Andrew Mickish - In add/remove-item methods, check whether items
-             is a number, not whether it is a cons (same effect without
-             crashing on NIL :items list)
-  02/24/93 Andrew Mickish - Added Aggrelist-Edit-String-Func
-  02/19/93 Andrew Mickish - Gadget-Add/Remove-Item slot parameter can be a list
-             for gadgets with aggrelists not at the top-level (option-button)
-  01/18/93 Andrew Mickish - Notice-items-changed --> :fix-update-slots
-  12/03/92 Andrew Mickish - Made item parameter optional for :add-item method;
-             Fixed :remove-nth-item method to remove nth component; Fixed
-             aggrelist methods to work when :items is a number
-  06/16/92 Andrew Mickish - New aggrelist and gadget methods (comments below)
-  04/13/92 Brad VanderZanden - In :remove-component, do not remove an instance
-	     from an aggregadget if in the same aggregadget as the prototype.
-  04/07/92 Andrew Mickish - Get-Local-Value ---> G-Local-Value
-  03/25/92 Andrew Mickish - Get-Values ---> G-Value
-  03/18/92 Andrew Mickish - Added condition to recursion in :remove-item method
-  11/06/91 Edward Pervin - Made move-component a method.
-  05/13/91 Edward Pervin - Add-item and remove-item had been defined
-	     in aggrelists.lisp.
-  04/22/91 Andrew Mickish - Added Gadget-Add-Item and Gadget-Remove-Item
-======================================================================
-|#
-
+
 #| Implementation details:
 
 ADD-COMPONENT
@@ -85,7 +47,7 @@ affected aggrelist.
 
 (in-package "OPAL")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(gadget-add-item gadget-remove-item)))
 
 
