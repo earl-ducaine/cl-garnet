@@ -14,17 +14,10 @@
 ;;;
 ;;; $Id::                                                             $	
 
-
-#|
-======================================================================
-Change log:
-  05/14/93 Andrew Mickish - Split off from add-agg.lisp
-======================================================================
-|#
-
+
 (in-package "OPAL")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(Single-Button-Get-Label Panel-Get-Label)))
 
 ;;
