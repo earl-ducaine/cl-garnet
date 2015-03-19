@@ -1,0 +1,18 @@
+#+COMMENT:
+#+COMMENT: $Id$
+#+COMMENT:
+* Font Size problem
+  - Seems like it can't tell the difference between 100dpi and 75dpi fonts.
+
+* Motif error gadget doesn't size the buttons correctly
+
+* Old text button gadget doesn't handle color properly
+  - See the "gadgets" demo
+
+* Allegro process code seems broken.
+
+* Multifont window flickers when scrolling or changing.
+
+* Transcription replay doesn't work.
+  - Not sure if it's bad output or a problem with input.
+  
