@@ -10,13 +10,7 @@
 ;;;
 ;;; $Id::                                                             $
 
-;;; CHANGE LOG:
-;;; 10/2/03 RGA --- New compile/load protocol
-;;;    7/28/96 RGA --- changed to use garnet-compile/load
-;;; 02/24/93 Andrew Mickish - Removed references to compile-opal/inter-p
-;;; 04/15/92 Mickish - Added ps-multifont and load of multifont-loader
-;;;
-
+
 (in-package "COMMON-LISP-USER")
 
 (defvar *debug-ps-mode* nil)
@@ -35,7 +29,7 @@
 (unless (get :garnet-modules :multifont)
   (load (merge-pathnames "multifont-loader" Garnet-Opal-PathName)))
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (garnet-mkdir-if-needed Garnet-ps-Pathname))
 
 (Defparameter Garnet-PS-Files
