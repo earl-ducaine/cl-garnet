@@ -67,8 +67,8 @@
 ;; 
 (defstruct (schema (:predicate is-schema)
                    (:print-function print-the-schema))
-  name					; the schema name, or a number
-  bins					; bins of lists of slots
+  name      ; the schema name, or a number
+  bins      ; bins of lists of slots
   )
 
 ;;;    (ts (locally (declare (optimize (speed 3) (safety 0) (debug 0)))
@@ -78,6 +78,17 @@
 ;;;        (locally (declare (optimize (speed 3) (safety 0) (debug 0)))
 ;;;        (schema-bins object)))
 
+;; SCHEMA-P
+;;
+;; Returns T if the <obj> is a schema which was not destroyed.
+;;
+(declaim (inline schema-p))
+(defun schema-p (obj)
+  (locally (declare #.*special-kr-optimization*)
+    (and (is-schema obj)
+	 ;; make sure it's not a formula, and it's not deleted.
+	 (hash-table-p (schema-bins obj))
+	 T)))
 
 ;; This structure is similar to a schema, but is used to store formulas.
 ;; It prints out with an F instead of an S, and it uses the same positions for
@@ -172,6 +183,7 @@
 (defvar *within-g-value* nil
   "Set to non-nil within a sub-formula evaluation")
 
+(declaim (fixnum *sweep-mark*))
 (defvar *sweep-mark* 0
   "Used as a sweep mark to detect circularities")
 
@@ -219,26 +231,56 @@
   "An a-list of relations known to the system, with their inverse(s).
    Used for the creation of automatic reverse-links.")
 
-;; FMG Is this SMP safe? Seems like locking would be needed to do it correctly, 
-;;     but the garbage collector seems to work fast enough these days.
-#-(and)
-(defparameter *reuse-formulas* (make-array 1 :adjustable t :fill-pointer 0)
-"A list of formulas that have been destroyed and can be reused.  This
- avoids the need to allocate and deallocate formulas all the time.")
+;;;
+;; FMG Make formula-reuse SMP safe. Don't like the heavy
+;; conditionalization here, but where else to put it?
+;;
 
-#+(and)
-(defparameter *reuse-formulas* nil
-  "A list of formulas that have been destroyed and can be reused.  This
-   avoids the need to allocate and deallocate formulas all the time.")
+(defvar *formula-pool* nil)
+#+ccl
+(defvar *formula-lock* (ccl:make-lock))
+#+sbcl
+(defvar *formula-lock* (sb-thread:make-mutex))
 
-;; FMG This doesn't seem to be used.
-;; (defparameter *reuse-slots* (make-array 1 :adjustable t :fill-pointer 0)
-;;   "An array of slot arrays that have been destroyed and can be reused.  This
-;;    avoids the need to allocate and deallocate arrays all the time.")
+#+(and cmu mp)
+(defun formula-push (f)
+  (mp:atomic-push f *formula-pool*))
+#+(and cmu mp)
+(defun formula-pop ()
+  (and *formula-pool* (mp:atomic-pop *formula-pool*)))
+#+(and cmu (not mp))
+(defun formula-push (f)
+  (system:without-interrupts
+    (push f *formula-pool*)))
+#+(and cmu (not mp))
+(defun formula-pop ()
+  (system:without-interrupts
+    (pop *formula-pool*)))
+#+sb-thread
+(defun formula-push (f)
+  (sb-thread:with-mutex (*formula-lock*)
+    (push f *formula-pool*)))
+#+sb-thread
+(defun formula-pop ()
+  (sb-thread:with-mutex (*formula-lock*)
+    (and *formula-pool* (pop *formula-pool*))))
+#+ccl
+(defun formula-push (f)
+  (ccl:with-lock-grabbed (*formula-lock*)
+    (push f *formula-pool*)))
+#+ccl
+(defun formula-pop ()
+  (ccl:with-lock-grabbed (*formula-lock*)
+    (pop *formula-pool*)))
+#+allegro
+(defun formula-push (f)
+  (excl:critical-section (:non-smp :without-scheduling)
+   (push f *formula-pool*)))
+#+allegro
+(defun formula-pop ()
+  (excl:critical-section (:non-smp :without-scheduling)
+   (pop *formula-pool*)))
 
-;; FMG This doesn't seem to be used.
-;; (defparameter *reuse-directories* (make-array 1 :adjustable t :fill-pointer 0)
-;;   "An array of directory arrays that have been destroyed and can be reused..")
 
 (defvar *schema-is-new* nil
   "If non-nil, we are inside the creation of a new schema.  This guarantees
@@ -331,7 +373,7 @@
 ;;  Definitions of value-information bits.
 
 #+EAGER
-(eval-when (eval compile load)
+(eval-when (:execute :compile-toplevel :load-toplevel)
   ;; bit is 1 if formula is part of a cycle, 0 otherwise
   (defparameter *cycle-bit* 0)
   ;; bit is 1 if formula is on the evaluation queue, 0 otherwise
@@ -363,7 +405,7 @@
 
 
 #+EAGER
-(eval-when (eval compile load)
+(eval-when (:execute :compile-toplevel :load-toplevel)
   (defparameter *cycle-mask* (ash 1 *cycle-bit*))
   (defparameter *eval-mask* (ash 1 *eval-bit*))
   (defparameter *visited-mask* (ash 1 *visited-bit*))
@@ -581,9 +623,10 @@
   #-GARNET-DEBUG
   nil)
 
-(declaim (inline formula-p deleted-p not-deleted-p is-inherited is-parent is-constant
-		 is-update-slot set-is-update-slot is-local-only is-parameter
-		 extract-type-code get-entry-type-code))
+(declaim (inline
+	  formula-p deleted-p not-deleted-p is-inherited is-parent is-constant
+	  is-update-slot set-is-update-slot is-local-only is-parameter
+	  extract-type-code get-entry-type-code))
 
 (defun formula-p (thing)
   (a-formula-p thing))
@@ -1052,7 +1095,6 @@ the formula object itself is returned."
   (if slots
       `(expand-accessor g-local-value-fn ,schema ,@slots)
       `(progn ,schema)))
-
 
 
 ;;; Demons

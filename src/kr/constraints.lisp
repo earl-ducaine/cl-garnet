@@ -13,14 +13,6 @@
 
 (in-package "KR")
 
-;;;    (eval-when (:execute :compile-toplevel :load-toplevel)
-;;;	 (proclaim '(special common-lisp-user::*default-garnet-proclaim*))
-;;;	 (if (boundp 'common-lisp-user::*default-garnet-proclaim*)
-;;;	     (when common-lisp-user::*default-garnet-proclaim*
-;;;	       (proclaim common-lisp-user::*default-garnet-proclaim*))
-;;;	     (proclaim '(optimize (safety 1) (space 0)
-;;;			 (speed 3) #+ALLEGRO (debug 0)))))
-
 (defvar *setup-dependencies* T
   "If T (the default), dependencies are set up whenever GV and GVL are
    evaluated inside formulas.  If nil, no dependencies are set up.")
@@ -59,22 +51,20 @@
 ;; Reuses one of the destroyed formulas, or allocates one if none exist.
 ;; FMG Note: *reuse-formulas* is set to nil to defeat this.
 (defun make-new-formula ()
-  (let ((l (1- (length *reuse-formulas*)))
-	f)
-    (if (< l 0)
-	;; No formulas to reuse
-	(setf f (make-a-formula))
-	;; Reuse the last formula in the array.
+  (let ((f (formula-pop)))
+    (if f
+	;; Reuse a formula
 	(progn
-	  (setf f (aref *reuse-formulas* l))
 	  (setf (a-formula-depends-on f) nil)
 	  (setf (a-formula-cached-value f) nil)
 	  (setf (a-formula-path f) nil)
 	  (setf (a-formula-is-a f) nil)
 	  (setf (a-formula-function f) nil)
 	  (setf (a-formula-lambda f) nil)
-	  (setf (a-formula-is-a-inv f) nil)
-	  (decf (fill-pointer *reuse-formulas*))))
+	  (setf (a-formula-is-a-inv f) nil))
+	;; No formulas to reuse
+	(setf f (make-a-formula))
+	)
     (set-formula-number f 0)
     f))
 
@@ -107,9 +97,12 @@
 	    (setf (a-formula-function formula)
 		  ;; This version does not work with CL version 2.  It is,
 		  ;; however, much more efficient than calling the compiler.
-		  #-(or CMU ANSI-CL) `(lambda () ,form)
+		  #-(or CMU ANSI-CL)
+		  `(lambda () ,form)
 		  ;; This version works with CL version 2.
-		  #+(or CMU ANSI-CL) (compile nil `(lambda () ,form)))
+		  #+(or CMU ANSI-CL)
+		  (compile nil `(lambda () ,form))
+		  )
 	    (setf (a-formula-lambda formula) form)))
       formula)))
 
@@ -442,6 +435,14 @@ in slot ~S of ~S.~%~%"
 		       "GV or GVL on the non-schema ~S, slot ~S (not
 inside a formula)"
 		       schema slot))))))
+
+
+;;; This function is for use in formulas.  It represents a direct (i.e.,
+;;; no-link) dependency.  If the <slot> of the <schema> changes, the formula
+;;; will be re-evaluated. 
+;;; 
+(defun gv-fn (schema slot)
+  (gv-fn-body g-value))
 
 
 (defun setup-dependency (schema slot value entry)

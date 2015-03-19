@@ -24,18 +24,6 @@
 
 (in-package "KR")
 
-;; SCHEMA-P
-;;
-;; Returns T if the <obj> is a schema which was not destroyed.
-;;
-(declaim (inline schema-p))
-(defun schema-p (obj)
-  (locally (declare #.*special-kr-optimization*)
-    (and (is-schema obj)
-	 ;; make sure it's not a formula, and it's not deleted.
-	 (hash-table-p (schema-bins obj))
-	 T)))
-
 (declaim (inline clear-one-slot))
 (defun clear-one-slot (schema slot entry)
   "Completely clear a slot, including dependencies, inherited, etc...
@@ -1305,8 +1293,7 @@ INPUTS:
       (when meta
 	(setf (a-formula-meta formula) NIL)
 	(destroy-schema meta)))
-    (when *reuse-formulas*
-      (vector-push-extend formula *reuse-formulas*))))
+    (formula-push formula)))
 
 
 (defun destroy-slot-helper (x slot)
@@ -2372,7 +2359,7 @@ RETURNS: a list, with elements as follows:
     (setf is-a (list is-a)))
   (when is-a
     (let ((*schema-is-new* T))	      ; Bind to prevent search on insertion
-					; of :is-a-inv in parent schemata.
+				      ; of :is-a-inv in parent schemata.
       ;; Check for immediate is-a loop, and set the :IS-A slot.
       (handle-is-a schema is-a generate-instance override)))
 
