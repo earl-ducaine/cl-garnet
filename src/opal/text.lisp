@@ -75,11 +75,11 @@
   (:xfont (o-formula (gvl :font :xfont)))
   (:cut-strings
    (o-formula
-    (let ((string (gvl :string))
+    (let ((string (the simple-string (gvl :string)))
 ;;	  (font (gvl :xfont))
 	  ;; Structs will be NIL if formula has never been evaluated
 	  (structs (g-value (gv :self) :cut-string-structs)))
-      (declare (string string))
+      (declare (simple-string string))
       (do* ((old-structs structs (cdr old-structs))
 	    (struct (car old-structs) (car old-structs))
 	    (i -1 j)
@@ -100,7 +100,7 @@
 			    string))
 	(multiple-value-bind (width dummy2 dummy3 left-bearing)
 	    (gem:text-extents (or (gvl :window)
-				  (gv device-info :current-root))
+				  (gv gem:device-info :current-root))
 			      (gvl :font)
 			      substring)
 	  (declare (ignore dummy2 dummy3))
@@ -119,7 +119,7 @@
 				    :width width
 				    :left-bearing left-bearing))))))))
       (s-value (gv :self) :cut-string-structs structs))))
-  (:height (o-formula (* (the fixnum (gvl :font :font-height))
+  (:height (o-formula (* (gvl-fixnum :font :font-height)
 			 (length (gvl :cut-strings)))))
   (:width (o-formula (let ((width *cursor-width*))
 		       (declare (fixnum width))
@@ -148,7 +148,7 @@
 		  (setf prev-len
 			;; Add an extra 1 for the #\newline
 			(+ 1 prev-len
-			   (length (cut-string-string a-cut-string))))
+			   (length (the simple-string (cut-string-string a-cut-string)))))
 		  (incf n)))))))))
   (:cursor-offset
    (o-formula
@@ -156,14 +156,14 @@
       (declare (type (or null fixnum) cursor-index))
       (when cursor-index
 	(let* ((ci                (the fixnum cursor-index))
-	       (cut-string        (nth (gvl :line-number) (gvl :cut-strings)))
+	       (cut-string        (nth (gvl-fixnum :line-number) (gvl :cut-strings)))
 	       (justification     (gvl :justification))
 	       (string            (cut-string-string cut-string))
 	       (line-width        (cut-string-width cut-string))
-	       (max-line-width    (the fixnum (gvl :width)))
-	       (font              (the fixnum (gvl :font)))
-	       (char-width        (the fixnum (gv  font :char-width)))
-	       (prev-len          (the fixnum (gvl :prev-len)))
+	       (max-line-width    (gvl-fixnum :width))
+	       (font              (gvl :font))
+	       (char-width        (gv-fixnum font :char-width))
+	       (prev-len          (gvl-fixnum :prev-len))
 	       ;; Adj-index gives us the cursor-index on the particular line
 	       (adj-index   (- ci prev-len))
 	       (fixed-index (cond ((<= ci 0)                 0)
@@ -176,7 +176,8 @@
 						     (subseq string 0 fixed-index)))))
 	       (max-cursor-offset (- max-line-width *cursor+++half+++width*)))
 	  (declare (fixnum ci line-width max-line-width char-width
-			   adj-index fixed-index base-width max-cursor-offset))
+			   adj-index fixed-index base-width max-cursor-offset)
+		   (simple-string string))
 	  ;; Never let offset be less than zero
 	  (max *cursor-half-width*
 	       (min max-cursor-offset
@@ -284,8 +285,9 @@
 	     (line-number (g-value gob :line-number)))
 	(s-value gob :cursor-index
 		 (+ (g-value gob :prev-len)
-		    (length (cut-string-string
-			     (nth line-number cut-strings))))))
+		    (length (the simple-string
+				 (cut-string-string
+				  (nth line-number cut-strings)))))))
       (s-value gob :cursor-index (length (g-value gob :string)))))
 
 

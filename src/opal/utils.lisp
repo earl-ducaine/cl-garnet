@@ -14,9 +14,7 @@
 
 (in-package "OPAL")
 
-(eval-when (:execute :load-toplevel :compile-toplevel)
-  (export '(make-image get-garnet-bitmap directory-p
-            time-to-string clip-and-map drawable-to-window)))
+;;; Exports moved to exports.lisp.
 
 (defvar garnet-image-date NIL)
 
@@ -24,7 +22,7 @@
 ;; the function gem:window-from-drawable, without having to always explicitly
 ;; reference the DEVICE-INFO object.
 (defun drawable-to-window (device-drawable)
-  (gem:window-from-drawable (g-value DEVICE-INFO :current-root)
+  (gem:window-from-drawable (g-value gem:DEVICE-INFO :current-root)
 			    device-drawable))
 
 (defparameter *util_month-list*
@@ -59,17 +57,17 @@
     (format t "*** using the following compiler policy: ***~%")
     (format t "~A~%" cl-user::default-garnet-proclaim)))
 
-#-cmu
+
 (defun garnet-restart-function ()
-  (format t "*** Restarting Garnet ~A image created with opal:make-image ***~%"
+  (format t "*** Restarting Garnet ~A image. ***~%"
 	  common-lisp-user::Garnet-Version-Number)
-  (when (boundp 'garnet-image-date)
+  (when (and (boundp 'garnet-image-date) garnet-image-date)
     (format t "*** Image creation date: ~A ***~%" garnet-image-date))
   (announce-debug-state)
   (opal:reconnect-garnet))
 
 
-#+cmu
+#-(and)
 (defun garnet-restart-function ()
   (format t "*** Restarting Garnet ~A image created on ~A ***~%"
 	  common-lisp-user::Garnet-Version-Number
@@ -114,16 +112,16 @@ Please consult your lisp's user manual for instructions.~%")
   ;; keep the #k<> and #f() reader macros active in the saved image.
   #+allegro
   (progn  
-    (if verbose (format t "~%Copying readtable..."))
+    (when verbose (format t "~%Copying readtable..."))
     (copy-readtable *readtable* common-lisp-user::Garnet-Readtable)
     (setf (cdr (assoc '*readtable* excl:*cl-default-special-bindings*))
           'common-lisp-user::Garnet-Readtable)
-    (if verbose (format t "copied.~%")))
+    (when verbose (format t "copied.~%")))
 
   (progn
-    (if verbose (format t "Disconnecting Garnet..."))
+    (when verbose (format t "Disconnecting Garnet..."))
     (opal:disconnect-garnet)
-    (if verbose (format t "disconnected.~%")))
+    (when verbose (format t "disconnected.~%")))
 
   (setf garnet-image-date (time-to-string))
 
@@ -137,7 +135,7 @@ Please consult your lisp's user manual for instructions.~%")
 
   #+(or allegro cmu ccl sbcl)
   (when gc
-    (if verbose (format t "Garbage collecting..."))
+    (when verbose (format t "Garbage collecting..."))
     #+allegro (excl:gc T)
     #+(and cmu (not gencgc)) (ext:gc T)
     #+(and cmu gencgc) (ext:gc :full t)
@@ -148,9 +146,9 @@ Please consult your lisp's user manual for instructions.~%")
       (ccl:gc)
       (ccl::purify))
 
-    (if verbose (format t "collected.~%")))
+    (when verbose (format t "collected.~%")))
 
-  (if verbose (format t "Saving image..."))
+  (when verbose (format t "Saving image..."))
   #+allegro (setq excl:*read-init-files* t)
   #+allegro (setq excl:*restart-init-function* #'garnet-restart-function)
   #+allegro
@@ -175,22 +173,24 @@ Please consult your lisp's user manual for instructions.~%")
   
   #+sbcl
   (progn
-    (pushnew #'garnet-restart-function sb-ext:*init-hooks*)
+;;    (pushnew #'garnet-restart-function sb-ext:*init-hooks*)
+    (setf sb-ext:*init-hooks*
+	  (append sb-ext:*init-hooks* (list #'garnet-restart-function)))
     (apply #'sb-ext:save-lisp-and-die filename extra-args))
   
-  (if verbose (format t "saved.~%"))
+  (when verbose (format t "saved.~%"))
 
   #-sbcl ;; SBCL quits automatically.
   (cond
     (quit
-     (if verbose (format t "Quitting lisp...~%"))
+     (when verbose (format t "Quitting lisp...~%"))
      #+allegro (excl:exit)
      #+cmu (ext:quit)
      )
     (t
-     (if verbose (format t "Reconnecting Garnet..."))
+     (when verbose (format t "Reconnecting Garnet..."))
      (opal:reconnect-garnet)
-     (if verbose (format t "reconnected.~%"))
+     (when verbose (format t "reconnected.~%"))
      ))
   ))
 

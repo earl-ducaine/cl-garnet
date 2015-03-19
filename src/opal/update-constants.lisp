@@ -32,6 +32,9 @@
 
 
 ;;; LINE
+(declaim (fixnum +line-x1+ +line-x2+ +line-y1+
+		 +line-y2+ +line-lstyle+ +line-fstyle+
+		 +line-draw-function+))
 (defconstant +line-x1+		  2)
 (defconstant +line-x2+		  3)
 (defconstant +line-y1+		  4)
@@ -42,6 +45,9 @@
 
 
 ;;; RECTANGLE
+(declaim (fixnum +rect-top+ +rect-left+ +rect-width+
+		 +rect-height+ +rect-lstyle+ +rect-fstyle+
+		 +rect-draw-function+))
 (defconstant +rect-top+           2)
 (defconstant +rect-left+          3)
 (defconstant +rect-width+         4)
@@ -52,6 +58,9 @@
 
 
 ;;; ROUNDTANGLE
+(declaim (fixnum +roundt-top+ +roundt-left+ +roundt-width+
+		 +roundt-height+ +roundt-radius+ +roundt-draw-radius+
+		 +roundt-lstyle+ +roundt-fstyle+ +roundt-draw-function+))
 (defconstant +roundt-top+           2)
 (defconstant +roundt-left+          3)
 (defconstant +roundt-width+         4)
@@ -64,6 +73,8 @@
 
 
 ;;; MULTIPOINT
+(declaim (fixnum +multi-point-list+ +multi-lstyle+ 
+		 +multi-fstyle+ +multi-draw-function+))
 (defconstant +multi-point-list+      2)
 (defconstant +multi-lstyle+	     3)
 (defconstant +multi-fstyle+	     4)
@@ -71,6 +82,8 @@
 
 
 ;;; POLYLINE
+(declaim (fixnum +polyline-point-list+ +polyline-lstyle+
+		 +polyline-fstyle+ +polyline-draw-function+))
 (defconstant +polyline-point-list+    2)
 (defconstant +polyline-lstyle+	      3)
 (defconstant +polyline-fstyle+	      4)
@@ -78,6 +91,11 @@
 
 
 ;;; TEXT
+(declaim (fixnum +text-top+ +text-left+ +text-width+
+		 +text-height+ +text-string+ +text-xfont+
+		 +text-actual-heightp+ +text-fill-background-p+ +text-lstyle+
+		 +text-draw-function+ +text-cursor-offset+ +text-justification+
+		 +text-cut-strings+ +text-line-number+))
 (defconstant +text-top+                    2)
 (defconstant +text-left+                   3)
 (defconstant +text-width+                  4)
@@ -94,7 +112,18 @@
 (defconstant +text-line-number+		  15)
 
 
+;;; MULTIFONT TEXT
+(declaim (fixnum +mf-text-lstyle+ +mf-text-draw-function+
+		 +mf-text-fill-background-p+ +mf-text-force-update+))
+(defconstant +mf-text-lstyle+ 6)
+(defconstant +mf-text-draw-function+ 7)
+(defconstant +mf-text-fill-background-p+ 8)
+(defconstant +mf-text-force-update+ 9)
+
+
 ;;; K-FRAMED-TEXT
+(declaim (fixnum +kft-string+ +kft-font+ +kft-xfont+
+		 +kft-text-extents+ +kft-text-width+ +kft-text-height+))
 (defconstant +kft-string+        9)
 (defconstant +kft-font+         10)
 (defconstant +kft-xfont+        11)
@@ -104,6 +133,8 @@
 
 
 ;;; BITMAPS
+(declaim (fixnum +bm-image+ +bm-top+ +bm-left+
+		 +bm-lstyle+ +bm-fstyle+ +bm-draw-function+))
 (defconstant +bm-image+		2)
 (defconstant +bm-top+		3)
 (defconstant +bm-left+		4)
@@ -113,6 +144,9 @@
 
 
 ;;; ARC
+(declaim (fixnum +arc-left+ +arc-top+ +arc-width+
+		 +arc-height+ +arc-angle1+ +arc-angle2+
+		 +arc-lstyle+ +arc-fstyle+ +arc-draw-function+))
 (defconstant +arc-left+		 2)
 (defconstant +arc-top+		 3)
 (defconstant +arc-width+	 4)
@@ -125,6 +159,9 @@
 
 
 ;;; CIRCLE
+(declaim (fixnum +circle-left+ +circle-top+ +circle-width+
+		 +circle-height+ +circle-angle1+ +circle-angle2+
+		 +circle-lstyle+ +circle-fstyle+ +circle-draw-function+))
 (defconstant +circle-left+		2)
 (defconstant +circle-top+		3)
 (defconstant +circle-width+		4)

@@ -25,78 +25,6 @@
 ;; 
 
 
-;;; CHANGE LOG:
-;;   12-Sep-95 goldman  Had to change the way reconnection is done to
-;;                      reflect the fact that *colormap-index-table*
-;;                      is now a hash table instead of an array.
-;;   17-Apr-94 amickish Restored s-value of :lineage to NIL when disconnect;
-;;                      Destroyed colormap slots after all.
-;;   25-Mar-94 amickish Eliminated redefinition warnings when reconnecting
-;;   15-Dec-93 amickish Do not maintain :display of opal::window; maintain
-;;                      :active-devices of DEVICE-INFO when destroy *root-window*
-;;   18-Nov-93 amickish Destroyed X-DEVICE and *root-window*
-;;   24-May-93 koz      Converted kr::set-slot-accessor calls to use
-;;                      new KR 2.3 format (one more argument)
-;;   19-Apr-93 amickish Destroyed font slots in opal:font-from-files
-;;   24-Feb-93 amickish moved *auxilliary-reconnect-routines* to new-defs
-;;   02-Feb-93 DZG In disconnect-garnet, call kr::set-slot-accessor on the
-;;                 font objects instead of destroy-slot.
-;;   01-Feb-93 amickish all-the-instances ---> do-all-instances
-;;   13-Jan-93 amickish Now sever X connections to fonts rather than texts
-;;   10-Dec-92 amickish *drawable-to-window-mapping* ---> *garnet-windows*
-;;   21-Sep-92 amickish No longer necessary to call notice-items-changed on
-;;                      menubars, due to reimplementation of :submenu-window-list
-;;                      in MENUBAR gadget.
-;;   22-Jun-92 ECP It is necessary to call notice-items-changed on
-;;                 menubars during the execution of reconnect-garnet.
-;;   19-Jun-92 ECP In reconnect-garnet, turn off asynchronous error reports.
-;;   29-May-92 ECP/KY Determine display number and screen number from
-;;                    full display name, by calling initialize-x11-values.
-;;	              If you call disconnect-garnet when already disconnected,
-;;		      or reconnect-garnet when already reconnected, exit.
-;;   25-May-92 ECP Check that elements of *all-windows* and
-;;	           *all-windows-which-have-been-closed* have not
-;;		   been destroyed.
-;;   06-May-92 ECP Only call main-event-loop-process in reconnect-garnet
-;;		   if it had been halted in disconnect-garnet.
-;;   16-Apr-92 ECP Call launch-main-event-loop-process at end of
-;;		   reconnect-garnet.
-;;   30-Mar-92 amickish  Changed funcalls of :update method to update call;
-;;                       Changed the way *all-the-windows* is computed in
-;;                       Disconnect-Garnet.
-;;   25-Mar-92 amickish  Get-Values ---> G-Value
-;;   23-Mar-92 ECP In reconnect-windows, must update all the windows,
-;;	           not just the visible ones.
-;;   20-Mar-92 ECP Moved exports to defs.lisp.  Use process routines.
-;;   11-Mar-92 ECP Added references to kr::*constants-disabled*
-;;	           When reinitializing colors, just call g-value,
-;;		   not s-value.
-;;   17-Feb-92 ECP Added *auxilliary-reconnect-routines*
-;;   31-Jan-92 ECP Eliminated *display-name-to-display-mapping*.
-;;   24-Jan-92 ECP reinitialized text objects in reconnect-garnet.
-;;   26-Mar-91 ECP kcl patch
-;;   24-Mar-91 ECP Fixed bug involving reconnect to a color screen.
-;;   07-Mar-91 ECP The question of whether the screen is color or
-;;                 black-and-white is now determined inside
-;;                 initialize-default-x-values in defs.lisp.
-;;   14-Feb-91 ECP More changes to color for connect and disconnect
-;;   08-Feb-91 ECP Added :color-p slot to opal:color to tell if
-;;                 screen is black-and-white or color.
-;;   11-Sep-90 ECP Get display name in allegro by (sys::getenv "DISPLAY")
-;;                 Use (short-site-name) as an #+allegro alternative
-;;                 to (machine-instance)
-;;   15-Aug-90 ECP Yet more debugging.  Disconnect-garnet must
-;;                 set windows :lineage slot to NIL.
-;;                 Reconnect-garnet has an optional argument.
-;;                 Call to initialize-default-x-values.
-;;   14-Aug-90 ECP In reconnect-garnet, just explicitly update
-;;	           top level windows.
-;;   10-Aug-90 ECP In reconnect-garnet, recompute display name.
-;;   21-Mar-90 ECP Lots of debugging, as well as the above comments.
-;;   09-Mar-90 ECP Released locally
-
-
-
 (in-package "OPAL")
 
 (defvar *all-the-windows* nil)
@@ -113,26 +41,8 @@
 
 
 (defun Destroy-Font-Slots (fnt)
-  (if (g-cached-value fnt :xfont)
-    (gem:delete-font (g-value device-info :current-root) fnt))
-  
-  ;; The calls to kr::set-slot-accessor are conceptually the same
-  ;; as calls to destroy-slot.  Destroying all these local slots will case
-  ;; formulas to be re-inherited and re-evaluated upon reconnection.
-  ;;
-  ;; amickish 11/18/93 - Commented out because font formulas now depend
-  ;; on the DEVICE-INFO schema, and you can make its slots constant if you
-  ;; want the formulas to become constant.
-  #+comment
-  (progn
-    (kr::set-slot-accessor fnt :xfont kr::*NO-VALUE* 0 NIL)
-    (kr::set-slot-accessor fnt :char-width kr::*NO-VALUE* 0 NIL)
-    (kr::set-slot-accessor fnt :max-char-ascent kr::*NO-VALUE* 0 NIL)
-    (kr::set-slot-accessor fnt :max-char-descent kr::*NO-VALUE* 0 NIL)
-    (kr::set-slot-accessor fnt :font-height kr::*NO-VALUE* 0 NIL)
-    (if (is-a-p fnt opal:font)
-	(kr::set-slot-accessor fnt :font-from-file kr::*NO-VALUE* 0 NIL)))
-  )
+  (when (g-cached-value fnt :xfont)
+    (gem:delete-font (g-value gem:device-info :current-root) fnt)))
 
 
 (defun Destroy-Color-Slots (col)
@@ -194,13 +104,13 @@
   (unless *garnet-has-been-disconnected*
     (return-from reconnect-garnet))
 
-  (let ((current-device (g-value DEVICE-INFO :current-device))
+  (let ((current-device (g-value gem:DEVICE-INFO :current-device))
         root-window)
 
     (unless device-type
       (setf device-type (g-value current-device :device-type)))
-    (s-value DEVICE-INFO :active-devices
-	     (delete current-device (g-value DEVICE-INFO :active-devices)))
+    (s-value gem:DEVICE-INFO :active-devices
+	     (delete current-device (g-value gem:DEVICE-INFO :active-devices)))
     (destroy-schema (g-value current-device :root-window))
     (destroy-schema current-device)
 
@@ -209,11 +119,11 @@
     (let (#+allegro (excl:*redefinition-warnings* NIL))
       (gem:init-device device-type display-name))
 
-    (setf root-window (g-value device-info :current-root))
+    (setf root-window (g-value gem:device-info :current-root))
 
-    ;; Should be called in X-Init-Device?
-    (gem:set-draw-functions root-window)
-
+    (with-constants-disabled
+      (s-value opal::COLOR :color-p gem:*color-screen-p*))
+    
     ;; you can't call alloc-color-cells on a :true-color or :static-color
     ;; screen...conditionalized it. [1995/12/08:goldman]
     (when gem:*read-write-colormap-cells-p*

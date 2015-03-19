@@ -101,7 +101,7 @@
       (let ((entry (aref opal::*halftone-table* n)))
         (ccl:dispose-record (opal::halftone-device-image entry))
         (setf (opal::halftone-device-image entry)
-              (gem:device-image (g-value opal::DEVICE-INFO :current-device) n))))
+              (gem:device-image (g-value DEVICE-INFO :current-device) n))))
     ;; Now update the pointers from the filling-styles to the new MACPTRs
     (opal::install-bitmap-images)))
 
@@ -1673,9 +1673,9 @@
 
   (attach-MAC-methods MAC-DEVICE)
 
-  (s-value opal::DEVICE-INFO :current-root *root-window*)
-  (s-value opal::DEVICE-INFO :current-device MAC-DEVICE)
-  (pushnew MAC-DEVICE (g-value opal::DEVICE-INFO :active-devices))
+  (s-value DEVICE-INFO :current-root *root-window*)
+  (s-value DEVICE-INFO :current-device MAC-DEVICE)
+  (pushnew MAC-DEVICE (g-value DEVICE-INFO :active-devices))
 
   (let ((display-info (mac-initialize-device NIL)))
     (s-value *root-window* :drawable

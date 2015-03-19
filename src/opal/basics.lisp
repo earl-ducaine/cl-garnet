@@ -8,30 +8,13 @@
 ;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Changes:
-;;; 17-Dec-93 amickish Halftone-X-Image ---> Halftone-Device-Image
-;;; 16-Jul-93 amickish Moved Set-Draw-Functions to defs.lisp
-;;; 22-Jul-92 bvz Rewrote gv-right, etc. functions to use broken-link-throw
-;;; 16-Mar-92 dzg,amickish  Removed copy-down of :update-slots and
-;;;               :fast-redraw-p in :intialize method of opal:view-object
-;;; 10-Mar-92 ecp Rewrote halftone, halftone-darker, halftone-lighter
-;;;		  so that if you call halftone twice with the same argument
-;;;		  you'll get the same answer.
-;;;  6-Aug-91 dzg Added error checking in bottom, right, etc.
-;;; 20-May-90 ecp New :percent slot in opal:bitmap tells what percent it is.
-;;; 19-Jun-90 ecp New functions gv-center-x-is-center-of, gv-center-y-is-center-of,
-;;;		  gv-right-is-left-of, gv-bottom-is-top-of.
-;;;  5-Jun-90 dzg Changed update-info structure to reduce storage allocation.
-;;; 16-Apr-90 ecp Moved center-x, center-y from basics.lisp to objects.lisp
-;;; 19-Mar-90 ecp Changed :tile to :stipple
-;;; 13-Feb-90 dzg Changed certain macros to defuns.
-;;;               Added new arguments to halftone (for color).
 
 (in-package "OPAL")
 
 ;;; The following allow access and setting to the gobs center
 ;;; position.
 
+(declaim (inline center))
 (defun center (gob)
   (values (center-x gob) (center-y gob)))
 
@@ -39,42 +22,80 @@
 ;;; adjust the far side of the gob's bounding box.
 ;;; Used to be macros, but were changed to defuns for efficiency.
 
+(declaim (inline bottom))
 (defun bottom (gob)
-  (when gob (1- (+ (the fixnum (g-value gob :top)) (the fixnum (g-value gob :height))))))
+  (when gob (1- (+ (g-value-fixnum gob :top)
+		   (g-value-fixnum gob :height)))))
 
+(declaim (inline right))
 (defun right (gob)
-  (when gob (1- (+ (the fixnum (g-value gob :left)) (the fixnum (g-value gob :width))))))
+  (when gob (1- (+ (g-value-fixnum gob :left)
+		   (g-value-fixnum gob :width)))))
 
+(declaim (inline unchecked-gv-bottom))
+(defun unchecked-gv-bottom (gob)
+  (1- (+ (gv-fixnum gob :top) (gv-fixnum gob :height))))
+
+(declaim (inline gv-bottom))
 (defun gv-bottom (gob)
-  (if gob (1- (+ (the fixnum (gv gob :top)) (the fixnum (gv gob :height))))
+  (if gob (unchecked-gv-bottom gob)
       (kr::broken-link-throw nil :top)))
 
+(declaim (inline unchecked-gv-right))
+(defun unchecked-gv-right (gob)
+  (1- (+ (gv-fixnum gob :left) (gv-fixnum gob :width))))
+
+(declaim (inline gv-right))
 (defun gv-right (gob)
-  (if gob (1- (+ (the fixnum (gv gob :left)) (the fixnum (gv gob :width))))
+  (if gob (unchecked-gv-right gob)
           (kr::broken-link-throw nil :left)))
 
+(declaim (inline unchecked-gv-center-x))
+(defun unchecked-gv-center-x (gob)
+  (+ (gv-fixnum gob :left) (truncate (gv-fixnum gob :width) 2)))
+
+(declaim (inline gv-center-x))
 (defun gv-center-x (gob)
-  (if gob (+ (the fixnum (gv gob :left)) (truncate (the fixnum (gv gob :width)) 2))
-          (kr::broken-link-throw nil :left)))
+  (if gob (unchecked-gv-center-x gob)
+      (kr::broken-link-throw nil :left)))
 
+
+(declaim (inline unchecked-gv-center-y))
+(defun unchecked-gv-center-y (gob)
+  (+ (gv-fixnum gob :top) (truncate (gv-fixnum gob :height) 2)))
+
+(declaim (inline gv-center-y))
 (defun gv-center-y (gob)
-  (if gob (+ (the fixnum (gv gob :top)) (truncate (the fixnum (gv gob :height)) 2))
-          (kr::broken-link-throw nil :top)))
+  (if gob (unchecked-gv-center-y gob)
+      (kr::broken-link-throw nil :top)))
 
 ;;; For formulas that want to set an object's center, right or bottom.
 
-; Gives the value for :left such that (gv-right :self) equals (gv gob :left)
+;; Gives the value for :left such that (gv-right :self) equals
+;; (gv gob :left)
+
+(declaim (inline unchecked-gv-right-is-left-of))
+(defun unchecked-gv-right-is-left-of (gob)
+  (- (gv-fixnum gob :left) (gvl-fixnum :width)))
+
+(declaim (inline gv-right-is-left-of))
 (defun gv-right-is-left-of (gob)
-  (if gob (- (the fixnum (gv gob :left)) (the fixnum (gvl :width)))
+  (if gob (unchecked-gv-right-is-left-of gob)
           (kr::broken-link-throw nil :left)))
 
-; Gives the value for :top such that (gv-bottom :self) equals (gv gob :top)
-(defun gv-bottom-is-top-of (gob)
-  (if gob (- (the fixnum (gv gob :top)) (the fixnum (gvl :height)))
-          (kr::broken-link-throw nil :top)))
+(declaim (inline unchecked-gv-bottom-is-top-of))
+(defun unchecked-gv-bottom-is-top-of (gob)
+  (- (gv-fixnum gob :top) (gvl-fixnum :height)))
 
-; Gives the value for :left such that (gv-center-x :self) equals (gv-center-x 
-; gob)
+;; Gives the value for :top such that (gv-bottom :self) equals 
+;; (gv gob :top)
+(declaim (inline gv-bottom-is-top-of))
+(defun gv-bottom-is-top-of (gob)
+  (if gob (unchecked-gv-bottom-is-top-of gob)
+      (kr::broken-link-throw nil :top)))
+
+;; Gives the value for :left such that (gv-center-x :self) equals
+;; (gv-center-x gob)
 (defun gv-center-x-is-center-of (gob)
   (if gob
       (if (and (is-a-p gob WINDOW)
@@ -82,8 +103,8 @@
 	  ;; If I am trying to center myself within a window, and I am going
 	  ;; to be drawn w.r.t the window's coordinate system (i.e., I am an
 	  ;; object or child in gob), then I want to ignore the window's :left
-	  (truncate (- (the fixnum (gv gob :width)) (the fixnum (gvl :width))) 2)
-	  (- (the fixnum (gv-center-x gob)) (truncate (the fixnum (gvl :width)) 2)))
+	  (truncate (- (gv-fixnum gob :width) (gvl-fixnum :width)) 2)
+	  (- (the fixnum (gv-center-x gob)) (truncate (gvl-fixnum :width) 2)))
       (kr::broken-link-throw nil :left)))
 
 ; Gives the value for :top such that (gv-center-y :self) equals (gv-center-y
@@ -95,15 +116,15 @@
 	  ;; If I am trying to center myself within a window, and I am going
 	  ;; to be drawn w.r.t the window's coordinate system (i.e., I am an
 	  ;; object or child in gob), then I want to ignore the window's :top
-	  (truncate (- (the fixnum (gv gob :height)) (the fixnum (gvl :height))) 2)
-	  (- (the fixnum (gv-center-y gob)) (truncate (the fixnum (gvl :height)) 2)))
+	  (truncate (- (gv-fixnum gob :height) (gvl-fixnum :height)) 2)
+	  (- (the fixnum (unchecked-gv-center-y gob)) (truncate (gvl-fixnum :height) 2)))
       (kr::broken-link-throw nil :top)))
 
 ;;; bounding-box just returns the current cached value of the bounding box
 ;;; as four values (top left width height)
 (defun bounding-box (gob)
-  (values (the fixnum (g-value gob :left)) (the fixnum (g-value gob :top))
-	  (the fixnum (g-value gob :width)) (the fixnum (g-value gob :height))))
+  (values (g-value-fixnum gob :left) (g-value-fixnum gob :top)
+	  (g-value-fixnum gob :width) (g-value-fixnum gob :height)))
 
 ;;; Unified setting methods
 ;;;

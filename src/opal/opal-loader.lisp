@@ -10,27 +10,6 @@
 ;;;
 ;;; $Id::                                                             $
 
-;;; Changes:
-;;; 10/2/03 RGA --- Changed from switching on #+apple to #+(and apple (not clx))
-;;; 11/8/93 AMICKISH Added x.lisp and called gem:init-device
-;;;  3/5/93 AMICKISH Added utils.lisp
-;;; 2/10/93 AMICKISH Added types.lisp
-;;; 7/20/92 AMICKISH Changed Defparameter of opal files to Defvar
-;;; 6/11/92 ECP Added pixmaps.lisp.
-;;; 04/02/92 RGM Released new version of multifont.
-;;; 03/20/92 ECP Added process.lisp.
-;;; 02/20/92 AMICKISH - Moved OPAL package defintion into Garnet-Loader
-;;; 12/10/91 ECP Added virtual-aggregates.
-;;; 6/18/91 ECP Added multifont.
-;;; 3/4/91  D'Souza Removed nickname "MO" of package Opal.
-;;; 8/15/90 ECP Moved clean-up to after open-and-close
-;;; 6/6/90  ECP Removed *twm-bug*
-;;; 3/22/90 Robert Cook - Define the package "OPAL" for the TI Explorer
-;;; 3/19/90 ECP Added *twm-bug*
-;;; 3/9/90  ECP Added open-and-close
-;;; 2/13/90 ECP Merged objects.lisp and eds-objects.lisp
-;;; 1/4/90  ECP Added version number
-;;;
 (in-package "COMMON-LISP-USER")
 
 (defparameter Opal-Version-Number "1.3")
@@ -44,18 +23,17 @@
 ;;;  Load Opal  ...
 (Defvar Garnet-Opal-Files
   '(
+    "exports"
     "types"
     "update-constants"
-    "defs"
     "macros"
+    "defs"
     "new-defs"
     "utils"
     "text-fonts"
     "create-instances"
-;;    "create-instances2"
     "text-functions"
     "text"
-
     "update-basics"
     "halftones"
     "objects"
@@ -71,7 +49,6 @@
     "virtual-aggregates"
     "pixmaps"
     "open-and-close"
-;;;    "x"
     ))
 
 (dolist (file Garnet-Opal-Files)

@@ -42,8 +42,6 @@
     pixmap))
 
 
-
-
 ;;; Initalize the buffer to be background color.
 (defun clear-buffer (a-window)
   (gem:clear-area a-window nil nil nil nil T))
@@ -189,27 +187,29 @@
 		   (make-array 4
 			       :initial-contents (list top left width height)))
 	  (s-value a-window :top 0)
-	  (s-value a-window :height *screen-height*)
+	  (s-value a-window :height gem:*screen-height*)
 	  (when fullzoom?
 	    (s-value a-window :left 0)
-	    (s-value a-window :width *screen-width*))))
+	    (s-value a-window :width gem:*screen-width*))))
       (update a-window))))
 
 
 (defun fullzoom-window (a-window) (zoom-window a-window T))
 
 (defun convert-coordinates (win1 x y &optional win2)
+  (declare (fixnum x y))
   (multiple-value-bind (xc yc)
-      (gem:translate-coordinates (if win1 win1 (g-value DEVICE-INFO :current-root))
+      (gem:translate-coordinates (if win1 win1 (g-value gem:DEVICE-INFO :current-root))
                                  win1 x y win2)
     (if xc
       ;; Low-level conversion is better.
       (values xc yc)
       ;; If not, do it purely in Opal terms.
-      (let ((left1 (if win1 (g-value win1 :left) 0))
-	    (top1  (if win1 (g-value win1 :top) 0))
-	    (left2 (if win2 (g-value win2 :left) 0))
-	    (top2  (if win2 (g-value win2 :top) 0)))
+      (let ((left1 (the fixnum (if win1 (g-value-fixnum win1 :left) 0)))
+	    (top1  (the fixnum (if win1 (g-value-fixnum win1 :top) 0)))
+	    (left2 (the fixnum (if win2 (g-value-fixnum win2 :left) 0)))
+	    (top2  (the fixnum (if win2 (g-value-fixnum win2 :top) 0))))
+	(declare (fixnum left1 top1 left2 top2))
 	(values (- (+ x left1) left2)
 		(- (+ y top1)  top2))))))
 
@@ -270,7 +270,8 @@
 
 (defun Exposure (event-debug a-window count x y width height display)
   (declare (ignore display))
-  (if event-debug
+  (declare (fixnum count x y width height))
+  (when event-debug
     (format t "exposure, count = ~S window-id=~s~%"
 	    count (gem:window-debug-id a-window)))
   (if (schema-p a-window)
@@ -281,31 +282,28 @@
 	(if (g-local-value a-window :very-first-exposure)
 	  (when (zerop count)
 	    (kr:destroy-slot a-window :very-first-exposure))
-	  (let* ((win-ui
-		  (get-local-value a-window :win-update-info))
+	  (let* ((win-ui (get-local-value a-window :win-update-info))
 		 (exposed-bbox (win-update-info-exposed-bbox win-ui)))
 	    (unless exposed-bbox
 	      (setq exposed-bbox
 		    (setf (win-update-info-exposed-bbox win-ui)
 			  (make-bbox :valid-p NIL))))
 	    (if (bbox-valid-p exposed-bbox)
-	      ;; already valid, so merge into existing bbox
-	      (setf (bbox-x2 exposed-bbox)
-		    (max (+ x width)
-			 (bbox-x2 exposed-bbox))
-		    (bbox-y2 exposed-bbox)
-		    (max (+ y height)
-			 (bbox-y2 exposed-bbox))
-		    (bbox-x1 exposed-bbox)
-		    (min x (bbox-x1 exposed-bbox))
-		    (bbox-y1 exposed-bbox)
-		    (min y (bbox-y1 exposed-bbox)))
-	      ;; invalid, so copy in and make valid
-	      (setf (bbox-valid-p exposed-bbox) T
-		    (bbox-x2 exposed-bbox) (+ x width)
-		    (bbox-y2 exposed-bbox) (+ y height)
-		    (bbox-x1 exposed-bbox) x
-		    (bbox-y1 exposed-bbox) y))
+		;; already valid, so merge into existing bbox
+		(setf (bbox-x2 exposed-bbox)
+		      (max (+ x width) (bbox-x2 exposed-bbox))
+		      (bbox-y2 exposed-bbox)
+		      (max (+ y height) (bbox-y2 exposed-bbox))
+		      (bbox-x1 exposed-bbox)
+		      (min x (bbox-x1 exposed-bbox))
+		      (bbox-y1 exposed-bbox)
+		      (min y (bbox-y1 exposed-bbox)))
+		;; invalid, so copy in and make valid
+		(setf (bbox-valid-p exposed-bbox) T
+		      (bbox-x2 exposed-bbox) (+ x width)
+		      (bbox-y2 exposed-bbox) (+ y height)
+		      (bbox-x1 exposed-bbox) x
+		      (bbox-y1 exposed-bbox) y))
 	    (when (zerop count)
 	      (s-value a-window :exposed-bbox exposed-bbox)
 	      (kr-send a-window :update a-window t)
@@ -445,20 +443,6 @@
     (if root
       (gem:flush-output root))))
 
-
-(defmacro With-Cursor (cursor &body body)
-  `(unwind-protect (progn
-		     (change-cursors ,cursor)
-		     ,@body)
-    (restore-cursors)))
-
-
-(defmacro With-HourGlass-Cursor (&body body)
-  `(unwind-protect (progn
-		     (change-cursors HourGlass-Pair)
-		     ,@body)
-    (restore-cursors)))
-
 ;;;
 ;; Cosmetic application of cursors.
 (defun set-gc-cursor ()
@@ -544,7 +528,7 @@
 	     (parent (or (g-value a-window :parent)
 			 ;; dzg & amickish -- use the root window of the
 			 ;; current device.
-			 (g-value device-info :current-root)))
+			 (g-value gem:device-info :current-root)))
              ;; NIL background-color means white
 	     (background (gem:color-to-index a-window
                           (g-value a-window :background-color)))
@@ -618,13 +602,14 @@
 
 (defun fix-window-properties (a-window changed-slots drawable)
   (let ((make-new-buffer nil)
-	(map-window-at-end-of-fix-properties nil))
+	(map-window-at-end-of-fix-properties nil)
+	(win-info (g-value a-window :win-update-info)))
     (gem::batch-changes (drawable)
       (dolist (slot changed-slots)
 	(case slot
 	  ((:aggregate :drawable)
 	   ;; not done
-	   (let* ((win-info (g-value a-window :win-update-info))
+	   (let* (
 		  (old-agg  (win-update-info-old-aggregate win-info))
 		  (agg      (g-value a-window :aggregate)))
 	     (set-window-cursor a-window drawable (g-value a-window :cursor))
@@ -673,15 +658,17 @@
 				    (+ (g-value a-window :top)
 				       (g-value a-window :top-border-width))))
 	  (:width
-	   (setf make-new-buffer
-		 (or (gem:set-window-property a-window :WIDTH
-					      (g-value a-window :width))
-		     make-new-buffer)))
+	   (let ((width (g-value a-window :width)))
+	     (setf (opal::win-update-info-width win-info) width)
+	     (setf make-new-buffer
+		   (or (gem:set-window-property a-window :WIDTH width)
+		       make-new-buffer))))
 	  (:height
-	   (setf make-new-buffer
-		 (or (gem:set-window-property a-window :HEIGHT
-					      (g-value a-window :height))
-		     make-new-buffer)))
+	   (let ((height (g-value a-window :height)))
+	     (setf (opal::win-update-info-height win-info) height)
+	     (setf make-new-buffer
+		 (or (gem:set-window-property a-window :HEIGHT height)
+		     make-new-buffer))))
 	  (:background-color
 	   (gem:set-window-property a-window :BACKGROUND-COLOR
 				    (g-value a-window :background-color)))
@@ -710,19 +697,27 @@
 
 (defun Delete-Notify (event-debug event-window)
   (if event-debug (format t " delete-notify ~s~%" event-window))
-  ;; Will be changed to take a-window as a parameter, rather than event-window.
-  ;; Hence, the following will be unnecessary.
+  ;; Will be changed to take a-window as a parameter, rather than
+  ;; event-window. Hence, the following will be unnecessary.
+  ;;
+  ;; XXX FMG I don't think so. Not sure how you deal with orphaned
+  ;; windows if you don't have the event window (X window) available.
   (let ((a-window (getf (xlib:drawable-plist event-window) :garnet)))
-    (if a-window
-      (if (schema-p a-window)
+    (if (schema-p a-window)
 	(let ((drawable (g-value a-window :drawable)))
 	  (if (and drawable (= (xlib:window-id drawable)
 			       (xlib:window-id event-window)))
-	    (opal:destroy a-window)
-	    ;; Then event-window is an orphaned window
-	    (gem:delete-window a-window event-window)))
+	      (progn
+		;; Because the window is being destroyed because of an
+		;; event from the window manager, we want to allow the
+		;; application to do something about it.
+		(dolist (hook (g-value a-window :destroy-hooks))
+		  (funcall hook a-window))
+		(opal:destroy a-window))
+	      ;; Then event-window is an orphaned window
+	      (gem:delete-window a-window event-window)))
 	;; Then event-window is an orphaned window
-	(gem:delete-window NIL event-window)))))
+	(gem:delete-window NIL event-window))))
 
 (define-method :destroy-me window (a-window)
   ;; first recursively destroy all subwindows
@@ -731,9 +726,9 @@
       (destroy child)))
   ;; remove window from parent (if not top-level)
   (let ((parent (g-value a-window :parent)))
-    (if parent
-	(s-value parent :child
-		 (delete a-window (g-local-value parent :child)))))
+    (when parent
+      (s-value parent :child
+	       (delete a-window (g-local-value parent :child)))))
   ;; then destroy main window
   (let ((drawable (g-value a-window :drawable)))
     (when drawable
@@ -745,7 +740,7 @@
   (s-value a-window :window nil)
   ;; destroy the backing store
   (let ((buffer (g-value a-window :buffer)))
-    (if buffer
+    (when buffer
       (gem:delete-pixmap a-window buffer T)))
   (call-prototype-method a-window))
 
@@ -763,14 +758,14 @@
   (gem:flush-output a-window))
 
 
-;;; The following two functions have been added to be used by interactors.
-;;; They are exported from Opal.
+;;; The following two functions have been added to be used by
+;;; interactors. They are exported from Opal.
 ;;;
 ;;; XXX The name implies that this is X stuff. But there's also a mac
 ;;; version. So this name should be changed and the code updated here
 ;;; and elsewhere (interactor code). The only use of "X" in the Opal
-;;; code should be as a counterpart to "Y". But ... it opens up a big
-;;; can of worms and is not too important now.
+;;; code should be as a counterpart to "Y" as in the X-Y axis. But ...
+;;; it opens up a big can of worms and is not too important now.
 (defun Get-X-Cut-Buffer (window)
   (if window
     (gem:get-cut-buffer window)

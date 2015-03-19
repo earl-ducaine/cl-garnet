@@ -52,10 +52,6 @@
 (defvar work-clip-mask (make-list 4))
 (defvar work-bbox (make-bbox :valid-p t))
 
-(defmacro point-to-rank (schema &rest args)
- `(let ((the-schema ,schema))
-   (kr-send the-schema :point-to-rank the-schema ,@args)))
-
 (create-instance 'opal:VIRTUAL-AGGREGATE opal:graphical-object
   :declare ((:type (fixnum :array-length-increment
 			   :next-available-rank :gaps-in-arrays)))
@@ -200,39 +196,6 @@
         (s-value dummy :rank rank)
         (s-value dummy :item-values (aref (g-value a-thing :item-array) rank))
         dummy))))
-
-
-
-(defmacro do-in-clip-rect ((m n agg rect) &body body)
-  `(let* ((agg* ,agg)
-	  (p-to-r (g-value agg* :point-to-rank))
-	  (r* ,rect)
-	  (array-size* (g-value agg* :array-length)) ; list
-	  (max-x2* (1- (first array-size*)))
-	  (max-y2* (1- (second array-size*)))
-	  (first* (first r*))
-	  (second* (second r*)))
-     (declare (fixnum max-x2* max-y2* first* second*))
-     (multiple-value-bind (x1* y1*)
-       		          (funcall p-to-r agg* first* second*)
-       (declare (fixnum x1* y1*))
-       (multiple-value-bind (x2* y2*)
-			    (funcall p-to-r agg* (+ first* (third r*) -1)
-						 (+ second* (fourth r*) -1))
-	 (declare (fixnum x2* y2*))
-	 (setq x1* (if x1* (max 0 x1*) 0))
-	 (setq y1* (if y1* (max 0 y1*) 0))
-	 (setq x2* (if x2* (min x2* max-x2*) max-x2*))
-	 (setq y2* (if y2* (min y2* max-y2*) max-y2*))
-	 (when (and (<= x1* x2*) (<= y1* y2*))
-	   (do ((,m x1* (1+ ,m)))
-	       ((> ,m x2*))
-	     (declare (fixnum ,m))
-	     (do ((,n y1* (1+ ,n)))
-	         ((> ,n y2*))
-	       (declare (fixnum ,n))
-	       ,@body)))))))
-
 
 
 (defun make-virtual-aggregate-invalid (agg)

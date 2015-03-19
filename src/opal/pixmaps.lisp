@@ -12,48 +12,17 @@
 
 ;;; $Id$
 
-
-;;; CHANGE LOG:
-;;
-;; [2003/11/20:rpg]        - Fred Gilham's fix does not seem to me to work.
-;;                           When one specifies depth as a parameter to
-;;                           gem:create-image, one can get it wrong, whereas
-;;                           gem:create-image will ask the display and get
-;;                           a correct number of bits per pixel from the depth.
-;; 17-DEC-1999 Fred Gilham - Fix problem where pixmap format doesn't match valid
-;;                           pixmap formats in displays with different `depth' and
-;;                           `bits-per-pixel' values.
-;; 10/20/99 Fred Gilham    - Fixed bug in write-xpm-file that caused it to write
-;;                           unnecessarily long xpm files when dumping pixmaps
-;;                           with many colors.
-;; 09/01/98 Fred Gilham    - Re-wrote write-xpm-file to use new algorithm not
-;;                           dependent on display depth.
-;; 08/01/98 Fred Gilham    - Fixed problems with depth > 8 bits.
-;;                           Write-xpm-file still broken for > 8-bit displays.
-;; 9/22/93 Bruno Haible    - CLISP doesn't allow declarations in flet
-;; 8/26/93 Andrew Mickish  - Added Reset-Pixmap-Images
-;; 6-Apr-93 koz            - Converted with-*-styles macros to set-*-style fns
-;;                           And omitted "clip-mask" as argument to draw function.
-;; 12/01/92 Andrew Mickish - Added bitmap-p switches so pixmaps will work
-;;                           on b/w screens
-;; 10/05/92 Martin Sjolin  - Removed CMCUL compiler warnings
-;; 09/12/92 Andrew Mickish - Added :xpm-format switch to Write-xpm-File,
-;;                           implemented XPM2 output format.
-;; 09/10/92 Andrew Mickish - Repaired bugs introduced when adding pedro-format
-;; 09/09/92 Pedro Szekely  - Added :format :z-pixmap parameter to
-;;                           xlib:get-image call in Window-To-Pximap-Image;
-;;                           reimplemented Write-xpm-File with write-char instead of format
-;; 08/11/92 Andrew Mickish - Added pedro-format to read-xpm-file
-;; 09/16/03 Robert Goldman - XPM files seem to sometime have a colormap entry of "None,"
-;;                           causing crash in read-xpm-file.  Modified read-xpm-file to
-;;                           ignore these entries.
+;;;
+;;; XXX Want to read pixmaps like this.
+;;(defun slurp-stream (stream)
+;;  (let ((seq (make-array (file-length stream) 
+;;			 :element-type '(unsigned-byte 8))))
+;;    (values seq (read-sequence seq stream))))
 
 
 (in-package "OPAL")
 
-(eval-when (:execute :load-toplevel :compile-toplevel)
-  (export '(pixmap write-xpm-file read-xpm-file
-	    create-pixmap-image window-to-pixmap-image)))
+;;; Moved exports to exports.lisp.
 
 ;;    This function was originally written to handle two types of
 ;;    pixmaps --
@@ -91,7 +60,7 @@
 (defun read-xpm-file (pathname &optional root-window)
   (declare (type (or pathname string stream) pathname))
   (unless root-window
-    (setq root-window (g-value DEVICE-INFO :current-root)))
+    (setq root-window (g-value gem:DEVICE-INFO :current-root)))
   
   ;; DZG (declare (values xlib:image))
   (with-open-file (fstream pathname :direction :input)
@@ -340,7 +309,7 @@
   (let ((f (open pathname :direction :output :if-exists :supersede))
 	(name (substitute #\_ #\- (pathname-name pathname)))
 	(image (g-value pixmap :image))
-	(root-window (g-value device-info :current-root)))
+	(root-window (g-value gem:device-info :current-root)))
     (multiple-value-bind (width height)
 	(gem:image-size root-window image)
       (let ((pixarray (gem:image-to-array root-window image))
@@ -453,7 +422,7 @@
 (defun create-pixmap-image (width height
 			    &optional 
 			      color
-			      (window (g-value device-info :current-root)))
+			      (window (g-value gem:device-info :current-root)))
   (let ((depth (gem::x-window-depth window)))
     ;; Passing the display depth as the `bits-per-pixel' optional
     ;; parameter seems to avoid problems of displays where the depth

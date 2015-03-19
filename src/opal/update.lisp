@@ -8,41 +8,8 @@
 ;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Changes:
-;;; 9/ 3/98 fmg Fixed problem with using aggregadgets as item-prototypes
-;;;             for virtual aggregates where the window wasn't propagaged
-;;;             properly.  See virtual-aggregates.lisp.
-;;; 4/ 6/93 koz Omitted "clip-mask" as argument to update and draw functions.
-;;; 2/ 3/93 koz Removed "free-invalid-objects" -- update-window now calls
-;;;             "free-list" instead.
-;;;12/15/92 amickish: Removed opal::legal-type-p and opal:type-check --
-;;;                   superceded by KR's type checking
-;;; 7/15/92 koz,dzg: As per comment in update-window dated 15-Jul-92, changed
-;;;		free-invalid-objects macro to not clear invalid-objects list
-;;;		(as this is now done at the head of update-method-window).
-;;; 6/23/92 ECP Due to new KR, it is now necessary to make graphical
-;;;		objects valid after they are drawn.
-;;; 6/15/92 DZG Prevented legal-type-p from giving a meaningless message
-;;;             for numbers, strings, etc.
-;;; 4/13/92 ECP Added :initial-element NIL to make-array, since in CMUCL
-;;;		the default initial value is 0.
-;;; 2/19/92 ECP Implemented double-clip-masks as list of length 8.
-;;; 2/10/92 ECP Use #+garnet-debug to control Opal type checking.
-;;; 1/24/92 DZG/ECP To get :update-slots, call get-value, not get-local-value.
-;;; 1/16/92 ECP In update method for aggregate, simply call update
-;;;		recursively, rather than call update-method-aggregate or
-;;;		update-method-graphical-object.
-;;; 3/25/91 ECP In update method for aggregates, in the dovalues loop,
-;;;		added :local t so that we just draw local components.
-;;; 6/12/90 BVZ Added call to clear-dirty-bits in :update method of aggregate
-;;; 5/31/90 ECP Removed type-checking for :justification slot
-;;; 4/12/90 ECP When updating an element of :update-slots-values, if the
-;;;		new value is a list, we want to put in a copy-list of
-;;;		the value.  Otherwise they'll be pointing to the same
-;;;		thing, and we won't be able to tell if the value changes.
-;;; 1/25/90 ECP Removed references to xlib:image-p, which is not in
-;;;             the R4 release of CLX.
-;;; 2/1/90  ECP Changed eq to equal.
+
+
 (in-package "OPAL")
 
 ;;; This updates the :update-slots-values slot, which should hold a list

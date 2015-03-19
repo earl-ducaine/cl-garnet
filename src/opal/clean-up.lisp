@@ -30,10 +30,6 @@
 ;;;
 (in-package "OPAL")
 
-(defmacro already-been-destroyed (a-window)
-  `(not (kr:schema-p ,a-window)))
-
-
 ;;; Returns all non-destroyed windows.
 ;;; Windows which are already destroyed but are accidentally still
 ;;; in the hash table are removed.
@@ -56,7 +52,7 @@ opal::*garnet-windows*."))
   return value is how many windows were destroyed"
 
   (let* ((num-killed 0)
-	 (root (g-value device-info :current-root))
+	 (root (g-value gem:device-info :current-root))
 	 ;; Store all drawables that were created by Garnet in clx-window-list
 	 (clx-window-list (unless (eq how-to :help)
 			    (gem:all-garnet-windows root))))

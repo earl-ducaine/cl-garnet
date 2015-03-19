@@ -21,14 +21,14 @@
 (in-package "OPAL")
 
 (defun char-width (fnt char &optional
-		       (display (g-value device-info :current-root)))
+		       (display (g-value gem:device-info :current-root)))
   (or (g-value fnt :char-width)
       (gem:character-width display fnt (char-code char))))
 
 
 (defun string-width (fnt str &key (start 0) end display)
   (unless display
-    (setq display (g-value DEVICE-INFO :current-root)))
+    (setq display (g-value gem:DEVICE-INFO :current-root)))
   ;; If it's a fixed-width font, get the stored width of a single character
   (let ((char-width (g-value fnt :char-width)))
     (if (and char-width (not (find #\newline str)))
@@ -74,7 +74,7 @@
 
 (defun string-height (fnt str &key (actual-heightp nil) display)
   (unless display
-    (setq display (g-value DEVICE-INFO :current-root)))
+    (setq display (g-value gem:DEVICE-INFO :current-root)))
   (if (and actual-heightp (not (find #\newline str)))
     (multiple-value-bind (width ascent descent)
 	(gem:text-extents display fnt str)
@@ -91,7 +91,7 @@
 ;; target.
 ;;
 (defun get-index (str font target)
-  (let* ((root (g-value device-info :current-root))
+  (let* ((root (g-value gem:device-info :current-root))
 	 (string-width (gem:text-width root font str))
 	 (string-length (length str)))
     (cond ((<= target 0) 0)

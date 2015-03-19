@@ -114,10 +114,12 @@
     ;;; This used to be done by a DefVar, but now the DefVars all occur at
     ;; the start of loading Opal, before the function is defined, so we must
     ;; Setf it here...
-    (setf *halftone-table* (build-halftone-table (g-value DEVICE-INFO
+    (setf *halftone-table* (build-halftone-table (g-value gem:DEVICE-INFO
 							  :current-root)))
     (install-bitmap-images)))
 
+
+(push #'initialize-halftones *auxilliary-reconnect-routines*)
 
 #|
 ;; quick and dirty 
@@ -176,7 +178,7 @@
 					       (foreground-color opal:black)
 					       (background-color opal:white))
   (unless root-window
-    (setq root-window (g-value DEVICE-INFO :current-root)))
+    (setq root-window (g-value gem:DEVICE-INFO :current-root)))
   (let ((result (create-instance NIL opal:filling-style
 		  (:foreground-color foreground-color)
 		  (:background-color background-color)

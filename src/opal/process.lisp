@@ -12,35 +12,6 @@
 ;;
 
 
-;;; Change Log
-;;--------------------------------------------------------------------------
-;; 
-;;      Gilham  20-Aug-98 Fixed problem with CMUCL process event handling.
-;;      Crosher      1998 Added CMUCL process support.
-;;      Mickish  4-Dec-93 Removed erroneous defvar of opal::update-locking-p
-;;      Almond/Mickish  18-Oct-93  Replaced lexical closure around launch-main-
-;;                                 event-loop with default value of TTY.
-;;      Almond/Mickish  17-Sep-93  Added lexical closure around launch-main-
-;;                                 event-loop, added restart-case
-;;      Clive Tong  06-Sep-93 Fixed lispworks stuff
-;;      Mickish  6-Aug-93 Added lispworks stuff
-;;      Almond   5-Jan-92 Bound *trace-output* in launch-mel-process
-;;      Dzg/Mickish 21-Sep-92 Added Update-Start-Fn and Update-Stop-Fn
-;;      Myers   20-Aug-92 Added running-main-event-loop-process-elsewhere-p
-;;      Almond  26-May-92 Added patch to launch-main-event-loop-process
-;; 			  to handle background streams for Lapidary.
-;;      Pervin  21-Apr-92 Added main-event-loop-process-running-p
-;;      Pervin  14-Apr-92 Uncommented out process code.
-;; 			  Got it to work on HP.
-;;      Pervin  30-Mar-92 Commented out process code.
-;;      Pervin  25-Mar-92 Made to be permanent part of Opal.
-;; 			  Merged process-allegro and process-lucid.   
-;;      Pervin   9-Aug-90 Released for Garnet.
-;; 	Stork	18-Jul-90 Created.
-;; 
-;;--------------------------------------------------------------------------
-
-
 (in-package "OPAL")
 
 ;;;  Global variables
@@ -54,7 +25,7 @@
 ;;
 
 (defun discard-all-pending-events ()
-  (gem:discard-pending-events (g-value device-info :current-root)))
+  (gem:discard-pending-events (g-value gem:device-info :current-root)))
 
 ;; Main event process loop. Define here so we don't have multiple pieces of code
 ;; doing the same thing.
@@ -69,7 +40,7 @@
   #-NO-K-READER
   (set-dispatch-macro-character #\# #\k (function kr::k-reader))
 
-  (let ((root-window (gv device-info :current-root)))
+  (let ((root-window (gv gem:device-info :current-root)))
     (unwind-protect
 	 (catch 'exit-main-loop-exception
 	   (loop
@@ -201,22 +172,10 @@
 
 (defun main-event-loop-process-running-p ()
   (and *main-event-loop-process*
-       ;;; Franz's comments about mp:process-runnable-p:  It is true of any
-       ;;; process that has a stack-group (meaning that is has been reset and
-       ;;; has not yet exhausted its computation), has at least one run reason,
-       ;;; has zero arrest reasons, and is not blocked in a call like
-       ;;; PROCESS-WAIT or any of its close relatives.  This last clause --
-       ;;; testing that the process is not blocked in PROCESS-WAIT --
-       ;;; perhaps isn't what you want.  If the process happens temporarily
-       ;;; to be waiting for something, it won't be killed.  Perhaps you
-       ;;; want to use the PROCESS-ACTIVE-P predicate instead, which
-       ;;; is true whether or not the process is in a PROCESS-WAIT.
        #+allegro
-       (not (mp:process-runnable-p
-		*main-event-loop-process*))
+       (mp:process-active-p *main-event-loop-process*)
        #+(and cmu mp)
-       (equal "Run"
-	      (mp:process-whostate *main-event-loop-process*))
+       (equal "Run" (mp:process-whostate *main-event-loop-process*))
        #+ccl
        (ccl::process-active-p *main-event-loop-process*)
        #+sb-thread
@@ -237,12 +196,12 @@
 
 #-(and) ;;ccl version; doesn't seem to work
 (defmacro with-update-lock-held (&body body)
-  `(ccl:with-lock-grabbed (*update-lock*)
+  `(ccl:with-lock-grabbed (gem:*update-lock*)
      ,@body))
 
 #-(and) ;; cmu verstion also doesn't seem to work right
 (defmacro with-update-lock-held (&body body)
-  `(mp:with-lock-held (*update-lock*)
+  `(mp:with-lock-held (gem:*update-lock*)
      ,@body))
 
 #+(and)
@@ -257,35 +216,35 @@
   (declare (ignore win))
   #+ALLEGRO
   (if common-lisp-user::update-locking-p
-      (unless (eq (mp:process-lock-locker *update-lock*) mp:*current-process*)
+      (unless (eq (mp:process-lock-locker gem:*update-lock*) mp:*current-process*)
 	;; Lock only if lock is held by a different process, or unlocked.
-	(mp:process-lock *update-lock*)))
+	(mp:process-lock gem:*update-lock*)))
   #+ccl
   (when common-lisp-user::update-locking-p
     (ccl:without-interrupts
-      (unless (eq (ccl::%%lock-owner *update-lock*) ccl:*current-process*)
-	(ccl:grab-lock *update-lock*))))
+      (unless (eq (ccl::%%lock-owner gem:*update-lock*) ccl:*current-process*)
+	(ccl:grab-lock gem:*update-lock*))))
   #+sb-thread
   (when common-lisp-user::update-locking-p
     (sb-sys:without-interrupts
-      (unless (sb-thread:holding-mutex-p *update-lock*)
+      (unless (sb-thread:holding-mutex-p gem:*update-lock*)
 	(sb-sys:allow-with-interrupts
-	  (sb-thread:grab-mutex *update-lock*))))))
+	  (sb-thread:grab-mutex gem:*update-lock*))))))
 
 
 (defun update-stop-fn (win)
   (declare (ignore win))
   #+ALLEGRO
   (if (and common-lisp-user::update-locking-p
-	   (eq (mp:process-lock-locker *update-lock*) mp:*current-process*))
-      (mp:process-unlock *update-lock*))
+	   (eq (mp:process-lock-locker gem:*update-lock*) mp:*current-process*))
+      (mp:process-unlock gem:*update-lock*))
   #+ccl
   (when common-lisp-user::update-locking-p
     (ccl:without-interrupts
-      (when (eq (ccl::%%lock-owner *update-lock*) ccl:*current-process*)
-	(ccl:release-lock *update-lock*))))
+      (when (eq (ccl::%%lock-owner gem:*update-lock*) ccl:*current-process*)
+	(ccl:release-lock gem:*update-lock*))))
   #+sb-thread
   (when common-lisp-user::update-locking-p
     (sb-sys:without-interrupts
-      (when (sb-thread:holding-mutex-p *update-lock*)
-	(sb-thread:release-mutex *update-lock*)))))
+      (when (sb-thread:holding-mutex-p gem:*update-lock*)
+	(sb-thread:release-mutex gem:*update-lock*)))))

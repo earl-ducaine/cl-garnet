@@ -8,74 +8,7 @@
 ;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Changes:
-;;; 07/06/93 Amickish - Adjusted scoping of gob-update-info in :add-component
-;;;                     method to avoid UPDATE-INFO type error in CMUCL
-;;; 03/10/93 Amickish - Now obj-in-rectangle, leaf-objects-in-rectangle, and
-;;;                     components-in-rectangle only return visible objects
-;;; 02/22/93 Koz/Amickish - Called do-all-components in :add-component method
-;;;                     to invalidate all the children of the new component
-;;; 12/31/92 Amickish - Called do-all-components in :remove-component method
-;;;                     to remove components from the invalid objects list
-;;; 04/29/92 Pervin   - Moved function to remove object from invalid objects
-;;;			list to update-basics.lisp
-;;; 04/28/92 Amickish - Wrapped destroy-slot call in with-constants-disabled
-;;; 04/10/92 Amickish - Renamed FUNCTION variable in :do-components and
-;;;                     :do-all-comonents methods to A-FUNCTION to avoid
-;;;                     conflicts, added type checking when :do-components
-;;;                     and :do-all-components call A-FUNCTION on SELF.
-;;; 03/30/92 Amickish - Changed point-in-gob-method-view-object function calls
-;;;                     to point-in-gob macro calls.
-;;; 03/25/92 Amickish - Get-Values ---> G-Value;
-;;;                     (setf (get-local-values ...)) ---> (s-value ...)
-;;; 03/23/92 Pervin - In remove-component, make sure window exists before
-;;;                   doing a get-local-value on it.
-;;; 03/18/92 Amickish - Removed CMUCL compiler warnings: set-values--->s-value,
-;;;                     bound a-window-update-info in :remove-component and
-;;;                     :move-component methods.
-;;; 03/16/92 Amickish - Adjusted scoping in add-component method
-;;; 03/11/92 Pervin - Remove component, make sure window exists before
-;;;		      doing a g-value on it.
-;;; 03/05/92 Pervin - In remove-component, make sure last-inv-obj is
-;;;                     still correct after ex-component is removed from
-;;;			invalid objects list.
-;;; 03/03/92 Amickish - s-value of :internally-parented ---> destroy-slot
-;;; 02/28/92 Amickish - Removed kr::schema-slots check because schema-p works
-;;;                     correctly now (returns NIL on destroyed objects)
-;;; 02/27/92 Szekely - Changed :destroy-me method of aggregate to not do
-;;;                    copy-list.
-;;; 02/19/92 Amickish - Bound kr::*constants-disabled* in initialize method
-;;;                     for aggregates.
-;;; 02/06/92 Pervin - Added leaf-objects-in-rectangle, components-in-rectangle,
-;;;		      and obj-in-rectangle.
-;;; 02/01/92 Amickish - Added :internally-parented checks to opal:aggregate's
-;;;                     add-component method.
-;;; 11/23/91 Amickish&Koz - Rewrote move-component so now it does not call
-;;;                         add-component.  Instead, both methods call
-;;;                         install-component, a function whose code used
-;;;                         to be part of add-component.
-;;; 11/6/91 Pervin - Made move-component a method.
-;;; 9/25/91 Pervin - Add-component takes a new optional argument :move
-;;;		     which is only invoked if it is called from move-component
-;;; 8/29/91 Pervin - In remove-component, make sure that object being
-;;;                  removed from aggregate belongs to that aggregate!
-;;; 3/25/91 Pervin - Added :local t to dovalues loop.
-;;; 3/4/91  D'Souza - Removed nickname "MO" of package Opal.
-;;; 7/11/90 Ed Pervin - new :destroy-me method
-;;; 6/1/90   RBD Fixed add-component to accept :head :tail :after :before
-;;; 5/20/90  BVZ Changed g-value to g-local-value in add-component
-;;;              to fix window bug.
-;;; 5/8/90   Mike Sannella
-;;;              Do-Components and Do-All-Components were ignoring
-;;;              their :type argument.
-;;; 3/6/90   ECP Allowed point-to-leaf, point-to-component,
-;;;              do-components, and do-all-components to accept
-;;;              a list of types as the argument to :type.
-;;; 1/2/90   RBD Corrected a misplaced parenthesis in add-component.
-;;;              Also, in add-component, replaced calls to append-value
-;;;		 by calls to nconc.
-;;; 12/11/89 ECP Point-to-leaf was returning T when :type was aggregate.
-
+
 (in-package "OPAL")
 
 ;;; Aggregate objects
@@ -88,6 +21,7 @@
 ;;; most, since we want to redraw fastest and redraws occur from bottom to
 ;;; top.
 
+
 ;;; Methods on aggregates:
 
 ;;; Initialize
@@ -479,11 +413,13 @@
 ;;; (If intersect = NIL, then "obj" must be completely inside the rectangle.
 ;;; (If type <> T, then "obj" must be of type "type".)
 (defun obj-in-rectangle (obj top left bottom right &key (type t) (intersect t))
+  (declare (fixnum top left bottom right))
   (if (g-value obj :visible)
-      (let* ((obj-left (g-value obj :left))
-	     (obj-top (g-value obj :top))
-	     (obj-right (+ obj-left -1 (g-value obj :width)))
-	     (obj-bottom (+ obj-top -1 (g-value obj :height))))
+      (let* ((obj-left (g-value-fixnum obj :left))
+	     (obj-top (g-value-fixnum obj :top))
+	     (obj-right (+ obj-left -1 (g-value-fixnum obj :width)))
+	     (obj-bottom (+ obj-top -1 (g-value-fixnum obj :height))))
+	(declare (fixnum obj-left obj-top obj-right obj-bottom))
 	(and (or (eq type t) (my-is-a-p obj type))
 	     (funcall (if intersect #'rectintersect #'rectsubset)
 		      obj-left obj-top obj-right obj-bottom
@@ -494,6 +430,7 @@
 ;;; instead of leafs.
 (defun components-in-rectangle (agg top left bottom right
 				&key (type t) (intersect t))
+  (declare (fixnum top left bottom right))
   (if (g-value agg :visible)
       (let (leafs)
 	(dolist (obj (g-value agg :components))
@@ -509,7 +446,8 @@
 (defun set-aggregate-hit-threshold (agg)
   (when (is-a-p agg opal:aggregate)
     (let ((max-hit 0))
+      (declaim (fixnum max-hit))
       (dovalues (c agg :components :local t)
-		(set-aggregate-hit-threshold c)
-		(setq max-hit (max max-hit (g-value c :hit-threshold))))
+	(set-aggregate-hit-threshold c)
+	(setq max-hit (q-max max-hit (g-value-fixnum c :hit-threshold))))
       (s-value agg :hit-threshold max-hit))))

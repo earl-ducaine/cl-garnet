@@ -147,10 +147,6 @@
     (gem:bit-blit a-window buffer x1 y1 (- x2 x1) (- y2 y1)
 		    drawable x1 y1)))
 
-;;(defmacro swap(a b) `(let((.temp. ,a)) (setq ,a ,b) (setq ,b .temp.)))
-(defmacro swap(a b) `(rotatef ,a ,b))
-
-
 
 (defvar newly-invisible-fastdraws-bbox (make-bbox))
 ;; The following are necessary for propagating changes to the bboxes
@@ -384,11 +380,9 @@ This is done to avoid unnecessary total updates."
 		    (progn
 		      (merge-bbox win-new-bbox win-old-bbox) ; merge into new
 		      (setq two-bboxes-p NIL)		     ; really only 1!
-;;;		      (setf (bbox-valid-p win-old-bbox) NIL) ; save until end
 		      (erase-bbox win-new-bbox a-window buffer)
 		      (bbox-to-clip-mask win-new-bbox clip-mask-1))
 		    (progn
-;;;		      (setf (bbox-valid-p win-old-bbox) NIL) ; save until end
 		      (erase-bbox win-old-bbox a-window buffer)
 		      (erase-bbox win-new-bbox a-window buffer)
 		      (bbox-to-clip-mask win-old-bbox clip-mask-1)
@@ -396,9 +390,7 @@ This is done to avoid unnecessary total updates."
 
 		(progn			; Only one valid bbox
 		  (when old-bbox-valid
-		    (swap win-old-bbox win-new-bbox)
-;;;		    (setf (bbox-valid-p win-old-bbox) NIL) ; save 'til end
-		    )
+		    (swap win-old-bbox win-new-bbox))
 		  (erase-bbox win-new-bbox a-window buffer)
 		  (bbox-to-clip-mask win-new-bbox clip-mask-1)))
 
