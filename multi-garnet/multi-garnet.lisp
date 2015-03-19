@@ -1268,6 +1268,8 @@
 
 ;; ***** interface to sky-blue add-constraint and remove-constraint *****
 
+(defvar *constraint-hooks* nil)
+
 (defvar *unsatisfied-max-constraint-warning* nil)
 
 ;; note: change cn-connection before adding or removing cn, so cn will be
@@ -1289,12 +1291,16 @@
 	   ;; when another max cn is removed.
 	   (when *unsatisfied-max-constraint-warning*
 	     (format t "~&Warning: Can't enforce max constraint ~S on object ~S, slot ~S~%"
-		     cn (OS-object (CN-os cn)) (OS-slot (CN-os cn))))
-	   ))
-    )
+		     cn (OS-object (CN-os cn)) (OS-slot (CN-os cn)))))))
+
   ;; update invalid paths/formulas only after adding cn,
   ;; to prevent recursive call to skyblue
   (update-invalidated-paths-and-formulas)
+
+  (when *constraint-hooks*
+    (dolist (hook *constraint-hooks*)
+      (funcall hook cn :add)))
+
   cn)
 
 (defun mg-remove-constraint (cn)

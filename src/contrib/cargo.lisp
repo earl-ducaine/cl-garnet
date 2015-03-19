@@ -34,7 +34,7 @@
 
 ;;; Constants
 
-(defvar *board-lines* 5
+(defvar *board-lines* 19
   "Number of lines on the board.")
 (defparameter *board-points* (* *board-lines* *board-lines*)
   "Number of points on the board.")
@@ -1050,8 +1050,8 @@ The game is also discussed on the newsgroup rec.games.go."))))
 				    (setq *board-lines* 19))
 				   (T NIL))
 			     (do-stop)
-			     (load "cargo") ; Several objects need to be reconstructed, so it's
-			     (do-go)))	    ;  easiest to just reload and restart
+			     (load "contrib:cargo") ; Several objects need to be reconstructed, so it's
+			     (do-go)))	            ; easiest to just reload and restart
 		      (("5x5" NIL)
 		       ("9x9" NIL)
 		       ("13x13" NIL)
