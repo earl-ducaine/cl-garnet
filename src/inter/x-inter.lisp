@@ -8,20 +8,18 @@
 ;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; CHANGE LOG:
-;;; 02/10/94  Andrew Mickish - Added parameters to X-translate-character
-;;; 02/03/94  Andrew Mickish - Made Check-Double-Press a Gem function
-;;; 01/19/94  Andrew Mickish - Created with functions from garnet-keytrans.lisp
 
+
 (in-package "GEM")
 
 (defparameter *last-state* NIL)
 (defparameter *last-code* NIL)
+(declaim (integer *last-time*))
 (defparameter *last-time* 0)
-
 
 (defun x-Check-Double-Press (root-window state code time)
   (declare (ignore root-window))
+  (declare (integer time))
   (if inter::*double-click-time*
       (let (newcode)
 	(if (and (eq state *last-state*)
@@ -38,11 +36,6 @@
       code))
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
-
-
-
 
 (defun x-set-interest-in-moved (window interestedp)
   ;; Macroexpansion of (inter::if-debug :mouse
