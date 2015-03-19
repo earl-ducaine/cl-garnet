@@ -4,86 +4,26 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; This code was written as part of the Garnet project at          ;;;
 ;;; Carnegie Mellon University, and has been placed in the public   ;;;
-;;; domain.  If you are using this code or any part of Garnet,      ;;;
-;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
+;;; domain.                                                         ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; $Id$
+;;;
+
+
 ;;; Make-PS-File
 ;;;
-;;; The function Make-PS-File generates postscript files from Garnet windows.
-;;; The resulting files may be sent directly to a postscript printer or
-;;; included in larger Scribe and LaTex documents.
+;;; The function Make-PS-File generates postscript files from Garnet
+;;; windows. The resulting files may be sent directly to a postscript
+;;; printer or included in larger Scribe and LaTex documents.
 ;;;
 ;;; Designed and implemented by Andrew Mickish
 ;;;
-;;; Change Log:
 
-;; 6/11/94  - Lyle Borg-Grahm - Two fixes for Make-ps-file, one a speed improvement
-;;             one correcting a problem with functions not written out.
-;; 95/10/27 - Charles Hollister - code fragments for MCL2.0.1, 3.0 and 3.0p2
-;;              compatibility
-;;; 12/05/94 Andrew Mickish - Commented out settransfer instruction in
-;;;            DrawBitmap that broke opaque bitmaps
-;;; 05/27/94 Andrew Mickish - Print-Image-Info and Print-Piximage-Info for Mac
-;;; 02/15/94 Andrew Mickish - Converted XLIB font function calls to Gem calls
-;;; 11/01/93 Andrew Mickish - Bitmaps with NIL for an :image value are ignored
-;;; 09/01/93 Andrew Mickish - Fixed typo in setf of *page-width*
-;;; 08/02/93 Andrew Mickish - Changed text functions for new version of text
-;;; 05/03/93 Andrew Mickish - Fixed extensive damage done by Don; made pixmaps
-;;;            draw in color when :color-p parameter is T; fixed menubar window
-;;;            positioning; used write instead of format where possible; fixed
-;;;            boundingbox for landscape pictures;
-;;; 09/15/92 Don Hopkins - Fixed PolyLine to handle many points, and
-;;;	       changed pattern fill to use fonts.
-;;; 08/29/92 Andrew Mickish -  Added EPSF-2.0 comment for Pagemaker
-;;; 08/26/92 Andrew Mickish -  Ignore objects drawn with :no-op
-;;; 07/17/92 Andrew Mickish -  Modified DrawArc and opal:arc :ps-object method
-;;;            to draw arcs entirely inside the bounding box (consistent with
-;;;            recent change made to :draw method of opal:arc).
-;;; 07/03/92 Andrew Mickish -  Added ability to specify a list of windows;
-;;;            used ~A when calling Format-Int-or-FP.
-;;; 06/23/92 Andrew Mickish -  Renamed variable "lt" to "thickness"
-;;; 06/10/92 Ed Pervin - Print pixmaps (only purely black pixels).
-;;; 06/04/92 Andrew Mickish -  Now white objects are printed with a white
-;;;            halftone instead of a white color
-;;; 06/02/92 Andrew Mickish -  Added :ps-object and :ps-register-fn methods
-;;;            to print cursors of cursor-text and cursor-multi-text
-;;; 05/01/92 Andrew Mickish -  Restored pushnew call in bitmap :ps-register-fn,
-;;; 04/28/92 Ed Pervin      -  Implemented :justification of multi-text.
-;;; 04/15/92 Andrew Mickish -  Moved multifont-text stuff to ps-multifont.lisp
-;;; 04/13/92 Rich McDaniel  -  New Multifont-text
-;;; 04/03/92 Andrew Mickish -  Changed DOLIST to DO in trailer-comments
-;;; 03/31/92 Andrew Mickish -  Added comment at top of PS file announcing
-;;;            whether the file uses real color or not.
-;;; 03/25/92 Andrew Mickish -  Added background window color
-;;; 01/03/92 Andrew Mickish -  Roundtangle method will not draw singularities
-;;; 10/16/91 Andrew Mickish -  Added Format-Int-or-FP so that integers are
-;;;            printed as integers and floats are printed as floats.
-;;; 10/15/91 Andrew Mickish -  Added :ps-register-fn for opal:oval.  Now PS
-;;;            pays attention to the :border-width of windows.
-;;; 10/11/91 Andrew Mickish -  Backslashes in strings are now duplicated
-;;;            before writing the string to the file.  Text can now have a
-;;;            filled background.
-;;; 10/11/91 Andrew Mickish - Split Make-PS-File so that all writing to the
-;;;            file is done at the end of the function, using Write-PS-To-File.
-;;;            BoundingBox information now appears both at the top and at
-;;;            the end of the PS file.
-;;; 08/29/91 Andrew Mickish - Fixed bitmap method and PS function to allow
-;;;            transparent bitmaps.  Added check of :visible slot before
-;;;            drawing subwindows.
-;;; 08/05/91 Andrew Mickish - Put gsave and grestore around ps-window call
-;;;            on subwindows.
-;;; 08/04/91 Andrew Mickish - Added more 'pop' calls in StrokeShape to clean
-;;;            unused parameters off the stack.
-;;; 08/02/91 Andrew Mickish - Added subwindows to the first pass search for
-;;;            registering needed postscript functions.  Added :ps-object
-;;;            method for opal:multi-text.  Make-PS-File now returns T.
-;;; 07/26/91 Andrew Mickish - Created
-;;;
-
+
 (in-package "OPAL")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(Make-PS-File)))
 
 
@@ -1243,9 +1183,9 @@ TITLE, CREATOR, FOR, COMMENT - Strings for header comments.
        (setf clip-p T)) ; Since the temp window has the same dimensions
 			; as the clip region, just clip to the window
       (t
-       (setf region-left opal:*screen-width*)
+       (setf region-left gem:*screen-width*)
        (setf region-right 0)
-       (setf region-top opal:*screen-height*)
+       (setf region-top gem:*screen-height*)
        (setf region-bottom 0)
 
        ;; Figure maximum window size.
