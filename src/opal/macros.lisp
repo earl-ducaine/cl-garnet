@@ -20,6 +20,9 @@
 
 (in-package "KR")
 
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (export '(gv-fixnum gvl-fixnum g-value-fixnum)))
+
 ;; FMG Some common idioms supporting optimization.
 (defmacro gv-fixnum (object &rest slots)
   `(the fixnum (gv ,object ,@slots)))
