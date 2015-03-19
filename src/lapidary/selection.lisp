@@ -26,7 +26,7 @@
 
 (in-package "LAPIDARY")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(Selection-Do-Go Selection-Do-Stop))
   (proclaim '(special editor-menu)))
 

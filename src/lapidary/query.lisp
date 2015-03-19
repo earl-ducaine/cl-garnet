@@ -22,7 +22,7 @@
 
 (defparameter common-lisp-user::*Used-Gilt-Version* "V3.0")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(INTER-AGG-QUERY)))
 
 (defparameter common-lisp-user::*Garnet-Object-Just-Created* 

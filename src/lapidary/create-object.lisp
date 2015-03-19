@@ -15,7 +15,7 @@
 
 (in-package "LAPIDARY")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(create-object-do-go create-object-do-stop)))
 
 (defun create-name (obj)

@@ -4,27 +4,19 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; This code was written as part of the Garnet project at          ;;;
 ;;; Carnegie Mellon University, and has been placed in the public   ;;;
-;;; domain.  If you are using this code or any part of Garnet,      ;;;
-;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
+;;; domain.                                                         ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; -*- Mode: Lisp; Package: LAPIDARY -*-
+;;;
+;;; $Id$
+
+
 ;;;
 ;;; This file provides the functions that handle the action buttons
 ;;; in the interactor menus
 ;;;
 
-#|
-==============================================================================
-Change log:
-    08/25/92: Andrew Mickish - Removed declare ignore of value in
-               Write-Interactor  
-    07/06/92: Brad Vander Zanden -- changed set-interactor-slots so that
-               it sees the name field of an interactor when the user changes
-               the name
-==============================================================================
-|#
-
- (in-package "LAPIDARY")
+
+(in-package "LAPIDARY")
 
 (defun get-start-where (queue inter)
   (let ((start-where (assoc :start-where queue)))
@@ -433,10 +425,10 @@ Change log:
 	    ;; aggregate
 	    (s-value inter-agg-query :agg-to-insert-into agg)
 	    (gilt:show-in-window inter-agg-query 
-				 (round (- opal:*screen-width* 
+				 (round (- gem:*screen-width* 
 					   (g-value inter-agg-query :window-width))
 					2)
-				 (round (- opal:*screen-height*
+				 (round (- gem:*screen-height*
 					   (g-value inter-agg-query :window-height))
 					2)
 				 t)

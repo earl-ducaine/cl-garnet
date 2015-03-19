@@ -176,9 +176,9 @@ Use the box constraint menu instead"))
 		       ;; ask whether the user wants to see the second 
 		       ;; endpoint
 		       (setf (opal:center-x *constraint-gadget-query-window*)
-			     opal:*screen-width*)
+			     gem:*screen-width*)
 		       (setf (opal:center-y *constraint-gadget-query-window*)
-			     opal:*screen-height*)
+			     gem:*screen-height*)
 		       (when (string= (constraint-gadget-query "Both endpoints of the line are constrained. To 
 see the constraint on the second endpoint,
 press 'NEXT'. If you do not want to see the

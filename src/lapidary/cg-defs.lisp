@@ -16,7 +16,7 @@
 
 (in-package "GARNET-GADGETS")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(box-constraint-do-go
 	    line-constraint-do-go 
 	    show-box-constraint-menu show-line-constraint-menu

@@ -13,7 +13,7 @@
 
 (in-package "LAPIDARY")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(Move-Grow-Do-Go Move-Grow-Do-Stop)))
 
 ;;; make sure that slots which are going to be changed by the move

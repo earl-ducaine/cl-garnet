@@ -4,30 +4,24 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; This code was written as part of the Garnet project at          ;;;
 ;;; Carnegie Mellon University, and has been placed in the public   ;;;
-;;; domain.  If you are using this code or any part of Garnet,      ;;;
-;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
+;;; domain.                                                         ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; -*- Mode: Lisp; Package: LAPIDARY -*-
-;;; This file contains code for initializing Lapidary.  It presumes that
-;;; Garnet is already loaded.
-;;; It defines "(do-go)", "(do-stop)", and the basic initialization code
-;;; which creates lapidary windows
 ;;;
-;;; Designed by Brad A. Myers, Brad Vander Zanden, and Roger Dannenberg
+;;; $Id$
+
+
+;;; This file contains code for initializing Lapidary. It presumes
+;;; that Garnet is already loaded.
+;;; It defines "(do-go)", "(do-stop)", and the basic initialization
+;;; code which creates lapidary windows
+;;;
+;;; Designed by Brad A. Myers, Brad Vander Zanden, and Roger Dannenberg.
 ;;; Implemented by DSK...
 
-;;; =================================================================
-;;;
-;;; CHANGE LOG
-;;;
-;;; 5/6/92 -- ECP  Added code to do-stop to make Lapidary restartable.
-;;; 8/7/89 -- added a function that creates the error message window
-;;;
-;;; =================================================================
-
+
 (in-package "LAPIDARY")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(Do-Go Do-Stop fix-it clean-up)))
 
 ;;; =======================================================================

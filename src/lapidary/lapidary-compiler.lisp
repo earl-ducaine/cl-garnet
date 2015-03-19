@@ -123,9 +123,10 @@
 	"support-inter" "by-demo"
 	"interactors" "interactors-menu"))
 
-(dolist (file Garnet-Lapidary-Files)
-  (garnet-compile (concatenate 'string "lapidary:" file))
-  (garnet-load (concatenate 'string "lapidary:" file)))
+(with-compilation-unit ()
+  (dolist (file Garnet-Lapidary-Files)
+    (garnet-compile (concatenate 'string "lapidary:" file))
+    (garnet-load (concatenate 'string "lapidary:" file))))
 
 
 (garnet-copy-files Garnet-Lapidary-Src Garnet-Lapidary-Pathname

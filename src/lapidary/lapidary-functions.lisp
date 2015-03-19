@@ -24,7 +24,7 @@
 		  common-lisp-user::*used-gilt-version*
 		  common-lisp-user::*used-garnet-version*))
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(lapidary-two-point-interactor directional-move-grow-interactor
 	    lapidary-angle-interactor lapidary-menu-interactor
 	    lapidary-button-interactor lapidary-text-interactor)))

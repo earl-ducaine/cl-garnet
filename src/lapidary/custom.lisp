@@ -170,12 +170,12 @@
     (when left
 	  ;; make sure query gadget stays on screen
 	  (when (> (+ left (g-value *constraint-gadget-query-window* :width))
-		   opal:*screen-width*)
-	    (setf left (- opal:*screen-width* 
+		   gem:*screen-width*)
+	    (setf left (- gem:*screen-width* 
 			  (g-value *constraint-gadget-query-window* :width))))
 	  (when (> (+ top (g-value *constraint-gadget-query-window* :height))
-		   opal:*screen-height*)
-	    (setf top (- opal:*screen-height*
+		   gem:*screen-height*)
+	    (setf top (- gem:*screen-height*
 			 (g-value *constraint-gadget-query-window* :height))))
 	  (s-value *constraint-gadget-query-window* :selection-function
 		   'c32-ok)

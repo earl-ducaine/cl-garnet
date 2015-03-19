@@ -21,7 +21,7 @@
 
 (in-package "LAPIDARY")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(PROMPT-GADGET)))
 
 (setf common-lisp-user::*Garnet-Object-Just-Created* 

@@ -7,18 +7,16 @@
 ;;; domain.  If you are using this code or any part of Garnet,      ;;;
 ;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; -*- Mode: Lisp; Package: LAPIDARY -*-
+;;;
+;;; $Id$
+
+
 ;;;
 ;;; This file provides the common functions and aggregadgets in the
 ;;; interactor menus and font menus
 ;;;
 
-(declaim (optimize (speed 1) (safety 3) (debug 3)))
-
-;;; CHANGE LOG
-;;;
-;;; 08/24/92 amickish - Added defvars and proclaim
-
+
 (in-package "LAPIDARY")
 
 (defvar *bold-font* (create-instance NIL opal:font (:face :bold)))
