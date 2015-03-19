@@ -20,25 +20,7 @@
 ;;   Written by Andrew Mickish
 
 
-;;;  CHANGE LOG
-;;   06/24/92  Andrew Mickish - Points is now optional for SLIDE-FINAL-FN
-;;   05/29/92  Brad Myers - made to work with new auto-repeat button inter
-;;   01/18/90  Andrew Mickish - Changed the following formulas to consider the
-;;             :scroll-p slot of the top level gadget:
-;;                 1) :active of TRILL-INTER      3) :active of SLIDE-INTER
-;;                 2) :visible of INDICATOR-TEXT  4) :active of JUMP-INTER
-;;   03/11/90  Andrew Mickish - Simplified VAL-1-FN and VAL-2-FN by calling
-;;             S-VALUE instead of INCF and DECF.
-;;   07/01/90  Andrew Mickish - Considered :window slot in :active formulas
-;;             of all interactors
-;;   11/30/90  Pavan Reddy - used "format" instead of "prin1-to-string" in
-;;             INDICATOR-TEXT to allow use of floats.
-
-;; (declaim (optimize (speed 2) (safety 3) (debug 3)))
-
-
 (in-package "GARNET-GADGETS")
-
 
 ;;;  TRILL INTERACTOR AND INCREMENTOR FUNCTIONS
 ;;
@@ -52,6 +34,7 @@
 	 (val-2 (g-value parent :val-2))
 	 (value (g-value parent :value))
 	 (inc-by (g-value interactor :operates-on :inc-by)))
+    (declare (type (or number null) val-1 val-2 value))
     (cond 
 
       ;; there is a max and a min
@@ -217,12 +200,12 @@
 ;;  INCDICATOR TEXT
 ;;
 (create-instance 'INDICATOR-TEXT opal:text
-   (:left (o-formula (- (+ (gv (kr-path 0 :parent :indicator) :left)
-			   (floor (gv (kr-path 0 :parent :indicator) :width) 2))
-			(floor (gvl :width) 2))))
-   (:top (o-formula (- (+ (gv (kr-path 0 :parent :indicator) :top)
-			  (floor (gv (kr-path 0 :parent :indicator) :height) 2))
-		       (floor (gvl :height) 2))))
+   (:left (o-formula (- (+ (gv-fixnum (kr-path 0 :parent :indicator) :left)
+			   (floor (gv-fixnum (kr-path 0 :parent :indicator) :width) 2))
+			(floor (gvl-fixnum :width) 2))))
+   (:top (o-formula (- (+ (gv-fixnum (kr-path 0 :parent :indicator) :top)
+			  (floor (gv-fixnum (kr-path 0 :parent :indicator) :height) 2))
+		       (floor (gvl-fixnum :height) 2))))
    (:string (o-formula (format NIL (gv (kr-path 0 :parent) :format-string)
 			       (gv (kr-path 0 :parent) :value))))
    (:font (o-formula (gv (kr-path 0 :parent) :indicator-font)))
@@ -279,10 +262,9 @@
 
 ;; The WHEEL-INTER is like a cross between the JUMP-INTER and the TRILL-INTER.
 ;; The main point is that it uses the scroll wheel.
-(create-instance 'WHEEL-INTER inter:Button-Interactor
+(create-instance 'WHEEL-INTER inter:Scroll-Wheel-Interactor
    (:active (o-formula (and (gvl :window) (gvl :operates-on :scroll-p))))
    (:window (o-formula (gv-local :self :operates-on :window)))
-   (:continuous NIL)
    (:start-where (o-formula (list :in-box (gvl :operates-on :bounding-area))))
    (:inc-by (o-formula (gv (kr-path 0 :operates-on) :scr-incr)))
    (:running-where (o-formula (list :in-box (gvl :operates-on :bounding-area))))
