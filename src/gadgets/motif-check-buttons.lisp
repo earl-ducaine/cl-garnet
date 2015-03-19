@@ -106,7 +106,7 @@
 
 (in-package "GARNET-GADGETS")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(Motif-Check-Button Motif-Check-Button-Panel))
   #+garnet-test
   (export '(Motif-Check-Buttons-Go Motif-Check-Buttons-Stop

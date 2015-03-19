@@ -26,7 +26,7 @@ Change log:
 
 (in-package "GARNET-GADGETS")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(Horiz-Choice-List Pop-Up-From-Icon)))
 
 (defparameter value-bold-font (opal:get-standard-font NIL :bold NIL))

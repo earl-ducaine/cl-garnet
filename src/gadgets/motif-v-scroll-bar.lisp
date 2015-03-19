@@ -63,7 +63,7 @@
 
 (in-package "GARNET-GADGETS")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(Motif-V-Scroll-Bar))
   #+garnet-test
   (export '(Motif-V-Scroll-Go Motif-V-Scroll-Stop
@@ -271,16 +271,15 @@
 				  (g-value interactor :operates-on :indicator :top))
 		   (SLIDE-FINAL-FN interactor obj))))
       ;; WHEEL is like KEY only it uses the scrollwheel events.
-      (:WHEEL ,inter:button-interactor
+      (:WHEEL ,inter:scroll-wheel-interactor
 	      (:active ,(o-formula (let ((p (gvl :operates-on)))
 				     (and (gvl :window) 
 					  (gv p :scroll-p) (gv p :active-p)))))
 	      (:window ,(o-formula (gv-local :self :operates-on :window)))
-	      (:continuous NIL)
+	      (:continuous nil)
 	      (:start-where ,(o-formula (list :in-box (gvl :operates-on :bounding-area))))
 	      (:start-event (:upscrollup :downscrollup))
 	      (:final-function MOTIF-KEY-TRILL-FN))
-
       (:KEY ,inter:button-interactor
 	    (:active ,(o-formula (let ((p (gvl :operates-on)))
 				   (and (gvl :window) 
@@ -309,7 +308,31 @@
 	   (create-instance 'MOTIF-V-SCROLL-TOP-AGG opal:aggregate))
   (create-instance 'DEMO-MOTIF-V-SCROLL-BAR MOTIF-V-SCROLL-BAR
      (:left 90)(:top 20)
-     (:keyboard-selection-p T))
+     (:keyboard-selection-p T)
+     ;; Override interactors so that the scroll wheel can work in the
+     ;; entire window.
+     (:interactors
+      `((:slide ,slide-inter
+		(:active ,(o-formula (let ((p (gvl :operates-on)))
+				       (and (gvl :window)
+					    (gv p :scroll-p) (gv p :active-p))))))
+	(:jump ,motif-jump
+	       (:final-function
+	      ,#'(lambda (interactor obj)
+		   (MOTIF-JUMP-FN interactor (inter:event-y inter:*current-event*)
+				  (g-value interactor :operates-on :indicator :top))
+		   (SLIDE-FINAL-FN interactor obj))))
+	(:WHEEL ,inter:button-interactor
+		(:active ,(o-formula (let ((p (gvl :operates-on)))
+				       (and (gvl :window) 
+					    (gv p :scroll-p) (gv p :active-p)))))
+		(:window ,(o-formula (gv-local :self :operates-on :window)))
+		(:continuous NIL)
+		(:start-where ,(o-formula (list :in motif-v-scroll-win)))
+		(:start-event (:upscrollup :downscrollup))
+		(:final-function MOTIF-KEY-TRILL-FN)))))
+
+	
   (opal:add-components MOTIF-V-SCROLL-TOP-AGG
 		       (create-instance NIL MOTIF-BACKGROUND)
 		       DEMO-MOTIF-V-SCROLL-BAR)

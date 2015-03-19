@@ -136,7 +136,7 @@
 
 (in-package "GARNET-GADGETS")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(Motif-Scrolling-Menu))
   #+garnet-test
   (export '(Motif-Scrolling-Menu-Go Motif-Scrolling-Menu-Stop
@@ -660,7 +660,18 @@
 	      ("Helvetica" helvetica-motif-fn) ("Chicago" chicago-motif-fn)
 	      ("Symbol" symbol-motif-fn) ("Monaco" monaco-motif-fn)
 	      ("Venice" venice-motif-fn) ("Gothic" gothic-motif-fn)
-	      ("Celtic" celtic-motif-fn))))
+	      ("Celtic" celtic-motif-fn)))
+    (:interactors
+     `((:selector ,motif-scrolling-menu-selector)
+       (:key-press ,MOTIF-SCROLLING-MENU-KEY-INTER)
+       (:WHEEL ,inter:button-interactor
+	       (:active ,(o-formula (and (gvl :window)
+					 (gvl :operates-on :keyboard-selection-p)
+					 (gvl :operates-on :active-p))))
+	       (:window ,(o-formula (gv-local :self :operates-on :window)))
+	       (:continuous NIL)
+	       (:start-where t)
+	       (:start-event (:upscrollup :downscrollup))))))
   (opal:add-components motif-scrolling-menu-top-agg motif-scrolling-menu-Obj)
   (opal:update motif-scrolling-menu-WIN))
 

@@ -101,7 +101,7 @@
 
 (in-package "GARNET-GADGETS")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(MOTIF-MENUBAR MOTIF-BAR-ITEM MAKE-MOTIF-SUBMENU-WIN
 	    ; Creation Functions
 	    Make-Motif-Menubar Make-Motif-Bar-Item Make-Motif-Submenu-Item))

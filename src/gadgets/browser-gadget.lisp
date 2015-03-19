@@ -79,7 +79,7 @@
 
 (in-package "GARNET-GADGETS")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(BROWSER-GADGET
 	    BROWSER-MENU-FN PUSH-FIRST-ITEM PROMOTE-ITEM
 	    SET-FIRST-ITEM BROWSER-MENU-SCROLL-FN BROWSER-SCROLL-FN)))
@@ -97,8 +97,9 @@
 	 (item (g-value sm-item :item))
 	 (menu-rank (g-value menu :rank))
 	 (real-menu-rank (+ menu-rank (g-value browser :start)))
-	 (new-menu-rank (+ 1 real-menu-rank))
+	 (new-menu-rank (1+ real-menu-rank))
 	 (selected (g-value browser :selected-ranks)))
+    (declare (fixnum menu-rank real-menu-rank new-menu-rank))
 
     (if (g-value sm-item :highlighted)
 	; if item has just become selected, update the info lists in
@@ -209,7 +210,7 @@
       (s-value browser :starts new-starts)
       (if additional-selection-coordinate
 	  (s-value browser :additional-selection-coordinate
-		   (list (+ 1 (car additional-selection-coordinate))
+		   (list (1+ (car additional-selection-coordinate))
 			 (second additional-selection-coordinate))))
       (s-value (g-value browser :scroll-bar) :value 0)
       (update-menus browser))))
@@ -230,7 +231,7 @@
 	; Retain items in scrolling menus to the right: chop off the
 	; left side of the :items, :starts, and :selected-ranks lists and
 	; add fillers if necessary
-	(let* ((rank+1 (+ 1 real-menu-rank))
+	(let* ((rank+1 (1+ real-menu-rank))
 	       (new-items (if item (nthcdr rank+1 (g-value browser :items))))
 	       (new-all-items
 		(if item (nthcdr rank+1 (g-value browser :all-items)))))
@@ -385,17 +386,17 @@ slot of your instance of the BROWSER-GADGET")))
 
    ; Non-customizable slots
    (:items NIL)
-   (:starts (o-formula (make-list (gvl :num-menus) :initial-element 0)))
+   (:starts (o-formula (make-list (gvl-fixnum :num-menus) :initial-element 0)))
    (:start (o-formula (if (gvl :scroll-p) (gvl :scroll-bar :value) 0)))
-   (:scroll-p (o-formula (> (length (gvl :items)) (gvl :num-menus))))
-   (:end (o-formula (+ (gvl :start) (gvl :num-menus))))
-   (:visible-items (o-formula (subseq (gvl :items) (gvl :start) (gvl :end))))
+   (:scroll-p (o-formula (> (length (gvl-fixnum :items)) (gvl-fixnum :num-menus))))
+   (:end (o-formula (+ (gvl-fixnum :start) (gvl-fixnum :num-menus))))
+   (:visible-items (o-formula (subseq (gvl :items) (gvl-fixnum :start) (gvl-fixnum :end))))
    (:parts
     `((:menu-list ,opal:aggrelist
         (:constant (:direction :h-spacing :pixel-margin :rank-margin
 		    :fixed-width-p :fixed-height-p))
-        (:left ,(o-formula (gvl :parent :left)))
-	(:top ,(o-formula (gvl :parent :top)))
+        (:left ,(o-formula (gvl-fixnum :parent :left)))
+	(:top ,(o-formula (gvl-fixnum :parent :top)))
 	(:direction :horizontal)
 	(:h-spacing 10)
 	;; This complicated :width formula not only computes the width of the
@@ -403,12 +404,13 @@ slot of your instance of the BROWSER-GADGET")))
 	;; box, according to the new width.
 	(:width ,(o-formula
 		  (let ((max-x 0))
+		    (declare (fixnum max-x))
 		    (gv (first (gvl :components)) :items)
 		    (opal:do-components KR::*schema-self*
 		      #'(lambda (menu)
-			  (setf max-x (MAX max-x (opal:gv-right menu)))))
+			  (setf max-x (opal:q-MAX max-x (opal:gv-right menu)))))
 		    (let* ((left (gvl :left))
-			   (new-width (MAX 0 (- max-x left)))
+			   (new-width (opal:q-MAX 0 (- max-x left)))
 			   (bound-left (+ left 40)) ; width of trill boxes = 40
 			   (bound-right (- max-x 40))
 			   (scroll-bar (g-value KR::*schema-self* :parent
@@ -422,10 +424,11 @@ slot of your instance of the BROWSER-GADGET")))
 					         bound-left
 						 (- bound-right ind-width))
 					  0 0 0)))
+		      (declare (fixnum left new-width bound-left bound-right))
 		      (s-value scroll-bar :width new-width)
 		      (s-value indicator :box new-box)
 		      new-width))))
-	(:items ,(o-formula (gvl :parent :num-menus)))
+	(:items ,(o-formula (gvl-fixnum :parent :num-menus)))
 	(:item-prototype
 	 (,SCROLLING-MENU
 	  (:constant (:indicator-text-p :int-scroll-feedback-p :multiple-p
@@ -434,9 +437,9 @@ slot of your instance of the BROWSER-GADGET")))
 		      :indicator-font :min-frame-width :v-spacing :h-align
 		      :int-menu-feedback-p :final-feedback-p :text-offset))
 	  (:height ,(o-formula
-		     (let ((new-height (+ (* (gvl :num-visible)
-					     (gvl :item-height))
-					  (gvl :title-height))))
+		     (let ((new-height (+ (* (gvl-fixnum :num-visible)
+					     (gvl-fixnum :item-height))
+					  (gvl-fixnum :title-height))))
 		       (let* ((top (g-value KR::*schema-self* :top))
 			      (bound-top (+ top 40)) ; height of boxes = 40
 			      (bound-bottom (- (+ top new-height) 40))
@@ -452,6 +455,7 @@ slot of your instance of the BROWSER-GADGET")))
 					      bound-top
 					      (- bound-bottom ind-height))
 				     0 0)))
+			 (declare (fixnum top bound-top bound-bottom ind-height))
 			 (s-value scroll-bar :height new-height)
 			 (s-value indicator :box new-box)
 			 new-height))))
@@ -478,7 +482,7 @@ slot of your instance of the BROWSER-GADGET")))
 			    (kr-send p :item-to-string-function item))
 			  ""))))
 	  (:selected-ranks ,(o-formula (let ((p (gvl :parent :parent)))
-					 (nth (+ (gvl :rank) (gv p :start))
+					 (nth (+ (gvl-fixnum :rank) (gv-fixnum p :start))
 					      (gv p :selected-ranks)))))
 	  (:menu-selection-function ,(o-formula (gvl :parent :parent
 						     :menu-function)))
@@ -491,29 +495,29 @@ slot of your instance of the BROWSER-GADGET")))
         (:constant (:min-height :val-1 :scr-trill-p :page-trill-p
 		    :indicator-text-p :scr-incr :int-feedback-p
 		    :format-string :indicator-font))
-	(:left ,(o-formula (gvl :parent :left)))
-	(:top ,(o-formula (+ (gvl :parent :top)
-			     (gvl :parent :menu-list :height) 10)))
+	(:left ,(o-formula (gvl-fixnum :parent :left)))
+	(:top ,(o-formula (+ (gvl-fixnum :parent :top)
+			     (gvl-fixnum :parent :menu-list :height) 10)))
 	(:width 380)
-	(:val-2 ,(o-formula (MAX (- (length (gvl :parent :items))
-				    (gvl :parent :num-menus))
-				 1)))
+	(:val-2 ,(o-formula (opal:q-MAX (- (length (gvl-fixnum :parent :items))
+					   (gvl-fixnum :parent :num-menus))
+					1)))
 	(:scroll-p ,(o-formula (gvl :parent :scroll-p)))
 	(:indicator-text-p NIL)
-	(:page-incr ,(o-formula (gvl :parent :num-menus)))
+	(:page-incr ,(o-formula (gvl-fixnum :parent :num-menus)))
 	(:int-scroll-feedback-p T)
 	(:selection-function BROWSER-SCROLL-FN))
 
       (:gray-feedback ,opal:rectangle
-       (:left ,(o-formula (+ 1 (gvl :obj-over :left))))
+       (:left ,(o-formula (1+ (gvl-fixnum :obj-over :left))))
        (:top ,(o-formula (if (gvl :obj-over :prev)
-			     (gvl :obj-over :top)
-			     (+ 1 (gvl :obj-over :top)))))
-       (:width ,(o-formula (- (gvl :obj-over :width) 2)))
+			     (gvl-fixnum :obj-over :top)
+			     (1+ (gvl-fixnum :obj-over :top)))))
+       (:width ,(o-formula (- (gvl-fixnum :obj-over :width) 2)))
        (:height ,(o-formula (if (and (gvl :obj-over :prev)
 				     (gvl :obj-over :next))
-				(gvl :obj-over :height)
-				(- (gvl :obj-over :height) 1))))
+				(gvl-fixnum :obj-over :height)
+				(1- (gvl-fixnum :obj-over :height)))))
        (:draw-function :xor)
        (:fast-redraw-p T)
        (:filling-style NIL)
@@ -529,17 +533,18 @@ slot of your instance of the BROWSER-GADGET")))
 	      (let ((real-menu-rank (car coordinate))
 		    (real-obj-rank (cadr coordinate))
 		    (browser-start (gvl :parent :start)))
+		(declare (fixnum real-menu-rank real-obj-rank browser-start))
 		;; When the coordinate indicates a visible position
 		(when (and (>= real-menu-rank browser-start)
 			   (< real-menu-rank (+ browser-start
-						(gvl :parent :num-menus))))
+						(gvl-fixnum :parent :num-menus))))
 		  (let* ((menu-rank (- real-menu-rank browser-start))
 			 (menu (nth menu-rank
 				    (gvl :parent :menu-list :components)))
-			 (menu-start (gv menu :start)))
+			 (menu-start (gv-fixnum menu :start)))
 		    (when (and (>= real-obj-rank menu-start)
-			       (< (+ menu-start (gv menu :num-visible))))
-		      (nth (- real-obj-rank (gv menu :start))
+			       (< (+ menu-start (gv-fixnum menu :num-visible))))
+		      (nth (- real-obj-rank (gv-fixnum menu :start))
 			   (gv menu :menu-item-list :components))
 		      )))))))))
 

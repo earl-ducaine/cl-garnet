@@ -61,7 +61,7 @@
 
 (in-package "GARNET-GADGETS")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(Multifont-Gadget)))
 
 (create-instance 'MULTIFONT-GADGET opal:aggregadget
@@ -114,7 +114,7 @@
 )
 
 #+garnet-test
-(eval-when (eval compile load)
+(eval-when (:execute :compile-toplevel :load-toplevel)
   (export '(multifont-gadget-go  multifont-gadget-stop)))
 
 #+garnet-test
@@ -142,7 +142,7 @@
    )
    (opal:add-component multifont-gadget-top gadget-instance)
    (opal:update multifont-gadget-win)
-#-cmu (inter:main-event-loop)
+#-(and cmu (not mp)) (inter:main-event-loop)
 )
 
 #+garnet-test

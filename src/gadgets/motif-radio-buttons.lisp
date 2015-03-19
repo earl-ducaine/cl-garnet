@@ -106,7 +106,7 @@
 
 (in-package "GARNET-GADGETS")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(Motif-Radio-Button Motif-Radio-Button-Panel))
   #+garnet-test	
   (export '(Motif-Radio-Buttons-Go Motif-Radio-Buttons-Stop

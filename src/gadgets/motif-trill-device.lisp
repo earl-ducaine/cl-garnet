@@ -52,7 +52,7 @@
 ;;;  01/21/93 Rajan Parthasarathy - Created
 
 (in-package "GARNET-GADGETS")
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(Motif-Trill-Device))
   #+garnet-test
   (export '(Motif-Trill-Win Motif-Trill-Agg Motif-Trill-Obj

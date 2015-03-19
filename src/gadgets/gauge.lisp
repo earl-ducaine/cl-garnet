@@ -80,7 +80,7 @@
 
 (in-package "GARNET-GADGETS")
 
-(eval-when (eval load compile)
+(eval-when (:load-toplevel :compile-toplevel :execute)
   (export '(Gauge))
   #+garnet-test
   (export '(Gauge-Go Gauge-Stop Gauge-Obj Gauge-Top-Agg Gauge-Win)))
@@ -480,7 +480,7 @@
 			  (value (g-value bar :value))
 			  (val-1 (g-value bar :val-1))
 			  (val-2 (g-value bar :val-2))
-			  (inc-by (or (g-value bar :scr-incr) 1))
+			  (inc-by (or (g-value bar :scr-incr) 5))
 			  (up-or-left (first (g-value interactor :start-event))))
 		     (if (eq (inter:event-char inter:*current-event*) up-or-left)
 			 (if (< val-1 val-2)

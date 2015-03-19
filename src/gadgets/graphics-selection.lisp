@@ -103,7 +103,7 @@
 
 (in-package "GARNET-GADGETS")
 
-(eval-when (eval load compile)
+(eval-when (:load-toplevel :compile-toplevel :execute)
   (export '(Graphics-Selection)))
 
 ;; These are the size of the selection boxes

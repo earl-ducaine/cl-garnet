@@ -35,7 +35,7 @@
 (in-package "GARNET-GADGETS")
 (defparameter demo-motif-ob NIL)
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(motif-option-button
 	    #+garnet-test motif-option-button-go
 	    #+garnet-test motif-option-button-stop)))
@@ -87,11 +87,11 @@
       ((AND (< (g-value menu :window :top) 0)
 	    (> (+ (g-value menu :window :top)
 		  (g-value menu :window :height))
-	       opal:*screen-height*)) (setf return-value NIL))
+	       gem:*screen-height*)) (setf return-value NIL))
       ((< (g-value menu :window :top) 0) (setf return-value 'top))
       ((> (+ (g-value menu :window :top)
 	     (g-value menu :window :height))
-	  opal:*screen-height*) (setf return-value 'bottom)))
+	  gem:*screen-height*) (setf return-value 'bottom)))
 
     return-value))
 
@@ -137,7 +137,7 @@
 		   (- (g-value g :parent :window :top-border-width)))
 	  (if (eq (motif-menu-out-of-screen g) 'bottom)
 	      (s-value menu :win-top
-		       (- opal:*screen-height*
+		       (- gem:*screen-height*
 			  (g-value menu :window :height)
 			  (g-value g :parent :window :top-border-width))))))))
 

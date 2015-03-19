@@ -8,43 +8,15 @@
 ;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+
+
 ;;;
 ;;;  Scrolling Window Parts
 ;;;      see the file Scrolling-window for an explanation
-#|
-============================================================
-Change log:
- 1/12/94 Andrew Mickish - xlib:drawable-plist ---> opal:drawable-to-window
- 9/08/93 Andrew Mickish - opal:cursor-multi-text ---> opal:text
- 9/01/93 Andrew Mickish - Updated Get-Cursor-Box according to new opal:text
- 7/26/93 Andrew Mickish - Put #+garnet-debug around demo functions
- 6/28/93 Rajan Parthasarathy - Fixed show-box to consider the case when
-           scroll bars are not on default side.
-14/17/93 Andrew Mickish - Removed clip-mask parameters from update calls
-12/15/92 Andrew Mickish - Added type and parameter declarations
-12/10/92 Andrew Mickish - *drawable-to-window-mapping* ---> *garnet-windows*
-9/07/92  Andrew Mickish - Set :clip-window in Scrolling-Window-Creator
-6/26/92  Rajan Parthasarathy - Fixed show-box to scroll horizontally;
-           Changed :auto-scroll method to scroll one line at a time.
-6/19/92  Rajan Parthasarathy - Added auto-scroll
-2/19/92  Ed Pervin - Implemented double-clip-masks.
-2/18/92  Andrew Mickish - Added :maybe-constant list
-7/26/91  Brad Myers - removed extra Scrolling-Window-With-Bars-Destroy
-                      and Scrolling-Window-With-Bars-Creator.
-                    - added Pedro's change so you can specify the
-                      :inner-aggregate-prototype for scrolling-window
-5/14/91  Andrew Mickish - Redefined Set-Scroll-Bar-Values to set
-           the indicators' :box slot instead of the bars' :value slot
-5/13/91  Edward Pervin - Scrolling-Window-With-Bars-Destroy
-           was accidentally declared twice.
-3/14/91  Brad Myers - Separated from Scrolling-window to allow 
-           Motif-scrolling-window-with-bars
-============================================================
-|#
 
 (in-package "GARNET-GADGETS")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(Scrolling-Window Auto-Scroll
 	    Scroll-Win-Inc Scroll-Win-To
 	    Scrolling-Window-Go Scrolling-Window-Stop
@@ -61,9 +33,9 @@ Change log:
 
 
 ;; This might be called directly by the user, in which case we need to
-;; destroy the window, or it might be called when the window is destroyed,
-;; in which case we don't want to destroy the window.  The gethash call
-;; determines which case this is.
+;; destroy the window, or it might be called when the window is
+;; destroyed, in which case we don't want to destroy the window. The
+;; gethash call determines which case this is.
 (defun Scrolling-Window-Destroy (window-gadget &optional erase)
   ;; have to destroy the windows
   (let ((window (g-value window-gadget :outer-window)))
@@ -153,7 +125,7 @@ Change log:
 		    ((or (is-a-p inter:interactor-window) null) :parent-window)
 		    ((or null string) :title :icon-title))
 	     (:maybe-constant :title :parent-window))
-   ; Customizable slots
+   ;; Customizable slots
    (:left 0) (:top 0)
    (:position-by-hand NIL)
    (:width 150)(:height 150)  ; note: is INNER width and height of outer window
@@ -167,27 +139,27 @@ Change log:
    (:X-Offset 0)
    (:Y-Offset 0)
    (:visible T)
-      ; read-only slots
+   ;; read-only slots
    (:Inner-Window NIL)  ; these are created by the update method
    (:inner-aggregate NIL) ; add your objects to this aggregate (but have to
 			  ; update first)
    (:outer-window NIL) ; call Opal:Update on this window (or on gadget itself)
 
-      ; internal slots
+   ;; internal slots
    (:destroy-me 'Scrolling-Window-Destroy)
    (:Update 'Scrolling-Window-Update)
    (:Creator-Func 'Scrolling-Window-Creator)
    )
 
 ;; This might be called directly by the user, in which case we need to
-;; destroy the window, or it might be called when the window is destroyed,
-;; in which case we don't want to destroy the window.  The gethash call
-;; determines which case this is.
-;; This is in this file, since it used by both the Garnet and Motif
-;; scrolling window with bars.
+;; destroy the window, or it might be called when the window is
+;; destroyed, in which case we don't want to destroy the window. The
+;; gethash call determines which case this is. This is in this file,
+;; since it used by both the Garnet and Motif scrolling window with
+;; bars.
 (defun Scrolling-Window-With-Bars-Destroy (window-gadget &optional erase)
   ;; First, remove the gadget from its window so when the window is
-  ;; destroyed, the gadget will not be.  Then destroy the gadget itself
+  ;; destroyed, the gadget will not be. Then destroy the gadget itself
   ;; using call-prototype-method
   (let ((agg (g-value window-gadget :parent))
 	(window (g-value window-gadget :outer-window)))
@@ -246,9 +218,9 @@ Change log:
 		     0 0)))))
 
 ;; Scroll-Outside-Win-P checks to see if we are being asked to scroll
-;; vertically so that the background of the clip window is exposed.
-;; If we are, it returns T, so that Scroll-Win-To and Scroll-Win-Inc
-;; can reset the y-offsets so that we never scroll (vertically) out of the
+;; vertically so that the background of the clip window is exposed. If
+;; we are, it returns T, so that Scroll-Win-To and Scroll-Win-Inc can
+;; reset the y-offsets so that we never scroll (vertically) out of the
 ;; inner-window
 
 (defun Scroll-Outside-Win-P (scroll-win-gadget y)
@@ -297,24 +269,23 @@ Change log:
 	   (is-a-p obj motif-scrolling-window-with-bars))))
 
 
-;; Showbox takes in a scrolling-window, and a left, top, right and bottom
-;; of an area you want to scroll to.  If the area is too big, it will
-;; scroll to the top of that area.
+;; show-box takes in a scrolling-window, and a left, top, right and
+;; bottom of an area you want to scroll to. If the area is too big, it
+;; will scroll to the top of that area.
 ;;
 ;; 1) If the top is above the scrolling-window, but left is inside the
 ;;    scrolling-window, it'll move up only.
 ;;
-;; 2) If left is too far to the left, but top is inside the scr-win, it
-;;    will move left only.
+;; 2) If left is too far to the left, but top is inside the scr-win,
+;;    it will move left only.
 ;;
 ;; 3) Same way for bottom and right.
 ;;
 ;; 4) If the area is already in the window, it won't do anything.
 ;;
-;; 5) For all other cases, it moves the top and left of the scrolling-window
-;;    to the top and left of the area desired.
+;; 5) For all other cases, it moves the top and left of the
+;;    scrolling-window to the top and left of the area desired.
 ;;
-
 (defun show-box (scr-win left top right bottom)
   (let* ((win-top (g-value scr-win :clip-window :top))
 	 (win-left (g-value scr-win :clip-window :left))
@@ -362,8 +333,8 @@ Change log:
 			     top))))))
 
 ;;
-;; Get-Cursor-Box takes a cursor-multi-text object and returns four values:
-;; the left, top, right, and bottom of the cursor.
+;; Get-Cursor-Box takes a cursor-multi-text object and returns four
+;; values: the left, top, right, and bottom of the cursor.
 ;;
 (defun Get-Cursor-Box (obj)
   (let* ((line-number (g-value obj :line-number))

@@ -64,14 +64,14 @@
 ;;;  leaving a gray border.
 ;;;
 (create-instance 'WHITE-RECT-FIELD opal:rectangle
-   (:left (o-formula (+ (gv (kr-path 0 :parent) :floating-left)
-			(gv (kr-path 0 :parent) :gray-width))))
-   (:top (o-formula (+ (gv (kr-path 0 :parent) :floating-top)
-		       (gv (kr-path 0 :parent) :gray-width))))
-   (:width (o-formula (- (gv (kr-path 0 :parent) :button-width)
-			 (* 2 (gv (kr-path 0 :parent) :gray-width)))))
-   (:height (o-formula (- (gv (kr-path 0 :parent) :button-height)
-			  (* 2 (gv (kr-path 0 :parent) :gray-width)))))
+   (:left (o-formula (+ (gv-fixnum (kr-path 0 :parent) :floating-left)
+			(gv-fixnum (kr-path 0 :parent) :gray-width))))
+   (:top (o-formula (+ (gv-fixnum (kr-path 0 :parent) :floating-top)
+		       (gv-fixnum (kr-path 0 :parent) :gray-width))))
+   (:width (o-formula (- (gv-fixnum (kr-path 0 :parent) :button-width)
+			 (* 2 (gv-fixnum (kr-path 0 :parent) :gray-width)))))
+   (:height (o-formula (- (gv-fixnum (kr-path 0 :parent) :button-height)
+			  (* 2 (gv-fixnum (kr-path 0 :parent) :gray-width)))))
    (:filling-style opal:white-fill))
 
 
@@ -79,12 +79,12 @@
 ;;;  appearance that the button casts a shadow.
 ;;;
 (create-instance 'BUTTON-SHADOW-RECT opal:rectangle
-   (:left (o-formula (+ (gv (kr-path 0 :parent) :button-left)
-			(gv (kr-path 0 :parent) :shadow-offset))))
-   (:top (o-formula (+ (gv (kr-path 0 :parent) :button-top)
-		       (gv (kr-path 0 :parent) :shadow-offset))))
-   (:width (o-formula (gv (kr-path 0 :parent) :button-width)))
-   (:height (o-formula (gv (kr-path 0 :parent) :button-height)))
+   (:left (o-formula (+ (gv-fixnum (kr-path 0 :parent) :button-left)
+			(gv-fixnum (kr-path 0 :parent) :shadow-offset))))
+   (:top (o-formula (+ (gv-fixnum (kr-path 0 :parent) :button-top)
+		       (gv-fixnum (kr-path 0 :parent) :shadow-offset))))
+   (:width (o-formula (gv-fixnum (kr-path 0 :parent) :button-width)))
+   (:height (o-formula (gv-fixnum (kr-path 0 :parent) :button-height)))
    (:filling-style opal:black-fill))
 
 
@@ -95,11 +95,11 @@
    (:constant '(:actual-heightp))
    (:left (o-formula (let ((p (kr-path 0 :parent)))
 		       (if (gv p :text-on-left-p)
-			   (gv p :left)
-			   (+ (gv p :left) (gv p :button-unit-width)
-			      (gv p :text-offset))))))
-   (:top (o-formula (- (gv (kr-path 0 :parent) :center-y)
-		       (floor (gvl :height) 2))))
+			   (gv-fixnum p :left)
+			   (+ (gv-fixnum p :left) (gv-fixnum p :button-unit-width)
+			      (gv-fixnum p :text-offset))))))
+   (:top (o-formula (- (gv-fixnum (kr-path 0 :parent) :center-y)
+		       (floor (gvl-fixnum :height) 2))))
    (:string (o-formula (let ((s (gv (kr-path 0 :parent) :string)))
 			 (if (stringp s)
 			     s

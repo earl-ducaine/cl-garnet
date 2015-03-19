@@ -1,1 +1,256 @@
 ;; $Id$
+;;;; text-buttons.lisp
+;;; CHANGE LOG:
+;;; 05/13/93  Andrew Mickish - :prev-visible ---> :prev
+;;; 02/23/93  Andrew Mickish - Added :string-set-func
+;;; 02/10/93  Andrew Mickish - Made :items of type items-type
+;;; 01/18/93  Andrew Mickish - Removed notice-items-changed, removed some
+;;;              kr-path's
+;;; 12/15/92  Andrew Mickish - Added type and parameter declarations
+;;; 06/16/92  Andrew Mickish - Added objects in :items list
+;;; 06/05/92  Andrew Mickish - Changed :visible in final-feedback to consider
+;;;              the :parent of obj-over
+;;; 04/17/92  Andrew Mickish - Now final-feedback objs are invisible when the
+;;;              parent gadget is invisible
+;;; 02/11/92  Andrew Mickish - Added :maybe-constant list
+;;; 07/26/91  Andrew Mickish - Added :toggle-p slot
+;;; 05/14/91  Andrew Mickish - Fixed :selected slot of :text-button-list
+;;; 04/15/91  Andrew Mickish - Added :notice-items-changed, :add-item, and
+;;;              :remove-item methods
+;;; 11/28/90  Pavan Reddy - Added formula to :value-obj slot of TEXT-BUTTON-
+;;;              PANEL so :value and :value-obj slots remain consistent.
+;;; 07/16/90  Andrew Mickish -  Reimplemented TEXT-BUTTON and TEXT-BUTTON-LIST
+;;;              prototypes so single button instances can be created.
+;;; 07/02/90  Andrew Mickish -  Added :FINAL-FEEDBACK part to TEXT-BUTTON-PANEL
+;;; 07/02/90  Andrew Mickish -  Converted circularity between :value and
+;;;              :selected slot;  Now the final-function sets :value-obj which
+;;;              propagates to :value and :selected.
+;;; 06/01/90  Andrew Mickish -  Changed :text-button-press to be a menu-inter
+;;; 02/24/90  Andrew Mickish -  Changed :font to Opal:default-font
+;;; 01/30/90  Andrew Mickish -  Added :selected slot to TEXT-BUTTON-LIST
+;;;              so that :value of panel can be set directly.
+;;;
+
+;;;; motif-text-buttons.lisp
+;;; CHANGE LOG:
+;;; 07/14/93  Andrew Mickish - Added :keyboard-selection-p dependency in
+;;;             :keyboard-selection formula
+;;; 05/26/93  Andrew Mickish - Fixed constant declarations for new aggrelists
+;;; 05/13/93  Andrew Mickish - :prev-visible ---> :prev
+;;; 02/23/93  Andrew Mickish - Added :string-set-func
+;;; 02/10/93  Andrew Mickish - Made :items and :inactive-items items-type
+;;; 01/25/93  Andrew Mickish - Added dependency on :items list so that
+;;;             the aggrelist's :fix-update-slots method will be invoked
+;;; 12/15/92  Andrew Mickish - Added type and parameter declarations
+;;; 11/20/92  Andrew Mickish - Added :fixed-width, :fixed-height to button-list
+;;; 06/16/92  Andrew Mickish - Added objects in :items list
+;;; 02/27/92  Andrew Mickish - Removed :leftdown case from panel's :KEY inter
+;;; 02/11/92  Andrew Mickish - Added :maybe-constant list
+;;; 10/13/91  Andrew Mickish - Added :leftdown case in the panel's :KEY
+;;;             interactor so the keyboard selection will follow mouse clicks
+;;; 10/08/91  Andrew Mickish - Added fast-redraw
+;;; 07/26/91  Andrew Mickish - Added :toggle-p
+;;; 05/14/91  Andrew Mickish - Fixed :selected slot of :button-list
+;;; 03/01/91  Andrew Mickish - Created
+
+;;;; scrolling-menu.lisp
+;;;  Change Log:
+;;;
+;;;  03/08/93 - Andrew Mickish - Added :known-as to TEXT-LABEL-PROTOTYPE
+;;;               so that :string-set-func works
+;;;  02/23/93 - Andrew Mickish - Added :string-set-func
+;;;  02/10/93 - Andrew Mickish - Made :items of type items-type
+;;;  12/15/92 - Andrew Mickish - Added type and parameter declarations
+;;;  09/07/92 - Mickish/Duchier - In :frame-left-on-right formula, changed
+;;;     :bound-width to :width
+;;;  07/13/92 - Rajan Parthasarathy - Added :toggle-p slot to SCROLLING-MENU
+;;;  06/26/92 - Andrew Mickish - Added objects in :items list
+;;;  04/30/92 - Andrew Mickish - Called get-standard-font for fonts
+;;;  02/11/92 - Andrew Mickish - Added :maybe-constant list
+;;;  09/11/91 - Andrew Mickish - Added a check for the :title in the formula
+;;;     for :title-height.
+;;;  06/16/90 - Andrew Mickish - Reimplemented :v-spacing and :text-offset to
+;;;     conform precisely to design requirements.  Changed :selected slot in
+;;;     top-level gadget to :selected-ranks.  Changed :direction of aggrelist
+;;;     to NIL and supplied formulas in :left and :top of S-M-ITEM.
+;;;  06/18/90 - Andrew Mickish - Considered length of :items list in :end slot
+;;;
+
+;;;; scrolling-window-multifont.lisp
+#|
+============================================================
+Change log:
+  06/28/93 Parthasarathy - Fixed small bug by changing <= to <
+  06/26/92 Parthasarathy - Changed to scroll one line at a time; fixed for
+             case where cursor is not currently visible in clip window.
+  06/19/92 Mickish - Created
+============================================================
+|#
+
+;;;; scrolling-window.lisp
+;;; ============================================================
+#||
+Change log:
+        ????????  Russell Almond - Changed #+garnet-debug around demo
+                       functions to #+garnet-test (This causes them
+                       not to be loaded even when debugging.)
+        12/13/93  Andrew Mickish - Added :omit-title-bar-p and made :parent
+                    reference a formula
+         7/26/93  Andrew Mickish - Put #+garnet-debug around demo functions
+        12/15/92  Andrew Mickish - Added type and parameter declarations
+         4/30/92  Andrew Mickish - Called get-standard-font for small font
+         2/18/92  Andrew Mickish - Added :maybe-constant list
+	 7/5/91   Ed Pervin - Fixed bug with horizontal slider of
+				scrolling-window-with-bars.
+	 3/14/91  Brad Myers - Separated into two files so can have a
+                               Motif-Scrolling-Window-With-Bars
+	 3/8/91   Brad Myers - Made work better when outer window changes size
+	 1/9/91   Brad Myers - Fixed bug in scrolling-windows (without bars)
+	 8/22/90  Brad Myers - Fixed comments and provide default title
+	 8/16/90  Brad Myers - Fixed so Scroll-Win-Inc and -To work on
+				scrolling-window-with-bars; also fixed so
+			        user can change size using window manager
+	 8/10/90  Brad Myers - Fixed so size correct now that w,h of windows is
+				inside, added comments
+	 8/6/90   Ed Pervin - Moved load of h-scroll-loader, v-scroll-loader
+		        to scrolling-window-loader.
+         7/25/90  Brad Myers - fix so destroy more robust, and so setting
+			:visible works
+	 6/20/90  Brad Myers - created
+============================================================
+||#
+
+;;;; scrolling-window-parts.lisp
+#|
+============================================================
+Change log:
+ 1/12/94 Andrew Mickish - xlib:drawable-plist ---> opal:drawable-to-window
+ 9/08/93 Andrew Mickish - opal:cursor-multi-text ---> opal:text
+ 9/01/93 Andrew Mickish - Updated Get-Cursor-Box according to new opal:text
+ 7/26/93 Andrew Mickish - Put #+garnet-debug around demo functions
+ 6/28/93 Rajan Parthasarathy - Fixed show-box to consider the case when
+           scroll bars are not on default side.
+14/17/93 Andrew Mickish - Removed clip-mask parameters from update calls
+12/15/92 Andrew Mickish - Added type and parameter declarations
+12/10/92 Andrew Mickish - *drawable-to-window-mapping* ---> *garnet-windows*
+9/07/92  Andrew Mickish - Set :clip-window in Scrolling-Window-Creator
+6/26/92  Rajan Parthasarathy - Fixed show-box to scroll horizontally;
+           Changed :auto-scroll method to scroll one line at a time.
+6/19/92  Rajan Parthasarathy - Added auto-scroll
+2/19/92  Ed Pervin - Implemented double-clip-masks.
+2/18/92  Andrew Mickish - Added :maybe-constant list
+7/26/91  Brad Myers - removed extra Scrolling-Window-With-Bars-Destroy
+                      and Scrolling-Window-With-Bars-Creator.
+                    - added Pedro's change so you can specify the
+                      :inner-aggregate-prototype for scrolling-window
+5/14/91  Andrew Mickish - Redefined Set-Scroll-Bar-Values to set
+           the indicators' :box slot instead of the bars' :value slot
+5/13/91  Edward Pervin - Scrolling-Window-With-Bars-Destroy
+           was accidentally declared twice.
+3/14/91  Brad Myers - Separated from Scrolling-window to allow
+           Motif-scrolling-window-with-bars
+============================================================
+|#
+
+;;;; h-slider.lisp
+;;; CHANGE LOG:
+;; 12/01/93 Andrew Mickish - Referenced parents' :visible slots in formulas
+;; 05/26/93 Andrew Mickish - Fixed constant declarations for new aggrelists
+;; 12/14/92 Andrew Mickish - Added type and parameter declarations
+;; 09/17/92 Andrew Mickish - Added :top, :width, and :height slots to
+;;            H-SLIDER-INDICATOR to reduce invalidations of top-level :height
+;; 04/30/92 Andrew Mickish - Called get-standard-font for fonts
+;; 02/07/92 Andrew Mickish - Added :maybe-constant slots
+;; 02/15/91 Andrew Mickish - Changed :string of TIC-MARKS's :item-prototype
+;;            to avoid round-off error.
+;; 11/30/90 Pavan Reddy - made appropriate modifications so :format-string
+;;            and :enum-format-string are used to format numbers in order to
+;;            use of floats.
+;; 11/19/90 Pavan Reddy - altered formulas in H-TIC-MARKS and PROTO-H-TIC so
+;;          :height and :items of H-TIC-MARKS are computed correctly.
+;; 04/09/90 Robert Cook - remove extra ')' at end of creation of 'H-END-MARKS.
+;; 01/18/90 Andrew Mickish - Changed :box of H-SLIDER-INDICATOR to '(0 0 0 0),
+;;             Added :scroll-p to H-SLIDER
+
+;;;; prop-sheet.lisp
+#|
+============================================================
+Change log:
+     10/26/93  Brad Myers - fixed so order of slots same as :parameters
+      9/20/93  Brad Myers - fixed so demo fits, and get base for 'member
+      9/17/93  R J Williams - Allowed ReUsePropSheetObj to take a Motif..Done
+      7/26/93  A. Mickish - Instead of using INIT variable for lazy loading
+                    of error-gadget, just check hash table;  Destroyed more
+                    objects in demo ...-stop function
+        3/20/93  A. Mickish - Moved load of error-gadget into demo function
+         3/2/93  Brad Myers - add done-function
+        1/19/93  Brad Myers - support multiple objects for prop-sheet-for-obj
+                            - automatic generation of list from obj :parameters
+       12/01/92  A. Mickish - Changed VALUE-PROTO to be an opal:cursor-text
+                    instead of opal:cursor-multi-text.
+       11/25/92  A. Mickish - In Obj-Read-Filter, used standard Careful-Eval
+        9/21/92  A. Mickish - In Label-Value-Proto, referenced :prev with
+                    gv-local rather than gv.
+        7/29/92  A. Mickish - Moved shared functions to this file from
+                    prop-sheet-win.lisp and motif-prop-sheet-win.lisp
+	5/04/92  R. Almond - Added allegro-v4.1 switches.
+        5/01/92  A. Mickish - Added with-constants-disabled in Obj-Read-Filter
+	3/20/92  Ed Pervin - eliminate control chars.
+        3/19/92  Brad Myers - Fixed because lucid doesn't have ignore-errors
+        3/04/92  A. Mickish - Changed switches for call to ignore-errors
+        2/13/92  Brad Myers - Removed all support for multiple values.
+                                 No more index field (not backwards compatible)
+                    - maybe-constant and constant slots
+                    - changed default position to 5,5 so constant works better
+        9/13/91  Brad Myers - fix more bugs with ReUsePropSheet (-- Steve Roth)
+                            - new function Set-Val-For-PropSheet-Value (Roth)
+                            - added :label-select-event
+                            - fix so works better with gadgets (-- N F Drakos)
+        2/9/92   Brad Myers - allow prop-sheet-for-obj to have a
+                                checking filter on slots
+        2/03/92  A. Mickish - removed second parameter from :initialize
+        7/25/91  Brad Myers - allow ReUsePropSheet to be
+                      called with a prop-sheet-with-OK, and similar for -obj
+	 10/23/90  Brad Myers - add comments
+	 10/16/90  Brad Myers - made into "real" gadget
+	 10/1/90   Pavan Reddy - made more efficient
+	 Summer/90 Brian Loyall - started
+============================================================
+|#
+
+;;;; GAD-scroll-parts.lisp
+;;;  CHANGE LOG
+;;   06/24/92  Andrew Mickish - Points is now optional for SLIDE-FINAL-FN
+;;   05/29/92  Brad Myers - made to work with new auto-repeat button inter
+;;   01/18/90  Andrew Mickish - Changed the following formulas to consider the
+;;             :scroll-p slot of the top level gadget:
+;;                 1) :active of TRILL-INTER      3) :active of SLIDE-INTER
+;;                 2) :visible of INDICATOR-TEXT  4) :active of JUMP-INTER
+;;   03/11/90  Andrew Mickish - Simplified VAL-1-FN and VAL-2-FN by calling
+;;             S-VALUE instead of INCF and DECF.
+;;   07/01/90  Andrew Mickish - Considered :window slot in :active formulas
+;;             of all interactors
+;;   11/30/90  Pavan Reddy - used "format" instead of "prin1-to-string" in
+;;             INDICATOR-TEXT to allow use of floats.
+
+;;;; polyline-creator.lisp
+#|
+============================================================
+Change log:
+        10/18/93  Andrew Mickish - Moved export list here from
+                  polyline-functions.lisp
+         7/13/93  Andrew Mickish - Show-Polyline-Handles ---> Toggle-P-H;
+                  Printed out name of new polyline when created; Clarified
+                  instructions.
+         6/30/93  Rajan Parthasarathy - Renamed a function, added some comments
+         6/17/93  Rajan Parthasarathy - Added polyline editing
+        12/14/92  Andrew Mickish - Added type and parameter declarations
+	  6/4/92  Brad Myers - Added input-filter like two-point-interactor;
+                               Added #+garnet-debug switches.
+	 3/20/92  Ed Pervin - Eliminated control chars completely.
+	 1/28/92  Ed Pervin - Must have # before '(lambda and changed
+ 			      #\control-\g to :control-\g for CMUCL
+        11/21/91  Andrew Mickish - Added :active-p
+	 8/01/90  Brad Myers - created
+============================================================
+|#

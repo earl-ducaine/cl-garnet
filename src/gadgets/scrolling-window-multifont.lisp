@@ -11,18 +11,9 @@
 ;;;
 ;;;  Scrolling Window Parts
 ;;;      see the file Scrolling-window for an explanation
-#|
-============================================================
-Change log:
-  06/28/93 Parthasarathy - Fixed small bug by changing <= to <
-  06/26/92 Parthasarathy - Changed to scroll one line at a time; fixed for
-             case where cursor is not currently visible in clip window.
-  06/19/92 Mickish - Created
-============================================================
-|#
 
+
 (in-package "GARNET-GADGETS")
- 
 
 ;; This method takes in a multifont text object and a scrolling-window and
 ;; scrolls so that the cursor is somewhat centered vertically in

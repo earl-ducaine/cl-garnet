@@ -7,6 +7,8 @@
 ;;; domain.  If you are using this code or any part of Garnet,      ;;;
 ;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
 ;;;
 ;;;  This file supplies a prop-sheet, which takes a list of values to
 ;;;  display, and prop-sheet-for-obj which takes a KR object to
@@ -215,54 +217,10 @@
 ;;;  Designed by A. Bryan Loyall
 ;;;  Extensively modified by Pavan Reddy and Brad A. Myers
 
-#|
-============================================================
-Change log:
-     10/26/93  Brad Myers - fixed so order of slots same as :parameters
-      9/20/93  Brad Myers - fixed so demo fits, and get base for 'member
-      9/17/93  R J Williams - Allowed ReUsePropSheetObj to take a Motif..Done
-      7/26/93  A. Mickish - Instead of using INIT variable for lazy loading
-                    of error-gadget, just check hash table;  Destroyed more
-                    objects in demo ...-stop function
-        3/20/93  A. Mickish - Moved load of error-gadget into demo function
-         3/2/93  Brad Myers - add done-function
-        1/19/93  Brad Myers - support multiple objects for prop-sheet-for-obj 
-                            - automatic generation of list from obj :parameters
-       12/01/92  A. Mickish - Changed VALUE-PROTO to be an opal:cursor-text
-                    instead of opal:cursor-multi-text.
-       11/25/92  A. Mickish - In Obj-Read-Filter, used standard Careful-Eval
-        9/21/92  A. Mickish - In Label-Value-Proto, referenced :prev with
-                    gv-local rather than gv.
-        7/29/92  A. Mickish - Moved shared functions to this file from
-                    prop-sheet-win.lisp and motif-prop-sheet-win.lisp
-	5/04/92  R. Almond - Added allegro-v4.1 switches.
-        5/01/92  A. Mickish - Added with-constants-disabled in Obj-Read-Filter
-	3/20/92  Ed Pervin - eliminate control chars.
-        3/19/92  Brad Myers - Fixed because lucid doesn't have ignore-errors
-        3/04/92  A. Mickish - Changed switches for call to ignore-errors
-        2/13/92  Brad Myers - Removed all support for multiple values.
-                                 No more index field (not backwards compatible)
-                    - maybe-constant and constant slots
-                    - changed default position to 5,5 so constant works better
-        9/13/91  Brad Myers - fix more bugs with ReUsePropSheet (-- Steve Roth)
-                            - new function Set-Val-For-PropSheet-Value (Roth)
-                            - added :label-select-event
-                            - fix so works better with gadgets (-- N F Drakos)
-        2/9/92   Brad Myers - allow prop-sheet-for-obj to have a 
-                                checking filter on slots
-        2/03/92  A. Mickish - removed second parameter from :initialize
-        7/25/91  Brad Myers - allow ReUsePropSheet to be
-                      called with a prop-sheet-with-OK, and similar for -obj
-	 10/23/90  Brad Myers - add comments
-	 10/16/90  Brad Myers - made into "real" gadget
-	 10/1/90   Pavan Reddy - made more efficient
-	 Summer/90 Brian Loyall - started
-============================================================
-|#
-
+
 (in-package "GARNET-GADGETS")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(Prop-Sheet ReUsePropSheet prop-sheet-for-obj
 	    ReUsePropSheetObj Get-Val-For-PropSheet-Value
 	    Set-Val-For-PropSheet-Value)))
@@ -1240,7 +1198,7 @@ so set there"      val slot fail-objs
 
 
 #+garnet-test
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(prop-sheet-for-obj-Go  prop-sheet-for-obj-stop)))
 
 #+garnet-test

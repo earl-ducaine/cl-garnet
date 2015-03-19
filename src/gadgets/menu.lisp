@@ -77,7 +77,7 @@
 
 (in-package "GARNET-GADGETS")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(Menu))
   #+garnet-test
   (export '(Menu-Go Menu-Stop Menu-Obj Menu-Top-Agg Menu-Win)))

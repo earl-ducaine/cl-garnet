@@ -31,7 +31,7 @@
 
 (in-package "GARNET-GADGETS")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(Add-Submenu-Item Remove-Submenu-Item
 	    Menubar-Components Submenu-Components Get-Submenu-Component
 	    Find-Submenu-Component Get-Bar-Component Set-Menubar Set-Submenu

@@ -101,13 +101,11 @@
 
 (in-package "GARNET-GADGETS")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(MENUBAR BAR-ITEM SUBMENU SUBMENU-ITEM MAKE-SUBMENU-WIN
-			     
-	    ; Creation Functions
+	    ;; Creation Functions
 	    Make-Menubar Make-Bar-Item Make-Submenu-Item))
-
-  ; Demo things
+  ;; Demo things
   #+garnet-test
   (export '(MENUBAR-GO MENUBAR-STOP DEMO-MENUBAR MENUBAR-WIN MENUBAR-TOP-AGG)))
 

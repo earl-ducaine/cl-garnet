@@ -66,7 +66,7 @@
 
 (in-package "GARNET-GADGETS")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(Motif-Gauge))
   #+garnet-test
   (export '(Motif-Gauge-Go Motif-Gauge-Stop

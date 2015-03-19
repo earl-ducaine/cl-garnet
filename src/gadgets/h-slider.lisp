@@ -58,26 +58,6 @@
 ;;  Written by Andrew Mickish
 
 
-;;; CHANGE LOG:
-;; 12/01/93 Andrew Mickish - Referenced parents' :visible slots in formulas
-;; 05/26/93 Andrew Mickish - Fixed constant declarations for new aggrelists
-;; 12/14/92 Andrew Mickish - Added type and parameter declarations
-;; 09/17/92 Andrew Mickish - Added :top, :width, and :height slots to
-;;            H-SLIDER-INDICATOR to reduce invalidations of top-level :height
-;; 04/30/92 Andrew Mickish - Called get-standard-font for fonts
-;; 02/07/92 Andrew Mickish - Added :maybe-constant slots
-;; 02/15/91 Andrew Mickish - Changed :string of TIC-MARKS's :item-prototype
-;;            to avoid round-off error.
-;; 11/30/90 Pavan Reddy - made appropriate modifications so :format-string
-;;            and :enum-format-string are used to format numbers in order to
-;;            use of floats.
-;; 11/19/90 Pavan Reddy - altered formulas in H-TIC-MARKS and PROTO-H-TIC so
-;;          :height and :items of H-TIC-MARKS are computed correctly.
-;; 04/09/90 Robert Cook - remove extra ')' at end of creation of 'H-END-MARKS.
-;; 01/18/90 Andrew Mickish - Changed :box of H-SLIDER-INDICATOR to '(0 0 0 0),
-;;             Added :scroll-p to H-SLIDER
-
-
 (in-package "GARNET-GADGETS")
 
 (eval-when (:execute :load-toplevel :compile-toplevel)

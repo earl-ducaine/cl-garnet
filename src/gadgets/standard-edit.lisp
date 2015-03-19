@@ -54,7 +54,7 @@ Change log:
 
 (in-package "GARNET-GADGETS")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(Standard-Delete Standard-Delete-All Standard-Undo-Last-Delete
 	    Standard-To-Bottom Standard-To-Top
 	    Standard-Duplicate Standard-Copy Standard-Cut Standard-Select-All

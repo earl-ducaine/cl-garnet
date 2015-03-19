@@ -84,7 +84,7 @@
 
 (in-package "GARNET-GADGETS")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(V-Slider))
   #+garnet-test
   (export '(V-Slider-Go V-Slider-Stop

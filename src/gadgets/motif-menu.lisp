@@ -129,7 +129,7 @@
 
 (in-package "GARNET-GADGETS")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(Motif-Menu Motif-Menu-Accelerator-Inter))
   #+garnet-test
   (export '(Motif-Menu-Go Motif-Menu-Stop

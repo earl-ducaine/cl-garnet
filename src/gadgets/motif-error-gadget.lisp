@@ -73,7 +73,7 @@ Change log:
 
 (in-package "GARNET-GADGETS")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(MOTIF-ERROR-GADGET MOTIF-QUERY-GADGET)))
 
 ;; NOTE:  If :parent-window is specified, then the parent window must already
@@ -93,64 +93,64 @@ Change log:
 		   ((integer 0) :window-width :window-height)
 		   ((is-a-p opal:color) :foreground-color)
 		   ((or null function symbol) :selection-function)))
-   (:width (o-formula (MAX (gvl :text :width) (gvl :button :width))))
-   (:height (o-formula (+ 20 (gvl :text :height) (gvl :button :height))))
+  (:width (o-formula (opal::q-max (gvl :text :width) (gvl :button :width))))
+  (:height (o-formula (+ 20 (gvl :text :height) (gvl :button :height))))
 
-   ; If there is no parent window, then the error window is created at
-   ; position (200, 200).
-   (:window-left (o-formula (if (gvl :parent-window)
-				(- (floor (gvl :parent-window :width) 2)
-				   (floor (gvl :window-width) 2))
-				200)))
-   (:window-top (o-formula (if (gvl :parent-window)
-			       (- (floor (gvl :parent-window :height) 2)
-				  (floor (gvl :window-height) 2))
+  ;; If there is no parent window, then the error window is created at
+  ;; position (200, 200).
+  (:window-left (o-formula (if (gvl :parent-window)
+			       (- (floor (gvl :parent-window :width) 2)
+				  (floor (gvl :window-width) 2))
 			       200)))
-   (:window-width (o-formula (+ 20 (gvl :width))))    ; 10 on each side
-   (:window-height (o-formula (+ 40 (gvl :height))))  ; 20 on top, bottom
-   (:window-title "Error")
+  (:window-top (o-formula (if (gvl :parent-window)
+			      (- (floor (gvl :parent-window :height) 2)
+				 (floor (gvl :window-height) 2))
+			      200)))
+  (:window-width (o-formula (+ 20 (gvl :width))))    ; 10 on each side
+  (:window-height (o-formula (+ 40 (gvl :height)))) ; 20 on top, bottom
+  (:window-title "Error")
 
-   (:parent-window NIL)    ;; The parent of the error-window
-   (:string "Error")
-   (:font (opal:get-standard-font :sans-serif :bold :medium))
-   (:justification :center)
-   (:modal-p T)
-   (:selection-function NIL)
-   (:foreground-color opal:motif-orange)
-   (:button-name "OK")
+  (:parent-window NIL) ;; The parent of the error-window
+  (:string "Error")
+  (:font (opal:get-standard-font :sans-serif :bold :medium))
+  (:justification :center)
+  (:modal-p T)
+  (:selection-function NIL)
+  (:foreground-color opal:motif-orange)
+  (:button-name "OK")
 
-   (:destroy #'Error-Gadget-Destroy)
+  (:destroy #'Error-Gadget-Destroy)
 
-   (:waiting NIL) ; if T, then OK should call interaction-complete.
-		  ; set by display-error
-   (:beep-p T)
-   (:parts
-    `((:text ,opal:multi-text
-	     (:left ,(o-formula
-		      (+ 10 (- (floor (MAX (gvl :width)
-					   (gvl :parent :button :width)) 2)
-			       (floor (gvl :width) 2)))))
-	     (:top 20)
-	     (:justification ,(o-formula (gvl :parent :justification)))
-	     (:string ,(o-formula (gvl :parent :string)))
-	     (:font ,(o-formula (gvl :parent :font))))
+  (:waiting NIL)     ; if T, then OK should call interaction-complete.
+					; set by display-error
+  (:beep-p T)
+  (:parts
+   `((:text ,opal:multi-text
+	    (:left ,(o-formula
+		     (+ 10 (- (floor (opal::q-max (gvl :width)
+					    (gvl :parent :button :width)) 2)
+			      (floor (gvl :width) 2)))))
+	    (:top 20)
+	    (:justification ,(o-formula (gvl :parent :justification)))
+	    (:string ,(o-formula (gvl :parent :string)))
+	    (:font ,(o-formula (gvl :parent :font))))
 
-      (:button ,MOTIF-TEXT-BUTTON
-	       (:left ,(o-formula
-			(+ 10 (- (floor (MAX (gvl :width)
-					     (gvl :parent :text :width)) 2)
-				 (floor (gvl :width) 2)))))
-	       (:top ,(o-formula (+ 20 (opal:gv-bottom
-					(gvl :parent :text)))))
-               (:foreground-color ,(o-formula (gvl :parent :foreground-color)))
-               (:Constant (T :Except :left :top :foreground-color))
-               (:font ,(opal:get-standard-font :sans-serif :bold :medium))
-               (:string ,(o-formula (gvl :parent :button-name)))
-	       (:final-feedback-p NIL)
-               (:selection-function
-		,#'(lambda (button value)
-		     (declare (ignore value))
-		     (E-Q-Gadget-Sel-Func button T))))))) ; always use the
+     (:button ,MOTIF-TEXT-BUTTON
+	      (:left ,(o-formula
+		       (+ 10 (- (floor (opal::q-max (gvl :width)
+					      (gvl :parent :text :width)) 2)
+				(floor (gvl :width) 2)))))
+	      (:top ,(o-formula (+ 20 (opal:gv-bottom
+				       (gvl :parent :text)))))
+	      (:foreground-color ,(o-formula (gvl :parent :foreground-color)))
+	      (:Constant (T :Except :left :top :foreground-color))
+	      (:font ,(opal:get-standard-font :sans-serif :bold :medium))
+	      (:string ,(o-formula (gvl :parent :button-name)))
+	      (:final-feedback-p NIL)
+	      (:selection-function
+	       ,#'(lambda (button value)
+		    (declare (ignore value))
+		    (E-Q-Gadget-Sel-Func button T))))))) ; always use the
 						          ; value T
 
 (create-instance 'MOTIF-QUERY-GADGET MOTIF-ERROR-GADGET
@@ -175,8 +175,8 @@ Change log:
     `(:text ;; same as error gadget
       (:button ,MOTIF-TEXT-BUTTON-PANEL
 	       (:left ,(o-formula
-			(+ 10 (- (floor (MAX (gvl :width)
-					     (gvl :parent :text :width)) 2)
+			(+ 10 (- (floor (opal::q-max (gvl :width)
+					       (gvl :parent :text :width)) 2)
 				 (floor (gvl :width) 2)))))
 	       (:top ,(o-formula (+ 20 (opal:gv-bottom
 					(gvl :parent :text)))))
@@ -213,7 +213,7 @@ Change log:
 
 ;;; testing/demo function for error-gadgets and query gadgets
 #+garnet-test
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(Motif-Error-Gadget-Go Motif-Error-Gadget-Stop MOTIF-EGADGET
 	    MOTIF-QGADGET))
   (proclaim '(special MOTIF-EG-WIN MOTIF-EG-AGG MOTIF-EG-FEED

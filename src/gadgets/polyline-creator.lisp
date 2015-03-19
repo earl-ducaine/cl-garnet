@@ -61,30 +61,11 @@
 ;;;          allow a-polyline to be edited.
 ;;;
 ;;;  Designed and written by Brad Myers
-#|
-============================================================
-Change log:
-        10/18/93  Andrew Mickish - Moved export list here from
-                  polyline-functions.lisp
-         7/13/93  Andrew Mickish - Show-Polyline-Handles ---> Toggle-P-H;
-                  Printed out name of new polyline when created; Clarified
-                  instructions.
-         6/30/93  Rajan Parthasarathy - Renamed a function, added some comments
-         6/17/93  Rajan Parthasarathy - Added polyline editing
-        12/14/92  Andrew Mickish - Added type and parameter declarations
-	  6/4/92  Brad Myers - Added input-filter like two-point-interactor;
-                               Added #+garnet-debug switches.
-	 3/20/92  Ed Pervin - Eliminated control chars completely.
-	 1/28/92  Ed Pervin - Must have # before '(lambda and changed
- 			      #\control-\g to :control-\g for CMUCL
-        11/21/91  Andrew Mickish - Added :active-p
-	 8/01/90  Brad Myers - created
-============================================================
-|#
 
+
 (in-package "GARNET-GADGETS")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(Polyline-Creator Stop-Polyline-Creator Abort-Polyline-Creator
 	    Toggle-Polyline-Handles Destroy-Polyline-Handles
 	    Hide-Polyline-Handles))

@@ -79,7 +79,7 @@
 
 (in-package :GARNET-GADGETS)
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(Insert-Text-Into-Box Motif-Scrolling-Labeled-Box Motif-Scrolling-Unlabeled-Box))
   #+garnet-test
   (export '(Motif-Scrolling-Labeled-Box-Go Motif-Scrolling-Labeled-Box-Stop
@@ -284,15 +284,15 @@
    ;; will do (don't use (gvl value) since it will change a lot and this
    ;; slot will be recomputed unnecessarily)
    (:field-height (o-formula (opal:string-height (gvl :field-font) "X")))
-   (:frame-left (o-formula (+ 2 (the fixnum (gvl :left)))))
-   (:frame-top (o-formula (- (the fixnum (gvl :center-y))
-			     (floor (the fixnum (gvl :frame-height)) 2))))
-   (:frame-width (o-formula (- (the fixnum (gvl :width)) 4)))
-   (:frame-height (o-formula (+ 4 (the fixnum (gvl :field-height)))))
-   (:field-left (o-formula (+ (the fixnum (gvl :frame-left)) (the fixnum (gvl :field-offset)))))
-   (:field-width (o-formula (- (the fixnum (gvl :frame-width)) (* 2 (the fixnum (gvl :field-offset))))))
-   (:height (o-formula (+ (the fixnum (gvl :frame-height)) 4)))
-   (:center-y (o-formula (+ 2 (the fixnum (gvl :top)) (floor (the fixnum (gvl :frame-height)) 2))))
+   (:frame-left (o-formula (+ 2 (gvl-fixnum :left))))
+   (:frame-top (o-formula (- (gvl-fixnum :center-y)
+			     (floor (gvl-fixnum :frame-height) 2))))
+   (:frame-width (o-formula (- (gvl-fixnum :width) 4)))
+   (:frame-height (o-formula (+ 4 (gvl-fixnum :field-height))))
+   (:field-left (o-formula (+ (gvl-fixnum :frame-left) (gvl-fixnum :field-offset))))
+   (:field-width (o-formula (- (gvl-fixnum :frame-width) (* 2 (gvl-fixnum :field-offset)))))
+   (:height (o-formula (+ (gvl-fixnum :frame-height) 4)))
+   (:center-y (o-formula (+ 2 (gvl-fixnum :top) (floor (gvl-fixnum :frame-height) 2))))
    (:parts
     `((:FRAME ,MOTIF-BOX
              (:constant (:depressed-p))
@@ -303,7 +303,7 @@
              (:depressed-p T))
       (:FIELD-TEXT ,garnet-gadgets:SCROLLING-INPUT-STRING
 		    (:left ,(o-formula (gvl :parent :field-left)))
-		    (:top ,(o-formula (+ 2 (the fixnum (gvl :parent :frame-top)))))
+		    (:top ,(o-formula (+ 2 (gvl-fixnum :parent :frame-top))))
 		    (:width ,(o-formula (gvl :parent :field-width)))
 		    (:value ,(o-formula (gvl :parent :value)))
 		    (:font ,(o-formula (gvl :parent :field-font)))

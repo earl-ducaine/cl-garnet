@@ -87,7 +87,7 @@
 
 (in-package "GARNET-GADGETS")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(DISPLAY-SAVE-GADGET DESTROY-SAVE-GADGET HIDE-SAVE-GADGET
 	    DISPLAY-LOAD-GADGET DESTROY-LOAD-GADGET HIDE-LOAD-GADGET
 	    display-save-gadget-and-wait display-load-gadget-and-wait

@@ -79,30 +79,10 @@
 ;;;
 ;;;  Written by Andrew Mickish
 
-;;; CHANGE LOG:
-;;; 07/14/93  Andrew Mickish - Added :keyboard-selection-p dependency in
-;;;             :keyboard-selection formula
-;;; 05/26/93  Andrew Mickish - Fixed constant declarations for new aggrelists
-;;; 05/13/93  Andrew Mickish - :prev-visible ---> :prev
-;;; 02/23/93  Andrew Mickish - Added :string-set-func
-;;; 02/10/93  Andrew Mickish - Made :items and :inactive-items items-type
-;;; 01/25/93  Andrew Mickish - Added dependency on :items list so that
-;;;             the aggrelist's :fix-update-slots method will be invoked
-;;; 12/15/92  Andrew Mickish - Added type and parameter declarations
-;;; 11/20/92  Andrew Mickish - Added :fixed-width, :fixed-height to button-list
-;;; 06/16/92  Andrew Mickish - Added objects in :items list
-;;; 02/27/92  Andrew Mickish - Removed :leftdown case from panel's :KEY inter
-;;; 02/11/92  Andrew Mickish - Added :maybe-constant list
-;;; 10/13/91  Andrew Mickish - Added :leftdown case in the panel's :KEY
-;;;             interactor so the keyboard selection will follow mouse clicks
-;;; 10/08/91  Andrew Mickish - Added fast-redraw
-;;; 07/26/91  Andrew Mickish - Added :toggle-p
-;;; 05/14/91  Andrew Mickish - Fixed :selected slot of :button-list
-;;; 03/01/91  Andrew Mickish - Created
-
+
 (in-package "GARNET-GADGETS")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(Motif-Text-Button Motif-Text-Button-Panel))
   #+garnet-test
   (export '(Motif-Text-Buttons-Go Motif-Text-Buttons-Stop
@@ -318,12 +298,12 @@
 	(,MOTIF-TEXT-BUTTON
 	 (:max-text-width-thus-far
 	  ,(o-formula (if (gvl :prev)
-			  (MAX (gvl :prev :max-text-width-thus-far)
-			       (gvl :text :width))
+			  (opal::q-max (gvl :prev :max-text-width-thus-far)
+				       (gvl :text :width))
 			  (gvl :text :width))))
 	 (:max-text-height-thus-far
 	  ,(o-formula (if (gvl :prev)
-			  (MAX (gvl :prev :max-text-height-thus-far)
+			  (opal::q-max (gvl :prev :max-text-height-thus-far)
 			       (gvl :text :height))
 			  (gvl :text :height))))
 	 (:foreground-color ,(o-formula (gv (kr-path 0 :parent :parent)

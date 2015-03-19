@@ -104,39 +104,6 @@
 ;;  for eager evaluation --BAM
 
 
-;;; ============================================================
-#||
-Change log:
-        ????????  Russell Almond - Changed #+garnet-debug around demo
-                       functions to #+garnet-test (This causes them
-                       not to be loaded even when debugging.)
-        12/13/93  Andrew Mickish - Added :omit-title-bar-p and made :parent
-                    reference a formula
-         7/26/93  Andrew Mickish - Put #+garnet-debug around demo functions
-        12/15/92  Andrew Mickish - Added type and parameter declarations
-         4/30/92  Andrew Mickish - Called get-standard-font for small font
-         2/18/92  Andrew Mickish - Added :maybe-constant list
-	 7/5/91   Ed Pervin - Fixed bug with horizontal slider of
-				scrolling-window-with-bars.
-	 3/14/91  Brad Myers - Separated into two files so can have a 
-                               Motif-Scrolling-Window-With-Bars
-	 3/8/91   Brad Myers - Made work better when outer window changes size
-	 1/9/91   Brad Myers - Fixed bug in scrolling-windows (without bars)
-	 8/22/90  Brad Myers - Fixed comments and provide default title
-	 8/16/90  Brad Myers - Fixed so Scroll-Win-Inc and -To work on
-				scrolling-window-with-bars; also fixed so
-			        user can change size using window manager
-	 8/10/90  Brad Myers - Fixed so size correct now that w,h of windows is 
-				inside, added comments
-	 8/6/90   Ed Pervin - Moved load of h-scroll-loader, v-scroll-loader
-		        to scrolling-window-loader.
-         7/25/90  Brad Myers - fix so destroy more robust, and so setting
-			:visible works
-	 6/20/90  Brad Myers - created 
-============================================================
-||#
-
-
 (in-package "GARNET-GADGETS")
 
 (eval-when (:execute :load-toplevel :compile-toplevel)

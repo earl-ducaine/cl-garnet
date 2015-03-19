@@ -62,7 +62,7 @@
 
 (in-package "GARNET-GADGETS")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(Motif-H-Scroll-Bar))
   #+garnet-test
   (export '(Motif-H-Scroll-Go Motif-H-Scroll-Stop
@@ -265,12 +265,12 @@
               (:running-where T))
       (:JUMP ,MOTIF-JUMP)
       ;; WHEEL is like KEY only uses the scroll wheel events.
-      (:WHEEL ,inter:button-interactor
+      (:WHEEL ,inter:scroll-wheel-interactor
 	      (:active ,(o-formula (let ((p (gvl :operates-on)))
 				     (and (gvl :window)
 					  (gv p :scroll-p) (gv p :active-p)))))
 	      (:window ,(o-formula (gv-local :self :operates-on :window)))
-	      (:continuous NIL)
+	      (:continuous nil)
 	      (:start-where ,(o-formula (list :in-box (gvl :operates-on :bounding-area))))
 	      (:start-event (:upscrollup :downscrollup))
 	      (:final-function MOTIF-KEY-TRILL-FN))

@@ -269,7 +269,7 @@ Change log:
 
 (in-package "GARNET-GADGETS")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(Multi-Graphics-Selection Set-Selection Undo-Last-Move-Grow)))
 
 ;; These are the size of the selection boxes
@@ -1650,7 +1650,7 @@ The :save-list-for-undo slot of the gadget will contain
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 #+garnet-test
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
  (export '(Multi-Graphics-Selection-Go
 	   Multi-Graphics-Selection-Obj
 	   Multi-Graphics-Selection-Stop)))

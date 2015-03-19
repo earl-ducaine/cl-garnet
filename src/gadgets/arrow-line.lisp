@@ -93,10 +93,10 @@
 
 (in-package "GARNET-GADGETS")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(Arrow-Line Double-Arrow-Line)))
 #+garnet-test
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(arrow-line-go arrow-line-stop arrow-line-win arrow-line-agg)))
 
 ;;

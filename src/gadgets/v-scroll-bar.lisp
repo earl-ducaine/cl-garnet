@@ -82,7 +82,7 @@
 
 (in-package "GARNET-GADGETS")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(V-Scroll-Bar))
   #+garnet-test
   (export '(V-Scroll-Go V-Scroll-Stop
@@ -219,6 +219,7 @@
 	      (:attach-point :where-hit))
       (:JUMP ,jump-inter)
       (:WHEEL-UP ,wheel-up-inter)
+      
       (:WHEEL-DOWN ,wheel-down-inter
 		   (:extra-function ,#'val-2-WHEEL-fn)))))
 

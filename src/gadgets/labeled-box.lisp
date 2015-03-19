@@ -57,7 +57,7 @@
 
 (in-package "GARNET-GADGETS")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(Labeled-Box))
   #+garnet-test
   (export '(Labeled-Box-Go Labeled-Box-Stop

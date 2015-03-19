@@ -26,7 +26,7 @@
 
 (in-package "GARNET-GADGETS")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(SAVE-GADGET)))
 
 (create-instance 'SAVE-GADGET opal:aggregadget

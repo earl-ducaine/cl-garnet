@@ -118,31 +118,10 @@
 ;;;  Designed by Brad Myers
 ;;;  Written by Andrew Mickish
 
-;;;  Change Log:
-;;;
-;;;  03/08/93 - Andrew Mickish - Added :known-as to TEXT-LABEL-PROTOTYPE
-;;;               so that :string-set-func works
-;;;  02/23/93 - Andrew Mickish - Added :string-set-func
-;;;  02/10/93 - Andrew Mickish - Made :items of type items-type
-;;;  12/15/92 - Andrew Mickish - Added type and parameter declarations
-;;;  09/07/92 - Mickish/Duchier - In :frame-left-on-right formula, changed
-;;;     :bound-width to :width
-;;;  07/13/92 - Rajan Parthasarathy - Added :toggle-p slot to SCROLLING-MENU
-;;;  06/26/92 - Andrew Mickish - Added objects in :items list
-;;;  04/30/92 - Andrew Mickish - Called get-standard-font for fonts
-;;;  02/11/92 - Andrew Mickish - Added :maybe-constant list
-;;;  09/11/91 - Andrew Mickish - Added a check for the :title in the formula
-;;;     for :title-height.
-;;;  06/16/90 - Andrew Mickish - Reimplemented :v-spacing and :text-offset to
-;;;     conform precisely to design requirements.  Changed :selected slot in
-;;;     top-level gadget to :selected-ranks.  Changed :direction of aggrelist
-;;;     to NIL and supplied formulas in :left and :top of S-M-ITEM.
-;;;  06/18/90 - Andrew Mickish - Considered length of :items list in :end slot
-;;;
 
 (in-package "GARNET-GADGETS")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(Scrolling-Menu))
   #+garnet-test
   (export '(Scrolling-Menu-Go Scrolling-Menu-Stop

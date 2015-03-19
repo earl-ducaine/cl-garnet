@@ -67,7 +67,7 @@
 
 (in-package "GARNET-GADGETS")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(Popup-Menu-Button lines-bitmap downarrow-bitmap))
 
   #+garnet-test
@@ -101,16 +101,16 @@
    (if (< (g-value menuwin :top) 0)
       (s-value menuwin :top 0)
       (if (> (+ (g-value menuwin :top) (g-value menuwin :height))
-	     opal:*screen-height*)
-         (s-value menuwin :top (- opal:*screen-height*
+	     gem:*screen-height*)
+         (s-value menuwin :top (- gem:*screen-height*
 				(g-value menuwin :height)))
       )
    )
    (if (< (g-value menuwin :left) 0)
       (s-value menuwin :left 0)
       (if (> (+ (g-value menuwin :left) (g-value menuwin :width))
-	     opal:*screen-width*)
-         (s-value menuwin :left (- opal:*screen-width*
+	     gem:*screen-width*)
+         (s-value menuwin :left (- gem:*screen-width*
 				 (g-value menuwin :width)))
       )
    )

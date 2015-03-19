@@ -86,7 +86,7 @@ Change log:
 
 (in-package "GARNET-GADGETS")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(ERROR-GADGET QUERY-GADGET)))
 
 ;; NOTE:  If :parent-window is specified, then the parent window must already
@@ -212,7 +212,7 @@ Change log:
 
 ;;; testing/demo function for error-gadgets and query gadgets
 #+garnet-test
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(Error-Gadget-Go Error-Gadget-Stop EGAGDET QGADGET))
   (proclaim '(special EG-WIN EG-AGG EG-FEED EGADGET QGADGET)))
 

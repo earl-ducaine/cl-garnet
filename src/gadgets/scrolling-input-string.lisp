@@ -78,7 +78,7 @@ Change log:
 
 (in-package :GARNET-GADGETS)
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(Scrolling-Input-String Insert-Text-Into-Box Insert-Text-Into-SIS))
   #+garnet-test
   (export '(Scrolling-Input-String-Go Scrolling-Input-String-Stop

@@ -156,7 +156,7 @@ Change log:
 
 (in-package "GARNET-GADGETS")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(motif-prop-sheet-with-OK motif-prop-sheet-for-obj-with-OK
 	    Motif-Prop-Sheet-For-Obj-With-Done
 	    Pop-Up-Win-For-Prop Pop-Up-Win-Change-Obj Pop-Up-Win-Change-Items)))

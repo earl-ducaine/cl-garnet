@@ -89,12 +89,12 @@
 (create-instance 'VALUE-TEXT opal:cursor-text
    (:string (o-formula (let ((p (kr-path 0 :parent :parent)))
 			 (format NIL (gv p :format-string) (gv p :value)))))
-   (:left (o-formula (+ (gv (kr-path 0 :parent) :left)
-			(floor (- (gv (kr-path 0 :parent) :width)
-				  (gvl :width)) 2))))
-   (:top (o-formula (+ (gv (kr-path 0 :parent) :top)
-		       (floor (- (gv (kr-path 0 :parent) :height)
-				 (gvl :height)) 2))))
+   (:left (o-formula (+ (gv-fixnum (kr-path 0 :parent) :left)
+			(floor (- (gv-fixnum (kr-path 0 :parent) :width)
+				  (gvl-fixnum :width)) 2))))
+   (:top (o-formula (+ (gv-fixnum (kr-path 0 :parent) :top)
+		       (floor (- (gv-fixnum (kr-path 0 :parent) :height)
+				 (gvl-fixnum :height)) 2))))
    (:font (o-formula (gv (kr-path 0 :parent) :font))))
 
 

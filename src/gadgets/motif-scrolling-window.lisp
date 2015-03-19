@@ -82,7 +82,7 @@
 
 (in-package "GARNET-GADGETS")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(Motif-Scrolling-Window-With-Bars
 	    Motif-Scrolling-Window-With-Bars-Go 
 	    Motif-Scrolling-Window-With-Bars-Stop)))

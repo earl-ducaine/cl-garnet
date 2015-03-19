@@ -37,7 +37,7 @@ Change log:
 
 (in-package "GARNET-GADGETS")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(Display-Error Display-Error-And-Wait
 	    Display-Query Display-Query-And-Wait
 	    Careful-Eval Careful-String-Eval Careful-Read-From-String

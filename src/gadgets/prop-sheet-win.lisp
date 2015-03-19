@@ -144,7 +144,7 @@ Change log:
 
 (in-package "GARNET-GADGETS")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(prop-sheet-with-OK prop-sheet-for-obj-with-OK Pop-Up-Win-For-Prop
 	    Pop-Up-Win-Change-Obj Pop-Up-Win-Change-Items)))
 

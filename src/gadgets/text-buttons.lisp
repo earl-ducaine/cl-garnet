@@ -73,40 +73,9 @@
 ;;;  Designed by Brad Myers
 ;;;  Written by Andrew Mickish
 
-;;; CHANGE LOG:
-;;; 05/13/93  Andrew Mickish - :prev-visible ---> :prev
-;;; 02/23/93  Andrew Mickish - Added :string-set-func
-;;; 02/10/93  Andrew Mickish - Made :items of type items-type
-;;; 01/18/93  Andrew Mickish - Removed notice-items-changed, removed some
-;;;              kr-path's
-;;; 12/15/92  Andrew Mickish - Added type and parameter declarations
-;;; 06/16/92  Andrew Mickish - Added objects in :items list
-;;; 06/05/92  Andrew Mickish - Changed :visible in final-feedback to consider
-;;;              the :parent of obj-over
-;;; 04/17/92  Andrew Mickish - Now final-feedback objs are invisible when the
-;;;              parent gadget is invisible
-;;; 02/11/92  Andrew Mickish - Added :maybe-constant list
-;;; 07/26/91  Andrew Mickish - Added :toggle-p slot
-;;; 05/14/91  Andrew Mickish - Fixed :selected slot of :text-button-list
-;;; 04/15/91  Andrew Mickish - Added :notice-items-changed, :add-item, and
-;;;              :remove-item methods
-;;; 11/28/90  Pavan Reddy - Added formula to :value-obj slot of TEXT-BUTTON-
-;;;              PANEL so :value and :value-obj slots remain consistent.
-;;; 07/16/90  Andrew Mickish -  Reimplemented TEXT-BUTTON and TEXT-BUTTON-LIST
-;;;              prototypes so single button instances can be created.
-;;; 07/02/90  Andrew Mickish -  Added :FINAL-FEEDBACK part to TEXT-BUTTON-PANEL
-;;; 07/02/90  Andrew Mickish -  Converted circularity between :value and
-;;;              :selected slot;  Now the final-function sets :value-obj which
-;;;              propagates to :value and :selected.
-;;; 06/01/90  Andrew Mickish -  Changed :text-button-press to be a menu-inter
-;;; 02/24/90  Andrew Mickish -  Changed :font to Opal:default-font
-;;; 01/30/90  Andrew Mickish -  Added :selected slot to TEXT-BUTTON-LIST
-;;;              so that :value of panel can be set directly.
-;;;
-
 (in-package "GARNET-GADGETS")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(Text-Button Text-Button-Panel))
   #+garnet-test
   (export '(Text-Buttons-Go Text-Buttons-Stop Text-Button-Obj
@@ -150,26 +119,26 @@
    (:selection-function NIL)
    (:value (o-formula (if (gvl :selected) (gvl :string))))
    (:selected (o-formula (gvl :value)))
-   (:floating-left (o-formula (+ (the fixnum (gvl :button-left))
+   (:floating-left (o-formula (+ (gvl-fixnum :button-left)
 				 (if (gvl :interim-selected)
-				     (the fixnum (gvl :shadow-offset))
+				     (gvl-fixnum :shadow-offset)
 				     0))))
-   (:floating-top (o-formula (+ (the fixnum (gvl :button-top))
+   (:floating-top (o-formula (+ (gvl-fixnum :button-top)
 				(if (gvl :interim-selected)
-				    (the fixnum (gvl :shadow-offset))
+				    (gvl-fixnum :shadow-offset)
 				    0))))
    (:button-left (o-formula (gvl :left)))
    (:button-top (o-formula (gvl :top)))
-   (:button-width (o-formula (+ (* 2 (the fixnum (gvl :gray-width)))
-				(* 2 (the fixnum (gvl :text-offset)))
-				(the fixnum (gvl :text-width)))))
-   (:button-height (o-formula (+ (* 2 (the fixnum (gvl :gray-width)))
-				 (* 2 (the fixnum (gvl :text-offset)))
-				 (the fixnum (gvl :text :height)))))
-   (:button-unit-width (o-formula (+ (the fixnum (gvl :button-width))
-				     (the fixnum (gvl :shadow-offset)))))
-   (:button-unit-height (o-formula (+ (the fixnum (gvl :button-height))
-				      (the fixnum (gvl :shadow-offset)))))
+   (:button-width (o-formula (+ (* 2 (gvl-fixnum :gray-width))
+				(* 2 (gvl-fixnum :text-offset))
+				(gvl-fixnum :text-width))))
+   (:button-height (o-formula (+ (* 2 (gvl-fixnum :gray-width))
+				 (* 2 (gvl-fixnum :text-offset))
+				 (gvl-fixnum :text :height))))
+   (:button-unit-width (o-formula (+ (gvl-fixnum :button-width)
+				     (gvl-fixnum :shadow-offset))))
+   (:button-unit-height (o-formula (+ (gvl-fixnum :button-height)
+				      (gvl-fixnum :shadow-offset))))
    (:text-width (o-formula (gvl :text :width)))
    (:width (o-formula (gvl :button-unit-width)))
    (:height (o-formula (gvl :button-unit-height)))
@@ -244,13 +213,13 @@
    (:v-spacing 5) (:h-spacing 5)
    (:h-align :center)
    (:fixed-width-p T)
-   (:fixed-width-size (o-formula (+ (* 2 (the fixnum (gvl :gray-width)))
-				    (* 2 (the fixnum (gvl :text-offset)))
+   (:fixed-width-size (o-formula (+ (* 2 (gvl-fixnum :gray-width))
+				    (* 2 (gvl-fixnum :text-offset))
 				    (gvl :text-button-list :tail
 					 :max-text-width-thus-far))))
    (:fixed-height-p T)
-   (:fixed-height-size (o-formula (+ (* 2 (the fixnum (gvl :gray-width)))
-				     (* 2 (the fixnum (gvl :text-offset)))
+   (:fixed-height-size (o-formula (+ (* 2 (gvl-fixnum :gray-width))
+				     (* 2 (gvl-fixnum :text-offset))
 				     (gvl :text-button-list :tail
 					  :max-text-height-thus-far))))
    (:indent 0) (:rank-margin NIL) (:pixel-margin NIL)
@@ -271,12 +240,12 @@
       (:left (o-formula
 	      (let ((white-field (gvl :parent :white-field)))
 		(case (gvl :parent :parent :parent :h-align)
-		  (:left (+ (the fixnum (gv white-field :left))
-			    (the fixnum (gvl :parent :text-offset))))
+		  (:left (+ (gv-fixnum white-field :left)
+			    (gvl-fixnum :parent :text-offset)))
 		  (:center (opal:gv-center-x-is-center-of white-field))
 		  (:right (- (the fixnum (opal:gv-right white-field))
-			     (the fixnum (gvl :parent :text-offset))
-			     (the fixnum (gvl :width))))))))))
+			     (gvl-fixnum :parent :text-offset)
+			     (gvl-fixnum :width)))))))))
    (:parts
     `((:text-button-list ,ITEMS-AGGLIST
        (:selected
@@ -301,32 +270,30 @@
 	  (:gray-width ,(o-formula (gv (kr-path 0 :parent :parent) :gray-width)))
 	  (:max-text-width-thus-far
 	   ,(o-formula (if (gvl :prev)
-			   (MAX (gvl :prev
-				     :max-text-width-thus-far)
-				(the fixnum (gvl :text :width)))
-			   (the fixnum (gvl :text :width)))))
+			   (opal:q-MAX (gvl :prev :max-text-width-thus-far)
+				 (gvl-fixnum :text :width))
+			   (gvl-fixnum :text :width))))
 	  (:max-text-height-thus-far
 	   ,(o-formula (if (gvl :prev)
-			   (MAX (gvl :prev
-				     :max-text-height-thus-far)
-				(the fixnum (gvl :text :height)))
-			   (the fixnum (gvl :text :height)))))
+			   (opal:q-MAX (gvl :prev :max-text-height-thus-far)
+				 (gvl-fixnum :text :height))
+			   (gvl-fixnum :text :height))))
 	  (:button-width ,(o-formula (let ((p (kr-path 0 :parent :parent)))
 				       (if (gv p :fixed-width-p)
-					   (the fixnum (gv p :fixed-width-size))
+					   (gv-fixnum p :fixed-width-size)
 					   (+ (the fixnum (* 2 (gvl :gray-width)))
-					      (* 2 (the fixnum (gvl :text-offset)))
-					      (the fixnum (gvl :text :width)))))))
+					      (* 2 (gvl-fixnum :text-offset))
+					      (gvl-fixnum :text :width))))))
 	  (:button-height ,(o-formula (let ((p (kr-path 0 :parent :parent)))
 					(if (gv p :fixed-height-p)
-					    (the fixnum (gv p :fixed-height-size))
-					    (+ (* 2 (the fixnum (gvl :gray-width)))
-					       (* 2 (the fixnum (gvl :text-offset)))
-					       (the fixnum (gvl :text :height)))))))
-	  (:button-unit-width ,(o-formula (+ (the fixnum (gvl :button-width))
-					     (the fixnum (gvl :shadow-offset)))))
-	  (:button-unit-height ,(o-formula (+ (the fixnum (gvl :button-height))
-					      (the fixnum (gvl :shadow-offset)))))
+					    (gv-fixnum p :fixed-height-size)
+					    (+ (* 2 (gvl-fixnum :gray-width))
+					       (* 2 (gvl-fixnum :text-offset))
+					       (gvl-fixnum :text :height))))))
+	  (:button-unit-width ,(o-formula (+ (gvl-fixnum :button-width)
+					     (gvl-fixnum :shadow-offset))))
+	  (:button-unit-height ,(o-formula (+ (gvl-fixnum :button-height)
+					      (gvl-fixnum :shadow-offset))))
 
 	  ;; Conditional formulas are required to allow either a list of
 	  ;; strings or a list of string/function pairs in the :items slot.
