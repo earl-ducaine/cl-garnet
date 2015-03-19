@@ -142,3 +142,339 @@ Change log:
         04/07/89 Dario Giuse and Brad Myers - changed to work with new KR
 ============================================================
 |#
+
+;;;; demo-motif.lisp
+;;;  CHANGE LOG:
+;;;
+;;;  07/02/93 Andrew Mickish - Excepted :keyboard-selection-p in constant lists
+;;;  05/26/93 Andrew Mickish - Fixed constant declarations for new aggrelists
+;;;  05/20/93 Andrew Mickish - Put scroll bars in their own aggregate;
+;;;            made some feedback objects fast-redraw; made scroll bars
+;;;            constant again.
+;;;  07/03/92 Ed Pervin - Temporarily made red-bar, green-bar, blue-bar
+;;;			be non-constant due to bug in KR 2.0.10.
+;;;  04/08/92 Andrew Mickish - Changed :items functions of SHADE-BUTTONS to
+;;;            set the SHADE-SLIDER with gg::*highlight-value*, etc.
+;;;  03/10/92 Ed Pervin - Changed (create-instance NIL opal:black)
+;;;			to just opal:black in many places.
+;;;  02/28/92 Andrew Mickish - Modified to work with hash-table-oriented
+;;;            implementation of gadget colors.
+;;;  02/26/92 Andrew Mickish - Added border rectangles to color boxes
+;;;  02/17/92 Andrew Mickish - Added constant slots
+;;;  11/25/91 Ed Pervin      - Allowed background color for windows, so
+;;;			       we don't have to use an actual rectangle.
+;;;  10/08/91 Andrew Mickish - Added fast-redraw to color rectangles
+;;;  03/21/91 Andrew Mickish - Added :selection-function of GROUND-BUTTONS
+;;;  03/01/91 Andrew Mickish - Created
+;;;
+
+
+;;;; demo-animator.lisp
+#|
+============================================================
+Change log:
+   8/12/93 Andrew Mickish - #+(or lucid allegro) ---> #+garnet-processes
+   8/11/93 Andrew Mickish - In Do-Stop, only destroy TOP-WIN if created
+   7/26/93 Andrew Mickish - Do not ignore INTER parameter in ANIMATOR-PIXMAP's
+             :timer-handler function
+  10/05/92 Andrew Mickish - Ignore parameters of DO-GO if not running Lucid
+             or Allegro
+   7/17/92 Brad Myers - Added animation of pixmap walking "eye"
+   6/04/92 Brad Myers - Started
+============================================================
+|#
+
+;;;; demo-gadgets.lisp
+;;;  CHANGE LOG:
+;;;  05/29/94 - Marty Geier - changed main window position in do-go
+;;;  05/29/94 - Marty Geier - changed load to garnet-load in demo-gadgets-init
+;;;  02/25/92 - Ed Pervin - Added :constant slots
+;;;  09/05/90 - Brad Myers - Added scrolling-labeled box
+;;;  01/04/90 - Andrew Mickish - Added parameters to demo function
+;;;  02/16/90 - Andrew Mickish - Changed demo-win to demo-gadgets-win.
+;;;             Changed demo-top-agg to demo-gadgets-top-agg.
+;;;             Changed font of demo-text-buttons-obj to the default font.
+;;;  07/17/90 - Andrew Mickish - Added DEMO-GADGETS-INIT to obviate loader file.
+;;;             Moved definition of DEMO-X-BUTTONS-OBJ so that DEMO-H-SCROLL-OBJ
+;;;             formulas will be initialized correctly.
+;;;             Removed setf's so that instances are created with explicit names
+;;;  07/23/90 - Edward Pervin - Added "common-lisp-user::" before Garnet-Gadgets-PathName
+;;;
+
+;;;; demo-unistrokes.lisp
+#|
+==================================================================
+Change log:
+     05/30/94 Marty Geier - changed main window position in do-go
+     09/16/93 James Landay   - started
+==================================================================
+|#
+
+;;;; garnet-calculator.lisp
+;;;  CHANGE LOG:
+;;;  06/01/94  Marty Geier - Added cases in sin and tan functions for
+;;;            0 checking due to unknown math errors.
+;;;            Also added checking for 1 case in log and ln functions,
+;;;            again to prevent a math error.
+;;;  04/18/94  amickish - Made Gem/Mac version
+;;;  09/06/94  Clive Tong - Added MAKE-PACKAGE call
+;;;  08/23/93  amickish - {-BUTTON ---> LEFT-PAREN-BUTTON;
+;;;                       }-BUTTON ---> RIGHT-PAREN-BUTTON;  Copied old
+;;;              opal:text formulas into k-framed-text object
+;;;  08/11/93  amickish - In Set-Result, don't take log of 0
+;;;  04/06/93  koz      - Changed from with-*-styles to set-*-style
+;;;  02/22/93  koz      - Made "log 0" and "ln 0" return "error", not a big #
+;;;  02/09/93  amickish - Added calls to Garnet-Note-Quitted
+;;;  02/03/93  amickish - Made compatible with demos-controller
+;;;  02/02/93  koz      - Created
+;;;
+
+;;;; demo-3d.lisp
+;;; Changes:
+;;; 15-Feb-94 Andrew Mickish - Made faster version for Mac
+;;;             - Repositioned X's inside buttons, and made XOR fast redraw
+;;;             - Removed X's color constraints, since XOR makes black anyway
+;;;             - Removed color constraint of radio-button's feedback circle
+;;; 09-Apr-92 Andrew Mickish - Changed create-instance of opal:line-2
+;;;             to opal:line-style
+;;; 25-Mar-92 Andrew Mickish - Get-Values ---> G-Value
+;;; 13-Feb-92 Pervin - Merged demo-3d and color-demo-3d
+;;; 13-Mar-91 Ed Pervin Changed package name back to demo-3d.
+
+;;;; demo-arith.lisp
+#|
+==================================================================
+Change log:
+     08/19/93 Andrew Mickish - Changed :value of ARITH-BOX so that arithmetic
+               operator is only called when there are in-vals
+     02/03/93 James Landay - made changes to xy-obj-edge to improve speed
+     04/09/92 Andrew Mickish - Changed create-instance of opal:line-0 to
+               opal:line-style
+     03/25/92 Andrew Mickish - Get-Values ---> G-Value
+     03/06/92 Andrew Mickish - Changed CMU pathname in Gesture-Creator to
+                "gesture-data:"; collected all loading of required files
+                into defvar of DEMO-ARITH-INIT.
+      2/21/92 James Landay   - Added gestures!
+       2/4/92 Andrew Mickish - In Create-New-Obj, we must create instances of
+                the prototype objects, not the selected objects.
+      1/28/92 Ed Pervin - Load PS.
+      8/06/91 Andrew Mickish - Added print buttons;  changed objects in
+                DO-GO to be named, rather than setq'ed;  removed DoIt and put
+                item-functions in the text-button-panel's :items list.
+     11/07/90 Ed Pervin - In Do-Quit, destroy the window BEFORE
+                exit-main-event-loop.
+      9/04/90 Osamu Hashimoto - Added Garnet-Note-Quitted for demo-controller,
+                Changed window positon.
+      8/21/90 Brad Myers - First character typed starts string over
+      7/04/90 Brad Myers - Started based on demo-editor
+==================================================================
+|#
+
+;;;; demo-clock.lisp
+;; Change Log
+;;
+;; 05-21-2013 Fred Gilham - Add scroll wheel support.
+;; 05-22-94 Marty Geier - Changed top of window so its on screen and grabbable
+
+;;;; demo-editor.lisp
+#|
+==================================================================
+Change log:
+         05/22/94 Marty Geier - Made main window more viewable
+         04/07/92 Ed Pervin - Move in-package to beginning of file.
+	 02/14/92 Ed Pervin - Converted formulas to o-formulas.
+         11/07/90 Ed Pervin - In Do-Quit, destroy the window BEFORE exit-main-event-loop.
+         09/04/90 Osamu Hashimoto - Added Garnet-Note-Quitted for demo-controller,
+                                    Changed window positon
+         01/04/90 Andrew Mickish - Added auto-loading of "text-buttons-loader",
+                  "graphics-loader", and "arrow-line-loader"
+===================================================================
+|#
+
+;;;; demo-file-browser.lisp
+;;;  CHANGE LOG:
+;;;  12/06/94 - Bruno Haible - Commented out :directories keyword for CLISP
+;;;  06/17-19/94 - Marty Geier - re-did directory structure to work on macintosh
+;;;                    Changes include: redo of pathname-to-string-fn and directory-fn
+;;;                    and #+apple support for all stripping of subdir char off end of
+;;;                    filename.  Also, carefull redo of prev button push for apple.
+;;;  05/22/94 - Marty Geier - Made main window grabbable and viewable
+;;;                           also changed loads to garnet-loads
+;;;  05/20/93 - Andrew Mickish - Made :num-menus not constant in FILE-BROWSER
+;;;  01/20/93 - Andrew Mickish - Fixed type problems (return "" instead of NIL)
+;;;  07/24/90 - Andrew Mickish - Added :additional-selection-p
+;;;  07/23/90 - Edward Pervin - Added "user::" before Garnet-Gadgets-PathName
+;;;  09/07/90 - Osamu Hashimoto - Added Garnet-Note-Quitted for demo-controller
+;;;  11/07/90 - Edward Pervin - In formula for :left of :l-box, changed
+;;;				(gvl :parent :width) to (gvl :parent :prev :width)
+;;;				Also, got DIRECTORY-FN to work on Sun.
+;;;  11/07/90 Ed Pervin - In Do-Quit, destroy the window BEFORE exit-main-event-loop.
+
+;;;; demo-gesture.lisp
+#|
+==================================================================
+Change log:
+     05/30/94 Marty Geier - Changed load to garnet-load
+     04/01/94 Andrew Mickish - Switched interactor events so that leftdown
+                draws gestures and middledown moves shapes
+     03/30/94 Andrew Mickish - positioned window for Mac version
+     03/25/92 James Landay   - started
+==================================================================
+|#
+
+;;;; demo-graph.lisp
+;;; CHANGE LOG:
+;;   05/29/94 Geier/Mickish - Fixed main window position; load to garnet-load
+;;              in demo-graph-init;  Changed color of nodes instead of XOR
+;;   06/01/93 Andrew Mickish - Removed Verify-Binding and called Careful-Eval
+;;              instead;  fixed problem with setting new root caused by
+;;              kr-send being an unsafe macro; made error-gadget window be
+;;              top-level
+;;   03/25/92 Andrew Mickish - Get-Values ---> G-Value
+;;   03/14/91 Andrew Mickish - Created
+
+
+;;;; demo-grow.lisp
+#|
+==================================================================
+Change log:
+         05/30/94 Marty Geier - changed load to garnet-load
+                                changed main window position in do-go
+	 05/27/92 Ed Pervin - The latest CMUCL requires that the
+				argument to random be declared an integer.
+	 04/07/92 Ed Pervin - Move in-package to beginning of file.
+         01/04/90 Andrew Mickish - Added auto-loading of "graphics-loader"
+==================================================================
+|#
+
+;;;; demo-othello.lisp
+-----------
+Change Log:
+      30-May-94 Marty Geier - moved window position too be viewable
+                              changed load to garnet-load
+      22-Sep-93 amickish  Ignored double-buffered-p in Do-Go
+      25-Mar-92 amickish  Get-Local-Values ---> G-Local-Value
+        2-25-92 Ed Pervin - Added some :constant slots
+       10-13-91 Andrew Mickish - Changed definition of some schemas to be
+                  unnamed so that they are not recursively destroyed when
+                  demo is restarted.
+        8-21-90 Brad Myers - made so will work stand-alone
+        9-04-90 Osamu Hashimoto - Added Garnet-Note-Quitted for demo-controller,
+|#
+
+;;;; demo-schema-browser.lisp
+;;;  CHANGE LOG:
+;;;  05/30/94 - Marty Geier - changed window position of main window in do-go
+;;;                           changed load to garnet-load
+;;;  06/03/93 - Andrew Mickish - Moved definition of Verify-Binding to utils
+;;;  01/21/93 - Andrew Mickish - Fixed type errors (return "" instead of NIL)
+;;;  05/14/92 - Martin Sjolin - check for a NIL schema when pressing
+;;;				Instances button.
+;;;  03/25/92 - Andrew Mickish - Get-Values ---> G-Value
+;;;  11/07/90 - Ed Pervin - In Do-Quit, destroy the window BEFORE
+;;;               exit-main-event-loop.
+;;;  09/07/90 - Osamu Hashimoto - Added Garnet-Note-Quitted for demo-controller
+;;;  07/23/90 - Edward Pervin - Added "user::" before Garnet-Gadgets-PathName
+
+;;;; demo-scrollbar.lisp
+;;; Changes:
+;;
+;; 5/30/94 Marty Geier - changed position of main window in do-go
+;;                       also changed load to garnet load.
+;; 2/25/92 Pervin  Added :constant slots
+;; 2/13/92 Pervin: merged demo-scrollbar and color-demo-scrollbar
+;; 3/14/90 Andrew Mickish:  Removed local motif-scrollbar and put in
+;;           garnet-gadgtets version
+;; 7/25/90 Roger Dannenberg - Changed :window slot of interactors to
+;;           (gv-local :self ...)
+;; 4/30/90  Edward Pervin : Added color
+;; 4/30/90  Andrew Mickish:  Updated appearance of Openlook and Next scrollbars
+;; 4/30/90  Andrew Mickish:  Added Motif scroll bar
+;; 4/9/90   R. Cook    Indent calls to opal:update.
+;; 11/20/89 Ed Pervin  Removed definition of Clip-and-Map,
+;;                     which is now exported from Interactor.
+;; 11/15/89 Ed Pervin: Had to rewrite BACKGROUND-TRILL because :y slot
+;;          was replaced by :y-off.
+;; 8/25/89  Andrew Mickish:  Added background trill interactor and integrated
+;;          into demo-scrollbar
+
+;;;; demo-sequence.lisp
+;;; CHANGES
+;;; 5/30/94 Marty Geier - Changed position of main window in do-go
+;;; 3/25/92 Andrew Mickish - Get-Values ---> G-Value
+;;; 3/05/92 Andrew Mickish - Added formula in :visible slot of text feedback
+;;;           object
+;;; 1/28/92 ECP  Made :xor objects be fast-redraw
+;;;
+
+;;;; demo-text.lisp
+#|
+============================================================
+Change log:
+       05/30/94 Marty Geier - Changed window position in do-go
+                              changed load to garnet-load
+       05/21/93 Brad Myers - fixed comments for new bindings
+       02/02/93 Andrew Mickish - opal:set-strings ---> opal:set-text
+	 4/2/92 Rich McDaniel - New multifont-text
+	 8/6/91 Ed Pervin - Made :strings of the-feedback-obj = NIL
+	 6/18/91 Ed Pervin - Changed to multifont-text
+	 3/15/90 Ed Pervin - Changed to variable width font
+         10/10/89 Brad Myers - New interactor changes
+         8/21/89 Brad Myers - Changes to use multi-line text
+         6/26/89 Brad Myers - Fixed to have quote for create-schema
+         6/19/89 Brad Myers - Fixed to print a message
+         4/20/89 Brad Myers - call-parent-method -> call-prototype-method
+	 4/7/89 Brad Myers and Dario Giuse - change for new KR
+         3/28/89 Brad Myers - New cursor-text works with 0-length strings
+         3/2/89 Philippe Marchal - Titles for window and icon
+         3/1/89 Brad Myers - started
+============================================================
+|#
+
+;;;; garnetdraw.lisp
+;;; CHANGE LOG:
+;;;
+;;;  6/17/94  Marty Geier - Corrected garnet-pathnames call to directory
+;;;              garnet: (for mac) instead of garnet\
+;;;  6/15/94  Andrew Mickish - Called user::garnet-pathnames for bitmap files
+;;;  5/30/94  Marty Geier - Fixed window position in create-main-win
+;;;  4/13/94  Andrew Mickish - Fixed in-package statement written out to file
+;;;  2/09/94  Andrew Mickish - Removed load of scrolling-labeled-box-loader
+;;; 10/06/93  Andrew Mickish - :background-color ---> :foreground-color
+;;;  7/13/93  Rajan Parthasarathy - Made *STORED-LINE-STYLES* list, and
+;;;             added Get-Line-Style function to get/make a line style.
+;;;             Made it use default opal colors whenever possible.
+;;;  7/ 8/93  Andrew Mickish - Destroyed CREATOR-* prototypes in Do-Stop
+;;;  7/ 8/93  Rajan Parthasarathy - Fixed bug in Ps-Sel-Fn
+;;;  6/17/93  Rajan Parthasarathy - Added polyline editing
+;;;  3/18/93  Brad Myers - allowed output to be used by gilt and other programs
+;;;  2/23/93  Andrew Mickish - Removed call to notice-items-changed for mbar
+;;;  2/10/93  Andrew Mickish - Changed :item-font and :accel-font in menubar;
+;;;             Removed DELETE interactor and attached #\rubout accelerator
+;;;             to menubar
+;;;  1/23/93  Rajan Parthasarathy - Modified to use motif gadgets.
+;;;  1/10/93  Brad Myers - use functions in standard-edit
+;;; 09/03/92  Andrew Mickish - GetFontFromMenu returns old font if no change
+;;; 08/31/92  Andrew Mickish - Now fontfun always sets the tool's font
+;;; 08/20/92  Andrew Mickish - "concatenate 'string" ---> "merge-pathnames"
+;;; 08/12/92  Rajan Parthasarathy - Modified to use save/load gadgets.
+;;;            Added s-value of :start-where of POLYGON-MAKER in Read-Sel-Fn.
+;;;            The function Save-File-If-Wanted is now loaded with the
+;;;            save-gadget.
+;;;  07/7/92  Brad Myers - Moved multi-grow and select in region to
+;;;                        multi-graphics-selection widget
+;;; 05/20/92  Brad Myers - Add gridding, fixed text entry, use Modal-p windows
+;;;                        removed load of prop-sheets
+;;; 05/11/92  Ed Pervin - Moved bitmaps to lib/bitmaps directory.
+;;;			  Added load of ps-loader.
+;;; 05/01/92  Andrew Mickish - Added :except in :constant list of *Read-DB*,
+;;;             Fixed interface to CURRENT-STATE's :feedback's :frfs slot,
+;;;             NEW-ITEM and POLYGON-MAKER no longer create instances of NIL
+;;;             filling-styles.
+;;; 04/28/92  Andrew Mickish - Added schema-p check in Read-Sel-Fn, added
+;;;             garnetdraw package name in Write-Draw-Agg
+;;; 04/23/92  Ed Pervin      - Added proclaim statement
+;;; 04/20/92  Andrew Mickish - Put into standard form
+;;; 09/15/91  Vivek Gupta    - Started
+;;;
+

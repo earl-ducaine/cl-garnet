@@ -4,10 +4,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; This code was written as part of the Garnet project at          ;;;
 ;;; Carnegie Mellon University, and has been placed in the public   ;;;
-;;; domain.  If you are using this code or any part of Garnet,      ;;;
-;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
+;;; domain.                                                         ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; $Id$
 
+
 ;;; This file contains the main demos controller
 ;;;
 ;;; ** Call (Do-Go) to start and (Do-Stop) to stop **
@@ -39,18 +41,30 @@
 ;;#+cmu (export '())
 
 (defparameter *package-list*
-   '(("3d" DEMO-3D)("angle" DEMO-ANGLE)("animator" DEMO-ANIMATOR)("arith" DEMO-ARITH)
+   '(("3d" DEMO-3D)
+     ("angle" DEMO-ANGLE)
+     ("animator" DEMO-ANIMATOR)
+     ("arith" DEMO-ARITH)
      ("virtual-agg" DEMO-VIRTUAL-AGG)
-     ("editor" DEMO-EDITOR)("file-browser" DEMO-FILE-BROWSER)
-     ("gadgets" DEMO-GADGETS) ("garnetdraw" GARNETDRAW)("gesture" DEMO-GESTURE)
-     ("grow" DEMO-GROW)("manyobjs" DEMO-MANYOBJS)
-     ("menu" DEMO-MENU)("multifont" DEMO-MULTIFONT)
-     ("multiwin" DEMO-MULTIWIN)("othello" DEMO-OTHELLO)("pixmap" DEMO-PIXMAP)
+     ("editor" DEMO-EDITOR)
+     ("file-browser" DEMO-FILE-BROWSER)
+     ("gadgets" DEMO-GADGETS)
+     ("garnetdraw" GARNETDRAW)
+     ("gesture" DEMO-GESTURE)
+     ("grow" DEMO-GROW)
+     ("manyobjs" DEMO-MANYOBJS)
+     ("menu" DEMO-MENU)
+     ("multifont" DEMO-MULTIFONT)
+     ("multiwin" DEMO-MULTIWIN)
+     ("othello" DEMO-OTHELLO)
+     ("pixmap" DEMO-PIXMAP)
      ("schema-browser" DEMO-SCHEMA-BROWSER)
-     ("scrollbar" DEMO-SCROLLBAR)("text" DEMO-TEXT)
+     ("scrollbar" DEMO-SCROLLBAR)
+     ("text" DEMO-TEXT)
      ("xasperate" DEMO-XASPERATE)
      ("calculator" GARNET-CALCULATOR)
-     ("motif" DEMO-MOTIF) ("graph" DEMO-GRAPH)
+     ("motif" DEMO-MOTIF)
+     ("graph" DEMO-GRAPH)
      ("unistrokes" DEMO-UNISTROKES)))
 
 (defparameter *running* NIL)
@@ -161,6 +175,7 @@ devised by David Goldberg at Xerox PARC.")
     (:total-width 700)
     (:total-height (o-formula (+ 5 (gvl :inner-aggregate :height)) 200)))
 
+
   (opal:update win1)
   (opal:update win2)
 
@@ -174,6 +189,12 @@ Click the button to start the demo."))
   (opal:add-components (g-value win2 :inner-aggregate) text)
 
   (opal:update win2)
+
+  ;; We want the scroll wheel to operate anywhere in the text.
+  (s-value win2 :v-scroll :wheel-up :start-where (list :element-of-or-none (g-value text :parent)))
+  (s-value win2 :v-scroll :wheel-down :start-where (list :element-of-or-none (g-value win2 :parent)))
+  (opal:update win2)
+  
   ;;if not CMU CommonLisp, then start the main event loop to look for events
   #-cmu (inter:main-event-loop)
 )
@@ -202,7 +223,7 @@ Click the button to start the demo."))
     (do-stop))
 
 (defun start (objlist)
-    (when (string= (car objlist) "logo") 
+    (when (string= (first objlist) "logo") 
 	  (opal:set-text text " ")
 	  (opal:update win2)
 	  (demo-logo:re-animate)
@@ -211,7 +232,7 @@ Click the button to start the demo."))
 		   (list ""
 			 (list (cons "Please wait... Loading."
 				     (opal:get-standard-font
-				      :fixed :bold-italic :very-large)))))
+				      :fixed :bold-italic :large)))))
     (opal:update win2)
     (let ((kr::*warning-on-create-schema* nil)
 	  (package-name (cadar (member (car objlist) *package-list* :key #'car

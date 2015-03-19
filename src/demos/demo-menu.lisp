@@ -7,7 +7,10 @@
 ;;; domain.  If you are using this code or any part of Garnet,      ;;;
 ;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; $Id$
 
+
 ;;; This file contains demo code for showing menus in a window
 ;;; When loaded, it creates a window that contains five menus that can be
 ;;; operated with the left mouse button
@@ -23,7 +26,7 @@
 ;;; Aggregadget Version Written by Andrew Mickish
 ;;; Color option added by Ed Pervin
 
-
+
 (in-package :DEMO-MENU)
 
 (when (not (get :garnet-modules :text-buttons))
@@ -385,7 +388,8 @@
 		      (if (> width max-width)
 			  width
 			  max-width)))
-	  ((= i num-items) max-width))))
+	  ((= i num-items) max-width))
+     0))
    ;; Analagous to :max-item-width
    (:max-item-height
     (o-formula
@@ -400,7 +404,8 @@
 		      (if (> height max-height)
 			  height
 			  max-height)))
-	  ((= i num-items) max-height))))
+	  ((= i num-items) max-height))
+     0))
    (:frame-width (o-formula (+ (gvl :offset2) (gvl :max-item-width))))
    ;; For :frame-height, consider the height of all of the items and the spaces
    ;; between them.
@@ -580,7 +585,8 @@
        (dolist (item (gvl :items))
          (setq this-width (opal:string-width font (string-capitalize item)))
          (when (> this-width max-width) (setq max-width (+ 5 this-width))))
-       max-width)))
+       max-width)
+     0))
    (:frame-width (o-formula (+ 3 (* 2 (gvl :max-item-width)))))
    (:text-height
     (o-formula
@@ -652,6 +658,14 @@
 	   (create-instance 'MENU-TOP-AGG opal:aggregate
 			    (:overlapping NIL)))
 
+  ;; If we get clobbered by the window manager, let the demos
+  ;; controller know (if it's there).
+  (when (fboundp 'common-lisp-user::Garnet-Note-Quitted)
+    (pushnew
+     #'(lambda (win)
+	 (declare (ignore win))
+	 (common-lisp-user::Garnet-Note-Quitted "DEMO-MENU"))
+     (g-value menu-win :destroy-hooks)))
 
   ;; In order to avoid font creation delays during menu selections, create
   ;; these fonts before they are used in MENU4.  These objects display spaces

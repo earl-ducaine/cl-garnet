@@ -7,7 +7,10 @@
 ;;; domain.  If you are using this code or any part of Garnet,      ;;;
 ;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; $Id$
 
+
 ;;; demo-unistrokes.lisp 
 ;;;
 ;;; This is DEMO-UNISTROKES. It is a sample application that uses
@@ -21,15 +24,12 @@
 ;;; Future work: 
 ;;;
 ;;; Known bugs:
-
-#|
-==================================================================
-Change log:
-     05/30/94 Marty Geier - changed main window position in do-go
-     09/16/93 James Landay   - started 
-==================================================================
-|#
-
+;;;
+;;;  Note that older Agate data files apparently don't use keywords
+;;;  for the structure slot names. This causes problems when the demo
+;;;  tries to read these files. This is probably an ANSI-related
+;;;  change. Solution: fix the files so that all the slot names are
+;;;  keywords.
 
 (in-package :DEMO-UNISTROKES)
 
@@ -379,6 +379,15 @@ Change log:
             (:width (o-formula (gvl :window :width)))
             (:height (o-formula (gvl :window :height)))))
 
+    ;; If we get clobbered by the window manager, let the demos
+    ;; controller know (if it's there).
+    (when (fboundp 'common-lisp-user::Garnet-Note-Quitted)
+      (pushnew
+       #'(lambda (win)
+	   (declare (ignore win))
+	   (common-lisp-user::Garnet-Note-Quitted "DEMO-UNISTROKES"))
+       (g-value top-win :destroy-hooks)))
+    
     ;; need to update top-win before instantiating dialos
     (opal:update TOP-WIN)
 

@@ -12,21 +12,6 @@
 ;;; Designed and implemented by Brad Myers
 ;;;
 
-#|
-============================================================
-Change log:
-   8/12/93 Andrew Mickish - #+(or lucid allegro) ---> #+garnet-processes
-   8/11/93 Andrew Mickish - In Do-Stop, only destroy TOP-WIN if created
-   7/26/93 Andrew Mickish - Do not ignore INTER parameter in ANIMATOR-PIXMAP's
-             :timer-handler function
-  10/05/92 Andrew Mickish - Ignore parameters of DO-GO if not running Lucid
-             or Allegro
-   7/17/92 Brad Myers - Added animation of pixmap walking "eye"
-   6/04/92 Brad Myers - Started
-============================================================
-|#
-
-
 
 (in-package :DEMO-ANIMATOR)
 
@@ -85,6 +70,15 @@ MCL 3.0 and greater  ***
     (s-value top-win :aggregate
 	     (setq agg (create-instance NIL opal:aggregate)))
     
+    ;; If we get clobbered by the window manager, let the demos
+    ;; controller know (if it's there).
+    (when (fboundp 'common-lisp-user::Garnet-Note-Quitted)
+      (pushnew
+       #'(lambda (win)
+	   (declare (ignore win))
+	   (common-lisp-user::Garnet-Note-Quitted "DEMO-ANIMATOR"))
+       (g-value top-win :destroy-hooks)))
+
     (create-instance 'wrapping-circle opal:circle
 		     (:left 150)(:top 100)
 		     (:filling-style opal:blue-fill)

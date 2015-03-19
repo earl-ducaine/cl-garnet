@@ -10,20 +10,10 @@
 ;;; $Id$
 ;;
 
+
 ;;;  DEMO-GRAPH
 ;;
 ;;  Designed and written by Andrew Mickish and Bryan Loyall
-
-
-;;; CHANGE LOG:
-;;   05/29/94 Geier/Mickish - Fixed main window position; load to garnet-load
-;;              in demo-graph-init;  Changed color of nodes instead of XOR
-;;   06/01/93 Andrew Mickish - Removed Verify-Binding and called Careful-Eval
-;;              instead;  fixed problem with setting new root caused by
-;;              kr-send being an unsafe macro; made error-gadget window be
-;;              top-level
-;;   03/25/92 Andrew Mickish - Get-Values ---> G-Value
-;;   03/14/91 Andrew Mickish - Created
 
 
 (in-package :DEMO-GRAPH)
@@ -99,8 +89,17 @@
   (s-value DEMO-GRAPH-WIN
 	   :aggregate
 	   (create-instance 'DEMO-GRAPH-TOP-AGG opal:aggregate))
-  (opal:update DEMO-GRAPH-WIN)
 
+  ;; If we get clobbered by the window manager, let the demos
+  ;; controller know (if it's there).
+  (when (fboundp 'common-lisp-user::Garnet-Note-Quitted)
+    (pushnew
+     #'(lambda (win)
+	 (declare (ignore win))
+	 (common-lisp-user::Garnet-Note-Quitted "DEMO-GRAPH"))
+     (g-value demo-graph-win :destroy-hooks)))
+
+  (opal:update DEMO-GRAPH-WIN)
 
   (create-instance 'SCHEMA-GRAPH opal:aggregraph
      (:left 10) (:top 50)

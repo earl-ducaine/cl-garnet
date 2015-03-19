@@ -4,16 +4,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; This code was written as part of the Garnet project at          ;;;
 ;;; Carnegie Mellon University, and has been placed in the public   ;;;
-;;; domain.  If you are using this code or any part of Garnet,      ;;;
-;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
+;;; domain.                                                         ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; $Id$
 
-#|
-Change log:
-05/30/94 Marty Geier - Changed main window position in do-go
-03/16/94 Andrew Mickish - Added Opal package names to function calls
-|#
-
+
 (in-package :DEMO-VIRTUAL-AGG)
 
 (declaim (special MY-CIRCLE W A R DOTS-BBOX LITTLE-STAR FEEDBACK-STAR))
@@ -90,6 +86,15 @@ Change log:
      (:aggregate (create-instance 'a opal:aggregate)))
   (setq *vp* w)
 
+  ;; If we get clobbered by the window manager, let the demos
+  ;; controller know (if it's there).
+  (when (fboundp 'common-lisp-user::Garnet-Note-Quitted)
+    (pushnew
+     #'(lambda (win)
+	 (declare (ignore win))
+	 (common-lisp-user::Garnet-Note-Quitted "DEMO-VIRTUAL-AGG"))
+       (g-value *vp* :destroy-hooks)))
+  
   (setq *input*
     (open (merge-pathnames "circles.data" common-lisp-user::Garnet-DataFile-PathName)
           :direction :input))

@@ -8,6 +8,9 @@
 ;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; $Id$
+
+
 ;;;  DEMO-MOTIF
 ;;;
 ;;;  The function in this module creates a window displaying the motif
@@ -22,32 +25,7 @@
 ;;;
 ;;;  Written by Andrew Mickish
 
-
-;;;  CHANGE LOG:
-;;;
-;;;  07/02/93 Andrew Mickish - Excepted :keyboard-selection-p in constant lists
-;;;  05/26/93 Andrew Mickish - Fixed constant declarations for new aggrelists
-;;;  05/20/93 Andrew Mickish - Put scroll bars in their own aggregate;
-;;;            made some feedback objects fast-redraw; made scroll bars
-;;;            constant again.
-;;;  07/03/92 Ed Pervin - Temporarily made red-bar, green-bar, blue-bar
-;;;			be non-constant due to bug in KR 2.0.10.
-;;;  04/08/92 Andrew Mickish - Changed :items functions of SHADE-BUTTONS to
-;;;            set the SHADE-SLIDER with gg::*highlight-value*, etc.
-;;;  03/10/92 Ed Pervin - Changed (create-instance NIL opal:black)
-;;;			to just opal:black in many places.
-;;;  02/28/92 Andrew Mickish - Modified to work with hash-table-oriented
-;;;            implementation of gadget colors.
-;;;  02/26/92 Andrew Mickish - Added border rectangles to color boxes
-;;;  02/17/92 Andrew Mickish - Added constant slots
-;;;  11/25/91 Ed Pervin      - Allowed background color for windows, so
-;;;			       we don't have to use an actual rectangle.
-;;;  10/08/91 Andrew Mickish - Added fast-redraw to color rectangles
-;;;  03/21/91 Andrew Mickish - Added :selection-function of GROUND-BUTTONS
-;;;  03/01/91 Andrew Mickish - Created
-;;;
-
-
+
 (in-package :DEMO-MOTIF)
 
 (defvar DEMO-MOTIF-INIT
@@ -186,7 +164,7 @@
 				(:constant T)
 				(:foreground-color opal:MOTIF-BLUE))))
   
-  (create-instance 'DEMO-MOTIF-WIN inter:interactor-window
+    (create-instance 'DEMO-MOTIF-WIN inter:interactor-window
      (:double-buffered-p double-buffered-p)
      ;; Filling-style is accessed by the :foreground-color of all the gadgets
      ;; in the window so that they change simultaneously
@@ -219,7 +197,15 @@
 	   :aggregate
 	   (create-instance 'DEMO-MOTIF-TOP-AGG opal:aggregate))
 
-
+  ;; If we get clobbered by the window manager, let the demos
+  ;; controller know (if it's there).
+  (when (fboundp 'common-lisp-user::Garnet-Note-Quitted)
+    (pushnew
+     #'(lambda (win)
+	 (declare (ignore win))
+	 (common-lisp-user::Garnet-Note-Quitted "DEMO-MOTIF"))
+     (g-value demo-motif-win :destroy-hooks)))
+  
   (create-instance 'COLOR-BUTTONS garnet-gadgets:MOTIF-CHECK-BUTTON-PANEL
      (:constant T :except :foreground-color)
      (:left 130) (:top 150)

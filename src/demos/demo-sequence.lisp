@@ -7,21 +7,20 @@
 ;;; domain.  If you are using this code or any part of Garnet,      ;;;
 ;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; $Id$
 
+
 ;;; This demo shows off having one interactor start another one
 ;;;
 ;;; Written by Brad Myers
-;;; CHANGES
-;;; 5/30/94 Marty Geier - Changed position of main window in do-go
-;;; 3/25/92 Andrew Mickish - Get-Values ---> G-Value
-;;; 3/05/92 Andrew Mickish - Added formula in :visible slot of text feedback
-;;;           object
-;;; 1/28/92 ECP  Made :xor objects be fast-redraw
-;;;
+;;;;
+;;;; Had some trouble getting this to work (FMG)
 
+
 (in-package :DEMO-SEQUENCE)
 
-(defparameter *test-debug* NIL)
+(defparameter *test-debug* t)
 
 ;;-----------------------------------
 (defparameter bigfnt (create-instance NIL opal:font
@@ -31,51 +30,48 @@
 (defun make-menu (top-agg names x y) 
   (let (menu-name shadow all-items feedback frame prev-item this-item)
 
-    (setf menu-name (create-instance NIL opal:aggregate
-					  (:left x)(:top y)(:width 500)
-					  (:height 500)
-					  (:overlapping T))) ;**NIL**
+    (create-instance 'menu-name opal:aggregate
+      (:left x)(:top y)(:width 500) (:height 500)
+      (:window (g-value top-agg :window))
+      (:overlapping T)) ;**NIL**
 
-    (setf shadow
-	  (create-instance NIL opal:rectangle
-	    (:left (o-formula (gvl :parent :left)))
-	    (:top (o-formula (gvl :parent :top)))
-	    ; width and height set later
-	    (:name :shadow)
-	    (:filling-style opal:black-fill)
-	    (:line-style NIL)))
+    (create-instance 'shadow opal:rectangle
+      (:left (o-formula (gvl :parent :left)))
+      (:top (o-formula (gvl :parent :top)))
+      ;; width and height set later
+      (:name :shadow)
+      (:filling-style opal:black-fill)
+      (:line-style NIL))
 
-    (setf all-items
-	  (create-instance NIL opal:aggregate
-				(:overlapping T) ;**NIL**
-				(:name :all-items)))
+    (create-instance 'all-items opal:aggregate
+      (:overlapping T) ;**NIL**
+      (:name :all-items))
 
-    (setf frame
-	  (create-instance NIL opal:rectangle
-	    (:filling-style opal:white-fill)
-	    (:name :frame)
-	    (:line-style opal:line-2)
-	    (:shadow shadow)
-	    (:left (o-formula (+ 5 (gvl :shadow :left)) 0))
-	    (:top (o-formula (+ 5 (gvl :shadow :top)) 0))
-	    (:width (o-formula (gvl :shadow :width) 0))
-	    (:height (o-formula (gvl :shadow :height) 0))))
+    (create-instance 'frame opal:rectangle
+      (:filling-style opal:white-fill)
+      (:name :frame)
+      (:line-style opal:line-2)
+      (:shadow shadow)
+      (:left (o-formula (+ 5 (gvl :shadow :left)) 0))
+      (:top (o-formula (+ 5 (gvl :shadow :top)) 0))
+      (:width (o-formula (gvl :shadow :width) 0))
+      (:height (o-formula (gvl :shadow :height) 0)))
 
     (opal:add-components top-agg menu-name)
 
     (opal:add-components menu-name shadow frame all-items)
 
-    (setf feedback (create-instance NIL opal:rectangle
-		     (:name :feedback)
-		     (:draw-function :xor)
-		     (:fast-redraw-p t)
-		     (:filling-style opal:black-fill)
-		     (:line-style NIL)   ; no outline
-		     (:visible (o-formula (gvl :obj-over)))
-		     (:left (o-formula (1- (gvl :obj-over :left)) 0))
-		     (:top (o-formula (1- (gvl :obj-over :top)) 0))
-		     (:width (o-formula (+ 2 (gvl :obj-over :width)) 0))
-		     (:height (o-formula (+ 2 (gvl :obj-over :height)) 0))))
+    (create-instance 'feedback opal:rectangle
+      (:name :feedback)
+      (:draw-function :xor)
+      (:fast-redraw-p t)
+      (:filling-style opal:black-fill)
+      (:line-style NIL)   ; no outline
+      (:visible (o-formula (gvl :obj-over)))
+      (:left (o-formula (1- (gvl :obj-over :left)) 0))
+      (:top (o-formula (1- (gvl :obj-over :top)) 0))
+      (:width (o-formula (+ 2 (gvl :obj-over :width)) 0))
+      (:height (o-formula (+ 2 (gvl :obj-over :height)) 0)))
 
     (opal:add-components menu-name feedback)
     
@@ -125,18 +121,16 @@
   (let (menu outline-feedback all-items )
     (setf menu (make-menu agg names x y))
     (setf all-items (get-value menu :all-items))
-    (setf outline-feedback
-	  (create-instance
-	   NIL opal:rectangle
-	   (:name :outline-feedback)
-	   (:draw-function :xor)
-	   (:fast-redraw-p t)
-	   (:all-items all-items)
-	   (:visible (o-formula (gvl :all-items :selected)))
-	   (:left (o-formula (- (gvl :all-items :selected :left) 2) 0))
-	   (:top (o-formula (- (gvl :all-items :selected :top) 2) 0))
-	   (:width (o-formula (+ 2 (gvl :all-items :selected :width)) 0))
-	   (:height (o-formula (+ 4 (gvl :all-items :selected :height)) 0))))
+    (create-instance 'outline-feedback opal:rectangle
+      (:name :outline-feedback)
+      (:draw-function :xor)
+      (:fast-redraw-p t)
+      (:all-items all-items)
+      (:visible (o-formula (gvl :all-items :selected)))
+      (:left (o-formula (- (gvl :all-items :selected :left) 2) 0))
+      (:top (o-formula (- (gvl :all-items :selected :top) 2) 0))
+      (:width (o-formula (+ 2 (gvl :all-items :selected :width)) 0))
+      (:height (o-formula (+ 4 (gvl :all-items :selected :height)) 0)))
     (opal:add-components menu outline-feedback)
     (when *test-debug* (format T "done menu1= ~s~%" menu))
     menu))
@@ -195,11 +189,11 @@
 (defun Create-text-obj (feedback)
   (when *test-debug* (format T "Creating new text object~%"))
   (let (obj)
-    (setq obj (create-instance NIL opal:text
-		   (:left (g-value feedback :left))
-		   (:top (g-value feedback :top))
-		   (:font (g-value feedback :font))
-		   (:string (g-value feedback :string))))
+    (create-instance 'obj opal:text
+      (:left (g-value feedback :left))
+      (:top (g-value feedback :top))
+      (:font (g-value feedback :font))
+      (:string (g-value feedback :string)))
     (opal:add-component aggnewobj obj)
     (incf texty (g-value obj :height))
     (s-value text-feedback-obj :top texty)
@@ -212,25 +206,25 @@
     (if (g-value newobjinter :line-p)
 	(progn
 	  (when *test-debug* (format T "creating line; ~s~%" point-list))
-	  (setq obj (create-instance NIL opal:line
-				     (:x1 (first point-list))
-				     (:y1 (second point-list))
-				     (:x2 (third point-list))
-				     (:y2 (fourth point-list))
-				     )))
+	  (create-instance 'obj opal:line
+	    (:x1 (first point-list))
+	    (:y1 (second point-list))
+	    (:x2 (third point-list))
+	    (:y2 (fourth point-list))
+	    ))
 	(progn
 	  (when *test-debug* (format T "creating rect; ~s~%" point-list))
-	  (setq obj (create-instance NIL opal:rectangle
-				     (:left (first point-list))
-				     (:top (second point-list))
-				     (:width (third point-list))
-				     (:height (fourth point-list))
-				     (:filling-style
-				      (case *glo-tone*
-					(0 opal:white-fill)
-					(1 opal:light-gray-fill)
-					(2 opal:gray-fill)
-					(3 opal:dark-gray-fill)))))
+	  (create-instance 'obj opal:rectangle
+	    (:left (first point-list))
+	    (:top (second point-list))
+	    (:width (third point-list))
+	    (:height (fourth point-list))
+	    (:filling-style
+	     (case *glo-tone*
+	       (0 opal:white-fill)
+	       (1 opal:light-gray-fill)
+	       (2 opal:gray-fill)
+	       (3 opal:dark-gray-fill))))
 	  (setq *glo-tone* (if (eq *glo-tone* 3) 0 (1+ *glo-tone*)))))
 	  
     (opal:add-component aggnewobj obj)
@@ -245,150 +239,156 @@
   (setq pop-menu (make-fixed-menu1 aggmenu stringlist 0 0))
   (s-value pop-menu :visible NIL)
 
-  (create-instance 'pop-inter
-		   inter:menu-interactor 
-		   (:start-where NIL)
-		   (:feedback-obj (g-value pop-menu :feedback))
-		   (:running-where
-		    `(:element-of ,(g-value pop-menu :all-items)))
-		   (:window vpmain)
-		   (:abort-action
-		    #'(lambda (an-interactor obj-over)
-			(call-prototype-method an-interactor obj-over)
-			;; (s-value pop-vp :visible NIL)
-			(s-value pop-menu :visible NIL)
-			(s-value (g-value menu3 :all-items) :selected NIL)))
-		   (:stop-action
-		    #'(lambda (an-interactor obj-over)
-			(when *test-debug* (format T "stop on ~s~%" obj-over))
-			;; (s-value pop-vp :visible NIL)
-			(s-value second-menu-string :mode (g-value obj-over :string))
-			(call-prototype-method an-interactor obj-over)
-			(s-value (g-value menu3 :all-items) :selected NIL)
-			(s-value pop-menu :visible NIL)
-			(s-value (g-value pop-menu :all-items) :selected NIL)
-			))))
+  (create-instance 'pop-inter inter:menu-interactor 
+    (:start-where NIL)
+    (:feedback-obj (g-value pop-menu :feedback))
+    (:running-where
+     `(:element-of ,(g-value pop-menu :all-items)))
+    (:window vpmain)
+    (:abort-action
+     #'(lambda (an-interactor obj-over)
+	 (call-prototype-method an-interactor obj-over)
+	 ;; (s-value pop-vp :visible NIL)
+	 (s-value pop-menu :visible NIL)
+	 (s-value (g-value menu3 :all-items) :selected NIL)))
+    (:stop-action
+     #'(lambda (an-interactor obj-over)
+	 (when *test-debug* (format T "stop on ~s~%" obj-over))
+	 ;; (s-value pop-vp :visible NIL)
+	 (s-value second-menu-string :mode (g-value obj-over :string))
+	 (call-prototype-method an-interactor obj-over)
+	 (s-value (g-value menu3 :all-items) :selected NIL)
+	 (s-value pop-menu :visible NIL)
+	 (s-value (g-value pop-menu :all-items) :selected NIL)
+	 ))))
 		     
 ;;-----------------------------------
 
 
 (defun do-stop ()
-  (opal:destroy vpmain))
+  (opal:destroy vpmain)
+  (setf vpmain nil))
 
 (defun do-go (&key dont-enter-main-event-loop double-buffered-p)
-  (setq vpmain (create-instance NIL inter:interactor-window (:height 360)
-			       (:width 400)(:top 100)(:left 100)
-			       (:title "GARNET SEQUENCING")
-                               (:double-buffered-p double-buffered-p)
-			       (:icon-title "Sequence")))
+  (create-instance 'vpmain inter:interactor-window
+    (:height 360) (:width 400)(:top 100)(:left 100)
+    (:title "GARNET SEQUENCING")
+    (:double-buffered-p double-buffered-p)
+    (:icon-title "Sequence"))
+
   (opal:update vpmain)
 
   (setq vpmenu vpmain)
-  (s-value vpmain :aggregate (create-instance 'aggmenu opal:aggregate
-						    (:overlapping T)))
-  (create-instance 'aggmain opal:aggregate (:left 0)(:top 0)
-				 (:width 400)(:height 360)
-				 (:overlapping T))
+  (s-value vpmain :aggregate 
+	   (create-instance 'aggmenu opal:aggregate (:overlapping T)))
+
+  (create-instance 'aggmain opal:aggregate
+    (:left 0)(:top 0) (:width 400)(:height 360)
+    (:overlapping T))
 
   ;;; the new objects will be under the menu
-  (opal:add-component aggmenu (create-instance 'aggnewobj opal:aggregate
-					       (:left 0)(:top 0)
-					       (:width 400)(:height 360)
-					       (:overlapping T)))
+  (opal:add-component aggmenu
+		      (create-instance 'aggnewobj opal:aggregate
+			(:left 0)(:top 0)
+			(:width 400)(:height 360)
+			(:overlapping T)))
 
-  (setq menu3 (make-fixed-menu1 aggmenu
-				'("Line" "Rectangle" "Menu" "Text") 5 5))
+  (setq menu3
+	(make-fixed-menu1 aggmenu
+			  '("Line" "Rectangle" "Menu" "Text") 5 5))
 
   (create-instance 'second-menu-string opal:text
-	      (:string (o-formula (concatenate 'string "Secondary mode is: "
-					      (gvl :mode))))
-	      (:mode "*NONE*")
-	      (:font bigfnt)
-	      (:left 5)
-	      (:top 325))
+    (:string (o-formula (concatenate 'string "Secondary mode is: "
+				     (gvl :mode))))
+    (:mode "*NONE*")
+    (:font bigfnt)
+    (:left 5)
+    (:top 325))
 
   (opal:add-component aggmenu second-menu-string)
   (opal:add-component aggmenu aggmain)
 
-  (setq inter3 (create-instance 'main-menu-inter
-				  inter:menu-interactor 
-				  (:feedback-obj (g-value menu3 :feedback))
-				  (:start-where
-				   `(:element-of ,(g-value menu3 :all-items)))
-				  (:window vpmenu)
-				  (:stop-action `Special-Stop-Action)))
+  (setq inter3
+	(create-instance 'main-menu-inter inter:menu-interactor 
+	  (:feedback-obj (g-value menu3 :feedback))
+	  (:start-where
+	   `(:element-of ,(g-value menu3 :all-items)))
+	  (:window vpmenu)
+	  (:stop-action `Special-Stop-Action)))
   (opal:add-component aggmain
-      (setq twop-rect (create-instance NIL opal:rectangle
-			   (:draw-function :xor)
-		           (:fast-redraw-p t)
-			   (:name "Interim Rect feedback")
-			   (:left (o-formula (first (gvl :box))))
-			   (:top (o-formula (second (gvl :box))))
-			   (:width (o-formula (third (gvl :box))))
-			   (:height (o-formula (fourth (gvl :box))))
-			   (:visible NIL)
-			   (:box '(0 0 0 0))
-			   (:line-style opal:dashed-line))))
+		      (create-instance 'twop-rect opal:rectangle
+			(:draw-function :xor)
+			(:fast-redraw-p t)
+			(:name "Interim Rect feedback")
+			(:left (o-formula (first (gvl :box))))
+			(:top (o-formula (second (gvl :box))))
+			(:width (o-formula (third (gvl :box))))
+			(:height (o-formula (fourth (gvl :box))))
+			(:visible NIL)
+			(:box '(0 0 0 0))
+			(:line-style opal:dashed-line)))
   (opal:add-component aggmain
-      (setq twop-line (create-instance NIL opal:line
-			   (:draw-function :xor)
-		           (:fast-redraw-p t)
-			   (:name "Interim Line feedback")
-			   (:x1 (o-formula (first (gvl :points))))
-			   (:y1 (o-formula (second (gvl :points))))
-			   (:x2 (o-formula (third (gvl :points))))
-			   (:y2 (o-formula (fourth (gvl :points))))
-			   (:visible NIL)  
-			   (:points '(0 0 0 0))
-			   (:line-style opal:dashed-line))))
+		      (create-instance 'twop-line opal:line
+			(:draw-function :xor)
+			(:fast-redraw-p t)
+			(:name "Interim Line feedback")
+			(:x1 (o-formula (first (gvl :points))))
+			(:y1 (o-formula (second (gvl :points))))
+			(:x2 (o-formula (third (gvl :points))))
+			(:y2 (o-formula (fourth (gvl :points))))
+			(:visible NIL)  
+			(:points '(0 0 0 0))
+			(:line-style opal:dashed-line)))
 
-  (setq newobjinter (create-instance 'two-p-inter inter:Two-Point-Interactor
-	(:Window vpmain)
-	(:start-where NIL) ; make sure doesn't start up on its own
-	(:running-where `(:in ,aggmain))
-	(:start-event :leftdown)
-	(:stop-event :any-mousedown)
-	(:abort-event :any-keyboard)
-	(:final-function 'Create-New-Obj)
-	(:line-p T)
-	(:feedback-obj (formula `(if (gvl :line-p) twop-line twop-rect)))
-	(:Min-width NIL)
-	(:Min-height NIL)
-	(:abort-if-too-small NIL)
-	(:abort-action #'(lambda (an-interactor)  ; turn off the outline box
-			   (call-prototype-method an-interactor)
-			   (s-value (g-value menu3 :all-items) :selected NIL)))
-	))
+  (setq newobjinter
+	(create-instance 'two-p-inter inter:Two-Point-Interactor
+	  (:Window vpmain)
+	  (:start-where NIL) ; make sure doesn't start up on its own
+	  (:running-where `(:in ,aggmain))
+	  (:start-event :leftdown)
+	  (:stop-event :any-mousedown)
+	  (:abort-event :any-keyboard)
+	  (:final-function 'Create-New-Obj)
+	  (:line-p T)
+	  (:feedback-obj (formula `(if (gvl :line-p) twop-line twop-rect)))
+	  (:Min-width NIL)
+	  (:Min-height NIL)
+	  (:abort-if-too-small NIL)
+	  (:abort-action #'(lambda (an-interactor)  ; turn off the outline box
+			     (call-prototype-method an-interactor)
+			     (s-value (g-value menu3 :all-items) :selected NIL)))
+	  ))
 
   (opal:add-component aggmain
 		      (create-instance 'text-feedback-obj
-				       opal:cursor-text (:string "")
-				       (:cursor-index nil)
-				       (:visible NIL)
-				       (:left 175)
-				       (:top texty)))
+			  opal:cursor-text (:string "")
+			  (:cursor-index nil)
+			  (:visible NIL)
+			  (:left 175)
+			  (:top texty)))
 
-  (setq textinter (create-instance 'text-inter inter:text-interactor
-	      (:feedback-obj text-feedback-obj)
-	      (:start-where NIL)  ; don't start by self; wait to be started explicitly
-	      (:window vpmain)
-	      (:abort-event :control-\g)
-	      (:stop-event '(:any-mousedown #\RETURN))
-	      (:start-action #'(lambda (inter new-obj start-event)
-				 (s-value (g-value inter :feedback-obj)
-					  :visible T)
-				 (call-prototype-method inter new-obj
-							start-event)))
-	      (:abort-action #'(lambda (an-interactor obj ev) ;turn off outline box
-			   (call-prototype-method an-interactor obj ev)
-			   (s-value (g-value menu3 :all-items) :selected NIL)))
-	      (:stop-action
-	       #'(lambda (an-interactor obj-over stop-event)
-		   ;; call parent to turn off feedback object visibility
-		   (call-prototype-method an-interactor obj-over stop-event)
-		   (let* ((feedback (g-value an-interactor :feedback-obj)))
-		     (create-text-obj feedback)
-		     (s-value feedback :string ""))))))
+  (setq textinter
+	(create-instance 'text-inter inter:text-interactor
+	  (:feedback-obj text-feedback-obj)
+	  (:start-where NIL)  ; don't start by self; wait to be started explicitly
+	  (:window vpmain)
+	  (:abort-event :control-\g)
+	  (:stop-event '(:any-mousedown #\RETURN))
+	  (:start-action #'(lambda (inter new-obj start-event)
+			     (s-value (g-value inter :feedback-obj)
+				      :visible T)
+			     (call-prototype-method inter new-obj
+						    start-event)))
+	  (:abort-action #'(lambda (an-interactor obj ev) ;turn off outline box
+			     (call-prototype-method an-interactor obj ev)
+			     (s-value (g-value menu3 :all-items) :selected NIL)))
+	  (:stop-action
+	   #'(lambda (an-interactor obj-over stop-event)
+	       ;; call parent to turn off feedback object visibility
+	       (call-prototype-method an-interactor obj-over stop-event)
+	       (let* ((feedback (g-value an-interactor :feedback-obj)))
+		 (create-text-obj feedback)
+		 (s-value feedback :string ""))))))
 
   (create-pop-menu '("First" "Second" "Third" "Fourth" "Fifth" "Sixth" "Seventh"))
 

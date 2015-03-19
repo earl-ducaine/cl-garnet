@@ -8,7 +8,7 @@
 ;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-
+
 ;;;This file is a sample of a visual programming arithmetic expression
 ;;; editor created with Garnet.
 ;;;
@@ -16,35 +16,8 @@
 ;;;
 ;;;Designed and implemented by Brad A. Myers
 
-#|
-==================================================================
-Change log:
-     08/19/93 Andrew Mickish - Changed :value of ARITH-BOX so that arithmetic
-               operator is only called when there are in-vals
-     02/03/93 James Landay - made changes to xy-obj-edge to improve speed
-     04/09/92 Andrew Mickish - Changed create-instance of opal:line-0 to
-               opal:line-style
-     03/25/92 Andrew Mickish - Get-Values ---> G-Value
-     03/06/92 Andrew Mickish - Changed CMU pathname in Gesture-Creator to
-                "gesture-data:"; collected all loading of required files
-                into defvar of DEMO-ARITH-INIT.
-      2/21/92 James Landay   - Added gestures!
-       2/4/92 Andrew Mickish - In Create-New-Obj, we must create instances of
-                the prototype objects, not the selected objects.
-      1/28/92 Ed Pervin - Load PS.
-      8/06/91 Andrew Mickish - Added print buttons;  changed objects in
-                DO-GO to be named, rather than setq'ed;  removed DoIt and put
-                item-functions in the text-button-panel's :items list.
-     11/07/90 Ed Pervin - In Do-Quit, destroy the window BEFORE
-                exit-main-event-loop.
-      9/04/90 Osamu Hashimoto - Added Garnet-Note-Quitted for demo-controller,
-                Changed window positon.
-      8/21/90 Brad Myers - First character typed starts string over 
-      7/04/90 Brad Myers - Started based on demo-editor
-==================================================================
-|#
 
-
+
 (in-package :DEMO-ARITH)
 
 ;;;  Load text-buttons-loader, graphics-loader, and arrow-line-loader
@@ -472,7 +445,7 @@ Change log:
   (opal:destroy TOP-WIN)
   ;;for demo-controller
   (unless (and (fboundp 'common-lisp-user::Garnet-Note-Quitted)
-           (common-lisp-user::Garnet-Note-Quitted "DEMO-ARITH"))))
+	       (common-lisp-user::Garnet-Note-Quitted "DEMO-ARITH"))))
 
 (defun PostScript-Window (g v)
   (declare (ignore g v))
@@ -711,7 +684,7 @@ Change log:
 
 (defun Do-Go (&key dont-enter-main-event-loop (double-buffered-p T))
   (let (work-win work-agg)
-    ;;;create top-level window
+    ;; Create top-level window
     (create-instance 'TOP-WIN inter:interactor-window
        (:double-buffered-p double-buffered-p)
        (:left 280) (:top 120)
@@ -719,16 +692,26 @@ Change log:
        (:title "GARNET Arithmetic Editor")
        (:icon-title "Arith"))
 
-    ;;;create the top level aggregate in the window
+    ;; Create the top level aggregate in the window
     (s-value TOP-WIN
-         :aggregate
-         (create-instance 'TOP-AGG opal:aggregate
-        (:left 0)(:top -2)
-        (:width (o-formula (gvl :window :width)))
-        (:height (o-formula (gvl :window :height)))))
+	     :aggregate
+	     (create-instance 'TOP-AGG opal:aggregate
+	       (:left 0)(:top -2)
+	       (:width (o-formula (gvl :window :width)))
+	       (:height (o-formula (gvl :window :height)))))
     (opal:update TOP-WIN)
 
-    ;;;create window for the work area
+    ;; If we get clobbered by the window manager, let the demos
+    ;; controller know (if it's there).
+    (when (fboundp 'common-lisp-user::Garnet-Note-Quitted)
+      (pushnew
+       #'(lambda (win)
+	   (declare (ignore win))
+	   (common-lisp-user::Garnet-Note-Quitted "DEMO-ARITH"))
+       (g-value top-win :destroy-hooks)))
+
+
+    ;; Create window for the work area
     (create-instance 'SCROLL-WIN garnet-gadgets:scrolling-window-with-bars
        (:left 175) (:top -2) ;no extra border at the top
        (:width (o-formula (- (gvl :window :parent :width) (gvl :left))))

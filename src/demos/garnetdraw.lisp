@@ -8,58 +8,15 @@
 ;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; $Id$
+
+
+;;;
 ;;;   GARNET DRAW
 ;;;
 ;;;  Implemented by Vivek Gupta
 
-
-;;; CHANGE LOG:
-;;;
-;;;  6/17/94  Marty Geier - Corrected garnet-pathnames call to directory
-;;;              garnet: (for mac) instead of garnet\
-;;;  6/15/94  Andrew Mickish - Called user::garnet-pathnames for bitmap files
-;;;  5/30/94  Marty Geier - Fixed window position in create-main-win
-;;;  4/13/94  Andrew Mickish - Fixed in-package statement written out to file
-;;;  2/09/94  Andrew Mickish - Removed load of scrolling-labeled-box-loader
-;;; 10/06/93  Andrew Mickish - :background-color ---> :foreground-color
-;;;  7/13/93  Rajan Parthasarathy - Made *STORED-LINE-STYLES* list, and
-;;;             added Get-Line-Style function to get/make a line style.
-;;;             Made it use default opal colors whenever possible.
-;;;  7/ 8/93  Andrew Mickish - Destroyed CREATOR-* prototypes in Do-Stop
-;;;  7/ 8/93  Rajan Parthasarathy - Fixed bug in Ps-Sel-Fn
-;;;  6/17/93  Rajan Parthasarathy - Added polyline editing
-;;;  3/18/93  Brad Myers - allowed output to be used by gilt and other programs
-;;;  2/23/93  Andrew Mickish - Removed call to notice-items-changed for mbar
-;;;  2/10/93  Andrew Mickish - Changed :item-font and :accel-font in menubar;
-;;;             Removed DELETE interactor and attached #\rubout accelerator
-;;;             to menubar
-;;;  1/23/93  Rajan Parthasarathy - Modified to use motif gadgets.
-;;;  1/10/93  Brad Myers - use functions in standard-edit
-;;; 09/03/92  Andrew Mickish - GetFontFromMenu returns old font if no change
-;;; 08/31/92  Andrew Mickish - Now fontfun always sets the tool's font
-;;; 08/20/92  Andrew Mickish - "concatenate 'string" ---> "merge-pathnames"
-;;; 08/12/92  Rajan Parthasarathy - Modified to use save/load gadgets.
-;;;            Added s-value of :start-where of POLYGON-MAKER in Read-Sel-Fn.
-;;;            The function Save-File-If-Wanted is now loaded with the
-;;;            save-gadget.
-;;;  07/7/92  Brad Myers - Moved multi-grow and select in region to
-;;;                        multi-graphics-selection widget
-;;; 05/20/92  Brad Myers - Add gridding, fixed text entry, use Modal-p windows
-;;;                        removed load of prop-sheets
-;;; 05/11/92  Ed Pervin - Moved bitmaps to lib/bitmaps directory.
-;;;			  Added load of ps-loader.
-;;; 05/01/92  Andrew Mickish - Added :except in :constant list of *Read-DB*,
-;;;             Fixed interface to CURRENT-STATE's :feedback's :frfs slot,
-;;;             NEW-ITEM and POLYGON-MAKER no longer create instances of NIL
-;;;             filling-styles.
-;;; 04/28/92  Andrew Mickish - Added schema-p check in Read-Sel-Fn, added
-;;;             garnetdraw package name in Write-Draw-Agg
-;;; 04/23/92  Ed Pervin      - Added proclaim statement
-;;; 04/20/92  Andrew Mickish - Put into standard form
-;;; 09/15/91  Vivek Gupta    - Started
-;;;
-
-
+
 (in-package :GARNETDRAW)
 
 (defparameter GarnetDraw-Version "2.0")
@@ -1393,6 +1350,15 @@ line-styles and filling-styles.
 
   (s-value WIN :aggregate (create-instance 'TOP-AGG opal:aggregate))
 
+  ;; If we get clobbered by the window manager, let the demos
+  ;; controller know (if it's there).
+  (when (fboundp 'common-lisp-user::Garnet-Note-Quitted)
+    (pushnew
+     #'(lambda (win)
+	 (declare (ignore win))
+	 (common-lisp-user::Garnet-Note-Quitted "GARNETDRAW"))
+     (g-value win :destroy-hooks)))
+  
   (Create-Moving-Prototypes) ; Creates MOVING-RECT, MOVING-OVAL, etc.
   (Create-Text-Feedback)     ; Creates TEXT-FEEDBACK
   (Create-Main-Menubar)      ; Creates MAIN-MENU

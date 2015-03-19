@@ -8,6 +8,9 @@
 ;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; $Id$
+
+
 ;;; This file contains demo code for testing the text interactor
 ;;;
 ;;; This is intended as a test and demonstration of the text interactor
@@ -19,6 +22,7 @@
 ;;; Implemented by Richard McDaniel
 
 
+
 (in-package :DEMO-MULTIFONT)
 
 (declaim (special FOCUS-INTER MOUSE-INTER TEXT1 TEXT2 WIN TOP MESSAGE
@@ -227,6 +231,15 @@
   (s-value win :aggregate top)
   (opal:update win)
 
+  ;; If we get clobbered by the window manager, let the demos
+  ;; controller know (if it's there).
+  (when (fboundp 'common-lisp-user::Garnet-Note-Quitted)
+    (pushnew
+     #'(lambda (win)
+	 (declare (ignore win))
+	 (common-lisp-user::Garnet-Note-Quitted "DEMO-MULTIFONT"))
+     (g-value win :destroy-hooks)))
+  
   ;; Create the message bar
   (create-instance 'message opal:multifont-text
     (:left 0)

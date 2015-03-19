@@ -7,7 +7,10 @@
 ;;; domain.  If you are using this code or any part of Garnet,      ;;;
 ;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; $Id$	
 
+
 ;;; This file contains demo code for showing things that change size in a window.
 ;;;
 ;;; This is intended as a test and demonstration of the move-grow
@@ -18,19 +21,7 @@
 ;;;
 ;;; Designed and implemented by Brad A. Myers
 
-#|
-==================================================================
-Change log:
-         05/30/94 Marty Geier - changed load to garnet-load
-                                changed main window position in do-go
-	 05/27/92 Ed Pervin - The latest CMUCL requires that the
-				argument to random be declared an integer.
-	 04/07/92 Ed Pervin - Move in-package to beginning of file.
-         01/04/90 Andrew Mickish - Added auto-loading of "graphics-loader"
-==================================================================
-|#
-
-
+
 (in-package :DEMO-GROW)
 
 ;;; Load GAD-button-parts unless already loaded
@@ -108,6 +99,14 @@ Change log:
 		    (create-instance 'top-agg Opal:aggregate)))
   (create-instance 'sel-objs-agg Opal:Aggregate)
 
+  ;; If we get clobbered by the window manager, let the demos
+  ;; controller know (if it's there).
+  (when (fboundp 'common-lisp-user::Garnet-Note-Quitted)
+    (pushnew
+     #'(lambda (win)
+	 (declare (ignore win))
+	 (common-lisp-user::Garnet-Note-Quitted "DEMO-GROW"))
+     (g-value win :destroy-hooks)))
 		   
   (Opal:Add-Component top-agg sel-objs-agg)
 

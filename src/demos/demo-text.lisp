@@ -7,7 +7,10 @@
 ;;; domain.  If you are using this code or any part of Garnet,      ;;;
 ;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; $Id$
 
+
 ;;; This file contains demo code for testing the text interactor
 ;;;
 ;;; This is intended as a test and demonstration of the text interactor
@@ -17,29 +20,7 @@
 ;;;
 ;;; Designed and implemented by Brad A. Myers
 
-#|
-============================================================
-Change log:
-       05/30/94 Marty Geier - Changed window position in do-go
-                              changed load to garnet-load
-       05/21/93 Brad Myers - fixed comments for new bindings
-       02/02/93 Andrew Mickish - opal:set-strings ---> opal:set-text
-	 4/2/92 Rich McDaniel - New multifont-text
-	 8/6/91 Ed Pervin - Made :strings of the-feedback-obj = NIL
-	 6/18/91 Ed Pervin - Changed to multifont-text
-	 3/15/90 Ed Pervin - Changed to variable width font
-         10/10/89 Brad Myers - New interactor changes
-         8/21/89 Brad Myers - Changes to use multi-line text
-         6/26/89 Brad Myers - Fixed to have quote for create-schema
-         6/19/89 Brad Myers - Fixed to print a message
-         4/20/89 Brad Myers - call-parent-method -> call-prototype-method
-	 4/7/89 Brad Myers and Dario Giuse - change for new KR
-         3/28/89 Brad Myers - New cursor-text works with 0-length strings
-         3/2/89 Philippe Marchal - Titles for window and icon
-         3/1/89 Brad Myers - started
-============================================================
-|#
-
+
 (in-package :DEMO-TEXT)
 
 (declaim (special VP TOP-AGG AGG VARIABLE-FONT TEXT-OBJ SPECIAL-OBJ
@@ -73,6 +54,16 @@ Change log:
   (s-value vp :aggregate
 	   (create-instance 'top-agg opal:aggregate
 				 (:overlapping T)))
+
+  ;; If we get clobbered by the window manager, let the demos
+  ;; controller know (if it's there).
+  (when (fboundp 'common-lisp-user::Garnet-Note-Quitted)
+    (pushnew
+     #'(lambda (win)
+	 (declare (ignore win))
+	 (common-lisp-user::Garnet-Note-Quitted "DEMO-TEXT"))
+     (g-value vp :destroy-hooks)))
+
   (create-instance 'agg opal:aggregate
 				 (:overlapping T)
 				 (:left 0)(:top 0)(:width 650)(:height 400))

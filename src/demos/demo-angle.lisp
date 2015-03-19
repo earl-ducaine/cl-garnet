@@ -21,7 +21,7 @@
 
 (in-package :DEMO-ANGLE)
 
-(defparameter *test-debug* t)
+(defparameter *test-debug* nil)
 (defparameter vp NIL)                  ;; window to be used for the display
 (defparameter top-agg4 NIL)            ;; top aggregate in window
 (defparameter fnt2 NIL)                ;; small, nice font
@@ -379,6 +379,15 @@
 	   (create-instance 'top-agg4 opal:aggregate
 					   (:overlapping NIL)))
 
+  ;; If we get clobbered by the window manager, let the demos
+  ;; controller know (if it's there).
+  (when (fboundp 'common-lisp-user::Garnet-Note-Quitted)
+    (pushnew
+     #'(lambda (win)
+	 (declare (ignore win))
+	 (common-lisp-user::Garnet-Note-Quitted "DEMO-ANGLE"))
+     (g-value vp :destroy-hooks)))
+  
   (create-instance 'fnt2 opal:font)
   
   ;; ** Menu 1 **

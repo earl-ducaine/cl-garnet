@@ -4,58 +4,41 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; This code was written as part of the Garnet project at          ;;;
 ;;; Carnegie Mellon University, and has been placed in the public   ;;;
-;;; domain.  If you are using this code or any part of Garnet,      ;;;
-;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
+;;; domain.                                                         ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;;
+;;; $Id$
+
+
 ;;;  Garnet Calculator (based on xcalc) - by David S. Kosbie
 ;;;
 ;;;
-;;;  CHANGE LOG:
-;;;  06/01/94  Marty Geier - Added cases in sin and tan functions for
-;;;            0 checking due to unknown math errors.
-;;;            Also added checking for 1 case in log and ln functions,
-;;;            again to prevent a math error.
-;;;  04/18/94  amickish - Made Gem/Mac version
-;;;  09/06/94  Clive Tong - Added MAKE-PACKAGE call
-;;;  08/23/93  amickish - {-BUTTON ---> LEFT-PAREN-BUTTON;
-;;;                       }-BUTTON ---> RIGHT-PAREN-BUTTON;  Copied old
-;;;              opal:text formulas into k-framed-text object
-;;;  08/11/93  amickish - In Set-Result, don't take log of 0
-;;;  04/06/93  koz      - Changed from with-*-styles to set-*-style
-;;;  02/22/93  koz      - Made "log 0" and "ln 0" return "error", not a big #
-;;;  02/09/93  amickish - Added calls to Garnet-Note-Quitted
-;;;  02/03/93  amickish - Made compatible with demos-controller
-;;;  02/02/93  koz      - Created
-;;;  
 
 
-;;;
+
 ;;;  Part I  -  k-framed-text
-;;;
+;;
 
-;;;  A simple framed text object for a text button.  Far less advanced, but
-;;;  quicker, than the gadget equivalent.  Basically just a RECTANGLE with a
-;;;  few patches.
-;;;
-;;;  NOTE:  Do NOT let the size of the string be larger than the size of
-;;;  the frame!
-;;;
-;;;  Same slots as a RECTANGLE, but also the following:
-;;;        :string      "none"
-;;;        :font        default-font
-;;;
-;;;	:text-width  <formula>
-;;;	:text-height <formula>
-;;;
-;;;  Plus some internal slots (see defn below).
-;;;
-
+;;  A simple framed text object for a text button. Far less advanced,
+;;  but quicker, than the gadget equivalent. Basically just a
+;;  RECTANGLE with a few patches.
+;;
+;;  NOTE: Do NOT let the size of the string be larger than the size
+;;  of the frame!
+;;
+;;  Same slots as a RECTANGLE, but also the following:
+;;     :string      "none"
+;;     :font        default-font
+;;
+;;	:text-width  <formula>
+;;	:text-height <formula>
+;;
+;;  Plus some internal slots (see defn below).
+;;
 
 (in-package "OPAL")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(HALF K-FRAMED-TEXT)))
 (defmacro half (n)
   `(truncate ,n 2))
@@ -673,109 +656,120 @@ top-tag
     (opal:add-component main-agg agg)))
 
 (defun setup-main-window (app-object double-buffered-p)
- (let (greeting frame-agg proto-button proto-cut-paste-button
-       (main-window
-         (unnamed-instance inter:interactor-window
-	       (:app-object       app-object)
-	       (:top              +main-win-top+)
-	       (:left             +main-win-left+)
-	       (:width            +main-win-width+)
-	       (:height           +main-win-height+)
-	       (:title            "Garnet Calculator")
-	       (:icon-title       "gcalc")
-	       (:background-color *main-win-color*)
-	       (:double-buffered-p double-buffered-p)))
-       (main-agg (unnamed-instance opal:aggregate)))
+  (let ((main-window
+	 (unnamed-instance inter:interactor-window
+			   (:app-object       app-object)
+			   (:top              +main-win-top+)
+			   (:left             +main-win-left+)
+			   (:width            +main-win-width+)
+			   (:height           +main-win-height+)
+			   (:title            "Garnet Calculator")
+			   (:icon-title       "gcalc")
+			   (:background-color *main-win-color*)
+			   (:double-buffered-p double-buffered-p)))
+	(main-agg (unnamed-instance opal:aggregate))
+	greeting frame-agg proto-button proto-cut-paste-button)
 
-  (kr:s-value main-window :aggregate main-agg)
-  (kr:s-value app-object :main-window main-window)
+    ;; If we get clobbered by the window manager, let the demos
+    ;; controller know (if it's there).
+    (when (fboundp 'common-lisp-user::Garnet-Note-Quitted)
+      (pushnew
+       #'(lambda (win)
+	   (declare (ignore win))
+	   (common-lisp-user::Garnet-Note-Quitted "GARNET-CALCULATOR"))
+       (g-value main-window :destroy-hooks)))
+   
 
-  (setq greeting (unnamed-instance opal:multi-text
-	(:string        +greeting+)
-	(:justification :center)
-	(:font          *greeting-font*)
-	(:top           (opal:half (- +main-win-height+
-				      (opal:string-height
-				       *greeting-font* +greeting+))))
-	(:left          (opal:half (- +main-win-width+
-				      (opal:string-width
-				       *greeting-font* +greeting+))))))
+    (kr:s-value main-window :aggregate main-agg)
+    (kr:s-value app-object :main-window main-window)
 
-  (opal:add-component main-agg greeting)
+    (setq greeting
+	  (unnamed-instance opal:multi-text
+			    (:string        +greeting+)
+			    (:justification :center)
+			    (:font          *greeting-font*)
+			    (:top           (opal:half (- +main-win-height+
+							  (opal:string-height
+							   *greeting-font* +greeting+))))
+			    (:left          (opal:half (- +main-win-width+
+							  (opal:string-width
+							   *greeting-font* +greeting+))))))
 
-  (opal:update main-window)
+    (opal:add-component main-agg greeting)
 
-  (setq frame-agg (unnamed-instance opal:aggregate))
+    (opal:update main-window)
 
-  (kr:s-value app-object :frame-window
-     (unnamed-instance inter:interactor-window
-	(:left          +frame-left+)
-	(:top           +frame-top+)
-	(:width         +frame-width+)
-	(:height        +frame-height+)
-	(:border-width  4)
-	(:aggregate     frame-agg)
-	(:parent        main-window)
-	(:double-buffered-p double-buffered-p)))
+    (setq frame-agg (unnamed-instance opal:aggregate))
 
-  (opal:add-components frame-agg
+    (kr:s-value app-object :frame-window
+		(unnamed-instance inter:interactor-window
+				  (:left          +frame-left+)
+				  (:top           +frame-top+)
+				  (:width         +frame-width+)
+				  (:height        +frame-height+)
+				  (:border-width  4)
+				  (:aggregate     frame-agg)
+				  (:parent        main-window)
+				  (:double-buffered-p double-buffered-p)))
 
-    (kr:s-value app-object :result
-       (unnamed-instance opal:text
-	  (:top        +result-top+)
-	  (:line-style *frame-line-style*)
-	  (:font       *result-font*)))
+    (opal:add-components frame-agg
 
-    (kr:s-value app-object :drg
-       (unnamed-instance opal:text
-	  (:top        +drg-top+)
-	  (:left       +drg-left+)
-	  (:font       *button-font*)
-	  (:line-style *frame-line-style*)
-	  (:string     "DEG"))))
+			 (kr:s-value app-object :result
+				     (unnamed-instance opal:text
+						       (:top        +result-top+)
+						       (:line-style *frame-line-style*)
+						       (:font       *result-font*)))
 
-  (set-result app-object 0)
+			 (kr:s-value app-object :drg
+				     (unnamed-instance opal:text
+						       (:top        +drg-top+)
+						       (:left       +drg-left+)
+						       (:font       *button-font*)
+						       (:line-style *frame-line-style*)
+						       (:string     "DEG"))))
 
-  (kr:s-value app-object :proto-button
-    (setq proto-button
-      (unnamed-instance opal:k-framed-text
-	(:width         +button-width+)
-	(:height        +button-height+)
-	(:filling-style *button-filling-style*)
-	(:line-style    *button-line-style*)
-	(:font          *button-font*))))
+    (set-result app-object 0)
 
-  (kr:s-value app-object :proto-cut-paste-button
-    (setq proto-cut-paste-button
-      (unnamed-instance proto-button
-        (:width     +cut-paste-width+)
-	(:left     (+ +frame-left+ +frame-width+ +button-h-spacing+)))))
+    (kr:s-value app-object :proto-button
+		(setq proto-button
+		      (unnamed-instance opal:k-framed-text
+					(:width         +button-width+)
+					(:height        +button-height+)
+					(:filling-style *button-filling-style*)
+					(:line-style    *button-line-style*)
+					(:font          *button-font*))))
 
-  (let ((left +button-left+))
-    (dolist (column +button-list+)
-      (make-button-column app-object main-agg +button-top+
-			  left column proto-button)
-      (incf left (+ +button-width+ +button-h-spacing+)))
-    (make-button-column app-object
-                        main-agg
-                        (+ +frame-top+ +button-v-spacing+)
-			left
-			+cut-paste-column+
-			proto-cut-paste-button))
+    (kr:s-value app-object :proto-cut-paste-button
+		(setq proto-cut-paste-button
+		      (unnamed-instance proto-button
+					(:width     +cut-paste-width+)
+					(:left     (+ +frame-left+ +frame-width+ +button-h-spacing+)))))
 
-  (opal:remove-component main-agg greeting)
-  (opal:destroy greeting)
+    (let ((left +button-left+))
+      (dolist (column +button-list+)
+	(make-button-column app-object main-agg +button-top+
+			    left column proto-button)
+	(incf left (+ +button-width+ +button-h-spacing+)))
+      (make-button-column app-object
+			  main-agg
+			  (+ +frame-top+ +button-v-spacing+)
+			  left
+			  +cut-paste-column+
+			  proto-cut-paste-button))
 
-  (opal:add-component main-agg
-    (kr:s-value app-object :feedback-rect
-      (kr:create-instance NIL opal:rectangle
-		(:filling-style opal:black-fill)
-		(:line-style    NIL)
-		(:draw-function :xor)
-		(:fast-redraw-p T)
-		(:visible NIL))))
+    (opal:remove-component main-agg greeting)
+    (opal:destroy greeting)
 
-  (opal:update main-window T)))
+    (opal:add-component main-agg
+			(kr:s-value app-object :feedback-rect
+				    (kr:create-instance NIL opal:rectangle
+				      (:filling-style opal:black-fill)
+				      (:line-style    NIL)
+				      (:draw-function :xor)
+				      (:fast-redraw-p T)
+				      (:visible NIL))))
+
+    (opal:update main-window T)))
 
                      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                      ;;;;;;; THE EVENT HANDLER  ;;;;;;;
@@ -870,10 +864,10 @@ top-tag
 			:main-window :proto-button))
 	(if (setq object (kr:g-value app-object slot))
 	   (opal:destroy object)))
-  (if destroy-app-object? (kr:destroy-schema app-object))
+  (when destroy-app-object? (kr:destroy-schema app-object))
   ;;for demo-controller
-  (if (fboundp 'Common-Lisp-User::Garnet-Note-Quitted)
-      (common-lisp-user::Garnet-Note-Quitted "GARNET-CALCULATOR"))))
+  (when (fboundp 'Common-Lisp-User::Garnet-Note-Quitted)
+    (common-lisp-user::Garnet-Note-Quitted "GARNET-CALCULATOR"))))
 
 
 
@@ -891,5 +885,5 @@ top-tag
     (stop-calc *Demo-App-Obj*)
     (setf *Demo-App-Obj* NIL)
     ;;for demo-controller
-    (if (fboundp 'Common-Lisp-User::Garnet-Note-Quitted)
-	(common-lisp-user::Garnet-Note-Quitted "GARNET-CALCULATOR"))))
+    (when (fboundp 'Common-Lisp-User::Garnet-Note-Quitted)
+      (common-lisp-user::Garnet-Note-Quitted "GARNET-CALCULATOR"))))

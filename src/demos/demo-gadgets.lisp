@@ -8,6 +8,9 @@
 ;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; $Id$	
+
+
 ;;;  DEMO-GADGETS
 ;;;
 ;;;  The function in this module creates a window showing several gadgets.
@@ -20,22 +23,6 @@
 ;;;  (demo-gadgets:do-stop).
 ;;;
 ;;;  Written by Andrew Mickish
-
-;;;  CHANGE LOG:
-;;;  05/29/94 - Marty Geier - changed main window position in do-go
-;;;  05/29/94 - Marty Geier - changed load to garnet-load in demo-gadgets-init
-;;;  02/25/92 - Ed Pervin - Added :constant slots
-;;;  09/05/90 - Brad Myers - Added scrolling-labeled box
-;;;  01/04/90 - Andrew Mickish - Added parameters to demo function
-;;;  02/16/90 - Andrew Mickish - Changed demo-win to demo-gadgets-win.
-;;;             Changed demo-top-agg to demo-gadgets-top-agg.
-;;;             Changed font of demo-text-buttons-obj to the default font.
-;;;  07/17/90 - Andrew Mickish - Added DEMO-GADGETS-INIT to obviate loader file.
-;;;             Moved definition of DEMO-X-BUTTONS-OBJ so that DEMO-H-SCROLL-OBJ
-;;;             formulas will be initialized correctly.
-;;;             Removed setf's so that instances are created with explicit names
-;;;  07/23/90 - Edward Pervin - Added "common-lisp-user::" before Garnet-Gadgets-PathName
-;;;
 
 (in-package :DEMO-GADGETS)
 
@@ -90,7 +77,16 @@
 	   :aggregate
 	   (create-instance 'DEMO-GADGETS-TOP-AGG opal:aggregate))
 
+  ;; If we get clobbered by the window manager, let the demos
+  ;; controller know (if it's there).
+  (when (fboundp 'common-lisp-user::Garnet-Note-Quitted)
+    (pushnew
+     #'(lambda (win)
+	 (declare (ignore win))
+	 (common-lisp-user::Garnet-Note-Quitted "DEMO-GADGETS"))
+     (g-value demo-gadgets-win :destroy-hooks)))
 
+  
   (create-instance 'DEMO-TEXT-BUTTONS-OBJ garnet-gadgets:text-button-panel
      (:constant T)
      (:left 10) (:top 10)

@@ -10,17 +10,8 @@
 
 ;;; Written by Brad Myers
 ;;; Upgraded to color by Ed Pervin (Mar 90)
-;;; Changes:
-;;; 15-Feb-94 Andrew Mickish - Made faster version for Mac
-;;;             - Repositioned X's inside buttons, and made XOR fast redraw
-;;;             - Removed X's color constraints, since XOR makes black anyway
-;;;             - Removed color constraint of radio-button's feedback circle
-;;; 09-Apr-92 Andrew Mickish - Changed create-instance of opal:line-2
-;;;             to opal:line-style
-;;; 25-Mar-92 Andrew Mickish - Get-Values ---> G-Value
-;;; 13-Feb-92 Pervin - Merged demo-3d and color-demo-3d
-;;; 13-Mar-91 Ed Pervin Changed package name back to demo-3d.
 
+
 (in-package :DEMO-3D)
 
 ;;-----------------------------------
@@ -410,6 +401,15 @@
 			       (:title "GARNET 3D") (:icon-title "3D")))
   (setq agg (s-value vp :aggregate (create-instance NIL opal:aggregate)))
 
+  ;; If we get clobbered by the window manager, let the demos
+  ;; controller know (if it's there).
+  (when (fboundp 'common-lisp-user::Garnet-Note-Quitted)
+    (pushnew
+     #'(lambda (win)
+	 (declare (ignore win))
+	 (common-lisp-user::Garnet-Note-Quitted "DEMO-3D"))
+     (g-value vp :destroy-hooks)))
+  
   (setq fnt (kr:create-instance NIL opal:font
 			(:family :serif) (:face :roman) (:size :small)))
   (setq fnti (kr:create-instance NIL opal:font

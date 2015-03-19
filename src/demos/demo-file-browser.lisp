@@ -8,29 +8,16 @@
 ;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; $Id$	
+
+
 ;;;  FILE BROWSER INTERFACE
 ;;;
 ;;;  Designed by Brad Myers
 ;;;  Written by Andrew Mickish
 ;;;
-;;;  CHANGE LOG:
-;;;  12/06/94 - Bruno Haible - Commented out :directories keyword for CLISP 
-;;;  06/17-19/94 - Marty Geier - re-did directory structure to work on macintosh
-;;;                    Changes include: redo of pathname-to-string-fn and directory-fn
-;;;                    and #+apple support for all stripping of subdir char off end of
-;;;                    filename.  Also, carefull redo of prev button push for apple.
-;;;  05/22/94 - Marty Geier - Made main window grabbable and viewable
-;;;                           also changed loads to garnet-loads
-;;;  05/20/93 - Andrew Mickish - Made :num-menus not constant in FILE-BROWSER
-;;;  01/20/93 - Andrew Mickish - Fixed type problems (return "" instead of NIL)
-;;;  07/24/90 - Andrew Mickish - Added :additional-selection-p
-;;;  07/23/90 - Edward Pervin - Added "user::" before Garnet-Gadgets-PathName
-;;;  09/07/90 - Osamu Hashimoto - Added Garnet-Note-Quitted for demo-controller
-;;;  11/07/90 - Edward Pervin - In formula for :left of :l-box, changed
-;;;				(gvl :parent :width) to (gvl :parent :prev :width)
-;;;				Also, got DIRECTORY-FN to work on Sun.
-;;;  11/07/90 Ed Pervin - In Do-Quit, destroy the window BEFORE exit-main-event-loop.
 
+
 (in-package :DEMO-FILE-BROWSER)
 
 (declaim (special FILE-BROWSER-WIN FILE-BROWSER-TOP-AGG QUIT-BUTTON))
@@ -84,9 +71,17 @@
 	   :aggregate
 	   (create-instance 'FILE-BROWSER-TOP-AGG opal:aggregate))
 
+  ;; If we get clobbered by the window manager, let the demos
+  ;; controller know (if it's there).
+  (when (fboundp 'common-lisp-user::Garnet-Note-Quitted)
+    (pushnew
+     #'(lambda (win)
+	 (declare (ignore win))
+	 (common-lisp-user::Garnet-Note-Quitted "DEMO-FILE-BROWSER"))
+     (g-value file-browser-win :destroy-hooks)))
 
-  ; Create FILE-BROWSER schema and add to window
-  ;
+  
+  ;; Create FILE-BROWSER schema and add to window
   (create-instance 'FILE-BROWSER garnet-gadgets:browser-gadget
      ;; Why isn't :num-menus constant?  Because that would make the :items
      ;; slot of the :menu-list aggrelist constant, and the positions of the
@@ -119,8 +114,7 @@
   (opal:update FILE-BROWSER-WIN)
 
 
-  ; Create CONTROL-PANEL and add to window
-  ;
+  ;; Create CONTROL-PANEL and add to window
   (create-instance 'CONTROL-PANEL opal:aggregadget
      (:constant :left :top)
      (:left 30)

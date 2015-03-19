@@ -7,29 +7,20 @@
 ;;; domain.  If you are using this code or any part of Garnet,      ;;;
 ;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; $Id$
 
-#|
+
+
+#||
 			DEMO-OTHELLO
 
-** THIS VERSION WORKS WITH MGE EDITOR **
+           ** THIS VERSION WORKS WITH MGE EDITOR **
 
-Written by David Kosbie
+                   Written by David Kosbie
+||#
 
------------
-Change Log:
-      30-May-94 Marty Geier - moved window position too be viewable
-                              changed load to garnet-load
-      22-Sep-93 amickish  Ignored double-buffered-p in Do-Go
-      25-Mar-92 amickish  Get-Local-Values ---> G-Local-Value
-        2-25-92 Ed Pervin - Added some :constant slots
-       10-13-91 Andrew Mickish - Changed definition of some schemas to be
-                  unnamed so that they are not recursively destroyed when
-                  demo is restarted.
-        8-21-90 Brad Myers - made so will work stand-alone
-        9-04-90 Osamu Hashimoto - Added Garnet-Note-Quitted for demo-controller,
-|#
-
-
+
 (in-package :DEMO-OTHELLO)
 
 (declaim (special W TOP-AGG TITLE TITLE-LINE PLAYER1-SCORE PLAYER2-SCORE
@@ -152,6 +143,7 @@ Change Log:
 				  (:title "Demo-Othello")
 				  (:icon-title "Othello"))
   (s-value w :aggregate (create-instance 'top-agg opal:aggregate))
+
   (opal:update w)
   (create-instance 'title opal:text
 	(:string "Garnet Othello")

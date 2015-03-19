@@ -7,25 +7,17 @@
 ;;; domain.  If you are using this code or any part of Garnet,      ;;;
 ;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; $Id$	
 
+
 ;;; demo-gesture.lisp 
 ;;;
 ;;; This is a simple demonstration of using the Garnet gesture interactor.
 ;;;
 ;;; Designed and implemented by James A. Landay 
 
-#|
-==================================================================
-Change log:
-     05/30/94 Marty Geier - Changed load to garnet-load
-     04/01/94 Andrew Mickish - Switched interactor events so that leftdown
-                draws gestures and middledown moves shapes
-     03/30/94 Andrew Mickish - positioned window for Mac version
-     03/25/92 James Landay   - started 
-==================================================================
-|#
-
-
+
 (in-package :DEMO-GESTURE)
 
 ;; Load the gesture interactor, unless already loaded 
@@ -176,6 +168,16 @@ Change log:
             (:left 0) (:top -2)
             (:width (o-formula (gvl :window :width)))
             (:height (o-formula (gvl :window :height)))))
+
+  ;; If we get clobbered by the window manager, let the demos
+  ;; controller know (if it's there).
+  (when (fboundp 'common-lisp-user::Garnet-Note-Quitted)
+    (pushnew
+     #'(lambda (win)
+	 (declare (ignore win))
+	 (common-lisp-user::Garnet-Note-Quitted "DEMO-GESTURE"))
+     (g-value top-win :destroy-hooks)))
+
 
     ;; create an aggregate to hold the shapes we will create
     (create-instance 'SHAPE-AGG opal:aggregate)

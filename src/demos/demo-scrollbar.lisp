@@ -6,8 +6,7 @@
 ;;  Carnegie Mellon University, and has been placed in the public    ;;
 ;;  domain.                                                          ;;
 ;;    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;    ;;
-
-;;; For some reason VC / emacs isn't putting in the Id stuff here.
+;;;
 ;;; $Id$	
 ;;
 
@@ -31,29 +30,6 @@
 ;;
 ;; -------------------------------------------------------------------------
 ;; Designed and implemented by Brad Vander Zanden
-
-
-;;; Changes:
-;;
-;; 5/30/94 Marty Geier - changed position of main window in do-go
-;;                       also changed load to garnet load.
-;; 2/25/92 Pervin  Added :constant slots
-;; 2/13/92 Pervin: merged demo-scrollbar and color-demo-scrollbar
-;; 3/14/90 Andrew Mickish:  Removed local motif-scrollbar and put in
-;;           garnet-gadgtets version
-;; 7/25/90 Roger Dannenberg - Changed :window slot of interactors to
-;;           (gv-local :self ...)
-;; 4/30/90  Edward Pervin : Added color
-;; 4/30/90  Andrew Mickish:  Updated appearance of Openlook and Next scrollbars
-;; 4/30/90  Andrew Mickish:  Added Motif scroll bar
-;; 4/9/90   R. Cook    Indent calls to opal:update.
-;; 11/20/89 Ed Pervin  Removed definition of Clip-and-Map,
-;;                     which is now exported from Interactor.
-;; 11/15/89 Ed Pervin: Had to rewrite BACKGROUND-TRILL because :y slot
-;;          was replaced by :y-off.
-;; 8/25/89  Andrew Mickish:  Added background trill interactor and integrated
-;;          into demo-scrollbar
-
 
 
 (in-package :DEMO-SCROLLBAR)
@@ -1069,6 +1045,15 @@
 		  (setq SB-top-agg
 			(create-instance NIL opal:aggregate)))))
 
+  ;; If we get clobbered by the window manager, let the demos
+  ;; controller know (if it's there).
+  (when (fboundp 'common-lisp-user::Garnet-Note-Quitted)
+    (pushnew
+     #'(lambda (win)
+	 (declare (ignore win))
+	 (common-lisp-user::Garnet-Note-Quitted "DEMO-SCROLLBAR"))
+     (g-value sb-vp :destroy-hooks)))
+  
   ;; create the scroll bar and meter text and display them
   (setq SB-MAC-obj (MAC-make-scroll-bar SB-VP SB-top-agg 'SB-MAC-obj 64 48 21 200))
   (setq SB-MAC-meter (MAC-make-meter-text SB-top-agg 'SB-MAC-meter SB-MAC-obj

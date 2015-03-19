@@ -6,30 +6,20 @@
 ;; Carnegie Mellon University, and has been placed in the public     ;;
 ;; domain.                                                           ;;
 ;;-------------------------------------------------------------------;;
-
-
-;;    This file is a sample of a graphics editor created with Garnet.  It is
-;;    designed to be a model for other code development, and therefore uses
-;;    all the most up-to-date Garnet features.
 ;;
-;;  ** Call (demo-editor:Do-Go) to start and (demo-editor:Do-Stop) to stop **
+;; $Id$
+
+
+;;    This file is a sample of a graphics editor created with Garnet.
+;;    It is designed to be a model for other code development, and
+;;    therefore uses all the most up-to-date Garnet features.
+;;
+;;  ** Call (demo-editor:Do-Go) to start
+;;  ** and (demo-editor:Do-Stop) to stop
 ;;
 ;;    Designed and implemented by Brad A. Myers
 
-#|
-==================================================================
-Change log:
-         05/22/94 Marty Geier - Made main window more viewable
-         04/07/92 Ed Pervin - Move in-package to beginning of file.
-	 02/14/92 Ed Pervin - Converted formulas to o-formulas.
-         11/07/90 Ed Pervin - In Do-Quit, destroy the window BEFORE exit-main-event-loop.
-         09/04/90 Osamu Hashimoto - Added Garnet-Note-Quitted for demo-controller,
-                                    Changed window positon
-         01/04/90 Andrew Mickish - Added auto-loading of "text-buttons-loader",
-                  "graphics-loader", and "arrow-line-loader"
-===================================================================
-|#
-
+
 (in-package :DEMO-EDITOR)
 
 ;;;  Load text-buttons-loader, graphics-loader, and arrow-line-loader unless
@@ -275,6 +265,15 @@ Change log:
 		    (:width 700) (:height 400)(:title "GARNET Sample Editor")
 		    (:icon-title "Graphics Editor")))
     (setf current-window top-win)
+
+    ;; If we get clobbered by the window manager, let the demos
+    ;; controller know (if it's there).
+    (when (fboundp 'common-lisp-user::Garnet-Note-Quitted)
+      (pushnew
+       #'(lambda (win)
+	   (declare (ignore win))
+	   (common-lisp-user::Garnet-Note-Quitted "DEMO-EDITOR"))
+       (g-value top-win :destroy-hooks)))
 
     ;; create window for the work area
     (setf work-win (create-instance NIL inter:interactor-window

@@ -8,6 +8,9 @@
 ;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; $Id$
+
+
 ;;;  SCHEMA BROWSER INTERFACE
 ;;;
 ;;;     This interface can be used to examine the hierarchy of Garnet objects
@@ -35,20 +38,8 @@
 ;;;  Designed by Brad Myers
 ;;;  Written by Andrew Mickish
 ;;;
-;;;  CHANGE LOG:
-;;;  05/30/94 - Marty Geier - changed window position of main window in do-go
-;;;                           changed load to garnet-load
-;;;  06/03/93 - Andrew Mickish - Moved definition of Verify-Binding to utils
-;;;  01/21/93 - Andrew Mickish - Fixed type errors (return "" instead of NIL)
-;;;  05/14/92 - Martin Sjolin - check for a NIL schema when pressing
-;;;				Instances button.
-;;;  03/25/92 - Andrew Mickish - Get-Values ---> G-Value
-;;;  11/07/90 - Ed Pervin - In Do-Quit, destroy the window BEFORE
-;;;               exit-main-event-loop.
-;;;  09/07/90 - Osamu Hashimoto - Added Garnet-Note-Quitted for demo-controller
-;;;  07/23/90 - Edward Pervin - Added "user::" before Garnet-Gadgets-PathName
 
-
+
 (in-package :DEMO-SCHEMA-BROWSER)
 
 (defvar DEMO-SCHEMA-BROWSER-INIT
@@ -88,6 +79,15 @@
   (s-value SCHEMA-BROWSER-WIN
 	   :aggregate
 	   (create-instance 'SCHEMA-BROWSER-TOP-AGG opal:aggregate))
+
+  ;; If we get clobbered by the window manager, let the demos
+  ;; controller know (if it's there).
+  (when (fboundp 'common-lisp-user::Garnet-Note-Quitted)
+    (pushnew
+     #'(lambda (win)
+	 (declare (ignore win))
+	 (common-lisp-user::Garnet-Note-Quitted "DEMO-SCHEMA-BROWSER"))
+     (g-value schema-browser-win :destroy-hooks)))
 
 
   ;; Create SCHEMA-BROWSER schema and add to window

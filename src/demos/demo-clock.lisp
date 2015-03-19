@@ -8,18 +8,14 @@
 ;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;; $Id$
+
 ;;; This is intended as a test and demonstration of the
 ;;; angle interactor as part of the Garnet project
 ;;;
 ;;; Designed and implemented by Ed Pervin
 
-;; Change Log
-;;
-;; 05-21-2013 Fred Gilham - Add scroll wheel support.
-;; 05-22-94 Marty Geier - Changed top of window so its on screen and grabbable
-
-
-
+
 (in-package :DEMO-CLOCK)
 
 (declaim (special HAND))
@@ -191,7 +187,7 @@
 				 (+ (g-value minute-hand :angle) delta))
 			(opal:update clock-window))))
 		   
-  ;;; This interactor advances the clock 5 minutes when you hit SPACE
+  ;; This interactor advances the clock 5 minutes when you hit SPACE
   (create-instance NIL inter:button-interactor
 		   (:window clock-window)
 		   (:continuous nil)
@@ -203,11 +199,11 @@
 			(s-value minute-hand :angle 
 				 (- (g-value minute-hand :angle) pi/6)))))
 
-  (create-instance NIL inter:button-interactor
+  ;; This interactor allows using the scroll wheel to adjust the clock.
+  (create-instance NIL inter:scroll-wheel-interactor
     (:window clock-window)
     (:continuous nil)
-    (:start-where t)
-    (:start-event (list :downscrollup :upscrollup))
+    (:start-where `(:in ,clock-circle))
     (:stop-action
      #'(lambda (an-interactor final-obj-over)
 	 (declare (ignore final-obj-over))
