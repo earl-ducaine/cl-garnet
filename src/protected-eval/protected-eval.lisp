@@ -160,8 +160,8 @@ prompting for a value to use/store.")
   (:modal-p T)
   (:beep-p T)
   (:parent-window nil)
-  (:window-top (floor opal:*screen-height* 2))
-  (:window-left (floor opal:*screen-width* 2)))
+  (:window-top (floor gem:*screen-height* 2))
+  (:window-left (floor gem:*screen-width* 2)))
 
 
 (defvar *user-type* :programmer

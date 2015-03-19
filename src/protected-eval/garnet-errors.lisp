@@ -225,8 +225,8 @@ implementation mechanism."
 
 (kr:create-instance 'message-display gg:Motif-Error-Gadget
   (:modal-p nil)
-  (:window-top (floor opal:*screen-height* 2))
-  (:window-left (floor opal:*screen-width* 2)))
+  (:window-top (floor gem:*screen-height* 2))
+  (:window-left (floor gem:*screen-width* 2)))
 
 
 (kr:s-value (kr:g-value message-display :window)
@@ -255,8 +255,8 @@ is meant to be called through call-displayer."
 
 (kr:create-instance 'selector-display gg:motif-query-gadget  #-(and)gg:query-gadget
   (:modal-p nil)
-  (:window-top (floor opal:*screen-height* 2))
-  (:window-left (floor opal:*screen-width* 2)))
+  (:window-top (floor gem:*screen-height* 2))
+  (:window-left (floor gem:*screen-width* 2)))
 
 (kr:s-value (kr:g-value selector-display :window)
     :title (format nil "~A:Selection" *application-long-name*))

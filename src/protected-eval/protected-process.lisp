@@ -27,7 +27,7 @@
   #-NO-K-READER
   (set-dispatch-macro-character #\# #\k (function kr::k-reader))
 
-  (let ((root-window (gv device-info :current-root)))
+  (let ((root-window (gv gem:device-info :current-root)))
     (unwind-protect
 	 (catch 'exit-main-loop-exception
 	   (loop
@@ -57,4 +57,4 @@
 	(gg:with-garnet-error-handling "Wait Interaction Complete"
 	  (loop
 	     (inter::default-event-handler
-		 (g-value opal::DEVICE-INFO :current-root)))))))
+		 (g-value gem:DEVICE-INFO :current-root)))))))
