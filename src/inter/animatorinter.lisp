@@ -46,7 +46,7 @@
 ;;; Default Procedures to go into the slots
 ;;
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (proclaim '(special Animator-Interactor)))
 
 (defun Animator-Interactor-Initialize (new-Animator-schema)

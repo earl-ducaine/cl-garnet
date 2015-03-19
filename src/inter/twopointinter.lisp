@@ -8,50 +8,18 @@
 ;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-
+
 ;;; This file contains the mouse and keyboard interactors to create new objects
 ;;; defined by two points (e.g., rectangles and lines).  It should be
 ;;; loaded after Interactor and after MoveGrowInter
 ;;;
 ;;; Designed and implemented by Brad A. Myers
 
-#|
-============================================================
-Change log:
-        6/4/92 Brad Myers - added :input-filter like movegrow
-                                        - NIL for no filtering
-                                        - number - grid by that amount
-                                        - (xmod xorigin ymod yorigin)
-                                        - Lambda(x y)
-        4/1/92  Andrew Mickish - kr::*debug-switch* ---> #-garnet-debug
-       10/11/90 Brad Myers - added explicit Stop-Interactor code
-        10/5/89 Brad Myers - Add Final-Function, remove create-function
-	10/4/89 Roger Dannenberg - Change debugging output
-        8/14/89 Brad Myers - Fixed for multiple priority levels
-				- added interactor as parameter to create-function
-				- made create-function be called even if too small
-        7/3/89  Brad Myers - Added minimum lengths for lines
-        6/26/89  Brad Myers - Fixed to have quote for create-schema
-        5/30/89  Brad Myers -  call-method -> kr-send;
-			allow running-where to be set after initialized
-        4/20/89  Brad Myers - schema-call -> call-method
-        4/14/89  Brad Myers - fixed self-deactivate
-        4/7/89 Brad Myers and Dario Giuse - fixed for new KR
-        2/18/89 Lynn Baumeister -- changed x,y to event in func calls
-	11/25/88 Brad Myers - started
-============================================================
-|#
-
+
 (in-package "INTERACTORS")
 
-;;;============================================================
-;;;============================================================
-;;;============================================================
-
-
-;;;============================================================
 ;;; Helper procedures for the default procedures to go into the slots
-;;;============================================================
+;;
 
 (defparameter *glo-two-points* (list 0 0 0 0))  ; use this to avoid cons-ing
 
@@ -154,9 +122,9 @@ Change log:
 	       (setf (fourth *glo-two-points*) y)))))
     *glo-two-points*))
 
-;;;============================================================
+
 ;;; Default Procedures to go into the slots
-;;;============================================================
+;;
 
 (declaim (special Two-Point-Interactor))
 
@@ -251,10 +219,10 @@ Change log:
       (dbprint-feed :visible feedback NIL an-interactor)
       (s-value feedback :visible NIL))))
   
-;;;============================================================
-;;; Go procedure utilities
-;;;============================================================
 
+
+;;; Go procedure utilities
+;;
 
 ;;; if continuous: (remove from start level, add to stop and abort
 ;;; 		    level, change state to running)
@@ -285,9 +253,9 @@ Change log:
   (s-value an-interactor :current-state :outside)
   (kr-send an-interactor :outside-action an-interactor
 	       (g-value an-interactor :outside)))
-;;;filtering based on :last is handled by the :outside-action procedure
-;;;  (unless (eq :last (g-value an-interactor :outside))
-;;;    (s-value an-interactor :remembered-last-object NIL)))
+;; filtering based on :last is handled by the :outside-action
+;; procedure (unless (eq :last (g-value an-interactor :outside))
+;; (s-value an-interactor :remembered-last-object NIL)))
 
 (defun two-point-do-back-inside (an-interactor obj event)
   #-garnet-debug (declare (ignore obj))
@@ -350,9 +318,10 @@ Change log:
 			   (g-value an-interactor :saved-last-points))
       (two-point-do-abort an-interactor NIL event)))
 
-;;;============================================================
+
+
 ;;; Two-Point schema
-;;;============================================================
+;;
 
 (Create-Schema 'inter:Two-Point-Interactor
 		     (:is-a inter:interactor)

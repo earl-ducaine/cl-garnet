@@ -36,6 +36,7 @@
       (second minute hour date month year day-of-week savingsp time-zone)
       (get-decoded-time)
     (declare (ignore second time-zone day-of-week))
+    (declare (fixnum hour date month year))
     (if (>= hour 12) (progn (setq savingsp " PM")
 		       (when (> hour 12)(incf hour -12)))
 	(setq savingsp " AM"))
@@ -71,7 +72,7 @@
   *trans-to-file*)
 
 (defun Close-Transcript ()
-  ;; make a local copy first, in case close's fail, will still be reset.
+  ;; make a local copy first, in case close fails, will still be reset.
   (let ((old-to *trans-to-file*)(old-from *trans-from-file*))
     (setf *trans-to-file* NIL)
     (setf *trans-from-file* NIL)
@@ -237,7 +238,7 @@
   (declare (ignore display))
   (let ((result
 	 (gem:event-handler
-	  (g-value opal:device-info :current-root) 
+	  (g-value gem:device-info :current-root) 
 	  T)))
     (if (eq result :abort)
 	result
@@ -539,13 +540,13 @@
 (defun do-circulate-notify ()
   (opal::Circulate-Notify (debug-p :event)))
 
-(defun do-configure-notify (event-window x y width height
+(defun do-configure-notify (a-window x y width height
 			    above-sibling)
-  (when event-window			;RGA Ignore if event-window no
+  (when a-window			;RGA Ignore if event-window no
 					;longer valid.
     (opal::Configure-Notify (debug-p :event) x y
 			    width height
-			    event-window above-sibling)))
+			    a-window above-sibling)))
 
 (defun do-enter-notify (a-window x y time)
   (if *trans-from-file*
@@ -555,10 +556,10 @@
 					;longer valid.
 	(Window-Enter a-window x y time))))
 
-(defun do-exposure (event-window x y width height count display)
-  (when event-window			;RGA ignore if window is no
+(defun do-exposure (a-window x y width height count display)
+  (when a-window			;RGA ignore if window is no
 					;longer valid.
-    (opal::Exposure (debug-p :event) event-window count x y
+    (opal::Exposure (debug-p :event) a-window count x y
 		    width height display)))
 
 (defun do-gravity-notify ()
@@ -576,8 +577,8 @@
     T					; ignore events when read transcript
     (Window-Leave a-window x y time)))
 
-(defun do-map-notify (event-window)
-  (opal::Map-Notify (debug-p :event) event-window))
+(defun do-map-notify (a-window)
+  (opal::Map-Notify (debug-p :event) a-window))
 
 (defun do-motion-notify (a-window x y display)
   (declare (ignore display))
@@ -634,7 +635,7 @@
 	(format t "Cannot call main-event-loop when no window is visible~%")
 	;; else do real work
 	(unless opal::*inside-main-event-loop*
-	  (let ((root-window (g-value opal:device-info :current-root)))
+	  (let ((root-window (g-value gem:device-info :current-root)))
 	    (if (eq exit-when-no-window-visible :on)
 		(setq opal::*inside-main-event-loop* t)
 		(setq opal::*inside-main-event-loop* :dont-care))
@@ -675,7 +676,7 @@ by the protected-eval code."
 	(catch 'exit-main-loop-exception
 	  (loop
 	     (default-event-handler
-		 (g-value opal:DEVICE-INFO :current-root)))
+		 (g-value gem:DEVICE-INFO :current-root)))
 	  ))))
   
 (defun Wait-Interaction-Complete (&optional window-to-raise)
@@ -693,7 +694,7 @@ by the protected-eval code."
       (opal:kill-main-event-loop-process))
     ;; need to update AFTER process is killed so the update message
     ;; won't be sent to the old process, since that might cause
-    ;; exposure and configure events to being to be processed in the
+    ;; exposure and configure events to begin to be processed in the
     ;; m-e-l-p which would cause a race condition.
     (when window-to-raise (opal:raise-window window-to-raise))
     (unwind-protect
@@ -701,7 +702,7 @@ by the protected-eval code."
       ;; unwind-protect cleanups.
       (setf *waiting-for-exit-wait-interaction-complete* old-count)
       ;; discard current event which was the one that caused the exit
-      (gem:discard-pending-events (g-value opal:device-info :current-root) 0)
+      (gem:discard-pending-events (g-value gem:device-info :current-root) 0)
       (when running-mel-process-elsewhere
 	(opal:launch-main-event-loop-process)))
     ))
@@ -726,7 +727,7 @@ by the protected-eval code."
 ;; Removes all interactors from the window, removes the window from the
 ;; global list
 (define-method :destroy-me interactor-window (window)
-"Method to kill an interactor-window"
+  "Method to kill an interactor-window"
   (if-debug :window (format T "Destroying interactor window ~s~%" window))
   (Check-and-handle-changed-inters) ; make sure inters are up to date
 				    ; before window is destroyed
@@ -737,7 +738,7 @@ by the protected-eval code."
   (call-prototype-method window))
 
 (define-method :initialize interactor-window (window)
-"Method to initialize an interactor-window"
+  "Method to initialize an interactor-window"
   (if-debug :window
 	    (format T "Initializing new interactor window ~s~%" window))
   (when (or *trans-from-file* *trans-to-file*)

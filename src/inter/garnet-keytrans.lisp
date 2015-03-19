@@ -59,7 +59,7 @@
 	(rplacd map modifier-name)
 	(push (cons clx-mask modifier-name) *modifier-translations*))))
 
-(let ((root (g-value opal:device-info :current-root)))
+(let ((root (g-value gem:device-info :current-root)))
   (define-keyboard-modifier (gem:create-state-mask root :control) :control)
   (define-keyboard-modifier (gem:create-state-mask root :mod-1) :meta)
   (define-keyboard-modifier (gem:create-state-mask root :shift) :shift)
@@ -87,6 +87,9 @@
 
 ;; X11 documentation merely says that pointer keycode numbers begin at 1
 ;; at CMU on the RT's, they get numbered left->right (makes sense)
+(declaim (fixnum *left-button* *middle-button* *right-button* 
+		 *up-scroll-button* *down-scroll-button*
+		 *double-offset*))
 (defvar *left-button*        1)
 (defvar *middle-button*      2)
 (defvar *right-button*       3)
@@ -115,11 +118,12 @@
 
 (defmacro modifier-index (incoming-bits)
   `(let ((sum 0))
-    (dolist (ele *modifier-translations*)
-      (let ((bit (car ele)))
-	(unless (zerop (logand bit ,incoming-bits))
-	  (incf sum bit))))
-    sum))
+     (declare (fixnum sum))
+     (dolist (ele *modifier-translations*)
+       (let ((bit (car ele)))
+	 (unless (zerop (logand bit ,incoming-bits))
+	   (incf sum bit))))
+     sum))
 
 
 

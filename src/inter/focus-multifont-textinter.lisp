@@ -19,7 +19,7 @@
 
 (in-package "INTERACTORS")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export
    '(FOCUS-MULTIFONT-TEXTINTER
      SET-FOCUS

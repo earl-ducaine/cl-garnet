@@ -16,52 +16,6 @@
 ;;;
 ;;; Designed and implemented by Brad A. Myers
 
-#|
-============================================================
-Change log:
-      9/29/93 Russell Almond - Added get-obj-slots-for-movegrow and fixed
-                   initialization problems.
-      6/15/93 Brad Myers - safe-functionp for input-filter
-     10/11/92 Brad Myers - :input-filter takes inter as first param --Szekely
-     7/16/92 Brad Myers - fixed small bug where :continuous NIL
-                   meant couldn't destroy in final-function: Robert Schnelbach
-     4/1/92  Andrew Mickish - kr::*debug-switch* ---> #-garnet-debug
-     1/29/92 Brad Myers - added :slots-to-set parameter
-		          :slots-to-set = :box or :points
-                            or a list of slots for l,t,w,h or x1,y1,x2,y2
-                           - allow filtering of input values
-		          :input-filter - NIL for no filtering
-                                        - number - grid by that amount
-                                        - (xmod xorigin ymod yorigin)
-                                        - Lambda(x y)
-        09/11/91 Andrew Mickish - Changed Clip-And-Map to check if val-1 and
-                                  val-2 are equal.
-        12/31/90 Brad Myers - used Pavan's version of Clip-and-map that
-                              works for real numbers also.
-        10/11/90 Brad Myers - added explicit Stop-Interactor code
-        10/6/89 Brad Myers - Export the function Clip-And-Map
-			     Allow lines to be moved as well as changing ends
-        10/5/89 Brad Myers - Add Final-Function,
-				New default running-where is T
-				Remove :new-obj-over slot (use :first-obj-over)
-				Remove slots :x and :y
-	10/4/89 Roger Dannenberg - Change debugging output
-        9/20/89 Brad Myers - Added error message for bad attach
-        8/14/89 Brad Myers - Fixed for multiple priority levels
-        7/7/89  Brad Myers - Minimum size for growing objects and have ability to
-				change end points of lines
-        6/26/89  Brad Myers - Fixed to have quote for create-schema
-        5/30/89  Brad Myers -  call-method -> kr-send;
-			allow running-where to be set after initialized; changed name
-        4/20/89  Brad Myers - schema-call -> call-method
-        4/14/89  Brad Myers - fixed self-deactivate
-        4/7/89 Brad Myers and Dario Giuse - fixed for new KR
-        2/11/89 Lynn Baumeister - changed x,y to event in func calls
-	11/8/88 Brad Myers - started adding the grow interactor
-	8/30/88 Brad Myers - moved to constraint version of KR
-	8/8/88 Brad Myers - started
-============================================================
-|#
 
 (in-package "INTERACTORS")
 

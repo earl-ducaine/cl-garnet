@@ -16,37 +16,6 @@
 ;; 
 ;;  Designed and implemented by Brad A. Myers
 
-
-;;; Change log:
-;;   7/16/92 Brad Myers - fixed small bug where :continuous NIL
-;;                        meant couldn't destroy in final-function: Robert Schnelbach
-;;   7/14/92 Brad Myers - Removed error "wrong object"
-;;   5/28/92 Brad Myers - added timers
-;;   4/1/92  Andrew Mickish - kr::*debug-switch* ---> #-garnet-debug
-;;   1/29/92 Brad Myers - added :slots-to-set parameter
-;;  10/11/90 Brad Myers - added explicit Stop-Interactor code
-;;   9/21/90 Brad Myers - fixed final-feedback so works if :start-where
-;;                        returns :none, and if :start-where is T
-;;   7/23/90 Brad Myers - added new parameter to
-;;                        Destroy-Extra-Final-Feedback-Objs
-;;   7/11/90 Ed Pervin - new :destroy-me method
-;;   6/14/90 Brad Myers - added destroy method
-;;   6/8/90 Brad Myers - add final-feedback-objs
-;;  12/5/89 Ed Pervin  - Removed extra `)'
-;;  10/5/89 Brad Myers - Add Final-Function
-;;  10/4/89 Roger Dannenberg - Change debugging output
-;;   9/22/89 Brad Myers - Made more robust when :start-where = T
-;;   8/14/89 Brad Myers - Fixed for multiple priority levels
-;;   6/26/89 Brad Myers - Fixed to have quote for create-schema
-;;   6/8/89  Brad Myers -  Fixed so how-set handled consistently
-;;   5/30/89  Brad Myers - call-method -> kr-send;
-;; 			   allow running-where to be set after initialized
-;;   4/20/89  Brad Myers - schema-call -> call-method
-;;   4/14/89  Brad Myers - fixed self-deactivate
-;;   4/7/89 Dario Giuse and Brad Myers - changed to work with new KR
-;;   2/15/89 Lynn Baumeister - changed x,y to event in func calls
-;;   9/9/88 Brad Myers - started
-
 
 (in-package "INTERACTORS")
 
@@ -344,3 +313,10 @@
 	(Kill-Timer-Process an-interactor))
   (Destroy-Extra-Final-Feedback-Objs an-interactor erase)
   (call-prototype-method an-interactor erase))
+
+;;
+;; Scroll wheel interactor. Scroll wheels are treated as if someone
+;; clicked on a button. We look for the mouse-up of the scroll wheel.
+(create-instance 'inter:scroll-wheel-interactor inter:button-interactor
+  (:continuous nil)
+  (:start-event '(:downscrollup :upscrollup)))

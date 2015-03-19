@@ -14,169 +14,6 @@
 ;; Designed and implemented by Brad A. Myers
 
 
-;;; Change log:
-;; 12/06/94 Charles Rich - Added UNLESS at end of handle-interactor-slot-changed
-;; 06/01/94 Brad Myers - Mac version of Process-Event for multiple window inters
-;; 02/04/94 Andrew Mickish - Set-Interest-In-Moved now in Gem
-;; 12/03/93 Andrew Mickish - Always reference CLTL1:char-bits in Allegro
-;; 11/22/93 Brad Myers - eliminate warning on :ACTIVE if destroy an inter proto
-;; 10/22/93 Andrew Mickish - Fixed CHAR-BITS call for LispWorks and Allegro 4.2
-;; 07/16/93 Brad Myers - BVZ: maintain :current-obj-over slot in inter
-;;                     - BVZ: fixed so can destroy inter after change inter window
-;;                     - BVZ: fixed window T bug in process-event
-;; 07/12/93 Brad Myers - PAS: destroy window and :active NIL, still destroy inter
-;; 06/02/93 Andrew Mickish - Added type definitions to inter::interactor, and
-;;                           removed g-value's from Check-Required-Slots
-;; 05/03/93 Brad Myers - Print-Inter-Levels robust if bad win (Jim Davis)
-;; 03/17/93 Brad Myers - fix: menubar showed bug when recalc window while running
-;; 03/12/93 Brad Myers - allow :short for trace-inter
-;;                     - support :enter-window and :exit-window as :start-events
-;; 03/10/93 Brad Myers - special slot in priority level called
-;;                       :sorted-interactors that when non-NIL makes the
-;;                       interactors run in sorted order by the number in the
-;;                       :sort-order slot of each interactor (lowest
-;;                       number runs first).  Then, if any runs, looks at
-;;                       the :exclusivity-value slot, and won't run any other
-;;                       interactors with the same value, unless NIL,
-;;                       which means any other interactors can run.  This
-;;                       slot can be any Lisp value.
-;; 02/02/93 Brad Myers - small bug in priority levels: check for window destroyed
-;; 01/18/93 Brad Myers - debug utility that operates on NEXT inter to
-;;                       run, and :next parameter to trace-inter
-;;                     - supply global accelerators that go BEFORE the inters
-;;                     - allow :action procedures to return :stop to mean this
-;;                       inter didn't grab the event (for text inter).
-;; 12/9/92 Brad Vander Zanden - fixed bug when a level is not active
-;; 10/22/92 Dave Kosbie - Added ACCELERATORS (window & global,mouse & keyboard)
-;; 10/22/92 Dave Kosbie - Changed :stop-when of normal-priority-level to :if-any
-;; 10/21/92 Dave Kosbie - Put "state" and "aggie" fields in "event"
-;;                        defstruct (for Katie)
-;; 10/13/92 Brad Myers - bug with priority-levels :stop-when=NIL
-;; 09/02/92 Mike Salisbury - Fixed bug in check-leaf-but-return-element:
-;;                           objects processed in wrong order
-;; 08/22/92 Brad Myers - Fixed bug for interactor, start-event and where T 
-;; 07/31/92 Brad Myers - Made :window slot be copied in case edited.
-;; 07/17/92 Brad Myers - Fixed bugs with change-active and priority levels
-;; 07/16/92 Brad Myers - Fixed bug where multiple windows in an inter
-;;                       messed up modal windows (from bvz).
-;; 07/07/92 Brad Myers - allow changing priority levels
-;; 06/12/92 Brad Myers - change get-local to g-local in destroy-me (--dzg)
-;; 06/10/92 Brad Myers - Fixed small bug with aborting from handle-change
-;; 06/08/92 Brad Myers - Made multiple window interactors more robust
-;; 06/04/92 Brad Myers - Support for animation-interactors
-;; 05/25/92 Brad Myers - Support for animation sending :timer events
-;; 05/22/92 Brad Myers - Start- and abort-inter must clear *changed first
-;;                       Added :modal-p windows
-;; 05/19/92 Brad Myers - make sure inter T gets newly created windows 
-;; 04/08/92  Andrew Mickish - Removed :window from :local-only-slots for
-;;                            inter:interactor, changed Check-Required-Slots 
-;;                            to do a g-local-value (not g-value) on the
-;;                            :window slot.
-;; 04/03/92 Brad Myers  - fixed bug with priority levels not being modal
-;; 03/25/92 Andrew Mickish - Added THE type declaration in Warp-Pointer
-;; 03/23/92 Brad Myers - fix bugs bvz found with changing active slot
-;; 03/18/92 Ed Pervin -  Added case in compare-and-get-possible-stop-event 
-;;                       to convert control characters to keywords.  
-;; 02/20/92 Andrew Mickish - Added schema-p call to :destroy-me method for
-;;                           interactors so that remove-local-interactor is 
-;;                           not called with an aggregadget that has already 
-;;                           been destroyed.
-;; 02/11/92 Brad Myers - made new grab more robust
-;;                     - changed kr::*debug-switch* to #+Garnet-debug
-;;                     - made remove-interactor-from-level-win more robust
-;; 02/03/92 Brad Myers - New functions Interaction-Complete and Wait-Interaction-Complete.
-;;                     - changed general-go into a direct call (not method)
-;;                     - special call for when interactors' window or active
-;;                       changes.  KR will call Inter:Notice-Interactor-Slot-Changed
-;;                     - no longer allowed to REMOVE from priority-level-list
-;;                     - priorities much more efficient
-;;                     - no debug code unless kr::*debug-switch*
-;;                     - default abort-event = ^G
-;;                     - added support for double-click
-;;                     - grab mouse when multi-windows
-;; 05/13/91 Ed Pervin - In the case statement in Stop-Interactor,
-;;                      changed (NIL NIL) to ((NIL) NIL).
-;; 02/27/91 Brad Myers - Exported new function Warp-Pointer.
-;; 01/14/91 Brad Myers - changed :custom to call the function, rather than
-;;                       looking it up as a method, and doesn't check
-;;                       the window of the object.
-;; 10/11/90 Brad Myers - added Stop-Interactor
-;; 09/21/90 Brad Myers - fixed final-feedback so works if :start-where
-;;                       returns :none and when :start-where is T.
-;;                       Exported new procedures:
-;;                            Return-Final-Selection-Objs,
-;;                            gv-Final-Selection-Objs
-;;                            DeSelectObj, SelectObj
-;; 07/26/90 Brad Myers - Added :custom branch to check-location
-;; 07/25/90 Brad Myers - destroy-me removes inter from aggregadget
-;; 07/11/90 Ed Pervin - new :destroy-me method
-;; 06/05/90 Brad Myers - export new transcript functions
-;; 04/09/90 Robert Cook - Changed append to copy-list.
-;; 04/9/90 Brad Myers - fixed so start-event can be T and interactor
-;;                      will start when created and won't stop.
-;; 03/06/90  Brad Myers - :type in start-where can be a list,
-;;                        export Insert-Text-Into-String
-;; 12/11/89 Ed Pervin - Exporting *garnet-break-key*
-;; 12/05/89  Ed Pervin - Removed extra `)'
-;; 11/16/89 Brad Myers - Extra debugging output in general-go
-;; 11/14/89 Ed Pervin - In Start-Interactor, added test to handle
-;;                      when event is NIL.
-;; 11/07/89  Ed Pervin - Main-event-loop, exit-main-event-loop and 
-;;                       beep are exported.
-;; 11/01/89  Ed Pervin - Split up check-location so it would compile
-;;                       on Sun.
-;; 10/26/89 Brad Myers - Add new function Abort-Interactor
-;; 10/19/89 Brad Myers - If tracing any then also trace :events
-;; 10/5/89 Brad Myers - If window is NIL, then don't run interactor,
-;;                      Add new slots :first-obj-over, :start-char
-;;                      Change *event* to *Current-Event*
-;; 10/04/89 Roger Dannenberg - Change debugging output
-;; 08/15/89 Brad Myers - Added :list-leaf-element-of-or-none and
-;;                             :list-element-of-or-none,
-;;                             :list-check-leaf-but-return-element-or-none
-;;                             :check-leaf-but-return-element-or-none
-;; 08/14/89 Brad Myers - Added multiple priority levels,
-;;                       exported event procedures
-;; 07/20/89 Brad Myers - Added new check-locations:
-;;                       :list-check-leaf-but-return-element
-;;                       :check-leaf-but-return-element
-;; 07/03/89 Brad Myers - Allow interactors to have multiple values in
-;;                       the window slot
-;; 06/26/89 Brad Myers - Fixed to have quote for create-schema
-;; 06/21/89 Brad Myers - Added :list-leaf-element-of
-;; 06/09/89 Brad Myers - New procedure to cause an interactor to start
-;;                       without waiting for its start event
-;; 05/26/89 Brad Myers - Allow stop-event and running-where to be set at any
-;;                       time. call-method => kr-send
-;; 05/19/89 Brad Myers - Removed all get-local-values (except for :state) so
-;;                       will work as prototypes
-;; 05/11/89 Brad Myers - Make steal-mouse queue run all interactors there
-;; 04/25/89 Brad Myers - Added :leaf-element-of-or-none
-;; 04/19/89 Brad Myers - schema-call -> call-method fixed so no update call
-;;                       if interactor destroyed, Window for interactor can
-;;                       be specified after created
-;;			 Fixed :in-box
-;; 04/13/89 Brad Myers - add :list-element-of, fixed change-active
-;; 04/07/89 Brad Myers - changed to new KR; merged Lynn's changes from 3/30
-;; 04/05/89 Brad Myers - small change to get-gob-of-where for where=T
-;; 03/30/89 Lynn Baumeister - altered code to work with portable events
-;; 03/28/89 Brad Myers - make window slot be inheritable (in Check-Required-Slots),
-;;                       and fixed destroy to look at the erase field so hopefully
-;;                       it will be more robust
-;; 03/02/89 Brad Myers - removed create and destroy procedures
-;; 02/24/89 Brad Myers - add point-to-leaf and NIL in Check-location
-;; 02/15/89 Lynn Baumeister - altered check-event big-time
-;; 02/15/89 Lynn Baumeister - changed interactor funcs to receive an event 
-;;                            instead of just x,y 
-;; 01/15/89 Lynn Baumeister - merged button-down, key-pressed, and button-up
-;;                            queues into one queue
-;; 12/22/88 Brad Myers - moved calc-set-value to menuinter
-
-;; 11/28/88 Brad Myers - changed to new Opal, moved Menus to their own file
-;; 8/17/88 Brad Myers - moved to constraint version of KR
-;; 7/24/88 Brad Myers - started 
-
-
 (in-package "INTERACTORS")
 
 ;;; the exported functions
@@ -218,7 +55,7 @@
 	    ;; the various exported interactor types
 	    interactor interactor-window button-interactor text-interactor
 	    two-point-interactor move-grow-interactor menu-interactor
-	    angle-interactor
+	    angle-interactor scroll-wheel-interactor
 	    ;; Export these if debugging is enabled.
 	    #+garnet-debug *int-debug* #+garnet-debug *int-trace*
 	    )))
@@ -264,7 +101,7 @@ The variable is set by turn-on{off}-mouse-moved.")
 ;;
 (defun Beep ()
   "Causes a beep or bell to sound"
-  (gem:beep (g-value opal:DEVICE-INFO :current-root)))
+  (gem:beep (g-value gem:DEVICE-INFO :current-root)))
 
 (defun Warp-Pointer (window x y)
   "Move the cursor to the specified x y position in the window."
