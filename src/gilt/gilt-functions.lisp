@@ -14,32 +14,10 @@
 ;;; 
 ;;; Designed and implemented by Osamu Hashimoto
 
-#|
-============================================================
-Change log:
-     3/4/93  Brad Myers - new function value-from-one-obj. 
-   11/25/92  Andrew Mickish/Francesmary Modugno - Set :modal-p of new window in
-               internal-show-in-window
-    8/21/92  Brad Myers - wait-interaction-complete new parameter
-    8/17/92  Andrew Mickish - Final functions now treat inter::*waiting-for-
-               exit-wait-interaction-complete* flag as a counter.
-    7/21/92  Andrew Mickish - Internal-Show-In-Window now always looks at
-               :window-width and :window-height
-     6/5/92  Brad Myers - Modal switch for show's
-     3/2/92  Brad Myers - show-in-window-and-wait
-    11/21/91 Andrew Mickish - Added :background-color for windows
-    08/07/91 Andrew Mickish - Added kr-send of :function-for-cancel to
-               Standard-Cancel-Function
-    01/02/91 Osamu Hashimoto - added standard-Apply-function
-    12/10/90 Brad Myers - added value-of function
-    11/30/90 Brad Myers - Provided X and Y for show-in-window
-    11/08/90 Osamu Hashimoto - Started
-============================================================
-|#
-
+
 (in-package "GILT")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(SHOW-IN-WINDOW SHOW-IN-WINDOW-AND-WAIT
 	    DESTROY-GADGET-WINDOW GADGET-VALUES SET-INITIAL-VALUE
 	    OKCANCEL-FUNCTION VALUE-OF

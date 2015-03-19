@@ -7,96 +7,17 @@
 ;;; domain.  If you are using this code or any part of Garnet,      ;;;
 ;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; $Id$
+;;;
 
+
 ;;; Gilt is a simple interface builder for Garnet.  It lets a user
 ;;; construct a user interface by selecting gadgets in the gadget window
 ;;; and then drawing them in the work window.  The work window can be
 ;;; exercised and written out.
 ;;;
 ;;; Designed and implemented by Brad Myers
-
-#|
-============================================================
-Change log:
-   01/11/95 Andrew Mickish - Added :EXECUTE and EVAL to written eval-when
-   12/02/94 Andrew Mickish - Changed written eval-when statement to CLTL2 style
-   10/07/93 Andrew Mickish - In saved files, wrote IN-PACKAGE at top of file,
-              and wrapped load of gadgets with EVAL-WHEN.
-    8/23/93 Andrew Mickish - Probe-file ---> gu:probe-directory
-    7/09/93 Andrew Mickish - When saving file, write out a load of multifont
-    7/01/93 Andrew Mickish - Changed lazy loader to check :garnet-modules
-              hash table instead of checking whether symbol was boundp;
-              moved Align-Func to align-imp.lisp; Removed binding of obj in
-              Val-Set-Func; Moved Gilt-Error and Sel-Obj-Value to
-              gilt-gadget-utils.lisp;
-    6/30/93 Andrew Mickish - Eliminated *Text-Feedback-Obj*, stringform, and
-              fix-up-string-after-edit, thanks to new cursor text
-    6/15/93 Andrew Mickish - Removed :old-items from create-time-do-not-dump-
-              slots;  Added :max-text-width-thus-far to *Text-Feedback-Obj*
-    5/20/93 Andrew Mickish - Fixed :active-p of main-menu menubar by reordering
-              object definitions
-    4/22/93 Andrew Mickish - Made hourglass cursor standard (in Opal);
-              Fixed :active-p of *Selection-Obj*
-    3/18/93 Brad Myers - Allow reading of garnetdraw files
-    2/16/93 Brad Myers - change so only one gilt, with different widget sets
-                          available
-                       - eliminate gilt-type
-                       - use standard-edit
-                       - use :parameters instead of :changeable-slots, etc.
-   01/18/93 Andrew Mickish - Removed calls to notice-items-changed
-   12/01/92 Andrew Mickish - Removed set of :constant slot in Create-New-Gadget
-              and instead put :constant declarations in *gilt-gadgets.lisp;
-              In Do-Read-File, copy :links and each link formula.
-   11/25/92 Andrew Mickish - In Properties-Func, don't assume all objects
-              have a :gilt-type (e.g., single buttons).
-   11/20/92 Andrew Mickish - Added filter extension; Put multi-selection at
-              higher priority level and removed Fix-All-Interactors.
-   10/5/92  Andrew Mickish - In Create-New-Gadget, clear new object's :known-as
-    9/1/92  Andrew Mickish - Removed defun of opal:convert-coordinates
-    5/1/92  Andrew Mickish - Added with-constants-disabled in Fix-Known-As,
-              added destroy of text-edit in do-stop.
-    4/4/92  Brad Myers - fixed so control- doesn't work for selection
-                         (required fixes to fix-all-interactors)
-                       - fixed so items slot not shared for Motif.
-    3/25/92 Andrew Mickish - Get-Local-Values ---> G-Local-Value
-    3/25/92 Brad Myers - fix bugs with save.  :control-xxx
-    3/04/92 Andrew Mickish - Bound kr::*constants-disabled* in Do-Read-File
-    2/24/92 Andrew Mickish - Added :visible formula to *Text-Feedback-Obj*;
-              Added mark-as-changed to Restore-Temp-Value
-    2/21/92 Andrew Mickish - Fixed To-Bottom-Func to look at first component
-    2/7/92  Brad Myers - fixed for constant slots
-    2/5/92  Ed Pervin - Made control characters :control-* for CMUCL
-    7/16/91 Andrew Mickish - Changed LinepForm so objects don't need a
-                             :gilt-type slot
-    5/15/91 Andrew Mickish - Added probe-file checks to Do-Read-File and
-                             Do-Save-File
-    4/14/91 Brad Myers - Made fix-all-interactors only work on local slots
-                       - Also fixed duplicate to not copy the :known-as slot
-    3/20/91 Brad Myers - Made *work-win*'s aggregate, *top-agg*, global
-    3/14/91 Andrew Mickish - Defined Is-A-Motif-Background and called from
-              To-Top-Func, To-Bottom-Func, and Duplicate-Func
-    3/13/91 Osamu Hashimoto - Moved Show-Save-Dailog & Show-Read-Dialog
-              to gilt-gadgets.lisp and motif-gilt-gadgets.lisp
-    3/07/91 Osamu Hashimoto - Moved *prop-sheet* to gilt-gadgets.lisp and
-              motif-gilt-gadgets.lisp
-    3/04/91 Osamu Hashimoto - Moved Make-Main-Menu to gilt-gadgets.lisp and
-              motif-gilt-gadgets.lisp
-    2/28/91 Andrew Mickish - Uncommented "export" code in Show-Save-Dialog;
-              Put formulas in :min-width and :min-height of Creator inter;
-              Since Export-p part of Save-Menu is now a single button, all
-              Car's of Export-p's :value were removed;
-    2/27/91 Andrew Mickish - Changed Load-File-Name to use assoc;
-              Moved *load-file* parameter into gilt-gadgets.lisp;
-              Put check for MOTIF-BACKGROUND in Generate-Uses-List;
-              *ib-win* is now an instance of IB-WINDOW created in gilt-gadgets
-    2/21/91 Andrew Mickish - Moved IB-OBJS into gilt-gadgets.lisp
-    1/23/91 Andrew Mickish - Removed ~% from error-gadget messages
-    12/5/90 Brad Myers - New save and read dialog boxes
-    11/27/90 Brad Myers - Added multiple selection
-    11/15/90 Brad Myers - Released
-    6/18/90 Brad Myers - Started
-============================================================
-|#
 
 ;;  **** BUGS:
 ;;  Opal: windows should appear in new place
@@ -110,11 +31,10 @@ Change log:
 
 ;;**** In Read, save other parts of main aggregate, such as interactors
 
-
+
 (in-package "GILT")
 
-(eval-when #-(or cmu lucid) (:compile-toplevel :load-toplevel :execute)
-	   #+(or cmu lucid) (compile load eval)
+(eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(Do-Go Do-Stop)))
 
 (defparameter Gilt-Version "V3.0")
@@ -351,8 +271,7 @@ Change log:
 			(gg:is-a-motif-rect gad))
 	      (pushnew (string-downcase (Load-File-Name item)) gadgets-to-load)))))
     (when gadgets-to-load
-      (format T "(eval-when #-(or cmu lucid) (:compile-toplevel :load-toplevel :execute)
-           #+(or cmu lucid) (compile load eval)~%")
+      (format T "(eval-when (:compile-toplevel :load-toplevel :execute)~%")
       (format T "  (dolist (gadget '(")
       (dolist (gad gadgets-to-load)
 	(format T "\"~a-loader\"~%		    " gad))

@@ -13,19 +13,9 @@
 ;;;  aggregate hierarchy between two objects.
 ;;;
 
-;;; CHANGE LOG:
-;;;
-;;; 11/25/92 Andrew Mickish - When src and dest are siblings, only optimize
-;;;            when dest has a :known-as slot.
-;;; 11/20/92 Andrew Mickish - Changed Marked-P and Set-Marked-Bit to use
-;;;            local values only;  When pushing new link into :link list,
-;;;            use pushnew instead of push.
-;;; 10/01/92 Andrew Mickish - Created this file from functions in Lapidary
-
-
 (in-package "GILT")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(Make-Path)))
 
 ;;; indicates whether an object has been marked

@@ -25,7 +25,7 @@
 
 (in-package "GILT")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(Get-Standard-Font Get-Font-From-File
 	    Make-Number Make-Keyword Make-Atom Make-Color-Fill))
   (proclaim '(special *error-gadget*)))

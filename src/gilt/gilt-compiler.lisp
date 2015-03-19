@@ -9,23 +9,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 
-#|
-==================================================================
-Change log:
-;;; 10/2/03 RGA --- New compile/load protocol
-       7/28/96 RGA --- changed to use garnet-compile/load
-    2/16/93 Brad Myers - change so only one gilt, with different widget sets
-                          available
-    2/20/92 Andrew Mickish - Moved make-package call to Garnet-Loader
-    2/18/92 Brad Myers - add gilt-gadget-utils
-    3/26/91 Pervin - Load compiled files in Lucid.
-    3/22/91 Ed Pervin - Added test to not load gadgets if compiling
-	 	all of Garnet
-    3/14/91 Andrew Mickish - Added Motif Version
-   12/10/90 Brad Myers - created
-==================================================================
-|#
-
+
 (in-package "COMMON-LISP-USER")
 
 (defvar *debug-gilt-mode* nil)
@@ -80,11 +64,7 @@ Change log:
     (unless (get :garnet-modules (car pair))
       (garnet-load (concatenate 'string "gadgets:" (cadr pair)))))
 
-
-#+allegroV3.1
-(common-lisp-user::gc t)
-
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (garnet-mkdir-if-needed Garnet-gilt-Pathname))
 
 (defvar gilt-files
