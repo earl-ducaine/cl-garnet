@@ -35,7 +35,7 @@
 (defpackage :AGATE (:use :KR :INTER :COMMON-LISP)
   (:export DO-GO DO-STOP))
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (garnet-mkdir-if-needed Garnet-Gesture-Pathname))
 
 

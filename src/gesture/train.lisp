@@ -17,27 +17,10 @@
 ;;;
 ;;; Designed and implemented by James A. Landay
 
-#|
-============================================================
-Change log:
-    07/02/93 James Landay - since fix-classifier () is unimplemented,
-                            made it return the same error as when there
-                            aren't enough examples.
-    05/26/92 James Landay - added gest-remove-example ()
-    03/24/92 James Landay - allow gestures with less than 3 points
-                            in gest-add-example ()
-    03/23/92 James Landay - made gest-done-adding () return nil on errors
-    12/31/92 James Landay - changed function names
-    12/27/92 James Landay - made add-example () and train-classifier ()
-                            expect each example as an array rather than list
-    12/21/92 James Landay - started
-============================================================
-|#
-
 
 (in-package "INTERACTORS")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(gest-add-example
 	    gest-classifier-train
 	    gest-done-adding 
