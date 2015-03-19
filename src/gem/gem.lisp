@@ -90,7 +90,7 @@
 ;; that generates a defun as well).
 
 (defmacro gem-method (method-name (&rest args))
-  (let ((macro-name (intern (symbol-name method-name) (find-package "GEM")))
+  (let ((function-name (intern (symbol-name method-name) (find-package "GEM")))
 	(has-rest (find '&rest args)))
     `(progn
 
@@ -100,7 +100,7 @@
        ;; Define the interface function itself, which will dispatch on its
        ;; first argument (a window) to find the appropriate device-specific
        ;; argument.
-       (defun ,macro-name (,@args)
+       (defun ,function-name (,@args)
 	 (,(if has-rest 'APPLY 'FUNCALL)
 	   (aref (g-value ,(car args) :METHODS)
 		 ,(find-or-create-name method-name))
@@ -128,7 +128,7 @@
 		 args)))
 
        ;; Export the interface function from the Gem package.
-       (eval-when (eval load compile) (export ',macro-name)))))
+       (eval-when (:execute :load-toplevel :compile-toplevel) (export ',function-name)))))
 
 ;; Same, generates a function instead of a macro.
 #-(and)
@@ -169,7 +169,7 @@
 (defmacro gem-method (method-name (&rest args))
   (let ((macro-name (intern (symbol-name method-name) (find-package "GEM")))
 	(has-rest (find '&rest args)))
-    `(eval-when (load eval compile)
+    `(eval-when (:load-toplevel :execute :compile-toplevel)
       (defun ,macro-name (,@args)
 	(,(if has-rest 'APPLY 'FUNCALL)
 	  (aref (g-value ,(car args) :METHODS)
@@ -185,6 +185,19 @@
       (export ',macro-name))))
 
 
+
+;;; This schema is kind of a bridge between GEM and OPAL. It's mostly
+;;  used in OPAL but because it's used in GEM as well, it needs to be
+;;  in this file for modularity's sake.
+;;
+;; The :current-root slot indicates the current device. This is used
+;; for all calls to Gem which occur in places where explicit device
+;; information is not available. The :active-devices slot contains the
+;; list of all the devices that have been initialized.
+;;
+(create-schema 'DEVICE-INFO
+  (:current-root NIL)
+  (:active-devices NIL))
 
 
 ;; This is called when a root-window device does not yet exist.  Therefore,
