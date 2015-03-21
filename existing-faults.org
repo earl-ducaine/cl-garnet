@@ -16,3 +16,9 @@
 * Transcription replay doesn't work.
   - Not sure if it's bad output or a problem with input.
   
+* Garnet should not need to connect to the X server to compile.
+* Connecting to the X server is a bit of a mess right now.
+  - CCL has issues with network connections
+    - esp. on Windows
+      - Probably a CLX issue related to endianness
+  - Allegro also has issues if the DISPLAY host is not ""
