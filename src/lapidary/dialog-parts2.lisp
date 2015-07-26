@@ -83,8 +83,8 @@
 ;;;*************
 
 (create-instance 'NAME-BOX garnet-gadgets:labeled-box
-   (:left (o-formula (+ 10 (gvl :parent :left))))
-   (:top (o-formula (+ 10 (opal:gv-bottom (gvl :parent :title)))))
+   (:left (o-formula (+ 10 (gvl-fixnum :parent :left))))
+   (:top (o-formula (+ 10 (opal:gv-bottom (gvl-fixnum :parent :title)))))
    (:label-string "Interactor Name:")
    (:value "")
    (:min-frame-width 150))
@@ -96,30 +96,30 @@
 
 (create-instance 'TITLED-FRAME opal:aggregadget
    (:maybe-constant :font :string :left :top :width :height)
-   (:left (o-formula (gvl :parent :left)))
-   (:top (o-formula (gvl :parent :top)))
-   (:width (o-formula (+ 30 (gvl :parent :contents :width))))
-   (:height (o-formula (+ (floor (gvl :text :height) 2)
-			  (gvl :frame :height))))
+   (:left (o-formula (gvl-fixnum :parent :left)))
+   (:top (o-formula (gvl-fixnum :parent :top)))
+   (:width (o-formula (+ 30 (gvl-fixnum :parent :contents :width))))
+   (:height (o-formula (+ (floor (gvl-fixnum :text :height) 2)
+			  (gvl-fixnum :frame :height))))
    (:string ":slot")
    (:font *bold-font*)
    (:parts
     `((:frame ,opal:rectangle
-		(:left ,(o-formula (gvl :parent :left)))
-		(:top ,(o-formula (opal:gv-center-y (gvl :parent :text))))
-		(:width ,(o-formula (gvl :parent :width)))
-		(:height ,(o-formula (+ 20 (gvl :parent :parent :contents
+		(:left ,(o-formula (gvl-fixnum :parent :left)))
+		(:top ,(o-formula (opal:gv-center-y (gvl-fixnum :parent :text))))
+		(:width ,(o-formula (gvl-fixnum :parent :width)))
+		(:height ,(o-formula (+ 20 (gvl-fixnum :parent :parent :contents
 						:height)))))
       (:text-frame ,opal:rectangle
-		   (:left ,(o-formula (+ (gvl :parent :left) 10)))
-		   (:top ,(o-formula (gvl :parent :text :top)))
-		   (:width ,(o-formula (+ (gvl :parent :text :width) 10)))
-		   (:height ,(o-formula (gvl :parent :text :height)))
+		   (:left ,(o-formula (+ (gvl-fixnum :parent :left) 10)))
+		   (:top ,(o-formula (gvl-fixnum :parent :text :top)))
+		   (:width ,(o-formula (+ (gvl-fixnum :parent :text :width) 10)))
+		   (:height ,(o-formula (gvl-fixnum :parent :text :height)))
 		   (:line-style NIL)
 		   (:filling-style ,opal:white-fill))
       (:text ,opal:text
-	     (:left ,(o-formula (+ (gvl :parent :text-frame :left) 5)))
-	     (:top ,(o-formula (gvl :parent :top)))
+	     (:left ,(o-formula (+ (gvl-fixnum :parent :text-frame :left) 5)))
+	     (:top ,(o-formula (gvl-fixnum :parent :top)))
 	     (:string ,(o-formula (gvl :parent :string)))
 	     (:font ,(o-formula (gvl :parent :font)))))))
 
@@ -139,13 +139,13 @@
    (:string "")
    (:parts
     `((:frame ,opal:rectangle
-	      (:left ,(o-formula (gvl :parent :left)))
-	      (:top ,(o-formula (gvl :parent :top)))
-	      (:width ,(o-formula (gvl :parent :width)))
-	      (:height ,(o-formula (gvl :parent :height))))
+	      (:left ,(o-formula (gvl-fixnum :parent :left)))
+	      (:top ,(o-formula (gvl-fixnum :parent :top)))
+	      (:width ,(o-formula (gvl-fixnum :parent :width)))
+	      (:height ,(o-formula (gvl-fixnum :parent :height))))
       (:text ,opal:text
-	     (:left ,(o-formula (+ 3 (gvl :parent :left))))
-	     (:top ,(o-formula (+ 2 (gvl :parent :top))))
+	     (:left ,(o-formula (+ 3 (gvl-fixnum :parent :left))))
+	     (:top ,(o-formula (+ 2 (gvl-fixnum :parent :top))))
 	     (:string ,(o-formula (let ((string (gvl :parent :string)))
 				    (if string string ""))))
 	     (:draw-function :xor) (:fast-redraw-p T)))))
@@ -169,19 +169,19 @@
 
 (create-instance 'SELECT-BOX garnet-gadgets:RADIO-BUTTON
    (:left 0) (:top 0)
-   (:width (o-formula (+ (gvl :text-width) (gvl :text-offset)
-			 10 (gvl :button-unit-width)
-			 (gvl :text-box :width))))
-   (:height (o-formula (MAX (gvl :button-unit-height)
-			    (gvl :text-box :height)
-			    (gvl :text :height))))
-   (:floating-left (o-formula (+ (gvl :button-left)
+   (:width (o-formula (+ (gvl-fixnum :text-width) (gvl-fixnum :text-offset)
+			 10 (gvl-fixnum :button-unit-width)
+			 (gvl-fixnum :text-box :width))))
+   (:height (o-formula (the fixnum (MAX (gvl-fixnum :button-unit-height)
+					(gvl-fixnum :text-box :height)
+					(gvl-fixnum :text :height)))))
+   (:floating-left (o-formula (+ (gvl-fixnum :button-left)
 				 (if (gvl :button-bound-box :interim-selected)
-				     (gvl :shadow-offset)
+				     (gvl-fixnum :shadow-offset)
 				     0))))
-   (:floating-top (o-formula (+ (gvl :button-top)
+   (:floating-top (o-formula (+ (gvl-fixnum :button-top)
 				 (if (gvl :button-bound-box :interim-selected)
-				     (gvl :shadow-offset)
+				     (gvl-fixnum :shadow-offset)
 				     0))))
    (:text-visible (o-formula (not (string= (gvl :string)
 					    "Start Anywhere in Window"))))
@@ -195,11 +195,11 @@
       (:button-bound-box ,BUTTON-BOUND-BOX)
       (:text-box ,TEXT-BOX
 	  (:visible ,(o-formula (gvl :parent :text-visible)))
-          (:left ,(o-formula (+ 10 (opal:gv-right (gvl :parent :shadow)))))
-	  (:top ,(o-formula (- (gvl :parent :center-y)
-			       (floor (gvl :height) 2))))
+          (:left ,(o-formula (+ 10 (opal:gv-right (gvl-fixnum :parent :shadow)))))
+	  (:top ,(o-formula (- (gvl-fixnum :parent :center-y)
+			       (floor (gvl-fixnum :height) 2))))
 	  (:string ,(o-formula (gvl :parent :field-string)))
-	  (:min-frame-width ,(o-formula (gvl :parent :min-frame-width))))))
+	  (:min-frame-width ,(o-formula (gvl-fixnum :parent :min-frame-width))))))
    (:interactors
     `((:radio-button-press :omit)
       (:select-box-press ,inter:button-interactor
@@ -234,11 +234,11 @@
 				     (if (gvl :interim-selected)
 					 (gvl :shadow-offset)
 					 0))))
-      (:floating-top ,(o-formula (+ (gvl :button-top)
+      (:floating-top ,(o-formula (+ (gvl-fixnum :button-top)
 				    (if (gvl :interim-selected)
 					(gvl :shadow-offset)
 					0))))
-      (:min-frame-width ,(o-formula (gvl :parent :min-frame-width)))
+      (:min-frame-width ,(o-formula (gvl-fixnum :parent :min-frame-width)))
       (:string ,(o-formula (let* ((items (gv (kr-path 0 :parent) :items))
 				  (item (nth (gvl :rank) items)))
 			     (if (listp item) (first item) item))))
@@ -297,7 +297,7 @@
    (:width (o-formula (+ (gvl :text :width) 15 (gvl :panel :width))))
    (:parts
     `((:text ,opal:text
-	     (:left ,(o-formula (gvl :parent :left)))
+	     (:left ,(o-formula (gvl-fixnum :parent :left)))
 	     (:top ,(o-formula (opal:gv-center-y-is-center-of
 				(gvl :parent :panel))))
 	     (:string ,(o-formula (gvl :parent :title)))
@@ -306,7 +306,7 @@
 ;	      (:constant ,(o-formula (gvl :parent :constant)))
 	      (:constant (t :except :left :top :width :height :items))
               (:left ,(o-formula (+ 15 (opal:gv-right (gvl :parent :text)))))
-              (:top ,(o-formula (gvl :parent :top)))
+              (:top ,(o-formula (gvl-fixnum :parent :top)))
 	      (:width ,(o-formula
                         (let ((width 0)
                               (h-spacing (gvl :h-spacing)))
@@ -314,7 +314,7 @@
                           (opal:do-components (gvl :radio-button-list)
                              #'(lambda (button)
                                  (setf width (+ width h-spacing
-                                                (g-value button :width)))))
+                                                (g-value-fixnum button :width)))))
                           width)))
               (:direction :horizontal)
               (:fixed-width-p NIL)
@@ -354,53 +354,54 @@
 
 (create-instance 'START-WHERE opal:aggregadget
    (:maybe-constant '(:left :top :width :height))
-   (:left (o-formula (+ 10 (gvl :parent :left))))
+   (:left (o-formula (+ 10 (gvl-fixnum :parent :left))))
    (:top (o-formula (+ (opal:gv-bottom (gvl :parent :known-as)) 10)))
    (:parts
     `((:titled-frame ,TITLED-FRAME
 	  (:string ":start-where"))
       (:contents ,opal:aggregadget
-	  (:width ,(o-formula (- (opal:gv-right (gvl :type-restrict))	
-			 (gvl :other-button :left))))
+	  (:width ,(o-formula (- (opal:gv-right (gvl :type-restrict))
+			 (gvl-fixnum :other-button :left))))
 	  (:height ,(o-formula (- (opal:gv-bottom (gvl :other-button))
-				  (gvl :select-box-panel :top))))
+				  (gvl-fixnum :select-box-panel :top))))
 	  (:value ,(o-formula (gvl :parent :value)))
 	  (:field-string ,(o-formula (gvl :parent :field-string)))
 	  (:parts
 	   ((:select-box-panel ,SELECT-BOX-PANEL)
 	    (:or-1 ,opal:text
-;	        (:constant ,(o-formula (gvl :parent :parent :constant)))
+;;	        (:constant ,(o-formula (gvl :parent :parent :constant)))
 		(:constant (t))
-		(:left ,(o-formula (+ 30 (gvl :parent :parent :left))))
+		(:left ,(o-formula (+ 30 (gvl-fixnum :parent :parent :left))))
 		(:top ,(o-formula (opal:gv-bottom
 				   (car (gvl :parent :select-box-panel
 					     :components)))))
 		(:string "or"))
 	    (:or-2 ,opal:text
-;		(:constant ,(o-formula (gvl :parent :parent :constant)))
+;;		(:constant ,(o-formula (gvl :parent :parent :constant)))
 		(:constant (t))
-		(:left ,(o-formula (+ 30 (gvl :parent :parent :left))))
+		(:left ,(o-formula (+ 30 (gvl-fixnum :parent :parent :left))))
 		(:top ,(o-formula (opal:gv-bottom
 				   (gvl :parent :select-box-panel))))
 		(:string "or"))
 
 
 	    (:other-button ,garnet-gadgets:text-button
-;		(:constant ,(o-formula (when (gvl :parent :parent :constant)
-;					     '(t :queue))))
+;;		(:constant ,(o-formula (when (gvl :parent :parent :constant)
+;;					     '(t :queue))))
 		(:constant (t))
 		(:queue ,(o-formula (gvl :window :queue)))
 		(:inter ,(o-formula (gvl :window :inter)))
-		(:left ,(o-formula (+ 15 (gvl :parent :parent :left))))
+		(:left ,(o-formula (+ 15 (gvl-fixnum :parent :parent :left))))
 		(:top ,(o-formula (+ 5 (opal:gv-bottom (gvl :parent :or-2)))))
 		(:string "Other")
-		(:selected ,(o-formula (string= (gvl :string) (gvl :parent :select-box-panel :value))))
+		(:selected ,(o-formula (string= (gvl :string)
+						(gvl :parent :select-box-panel :value))))
 		(:gray-width 3) (:shadow-offset 5) (:text-offset 3)
 		(:selection-function show-start-where-win)
 		(:final-feedback-p t))
 	    (:other-box ,text-box
 		(:left ,(o-formula (+ 10 (opal:gv-right
-					  (gvl :parent :other-button)))))
+					  (gvl-fixnum :parent :other-button)))))
 		(:top ,(o-formula (opal:gv-center-y-is-center-of
 				   (gvl :parent :other-button))))
 		(:string ,(o-formula (if (gvl :parent :other-button :selected)
@@ -411,7 +412,7 @@
 		(:constant (t))
 		(:value ,(o-formula (gvl :parent :select-box-panel :type)))
 	        (:left ,(o-formula (+ 10 (opal:gv-right
-					  (gvl :parent :other-box)))))
+					  (gvl-fixnum :parent :other-box)))))
 		(:top ,(o-formula (gv-center-my-top
 				   (gvl :parent :other-button))))
 		(:selection-function prompt-for-type-restrict)
@@ -429,8 +430,8 @@
   (:white-frame (o-formula (gvl :obj-over :white-frame)))
   (:left (o-formula (opal:gv-center-x-is-center-of (gvl :white-frame))))
   (:top (o-formula (opal:gv-center-y-is-center-of (gvl :white-frame))))
-  (:width (o-formula (- (gvl :white-frame :width) 6)))
-  (:height (o-formula (- (gvl :white-frame :height) 6)))
+  (:width (o-formula (- (gvl-fixnum :white-frame :width) 6)))
+  (:height (o-formula (- (gvl-fixnum :white-frame :height) 6)))
   (:visible (o-formula (gvl :obj-over)))
   (:obj-over nil))
 
@@ -448,8 +449,8 @@
       (:LINE-STYLE ,OPAL:LINE-0)
       (:DIAMETER 36)
       (:RADIUS ,(o-formula (/ (GVL :DIAMETER) 2) 18))
-      (:LEFT ,(formula `(+ (GVL :PARENT :LEFT ) 5 ) 270))
-      (:TOP ,(formula `(+ (GVL :PARENT :TOP ) 5 ) 54))
+      (:LEFT ,(formula `(+ (GVL-FIXNUM :PARENT :LEFT ) 5 ) 270))
+      (:TOP ,(formula `(+ (GVL-FIXNUM :PARENT :TOP ) 5 ) 54))
       (:WIDTH 23)
       (:HEIGHT 23))
     (:GRAY-FRAME ,OPAL:CIRCLE
@@ -457,11 +458,11 @@
       (:FILLING-STYLE ,OPAL:GRAY-FILL)
       (:DRAW-FUNCTION :COPY)
       (:LEFT ,(formula `(if (gvl :parent :interim-selected)
-			    (gvl :parent :shadow :left)
-			    (+ (GVL :PARENT :SHADOW :LEFT ) -5 )) 265))
+			    (gvl-fixnum :parent :shadow :left)
+			    (+ (GVL-FIXNUM :PARENT :SHADOW :LEFT ) -5 )) 265))
       (:TOP ,(formula `(if (gvl :parent :interim-selected)
-			   (gvl :parent :shadow :top)
-			   (+ (GVL :PARENT :SHADOW :TOP ) -5 )) 49))
+			   (gvl-fixnum :parent :shadow :top)
+			   (+ (GVL-FIXNUM :PARENT :SHADOW :TOP ) -5 )) 49))
       (:WIDTH 23)
       (:HEIGHT 23))
     (:WHITE-FRAME ,OPAL:CIRCLE
@@ -470,22 +471,22 @@
       (:LINE-STYLE ,OPAL:LINE-0)
       (:DIAMETER 21)
       (:RADIUS ,(o-formula (/ (GVL :DIAMETER) 2) 21/2))
-      (:LEFT ,(formula `(+ (GVL :PARENT :GRAY-FRAME :LEFT ) 3 ) 268))
-      (:TOP ,(formula `(+ (GVL :PARENT :GRAY-FRAME :TOP ) 3 ) 52))
+      (:LEFT ,(formula `(+ (GVL-FIXNUM :PARENT :GRAY-FRAME :LEFT ) 3 ) 268))
+      (:TOP ,(formula `(+ (GVL-FIXNUM :PARENT :GRAY-FRAME :TOP ) 3 ) 52))
       (:WIDTH 17)
       (:HEIGHT 17)))))
 
 (create-instance 'labeled-lap-radio-button lap-radio-button
     (:maybe-constant '(:string))
-    (:width (o-formula (+ (gvl :shadow :width) (gvl :label :width) 15)))
+    (:width (o-formula (+ (gvl-fixnum :shadow :width) (gvl-fixnum :label :width) 15)))
     (:string "")
     (:parts `(:shadow :gray-frame :white-frame
 	      (:label ,opal:text
 		     (:constant (t))
 		     (:left ,(o-formula (+ (opal:gv-right 
-					    (gvl :parent :shadow)) 10)))
+					    (gvl-fixnum :parent :shadow)) 10)))
 		     (:top ,(o-formula (opal:gv-center-y-is-center-of 
-					(gvl :parent :shadow))))
+					(gvl-fixnum :parent :shadow))))
 		     (:string ,(o-formula (gvl :parent :string)))))))
 
 

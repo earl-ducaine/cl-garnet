@@ -9,7 +9,7 @@
 #
 SBCL=/usr/local/bin/sbcl
 CMUCL=/usr/local/bin/lisp
-ACL=/usr/local/allegro-cl-amd64-linux/8.2/alisp
+ACL=/homedir/brg/aic/allegro-cl-amd64-linux/8.2/alisp
 CCL=/usr/local/bin/ccl
 
 # Setting this to "T" turns on the debug flag, adding a lot of

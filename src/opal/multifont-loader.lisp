@@ -23,11 +23,11 @@ Change log:
 
 ;; check first to see if places are set
 (unless (boundp 'Garnet-Opal-PathName)
-   (error "Load 'Multifont-Loader' first to set Garnet-Opal-PathName before loading Gadgets.")
+   (error "Load 'Garnet-Loader' first to set Garnet-Opal-PathName before loading Gadgets.")
 )
 
 (unless (boundp 'Garnet-Inter-PathName)
-   (error "Load 'Multifont-Loader' first to set Garnet-Inter-PathName before loading Gadgets.")
+   (error "Load 'Garnet-Loader' first to set Garnet-Inter-PathName before loading Gadgets.")
 )
 
 ;;; Load modules required for multifont

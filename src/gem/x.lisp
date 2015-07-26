@@ -2087,8 +2087,7 @@ returns the HOST name, stripping off the display number."
   
   (setq *default-x-display*
 	#-allegro
-	(xlib:open-display *default-x-display-name*
-			   :display *default-x-display-number*)
+	(xlib:open-default-display)
 	#+allegro
 	(ignore-errors
 	  (xlib:open-display *default-x-display-name*
@@ -2114,9 +2113,7 @@ returns the HOST name, stripping off the display number."
 	 (nth *default-x-screen-number*
 	      (xlib:display-roots
 	       #-allegro
-	       (xlib:open-display
-		*default-x-display-name*
-		:display *default-x-display-number*)
+	       (xlib:open-default-display)
 	       #+allegro
 	       (or
 		(ignore-errors

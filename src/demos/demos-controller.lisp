@@ -17,6 +17,7 @@
 ;;; Designed and implemented by Osamu Hashimoto
 ;;;
 
+
 (in-package :DEMOS-CONTROLLER)
 
 (declaim (special WIN1 AGG1 BT QBT DEMOS-MOUSELINE WIN2 TEXT))
@@ -33,12 +34,6 @@
   (common-lisp-user::garnet-load (concatenate 'string "gadgets:" file)))
 
 (common-lisp-user::garnet-load "demos:demo-logo")
-
-
-;; export nothing, just work around a bug in CMUCL.
-;; If didn't export here, CMUCL's overzealous optimizing compiler would
-;; screw up the reference to demo-logo:do-go in the code below.
-;;#+cmu (export '())
 
 (defparameter *package-list*
    '(("3d" DEMO-3D)
@@ -124,6 +119,7 @@ devised by David Goldberg at Xerox PARC.")
     ("virtual-agg" "Demonstrates virtual aggregates.")
     ))
 
+
 (defun Do-Go ()
   (setq *running* NIL)
   (demo-logo:do-go :dont-enter-main-event-loop T)

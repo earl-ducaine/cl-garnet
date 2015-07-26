@@ -4,10 +4,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; This code was written as part of the Garnet project at          ;;;
 ;;; Carnegie Mellon University, and has been placed in the public   ;;;
-;;; domain.  If you are using this code or any part of Garnet,      ;;;
-;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
+;;; domain.                                                         ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; $Id$
+
+
 ;;;  Graphics-Selection:  Selection squares around graphic objects
 ;;;
 ;;;  Features and operation of the Graphics Selection object:
@@ -22,6 +24,7 @@
 ;;;        by dragging the selection square.
 ;;;
 
+
 ;;; Programmer Interface
 ;;; ====================
 ;;;
@@ -76,6 +79,7 @@
 ;;; 	        changed as the object is moved or grown.
 ;;;
 
+
 ;;; End User Operation
 ;;; ==================
 ;;;
@@ -95,12 +99,8 @@
 ;;;
 ;;;  Designed and written by Brad Myers
 ;;;
-;;; Changes:
-;;; 14-Dec-92 Andrew Mickish - Added type and parameter declarations
-;;; 22-Jul-92 Andrew Mickish - Added top-level :start-event and :active-p slots
-;;;  9-Apr-90 Robert Cook - in the creation of Graphics-Selection,
-;;;			    removed ignore declaration.
 
+
 (in-package "GARNET-GADGETS")
 
 (eval-when (:load-toplevel :compile-toplevel :execute)

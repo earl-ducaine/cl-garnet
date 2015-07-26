@@ -338,12 +338,9 @@ directory. It assumes that 'sub-directory' is directly under
     (make-pathname :directory (append dir subdir))))
 
 
-;; the following is just bloody awful, but I won't be able to fix it
-;; until version 4 comes along. [2006/01/05:rpg]
 (defun Get-Garnet-Binary-Pathname ()
   (let ((directory-name
 	 (if Multiple-Garnet-Binary-Directories
-
 	     ;; Per-implementation binary directory
 	     ;; Not bin.xxxx but bin-xxxx to avoid any confusion regarding
 	     ;; filename types.
@@ -354,7 +351,6 @@ directory. It assumes that 'sub-directory' is directly under
 	     #-(or sbcl ccl cmu allegro)
 	     (error "Garnet doesn't currently work with ~S (ports welcome!)"
 		    (lisp-implementation-type))
-
 	     ;; Single binary directory
 	     "bin")))
     (append-directory Your-Garnet-Pathname directory-name)))
@@ -799,22 +795,47 @@ Example:
     (unwind-protect
 	 (progn
 	   (multiple-value-setq (val errorp)
-	     (ignore-errors (xlib:open-display d-name :display d-number)))
+	     (ignore-errors
+	       #+allegro
+	       (xlib:open-display d-name :display d-number)
+	       #-allegro
+	       (xlib:open-default-display)
+	       ))
 	   (if errorp
 	       (error "Could not open a display for ~S.
-     You must already be running X to load or compile Garnet.  Your DISPLAY
-environment variable must be set with the name of the machine on which the
-Garnet windows will be displayed.  Please exit lisp and execute a command
-like the following to the unix shell before loading or compiling Garnet:
-  \"setenv DISPLAY windowmachine.cs.cmu.edu:0.0\"
-  \"setenv DISPLAY unix:0.0\"
-  \"setenv DISPLAY :0.0\"
-  \"setenv DISPLAY :0\"
-The last three values may be more efficient when you want the Garnet windows
-to appear on the same machine that Garnet is running on.
-     Additionally, you must execute the command \"xhost +\" on the machine
-that the windows will be displayed on, if it is different from the machine
-running Garnet."
+     You must already be running X to load or compile Garnet. Your
+DISPLAY environment variable must be set with the name of the machine
+on which the Garnet windows will be displayed. Ordinarily this should
+be done automagically for you. You can see the value of this variable
+by typing \"printenv DISPLAY\" at the shell prompt.
+
+The DISPLAY environment variable should look something like one of the
+following:
+
+  \"localhost:12.0\"  
+  \"desktop.cs.cmu.edu:0.0\"
+  \"unix:0.0\"
+  \":0.0\"
+  \":0\"
+
+The first case is usually the result of an SSH tunnel setting the
+environment variable. This is either enabled by ssh -X or ssh -Y or by
+your ssh configuration. Further explanation is beyond the scope of
+this error message.
+
+The second case is common in secure local networks with shared NFS
+file systems, of which there are no longer any instances in the known
+universe.
+
+The last three values will usually be more efficient when you want the
+Garnet windows to appear on the display of the machine that Garnet is
+running on.
+
+     If you find that this error occurs inexplicably, you can try
+executing the command \"xhost +\" on the machine where the windows
+will be displayed, if it is different from the machine running Garnet.
+This disables security and is not recommended for ordinary use, but it
+may help in troubleshooting." 
 		      full-display-name)))
       (when val
 	(xlib:close-display val)))
