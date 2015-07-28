@@ -187,21 +187,21 @@ With SBCL:
    (defpackage :DEMO-ARITH (:use :KR :COMMON-LISP) (:export DO-GO DO-STOP))
    (defpackage :DEMO-SCHEMA-BROWSER (:use :COMMON-LISP :KR)
      (:export DO-GO DO-STOP SCHEMA-BROWSER SCHEMA-BROWSER-WIN
-	      SCHEMA-BROWSER-TOP-AGG))
+              SCHEMA-BROWSER-TOP-AGG))
    (defpackage :DEMO-ARRAY (:use :COMMON-LISP :KR) (:export DO-GO DO-STOP))
    (defpackage :DEMO-SCROLLBAR (:use :COMMON-LISP :KR)
      (:export DO-GO DO-STOP
-	      MAC-obj MAC-Go MAC-Stop
-	      Open-obj Open-Go Open-Stop
-	      NEXT-obj NEXT-Go NEXT-Stop
-	      Motif-obj Motif-Go Motif-Stop))
+              MAC-obj MAC-Go MAC-Stop
+              Open-obj Open-Go Open-Stop
+              NEXT-obj NEXT-Go NEXT-Stop
+              Motif-obj Motif-Go Motif-Stop))
    (defpackage :DEMO-CLOCK (:use :KR :COMMON-LISP) (:export DO-GO DO-STOP))
    (defpackage :DEMO-SEQUENCE (:use :COMMON-LISP :KR) (:export DO-GO DO-STOP))
    (defpackage :DEMO-EDITOR (:use :KR :COMMON-LISP) (:export DO-GO DO-STOP))
    (defpackage :DEMO-TEXT (:use :COMMON-LISP :KR) (:export DO-GO DO-STOP))
    (defpackage :DEMO-FILE-BROWSER (:use :COMMON-LISP :KR)
      (:export DO-GO DO-STOP FILE-BROWSER FILE-BROWSER-WIN
-	      FILE-BROWSER-TOP-AGG))
+              FILE-BROWSER-TOP-AGG))
    (defpackage :DEMO-TRUCK (:use :KR :COMMON-LISP) (:export DO-GO DO-STOP))
    (defpackage :DEMO-GADGETS (:use :COMMON-LISP :KR) (:export DO-GO DO-STOP))
    (defpackage :DEMO-TWOP (:use :KR :COMMON-LISP) (:export DO-GO DO-STOP))
@@ -209,7 +209,7 @@ With SBCL:
    (defpackage :DEMO-UNISTROKES (:use :COMMON-LISP :KR :INTER) (:export DO-GO DO-STOP))
    (defpackage :DEMO-GRAPH (:use :COMMON-LISP :KR)
      (:export DO-GO DO-STOP SCHEMA-GRAPH DEMO-GRAPH-ERROR-GADGET ROOT-BOX
-	      RELAYOUT DEMO-GRAPH-WIN))
+              RELAYOUT DEMO-GRAPH-WIN))
    (defpackage :DEMO-VIRTUAL-AGG (:use :COMMON-LISP :KR) (:export DO-GO DO-STOP))
    (defpackage :DEMO-GROW (:use :KR :COMMON-LISP) (:export DO-GO DO-STOP))
    (defpackage :DEMO-XASPERATE (:use :COMMON-LISP :KR) (:export DO-GO DO-STOP))
@@ -224,8 +224,8 @@ With SBCL:
    (defpackage :DEMO-MOTIF (:use :COMMON-LISP :KR) (:export DO-GO DO-STOP))
    (defpackage :MGE (:use :COMMON-LISP :KR)
      (:export DO-GO DO-STOP
-	      CREATE-PIECE DESTROY-PIECE DESTROY-ALL-PIECES
-	      GO-INITIALIZE EDITOR-SHOW-WINDOW))
+              CREATE-PIECE DESTROY-PIECE DESTROY-ALL-PIECES
+              GO-INITIALIZE EDITOR-SHOW-WINDOW))
    (defpackage :DEMO-MOVELINE (:use :KR :COMMON-LISP) (:export DO-GO DO-STOP))
    )
 
@@ -318,12 +318,12 @@ if a user loads garnet-loader.lisp a second time.")
   ;; want a directory
   (let ((path (pathname name)))
     (if (pathname-name path) 
-	;; The pathname lacks a trailing slash.
+        ;; The pathname lacks a trailing slash.
         (merge-pathnames
          (make-pathname :directory `(:relative ,(pathname-name path)))
          (make-pathname :directory (pathname-directory path)
                         :host (pathname-host path)))
-	;; The pathname is OK as it stands.
+        ;; The pathname is OK as it stands.
         path)))
 
 
@@ -332,27 +332,27 @@ if a user loads garnet-loader.lisp a second time.")
 directory. It assumes that 'sub-directory' is directly under
 'directory'."
   (let ((dir (pathname-directory directory))
-	(subdir (if (listp sub-directory) 
-		    sub-directory
-		    (list sub-directory))))
+        (subdir (if (listp sub-directory) 
+                    sub-directory
+                    (list sub-directory))))
     (make-pathname :directory (append dir subdir))))
 
 
 (defun Get-Garnet-Binary-Pathname ()
   (let ((directory-name
-	 (if Multiple-Garnet-Binary-Directories
-	     ;; Per-implementation binary directory
-	     ;; Not bin.xxxx but bin-xxxx to avoid any confusion regarding
-	     ;; filename types.
-	     #+sbcl "bin-sbcl"
-	     #+ccl "bin-ccl"
-	     #+cmu "bin-cmu"
-	     #+allegro "bin-allegro"
-	     #-(or sbcl ccl cmu allegro)
-	     (error "Garnet doesn't currently work with ~S (ports welcome!)"
-		    (lisp-implementation-type))
-	     ;; Single binary directory
-	     "bin")))
+         (if Multiple-Garnet-Binary-Directories
+             ;; Per-implementation binary directory
+             ;; Not bin.xxxx but bin-xxxx to avoid any confusion regarding
+             ;; filename types.
+             #+sbcl "bin-sbcl"
+             #+ccl "bin-ccl"
+             #+cmu "bin-cmu"
+             #+allegro "bin-allegro"
+             #-(or sbcl ccl cmu allegro)
+             (error "Garnet doesn't currently work with ~S (ports welcome!)"
+                    (lisp-implementation-type))
+             ;; Single binary directory
+             "bin")))
     (append-directory Your-Garnet-Pathname directory-name)))
 
 
@@ -471,81 +471,81 @@ directory. It assumes that 'sub-directory' is directly under
 #+cmu
 (progn
   (setf (ext:search-list "utils:")
-	(list (namestring Garnet-Utils-PathName)))
+        (list (namestring Garnet-Utils-PathName)))
   (setf (ext:search-list "utils-src:")
-	(list (namestring Garnet-Utils-Src)))
+        (list (namestring Garnet-Utils-Src)))
 
   (setf (ext:search-list "kr:")
-	(list (namestring Garnet-KR-PathName)))
+        (list (namestring Garnet-KR-PathName)))
   (setf (ext:search-list "kr-src:")
-	(list (namestring Garnet-KR-Src)))
+        (list (namestring Garnet-KR-Src)))
 
   (setf (ext:search-list "gem:")
-	(list (namestring Garnet-Gem-PathName)))
+        (list (namestring Garnet-Gem-PathName)))
   (setf (ext:search-list "gem-src:")
-	(list (namestring Garnet-Gem-Src)))
+        (list (namestring Garnet-Gem-Src)))
 
   (setf (ext:search-list "opal:")
-	(list (namestring Garnet-Opal-PathName)))
+        (list (namestring Garnet-Opal-PathName)))
   (setf (ext:search-list "opal-src:")
-	(list (namestring Garnet-Opal-Src)))
+        (list (namestring Garnet-Opal-Src)))
 
   (setf (ext:search-list "inter:")
-	(list (namestring Garnet-Inter-PathName)))
+        (list (namestring Garnet-Inter-PathName)))
   (setf (ext:search-list "inter-src:")
-	(list (namestring Garnet-Inter-Src)))
+        (list (namestring Garnet-Inter-Src)))
 
   (setf (ext:search-list "gesture:")
-	(list (namestring Garnet-Gesture-PathName)))
+        (list (namestring Garnet-Gesture-PathName)))
   (setf (ext:search-list "gesture-src:")
-	(list (namestring Garnet-Gesture-Src)))
+        (list (namestring Garnet-Gesture-Src)))
   (setf (ext:search-list "gesture-data:")
-	(list (namestring Garnet-Gesture-Data-PathName)))
+        (list (namestring Garnet-Gesture-Data-PathName)))
 
   (setf (ext:search-list "ps:")
-	(list (namestring Garnet-PS-PathName)))
+        (list (namestring Garnet-PS-PathName)))
   (setf (ext:search-list "ps-src:")
-	(list (namestring Garnet-PS-Src)))
+        (list (namestring Garnet-PS-Src)))
 
   (setf (ext:search-list "aggregadgets:")
-	(list (namestring Garnet-Aggregadgets-PathName)))
+        (list (namestring Garnet-Aggregadgets-PathName)))
   (setf (ext:search-list "aggregadgets-src:")
-	(list (namestring Garnet-Aggregadgets-Src)))
+        (list (namestring Garnet-Aggregadgets-Src)))
 
   (setf (ext:search-list "gadgets:")
-	(list (namestring Garnet-Gadgets-PathName)))
+        (list (namestring Garnet-Gadgets-PathName)))
   (setf (ext:search-list "gadgets-src:")
-	(list (namestring Garnet-Gadgets-Src)))
+        (list (namestring Garnet-Gadgets-Src)))
 
   (setf (ext:search-list "debug:")
-	(list (namestring Garnet-Debug-PathName)))
+        (list (namestring Garnet-Debug-PathName)))
   (setf (ext:search-list "debug-src:")
-	(list (namestring Garnet-Debug-Src)))
+        (list (namestring Garnet-Debug-Src)))
 
   (setf (ext:search-list "demos:")
-	(list (namestring Garnet-Demos-PathName)))
+        (list (namestring Garnet-Demos-PathName)))
   (setf (ext:search-list "demos-src:")
-	(list (namestring Garnet-Demos-Src)))
+        (list (namestring Garnet-Demos-Src)))
 
   (setf (ext:search-list "gilt:")
-	(list (namestring Garnet-Gilt-PathName)))
+        (list (namestring Garnet-Gilt-PathName)))
   (setf (ext:search-list "gilt-src:")
-	(list (namestring Garnet-Gilt-Src)))
+        (list (namestring Garnet-Gilt-Src)))
 
   (setf (ext:search-list "c32:")
-	(list (namestring Garnet-C32-PathName)))
+        (list (namestring Garnet-C32-PathName)))
   (setf (ext:search-list "c32-src:")
-	(list (namestring Garnet-C32-Src)))
+        (list (namestring Garnet-C32-Src)))
 
   (setf (ext:search-list "lapidary:")
-	(list (namestring Garnet-Lapidary-PathName)))
+        (list (namestring Garnet-Lapidary-PathName)))
   (setf (ext:search-list "lapidary-src:")
-	(list (namestring Garnet-Lapidary-Src)))
+        (list (namestring Garnet-Lapidary-Src)))
 
   (setf (ext:search-list "contrib:")
-	(list (namestring Garnet-Contrib-PathName)))
+        (list (namestring Garnet-Contrib-PathName)))
   (setf (ext:search-list "contrib-src:")
-	(list (namestring Garnet-Contrib-Src)))
+        (list (namestring Garnet-Contrib-Src)))
 
   )
 
@@ -638,24 +638,24 @@ the file from the proper directory in the Garnet source tree.
 Otherwise just load the filename as given."
   (let ((pos (position #\: filename)))
     (if pos
-	(let* ((module (subseq filename 0 pos))
-	       (name (subseq filename (1+ pos)))
-	       (module-src-directory
-		(or (cdr (assoc module Garnet-Load-Alist :test #'string=))
-		    (error "Module ~S is not a Garnet module" module)))
-	       (src-pathname (make-pathname :name name
-					    ;; For Windows.
-					    :device (pathname-device module-src-directory)
-					    :directory (pathname-directory
-							module-src-directory))))
-	  (force-output *error-output*)
-	  (format T "~&Loading ~s~%" src-pathname)
-	  (force-output)
-	  (load src-pathname))
-	;; else no module name found; load regular.
-	(progn
-	  (format T "No module name given: Loading ~s~%" filename)
-	  (load filename)))))
+        (let* ((module (subseq filename 0 pos))
+               (name (subseq filename (1+ pos)))
+               (module-src-directory
+                (or (cdr (assoc module Garnet-Load-Alist :test #'string=))
+                    (error "Module ~S is not a Garnet module" module)))
+               (src-pathname (make-pathname :name name
+                                            ;; For Windows.
+                                            :device (pathname-device module-src-directory)
+                                            :directory (pathname-directory
+                                                        module-src-directory))))
+          (force-output *error-output*)
+          (format T "~&Loading ~s~%" src-pathname)
+          (force-output)
+          (load src-pathname))
+        ;; else no module name found; load regular.
+        (progn
+          (format T "No module name given: Loading ~s~%" filename)
+          (load filename)))))
 
 
 ;;; Garnet-Compile.
@@ -691,43 +691,43 @@ Example:
     gadgets directory)."
 
   (let* ((pos (position #\: filename))
-	 (module (if pos
-		     (subseq filename 0 pos)
-		     ;; else no colon, abort
-		     (error
-		      "The filename ~A is not prefixed by a garnet module name. Aborting compile" 
-		      filename)))
-	 ;; We want to extract just the name part, without the .lisp if present.
-	 (filepath (subseq filename (1+ pos)))
-	 (name (pathname-name filepath))
-	 (type (pathname-type name))
-	 (module-src (concatenate 'string module "-src"))
-	 (module-src-directory
-	  (or (cdr (assoc module-src Garnet-Load-Alist
-			  :test #'string=))
-	      (cdr (assoc module Garnet-Load-Alist
-			  :test #'string=))
-	      (error "Module named ~S not found in Garnet-Load-Alist"
-		     module)))
-	 (module-bin-directory
-	  (or (cdr (assoc module Garnet-Load-Alist
-			  :test #'string=))
-	      (error "Module named ~S not found in Garnet-Load-Alist"
-		     module)))
-	 (src-pathname (make-pathname :name name
-				      ;; If no user supplied type, add default.
-				      :type (or type "lisp")
-				      :device (pathname-device module-src-directory)
-				      :directory (pathname-directory module-src-directory)))
-	 #+cmu
-	 (err-pathname (make-pathname :name name
-				      :type (or type "err")
-				      :device (pathname-device module-src-directory)
-				      :directory (pathname-directory module-src-directory)))
-	 (bin-pathname (make-pathname :name name
-				      :type *compiler-extension*
-				      :device (pathname-device module-bin-directory)
-				      :directory (pathname-directory module-bin-directory))))
+         (module (if pos
+                     (subseq filename 0 pos)
+                     ;; else no colon, abort
+                     (error
+                      "The filename ~A is not prefixed by a garnet module name. Aborting compile" 
+                      filename)))
+         ;; We want to extract just the name part, without the .lisp if present.
+         (filepath (subseq filename (1+ pos)))
+         (name (pathname-name filepath))
+         (type (pathname-type name))
+         (module-src (concatenate 'string module "-src"))
+         (module-src-directory
+          (or (cdr (assoc module-src Garnet-Load-Alist
+                          :test #'string=))
+              (cdr (assoc module Garnet-Load-Alist
+                          :test #'string=))
+              (error "Module named ~S not found in Garnet-Load-Alist"
+                     module)))
+         (module-bin-directory
+          (or (cdr (assoc module Garnet-Load-Alist
+                          :test #'string=))
+              (error "Module named ~S not found in Garnet-Load-Alist"
+                     module)))
+         (src-pathname (make-pathname :name name
+                                      ;; If no user supplied type, add default.
+                                      :type (or type "lisp")
+                                      :device (pathname-device module-src-directory)
+                                      :directory (pathname-directory module-src-directory)))
+         #+cmu
+         (err-pathname (make-pathname :name name
+                                      :type (or type "err")
+                                      :device (pathname-device module-src-directory)
+                                      :directory (pathname-directory module-src-directory)))
+         (bin-pathname (make-pathname :name name
+                                      :type *compiler-extension*
+                                      :device (pathname-device module-bin-directory)
+                                      :directory (pathname-directory module-bin-directory))))
     (force-output *error-output*)
     (format T "~&Compiling ~s~%" src-pathname)
     (format T "for output to ~s~%" bin-pathname)
@@ -735,14 +735,14 @@ Example:
     ;; sds: make sure that bin/foo directory is already there
     (garnet-mkdir-if-needed bin-pathname)
     (let ((*compile-verbose* Garnet-Garnet-Debug)
-	  (*compile-print* Garnet-Garnet-Debug)
-	  #+cmu (*gc-verbose* nil)
-	  )
+          (*compile-print* Garnet-Garnet-Debug)
+          #+cmu (*gc-verbose* nil)
+          )
       (compile-file src-pathname
-		    :output-file bin-pathname
-		    #+cmu :error-file #+cmu err-pathname
-		    #+cmu :error-output #+cmu nil
-		    ))))
+                    :output-file bin-pathname
+                    #+cmu :error-file #+cmu err-pathname
+                    #+cmu :error-output #+cmu nil
+                    ))))
 
 
 ;;; ----------------------------------------
@@ -771,38 +771,38 @@ Example:
 (defun get-display-number (display)
   ;; The display number is everything from the colon to the period (if
   ;; it is present).
-  (unless (find #\: display)
-    (error "The display specification  \"~A\" is ill-formed: missing colon" display))
-  (let ((display-number
-	 (ignore-errors
-	   (parse-integer
-	    (subseq display
-		    (1+ (position #\: display))
-		    (position #\. display))))))
-    (unless (numberp display-number)
-      (error "The display specification  \"~A\" is invalid: bad display number" display))
-    display-number))
+  (let* ((colon-pos (position #\: display :from-end t))
+         (period-pos (and colon-pos (position #\. display :start colon-pos))))
+    (unless colon-pos
+      (error "The display specification  \"~A\" is ill-formed: missing colon" display))
+    (let ((display-number
+           (ignore-errors
+             (parse-integer
+              (subseq display (1+ colon-pos) period-pos)))))
+      (unless (numberp display-number)
+        (error "The display specification  \"~A\" is invalid: bad display number" display))
+      display-number)))
 
 
 (defun verify-display-can-be-opened ()
   (let* ((full-display-name (get-full-display-name))
-	 (d-name (if full-display-name
-		     (get-display-name full-display-name)
-		     (machine-instance)))
-	 (d-number (get-display-number full-display-name))
-	 (val nil)
-	 (errorp nil))
+         (d-name (if full-display-name
+                     (get-display-name full-display-name)
+                     (machine-instance)))
+         (d-number (get-display-number full-display-name))
+         (val nil)
+         (errorp nil))
     (unwind-protect
-	 (progn
-	   (multiple-value-setq (val errorp)
-	     (ignore-errors
-	       #+allegro
-	       (xlib:open-display d-name :display d-number)
-	       #-allegro
-	       (xlib:open-default-display)
-	       ))
-	   (if errorp
-	       (error "Could not open a display for ~S.
+         (progn
+           (multiple-value-setq (val errorp)
+             (ignore-errors
+               #+allegro
+               (xlib:open-display d-name :display d-number)
+               #-allegro
+               (xlib:open-default-display)
+               ))
+           (if errorp
+               (error "Could not open a display for ~S.
      You must already be running X to load or compile Garnet. Your
 DISPLAY environment variable must be set with the name of the machine
 on which the Garnet windows will be displayed. Ordinarily this should
@@ -836,9 +836,9 @@ executing the command \"xhost +\" on the machine where the windows
 will be displayed, if it is different from the machine running Garnet.
 This disables security and is not recommended for ordinary use, but it
 may help in troubleshooting." 
-		      full-display-name)))
+                      full-display-name)))
       (when val
-	(xlib:close-display val)))
+        (xlib:close-display val)))
       T))
 
 ;;; RGA --- sometimes I only want to load KR.  Don't need a display we
@@ -856,7 +856,7 @@ may help in troubleshooting."
 ;;
 (if load-utils-p
     (if (and *dont-load-modules-twice* (get :garnet-modules :utils))
-	(format T "~%****** Utils already loaded *******~%")
+        (format T "~%****** Utils already loaded *******~%")
         (progn
           (format T "~% %%%%%%%% Loading Utils %%%%%%%%~%")
           (load Garnet-Utils-Loader)))
@@ -864,7 +864,7 @@ may help in troubleshooting."
 
 (if load-kr-p
     (if (and *dont-load-modules-twice* (get :garnet-modules :kr))
-	(format T "~%****** KR already loaded *******~%")
+        (format T "~%****** KR already loaded *******~%")
         (progn
           (format T "~% %%%%%%%% Loading KR %%%%%%%%~%")
           (load Garnet-KR-Loader)))
@@ -874,7 +874,7 @@ may help in troubleshooting."
 
 (if load-gem-p
     (if (and *dont-load-modules-twice* (get :garnet-modules :gem))
-	(format T "~%****** Gem already loaded *******~%")
+        (format T "~%****** Gem already loaded *******~%")
         (progn
           (format T "~% %%%%%%%% Loading Gem %%%%%%%%~%")
           (load Garnet-Gem-Loader)))
@@ -882,7 +882,7 @@ may help in troubleshooting."
 
 (if load-opal-p
     (if (and *dont-load-modules-twice* (get :garnet-modules :opal))
-	(format T "~%****** Opal already loaded *******~%")
+        (format T "~%****** Opal already loaded *******~%")
         (progn
           (format T "~% %%%%%%%% Loading Opal %%%%%%%%~%")
           (load Garnet-Opal-Loader)))
@@ -891,7 +891,7 @@ may help in troubleshooting."
 #-(and)
 (if load-truetype-p
     (if (and *dont-load-modules-twice* (get :garnet-modules :truetype))
-	(format T "~%****** Truetype already loaded *******~%")
+        (format T "~%****** Truetype already loaded *******~%")
         (progn
           (format T "~% %%%%%%%% Loading Truetype %%%%%%%%~%")
           (load Garnet-Truetype-Loader)))
@@ -899,7 +899,7 @@ may help in troubleshooting."
 
 (if load-inter-p
     (if (and *dont-load-modules-twice* (get :garnet-modules :inter))
-	(format T "~%****** Interactors already loaded *******~%")
+        (format T "~%****** Interactors already loaded *******~%")
         (progn
           (format T "~% %%%%%%%% Loading Interactors %%%%%%%%~%")
           (load Garnet-Inter-Loader)))
@@ -907,7 +907,7 @@ may help in troubleshooting."
 
 (if load-multifont-p
     (if (and *dont-load-modules-twice* (get :garnet-modules :multifont))
-	(format T "~%****** Multifont already loaded *******~%")
+        (format T "~%****** Multifont already loaded *******~%")
         (progn
           (format T "~% %%%%%%%% Loading Multifont %%%%%%%%~%")
           (load Garnet-Multifont-Loader)))
@@ -915,7 +915,7 @@ may help in troubleshooting."
 
 (if load-gesture-p
     (if (and *dont-load-modules-twice* (get :garnet-modules :gesture))
-	(format T "~%****** Gestures already loaded *******~%")
+        (format T "~%****** Gestures already loaded *******~%")
         (progn
           (format T "~% %%%%%%%% Loading Gestures %%%%%%%%~%")
           (load Garnet-Gesture-Loader)))
@@ -923,7 +923,7 @@ may help in troubleshooting."
 
 (if load-ps-p
     (if (and *dont-load-modules-twice* (get :garnet-modules :ps))
-	(format T "~%****** PS already loaded *******~%")
+        (format T "~%****** PS already loaded *******~%")
         (progn
           (format T "~% %%%%%%%% Loading PS %%%%%%%%~%")
           (load Garnet-PS-Loader)))
@@ -931,7 +931,7 @@ may help in troubleshooting."
 
 (if load-aggregadgets-p
     (if (and *dont-load-modules-twice* (get :garnet-modules :aggregadgets))
-	(format T "~%****** Aggregadgets already loaded *******~%")
+        (format T "~%****** Aggregadgets already loaded *******~%")
         (progn
           (format T "~% %%%%%%%% Loading Aggregadgets %%%%%%%%~%")
           (load Garnet-Aggregadgets-Loader)))
@@ -939,7 +939,7 @@ may help in troubleshooting."
 
 (if load-aggregraphs-p
     (if (and *dont-load-modules-twice* (get :garnet-modules :aggregraphs))
-	(format T "~%****** Aggregraphs already loaded *******~%")
+        (format T "~%****** Aggregraphs already loaded *******~%")
         (progn
           (format T "~% %%%%%%%% Loading Aggregraphs %%%%%%%%~%")
           (load Garnet-Aggregraphs-Loader)))
@@ -949,7 +949,7 @@ may help in troubleshooting."
 
 (if load-gadgets-p
     (if (and *dont-load-modules-twice* (get :garnet-modules :gadgets))
-	(format T "~%****** Gadgets already loaded *******~%")
+        (format T "~%****** Gadgets already loaded *******~%")
         (progn
           (format T "~% %%%%%%%% Loading Gadgets %%%%%%%%~%")
           (load Garnet-Gadgets-Loader)))
@@ -957,7 +957,7 @@ may help in troubleshooting."
 
 (if load-debug-p
     (if (and *dont-load-modules-twice* (get :garnet-modules :debug))
-	(format T "~%****** Debugging programs already loaded *******~%")
+        (format T "~%****** Debugging programs already loaded *******~%")
         (progn
           (format T "~% %%%%%%%% Loading Debugging programs %%%%%%%%~%")
           (load Garnet-Debug-Loader)))
@@ -966,7 +966,7 @@ may help in troubleshooting."
 
 (if load-demos-p
     (if (and *dont-load-modules-twice* (get :garnet-modules :demos))
-	(format T "~%****** Demos already loaded *******~%")
+        (format T "~%****** Demos already loaded *******~%")
         (progn
           (format T "~% %%%%%%%% Loading Demos %%%%%%%%~%")
           (load Garnet-Demos-Loader)))
@@ -975,7 +975,7 @@ may help in troubleshooting."
 
 (if load-gilt-p
     (if (and *dont-load-modules-twice* (get :garnet-modules :gilt))
-	(format T "~%****** Gilt already loaded *******~%")
+        (format T "~%****** Gilt already loaded *******~%")
         (progn
           (format T "~% %%%%%%%% Loading Gilt %%%%%%%%~%")
           (load Garnet-Gilt-Loader)))
@@ -984,7 +984,7 @@ may help in troubleshooting."
 
 (if load-c32-p
     (if (and *dont-load-modules-twice* (get :garnet-modules :c32))
-	(format T "~%****** C32 already loaded *******~%")
+        (format T "~%****** C32 already loaded *******~%")
         (progn
           (format T "~% %%%%%%%% Loading C32 %%%%%%%%~%")
           (load Garnet-C32-Loader)))
@@ -993,7 +993,7 @@ may help in troubleshooting."
 
 (if load-lapidary-p
     (if (and *dont-load-modules-twice* (get :garnet-modules :lapidary))
-	(format T "~%****** Lapidary already loaded *******~%")
+        (format T "~%****** Lapidary already loaded *******~%")
         (progn
           (format T "~% %%%%%%%% Loading Lapidary %%%%%%%%~%")
           (load Garnet-Lapidary-Loader)))
@@ -1002,7 +1002,7 @@ may help in troubleshooting."
 
 (if load-protected-eval-p
     (if (and *dont-load-modules-twice* (get :garnet-modules :protected-eval))
-	(format T "~%****** Protected-eval already loaded *******~%")
+        (format T "~%****** Protected-eval already loaded *******~%")
         (progn
           (format T "~% %%%%%%%% Loading Protected-eval %%%%%%%%~%")
           (load Garnet-Protected-Eval-Loader)))
@@ -1029,17 +1029,17 @@ may help in troubleshooting."
   to binary directory."
   (dolist (file file-list)
     (let ((src (merge-pathnames file src-dir))
-	  (dest (merge-pathnames file bin-dir)))
+          (dest (merge-pathnames file bin-dir)))
       ;; Yes this conses up the wazoo. But it's only used during builds.
       (with-open-file (s src :element-type '(unsigned-byte 8))
-	(let ((buffer (make-array (file-length s) :element-type '(unsigned-byte 8))))
-	  (read-sequence buffer s)
-	  (with-open-file (d dest
-			     :direction :output
-			     :if-does-not-exist :create
-			     :if-exists :overwrite
-			     :element-type '(unsigned-byte 8))
-	    (write-sequence buffer d)))))))
+        (let ((buffer (make-array (file-length s) :element-type '(unsigned-byte 8))))
+          (read-sequence buffer s)
+          (with-open-file (d dest
+                             :direction :output
+                             :if-does-not-exist :create
+                             :if-exists :overwrite
+                             :element-type '(unsigned-byte 8))
+            (write-sequence buffer d)))))))
 
 (format t "~%... Garnet Load Complete ...~%")
 

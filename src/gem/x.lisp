@@ -19,25 +19,25 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(Display-Info
-	    Make-Display-Info Copy-Display-Info
-	    Display-Info-Display Display-Info-Screen Display-Info-Root-Window
-	    Display-Info-Line-Style-GC and Display-Info-Filling-Style-GC
-	    *screen-width* *screen-height*
-	    *function-alist*
-	    *white* *black*
-	    *color-screen-p*
-	    *read-write-colormap-cells-p*
-	    *update-lock*
-	    ;; Font stuff.
-	    *Fixed-Font-Family* *Serif-Font-Family* *Sans-Serif-Font-Family*
-	    *Small-Font-Size* *Medium-Font-Size*
-	    *Large-Font-Size* *Very-Large-Font-Size*
-	    *Small-Font-Point-Size* *Medium-Font-Point-Size* 
-	    *Large-Font-Point-Size* *Very-Large-Font-Point-Size*
-	    default-font-from-file
-	    *Exposure-Event-Mask*
-	    Device-Info
-	    )))
+            Make-Display-Info Copy-Display-Info
+            Display-Info-Display Display-Info-Screen Display-Info-Root-Window
+            Display-Info-Line-Style-GC and Display-Info-Filling-Style-GC
+            *screen-width* *screen-height*
+            *function-alist*
+            *white* *black*
+            *color-screen-p*
+            *read-write-colormap-cells-p*
+            *update-lock*
+            ;; Font stuff.
+            *Fixed-Font-Family* *Serif-Font-Family* *Sans-Serif-Font-Family*
+            *Small-Font-Size* *Medium-Font-Size*
+            *Large-Font-Size* *Very-Large-Font-Size*
+            *Small-Font-Point-Size* *Medium-Font-Point-Size* 
+            *Large-Font-Point-Size* *Very-Large-Font-Point-Size*
+            default-font-from-file
+            *Exposure-Event-Mask*
+            Device-Info
+            )))
 
 
 (declaim (special default-font-from-file)) ; This is an opal instance we forward-reference.
@@ -60,7 +60,7 @@
 
 (defstruct (gem-gc (:print-function gem-gc-print-function))
   gcontext
-  opal-style				; This is either a line or filling style
+  opal-style                            ; This is either a line or filling style
 
   function
   foreground
@@ -69,8 +69,8 @@
   line-style
   cap-style
   join-style
-  dashes				; do not set to NIL
-  font					; do not set to NIL
+  dashes                                ; do not set to NIL
+  font                                  ; do not set to NIL
   fill-style
   fill-rule
   stipple
@@ -86,8 +86,8 @@
 (defun gem-gc-print-function (gc stream depth)
   (declare (ignore depth))
   (format stream "#<GEM-GC function ~A clip-mask ~A>"
-	  (gem-gc-function gc)
-	  (gem-gc-clip-mask gc)))
+          (gem-gc-function gc)
+          (gem-gc-clip-mask gc)))
 
 (defvar *default-x-display-name*)
 (setf (documentation '*default-x-display-name* 'variable)
@@ -115,32 +115,32 @@ being a string display designator.")
 
 (defun x-set-screen-color-attribute-variables (root-window)
   (declare (ignore root-window))
-;;;		(let* ((*print-pretty* NIL)
-;;;		       (colormap-string (string-upcase
-;;;					 (princ-to-string opal::*default-x-colormap*))))
-;;;		  (if (or (search "PSEUDO-COLOR" colormap-string)
-;;;			  (search "DIRECT-COLOR" colormap-string)
-;;;			  (search "GRAY-SCALE" colormap-string))
-;;;		      (setq *is-this-a-color-screen?* t)
-;;;		      (setq *is-this-a-color-screen?* nil)))
+;;;             (let* ((*print-pretty* NIL)
+;;;                    (colormap-string (string-upcase
+;;;                                      (princ-to-string opal::*default-x-colormap*))))
+;;;               (if (or (search "PSEUDO-COLOR" colormap-string)
+;;;                       (search "DIRECT-COLOR" colormap-string)
+;;;                       (search "GRAY-SCALE" colormap-string))
+;;;                   (setq *is-this-a-color-screen?* t)
+;;;                   (setq *is-this-a-color-screen?* nil)))
   ;;incorporated Nick Levine's patch into the code.
   ;;[1995/09/11:goldman]
   ;;further patched this to add *read-write-colormap-cells-p* [1995/12/08:goldman]
   (let ((color-screen-types '(:pseudo-color 
-			      :direct-color
-			      :static-color
-			      :true-color
-			      :quickdraw))
-	(screen-type (xlib::visual-info-class
-		      (xlib::screen-root-visual-info
-		       *default-x-screen*))))
+                              :direct-color
+                              :static-color
+                              :true-color
+                              :quickdraw))
+        (screen-type (xlib::visual-info-class
+                      (xlib::screen-root-visual-info
+                       *default-x-screen*))))
     (setq *color-screen-p*
-	  (if (member screen-type color-screen-types :test #'eq)
-	      screen-type
-	      nil))
+          (if (member screen-type color-screen-types :test #'eq)
+              screen-type
+              nil))
     (setq *read-write-colormap-cells-p* 
-	  (and *color-screen-p*
-	       (member screen-type '(:direct-color :pseudo-color) :test #'eq))))
+          (and *color-screen-p*
+               (member screen-type '(:direct-color :pseudo-color) :test #'eq))))
   (setq *HP-display-type?* (and *color-screen-p* (zerop gem:*black*))))
 
 
@@ -148,8 +148,8 @@ being a string display designator.")
   (declare (ignore root-window))
   (if *color-screen-p*
       (if a-color (g-value a-color :colormap-index) *white*)
-      (if (eq a-color opal::black) 	; XXX this breaks modularity.
-	  *black*
+      (if (eq a-color opal::black)      ; XXX this breaks modularity.
+          *black*
           *white*)))
 
 
@@ -193,25 +193,25 @@ being a string display designator.")
 (defun get-stipple-schema-pixmap (stipple-schema root-window bitmap-p)
   (let ((root-plist (g-value stipple-schema :root-pixmap-plist)))
     (or (getf root-plist root-window)
-	(let ((the-image (g-value stipple-schema :image))
-	      roots-entry)
-	  ;; (return-from get-stipple-schema-pixmap NIL)
-	  (if the-image
-	    (if (typep the-image 'xlib::image)
-	      (multiple-value-bind (width height)
-		  (x-image-size nil the-image)
-		(setq roots-entry (x-build-pixmap *root-window* the-image
-						      width height
-						      bitmap-p))
-		(s-value stipple-schema :root-pixmap-plist
-			 (cons root-window (cons roots-entry root-plist)))
-		roots-entry)
-	      (format
-	       t
-	       "WARNING -- :image entry in schema ~A is not of type xlib:image!~%"
-	       stipple-schema))
-	    (format
-	     t "WARNING -- no :image slot in schema ~A~%" stipple-schema))))))
+        (let ((the-image (g-value stipple-schema :image))
+              roots-entry)
+          ;; (return-from get-stipple-schema-pixmap NIL)
+          (if the-image
+            (if (typep the-image 'xlib::image)
+              (multiple-value-bind (width height)
+                  (x-image-size nil the-image)
+                (setq roots-entry (x-build-pixmap *root-window* the-image
+                                                      width height
+                                                      bitmap-p))
+                (s-value stipple-schema :root-pixmap-plist
+                         (cons root-window (cons roots-entry root-plist)))
+                roots-entry)
+              (format
+               t
+               "WARNING -- :image entry in schema ~A is not of type xlib:image!~%"
+               stipple-schema))
+            (format
+             t "WARNING -- no :image slot in schema ~A~%" stipple-schema))))))
 
 
 (defmacro get-x-stipple (style-schema root-window)
@@ -236,90 +236,90 @@ being a string display designator.")
     (:foreground
      `(let ((v ,value))
        (unless (eq v (gem-gc-foreground ,gem-gcontext))
-	 (setf (gem-gc-foreground ,gem-gcontext)
-	       (setf (xlib:gcontext-foreground ,xlib-gcontext) v)))))
+         (setf (gem-gc-foreground ,gem-gcontext)
+               (setf (xlib:gcontext-foreground ,xlib-gcontext) v)))))
     (:background
      `(let ((v ,value))
        (unless (eq v (gem-gc-background ,gem-gcontext))
-	 (setf (gem-gc-background ,gem-gcontext)
-	       (setf (xlib:gcontext-background ,xlib-gcontext) v)))))
+         (setf (gem-gc-background ,gem-gcontext)
+               (setf (xlib:gcontext-background ,xlib-gcontext) v)))))
     (:function
      `(let ((v ,value))
        (unless (eq v (gem-gc-function ,gem-gcontext))
-	 (setf (gem-gc-function ,gem-gcontext)
-	       (setf (xlib:gcontext-function ,xlib-gcontext) v)))))
+         (setf (gem-gc-function ,gem-gcontext)
+               (setf (xlib:gcontext-function ,xlib-gcontext) v)))))
     (:line-width
      `(let ((v ,value))
        (unless (eq v (gem-gc-line-width ,gem-gcontext))
-	 (setf (gem-gc-line-width ,gem-gcontext)
-	       (setf (xlib:gcontext-line-width ,xlib-gcontext) v)))))
+         (setf (gem-gc-line-width ,gem-gcontext)
+               (setf (xlib:gcontext-line-width ,xlib-gcontext) v)))))
     (:line-style
      `(let ((v ,value))
        (unless (eq v (gem-gc-line-style ,gem-gcontext))
-	 (setf (gem-gc-line-style ,gem-gcontext)
-	       (setf (xlib:gcontext-line-style ,xlib-gcontext) v)))))
+         (setf (gem-gc-line-style ,gem-gcontext)
+               (setf (xlib:gcontext-line-style ,xlib-gcontext) v)))))
     (:cap-style
      `(let ((v ,value))
        (unless (eq v (gem-gc-cap-style ,gem-gcontext))
-	 (setf (gem-gc-cap-style ,gem-gcontext)
-	       (setf (xlib:gcontext-cap-style ,xlib-gcontext) v)))))
+         (setf (gem-gc-cap-style ,gem-gcontext)
+               (setf (xlib:gcontext-cap-style ,xlib-gcontext) v)))))
     (:join-style
      `(let ((v ,value))
        (unless (eq v (gem-gc-join-style ,gem-gcontext))
-	 (setf (gem-gc-join-style ,gem-gcontext)
-	       (setf (xlib:gcontext-join-style ,xlib-gcontext) v)))))
+         (setf (gem-gc-join-style ,gem-gcontext)
+               (setf (xlib:gcontext-join-style ,xlib-gcontext) v)))))
     (:dashes
      `(let ((v ,value))
        (unless (eq v (gem-gc-dashes ,gem-gcontext))
-	 (setf (gem-gc-dashes ,gem-gcontext)
-	       (if v			; do not set to NIL
-		 (setf (xlib:gcontext-dashes ,xlib-gcontext) v))))))
+         (setf (gem-gc-dashes ,gem-gcontext)
+               (if v                    ; do not set to NIL
+                 (setf (xlib:gcontext-dashes ,xlib-gcontext) v))))))
     (:font
      `(let ((v ,value))
        (unless (eq v (gem-gc-font ,gem-gcontext))
-	 (setf (gem-gc-font ,gem-gcontext)
-	       (if v			; do not set to NIL
-		 (setf (xlib:gcontext-font ,xlib-gcontext) v))))))
+         (setf (gem-gc-font ,gem-gcontext)
+               (if v                    ; do not set to NIL
+                 (setf (xlib:gcontext-font ,xlib-gcontext) v))))))
     (:fill-style
      `(let ((v ,value))
        (unless (eq v (gem-gc-fill-style ,gem-gcontext))
-	 (setf (gem-gc-fill-style ,gem-gcontext)
-	       (setf (xlib:gcontext-fill-style ,xlib-gcontext) v)))))
+         (setf (gem-gc-fill-style ,gem-gcontext)
+               (setf (xlib:gcontext-fill-style ,xlib-gcontext) v)))))
     (:fill-rule
      `(let ((v ,value))
        (unless (eq v (gem-gc-fill-rule ,gem-gcontext))
-	 (setf (gem-gc-fill-rule ,gem-gcontext)
-	       (setf (xlib:gcontext-fill-rule ,xlib-gcontext) v)))))
+         (setf (gem-gc-fill-rule ,gem-gcontext)
+               (setf (xlib:gcontext-fill-rule ,xlib-gcontext) v)))))
     (:stipple
      `(let ((v ,value))
        (unless (eq v (gem-gc-stipple ,gem-gcontext))
-	 (setf (gem-gc-stipple ,gem-gcontext)
-	       (if v			; do not set to NIL
-		 (setf (xlib:gcontext-stipple ,xlib-gcontext) v))))))
+         (setf (gem-gc-stipple ,gem-gcontext)
+               (if v                    ; do not set to NIL
+                 (setf (xlib:gcontext-stipple ,xlib-gcontext) v))))))
     (:clip-mask
      `(let* ((v ,value)
-	     (s (gem-gc-stored-clip-mask ,gem-gcontext))
-	     do-copy?)
+             (s (gem-gc-stored-clip-mask ,gem-gcontext))
+             do-copy?)
        (setf (gem-gc-clip-mask ,gem-gcontext) v)
        (if (eq v :none)
-	 (unless (eq (first s) :none)
-	   (setf (xlib:gcontext-clip-mask ,xlib-gcontext) :none)
-	   (setf (first s) :none))
-	 (progn
-	   (unless (nthcdr 4 v)
-	     ;; special cases if v has only one clip-mask
-	     (unless (eq (first s) :short)
-	       (setq do-copy? T)
-	       (setf (first s) :short))
-	     (setq s (nthcdr 4 s)))
-	   (when (or do-copy? (not (equal v s)))
-	     (setf (xlib:gcontext-clip-mask ,xlib-gcontext) v)
-	     ;; copy v into s.
-	     (do nil
-		 ((null v))
-	       (setf (car s) (car v))
-	       (setq s (cdr s))
-	       (setq v (cdr v))))))))))
+         (unless (eq (first s) :none)
+           (setf (xlib:gcontext-clip-mask ,xlib-gcontext) :none)
+           (setf (first s) :none))
+         (progn
+           (unless (nthcdr 4 v)
+             ;; special cases if v has only one clip-mask
+             (unless (eq (first s) :short)
+               (setq do-copy? T)
+               (setf (first s) :short))
+             (setq s (nthcdr 4 s)))
+           (when (or do-copy? (not (equal v s)))
+             (setf (xlib:gcontext-clip-mask ,xlib-gcontext) v)
+             ;; copy v into s.
+             (do nil
+                 ((null v))
+               (setf (car s) (car v))
+               (setq s (cdr s))
+               (setq v (cdr v))))))))))
 
 
 ;;; The HP has a non-traditional assignment of black=0 and white=1, but to
@@ -329,12 +329,12 @@ being a string display designator.")
 ;;;
 (defmacro HP-XOR-hack (x-draw-function index)
   `(if (and *HP-display-type?* 
-	    (eq ,x-draw-function ,boole-xor))
+            (eq ,x-draw-function ,boole-xor))
        (if (eql *black* ,index)
-	   *white*
-	   (if (eql *white* ,index)
-	       *black*
-	       ,index))
+           *white*
+           (if (eql *white* ,index)
+               *black*
+               ,index))
        ,index))
 
 
@@ -343,44 +343,44 @@ being a string display designator.")
   (when line-style
     (let ((draw-fn-changed? (set-gc gem-gc xlib-gc :function x-draw-fn)))
       (unless (eq x-draw-fn boole-2)
-	(let ((x-stipple (get-x-stipple line-style root-window))
-	      x-dash-pattern)
+        (let ((x-stipple (get-x-stipple line-style root-window))
+              x-dash-pattern)
 
-	  ;; If the draw-function is :xor and *black* = 0 (for instance
-	  ;; on HP machines), then we must draw black as white and white
-	  ;; as black.  But we must check the draw-function first.
-	  ;; Set-gc returns non-NIL if draw-function changed.
-	  (when (or draw-fn-changed?
-		    (not (eq line-style (gem-gc-opal-style gem-gc))))
-	    (set-gc gem-gc xlib-gc :foreground
-		    (HP-XOR-hack
-		     x-draw-fn
-		     (g-value line-style :foreground-color :colormap-index)))
-	    (set-gc gem-gc xlib-gc :background
-		    (HP-XOR-hack
-		     x-draw-fn
-		     (g-value line-style :background-color :colormap-index))))
+          ;; If the draw-function is :xor and *black* = 0 (for instance
+          ;; on HP machines), then we must draw black as white and white
+          ;; as black.  But we must check the draw-function first.
+          ;; Set-gc returns non-NIL if draw-function changed.
+          (when (or draw-fn-changed?
+                    (not (eq line-style (gem-gc-opal-style gem-gc))))
+            (set-gc gem-gc xlib-gc :foreground
+                    (HP-XOR-hack
+                     x-draw-fn
+                     (g-value line-style :foreground-color :colormap-index)))
+            (set-gc gem-gc xlib-gc :background
+                    (HP-XOR-hack
+                     x-draw-fn
+                     (g-value line-style :background-color :colormap-index))))
 
-	  (unless (eq line-style (gem-gc-opal-style gem-gc))
-	    (setf (gem-gc-opal-style gem-gc) line-style)
-	    (set-gc gem-gc xlib-gc :line-width
-		    (g-value line-style :line-thickness))
-	    (set-gc gem-gc xlib-gc :line-style
-		    (g-value line-style :line-style))
-	    (set-gc gem-gc xlib-gc :cap-style
-		    (g-value line-style :cap-style))
-	    (set-gc gem-gc xlib-gc :join-style
-		    (g-value line-style :join-style))
-	    (if (setq x-dash-pattern (g-value line-style :dash-pattern))
-		(set-gc gem-gc xlib-gc :dashes x-dash-pattern)))
+          (unless (eq line-style (gem-gc-opal-style gem-gc))
+            (setf (gem-gc-opal-style gem-gc) line-style)
+            (set-gc gem-gc xlib-gc :line-width
+                    (g-value line-style :line-thickness))
+            (set-gc gem-gc xlib-gc :line-style
+                    (g-value line-style :line-style))
+            (set-gc gem-gc xlib-gc :cap-style
+                    (g-value line-style :cap-style))
+            (set-gc gem-gc xlib-gc :join-style
+                    (g-value line-style :join-style))
+            (if (setq x-dash-pattern (g-value line-style :dash-pattern))
+                (set-gc gem-gc xlib-gc :dashes x-dash-pattern)))
 
-	  ;; This can't be in the "unless" since the same
-	  ;; line-style can have different x-stipples
-	  (if x-stipple
-	      (progn
-		(set-gc gem-gc xlib-gc :fill-style :opaque-stippled)
-		(set-gc gem-gc xlib-gc :stipple x-stipple))
-	      (set-gc gem-gc xlib-gc :fill-style :solid)))))))
+          ;; This can't be in the "unless" since the same
+          ;; line-style can have different x-stipples
+          (if x-stipple
+              (progn
+                (set-gc gem-gc xlib-gc :fill-style :opaque-stippled)
+                (set-gc gem-gc xlib-gc :stipple x-stipple))
+              (set-gc gem-gc xlib-gc :fill-style :solid)))))))
 
 
 (defun set-filling-style (filling-style gem-gc xlib-gc root-window x-draw-fn)
@@ -388,25 +388,25 @@ being a string display designator.")
   (when filling-style
     (unless (eq x-draw-fn boole-2)
       (let ((x-stipple (get-x-stipple filling-style root-window)))
-	;; Set-gc returns non-NIL if draw-function changed.
-	(when (or (set-gc gem-gc xlib-gc :function x-draw-fn)
-		  (not (eq filling-style (gem-gc-opal-style gem-gc))))
-	  (set-gc gem-gc xlib-gc :foreground
-		  (HP-XOR-hack
-		   x-draw-fn
-		   (g-value filling-style :foreground-color :colormap-index)))
-	  (set-gc gem-gc xlib-gc :background
-		  (HP-XOR-hack
-		   x-draw-fn
-		   (g-value filling-style :background-color :colormap-index))))
+        ;; Set-gc returns non-NIL if draw-function changed.
+        (when (or (set-gc gem-gc xlib-gc :function x-draw-fn)
+                  (not (eq filling-style (gem-gc-opal-style gem-gc))))
+          (set-gc gem-gc xlib-gc :foreground
+                  (HP-XOR-hack
+                   x-draw-fn
+                   (g-value filling-style :foreground-color :colormap-index)))
+          (set-gc gem-gc xlib-gc :background
+                  (HP-XOR-hack
+                   x-draw-fn
+                   (g-value filling-style :background-color :colormap-index))))
 
-	(unless (eq filling-style (gem-gc-opal-style gem-gc))
-	  (setf (gem-gc-opal-style gem-gc) filling-style)
-	  (set-gc gem-gc xlib-gc :fill-style
-		  (g-value filling-style :fill-style))
-	  (set-gc gem-gc xlib-gc :fill-rule
-		  (g-value filling-style :fill-rule)))
-	(if x-stipple (set-gc gem-gc xlib-gc :stipple x-stipple))))
+        (unless (eq filling-style (gem-gc-opal-style gem-gc))
+          (setf (gem-gc-opal-style gem-gc) filling-style)
+          (set-gc gem-gc xlib-gc :fill-style
+                  (g-value filling-style :fill-style))
+          (set-gc gem-gc xlib-gc :fill-rule
+                  (g-value filling-style :fill-rule)))
+        (if x-stipple (set-gc gem-gc xlib-gc :stipple x-stipple))))
     (set-gc gem-gc xlib-gc :function x-draw-fn)))
 
 
@@ -419,7 +419,7 @@ being a string display designator.")
   "Iterates over all CLX windows.  Clean-Up calls
 this function with the root CLX window."
   (let ((windows (if (member :garnet (xlib:drawable-plist clx-window))
-		   (list clx-window))))
+                   (list clx-window))))
     (dolist (w (xlib:query-tree clx-window))
       (setf windows (append windows (do-all-garnet-windows w))))
     windows))
@@ -442,8 +442,8 @@ These are raw windows, NOT Opal windows!"
 ;;;
 (defun x-bit-blit (window source s-x s-y width height destination d-x d-y)
   (xlib:copy-area source
-		  (g-value window :buffer-gcontext)
-		  s-x s-y width height destination d-x d-y))
+                  (g-value window :buffer-gcontext)
+                  s-x s-y width height destination d-x d-y))
 
 
 (defun x-black-white-pixel (window)
@@ -451,7 +451,7 @@ These are raw windows, NOT Opal windows!"
 multiple values."
   (let ((screen (display-info-screen (g-value window :display-info))))
     (values (xlib:screen-black-pixel screen)
-	    (xlib:screen-white-pixel screen))))
+            (xlib:screen-white-pixel screen))))
 
 
 (defun x-character-width (root-window opal-font the-char-code)
@@ -468,20 +468,20 @@ operate on the window's buffer instead."
   (if clear-buffer-p
       ;; Clear the window's buffer
       (let* ((gc (g-value window :buffer-gcontext))
-	     (buffer (g-value window :buffer))
-	     (background (xlib:gcontext-background gc)))
-	(xlib:with-gcontext (gc :function *copy* :foreground background)
-	  (if x
-	      ;; clear only a region
-	      (xlib:draw-rectangle buffer gc x y width height t)
-	      ;; clear the entire buffer
-	      (xlib:draw-rectangle buffer gc 0 0
-				   (xlib:drawable-width buffer)
-				   (xlib:drawable-height buffer) t))))
+             (buffer (g-value window :buffer))
+             (background (xlib:gcontext-background gc)))
+        (xlib:with-gcontext (gc :function *copy* :foreground background)
+          (if x
+              ;; clear only a region
+              (xlib:draw-rectangle buffer gc x y width height t)
+              ;; clear the entire buffer
+              (xlib:draw-rectangle buffer gc 0 0
+                                   (xlib:drawable-width buffer)
+                                   (xlib:drawable-height buffer) t))))
       ;; Clear the window itself
       (xlib:clear-area (the-drawable window)
-		       :x x :y y :width width :height height
-		       :exposures-p NIL)))
+                       :x x :y y :width width :height height
+                       :exposures-p NIL)))
 
 
 
@@ -499,7 +499,7 @@ operate on the window's buffer instead."
      (xlib:alloc-color-cells *default-x-colormap* 1))
     (:FIRST-ALLOCATABLE-INDEX
      (let* ((indices (xlib:alloc-color-cells *default-x-colormap* 1))
-	    (index (car indices)))
+            (index (car indices)))
        (xlib:free-colors *default-x-colormap* indices)
        index))
     (:FREE-COLORS
@@ -510,19 +510,19 @@ operate on the window's buffer instead."
      (let* ((xcolor (xlib:lookup-color *default-x-colormap* a)))
        ;; The PS module needs the RGB values
        (values (xlib:color-red xcolor)
-	       (xlib:color-green xcolor)
-	       (xlib:color-blue xcolor))))
+               (xlib:color-green xcolor)
+               (xlib:color-blue xcolor))))
     (:MAKE-COLOR
      (xlib:make-color :red a :green b :blue c))
     (:QUERY-COLORS
      ;; Returns three values: red, green, blue components
      (let ((color (car (xlib:query-colors *default-x-colormap* (list a)))))
        (values (floor (* 65535 (xlib:color-red color)))
-	       (floor (* 65535 (xlib:color-green color)))
-	       (floor (* 65535 (xlib:color-blue color))))))
+               (floor (* 65535 (xlib:color-green color)))
+               (floor (* 65535 (xlib:color-blue color))))))
     (t
      (error "Unknown property ~S in gem::x-colormap-property~%"
-	    property))))
+            property))))
 
 
 
@@ -530,19 +530,19 @@ operate on the window's buffer instead."
   "Copy the cursor or bitmap in <from> to the pixmap <to>.  The operation
 affects an area of <width> by <height>."
   (let* ((screen (display-info-screen
-		  (g-value root-window :display-info)))
-	 (gc (xlib:create-gcontext
-	      :drawable to :function boole-1
-	      :foreground (xlib:screen-white-pixel screen)
-	      :background (xlib:screen-black-pixel screen))))
+                  (g-value root-window :display-info)))
+         (gc (xlib:create-gcontext
+              :drawable to :function boole-1
+              :foreground (xlib:screen-white-pixel screen)
+              :background (xlib:screen-black-pixel screen))))
     (xlib:put-image to gc from :x 0 :y 0 :width width :height height)
     (xlib:free-gcontext gc)))
 
 
 
 (defun x-create-cursor (root-window source mask
-			foreground background
-			from-font-p x y)
+                        foreground background
+                        from-font-p x y)
   (declare (ignore root-window))
   "If <from-font-p> is true, the <source> is a font; otherwise, it is
 a pixmap.  Same for the <mask>.  <x> and <y> are a position when the
@@ -550,14 +550,14 @@ source is a pixmap; otherwise, they are the cursor-char and the mask-char
 for the two fonts."
   (if from-font-p
       (xlib:create-glyph-cursor :source-font source :mask-font mask
-				:source-char x
-				:mask-char y
-				:foreground foreground
-				:background background)
+                                :source-char x
+                                :mask-char y
+                                :foreground foreground
+                                :background background)
       (xlib:create-cursor :source source :mask mask
-			  :x x :y y
-			  :foreground (g-value opal::black :xcolor)
-			  :background (g-value opal::white :xcolor))))
+                          :x x :y y
+                          :foreground (g-value opal::black :xcolor)
+                          :background (g-value opal::white :xcolor))))
   
 
 ;; The following deals with cases where the display provides pixmaps
@@ -582,7 +582,7 @@ pixmap format in the list of valid formats."
   (let ((valid-formats (depth-pixmap-format depth)))
     (dolist (format valid-formats (xlib:pixmap-format-bits-per-pixel (car valid-formats)))
       (when (= (xlib:pixmap-format-bits-per-pixel format) depth)
-	(return-from depth-to-bits-per-pixel depth)))))
+        (return-from depth-to-bits-per-pixel depth)))))
 
 
 (defun pixarray-element-type (depth)
@@ -605,41 +605,41 @@ pixmap format in the list of valid formats."
 ;; actual data
 ;;
 (defun x-create-image (root-window width height depth from-data-p
-		       &optional color-or-data properties
-			 bits-per-pixel left-pad data-array)
+                       &optional color-or-data properties
+                         bits-per-pixel left-pad data-array)
   (declare (ignore root-window data-array))
   (unless bits-per-pixel
     (setf bits-per-pixel (depth-to-bits-per-pixel depth)))
   (if from-data-p
       (let* ((bits-per-line (xlib::index* width bits-per-pixel))
-	     (padded-bits-per-line
-	      (xlib::index* (xlib::index-ceiling bits-per-line 32) 32))
-	     (padded-bytes-per-line
-	      (xlib::index-ceiling padded-bits-per-line 8)))
-	(xlib:create-image
-	 :width width :height height
-	 :depth depth
-	 :format :z-pixmap
-	 :data color-or-data
-	 :unit 32 :pad 32
-	 :byte-lsb-first-p t :bit-lsb-first-p t
-	 :bits-per-pixel bits-per-pixel
-	 :plist properties
-	 :bytes-per-line padded-bytes-per-line :left-pad left-pad))
+             (padded-bits-per-line
+              (xlib::index* (xlib::index-ceiling bits-per-line 32) 32))
+             (padded-bytes-per-line
+              (xlib::index-ceiling padded-bits-per-line 8)))
+        (xlib:create-image
+         :width width :height height
+         :depth depth
+         :format :z-pixmap
+         :data color-or-data
+         :unit 32 :pad 32
+         :byte-lsb-first-p t :bit-lsb-first-p t
+         :bits-per-pixel bits-per-pixel
+         :plist properties
+         :bytes-per-line padded-bytes-per-line :left-pad left-pad))
       (let* ((element-type (pixarray-element-type bits-per-pixel))
-	     (data-array (make-array (list height width)
-				     :element-type element-type
-				     :initial-element
-				     (if color-or-data
-					 (g-value color-or-data :colormap-index)
-					 *white*))))
-	(xlib:create-image
-	 :depth depth
-	 :bits-per-pixel bits-per-pixel
-	 :width width
-	 :height height
-	 :format :z-pixmap
-	 :data data-array ))))
+             (data-array (make-array (list height width)
+                                     :element-type element-type
+                                     :initial-element
+                                     (if color-or-data
+                                         (g-value color-or-data :colormap-index)
+                                         *white*))))
+        (xlib:create-image
+         :depth depth
+         :bits-per-pixel bits-per-pixel
+         :width width
+         :height height
+         :format :z-pixmap
+         :data data-array ))))
   
 
 (defun x-create-image-array (root-window width height depth)
@@ -647,32 +647,32 @@ pixmap format in the list of valid formats."
 1 for a bitmap and the depth of the display for a pixmap."
   (declare (ignore root-window))
   (make-array (list height width)
-	      :element-type (pixarray-element-type depth)))
+              :element-type (pixarray-element-type depth)))
 
 
 
 (defun x-create-pixmap (window width height depth
-			&optional image bitmap-p data-array)
+                        &optional image bitmap-p data-array)
   (declare (ignore data-array))
   (let* ((drawable (g-value window :drawable))
-	 (pixmap (xlib:create-pixmap :width width
-				     :height height
-				     :depth depth
-				     :drawable drawable)))
+         (pixmap (xlib:create-pixmap :width width
+                                     :height height
+                                     :depth depth
+                                     :drawable drawable)))
     (if image
       (let ((gc (xlib:create-gcontext 
-		 :drawable pixmap :function boole-1
-		 ;; Since this pixmap is going to be used as a stipple mask,
-		 ;; you must have 1's in foreground, regardless of whether
-		 ;; *black* is 1 on this machine or not (on HP's, it's 0).
-		 :foreground 1  ; NOT opal::*black*
-		 :background 0  ; NOT opal::*white*
-		 )))
-	(xlib:put-image pixmap gc image
-			:x 0 :y 0 :width width :height height
-			:bitmap-p bitmap-p)
-	(xlib:free-gcontext gc)
-	(xlib:set-wm-properties drawable :icon-pixmap pixmap)))
+                 :drawable pixmap :function boole-1
+                 ;; Since this pixmap is going to be used as a stipple mask,
+                 ;; you must have 1's in foreground, regardless of whether
+                 ;; *black* is 1 on this machine or not (on HP's, it's 0).
+                 :foreground 1  ; NOT opal::*black*
+                 :background 0  ; NOT opal::*white*
+                 )))
+        (xlib:put-image pixmap gc image
+                        :x 0 :y 0 :width width :height height
+                        :bitmap-p bitmap-p)
+        (xlib:free-gcontext gc)
+        (xlib:set-wm-properties drawable :icon-pixmap pixmap)))
     pixmap))
 
 
@@ -685,49 +685,49 @@ pixmap format in the list of valid formats."
 ;;; the newly-created drawable.
 ;;;
 (defun x-create-window (parent-window x y width height
-			title icon-name
-			background border-width
-			save-under visible
-			min-width min-height max-width max-height
-			user-specified-position-p user-specified-size-p
-			override-redirect)
+                        title icon-name
+                        background border-width
+                        save-under visible
+                        min-width min-height max-width max-height
+                        user-specified-position-p user-specified-size-p
+                        override-redirect)
   (let* ((display-info (g-value parent-window :display-info))
-	 (drawable (xlib:create-window
-		    :parent (g-value parent-window :drawable)
-		    :x x
-		    :y y
-		    :width width
-		    :height height
-		    :background background
-		    :border-width border-width
-		    :border (xlib:screen-black-pixel (display-info-screen
-						      display-info))
-		    :override-redirect override-redirect
-		    :event-mask *exposure-event-mask*
-		    :save-under save-under
-		    :class :input-output)))
+         (drawable (xlib:create-window
+                    :parent (g-value parent-window :drawable)
+                    :x x
+                    :y y
+                    :width width
+                    :height height
+                    :background background
+                    :border-width border-width
+                    :border (xlib:screen-black-pixel (display-info-screen
+                                                      display-info))
+                    :override-redirect override-redirect
+                    :event-mask *exposure-event-mask*
+                    :save-under save-under
+                    :class :input-output)))
     (setf (xlib:wm-hints drawable)
           (xlib:make-wm-hints :input :on :initial-state visible))
     (setf (xlib:wm-normal-hints drawable)
-	  (xlib:make-wm-size-hints
-	   :width-inc 1
-	   :height-inc 1
-	   :x x
-	   :y y
-	   :min-width min-width
-	   :min-height min-height
-	   :max-width max-width
-	   :max-height max-height
-	   :user-specified-position-p user-specified-position-p
-	   :user-specified-size-p user-specified-size-p))
+          (xlib:make-wm-size-hints
+           :width-inc 1
+           :height-inc 1
+           :x x
+           :y y
+           :min-width min-width
+           :min-height min-height
+           :max-width max-width
+           :max-height max-height
+           :user-specified-position-p user-specified-position-p
+           :user-specified-size-p user-specified-size-p))
 
     (xlib:set-wm-properties drawable
-;;			    :client-machine
-;;			    (machine-instance)
-			    :resource-name "Opal"
-			    :resource-class :opal
-			    :name title
-			    :icon-name icon-name)
+;;                          :client-machine
+;;                          (machine-instance)
+                            :resource-name "Opal"
+                            :resource-class :opal
+                            :name title
+                            :icon-name icon-name)
 
     ;;; The following allows you to destroy windows by hand using the
     ;;; window manager.  Unfortunately, this does not work in lispworks, but
@@ -738,14 +738,14 @@ pixmap format in the list of valid formats."
     ;;; error checking in other implementations than clisp and lispworks.
     ;;; B. Haible 20.9.1993
     (xlib:change-property drawable
-			  :WM_CLIENT_MACHINE (short-site-name)
-			  :STRING 8)
+                          :WM_CLIENT_MACHINE (short-site-name)
+                          :STRING 8)
     
     (xlib:change-property drawable :WM_PROTOCOLS
-			  (list (xlib:intern-atom
-				 (display-info-display display-info)
-				 "WM_DELETE_WINDOW"))
-			  :ATOM 32)
+                          (list (xlib:intern-atom
+                                 (display-info-display display-info)
+                                 "WM_DELETE_WINDOW"))
+                          :ATOM 32)
     drawable))
 
 
@@ -784,43 +784,43 @@ pixmap format in the list of valid formats."
     #-allegro
     (loop
      (unless
-	 (xlib:event-case (*default-x-display*
-			   :discard-p nil :timeout 0)
-			  (:motion-notify ((:x x-prime) (:y y-prime)
-					   (:event-window win-prime))
-					  (setf current-x x-prime)
-					  (setf current-y y-prime)
-					  (setf current-win win-prime)
-					  (if *mouse-debug* 
-					    (incf *mouse-throw-aways*))
-					  t)
-			  (t () nil))	; any other event, return nil (causes
-					; event-case to terminate), which causes
-					; loop to terminate
+         (xlib:event-case (*default-x-display*
+                           :discard-p nil :timeout 0)
+                          (:motion-notify ((:x x-prime) (:y y-prime)
+                                           (:event-window win-prime))
+                                          (setf current-x x-prime)
+                                          (setf current-y y-prime)
+                                          (setf current-win win-prime)
+                                          (if *mouse-debug* 
+                                            (incf *mouse-throw-aways*))
+                                          t)
+                          (t () nil))   ; any other event, return nil (causes
+                                        ; event-case to terminate), which causes
+                                        ; loop to terminate
        (return)))
     #+ALLEGRO
     (block throw-away
       (xlib:event-case (*default-x-display*
-			:discard-p t :timeout 0)
-		       (:motion-notify ((:x x-prime) (:y y-prime)
-					(:event-window win-prime))
-				       (setf current-x x-prime)
-				       (setf current-y y-prime)
-				       (setf current-win win-prime)
-				       (if *mouse-debug* 
-					 (incf *mouse-throw-aways*))
-				       nil)
-		       (t () (return-from throw-away))))
+                        :discard-p t :timeout 0)
+                       (:motion-notify ((:x x-prime) (:y y-prime)
+                                        (:event-window win-prime))
+                                       (setf current-x x-prime)
+                                       (setf current-y y-prime)
+                                       (setf current-win win-prime)
+                                       (if *mouse-debug* 
+                                         (incf *mouse-throw-aways*))
+                                       nil)
+                       (t () (return-from throw-away))))
     (values current-x current-y
-	    (if current-win
-	      (getf (xlib:drawable-plist current-win) :garnet)))))
+            (if current-win
+              (getf (xlib:drawable-plist current-win) :garnet)))))
 
 #-(and cmu mp)
 (defun x-discard-pending-events (root-window &optional (timeout 1))
   (declare (ignore root-window))
   (xlib:event-case (*default-x-display* :discard-p t :timeout timeout)
-		   (:destroy-notify () NIL) ; get rid of warnings
-		   (otherwise () t)))
+                   (:destroy-notify () NIL) ; get rid of warnings
+                   (otherwise () t)))
 
 #+(and cmu mp)
 (defun x-discard-pending-events (root-window &optional (timeout 1))
@@ -840,84 +840,84 @@ pixmap format in the list of valid formats."
   (make-array '(2 2 2) :initial-contents '(((0 1) (1 1)) ((1 1) (0 1)))))
 
 (defun x-draw-arc (window x y width height angle1 angle2 function
-			  line-style fill-style &optional pie-slice-p)
+                          line-style fill-style &optional pie-slice-p)
   (declare (ignore pie-slice-p))
   (let* ((thickness (if line-style
-			(max 1 (g-value line-style :line-thickness))
+                        (max 1 (g-value line-style :line-thickness))
                         0))
-	 (thickness2 (* thickness 2))
-	 (fill-width (max 0 (- width thickness2)))
-	 (fill-height (max 0 (- height thickness2)))
-	 (display-info (g-value window :display-info))
-	 (root-window (display-info-root-window display-info))
-	 (drawable (the-drawable window)))
+         (thickness2 (* thickness 2))
+         (fill-width (max 0 (- width thickness2)))
+         (fill-height (max 0 (- height thickness2)))
+         (display-info (g-value window :display-info))
+         (root-window (display-info-root-window display-info))
+         (drawable (the-drawable window)))
     (setf function (get function :x-draw-function))
     (if fill-style
       (let ((filling-style-gc (display-info-line-style-gc display-info)))
-	(set-filling-style
-	 fill-style
-	 filling-style-gc
-	 (gem-gc-gcontext filling-style-gc) root-window function)
-	(xlib:draw-arc drawable (gem-gc-gcontext filling-style-gc)
-		       (+ x thickness) (+ y thickness)
-		       fill-width fill-height angle1 angle2 T)))
+        (set-filling-style
+         fill-style
+         filling-style-gc
+         (gem-gc-gcontext filling-style-gc) root-window function)
+        (xlib:draw-arc drawable (gem-gc-gcontext filling-style-gc)
+                       (+ x thickness) (+ y thickness)
+                       fill-width fill-height angle1 angle2 T)))
     (if line-style
       (let* ((line-style-gc (display-info-line-style-gc display-info))
-	     (xlib-gc-line (gem-gc-gcontext line-style-gc))
-	     (half-thickness (truncate thickness 2))
-	     (diameter (min width height))
-	     (d-mod-2 (mod diameter 2))
-	     (t-mod-2 (mod thickness 2)))
-	(set-line-style line-style line-style-gc xlib-gc-line
-			root-window function)
-	(xlib:draw-arc
-	 drawable xlib-gc-line
-	 (+ x half-thickness
-	    (aref *left-adjustment* d-mod-2 d-mod-2 t-mod-2))
-	 (+ y half-thickness
-	    (aref *top-adjustment* d-mod-2 d-mod-2 t-mod-2))
-	 (max 0 (- width thickness
-		   (aref *width-adjustment* d-mod-2 d-mod-2 t-mod-2)))
-	 (max 0 (- height thickness
-		   (aref *height-adjustment* d-mod-2 d-mod-2 t-mod-2)))
-	 angle1 angle2 NIL)))))
+             (xlib-gc-line (gem-gc-gcontext line-style-gc))
+             (half-thickness (truncate thickness 2))
+             (diameter (min width height))
+             (d-mod-2 (mod diameter 2))
+             (t-mod-2 (mod thickness 2)))
+        (set-line-style line-style line-style-gc xlib-gc-line
+                        root-window function)
+        (xlib:draw-arc
+         drawable xlib-gc-line
+         (+ x half-thickness
+            (aref *left-adjustment* d-mod-2 d-mod-2 t-mod-2))
+         (+ y half-thickness
+            (aref *top-adjustment* d-mod-2 d-mod-2 t-mod-2))
+         (max 0 (- width thickness
+                   (aref *width-adjustment* d-mod-2 d-mod-2 t-mod-2)))
+         (max 0 (- height thickness
+                   (aref *height-adjustment* d-mod-2 d-mod-2 t-mod-2)))
+         angle1 angle2 NIL)))))
 
 
 
 (defun x-draw-image (window left top width height image function fill-style)
   (let* ((display-info (g-value window :display-info))
-	 (root-window (display-info-root-window display-info))
-	 (drawable (the-drawable window))
-	 (bitmap-p (= (xlib:image-depth image) 1)))
+         (root-window (display-info-root-window display-info))
+         (drawable (the-drawable window))
+         (bitmap-p (= (xlib:image-depth image) 1)))
 
     (setf function (get function :x-draw-function))
     (if fill-style
       (let* ((fill-style-gc (display-info-line-style-gc display-info))
-	     (xlib-gc-fill (gem-gc-gcontext fill-style-gc)))
-	(set-filling-style fill-style fill-style-gc xlib-gc-fill
-			   root-window function)
-	(if (and (eq (xlib:gcontext-fill-style xlib-gc-fill) :stippled)
-		 bitmap-p)
-	  (let ((save-stipple (xlib:gcontext-stipple xlib-gc-fill)))
-	    (setf (xlib:gcontext-stipple xlib-gc-fill)
-		  (x-build-pixmap window image width height bitmap-p))
-	    (setf (xlib:gcontext-ts-x xlib-gc-fill) left)
-	    (setf (xlib:gcontext-ts-y xlib-gc-fill) top)
-	    (xlib:draw-rectangle drawable xlib-gc-fill
-				 left top width height t)
-	    (if save-stipple
-	      (setf (xlib:gcontext-stipple xlib-gc-fill) save-stipple)))
-	  (xlib:put-image drawable xlib-gc-fill image
-			  :x left
-			  :y top
-			  :width width
-			  :height height
-			  :bitmap-p bitmap-p))))))
+             (xlib-gc-fill (gem-gc-gcontext fill-style-gc)))
+        (set-filling-style fill-style fill-style-gc xlib-gc-fill
+                           root-window function)
+        (if (and (eq (xlib:gcontext-fill-style xlib-gc-fill) :stippled)
+                 bitmap-p)
+          (let ((save-stipple (xlib:gcontext-stipple xlib-gc-fill)))
+            (setf (xlib:gcontext-stipple xlib-gc-fill)
+                  (x-build-pixmap window image width height bitmap-p))
+            (setf (xlib:gcontext-ts-x xlib-gc-fill) left)
+            (setf (xlib:gcontext-ts-y xlib-gc-fill) top)
+            (xlib:draw-rectangle drawable xlib-gc-fill
+                                 left top width height t)
+            (if save-stipple
+              (setf (xlib:gcontext-stipple xlib-gc-fill) save-stipple)))
+          (xlib:put-image drawable xlib-gc-fill image
+                          :x left
+                          :y top
+                          :width width
+                          :height height
+                          :bitmap-p bitmap-p))))))
 
 
 (defun x-draw-line (window x1 y1 x2 y2 function line-style &optional drawable)
   (let* ((display-info (g-value window :display-info))
-	 (root-window (display-info-root-window display-info)))
+         (root-window (display-info-root-window display-info)))
     ;; Provide the actual drawable of the window if you want to bypass drawing
     ;; into the buffer.  This is used by the gesture-interactor to draw lines
     ;; directly into the window, not the buffer.
@@ -926,212 +926,212 @@ pixmap format in the list of valid formats."
     (setf function (get function :x-draw-function))
     (if line-style
       (let* ((line-style-gc (display-info-line-style-gc display-info))
-	     (xlib-gc-line (gem-gc-gcontext line-style-gc)))
-	(set-line-style line-style line-style-gc xlib-gc-line
-			root-window function)
-	(xlib:draw-line drawable xlib-gc-line x1 y1 x2 y2)))))  
+             (xlib-gc-line (gem-gc-gcontext line-style-gc)))
+        (set-line-style line-style line-style-gc xlib-gc-line
+                        root-window function)
+        (xlib:draw-line drawable xlib-gc-line x1 y1 x2 y2)))))  
 
 
 
 (defun x-draw-lines (window point-list function line-style fill-style)
   (let* ((display-info (g-value window :display-info))
-	 (root-window (display-info-root-window display-info))
-	 (drawable (the-drawable window)))
+         (root-window (display-info-root-window display-info))
+         (drawable (the-drawable window)))
     (setf function (get function :x-draw-function))
     (if fill-style
       (let* ((filling-style-gc (display-info-line-style-gc display-info))
-	     (xlib-gc-filling (gem-gc-gcontext filling-style-gc)))
-	(set-filling-style
-	 fill-style filling-style-gc xlib-gc-filling root-window function)
-	(xlib:draw-lines drawable xlib-gc-filling point-list :fill-p T)))
+             (xlib-gc-filling (gem-gc-gcontext filling-style-gc)))
+        (set-filling-style
+         fill-style filling-style-gc xlib-gc-filling root-window function)
+        (xlib:draw-lines drawable xlib-gc-filling point-list :fill-p T)))
     (if line-style
       (let* ((line-style-gc (display-info-line-style-gc display-info))
-	     (xlib-gc-line (gem-gc-gcontext line-style-gc)))
-	(set-line-style line-style line-style-gc xlib-gc-line
-			root-window function)
-	(xlib:draw-lines drawable xlib-gc-line point-list)))))
+             (xlib-gc-line (gem-gc-gcontext line-style-gc)))
+        (set-line-style line-style line-style-gc xlib-gc-line
+                        root-window function)
+        (xlib:draw-lines drawable xlib-gc-line point-list)))))
 
 
 
 (defun x-draw-points (window point-list function line-style)
   (let* ((display-info (g-value window :display-info))
-	 (root-window (display-info-root-window display-info))
-	 (drawable (the-drawable window)))
+         (root-window (display-info-root-window display-info))
+         (drawable (the-drawable window)))
     (let* ((line-style-gc (display-info-line-style-gc display-info))
-	   (xlib-gc-line (gem-gc-gcontext line-style-gc)))
+           (xlib-gc-line (gem-gc-gcontext line-style-gc)))
       (set-line-style line-style
-		      line-style-gc xlib-gc-line
-		      root-window (get function :x-draw-function))
+                      line-style-gc xlib-gc-line
+                      root-window (get function :x-draw-function))
       (xlib:draw-points drawable xlib-gc-line point-list))))
 
 
 
 (defun x-draw-rectangle (window left top width height function
-			 line-style fill-style)
+                         line-style fill-style)
   (declare (fixnum left top width height))
   (if (< width 1)
     (setf width 1))
   (if (< height 1)
     (setf height 1))
   (let* ((display-info (g-value window :display-info))
-	 (root-window (display-info-root-window display-info))
-	 (drawable (the-drawable window))
-	 (thickness (if line-style
-			(max (g-value line-style :line-thickness) 1) 0)))
+         (root-window (display-info-root-window display-info))
+         (drawable (the-drawable window))
+         (thickness (if line-style
+                        (max (g-value line-style :line-thickness) 1) 0)))
     (setf function (get function :x-draw-function))
     (if fill-style
       (let* ((filling-style-gc (display-info-line-style-gc display-info))
-	     (gc (gem-gc-gcontext filling-style-gc))
-	     (th2 (* 2 thickness)))
-	(set-filling-style fill-style filling-style-gc gc
-			   root-window function)
-	(xlib:draw-rectangle drawable gc
-			     (+ left thickness) (+ top thickness)
-			     (- width th2) (- height th2)
-			     t)))
+             (gc (gem-gc-gcontext filling-style-gc))
+             (th2 (* 2 thickness)))
+        (set-filling-style fill-style filling-style-gc gc
+                           root-window function)
+        (xlib:draw-rectangle drawable gc
+                             (+ left thickness) (+ top thickness)
+                             (- width th2) (- height th2)
+                             t)))
     (if line-style
       (let* ((line-style-gc (display-info-line-style-gc display-info))
-	     (xlib-gc-line (gem-gc-gcontext line-style-gc))
-	     (half-thickness (truncate thickness 2)))
-	(set-line-style line-style line-style-gc xlib-gc-line
-			root-window function)
-	(xlib:draw-rectangle drawable xlib-gc-line
-			     (+ left half-thickness)
-			     (+ top half-thickness)
-			     (- width thickness)
-			     (- height thickness) NIL)))))
+             (xlib-gc-line (gem-gc-gcontext line-style-gc))
+             (half-thickness (truncate thickness 2)))
+        (set-line-style line-style line-style-gc xlib-gc-line
+                        root-window function)
+        (xlib:draw-rectangle drawable xlib-gc-line
+                             (+ left half-thickness)
+                             (+ top half-thickness)
+                             (- width thickness)
+                             (- height thickness) NIL)))))
 
 
 
 (defun x-draw-roundtangle (window left top width height
-				  x-radius y-radius function
-				  line-style fill-style)
+                                  x-radius y-radius function
+                                  line-style fill-style)
   (let* ((display-info (g-value window :display-info))
-	 (root-window (display-info-root-window display-info))
-	 (drawable (the-drawable window))
-	 (th (if line-style (max 1 (g-value line-style :line-thickness)) 0))
-	 (th\2 (ceiling th 2))
-	 (th/2 (floor th 2))
+         (root-window (display-info-root-window display-info))
+         (drawable (the-drawable window))
+         (th (if line-style (max 1 (g-value line-style :line-thickness)) 0))
+         (th\2 (ceiling th 2))
+         (th/2 (floor th 2))
          ;; The mnemonic for c-w and c-h is "corner-width" and "corner-height"
-	 (c-w (+ x-radius x-radius))
-	 (c-h (+ y-radius y-radius)))
+         (c-w (+ x-radius x-radius))
+         (c-h (+ y-radius y-radius)))
     (setf function (get function :x-draw-function))
     (if fill-style
       (let* ((filling-style-gc (display-info-line-style-gc
-				display-info))
-	     (gc (gem-gc-gcontext filling-style-gc))
-	     (r x-radius)
-	     (top-l (+ top y-radius))
-	     (top-f (+ top th))
-	     (right-l (- (+ left width) r))
-	     (side-w (max 0 (- x-radius th)))
-	     (side-h (- height y-radius y-radius))
-	     (bottom-t (+ top height (- c-h))))
-	(set-filling-style fill-style filling-style-gc
-			   gc root-window function)
-	;; center rectangle, from top to bottom
-	(xlib:draw-rectangle drawable gc
-			     (+ left r) top-f
-			     (- width r r) (max 0 (- height th th)) T)
-	;; two side rectangles
-	(xlib:draw-rectangle drawable gc
-			     (+ left th) top-l side-w side-h T)
-	(xlib:draw-rectangle drawable gc
-			     right-l top-l side-w side-h T)
-	;; four filled arcs at the corners
-	;; The cruddy +1 and -1 is to get the filling-styles and line-styles
-	;; to touch at the corners
-	(let* ((right-f (+ (- right-l x-radius) th))
-	       (left-f (+ left th))
-	       (left-f-1 (- left-f (if line-style 1 0)))
-	       (top-f-1 (- top-f (if line-style 1 0)))
-	       (bottom-f (+ bottom-t th))
-	       (th2 (+ th th))
-	       (c-w-f (max 0 (- c-w th2)))
-	       (c-h-f (max 0 (- c-h th2)))
-	       (c-w-f+1 (+ c-w-f (if line-style 1 0)))
-	       (c-h-f+1 (+ c-h-f (if line-style 1 0))))
-	  (xlib:draw-arc drawable gc right-f top-f-1
-			             c-w-f c-h-f+1 0.0 gu:pi/2 T)
-	  (xlib:draw-arc drawable gc (- left-f 1) (- top-f 1)
-			             (+ c-w-f 1)  (+ c-h-f 1)
-				     gu:pi/2 gu:pi/2 T)
-	  (xlib:draw-arc drawable gc left-f-1 bottom-f c-w-f+1 c-h-f
-			             pi gu:pi/2 T)
-	  (xlib:draw-arc drawable gc right-f bottom-f c-w-f c-w-f
-			             gu:pi3/2 gu:pi/2 T))
-	t))
+                                display-info))
+             (gc (gem-gc-gcontext filling-style-gc))
+             (r x-radius)
+             (top-l (+ top y-radius))
+             (top-f (+ top th))
+             (right-l (- (+ left width) r))
+             (side-w (max 0 (- x-radius th)))
+             (side-h (- height y-radius y-radius))
+             (bottom-t (+ top height (- c-h))))
+        (set-filling-style fill-style filling-style-gc
+                           gc root-window function)
+        ;; center rectangle, from top to bottom
+        (xlib:draw-rectangle drawable gc
+                             (+ left r) top-f
+                             (- width r r) (max 0 (- height th th)) T)
+        ;; two side rectangles
+        (xlib:draw-rectangle drawable gc
+                             (+ left th) top-l side-w side-h T)
+        (xlib:draw-rectangle drawable gc
+                             right-l top-l side-w side-h T)
+        ;; four filled arcs at the corners
+        ;; The cruddy +1 and -1 is to get the filling-styles and line-styles
+        ;; to touch at the corners
+        (let* ((right-f (+ (- right-l x-radius) th))
+               (left-f (+ left th))
+               (left-f-1 (- left-f (if line-style 1 0)))
+               (top-f-1 (- top-f (if line-style 1 0)))
+               (bottom-f (+ bottom-t th))
+               (th2 (+ th th))
+               (c-w-f (max 0 (- c-w th2)))
+               (c-h-f (max 0 (- c-h th2)))
+               (c-w-f+1 (+ c-w-f (if line-style 1 0)))
+               (c-h-f+1 (+ c-h-f (if line-style 1 0))))
+          (xlib:draw-arc drawable gc right-f top-f-1
+                                     c-w-f c-h-f+1 0.0 gu:pi/2 T)
+          (xlib:draw-arc drawable gc (- left-f 1) (- top-f 1)
+                                     (+ c-w-f 1)  (+ c-h-f 1)
+                                     gu:pi/2 gu:pi/2 T)
+          (xlib:draw-arc drawable gc left-f-1 bottom-f c-w-f+1 c-h-f
+                                     pi gu:pi/2 T)
+          (xlib:draw-arc drawable gc right-f bottom-f c-w-f c-w-f
+                                     gu:pi3/2 gu:pi/2 T))
+        t))
     (if line-style
       (let* ((line-style-gc (display-info-line-style-gc display-info))
-	     (xlib-gc-line (gem-gc-gcontext line-style-gc))
-	     (left-w (+ left x-radius))
-	     (right (+ left width (- x-radius))))
-	(set-line-style line-style line-style-gc xlib-gc-line
-			root-window function)
-	;; Top and bottom segments
-	(let* ((y (+ top th/2))
-	       (y1 (+ top height (- th\2)))
-	       (l (+ left th/2))
-	       (l1 (+ left width (- th\2)))
-	       (up (+ top y-radius))
-	       (down (+ top height (- y-radius)))
-	       (c-w (max 0 (- c-w th)))
-	       (c-h (max 0 (- c-h th))))
-	  (xlib:draw-segments drawable xlib-gc-line
-			      (list left-w y right y
-				    left-w y1 right y1
-				    l up l down
-				    l1 up l1 down))
-	  (let ((left (+ left th\2 (if (< th 2) -1 0)))
-		(right (+ left width (- c-w) (- th\2) (if (< th 2) 0 -1)))
-		(bottom (+ top height (- c-h) (- th\2) (if (<= th 3) 0 -1))))
-	    ;; Four arcs
-	    (xlib:draw-arc drawable xlib-gc-line
-			   right (+ top th/2) c-w c-h 0.0 gu:pi/2)
-	    (xlib:draw-arc drawable xlib-gc-line
-			   left (+ top th/2) c-w c-h gu:pi/2 gu:pi/2)
-	    (xlib:draw-arc drawable xlib-gc-line
-			   left bottom c-w c-h pi gu:pi/2)
-	    (xlib:draw-arc drawable xlib-gc-line
-			   right bottom c-w c-h gu:pi3/2 gu:pi/2)))))))
+             (xlib-gc-line (gem-gc-gcontext line-style-gc))
+             (left-w (+ left x-radius))
+             (right (+ left width (- x-radius))))
+        (set-line-style line-style line-style-gc xlib-gc-line
+                        root-window function)
+        ;; Top and bottom segments
+        (let* ((y (+ top th/2))
+               (y1 (+ top height (- th\2)))
+               (l (+ left th/2))
+               (l1 (+ left width (- th\2)))
+               (up (+ top y-radius))
+               (down (+ top height (- y-radius)))
+               (c-w (max 0 (- c-w th)))
+               (c-h (max 0 (- c-h th))))
+          (xlib:draw-segments drawable xlib-gc-line
+                              (list left-w y right y
+                                    left-w y1 right y1
+                                    l up l down
+                                    l1 up l1 down))
+          (let ((left (+ left th\2 (if (< th 2) -1 0)))
+                (right (+ left width (- c-w) (- th\2) (if (< th 2) 0 -1)))
+                (bottom (+ top height (- c-h) (- th\2) (if (<= th 3) 0 -1))))
+            ;; Four arcs
+            (xlib:draw-arc drawable xlib-gc-line
+                           right (+ top th/2) c-w c-h 0.0 gu:pi/2)
+            (xlib:draw-arc drawable xlib-gc-line
+                           left (+ top th/2) c-w c-h gu:pi/2 gu:pi/2)
+            (xlib:draw-arc drawable xlib-gc-line
+                           left bottom c-w c-h pi gu:pi/2)
+            (xlib:draw-arc drawable xlib-gc-line
+                           right bottom c-w c-h gu:pi3/2 gu:pi/2)))))))
 
 
 
 (defun x-draw-text (window x y string font function
-		    line-style &optional fill-background invert-p)
+                    line-style &optional fill-background invert-p)
   (declare (fixnum x y))
   (declare (optimize (speed 3) (safety 0) (debug 0) (space 1)))
   (setf font (g-value font :xfont))
   (setf function (get function :x-draw-function))
   (let* ((display-info (g-value window :display-info))
-	 (root-window (display-info-root-window display-info))
-	 (drawable (the-drawable window)))
+         (root-window (display-info-root-window display-info))
+         (drawable (the-drawable window)))
     (if (and line-style font)
       (let* ((line-style-gc (display-info-line-style-gc display-info))
-	     (xlib-gc-line (gem-gc-gcontext line-style-gc)))
-	(set-line-style line-style line-style-gc xlib-gc-line
-			root-window function)
-	(set-gc line-style-gc xlib-gc-line :font font)
-	(if fill-background
-	  (let ((background (g-value line-style :background-color
-				     :colormap-index))
-		(foreground (if invert-p (g-value line-style :foreground-color
-						  :colormap-index))))
-	    (if invert-p
-	      (progn
-		(set-gc line-style-gc xlib-gc-line
-			:foreground background)
-		(set-gc line-style-gc xlib-gc-line
-			:background foreground))
-	      (set-gc line-style-gc xlib-gc-line :background background))
-	    (xlib:draw-image-glyphs drawable xlib-gc-line x y string)
-	    (when invert-p
-	      ;; restore gc
-	      (set-gc line-style-gc xlib-gc-line
-		      :foreground foreground)
-	      (set-gc line-style-gc xlib-gc-line
-		      :background background)))
-	  (xlib:draw-glyphs drawable xlib-gc-line x y string))))))
+             (xlib-gc-line (gem-gc-gcontext line-style-gc)))
+        (set-line-style line-style line-style-gc xlib-gc-line
+                        root-window function)
+        (set-gc line-style-gc xlib-gc-line :font font)
+        (if fill-background
+          (let ((background (g-value line-style :background-color
+                                     :colormap-index))
+                (foreground (if invert-p (g-value line-style :foreground-color
+                                                  :colormap-index))))
+            (if invert-p
+              (progn
+                (set-gc line-style-gc xlib-gc-line
+                        :foreground background)
+                (set-gc line-style-gc xlib-gc-line
+                        :background foreground))
+              (set-gc line-style-gc xlib-gc-line :background background))
+            (xlib:draw-image-glyphs drawable xlib-gc-line x y string)
+            (when invert-p
+              ;; restore gc
+              (set-gc line-style-gc xlib-gc-line
+                      :foreground foreground)
+              (set-gc line-style-gc xlib-gc-line
+                      :background background)))
+          (xlib:draw-glyphs drawable xlib-gc-line x y string))))))
 
 
 ;;; Given a drawable or pixmap, returns the associated Opal window.
@@ -1151,10 +1151,10 @@ pixmap format in the list of valid formats."
       (xlib:process-event
        display :timeout 0
        :handler #'(lambda (&key cmu-event-window a-window &allow-other-keys)
-		    (if (or (eq cmu-event-window event-window)
-			    (eq a-window event-window))
-		      (setf result t)
-		      nil)))
+                    (if (or (eq cmu-event-window event-window)
+                            (eq a-window event-window))
+                      (setf result t)
+                      nil)))
       result)
     #-cmu
     (xlib:discard-current-event display)
@@ -1165,8 +1165,8 @@ pixmap format in the list of valid formats."
   (let ((a-window (getf (xlib:drawable-plist event-window) :garnet)))
     (if a-window
       (let ((drawable (g-value a-window :drawable)))
-	(and drawable (= (xlib:window-id drawable)
-			 (xlib:window-id event-window)))))))
+        (and drawable (= (xlib:window-id drawable)
+                         (xlib:window-id event-window)))))))
 
 
 ;;; Taken from windows.lisp
@@ -1213,19 +1213,19 @@ pixmap format in the list of valid formats."
       (event-window)
       (event-handler-debug :MAP-NOTIFY)
       (interactors::do-map-notify (x-window-from-drawable root-window
-							  event-window)))
+                                                          event-window)))
      (:UNMAP-NOTIFY
       (event-window)
       (event-handler-debug :UNMAP-NOTIFY)
       (interactors::do-unmap-notify (x-window-from-drawable root-window
-							    event-window)))
+                                                            event-window)))
      (:REPARENT-NOTIFY
       (event-window)
       (event-handler-debug :REPARENT-NOTIFY)
       (if (connected-window-p event-window)
-	(let ((window (x-window-from-drawable root-window event-window)))
-	  (s-value window :already-initialized-border-widths nil)
-	  (s-value window :lineage (lineage-of-drawable event-window)))))
+        (let ((window (x-window-from-drawable root-window event-window)))
+          (s-value window :already-initialized-border-widths nil)
+          (s-value window :lineage (lineage-of-drawable event-window)))))
      (:CIRCULATE-NOTIFY
       ()
       (event-handler-debug :CIRCULATE-NOTIFY)
@@ -1242,69 +1242,69 @@ pixmap format in the list of valid formats."
       (event-window x y width height above-sibling)
       (event-handler-debug :CONFIGURE-NOTIFY)
       (if (connected-window-p event-window)
-	(interactors::do-configure-notify (x-window-from-drawable root-window
-								  event-window)
-	  x y width height above-sibling)))
+        (interactors::do-configure-notify (x-window-from-drawable root-window
+                                                                  event-window)
+          x y width height above-sibling)))
      (:EXPOSURE
       (event-window x y width height count)
       (event-handler-debug :EXPOSURE x y width height count)
       (when (connected-window-p event-window)
-	(interactors::do-exposure (x-window-from-drawable root-window event-window)
-	  x y width height count display)))
+        (interactors::do-exposure (x-window-from-drawable root-window event-window)
+          x y width height count display)))
      (:KEY-PRESS
       (event-window x y state code time)
       (event-handler-debug :KEY-PRESS event-window x y state code time)
       (if ignore-keys
-	;; We don't want keys, but check if this is the abort key
-	  (let ((c (x-translate-character *root-window* 0 0 state code 0)))
-	    (when (eq c interactors::*garnet-break-key*)
-	      (format T "~%**Aborting transcript due to user command**~%")
-	      (return-from x-event-handler :abort)))
-	  ;; Normal case: we do want keys
-	  (interactors::do-key-press
-	      (x-window-from-drawable root-window event-window)
-	    x y state code time)))
+        ;; We don't want keys, but check if this is the abort key
+          (let ((c (x-translate-character *root-window* 0 0 state code 0)))
+            (when (eq c interactors::*garnet-break-key*)
+              (format T "~%**Aborting transcript due to user command**~%")
+              (return-from x-event-handler :abort)))
+          ;; Normal case: we do want keys
+          (interactors::do-key-press
+              (x-window-from-drawable root-window event-window)
+            x y state code time)))
      (:BUTTON-PRESS
       (event-window x y state code time event-key)
       (event-handler-debug :BUTTON-PRESS event-window x y state code time
-			   event-key)
+                           event-key)
       (unless ignore-keys
-	(interactors::do-button-press (x-window-from-drawable root-window
-							      event-window)
-	  x y state code time event-key)))
+        (interactors::do-button-press (x-window-from-drawable root-window
+                                                              event-window)
+          x y state code time event-key)))
      (:BUTTON-RELEASE
       (event-window x y state code time event-key)
       (event-handler-debug :BUTTON-RELEASE event-window x y state code time
-			   event-key)
+                           event-key)
       (unless ignore-keys
-	(interactors::do-button-release (x-window-from-drawable root-window
-								event-window)
-	  x y state code time event-key)))
+        (interactors::do-button-release (x-window-from-drawable root-window
+                                                                event-window)
+          x y state code time event-key)))
      (:MOTION-NOTIFY
       (event-window x y)
       (event-handler-debug :MOTION-NOTIFY event-window x y)
       (unless ignore-keys
-	(interactors::do-motion-notify (x-window-from-drawable root-window event-window)
-	  x y display)))
+        (interactors::do-motion-notify (x-window-from-drawable root-window event-window)
+          x y display)))
      (:ENTER-NOTIFY
       (event-window x y time)
       (event-handler-debug :ENTER-NOTIFY event-window x y time)
       (unless ignore-keys
-	(interactors::do-enter-notify (x-window-from-drawable root-window
-							      event-window)
-	  x y time)))
+        (interactors::do-enter-notify (x-window-from-drawable root-window
+                                                              event-window)
+          x y time)))
      (:LEAVE-NOTIFY
       (event-window x y time)
       (event-handler-debug :LEAVE-NOTIFY event-window x y time)
       (unless ignore-keys
-	(interactors::do-leave-notify (x-window-from-drawable root-window
-							      event-window)
-	  x y time)))
+        (interactors::do-leave-notify (x-window-from-drawable root-window
+                                                              event-window)
+          x y time)))
      (:NO-EXPOSURE
       ()
       (event-handler-debug :NO-EXPOSURE)
       (unless ignore-keys
-	t))
+        t))
      (OTHERWISE
       ()
       (event-handler-debug :UNKNOWN)
@@ -1327,19 +1327,19 @@ pixmap format in the list of valid formats."
       (event-window)
       (event-handler-debug :MAP-NOTIFY)
       (interactors::do-map-notify (x-window-from-drawable root-window
-							  event-window)))
+                                                          event-window)))
      (:UNMAP-NOTIFY
       (event-window)
       (event-handler-debug :UNMAP-NOTIFY)
       (interactors::do-unmap-notify (x-window-from-drawable root-window
-							    event-window)))
+                                                            event-window)))
      (:REPARENT-NOTIFY
       (event-window)
       (event-handler-debug :REPARENT-NOTIFY)
       (if (connected-window-p event-window)
-	(let ((window (x-window-from-drawable root-window event-window)))
-	  (s-value window :already-initialized-border-widths nil)
-	  (s-value window :lineage (lineage-of-drawable event-window)))))
+        (let ((window (x-window-from-drawable root-window event-window)))
+          (s-value window :already-initialized-border-widths nil)
+          (s-value window :lineage (lineage-of-drawable event-window)))))
      (:CIRCULATE-NOTIFY
       ()
       (event-handler-debug :CIRCULATE-NOTIFY)
@@ -1356,63 +1356,63 @@ pixmap format in the list of valid formats."
       (event-window x y width height above-sibling)
       (event-handler-debug :CONFIGURE-NOTIFY)
       (if (connected-window-p event-window)
-	(interactors::do-configure-notify (x-window-from-drawable root-window
-								  event-window)
-	  x y width height above-sibling)))
+        (interactors::do-configure-notify (x-window-from-drawable root-window
+                                                                  event-window)
+          x y width height above-sibling)))
      (:EXPOSURE
       (event-window x y width height count)
       (event-handler-debug :EXPOSURE x y width height count)
       (if (connected-window-p event-window)
-	(interactors::do-exposure (x-window-from-drawable root-window
-							  event-window)
-	  x y width height count display)))
+        (interactors::do-exposure (x-window-from-drawable root-window
+                                                          event-window)
+          x y width height count display)))
      (:KEY-PRESS
       (event-window x y state code time)
       (event-handler-debug :KEY-PRESS event-window x y state code time)
       (if ignore-keys
-	;; We don't want keys, but check if this is the abort key
-	(let ((c (translate-character display code state)))
-	  (when (eq c interactors::*garnet-break-key*)
-	    (format T "~%**Aborting transcript due to user command**~%")
-	    (return-from x-event-handler :abort)))
-	;; Normal case: we do want keys
-	(interactors::do-key-press event-window
-	  ;; DZG - must be fixed here and below (x-window-from-drawable root-window event-window)
-	  x y state code time)))
+        ;; We don't want keys, but check if this is the abort key
+        (let ((c (translate-character display code state)))
+          (when (eq c interactors::*garnet-break-key*)
+            (format T "~%**Aborting transcript due to user command**~%")
+            (return-from x-event-handler :abort)))
+        ;; Normal case: we do want keys
+        (interactors::do-key-press event-window
+          ;; DZG - must be fixed here and below (x-window-from-drawable root-window event-window)
+          x y state code time)))
      (:BUTTON-PRESS
       (event-window x y state code time event-key)
       (event-handler-debug :BUTTON-PRESS event-window x y state code time
-			   event-key)
+                           event-key)
       (unless ignore-keys
-	(interactors::do-button-press event-window
-	  x y state code time event-key)))
+        (interactors::do-button-press event-window
+          x y state code time event-key)))
      (:BUTTON-RELEASE
       (event-window x y state code time event-key)
       (event-handler-debug :BUTTON-RELEASE event-window x y state code time
-			   event-key)
+                           event-key)
       (unless ignore-keys
-	(interactors::do-button-release event-window
-	  x y state code time event-key)))
+        (interactors::do-button-release event-window
+          x y state code time event-key)))
      (:MOTION-NOTIFY
       (event-window x y)
       (event-handler-debug :MOTION-NOTIFY event-window x y)
       (unless ignore-keys
-	(interactors::do-motion-notify event-window x y display)))
+        (interactors::do-motion-notify event-window x y display)))
      (:ENTER-NOTIFY
       (event-window x y time)
       (event-handler-debug :ENTER-NOTIFY event-window x y time)
       (unless ignore-keys
-	(interactors::do-enter-notify event-window x y time)))
+        (interactors::do-enter-notify event-window x y time)))
      (:LEAVE-NOTIFY
       (event-window x y time)
       (event-handler-debug :LEAVE-NOTIFY event-window x y time)
       (unless ignore-keys
-	(interactors::do-leave-notify event-window x y time)))
+        (interactors::do-leave-notify event-window x y time)))
      (:NO-EXPOSURE
       ()
       (event-handler-debug :NO-EXPOSURE)
       (unless ignore-keys
-	t))
+        t))
      (OTHERWISE () (format t "illegal event") t))))
 
 
@@ -1430,9 +1430,9 @@ pixmap format in the list of valid formats."
   (declare (ignore root-window))
   (let ((font (g-value opal-font :xfont)))
     (if min-too
-	(values (xlib:max-char-width font)
-		(xlib:min-char-width font))
-	(xlib:max-char-width font))))
+        (values (xlib:max-char-width font)
+                (xlib:min-char-width font))
+        (xlib:max-char-width font))))
 
 (defun x-font-name-p (root-window arg)
   (declare (ignore root-window))
@@ -1463,7 +1463,7 @@ pixmap format in the list of valid formats."
             (:fixed      *Fixed-Font-Family*)
             (:serif      *Serif-Font-Family*)
             (:sans-serif *Sans-Serif-Font-Family*)
-	    (otherwise   nil)))
+            (otherwise   nil)))
         (face-part
          (let ((face-spec (if (consp (second key))
                               (second key)
@@ -1471,7 +1471,7 @@ pixmap format in the list of valid formats."
            (if (subsetp face-spec *x-font-faces*)
                face-spec)))
         (size-part
-	  (case (third key)
+          (case (third key)
             (:small      (princ-to-string *Small-Font-Point-Size*))
             (:medium     (princ-to-string *Medium-Font-Point-Size*))
             (:large      (princ-to-string *Large-Font-Point-Size*))
@@ -1484,23 +1484,23 @@ pixmap format in the list of valid formats."
           ((null size-part)
            (cons (third key) :size))
           (t
-	   (let ((adjusted-face-part
-		  (cond ((equal '(:roman) face-part) "medium-r")
-			((equal '(:bold) face-part) "bold-r")
-			((equal '(:italic) face-part)
-			 (if (eq (first key) :serif) "medium-i" "medium-o"))
-			((or (equal '(:bold-italic) face-part)
-			     (equal '(:bold :italic) face-part)
-			     (equal '(:italic :bold) face-part))
-			 (if (eq (first key) :serif) "bold-i" "bold-o")))))
-	     (concatenate 'string
-	       "*-*-"
-	       family-part
-	       "-"
-	       adjusted-face-part
-	       "-*-*-*-" 
-	       size-part
-	       "-*-*-*-*-iso8859-1"))))))
+           (let ((adjusted-face-part
+                  (cond ((equal '(:roman) face-part) "medium-r")
+                        ((equal '(:bold) face-part) "bold-r")
+                        ((equal '(:italic) face-part)
+                         (if (eq (first key) :serif) "medium-i" "medium-o"))
+                        ((or (equal '(:bold-italic) face-part)
+                             (equal '(:bold :italic) face-part)
+                             (equal '(:italic :bold) face-part))
+                         (if (eq (first key) :serif) "bold-i" "bold-o")))))
+             (concatenate 'string
+               "*-*-"
+               family-part
+               "-"
+               adjusted-face-part
+               "-*-*-*-" 
+               size-part
+               "-*-*-*-*-iso8859-1"))))))
 
 
 
@@ -1510,16 +1510,16 @@ pixmap format in the list of valid formats."
 (defun fix-font-path (path-argument)
   (when path-argument
     (let* ((path path-argument)
-	   (colon-posn (position #\: path))
-	   (search-path (when colon-posn
-			  #+cmu (ext:search-list
-				 (subseq path 0 (1+ colon-posn)))
-			  #-cmu nil)))
+           (colon-posn (position #\: path))
+           (search-path (when colon-posn
+                          #+cmu (ext:search-list
+                                 (subseq path 0 (1+ colon-posn)))
+                          #-cmu nil)))
       (if search-path
-	  (concatenate 'string (car search-path) (subseq path (1+ colon-posn)))
-	  (if (eq (position #\/ path :from-end t) (1- (length path)))
-	      path
-	      (concatenate 'string path "/"))))))
+          (concatenate 'string (car search-path) (subseq path (1+ colon-posn)))
+          (if (eq (position #\/ path :from-end t) (1- (length path)))
+              path
+              (concatenate 'string path "/"))))))
 
 ;; Hack used in font-to-xfont to counteract ridiculous tendency
 ;; of CLX to tack on #\null characters at the end of font paths.
@@ -1534,34 +1534,34 @@ pixmap format in the list of valid formats."
 
 (defun x-font-to-internal (root-window font-from-file)
   (let ((dx-plist (g-value font-from-file :display-xfont-plist))
-	(display (the-display root-window)))
+        (display (the-display root-window)))
     (or (getf dx-plist display)
-	(let ((font-path (fix-font-path
-			  (g-value font-from-file :font-path)))
-	      (font-name (g-value font-from-file :font-name)))
-	  (when font-path
-	    (let ((xfont-path (mapcar #'remove-null-char
-				      (xlib:font-path display))))
-	      ;;; Add the font-path to the font-path, if necessary
-	      (unless (member font-path xfont-path :test #'string=)
-		(setf (xlib:font-path display)
-		      (cons font-path xfont-path))
-		;;; Now make sure it's there!
-		(unless (member font-path (xlib:font-path display)
-				:test #'string=)
-		  (format t "WARNING: X did not add ~A to font-path!!~%"
-			  font-path)))))
-	  ;;; Open the font only if it's on the font-path
-	  (if (xlib:list-font-names display font-name)
-	    (let ((xfont (xlib:open-font display font-name)))
-		(s-value font-from-file :display-xfont-plist
-			 (cons display (cons xfont dx-plist)))
-		xfont)
-	      (progn
-		(format t "WARNING: Font '~A' not on font path!~%"
-			font-name)
-		(format t "  ****   Resorting to Default Font!~%")
-		(x-font-to-internal root-window default-font-from-file)))))))
+        (let ((font-path (fix-font-path
+                          (g-value font-from-file :font-path)))
+              (font-name (g-value font-from-file :font-name)))
+          (when font-path
+            (let ((xfont-path (mapcar #'remove-null-char
+                                      (xlib:font-path display))))
+              ;;; Add the font-path to the font-path, if necessary
+              (unless (member font-path xfont-path :test #'string=)
+                (setf (xlib:font-path display)
+                      (cons font-path xfont-path))
+                ;;; Now make sure it's there!
+                (unless (member font-path (xlib:font-path display)
+                                :test #'string=)
+                  (format t "WARNING: X did not add ~A to font-path!!~%"
+                          font-path)))))
+          ;;; Open the font only if it's on the font-path
+          (if (xlib:list-font-names display font-name)
+            (let ((xfont (xlib:open-font display font-name)))
+                (s-value font-from-file :display-xfont-plist
+                         (cons display (cons xfont dx-plist)))
+                xfont)
+              (progn
+                (format t "WARNING: Font '~A' not on font path!~%"
+                        font-name)
+                (format t "  ****   Resorting to Default Font!~%")
+                (x-font-to-internal root-window default-font-from-file)))))))
 
 
 
@@ -1592,63 +1592,63 @@ pixmap format in the list of valid formats."
 
 (defparameter *report-motion-pem*
   (xlib:make-event-mask :button-press :button-release
-			:pointer-motion))
+                        :pointer-motion))
 
 (defparameter *enter-leave-report-motion-pem*
   (xlib:make-event-mask :button-press :button-release
-			:pointer-motion
-			:enter-window
-			:leave-window))
+                        :pointer-motion
+                        :enter-window
+                        :leave-window))
 
 
 (defparameter *ignore-motion-grab-em*
   (xlib:make-event-mask :button-press :button-release
-			:key-press
-			:exposure
-			:structure-notify
-			:owner-grab-button))
+                        :key-press
+                        :exposure
+                        :structure-notify
+                        :owner-grab-button))
 
 (defparameter *enter-leave-ignore-motion-grab-em*
   (xlib:make-event-mask :button-press :button-release
-			:key-press
-			:exposure
-			:structure-notify
-			:enter-window
-			:leave-window
-			:owner-grab-button))
+                        :key-press
+                        :exposure
+                        :structure-notify
+                        :enter-window
+                        :leave-window
+                        :owner-grab-button))
 
 (defparameter *ignore-motion-em*
   (xlib:make-event-mask :button-press :button-release
-			:key-press
-			:exposure
-			:structure-notify))
+                        :key-press
+                        :exposure
+                        :structure-notify))
 
 (defparameter *enter-leave-ignore-motion-em*
   (xlib:make-event-mask :button-press :button-release
-			:key-press
-			:exposure
-			:structure-notify
-			:enter-window
-			:leave-window))
+                        :key-press
+                        :exposure
+                        :structure-notify
+                        :enter-window
+                        :leave-window))
 
 
 ;;; em = eventmask , used to change an event mask
 (defparameter *report-motion-em*
   (xlib:make-event-mask :button-press :button-release
-			:key-press
-			:exposure
-			:pointer-motion
-			:structure-notify))
+                        :key-press
+                        :exposure
+                        :pointer-motion
+                        :structure-notify))
 
 
 (defparameter *enter-leave-report-motion-em*
   (xlib:make-event-mask :button-press :button-release
-			:key-press
-			:exposure
-			:pointer-motion
-			:structure-notify
-			:enter-window
-			:leave-window))
+                        :key-press
+                        :exposure
+                        :pointer-motion
+                        :structure-notify
+                        :enter-window
+                        :leave-window))
 
 
 
@@ -1657,9 +1657,9 @@ pixmap format in the list of valid formats."
 (defun x-image-bit (root-window image x y)
   (declare (ignore root-window))
   (let* ((bytes-per-line (xlib::image-x-bytes-per-line image))
-	 (byte-pos (+ (floor x 8) (* bytes-per-line y)))
-	 (byte (aref (xlib::image-x-data image) byte-pos))
-	 (bit-pos (mod x 8)))
+         (byte-pos (+ (floor x 8) (* bytes-per-line y)))
+         (byte (aref (xlib::image-x-data image) byte-pos))
+         (bit-pos (mod x 8)))
     (logbitp bit-pos byte)))
 
 
@@ -1704,7 +1704,7 @@ pixmap format in the list of valid formats."
 (defun x-image-hot-spot (root-window image)
   (declare (ignore root-window))
   (values (xlib:image-x-hot image)
-	  (xlib:image-y-hot image)))
+          (xlib:image-y-hot image)))
 
 
 ;;; Given an X image, returns its size as multiple values (width, height,
@@ -1713,8 +1713,8 @@ pixmap format in the list of valid formats."
 (defun x-image-size (root-window image)
   (declare (ignore root-window))
   (values (xlib:image-width image)
-	  (xlib:image-height image)
-	  (xlib:image-depth image)))
+          (xlib:image-height image)
+          (xlib:image-depth image)))
 
 
 
@@ -1742,65 +1742,65 @@ pixmap format in the list of valid formats."
 (defun x-initialize-device (root-window)
   (declare (ignore root-window))
   (let* ((x-line-style-gc
-	  (xlib:create-gcontext :drawable *default-x-root*
-				:cache-p t
-				:function 2
-				:foreground *black*
-				:background *white*
-				:line-width 0
-				:line-style :solid
-				:cap-style :butt
-				:join-style :miter
-				:fill-style :solid
-				:fill-rule :even-odd))
-	 (x-filling-style-gc
-	  (xlib:create-gcontext :drawable *default-x-root*
-				:cache-p t
-				:function 2
-				:foreground *black*
-				:background *white*
-				:line-width 0
-				:line-style :solid
-				:cap-style :butt
-				:join-style :miter
-				:fill-style :solid
-				:fill-rule :even-odd))
-	 (gem-line-style-gc
-	  (make-gem-gc	:gcontext x-line-style-gc
-			:opal-style NIL
-			:function 2
-			:line-width 0
-			:line-style :solid
-			:cap-style  :butt
-			:join-style :miter
-			:dashes NIL
-			:font   NIL
-			:fill-style :solid
-			:fill-rule  :even-odd
-			:stipple   NIL
-			:clip-mask :none
-			:stored-clip-mask (make-list 8)))
-	 (gem-filling-style-gc
-	  (make-gem-gc	:gcontext x-filling-style-gc
-			:opal-style NIL
-			:function 2
-			:line-width 0
-			:line-style :solid
-			:cap-style  :butt
-			:join-style :miter
-			:dashes NIL
-			:font   NIL
-			:fill-style :solid
-			:fill-rule  :even-odd
-			:stipple   NIL
-			:clip-mask :none
-			:stored-clip-mask (make-list 8))))
+          (xlib:create-gcontext :drawable *default-x-root*
+                                :cache-p t
+                                :function 2
+                                :foreground *black*
+                                :background *white*
+                                :line-width 0
+                                :line-style :solid
+                                :cap-style :butt
+                                :join-style :miter
+                                :fill-style :solid
+                                :fill-rule :even-odd))
+         (x-filling-style-gc
+          (xlib:create-gcontext :drawable *default-x-root*
+                                :cache-p t
+                                :function 2
+                                :foreground *black*
+                                :background *white*
+                                :line-width 0
+                                :line-style :solid
+                                :cap-style :butt
+                                :join-style :miter
+                                :fill-style :solid
+                                :fill-rule :even-odd))
+         (gem-line-style-gc
+          (make-gem-gc  :gcontext x-line-style-gc
+                        :opal-style NIL
+                        :function 2
+                        :line-width 0
+                        :line-style :solid
+                        :cap-style  :butt
+                        :join-style :miter
+                        :dashes NIL
+                        :font   NIL
+                        :fill-style :solid
+                        :fill-rule  :even-odd
+                        :stipple   NIL
+                        :clip-mask :none
+                        :stored-clip-mask (make-list 8)))
+         (gem-filling-style-gc
+          (make-gem-gc  :gcontext x-filling-style-gc
+                        :opal-style NIL
+                        :function 2
+                        :line-width 0
+                        :line-style :solid
+                        :cap-style  :butt
+                        :join-style :miter
+                        :dashes NIL
+                        :font   NIL
+                        :fill-style :solid
+                        :fill-rule  :even-odd
+                        :stipple   NIL
+                        :clip-mask :none
+                        :stored-clip-mask (make-list 8))))
 
     (make-display-info :display *default-x-display*
-		       :screen  *default-x-screen*
-		       :root-window *default-x-root*
-		       :line-style-gc gem-line-style-gc
-		       :filling-style-gc gem-filling-style-gc)))
+                       :screen  *default-x-screen*
+                       :root-window *default-x-root*
+                       :line-style-gc gem-line-style-gc
+                       :filling-style-gc gem-filling-style-gc)))
 
 
 
@@ -1813,64 +1813,64 @@ pixmap format in the list of valid formats."
     (set-four-borders window (xlib:drawable-border-width drawable))
     (let ((lineage (g-value window :lineage)))
       (case (length lineage)
-	(2				; UWM or window without title
-	 (set-four-borders window (xlib:drawable-border-width drawable)))
-	(3				; TWM
-	 (let ((border-width (xlib:drawable-border-width (second lineage))))
-	   (set-four-borders
-	    window
-	    (+ border-width (xlib:drawable-x drawable))
-	    (+ border-width (xlib:drawable-y drawable))
-	    (- (xlib:drawable-width (second lineage))
-	       (xlib:drawable-width (first lineage))
-	       (xlib:drawable-x (first lineage))
-	       (- border-width))
-	    (- (xlib:drawable-height (second lineage))
-	       (xlib:drawable-height (first lineage))
-	       (xlib:drawable-y (first lineage))
-	       (- border-width)))))
-	((4 6)				; MWM and DECWindows, or possibly TVTWM
-	 ;; if it is TVTWM, i.e. 3rd window is virtual root
-	 (if (xlib:get-property (third lineage) :__SWM_VROOT)
-	   (let* ((parent (second lineage))
-		  (border-width (xlib:drawable-border-width parent)))
-	     (set-four-borders
-	      window
-	      (+ border-width (xlib:drawable-x (first lineage)))
-	      (+ border-width (xlib:drawable-y (first lineage)))
-	      (- (xlib:drawable-width (second lineage))
-		 (xlib:drawable-width (first lineage))
-		 (xlib:drawable-x (first lineage))
-		 (- border-width))
-	      (- (xlib:drawable-height (second lineage))
-		 (xlib:drawable-height (first lineage))
-		 (xlib:drawable-y (first lineage))
-		 (- border-width))))
-	   (let* ((parent (second lineage))
-		  (grandparent (third lineage))
-		  (left-border-width
-		   (MAX (xlib:drawable-x parent)	      ; MWM
-			(xlib:drawable-border-width parent))) ; DECwindows
-		  (top-border-width (xlib:drawable-y parent)))
-	     (set-four-borders window
-			       left-border-width
-			       top-border-width
-			       (- (xlib:drawable-width grandparent)
-				  (xlib:drawable-width parent)
-				  left-border-width)
-			       (- (xlib:drawable-height grandparent)
-				  (xlib:drawable-height parent)
-				  top-border-width)))))))))
+        (2                              ; UWM or window without title
+         (set-four-borders window (xlib:drawable-border-width drawable)))
+        (3                              ; TWM
+         (let ((border-width (xlib:drawable-border-width (second lineage))))
+           (set-four-borders
+            window
+            (+ border-width (xlib:drawable-x drawable))
+            (+ border-width (xlib:drawable-y drawable))
+            (- (xlib:drawable-width (second lineage))
+               (xlib:drawable-width (first lineage))
+               (xlib:drawable-x (first lineage))
+               (- border-width))
+            (- (xlib:drawable-height (second lineage))
+               (xlib:drawable-height (first lineage))
+               (xlib:drawable-y (first lineage))
+               (- border-width)))))
+        ((4 6)                          ; MWM and DECWindows, or possibly TVTWM
+         ;; if it is TVTWM, i.e. 3rd window is virtual root
+         (if (xlib:get-property (third lineage) :__SWM_VROOT)
+           (let* ((parent (second lineage))
+                  (border-width (xlib:drawable-border-width parent)))
+             (set-four-borders
+              window
+              (+ border-width (xlib:drawable-x (first lineage)))
+              (+ border-width (xlib:drawable-y (first lineage)))
+              (- (xlib:drawable-width (second lineage))
+                 (xlib:drawable-width (first lineage))
+                 (xlib:drawable-x (first lineage))
+                 (- border-width))
+              (- (xlib:drawable-height (second lineage))
+                 (xlib:drawable-height (first lineage))
+                 (xlib:drawable-y (first lineage))
+                 (- border-width))))
+           (let* ((parent (second lineage))
+                  (grandparent (third lineage))
+                  (left-border-width
+                   (MAX (xlib:drawable-x parent)              ; MWM
+                        (xlib:drawable-border-width parent))) ; DECwindows
+                  (top-border-width (xlib:drawable-y parent)))
+             (set-four-borders window
+                               left-border-width
+                               top-border-width
+                               (- (xlib:drawable-width grandparent)
+                                  (xlib:drawable-width parent)
+                                  left-border-width)
+                               (- (xlib:drawable-height grandparent)
+                                  (xlib:drawable-height parent)
+                                  top-border-width)))))))))
 
 
 (defun x-inject-event (window index)
   (let ((drawable (g-value window :drawable)))
     (xlib:send-event drawable 
-		     :client-message nil
-		     :event-window drawable
-		     :type :TIMER_EVENT
-		     :format 32
-		     :data (list index))))
+                     :client-message nil
+                     :event-window drawable
+                     :type :TIMER_EVENT
+                     :format 32
+                     :data (list index))))
 
 
 
@@ -1892,11 +1892,11 @@ pixmap format in the list of valid formats."
   (let ((display (the-display a-window)))
     (when (eq (xlib:window-map-state drawable) :unmapped)
       (mp:with-process-lock (*update-lock*)
-	(xlib:map-window drawable)
-	(xlib:display-force-output display)
-	(xlib:event-case (display :discard-p nil :peek-p t :timeout 5)
-	  (:map-notify (event-window)
-		       (eq event-window drawable)))))))
+        (xlib:map-window drawable)
+        (xlib:display-force-output display)
+        (xlib:event-case (display :discard-p nil :peek-p t :timeout 5)
+          (:map-notify (event-window)
+                       (eq event-window drawable)))))))
 
 
 #+ccl
@@ -1904,12 +1904,12 @@ pixmap format in the list of valid formats."
   (let ((display (the-display a-window)))
     (when (eq (xlib:window-map-state drawable) :unmapped)
       (ccl:with-lock-grabbed (*update-lock*)
-	(xlib:map-window drawable)
-	(xlib:display-force-output display))
+        (xlib:map-window drawable)
+        (xlib:display-force-output display))
       (loop
-	 (if (eq (xlib:window-map-state drawable) :unmapped)
-	     (sleep .1)
-	     (return t))))))
+         (if (eq (xlib:window-map-state drawable) :unmapped)
+             (sleep .1)
+             (return t))))))
 
 
 
@@ -1918,24 +1918,24 @@ pixmap format in the list of valid formats."
   (let ((display (the-display a-window)))
     (when (eq (xlib:window-map-state drawable) :unmapped)
       (mp:with-lock-held (*update-lock*)
-	(xlib:map-window drawable)
-	(xlib:display-force-output display))
+        (xlib:map-window drawable)
+        (xlib:display-force-output display))
       (loop
-	 (if (eq (xlib:window-map-state drawable) :unmapped)
-	     (sleep .1)
-	     (return t))))))
+         (if (eq (xlib:window-map-state drawable) :unmapped)
+             (sleep .1)
+             (return t))))))
 
 #+sb-thread
 (defun x-map-and-wait (a-window drawable)
   (let ((display (the-display a-window)))
     (when (eq (xlib:window-map-state drawable) :unmapped)
       (sb-thread:with-recursive-lock (*update-lock*)
-	(xlib:map-window drawable)
-	(xlib:display-force-output display))
+        (xlib:map-window drawable)
+        (xlib:display-force-output display))
       (loop
-	 (if (eq (xlib:window-map-state drawable) :unmapped)
-	     (sleep .1)
-	     (return t))))))
+         (if (eq (xlib:window-map-state drawable) :unmapped)
+             (sleep .1)
+             (return t))))))
 
 
 (defun x-max-character-ascent (root-window opal-font)
@@ -1959,14 +1959,14 @@ pixmap format in the list of valid formats."
     ;; Mouse grab.
     (if (keywordp owner-p)
       (xlib:change-active-pointer-grab *default-x-display*
-				       (if want-enter-leave
-					 *enter-leave-report-motion-pem*
-					 *report-motion-pem*))
+                                       (if want-enter-leave
+                                         *enter-leave-report-motion-pem*
+                                         *report-motion-pem*))
       (xlib:grab-pointer *default-x-display*
-			 (if want-enter-leave
-			   *enter-leave-report-motion-pem*
-			   *report-motion-pem*)
-			 :owner-p owner-p))
+                         (if want-enter-leave
+                           *enter-leave-report-motion-pem*
+                           *report-motion-pem*)
+                         :owner-p owner-p))
     ;; Mouse ungrab.
     (xlib:ungrab-pointer *default-x-display*)))
     
@@ -1978,7 +1978,7 @@ pixmap format in the list of valid formats."
 (defun x-raise-or-lower (window raise-p)
   #+(and)
   (setf (xlib:window-priority (g-value window :drawable))
-	(if raise-p :above :below))
+        (if raise-p :above :below))
   #-(and)
   (if raise-p
       (xlib:circulate-window-up (g-value window :drawable))
@@ -1998,21 +1998,21 @@ pixmap format in the list of valid formats."
   (if new-parent
     (if (is-a-p new-parent opal::window)
       (xlib:reparent-window drawable
-			    (g-value new-parent :drawable)
-			    left top)
+                            (g-value new-parent :drawable)
+                            left top)
       (error "Parent ~S of window ~S is not of type window~%"
-	     new-parent window))
+             new-parent window))
     (xlib:reparent-window drawable
-			  (display-info-root-window
-			   (g-value window :display-info))
-			  left top)))
+                          (display-info-root-window
+                           (g-value window :display-info))
+                          left top)))
 
 
 
 (defun x-set-clip-mask (a-window clip-mask &optional lstyle-ogc fstyle-ogc)
   (declare (ignore a-window))
   (let ((lstyle-xgc (gem-gc-gcontext lstyle-ogc))
-	(fstyle-xgc (gem-gc-gcontext fstyle-ogc)))
+        (fstyle-xgc (gem-gc-gcontext fstyle-ogc)))
     (set-gc lstyle-ogc lstyle-xgc :clip-mask clip-mask)
     (set-gc fstyle-ogc fstyle-xgc :clip-mask clip-mask)))
 
@@ -2020,8 +2020,8 @@ pixmap format in the list of valid formats."
 
 (defun x-set-cut-buffer (window string)
   (setf (xlib:cut-buffer
-	 (display-info-display (g-value window :display-info)))
-	string))
+         (display-info-display (g-value window :display-info)))
+        string))
 
 
 
@@ -2051,48 +2051,52 @@ returns the HOST name, stripping off the display number."
   (subseq display 0 (position #\: display :test #'char=)))
 
 (defun get-display-number (display)
-  (declare (type string display))
-  (let ((dnum-start (position #\: display)))
-    (unless dnum-start
-      ;; assume it's display zero
-      (return-from get-display-number 0))
-    (incf dnum-start)
-    (let ((dnum-end (position #\. display :start dnum-start)))
-      ;; Subseq will take nil as the "end" parameter 
-      ;; and just use the whole string.
-      (parse-integer (subseq display dnum-start dnum-end)))))
+  ;; The display number is everything from the colon to the period (if
+  ;; it is present).
+  (let* ((colon-pos (position #\: display :from-end t))
+         (period-pos (and colon-pos (position #\. display :start colon-pos))))
+    (unless colon-pos
+      (error "The display specification  \"~A\" is ill-formed: missing colon" display))
+    (let ((display-number
+           (ignore-errors
+             (parse-integer
+              (subseq display (1+ colon-pos) period-pos)))))
+      (unless (numberp display-number)
+        (error "The display specification  \"~A\" is invalid: bad display number" display))
+      display-number)))
 
 (defun get-screen-number (display)
-  (let ((dot (position #\. display)))
+  (let*  ((colon-pos (position #\: display :from-end t))
+          (dot (and colon-pos (position #\. display :start colon-pos))))
     (if dot
-	(or (parse-integer (subseq display (1+ dot)) :junk-allowed t) 0)
-	0)))
-	       
+        (or (parse-integer (subseq display (1+ dot)) :junk-allowed t) 0)
+        0)))
+               
 
 (defun x-set-device-variables (root-window full-display-name
-			       &aux auth-name auth-data)
+                               &aux auth-name auth-data)
   (declare (ignore root-window)
-	   (ignore auth-name auth-data))
+           (ignore auth-name auth-data))
   (setf *default-x-display-number* 
         (if full-display-name 
             (get-display-number full-display-name)
             0))
   (setq *default-x-display-name*
-	(if full-display-name
-	    (get-display-name full-display-name)
-	    #-allegro "" #-(and)(machine-instance)
-	    #+allegro (short-site-name)))
+        (if full-display-name
+            (get-display-name full-display-name)
+            #-allegro "" #-(and)(machine-instance)
+            #+allegro (short-site-name)))
 
   (setq *default-x-screen-number* (get-screen-number full-display-name))
   
   (setq *default-x-display*
-	#-allegro
-	(xlib:open-default-display)
-	#+allegro
-	(ignore-errors
-	  (xlib:open-display *default-x-display-name*
-			     :display *default-x-display-number*))
-	)
+        #-allegro
+        (xlib:open-default-display)
+        #+allegro
+        (ignore-errors
+          (xlib:open-display *default-x-display-name*
+                             :display *default-x-display-number*))
+        )
   (setq *default-x-screen*
         (nth *default-x-screen-number*
              (xlib:display-roots *default-x-display*)))
@@ -2106,27 +2110,27 @@ returns the HOST name, stripping off the display number."
   ;;; it would cause an implicit xlib:display-force-output.
   ;;; (Except that in CMUCL you cannot use two displays at one time.)
   (setq *default-x-colormap*
-	(xlib:screen-default-colormap
-	 #+cmu
-	 *default-x-screen*
-	 #-cmu
-	 (nth *default-x-screen-number*
-	      (xlib:display-roots
-	       #-allegro
-	       (xlib:open-default-display)
-	       #+allegro
-	       (or
-		(ignore-errors
-		  (xlib:open-display
-		   *default-x-display-name*
-		   :display *default-x-display-number*)))
-	       ))))
+        (xlib:screen-default-colormap
+         #+cmu
+         *default-x-screen*
+         #-cmu
+         (nth *default-x-screen-number*
+              (xlib:display-roots
+               #-allegro
+               (xlib:open-default-display)
+               #+allegro
+               (or
+                (ignore-errors
+                  (xlib:open-display
+                   *default-x-display-name*
+                   :display *default-x-display-number*)))
+               ))))
   (setq *white* (xlib:screen-white-pixel *default-x-screen*))
   (setq *black* (xlib:screen-black-pixel *default-x-screen*))
   ;; Added :button-press and :key-press so garnet-debug:ident will work.
   (setf *exposure-event-mask*
-	(xlib:make-event-mask :exposure :structure-notify
-			      :button-press :key-press)))
+        (xlib:make-event-mask :exposure :structure-notify
+                              :button-press :key-press)))
 
 
 ;;; Sets the pointer from a raw X <drawable> (a drawable or pixmap) to the
@@ -2152,57 +2156,57 @@ integer.  We want to specify nice keywords instead of those silly
 (defun x-set-draw-function-alist (root-window)
   (declare (ignore root-window))
   (setq *function-alist*
-	(cond ((zerop *white*) 		    ; Sparc
-	       `((:clear . ,boole-clr)	    ; (color, *white* = 0)
-		 (:set . ,boole-set)
-		 (:copy . ,boole-1)
-		 (:no-op . ,boole-2)
-		 (:copy-inverted . ,boole-c1)
-		 (:invert . ,boole-c2)
-		 (:and . ,boole-and)
-		 (:or . ,boole-ior)
-		 (:xor . ,boole-xor)
-		 (:equiv . ,boole-eqv)
-		 (:nand . ,boole-nand)
-		 (:nor . ,boole-nor)
-		 (:and-inverted . ,boole-andc1)
-		 (:and-reverse . ,boole-andc2)
-		 (:or-inverted . ,boole-orc1)
-		 (:or-reverse . ,boole-orc2)))
-	      (*color-screen-p* ; HP
-	       `((:clear . ,boole-set)	       ; (color, *white* = 1)
-		 (:set . ,boole-clr)
-		 (:copy . ,boole-1)
-		 (:no-op . ,boole-2)
-		 (:copy-inverted . ,boole-c1)
-		 (:invert . ,boole-c2)
-		 (:and . ,boole-ior)
-		 (:or . ,boole-and)
-		 (:xor . ,boole-xor)
-		 (:equiv . ,boole-eqv)
-		 (:nand . ,boole-nand)
-		 (:nor . ,boole-nor)
-		 (:and-inverted . ,boole-orc1)
-		 (:and-reverse . ,boole-orc2)
-		 (:or-inverted . ,boole-andc1)
-		 (:or-reverse . ,boole-andc2)))
-	      (t			; IBM-RT (black-and-white)
-	       `((:clear . ,boole-set)	; (black-and-white, *white* = 1)
-		 (:set . ,boole-clr)
-		 (:copy . ,boole-1)
-		 (:no-op . ,boole-2)
-		 (:copy-inverted . ,boole-c1)
-		 (:invert . ,boole-c2)
-		 (:and . ,boole-ior)
-		 (:or . ,boole-and)
-		 (:xor . ,boole-eqv)
-		 (:equiv . ,boole-xor)
-		 (:nand . ,boole-nor)
-		 (:nor . ,boole-nand)
-		 (:and-inverted . ,boole-orc1)
-		 (:and-reverse . ,boole-orc2)
-		 (:or-inverted . ,boole-andc1)
-		 (:or-reverse . ,boole-andc2)))))
+        (cond ((zerop *white*)              ; Sparc
+               `((:clear . ,boole-clr)      ; (color, *white* = 0)
+                 (:set . ,boole-set)
+                 (:copy . ,boole-1)
+                 (:no-op . ,boole-2)
+                 (:copy-inverted . ,boole-c1)
+                 (:invert . ,boole-c2)
+                 (:and . ,boole-and)
+                 (:or . ,boole-ior)
+                 (:xor . ,boole-xor)
+                 (:equiv . ,boole-eqv)
+                 (:nand . ,boole-nand)
+                 (:nor . ,boole-nor)
+                 (:and-inverted . ,boole-andc1)
+                 (:and-reverse . ,boole-andc2)
+                 (:or-inverted . ,boole-orc1)
+                 (:or-reverse . ,boole-orc2)))
+              (*color-screen-p* ; HP
+               `((:clear . ,boole-set)         ; (color, *white* = 1)
+                 (:set . ,boole-clr)
+                 (:copy . ,boole-1)
+                 (:no-op . ,boole-2)
+                 (:copy-inverted . ,boole-c1)
+                 (:invert . ,boole-c2)
+                 (:and . ,boole-ior)
+                 (:or . ,boole-and)
+                 (:xor . ,boole-xor)
+                 (:equiv . ,boole-eqv)
+                 (:nand . ,boole-nand)
+                 (:nor . ,boole-nor)
+                 (:and-inverted . ,boole-orc1)
+                 (:and-reverse . ,boole-orc2)
+                 (:or-inverted . ,boole-andc1)
+                 (:or-reverse . ,boole-andc2)))
+              (t                        ; IBM-RT (black-and-white)
+               `((:clear . ,boole-set)  ; (black-and-white, *white* = 1)
+                 (:set . ,boole-clr)
+                 (:copy . ,boole-1)
+                 (:no-op . ,boole-2)
+                 (:copy-inverted . ,boole-c1)
+                 (:invert . ,boole-c2)
+                 (:and . ,boole-ior)
+                 (:or . ,boole-and)
+                 (:xor . ,boole-eqv)
+                 (:equiv . ,boole-xor)
+                 (:nand . ,boole-nor)
+                 (:nor . ,boole-nand)
+                 (:and-inverted . ,boole-orc1)
+                 (:and-reverse . ,boole-orc2)
+                 (:or-inverted . ,boole-andc1)
+                 (:or-reverse . ,boole-andc2)))))
   ;; For erasing buffers
   (setq *copy* (cdr (assoc :copy *function-alist*))))
 
@@ -2216,19 +2220,19 @@ integer.  We want to specify nice keywords instead of those silly
   (case property
     (:BACKGROUND-COLOR
      (let* ((gc (g-value window :buffer-gcontext))
-	    (drawable (g-value window :drawable))
-	    (index (x-color-to-index window value)))
+            (drawable (g-value window :drawable))
+            (index (x-color-to-index window value)))
        (setf (xlib:window-background drawable) index)
        (when gc (setf (xlib:gcontext-background gc) index))
        (when (g-value window :visible)
-	 (xlib:map-window drawable)))
+         (xlib:map-window drawable)))
      nil)
     (:BUFFER-GCONTEXT
      ;; The <value> is a list of three elements: (buffer foregr. backgr.)
      (s-value window :buffer-gcontext
-	      (xlib:create-gcontext :drawable (first value)
-				    :foreground (second value)
-				    :background (third value))))
+              (xlib:create-gcontext :drawable (first value)
+                                    :foreground (second value)
+                                    :background (third value))))
     (:CURSOR
      (setf (xlib:window-cursor (g-value window :drawable)) value))
     (:EVENT-MASK
@@ -2236,62 +2240,62 @@ integer.  We want to specify nice keywords instead of those silly
      ;; defparameters.
      (let ((skip-force-output NIL))
        (setf (xlib:window-event-mask (g-value window :drawable))
-	     (case value
-	       (:E-K *enter-leave-ignore-motion-em*)
-	       (:K *ignore-motion-em*)
-	       (:E-G-K *enter-leave-ignore-motion-grab-em*)
-	       (:G-K *ignore-motion-grab-em*)
-	       (:E-K-M
-		(setf skip-force-output T)
-		*enter-leave-report-motion-em*)
-	       (:K-M
-		(setf skip-force-output T)
-		*report-motion-em*)
-	       (T
-		(error
-		 "Illegal keyword ~S in gem:set-window-property (:EVENT-MASK)"
-		 value))))
+             (case value
+               (:E-K *enter-leave-ignore-motion-em*)
+               (:K *ignore-motion-em*)
+               (:E-G-K *enter-leave-ignore-motion-grab-em*)
+               (:G-K *ignore-motion-grab-em*)
+               (:E-K-M
+                (setf skip-force-output T)
+                *enter-leave-report-motion-em*)
+               (:K-M
+                (setf skip-force-output T)
+                *report-motion-em*)
+               (T
+                (error
+                 "Illegal keyword ~S in gem:set-window-property (:EVENT-MASK)"
+                 value))))
        (if skip-force-output
-	 ;; CMUCL does not call display-force-output automatically after the
-	 ;; event-mask is changed (which is consistent with the CLX docs).
-	 ;; But since this operation is expensive, only do it for CMUCL.
-;;;	 #+CMU (xlib:display-force-output *default-x-display*)
-	 #-CMU NIL
+         ;; CMUCL does not call display-force-output automatically after the
+         ;; event-mask is changed (which is consistent with the CLX docs).
+         ;; But since this operation is expensive, only do it for CMUCL.
+;;;      #+CMU (xlib:display-force-output *default-x-display*)
+         #-CMU NIL
 
-	 ;; Need to force-output when using the background m-e-l
-	 ;; process,  otherwise this doesn't get noticed.
-	 (xlib:display-force-output *default-x-display*))))
+         ;; Need to force-output when using the background m-e-l
+         ;; process,  otherwise this doesn't get noticed.
+         (xlib:display-force-output *default-x-display*))))
     (:EVENT-POSITION
      ;; This is used after a :configure-notify event has given us what it
      ;; thinks are the X and Y coordinates for the window.  For certain
      ;; window managers, we have to do some massaging of the actual numbers.
      ;; In this case, the <value> is a list of X, Y, and the event window.
      (let ((lineage (or (g-value window :lineage)
-			(s-value window :lineage
-				 (lineage-of-drawable (third value)))))
-	   (x (first value))
-	   (y (second value)))
+                        (s-value window :lineage
+                                 (lineage-of-drawable (third value)))))
+           (x (first value))
+           (y (second value)))
        ;; Use the length of the lineage to determine what window manager.
        (case (length lineage)
-	 (2				; UWM or window without label.
-	  (s-value window :left x)
-	  (s-value window :top y))
-	 (3				; TWM
-	  (s-value window :left (xlib:drawable-x (second lineage)))
-	  (s-value window :top (xlib:drawable-y (second lineage))))
-	 ((4 6)				; MWM and DECWindows, or possibly TVTWM
-	  (let ((3rd (third lineage)))
-	    (if (xlib:get-property 3rd :__SWM_VROOT)
-	      (let ((2nd (second lineage)))
-		(s-value window :left (xlib:drawable-x 2nd))
-		(s-value window :top (xlib:drawable-y 2nd)))
-	      (progn
-		(s-value window :left (xlib:drawable-x 3rd))
-		(s-value window :top (xlib:drawable-y 3rd)))))))))
+         (2                             ; UWM or window without label.
+          (s-value window :left x)
+          (s-value window :top y))
+         (3                             ; TWM
+          (s-value window :left (xlib:drawable-x (second lineage)))
+          (s-value window :top (xlib:drawable-y (second lineage))))
+         ((4 6)                         ; MWM and DECWindows, or possibly TVTWM
+          (let ((3rd (third lineage)))
+            (if (xlib:get-property 3rd :__SWM_VROOT)
+              (let ((2nd (second lineage)))
+                (s-value window :left (xlib:drawable-x 2nd))
+                (s-value window :top (xlib:drawable-y 2nd)))
+              (progn
+                (s-value window :left (xlib:drawable-x 3rd))
+                (s-value window :top (xlib:drawable-y 3rd)))))))))
     (:HEIGHT
      (let ((old-buffer (g-value window :buffer)))
        (setf (xlib:drawable-height (g-value window :drawable))
-	     (max 0 value))
+             (max 0 value))
        ;; Does the buffer need to be recreated?
        (and old-buffer (> value (xlib:drawable-height old-buffer)))))
     (:ICON-TITLE
@@ -2300,20 +2304,20 @@ integer.  We want to specify nice keywords instead of those silly
      nil)
     (:LEFT
      (let* ((drawable (g-value window :drawable))
-	    (hints (xlib:wm-normal-hints drawable)))
+            (hints (xlib:wm-normal-hints drawable)))
        (setf (xlib:drawable-x drawable) value
-	     (xlib:wm-size-hints-x hints) value
-	     (xlib:wm-normal-hints drawable) hints))
+             (xlib:wm-size-hints-x hints) value
+             (xlib:wm-normal-hints drawable) hints))
      nil)
     (:PARENT
      (let ((left (g-value window :left))
-	   (top (g-value window :top))
-	   (drawable (g-value window :drawable)))
+           (top (g-value window :top))
+           (drawable (g-value window :drawable)))
        (if value
-	 (xlib:reparent-window drawable (g-value window :drawable) left top)
-	 (xlib:reparent-window drawable (display-info-root-window
-					 (g-value window :display-info))
-			       left top)))
+         (xlib:reparent-window drawable (g-value window :drawable) left top)
+         (xlib:reparent-window drawable (display-info-root-window
+                                         (g-value window :display-info))
+                               left top)))
      nil)
     (:POINTER-POSITION
      ;; Warps the pointer to the position expressed by the <value>
@@ -2321,21 +2325,21 @@ integer.  We want to specify nice keywords instead of those silly
      (xlib:display-force-output *default-x-display*))
     (:REPORT-ASYNCHRONOUS-ERRORS
      (setf (xlib:display-report-asynchronous-errors
-	    *default-x-display*)
-	   value))
+            *default-x-display*)
+           value))
     (:SAVE-UNDER
      (setf (xlib:window-save-under (g-value window :drawable)) value)
      nil)
     (:SUBWINDOW-MODE
      (let ((display-info (g-value window :display-info)))
        (setf (xlib:gcontext-subwindow-mode
-	      (gem-gc-gcontext
-	       (display-info-line-style-gc display-info)))
-	     value)
+              (gem-gc-gcontext
+               (display-info-line-style-gc display-info)))
+             value)
        (setf (xlib:gcontext-subwindow-mode
-	      (gem-gc-gcontext
-	       (display-info-filling-style-gc display-info)))
-	     value)))
+              (gem-gc-gcontext
+               (display-info-filling-style-gc display-info)))
+             value)))
     (:TITLE
 ;;;     (let ((drawable (g-value window :drawable)))
 ;;;       (setf (xlib:wm-name drawable) value)
@@ -2344,33 +2348,33 @@ integer.  We want to specify nice keywords instead of those silly
      nil)
     (:TOP
      (let* ((drawable (g-value window :drawable))
-	    (hints (xlib:wm-normal-hints drawable)))
+            (hints (xlib:wm-normal-hints drawable)))
        (setf (xlib:drawable-y drawable) value
-	     (xlib:wm-size-hints-y hints) value
-	     (xlib:wm-normal-hints drawable) hints))
+             (xlib:wm-size-hints-y hints) value
+             (xlib:wm-normal-hints drawable) hints))
      nil)
     (:VISIBLE
      (let* ((drawable (g-value window :drawable))
-	    (vis (g-value window :visible))
-	    (map-window NIL))
+            (vis (g-value window :visible))
+            (map-window NIL))
        (cond ((eq vis t)
-	      (setf map-window t))
-	     ((eq vis :iconified)
-	      (xlib:iconify-window drawable *default-x-screen*))
-	     ((eq vis nil)
-	      (xlib:withdraw-window drawable *default-x-screen*)))
+              (setf map-window t))
+             ((eq vis :iconified)
+              (xlib:iconify-window drawable *default-x-screen*))
+             ((eq vis nil)
+              (xlib:withdraw-window drawable *default-x-screen*)))
        ;; Does the window need to be mapped?
        map-window))
     (:WIDTH
      (let ((old-buffer (g-value window :buffer)))
        (setf (xlib:drawable-width (g-value window :drawable))
-	     (max 0 value))
+             (max 0 value))
 
        ;; Does the buffer need to be recreated?
        (and old-buffer (> value (xlib:drawable-width old-buffer)))))
     (T
      (format t "Unknown property ~S in gem:set-window-property.~%"
-	     property))))
+             property))))
 
 
 
@@ -2379,8 +2383,8 @@ integer.  We want to specify nice keywords instead of those silly
 (defun x-stippled-p (root-window)
   (eq (xlib:gcontext-fill-style
        (gem-gc-gcontext
-	(display-info-filling-style-gc
-	 (g-value root-window :display-info))))
+        (display-info-filling-style-gc
+         (g-value root-window :display-info))))
       :stippled))
 
 
@@ -2425,7 +2429,7 @@ Returns multiple values."
   (declare (ignore root-window))
   (declare (fixnum x y))
   (let ((draw1 (when window1 (g-value window1 :drawable)))
-	(draw2 (when window2 (g-value window2 :drawable))))
+        (draw2 (when window2 (g-value window2 :drawable))))
     (when (and draw1 (null window2))
       (setf draw2 (xlib:drawable-root draw1)))
     (when (and draw2 (null window1))
@@ -2462,8 +2466,8 @@ the X drawable."
   (declare (fixnum width height)) 
   (let ((old-buffer (g-value window :buffer)))
     (and old-buffer
-	 (or (> height (xlib:drawable-height old-buffer))
-	     (> width  (xlib:drawable-width old-buffer))))))
+         (or (> height (xlib:drawable-height old-buffer))
+             (> width  (xlib:drawable-width old-buffer))))))
 
 
 (defun x-window-to-image (window left top width height)
@@ -2471,7 +2475,7 @@ the X drawable."
   (let ((drawable (g-value window :drawable)))
     (if drawable
       (xlib:get-image drawable :format :z-pixmap :x left :y top
-		      :width width :height height))))
+                      :width width :height height))))
 
 
 (defun x-write-an-image (root-window pathname image)
@@ -2505,7 +2509,7 @@ the X drawable."
   (attach-method x-device :delete-pixmap #'x-delete-pixmap)
   (attach-method x-device :delete-window #'x-delete-window)
   (attach-method x-device :discard-mouse-moved-events
-		 #'x-discard-mouse-moved-events)
+                 #'x-discard-mouse-moved-events)
   (attach-method x-device :discard-pending-events #'x-discard-pending-events)
   (attach-method x-device :draw-arc #'x-draw-arc)
   (attach-method x-device :draw-image #'x-draw-image)
@@ -2531,7 +2535,7 @@ the X drawable."
   (attach-method x-device :image-to-array #'x-image-to-array)
   (attach-method x-device :initialize-device #'x-initialize-device)
   (attach-method x-device :initialize-window-borders
-		 #'x-initialize-window-borders)
+                 #'x-initialize-window-borders)
   (attach-method x-device :inject-event #'x-inject-event)
   (attach-method x-device :make-font-name #'x-make-font-name)
   (attach-method x-device :map-and-wait #'x-map-and-wait)
@@ -2567,7 +2571,7 @@ the X drawable."
                           'x-compare-and-get-possible-stop-event)
   (attach-method x-device :set-interest-in-moved 'x-set-interest-in-moved)
   (attach-method x-device :translate-mouse-character
-		          'x-translate-mouse-character)
+                          'x-translate-mouse-character)
   (attach-method x-device :translate-character 'x-translate-character)
   
   ;; now make all windows inherit Gem methods from the X device.
@@ -2614,7 +2618,7 @@ the X drawable."
 
   (let ((display-info (initialize-device *root-window*)))
     (s-value *root-window* :drawable
-	     (display-info-root-window display-info))
+             (display-info-root-window display-info))
     (s-value *root-window* :display-info display-info))
 
   (set-draw-functions *root-window*)
