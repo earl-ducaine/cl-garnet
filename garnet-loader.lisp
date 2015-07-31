@@ -295,7 +295,10 @@ if a user loads garnet-loader.lisp a second time.")
 ;; Now do this in build script. I.e. could also use quicklisp if
 ;; desired. If not using the build script, you must put something here
 ;; that loads CLX.
-;; (require :clx)
+(require :clx)
+#+sbcl
+(require :sb-posix)                     ;might be done by CLX, but if so
+                                        ;the REQUIRE will just be a NO-OP
 
 ;;; Garnet Root pathname
 ;;

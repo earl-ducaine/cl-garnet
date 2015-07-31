@@ -20,9 +20,6 @@
 
 (in-package "GARNET-UTILS")
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (require :sb-posix))
-
 (eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(WHILE
             UNTIL
