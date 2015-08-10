@@ -10,7 +10,7 @@
 #
 SBCL=${SBCL:-/usr/local/bin/sbcl}
 CMUCL=${CMUCL:-/usr/local/bin/lisp}
-ACL=${ACL:-/usr/local/acl-current/alisp}
+ACL=${ACL:-/usr/local/acl/8.2/alisp}
 CCL=${CCL:-/usr/local/bin/ccl}
 
 # Setting this to "T" turns on the debug flag, adding a lot of
@@ -92,7 +92,6 @@ esac
 
 
 $BUILD << EOF
-(require :clx)
 (load "garnet-prepare-compile")
 (defvar Garnet-Garnet-Debug $DEBUG)
 ;;#+cmu (setf c:*record-xref-info* $DEBUG)
@@ -102,8 +101,6 @@ $QUIT
 EOF
 
 [ $? -eq 0 ] && $LOAD << EOF
-
-(require :clx)
 (defvar Garnet-Garnet-Debug $DEBUG) ; debugging version
 (load "garnet-loader")
 (let ((args (list "$IMAGE"
