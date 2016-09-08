@@ -122,7 +122,7 @@
 					 (make-list free-menus
 						    :initial-element 0)
 					 (list 0)))))
-				     
+
 		; discard items that were beyond the rank of the current menu
 		; and add the new item to the end of the :items list
 		(s-value browser :items new-items)
@@ -131,7 +131,7 @@
 		; discard selected-indices beyond and including the current
 		; menu, then add the new selection to the end of the list
 		(s-value browser :selected-ranks new-selected)
-			 
+
 		; discard starts that were beyond the rank of the current menu,
 		; and add a new start for the new menu
 		(s-value browser :starts new-starts))
@@ -165,7 +165,7 @@
 		(s-value browser :all-items new-all-items)
 		(s-value browser :selected-ranks new-selected)
 		(s-value browser :starts new-starts))))))
-		      
+
 
     ; Remove the gray feedback if it is to the right of the item just selected
     (let* ((gray-menu-rank (car (g-value browser
@@ -388,7 +388,8 @@ slot of your instance of the BROWSER-GADGET")))
    (:items NIL)
    (:starts (o-formula (make-list (gvl-fixnum :num-menus) :initial-element 0)))
    (:start (o-formula (if (gvl :scroll-p) (gvl :scroll-bar :value) 0)))
-   (:scroll-p (o-formula (> (length (gvl-fixnum :items)) (gvl-fixnum :num-menus))))
+   (:scroll-p (o-formula (> (length (gvl :items))
+			    (gvl-fixnum :num-menus))))
    (:end (o-formula (+ (gvl-fixnum :start) (gvl-fixnum :num-menus))))
    (:visible-items (o-formula (subseq (gvl :items) (gvl-fixnum :start) (gvl-fixnum :end))))
    (:parts
@@ -450,7 +451,7 @@ slot of your instance of the BROWSER-GADGET")))
 			      (val-2 (g-value scroll-bar :val-2))
 			      (indicator (g-value scroll-bar :indicator))
 			      (ind-height (g-value indicator :height))
-			      (new-box 
+			      (new-box
 			       (list 0 (inter:clip-and-map value val-1 val-2
 					      bound-top
 					      (- bound-bottom ind-height))
@@ -499,7 +500,7 @@ slot of your instance of the BROWSER-GADGET")))
 	(:top ,(o-formula (+ (gvl-fixnum :parent :top)
 			     (gvl-fixnum :parent :menu-list :height) 10)))
 	(:width 380)
-	(:val-2 ,(o-formula (opal:q-MAX (- (length (gvl-fixnum :parent :items))
+	(:val-2 ,(o-formula (opal:q-MAX (- (length (gvl :parent :items))
 					   (gvl-fixnum :parent :num-menus))
 					1)))
 	(:scroll-p ,(o-formula (gvl :parent :scroll-p)))

@@ -15,6 +15,10 @@
 
 (in-package "OPAL")
 
+(defvar *debug-opal-mode* nil)
+(setf (get :garnet-modules :opal) T)
+
+
 ;;; This is the export list for as much of OPAL as I could find (FMG).
 
 ;;; Import some stuff from GEM that used to be in OPAL.
@@ -29,13 +33,13 @@
 	    gem:*Fixed-Font-Family* gem:*Serif-Font-Family* gem:*Sans-Serif-Font-Family*
 	    gem:*Small-Font-Size* gem:*Medium-Font-Size*
 	    gem:*Large-Font-Size* gem:*Very-Large-Font-Size*
-	    gem:*Small-Font-Point-Size* gem:*Medium-Font-Point-Size* 
+	    gem:*Small-Font-Point-Size* gem:*Medium-Font-Point-Size*
 	    gem:*Large-Font-Point-Size* gem:*Very-Large-Font-Point-Size*
 	    gem:default-font-from-file)
 	  (find-package "OPAL")))
 
 (eval-when (:execute :load-toplevel :compile-toplevel)
-  (export '(bottom right center-x center-y
+  (export '(*debug-opal-mode* bottom right center-x center-y
 	    gv-bottom gv-right gv-center-x gv-center-y
 	    gv-center-x-is-center-of gv-center-y-is-center-of
 	    gv-right-is-left-of gv-bottom-is-top-of
@@ -57,12 +61,12 @@
 	    update destroy destroy-me
 	    raise-window lower-window iconify-window deiconify-window
 	    zoom-window fullzoom-window
-	    
+
 	    ;; Class names
 	    aggregate view-object graphical-object line rectangle
 	    roundtangle multipoint polyline polygon text bitmap arc oval
 	    circle arrowhead multi-text cursor-multi-text
-	    
+
 	    line-style default-line-style filling-style default-filling-style
 	    font cursor-text graphic-quality font-from-file cursor-font
 	    arrow-cursor arrow-cursor-mask arrow-pair
@@ -75,10 +79,10 @@
 	    move-cursor-up-one-line
 	    move-cursor-to-beginning-of-line
 	    move-cursor-to-end-of-line
-	    
+
 	    Get-X-Cut-Buffer Set-X-Cut-Buffer ; for interactors' use
 	    leaf-objects-in-rectangle components-in-rectangle obj-in-rectangle
-	    
+
 	    ;; filling and line style constants
 	    no-fill black-fill white-fill
 	    gray-fill light-gray-fill dark-gray-fill
@@ -87,39 +91,39 @@
 	    motif-gray-fill motif-blue-fill motif-orange-fill motif-green-fill
 	    motif-light-gray-fill motif-light-blue-fill motif-light-orange-fill
 	    motif-light-green-fill
-	    
+
 	    make-filling-style
 	    diamond-fill
-	    
+
 	    no-line thin-line line-0 line-1 line-2 line-4 line-8 gray-line
-	    dotted-line dashed-line 
+	    dotted-line dashed-line
 	    red-line green-line blue-line yellow-line
 	    cyan-line orange-line purple-line white-line
-	    
+
 	    ;; Colors
 	    color white black red green blue cyan yellow orange purple
 	    motif-gray motif-blue motif-orange motif-green motif-light-gray
 	    motif-light-blue motif-light-orange motif-light-green
 	    color-to-index
-	    
+
 	    ;; From Clean-Up.Lisp
 	    clean-up change-garnet-display update-all reset-cursor
-	    
+
 	    ;; From open-and-close.lisp
 	    disconnect-garnet reconnect-garnet
-	    
+
 	    ;; From process.lisp
 	    launch-main-event-loop-process
 	    kill-main-event-loop-process
 	    main-event-loop-process-running-p
 	    running-main-event-loop-process-elsewhere-p
-	    
+
 	    ;; From virtual-aggregates.lisp
 	    virtual-aggregate remove-item add-item change-item point-to-rank
 	    recalculate-virtual-aggregate-bboxes do-in-clip-rect
 	    do-items ;; [2003/09/16:rpg]
 
-	    
+
 	    get-standard-font
 
 	    ;; Stuff that should be exported IMHO (fmg).
@@ -127,7 +131,7 @@
 
 	    ;; Multifont stuff.
 	    MULTIFONT-TEXT
-	    
+
 	    SET-CURSOR-VISIBLE
 	    SET-CURSOR-TO-X-Y-POSITION
 	    SET-CURSOR-TO-LINE-CHAR-POSITION
@@ -142,17 +146,17 @@
 	    GO-TO-END-OF-TEXT
 	    GO-TO-BEGINNING-OF-LINE
 	    GO-TO-END-OF-LINE
-	    
+
 	    FETCH-NEXT-CHAR
 	    FETCH-PREV-CHAR
-	    
+
 	    TOGGLE-SELECTION
 	    SET-SELECTION-TO-X-Y-POSITION
 	    SET-SELECTION-TO-LINE-CHAR-POSITION
 	    GET-SELECTION-LINE-CHAR-POSITION
 	    CHANGE-FONT-OF-SELECTION
 	    CHANGE-COLOR-OF-SELECTION
-	    
+
 	    ADD-CHAR
 	    DELETE-CHAR
 	    DELETE-PREV-CHAR
@@ -168,17 +172,17 @@
 	    DELETE-WORD
 	    DELETE-PREV-WORD
 	    KILL-REST-OF-LINE
-	    
+
 	    COPY-SELECTED-TEXT
 	    DELETE-SELECTION
-	    
+
 	    SET-TEXT
 	    GET-STRING
 	    GET-TEXT
 	    GET-OBJECTS
-	    
+
 	    NOTICE-RESIZE-OBJECT
-	    
+
 	    TEXT-TO-PURE-LIST
 	    PURE-LIST-TO-TEXT
 	    TEXT-TO-STRING
@@ -192,4 +196,3 @@
 	    ;; Utils.
 	    make-image get-garnet-bitmap directory-p
             time-to-string clip-and-map drawable-to-window)))
-

@@ -15,7 +15,6 @@
 
 (in-package :DEMO-ANIMATOR)
 
-#+garnet-processes
 (defvar DEMO-ANIMATOR-INIT
     (dolist (gadget '("gadgets:text-buttons-loader"))
 	    (common-lisp-user::garnet-load gadget))
@@ -24,7 +23,6 @@
 (defparameter pixmapfilename "eye")
 (defparameter numpixmapfiles 12)
 
-#+garnet-processes
 (defvar pixmaps (let (i filename pics)
 		  (format T "Loading pictures...")
 		  (force-output)
@@ -52,13 +50,6 @@
 		  PIXMAP-BUTTON ANIMATOR-CIRCLE ANIMATING-PIXMAP))
 
 (defun do-go (&key dont-enter-main-event-loop (double-buffered-p T))
-  #-garnet-processes
-  (declare (ignore dont-enter-main-event-loop double-buffered-p))
-  #-garnet-processes
-  (format T "*** Demo-Animator only works under Lucid, Allegro, and LispWorks and 
-MCL 3.0 and greater  ***
-*** because it uses multiple processes.  Sorry.***")
-  #+garnet-processes
   (let (agg)
     ;;;create top-level window
     (create-instance 'TOP-WIN inter:interactor-window
@@ -69,7 +60,7 @@ MCL 3.0 and greater  ***
        (:icon-title "Animator"))
     (s-value top-win :aggregate
 	     (setq agg (create-instance NIL opal:aggregate)))
-    
+
     ;; If we get clobbered by the window manager, let the demos
     ;; controller know (if it's there).
     (when (fboundp 'common-lisp-user::Garnet-Note-Quitted)
@@ -85,7 +76,7 @@ MCL 3.0 and greater  ***
 		     (:line-style NIL)
 		     (:draw-function :xor)
 		     (:fast-redraw-p T))
-    
+
     (create-instance 'animating-pixmap opal:pixmap
       (:left 5)(:top 168) (:count 0)
       (:image (o-formula (nth (gvl :count) pixmaps))))
@@ -96,7 +87,7 @@ MCL 3.0 and greater  ***
 		     (:obj-to-change wrapping-circle)
 		     (:x-inc -2)(:y-inc 3)
 		     (:timer-repeat-wait 0.1)) ;seconds
-		     
+
     (create-instance 'animator-button inter:animator-bounce
 		     (:window TOP-WIN)
 		     (:x-inc 5)(:y-inc 5)
@@ -117,7 +108,7 @@ MCL 3.0 and greater  ***
 					 (if moving-right 0 6))
 				(s-value animating-pixmap :count cnt))
 			    (incf pos (if moving-right 2 -2))
-			    (if moving-right 
+			    (if moving-right
 				(if (>= pos (- (g-value TOP-WIN :width) 32))
 				    (progn
 				      (s-value inter :moving-right NIL)
@@ -178,5 +169,4 @@ MCL 3.0 and greater  ***
       #-(and cmu mp) (inter:main-event-loop))))
 
 (defun do-stop ()
-  #+garnet-processes
   (opal:destroy top-win))

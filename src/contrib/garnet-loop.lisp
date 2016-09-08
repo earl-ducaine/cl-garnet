@@ -1,13 +1,13 @@
-;;;; -*- Mode: Lisp -*- 
+;;;; -*- Mode: Lisp -*-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; 
+;;;;
 ;;;; File            : garnet-loop.lisp
 ;;;; Author          : Frank Ritter
 ;;;; Created On      : Thu Sep 27 14:10:14 1990
 ;;;; Last Modified By: Frank Ritter
 ;;;; Last Modified On: Mon Nov 11 11:19:47 1991
 ;;;; Update Count    : 72
-;;;; 
+;;;;
 ;;;; PURPOSE
 ;;;; 	A top level read-eval-print loop that allows lisp and Garnet to run
 ;;;; at the same time.
@@ -21,8 +21,8 @@
 ;;;;	II.	Garnet-event-and-lisp-loop
 ;;;;	III.	Garnet-lisp-repl
 ;;;;	IV.	Change to default-event-handler
-;;;; 
-;;;; Copyright 1990, Frank Ritter, permission to copy subject to the 
+;;;;
+;;;; Copyright 1990, Frank Ritter, permission to copy subject to the
 ;;;; conditions below.
 ;;;; The material in this file is made available according to the
 ;;;; terms of the GNU LGPL, modified by the Lisp LGPL preamble.  Both
@@ -46,7 +46,7 @@ an official part of Garnet, and comes with no guarantees whatsoever
 To use it, call the function grepl in the opal package.
 
 Within garnet loop the prompt appears as "<garnet:current-package-name>".
-In addition to running the essentials of inter:main-event-loop, 
+In addition to running the essentials of inter:main-event-loop,
 several other actions are supported through forms on *garnet-repl-conditions*.
 
 Grepl works best if it has its input line buffered, as emacs does for
@@ -58,7 +58,7 @@ lisp process down or increase the sleep time.  I'm open to other
 suggestions.  I don't notice a degredation on my workstation from
 running this loop, but I may no longer notice it.
 
-The header courtesy of software from Hucka@umich, file format taken 
+The header courtesy of software from Hucka@umich, file format taken
 from Milnes@cs.cmu.edu.
 
 Frank Ritter@psy.cmu.edu, September 28, 1990
@@ -119,7 +119,7 @@ some comments by Pedro Szekely@venera.isi.edu, Ed Pervin@cs.cmu.edu
           rewelcome-to-grepl
           welcome-to-grepl
           *grepl-conditions*
-          
+
           ;; functions & macros
           clear-X-events
           garnet-event-and-lisp-loop
@@ -135,7 +135,7 @@ some comments by Pedro Szekely@venera.isi.edu, Ed Pervin@cs.cmu.edu
 ;;;	ii. 	Advanced user or Non-user variables
 ;;;
 
-(defparameter *quit-grepl* nil 
+(defparameter *quit-grepl* nil
   #-release-garnet
   "Flag used to quit the event-and-lisp-loop.")
 
@@ -171,10 +171,10 @@ lisp read-eval-print loop."
    (throw 'exit-grepl t))
 
   ((equal :pack grepl-item)
-   ":pack will set the package to the package corresponding to the string, atom, 
+   ":pack will set the package to the package corresponding to the string, atom,
 or evaluated literal expression that it is passed as a second argument."
    (let* ((p1 (or (pop input) (read *standard-input*)))
-          (p2 (cond ((stringp p1) p1) 
+          (p2 (cond ((stringp p1) p1)
                     ((listp p1) (eval p1)) ;quoted list or form
                     ((boundp p1) (eval p1))
                     (t p1))) )
@@ -189,15 +189,15 @@ or evaluated literal expression that it is passed as a second argument."
   ((equal :user grepl-item) ":user sets the package to user." (in-package "COMMON-LISP-USER"))
   ((eq :opal item)   ":opal will set the package to OPAL."   (in-package "OPAL"))
 
-  ((equal :redo grepl-item) 
+  ((equal :redo grepl-item)
    ":redo will redo the last command"
    (grepl grepl-history))
 
-  ((equal :clearx grepl-item) 
+  ((equal :clearx grepl-item)
    ":clearx will clear out any X events that might be out there."
    (opal:clear-X-events))
 
-  ((equal :load grepl-item) 
+  ((equal :load grepl-item)
    ":load will reload a file from the grepl-loading-directory you define."
    (let ((file (cond (input (pop input))
                      (t (and (not (listen *standard-input*))
@@ -231,7 +231,7 @@ or evaluated literal expression that it is passed as a second argument."
 (defun print-grepl-prompt (&key (stream t))
   #-release-garnet
  "Print out the garnet-prompt"
- (format stream "<~a:~a> " 
+ (format stream "<~a:~a> "
          grepl-supersystem-name
          (string-downcase (package-name *package*))))
 
@@ -247,7 +247,7 @@ or evaluated literal expression that it is passed as a second argument."
    (if help-item
      (format t "* ~a~%" help-item))))
 
-(defconstant *whitespace-chars* 
+(defconstant *whitespace-chars*
   '(#\Space #\Newline #\Tab #\Page #\Rubout #\Linefeed #\Return #\Backspace)
   #-release-garnet
   "A list of characters read as whitespace by the garnet-repl")
@@ -269,7 +269,8 @@ or evaluated literal expression that it is passed as a second argument."
  "Clear the event queue, really more advanced version"
  (let ((display (if awindow
                     (opal::display-info-display (g-value awindow :display-info))
-	            (let ((win1 (caar (opal::get-table-contents))))
+		    ;; (let ((win1 (caar (opal::get-table-contents))))
+		    (let ((win1 (caar (opal::get-table-contents))))
 		       (if win1
 			   (xlib:window-display win1)
                            opal::*default-x-display*)))))
@@ -302,8 +303,8 @@ or evaluated literal expression that it is passed as a second argument."
     (format t "~%~a ~%" welcome-to-grepl)
     start
     (setq *quit-grepl* nil)
-    (unwind-protect 
-      (block nil 
+    (unwind-protect
+      (block nil
 	    (catch 'exit-grepl (garnet-event-and-lisp-loop)))
       (cond (*quit-grepl* nil) ;user wants out
             (t (format t "~a ~%" rewelcome-to-grepl)
@@ -333,7 +334,7 @@ when they happen."
   ;; tells us when there's an x-event.  If gnu is not there, a user
   ;; is committed to typing something if he starts to.
   (prog () start
-        (cond ( (listen *standard-input*) 
+        (cond ( (listen *standard-input*)
 		(garnet-lisp-repl) )
 	      ( (xlib:event-listen display)
                 ;; uses keyword based event-handler sent to Garnet Fall 90
@@ -356,7 +357,7 @@ when they happen."
 ;;; somewhat shaky history item
 ;;;
 
-(defconstant *newline-chars* 
+(defconstant *newline-chars*
   '(#\Newline #\Linefeed #\Return)
   #-release-garnet
   "A list of characters read as new-lines by the grepl")
@@ -365,14 +366,14 @@ when they happen."
   #-release-garnet
   "Lisp Read-Eval-Print-Loop (repl) for Garnet that runs once per call of grepl."
   (declare (special input)) ; necc for the evals below
-  (setq grepl-history (reverse grepl-history)) 
+  (setq grepl-history (reverse grepl-history))
   ;; reverse up here for safty
   (if (and (not input)
            (whitespace-char-p (peek-char nil *standard-input*)))
       ;; read some deadspace, else doit
       (if (member (read-char *standard-input*) *newline-chars* :test #'char=)
 	  (funcall grepl-prompt-function :stream *standard-output*))
-      (progv '(grepl-item) 
+      (progv '(grepl-item)
               (list (or (pop input)
                         (read *standard-input*)))
         (if (not (eq grepl-item :redo))
@@ -404,7 +405,7 @@ when they happen."
   "Event handler for the interactor windows"
   (declare (ignore force-output-p discard-p))
   (xlib:event-case (display :discard-p t :force-output-p t
-                    :force-output-p force-output-p :peek-p peek-p 
+                    :force-output-p force-output-p :peek-p peek-p
                     :timeout timeout)
     (:MAP-NOTIFY (event-window)
 		 (opal::Map-Notify (debug-p :event) event-window)

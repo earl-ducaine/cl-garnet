@@ -36,14 +36,14 @@
 
 (defvar *debug-inter-mode* nil)
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (proclaim
-   (if *debug-inter-mode*
-       (and (boundp 'Garnet-Compile-Debug-Settings)
-	    Garnet-Compile-Debug-Settings)
-       ;; Global default settings.
-       (and (boundp 'Default-Garnet-Proclaim) 
-	    Default-Garnet-Proclaim))))
+;; (eval-when (:compile-toplevel :load-toplevel :execute)
+;;   (proclaim
+;;    (if *debug-inter-mode*
+;;        (and (boundp 'Garnet-Compile-Debug-Settings)
+;; 	    Garnet-Compile-Debug-Settings)
+;;        ;; Global default settings.
+;;        (and (boundp 'Default-Garnet-Proclaim)
+;; 	    Default-Garnet-Proclaim))))
 
 
 
@@ -63,28 +63,29 @@
 
   '(
     ;; key translation files
-    "garnet-keytrans"
-    "define-mouse-keys"
-    "x-define-keys"
-    "x-inter"
+    ;; "garnet-keytrans"
+    ;; "define-mouse-keys"
+    ;; "x-define-keys"
+    ;; "x-inter"
 
-    ;; interactor files
-    "interactors"
-    "accelerators"
-    "animation-process"
-    "i-windows"
-    "menuinter"
-    "movegrowinter"
-    "buttoninter"
-    "twopointinter"
-    "textkeyhandling"
-    "lispkeyhandling"
-    "textinter"
-    "multifont-textinter"
-    "focus-multifont-textinter"
-    "selection-interactor"
-    "angleinter"
-    "animatorinter"))
+    ;; ;; interactor files
+    ;; "interactors"
+    ;; "accelerators"
+    ;; "animation-process"
+    ;; "i-windows"
+    ;; "menuinter"
+    ;; "movegrowinter"
+    ;; "buttoninter"
+    ;; "twopointinter"
+    ;; "textkeyhandling"
+    ;; "lispkeyhandling"
+    ;; "textinter"
+    ;; "multifont-textinter"
+    ;; "focus-multifont-textinter"
+    ;; "selection-interactor"
+    ;; "angleinter"
+    ;; "animatorinter")
+  ))
 
 (dolist (file Garnet-Inter-Files)
   (let ((gfile (concatenate 'string "inter:" file)))
@@ -96,4 +97,3 @@
 
 (setf (get :garnet-modules :inter) t)
 (setf (get :garnet-modules :multifont) t)
-

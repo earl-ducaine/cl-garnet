@@ -9,12 +9,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 
-(in-package "GEM")
+(in-package :gem)
 
-;;; Define names and argument lists for all the Gem methods.  Define and
-;;; export all Gem interface macros, such as (gem:create-window)
-
-
+;;; Define names and argument lists for all the Gem methods.  Define
+;;; and export all Gem interface macros, such as (gem:create-window)
 
 (gem-method :ALL-GARNET-WINDOWS (root-window))
 

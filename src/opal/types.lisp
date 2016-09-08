@@ -19,7 +19,7 @@
 ;;; 03-06-93 amickish - Added (integer 1); added interactor type declarations
 
 
-(in-package "KR")
+(in-package :kr)
 
 ;; kr-boolean is now defined in KR itself
 
@@ -244,4 +244,3 @@
   '(or null (is-a-p inter::interactor-window)
     (member T)
     (satisfies list-of-wins-p)))
-

@@ -23,11 +23,6 @@ Change log:
 (unless (boundp 'Garnet-Lapidary-PathName)
   (error "Load 'Garnet-Loader' first to set Garnet-Lapidary-PathName before loading this file."))
 
-
-#+explorer
-(unless (find-package "LAPIDARY")
-  (make-package "LAPIDARY" :use '("LISP" "KR")))
-
 ;;; Now load the Lapidary-Functions module
 ;;;
 (unless (get :garnet-modules :Lapidary-Functions)
@@ -37,4 +32,3 @@ Change log:
 
 (setf (get :garnet-modules :Lapidary-Functions) t)
 ;;; (provide 'Lapidary-Functions)
-

@@ -13,37 +13,37 @@
 
 (in-package "COMMON-LISP-USER")
 
-(defvar *debug-ps-mode* nil)
+(defvar *debug-ps-mode* t)
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (proclaim
-   (if *debug-ps-mode*
-       (and (boundp 'Garnet-Compile-Debug-Settings)
-	    Garnet-Compile-Debug-Settings)
-       ;; Global default settings.
-       (and (boundp 'Default-Garnet-Proclaim) 
-	    Default-Garnet-Proclaim))))
+;; (eval-when (:compile-toplevel :load-toplevel :execute)
+;;   (proclaim
+;;    (if *debug-ps-mode*
+;;        (and (boundp 'Garnet-Compile-Debug-Settings)
+;; 	    Garnet-Compile-Debug-Settings)
+;;        ;; Global default settings.
+;;        (and (boundp 'Default-Garnet-Proclaim)
+;; 	    Default-Garnet-Proclaim))))
 
 
 ;; Only loads this file when not compiling all of Garnet.
-(unless (get :garnet-modules :multifont)
-  (load (merge-pathnames "multifont-loader" Garnet-Opal-PathName)))
+;; (unless (get :garnet-modules :multifont)
+;;   (load (merge-pathnames "multifont-loader" Garnet-Opal-PathName)))
 
-(eval-when (:execute :load-toplevel :compile-toplevel)
-  (garnet-mkdir-if-needed Garnet-ps-Pathname))
+;; (eval-when (:execute :load-toplevel :compile-toplevel)
+;;   (garnet-mkdir-if-needed Garnet-ps-Pathname))
 
-(Defparameter Garnet-PS-Files
-  '(
-    "ps"
-    "ps-multifont"
-    ))
+;; (Defparameter Garnet-PS-Files
+;;   '(
+;;     ;; "ps"
+;;     ;; "ps-multifont"
+;;     ))
 
-(dolist (file Garnet-PS-Files)
-  (let ((gfile (concatenate 'string "ps:" file)))
-    (garnet-compile gfile)
-    (garnet-load gfile)))
+;; (dolist (file Garnet-PS-Files)
+;;   (let ((gfile (concatenate 'string "ps:" file)))
+;;     (garnet-compile gfile)
+;;     (garnet-load gfile)))
 
-(garnet-copy-files Garnet-Ps-Src Garnet-Ps-Pathname
-		   '("ps-loader.lisp"))
+;; (garnet-copy-files Garnet-Ps-Src Garnet-Ps-Pathname
+;; 		   '("ps-loader.lisp"))
 
 (setf (get :garnet-modules :ps) T)

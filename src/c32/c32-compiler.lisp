@@ -1,5 +1,5 @@
 ;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: COMMON-LISP-USER; Base: 10 -*-
-;;; 
+;;;
 ;;;___________________________________________________________________
 ;;; The Garnet User Interface Development Environment
 ;;; Copyright (c) 1991 Carnegie Mellon University
@@ -10,7 +10,7 @@
 ;;; Garnet project, please contact Brad Myers (Brad.Myers@CS.CMU.EDU).
 ;;;___________________________________________________________________
 ;;;
-;;; $Id::                                                             $	
+;;; $Id::                                                             $
 
 
 #|
@@ -28,14 +28,14 @@ Change log:
 
 (defvar *debug-c32-mode* nil)
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (proclaim
-   (if *debug-c32-mode*
-       (and (boundp 'Garnet-Compile-Debug-Settings)
-	    Garnet-Compile-Debug-Settings)
-       ;; Global default settings.
-       (and (boundp 'Default-Garnet-Proclaim)
-	    Default-Garnet-Proclaim))))
+;; (eval-when (:compile-toplevel :load-toplevel :execute)
+;;   (proclaim
+;;    (if *debug-c32-mode*
+;;        (and (boundp 'Garnet-Compile-Debug-Settings)
+;; 	    Garnet-Compile-Debug-Settings)
+;;        ;; Global default settings.
+;;        (and (boundp 'Default-Garnet-Proclaim)
+;; 	    Default-Garnet-Proclaim))))
 
 
 (format t "Compiling C32...~%")
@@ -56,30 +56,30 @@ Change log:
 (garnet-mkdir-if-needed Garnet-c32-Pathname)
 
 
-(dolist (gadget '(
-		  "labeled-box-loader"
-		  "x-buttons-loader"
-		  "arrow-line-loader"
-		  "text-buttons-loader"
-		  "scrolling-window-loader"
-		  "scrolling-input-string-loader"
-		  "scrolling-menu-loader"  ; for pop-up-functions
-		  "error-gadget-loader"	  		; for C32error
-		  "scrolling-labeled-box-loader"	; for package name
-		  "motif-scrolling-window-loader"
-		  ))
-  (load (merge-pathnames gadget garnet-gadgets-pathname)))
+;; (dolist (gadget '(
+;; 		  "labeled-box-loader"
+;; 		  "x-buttons-loader"
+;; 		  "arrow-line-loader"
+;; 		  "text-buttons-loader"
+;; 		  "scrolling-window-loader"
+;; 		  "scrolling-input-string-loader"
+;; 		  "scrolling-menu-loader"  ; for pop-up-functions
+;; 		  "error-gadget-loader"	  		; for C32error
+;; 		  "scrolling-labeled-box-loader"	; for package name
+;; 		  "motif-scrolling-window-loader"
+;; 		  ))
+;;   (load (merge-pathnames gadget garnet-gadgets-pathname)))
 
 (defvar C32-files '(
-		    "c32"
-		    "c32formula"
-		    "c32ref"
-		    "pop-up-generalize"
-		    "pop-up-copy-formula"
-		    "pop-up-ask-object"
-		    "pop-up-functions"
-		    "c32dialog"
-		    "c32-lapidary"
+		    ;; "c32"
+		    ;; "c32formula"
+		    ;; "c32ref"
+		    ;; "pop-up-generalize"
+		    ;; "pop-up-copy-formula"
+		    ;; "pop-up-ask-object"
+		    ;; "pop-up-functions"
+		    ;; "c32dialog"
+		    ;; "c32-lapidary"
 		    ))
 
 

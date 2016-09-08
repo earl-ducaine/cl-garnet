@@ -6,7 +6,7 @@
 ;;  Carnegie Mellon University, and has been placed in the public    ;;
 ;;  domain.                                                          ;;
 ;;    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;    ;;
-;; 
+;;
 ;; Originally written by meltsner@chipman.crd.ge.com,
 ;;
 
@@ -15,7 +15,7 @@
 ;;;
 ;;; XXX Want to read pixmaps like this.
 ;;(defun slurp-stream (stream)
-;;  (let ((seq (make-array (file-length stream) 
+;;  (let ((seq (make-array (file-length stream)
 ;;			 :element-type '(unsigned-byte 8))))
 ;;    (values seq (read-sequence seq stream))))
 
@@ -45,7 +45,7 @@
 ;;     " 	c #FFFFFFFFFFFF",
 ;;     ...
 ;; while pedro-format files look like
-;;     ! XPM2  
+;;     ! XPM2
 ;;     16 16 3 1
 ;;       c #FFFFFFFFFFFF
 ;;     ...
@@ -61,8 +61,6 @@
   (declare (type (or pathname string stream) pathname))
   (unless root-window
     (setq root-window (g-value gem:DEVICE-INFO :current-root)))
-  
-  ;; DZG (declare (values xlib:image))
   (with-open-file (fstream pathname :direction :input)
     (let ((line "")
 	  (properties nil)
@@ -75,7 +73,7 @@
 	       (type list properties))
       ;; Get properties
       (gu:until (not (search "XPM" line))
-	 (setq line (read-line fstream)))
+	(setq line (read-line fstream)))
       (setq meltsner-format (not (eq #\# (aref line 0))))
       ;; The pedro-format does not have a line that begins with "static char"
       (setq pedro-format (not (search "char *" line)))
@@ -90,17 +88,16 @@
 		(find-package "KEYWORD"))))
 	(when (null name)
 	  (if meltsner-format
-	    (if pedro-format
-	      ;; In the pedro-format, the line that usually gives you the
-	      ;; name of the pixmap does not exist
-	      (setq name :untitled)
-	      (setq name-end (position #\[ line :test #'char= :from-end t)
-		    name (read-keyword line 13 name-end)))
-	    (setq name-end (search "_format " line)
-		  name (read-keyword line 8 name-end)))
+	      (if pedro-format
+		  ;; In the pedro-format, the line that usually gives you the
+		  ;; name of the pixmap does not exist
+		  (setq name :untitled)
+		  (setq name-end (position #\[ line :test #'char= :from-end t)
+			name (read-keyword line 13 name-end)))
+	      (setq name-end (search "_format " line)
+		    name (read-keyword line 8 name-end)))
 	  (unless (eq name :image)
 	    (setf (getf properties :name) name))))
-
       ;; Calculate sizes
       ;; In the meltsner-format, read until you get to a line beginning with
       ;; a #\".  In the pedro-format, the desired line is already current,
@@ -110,41 +107,40 @@
 	  (setq line (read-line fstream)))
 	(setq line (read-from-string line)))
       (let ((bitmap-p (not (g-value color :color-p)))
-	    ;; RGA This next will lose on a Mac.  
-	    ;; ***TODO: Fix this.*** 
+	    ;; RGA This next will lose on a Mac.
+	    ;; ***TODO: Fix this.***
 	    (depth (gem::x-window-depth root-window))
 	    width height ncolors left-pad chars-per-pixel)
 	;; DZG (declare (type (or null xlib:card16) width height)
 	;; DZG	 (type (or null xlib:image-depth) depth)
 	;; DZG	 (type (or null xlib:card8) left-pad))
 	(if meltsner-format
-	  (with-input-from-string (params line)
-	    (setq width (read params))
-	    (setq height (read params))
-	    (setq ncolors  (read params))
-	    ;; (setq depth (if bitmap-p 1 depth))
-	    (setq chars-per-pixel (read params))
-	    (setq left-pad 0))
-	  (progn
-	    (setq line (read-line fstream))
-	    (setq width (read-from-string
-			 (subseq line (1+ (position #\space line
-						    :from-end t)))))
-	    (setq line (read-line fstream))
-	    (setq height (read-from-string
-			  (subseq line (1+ (position #\space line
-						     :from-end t)))))
-	    (setq line (read-line fstream))
-	    (setq ncolors (read-from-string
+	    (with-input-from-string (params line)
+	      (setq width (read params))
+	      (setq height (read params))
+	      (setq ncolors  (read params))
+	      ;; (setq depth (if bitmap-p 1 depth))
+	      (setq chars-per-pixel (read params))
+	      (setq left-pad 0))
+	    (progn
+	      (setq line (read-line fstream))
+	      (setq width (read-from-string
 			   (subseq line (1+ (position #\space line
 						      :from-end t)))))
-	    ;; (setq depth (if bitmap-p 1 8))
-	    (setq line (read-line fstream))
-	    (setq chars-per-pixel (read-from-string
-				   (subseq line (1+ (position #\space line
-							      :from-end t)))))
-	    (setq left-pad 0)))
-
+	      (setq line (read-line fstream))
+	      (setq height (read-from-string
+			    (subseq line (1+ (position #\space line
+						       :from-end t)))))
+	      (setq line (read-line fstream))
+	      (setq ncolors (read-from-string
+			     (subseq line (1+ (position #\space line
+							:from-end t)))))
+	      ;; (setq depth (if bitmap-p 1 8))
+	      (setq line (read-line fstream))
+	      (setq chars-per-pixel (read-from-string
+				     (subseq line (1+ (position #\space line
+								:from-end t)))))
+	      (setq left-pad 0)))
 	(unless (and width height) (error "Not a BITMAP file"))
 	(let* ((color-sequence (make-array ncolors))
 	       (chars-sequence (make-array ncolors))
@@ -158,7 +154,6 @@
 					     ;; `depth' here gives an error.
 					     bits-per-pixel))
 	       (pixel (make-sequence 'string chars-per-pixel)))
-
 	  (flet ((parse-hex (char)
 		   (second (assoc char
 				  '((#\0  0) (#\1  1) (#\2  2) (#\3  3)
@@ -171,30 +166,28 @@
 	      ;; Eat garbage until we get to a line like
 	      ;; " c #FFFFFFFFFFFF...",
 	      (loop
-	       (setq line (read-line fstream))
-	       (when (or (search "\"," line)
-			 (and (not (search "static" line))
-			      (search "c " line)))
-		 (return)))
-
+		 (setq line (read-line fstream))
+		 (when (or (search "\"," line)
+			   (and (not (search "static" line))
+				(search "c " line)))
+		   (return)))
 	      (if meltsner-format
-		(progn
-		  ;; If not in pedro-format, line is currently a string of
-		  ;; a string -- remove one layer of stringness
-		  (unless pedro-format
-		    (setq line (read-from-string line)))
+		  (progn
+		    ;; If not in pedro-format, line is currently a string of
+		    ;; a string -- remove one layer of stringness
+		    (unless pedro-format
+		      (setq line (read-from-string line)))
 					;  Got the pixel characters
-		  (setf (aref chars-sequence cind)
-			(subseq line 0 chars-per-pixel))
-		  (setq line
-			(subseq line (+ 2 (position #\c line
-						    :start chars-per-pixel)))))
-		(progn
-		  (setf (aref chars-sequence cind) (read-from-string line))
-		  (setq line
-			(read-from-string
-			 (subseq line (1+ (position #\, line)))))))
-
+		    (setf (aref chars-sequence cind)
+			  (subseq line 0 chars-per-pixel))
+		    (setq line
+			  (subseq line (+ 2 (position #\c line
+						      :start chars-per-pixel)))))
+		  (progn
+		    (setf (aref chars-sequence cind) (read-from-string line))
+		    (setq line
+			  (read-from-string
+			   (subseq line (1+ (position #\, line)))))))
 	      (cond
 		((char-equal #\# (aref line 0))
 		 (let* ((vals (map 'list #'parse-hex
@@ -202,7 +195,6 @@
 					   (position #\space line :start 2))))
 			(clength (/ (length vals) 3))
 			(divisor (- (expt 16 clength) 1)))
-
 		   (setf (aref color-sequence cind)
 			 (gem:colormap-property
 			  root-window
@@ -224,7 +216,7 @@
 			      divisor))))))
 		(t
 		 (if meltsner-format
-		   (setq line (read-from-string line)))
+		     (setq line (read-from-string line)))
 		 ;;		 (break)
 		 ;; I don't know why some xpms have a "None" entry in their
 		 ;; colormap, but some I got from DOI topographic
@@ -237,25 +229,23 @@
 			  :ALLOC-COLOR
 			  (gem:colormap-property root-window
 						 :LOOKUP-COLOR line)))))))
-
 	    ;; Eat garbage between color information and pixels.
 	    ;; Some pixmap files have no garbage, some have a single line
 	    ;; of the comment /* pixels */, and non-meltsner-format files
 	    ;; have two lines of garbage.
 	    (if meltsner-format
-	      ;; Only eat the line if it is a /* pixel */ comment
-	      (if (char= #\/ (peek-char NIL fstream))
-		(setq line (read-line fstream)))
-	      (setq line (read-line fstream)
-		    line (read-line fstream)))
-
+		;; Only eat the line if it is a /* pixel */ comment
+		(if (char= #\/ (peek-char NIL fstream))
+		    (setq line (read-line fstream)))
+		(setq line (read-line fstream)
+		      line (read-line fstream)))
 	    ;; Read data
 	    ;; Note: using read-line instead of read-char would be 20% faster,
 	    ;;       but would cons a lot of garbage...
 	    ;; I'm not sure I should follow the above -- egc might be faster.
 	    (dotimes (i height)
 	      (if (char= #\" (peek-char NIL fstream))
-		(read-char fstream))	;burn quote mark
+		  (read-char fstream))	;burn quote mark
 	      (dotimes (j width)
 		(dotimes (k chars-per-pixel)
 		  (setf (aref pixel k)
@@ -264,11 +254,10 @@
 				    (position pixel chars-sequence
 					      :test #'string=)))
 		       (adjusted-value (if bitmap-p
-					 (if (eql value 0) value 1)
-					 value)))
+					   (if (eql value 0) value 1)
+					   value)))
 		  (setf (aref data i j) adjusted-value)))
 	      (read-line fstream)))	;burn junk at end
-
 	  ;; Compensate for left-pad in width and x-hot
 	  (unless (zerop left-pad)
 	    (decf width left-pad)
@@ -277,11 +266,8 @@
                             data properties bits-per-pixel
                             left-pad data))))))
 
-
-
 (defun digit-to-hex (n)
   (code-char (+ (if (< n 10) 48 55) n)))
-
 
 (defun print-hex (f n)
   (format f "~A~A~A~A" (digit-to-hex (mod (floor n 4096) 16))
@@ -290,7 +276,6 @@
 		       (digit-to-hex (mod n 16))))
 
 
-
 ;;;
 ;; The following info is obtained from scan.c in XPM-3.4k library.
 ;;
@@ -316,7 +301,7 @@
 	    (pixhash (make-hash-table))
 	    (max-printable (length +printable+))
 	    (ncolors 0))
-	
+
 	;; Scan pixmap array to figure out how many distinct colors are in it.
 	(dotimes (i height)
 	  (dotimes (j width)
@@ -417,10 +402,8 @@
 	  (gem:draw-rectangle a-window left top width height
 			      function line-style nil))))))
 
-
-
 (defun create-pixmap-image (width height
-			    &optional 
+			    &optional
 			      color
 			      (window (g-value gem:device-info :current-root)))
   (let ((depth (gem::x-window-depth window)))

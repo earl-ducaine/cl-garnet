@@ -8,7 +8,7 @@
 # Configure these paths for your system, or just set the environment
 # variables.
 #
-SBCL=${SBCL:-/usr/local/bin/sbcl}
+SBCL=$(which sbcl)
 CMUCL=${CMUCL:-/usr/local/bin/lisp}
 ACL=${ACL:-/usr/local/acl/8.2/alisp}
 CCL=${CCL:-/usr/local/bin/ccl}
@@ -58,7 +58,7 @@ case $# in
 	exit 1
 	;;
 esac
-    
+
 case $1 in
     sbcl)
 	BUILD="$SBCL --disable-debugger"

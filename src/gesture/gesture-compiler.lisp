@@ -14,15 +14,6 @@
 
 (defvar *debug-gesture-mode* nil)
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (proclaim
-   (if *debug-gesture-mode*
-       (and (boundp 'Garnet-Compile-Debug-Settings)
-	    Garnet-Compile-Debug-Settings)
-       ;; Global default settings.
-       (and (boundp 'Default-Garnet-Proclaim) 
-	    Default-Garnet-Proclaim))))
-
 (dolist (pair '((:motif-text-buttons "motif-text-buttons-loader")
 		(:motif-scrolling-labeled-box "motif-scrolling-labeled-box-loader")
 		(:motif-radio-buttons "motif-radio-buttons-loader")
@@ -41,13 +32,13 @@
 
 (Defvar Garnet-Gesture-Files
   '(
-    "features" 
-    "matrix"
-    "classify" 
-    "gestureinter" 
-    "fileio" 
-    "train"
-    "agate"
+    ;; "features"
+    ;; "matrix"
+    ;; "classify"
+    ;; "gestureinter"
+    ;; "fileio"
+    ;; "train"
+    ;; "agate"
     ))
 
 (dolist (file Garnet-Gesture-Files)
@@ -63,4 +54,3 @@
 #+allegro-V3.1 (gc t)
 
 (setf (get :garnet-modules :gesture) t)
-

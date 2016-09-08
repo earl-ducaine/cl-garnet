@@ -25,7 +25,7 @@
 
 ;; The second half of the convention provides information about
 ;; slots.  This is done through the :slot-doc slot of the schema.
-;; This is a paired list of the form slot-name, doc-string.  
+;; This is a paired list of the form slot-name, doc-string.
 
 ;; The function kr:get-slot-doc (<schema> <slot>) accesses the
 ;; doc-string for a schema. It will search first the local slot and
@@ -45,16 +45,16 @@
 ;;		          :height "Vertical Extent of Rectangle."
 ;;		          :width "Horizontal Extent of Rectangle."
 ;;		          :line-style "The color, width and dashing of the border."
-;;		          :filling-style "The color and shading of the interior." 
+;;		          :filling-style "The color and shading of the interior."
 ;;		          :draw-function "How does drawing interact with
 ;;                                        objects underneath."
 ;;		          :visible "Is the object to be drawn?"))
 
 
 ;;; KR part of garnet must be loaded.
-(in-package :Kr)
+(in-package :kr)
 
-(export '(get-slot-doc set-slot-doc))
+
 
 (defun get-slot-doc (schema slot)
   "Returns the documentation string associated with <slot> in <schema>."
@@ -83,10 +83,5 @@
   (let ((doc-plist (get-local-value schema :slot-doc)))
     (setf (getf doc-plist slot) doc-string)
     (s-value schema :slot-doc  doc-plist)))
-	
-(pushnew :KR-DOC *Features*)
 
-	
-	 
-  
-  
+(pushnew :KR-DOC *Features*)

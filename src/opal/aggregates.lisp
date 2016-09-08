@@ -15,7 +15,7 @@
 
 ;;; Aggregates allow for a group of graphical-objects to be associated
 ;;; together to form a new, more complex object.
-;;; 
+;;;
 ;;; An implementation detail:
 ;;; The children of a gob are stored in a list from bottom most to top
 ;;; most, since we want to redraw fastest and redraws occur from bottom to
@@ -25,7 +25,7 @@
 ;;; Methods on aggregates:
 
 ;;; Initialize
-;;; 
+;;;
 ;;; The :aggregate-p slot is used by the update algorithm for efficiency
 (define-method :initialize opal:aggregate (a-aggregate)
   (call-prototype-method a-aggregate)
@@ -40,7 +40,7 @@
 	  T)))
 
 ;;; Destroy method
-;;; 
+;;;
 ;;; If top-level-p is true, then you must erase the aggregate (carefully!).
 ;;; Otherwise, we can presume that the calling party has already gone
 ;;; through the trouble of erasing the aggregate.
@@ -64,8 +64,10 @@
                       (setq erase-p NIL)))
                 (setq total-update-p (not (carefully-erase a-aggregate the-window)))))
         (when (and top-level-p parent)
-          (s-value parent :components
-		   (delete a-aggregate (g-local-value parent :components)))
+	  ;; Need to disable constants, since components slot is constant on agregadgets.
+	  (with-constants-disabled
+	    (s-value parent :components
+		     (delete a-aggregate (g-local-value parent :components))))
           (mark-as-changed parent :components))
         (let ((components (g-local-value a-aggregate :components)))
           (with-constants-disabled (destroy-slot a-aggregate :components))
@@ -139,17 +141,17 @@
 
 ;;; Add-Component adds gob to aggregate covering according to the arguments of
 ;;; the where keyword argument.  Note that the :where keyword is now OPTIONAL.
-;;; 
+;;;
 ;;; Options for the :where keyword argument:
 ;;;    :front, :back, :behind, :in-front, or :at
 ;;;    :tail,  :head, :before, :after
 ;;; Interpretation of arg:
-;;;  - if (member '(:behind :in-front :before :after) where) 
+;;;  - if (member '(:behind :in-front :before :after) where)
 ;;;    gob is positioned relative to (third arg)
 ;;;  - if (eq where :at) gob is positioned at (third arg) positions from
 ;;; the front of the children
 ;;;  - otherwise it is ignored.
-;;; 
+;;;
 ;;; This is really a lot less complicated than it seems, you can say things
 ;;; like:
 ;;; (add-component foo :where :front)       == (add-component foo :front)
@@ -177,10 +179,10 @@
     (when a-window
       (let ((gob-update-info (the UPDATE-INFO (g-local-value gob :update-info))))
 	(set-display-slots gob a-window t)
-	
+
 	;; Place the object on its window's invalid-objects list
 	(make-object-invalid gob gob-update-info a-window)
-   
+
 	;; Invalidate all of the aggregate's children (recursively)
 	(if (update-info-aggregate-p gob-update-info)
 	    (do-all-components gob
@@ -199,14 +201,14 @@
   gob)
 
 ;;; Add multiple components at the same time
-;;; 
+;;;
 (defun add-components (agg &rest components)
   (dolist (component components)
     (add-component agg component))
   (car (last components)))
 
 ;;; Remove-component deletes the topmost occurance of gob in aggregate
-;;; 
+;;;
 (define-method :remove-component opal:aggregate (a-aggregate gob)
 
  (if (not (eq (g-local-value gob :parent) a-aggregate))
@@ -219,7 +221,7 @@
 
   (let* ((gob-update-info (the UPDATE-INFO (g-local-value gob :update-info)))
          (a-window (update-info-window gob-update-info))
-	 (a-window-update-info 
+	 (a-window-update-info
 	    (when a-window (g-local-value a-window :update-info))))
     (when a-window-update-info
       (let* ((win-update-info (g-value a-window :win-update-info))
@@ -264,7 +266,7 @@
   (s-value a-aggregate :components
 	   (delete gob (g-local-value a-aggregate :components)))
   (install-component a-aggregate gob args))
-  
+
 ;;; Remove multiple components at the same time
 (defun remove-components (agg &rest components)
   (dolist (component components)
@@ -285,7 +287,7 @@
 
 ;;; Do-Components applies function to all children of aggregate
 
-(define-method :do-components opal:aggregate (a-aggregate a-function 
+(define-method :do-components opal:aggregate (a-aggregate a-function
 					     &key (type t) (self nil))
   (let ((children (g-local-value a-aggregate :components)))
     (dolist (child children)
@@ -328,7 +330,7 @@
 			    (my-is-a-p child type))
 			(point-in-gob child x y))
 	       child)))))
-  
+
 (define-method :point-to-component opal:aggregate
 	       (a-aggregate x y &key (type t))
   (when (point-in-gob a-aggregate x y)
@@ -425,7 +427,7 @@
 		      obj-left obj-top obj-right obj-bottom
 		      left top right bottom)))))
 
-  
+
 ;;; Like leaf-objects-in-rectangle, but only returns top-level components
 ;;; instead of leafs.
 (defun components-in-rectangle (agg top left bottom right

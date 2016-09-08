@@ -15,32 +15,32 @@
 
 (defvar *debug-aggregadgets-mode* nil)
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (proclaim
-   (if *debug-aggregadgets-mode*
-       (and (boundp 'Garnet-Compile-Debug-Settings)
-	    Garnet-Compile-Debug-Settings)
-       ;; Global default settings.
-       (and (boundp 'Default-Garnet-Proclaim) 
-	    Default-Garnet-Proclaim))))
+;; (eval-when (:compile-toplevel :load-toplevel :execute)
+;;   (proclaim
+;;    (if *debug-aggregadgets-mode*
+;;        (and (boundp 'Garnet-Compile-Debug-Settings)
+;; 	    Garnet-Compile-Debug-Settings)
+;;        ;; Global default settings.
+;;        (and (boundp 'Default-Garnet-Proclaim)
+;; 	    Default-Garnet-Proclaim))))
 
 
 (Defvar Garnet-Aggregadgets-Files
   '(
-    "agg-macros"
-    "agg-utils"
-    "aggregadgets"
-    "aggrelists"
-    "add-agg"
-    "agg-fix-slots"
-    "copy-agg"
-    "save-agg"
-    "string-edit"
-    "agg-labels"
-    "rectangle-conflict-object"
-    "aggregraphs"
-    "scalable-aggregraph"
-    "scalable-aggregraph-image"
+    ;; "agg-macros"
+    ;; "agg-utils"
+    ;; "aggregadgets"
+    ;; "aggrelists"
+    ;; "add-agg"
+    ;; "agg-fix-slots"
+    ;; "copy-agg"
+    ;; "save-agg"
+    ;; "string-edit"
+    ;; "agg-labels"
+    ;; "rectangle-conflict-object"
+    ;; "aggregraphs"
+    ;; "scalable-aggregraph"
+    ;; "scalable-aggregraph-image"
     ))
 
 (eval-when (:execute :load-toplevel :compile-toplevel)

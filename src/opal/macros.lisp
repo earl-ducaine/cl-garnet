@@ -18,7 +18,7 @@
 ;;  possible.
 
 
-(in-package "KR")
+(in-package :kr)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(gv-fixnum gvl-fixnum g-value-fixnum)))
@@ -37,7 +37,7 @@
 
 (in-package "OPAL")
 
-;;; General Use 
+;;; General Use
 
 
 ;; Wrappers for KR-SEND.
@@ -138,7 +138,7 @@
 ;;; For "objects.lisp"
 ;;
 
-(declaim (inline get-thickness))	   
+(declaim (inline get-thickness))
 (defun get-thickness (gob)
   (let* ((line-style (g-value gob :line-style))
 	 (thickness  (and line-style (g-value line-style :line-thickness))))

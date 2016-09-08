@@ -10,19 +10,20 @@
 ;;;
 ;;; Constraint Gadget:Defs.Lisp
 ;;;
-;;; This file contains many of the schemas, defconstants, defvars, defmacros, 
-;;; and defstructs which are used by Constraint Gadget.  
+;;; This file contains many of the schemas, defconstants, defvars, defmacros,
+;;; and defstructs which are used by Constraint Gadget.
 ;;;
 
 (in-package "GARNET-GADGETS")
 
 (eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(box-constraint-do-go
-	    line-constraint-do-go 
+	    box-constraint-do-stop
+	    line-constraint-do-go
 	    show-box-constraint-menu show-line-constraint-menu
 	    c32 destroy-constraint-support-slots
 	    cg-destroy-constraint valid-integer-p)))
-	  
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; fonts used in constraint menus
@@ -160,13 +161,13 @@
 (defconstant 135deg (- 1 (/ (sqrt 2) 2)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; 
+;;;
 ;;; prototype formulas for the constraints shown in the constraint gadget's
 ;;; constraint menus
-;;; 
+;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defvar *left-outside-formula* 
+(defvar *left-outside-formula*
   (o-formula (- (opal:gv-right-is-left-of (gvl :left-over))
 					  (gvl :left-offset))
 	     0
@@ -176,7 +177,7 @@
 					    (gvl :left-offset))
 					 0
 					 (:menu-item :in-left)))
-(defvar *left-center-formula* 
+(defvar *left-center-formula*
   (o-formula (- (+ (gvl :left-over :left)
 		   (truncate (* (gvl :left-over :width)
 				(gvl :left-offset))))
@@ -184,7 +185,7 @@
 	     0
 	     (:menu-item :center)))
 
-(defvar *right-inside-formula* 
+(defvar *right-inside-formula*
   (o-formula (1+ (- (opal:gv-right (gvl :left-over))
 		    (gvl :width)
 		    (gvl :left-offset)))
@@ -196,14 +197,14 @@
 					   0
 					   (:menu-item :out-right)))
 
-(defvar *left-constraint-vector* 
+(defvar *left-constraint-vector*
   (make-array 5 :initial-contents (list *left-outside-formula*
 					*left-inside-formula*
 					*left-center-formula*
 					*right-inside-formula*
 					*right-outside-formula*)))
 
-(defvar *top-outside-formula* 
+(defvar *top-outside-formula*
   (o-formula (- (opal:gv-bottom-is-top-of (gvl :top-over))
 		(gvl :top-offset))
 	     0
@@ -214,7 +215,7 @@
 					0
 					(:menu-item :in-top)))
 
-(defvar *top-center-formula* 
+(defvar *top-center-formula*
   (o-formula (- (+ (gvl :top-over :top)
 		   (truncate (* (gvl :top-over :height)
 				(gvl :top-offset))))
@@ -222,7 +223,7 @@
 	     0
 	     (:menu-item :center)))
 
-(defvar *bottom-inside-formula* 
+(defvar *bottom-inside-formula*
   (o-formula (1+ (- (opal:gv-bottom (gvl :top-over))
 		    (gvl :height)
 		    (gvl :top-offset)))
@@ -234,35 +235,35 @@
 					    0
 					    (:menu-item :out-bot)))
 
-(defvar *top-constraint-vector* 
+(defvar *top-constraint-vector*
   (make-array 5 :initial-contents (list *top-outside-formula*
 					*top-inside-formula*
 					*top-center-formula*
 					*bottom-inside-formula*
 					*bottom-outside-formula*)))
 
-(defvar *width-formula* (o-formula (round (+ (* (gvl :width-scale) 
+(defvar *width-formula* (o-formula (round (+ (* (gvl :width-scale)
 						(gvl :width-over :width))
 					     (gvl :width-difference)))
 				   0
 				   (:menu-item :con-button)))
 
-(defvar *width-constraint-vector* 
+(defvar *width-constraint-vector*
   (make-array 1 :initial-contents (list *width-formula*)))
 
-(defvar *height-formula* (o-formula (round (+ (* (gvl :height-scale) 
+(defvar *height-formula* (o-formula (round (+ (* (gvl :height-scale)
 					 (gvl :height-over :height))
 				      (gvl :height-difference)))
 				    0
 				    (:menu-item :con-button)))
 
-(defvar *height-constraint-vector* 
+(defvar *height-constraint-vector*
   (make-array 1 :initial-contents (list *height-formula*)))
 (defvar *custom-constraint* nil)
 
 ;; lists of offset slots used by objects
 (defvar *list-offsets* (list :x1-offset :x2-offset :y1-offset :y2-offset))
-(defvar *box-offsets* (list :left-offset :top-offset 
+(defvar *box-offsets* (list :left-offset :top-offset
 			    :width-difference :height-difference))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -285,4 +286,3 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defvar *do-not-inherit-list* '(:left :top :active))
-

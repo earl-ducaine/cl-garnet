@@ -11,7 +11,7 @@
 ;;; $Id::                                                             $
 ;;;
 
-(in-package "KR")
+(in-package :kr)
 
 (defvar *setup-dependencies* T
   "If T (the default), dependencies are set up whenever GV and GVL are
@@ -111,7 +111,7 @@
 ;; This version stores the formula as an INTERPRETED lambda.
 ;; If <initial-value> is supplied, it is stored as the cached value for the
 ;; formula; the formula, however, is still marked invalid.
-;; 
+;;
 (defmacro formula (form &optional (initial-value nil) &rest slots)
   (if slots
       `(formula-fn ,form ,initial-value (create-schema nil ,@slots))
@@ -195,7 +195,7 @@ RETURNS:  the <formula>
 
 
 ;; CHANGE-FORMULA
-;; 
+;;
 ;; Modify the function associated with a formula.  Several possible
 ;; combinations exist:
 ;; - If the function is local and there are no children, just go ahead and
@@ -204,7 +204,7 @@ RETURNS:  the <formula>
 ;;   children formulas as well.
 ;; - if the function used to be inherited, replace it and eliminate the
 ;;   link with the parent formula.
-;; 
+;;
 (defun change-formula (schema slot form)
   "Modifies the formula at position 0 in the <slot> of the <schema> to have
   <form> as its new function.  Inherited formulas are treated appropriately."
@@ -439,8 +439,8 @@ inside a formula)"
 
 ;;; This function is for use in formulas.  It represents a direct (i.e.,
 ;;; no-link) dependency.  If the <slot> of the <schema> changes, the formula
-;;; will be re-evaluated. 
-;;; 
+;;; will be re-evaluated.
+;;;
 (defun gv-fn (schema slot)
   (gv-fn-body g-value))
 
@@ -519,7 +519,7 @@ accessing slots until the end of the link."
   schema)
 
 (defmacro gv (schema &rest slots)
-  "Used in formulas. Expands into a chain of value accesses, 
+  "Used in formulas. Expands into a chain of value accesses,
 or a single call to gv-value-fn."
   (cond
     (slots
@@ -559,7 +559,7 @@ Found in the expression   (gv ~S~{ ~S~}) ,~:[
   (gv-fn-body g-local-value))
 
 (defmacro gv-local (schema &rest slots)
-  "Used in formulas. Expands into a chain of nested calls to gv-local-fn, 
+  "Used in formulas. Expands into a chain of nested calls to gv-local-fn,
 which creates a dependency point in a formula."
   (cond (slots
 	 `(expand-accessor gv-local-fn ,schema ,@slots))
@@ -569,7 +569,7 @@ which creates a dependency point in a formula."
 	 `(progn ,schema))))
 
 (defmacro gvl (name &rest names)
-  "Used in formulas. Equivalent to a call to GV 
+  "Used in formulas. Equivalent to a call to GV
 with a :SELF added as the first parameter."
   `(gv *schema-self* ,name ,@names))
 
@@ -624,7 +624,7 @@ with a :SELF added as the first parameter."
   ;; Create the IS-A relation, which should come first in the list.
   (create-relation :IS-A T :IS-A-INV)
   ;; Create the default schema which controls the behavior of PS
-  ;; 
+  ;;
   (create-schema 'PRINT-SCHEMA-CONTROL
     ;; Names of slots which should be printed out first, in the right order.
     (:sorted-slots :left :top :width :height)
@@ -645,15 +645,15 @@ with a :SELF added as the first parameter."
   return NIL. This seems not to break anything but changes the behavior of this
   function."
   (locally (declare #.*special-kr-optimization*)
-    ;; Profiling indicated that this function is expensive, so I tried to 
+    ;; Profiling indicated that this function is expensive, so I tried to
     ;; avoid unnecessary repetition of tests and exit as early as possible.
-  
+
     (unless (and schema (schema-p schema))
       (return-from is-a-p nil))
 
     ;; We know we've got something, and it's a schema. So if type is T
     ;; or if the schema is eq to the type, return T.
-    (when (or (eq type T) 
+    (when (or (eq type T)
 	      (eq schema type))		; (is-a-p foo foo) is true
       (return-from is-a-p T))
 
@@ -673,7 +673,7 @@ with a :SELF added as the first parameter."
 	;; not upward, so it's better to just iterate through the IS-A list
 	;; once, calling is-a-p on the parents if they aren't eq to TYPE.
 	#-(and)
-	(or (dolist (parent (g-value schema :IS-A)) 
+	(or (dolist (parent (g-value schema :IS-A))
 	      (when (eq parent type)
 		(return T)))
 	    ;; Not directly in the list: how about the parents?
@@ -681,7 +681,7 @@ with a :SELF added as the first parameter."
 	      (when (is-a-p parent type)
 		(return t))))
 
-	(dolist (parent (g-value schema :IS-A)) 
+	(dolist (parent (g-value schema :IS-A))
 	  (when (or (eq parent type)
 		    ;; Not directly in the IS-A list: how about the parents?
 		    (is-a-p parent type))
@@ -739,4 +739,3 @@ dotted pairs, where each pair consists of a schema and a slot."
 
 (dolist (type '(null string keyword integer number list cons schema))
   (encode-type type))
-

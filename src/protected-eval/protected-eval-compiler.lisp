@@ -10,7 +10,7 @@
 ;;; $Id$
 
 ;;; RGA  Compile script for prompter/protected-eval/etc.
-;;       
+;;
 
 ;;  Version 3.3 --- FMG sorted out the code in this directory,
 ;;                  integrated it into the Garnet build system.
@@ -23,14 +23,14 @@
 
 (defvar *debug-protected-eval-mode* nil)
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (proclaim
-   (if *debug-protected-eval-mode*
-       (and (boundp 'Garnet-Compile-Debug-Settings)
-	    Garnet-Compile-Debug-Settings)
-       ;; Global default settings.
-       (and (boundp 'Default-Garnet-Proclaim) 
-	    Default-Garnet-Proclaim))))
+;; (eval-when (:compile-toplevel :load-toplevel :execute)
+;;   (proclaim
+;;    (if *debug-protected-eval-mode*
+;;        (and (boundp 'Garnet-Compile-Debug-Settings)
+;; 	    Garnet-Compile-Debug-Settings)
+;;        ;; Global default settings.
+;;        (and (boundp 'Default-Garnet-Proclaim)
+;; 	    Default-Garnet-Proclaim))))
 
 
 (eval-when (:execute :load-toplevel :compile-toplevel)
@@ -38,12 +38,13 @@
 
 (defvar Protected-Eval-Compile-Files
   '(
-    "error"
-    "prompter"
-    "protected-eval"
-    "protected-process"
-    "abstract-errors"
-    "garnet-errors"))
+    ;; "error"
+    ;; "prompter"
+    ;; "protected-eval"
+    ;; "protected-process"
+    ;; "abstract-errors"
+    ;; "garnet-errors"
+    ))
 
 (with-compilation-unit ()
   (dolist (file Protected-Eval-Compile-Files)

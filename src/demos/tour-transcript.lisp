@@ -4,17 +4,7 @@
 ;;; A rough attempt to verify that the garnet "tour" works.
 ;;;
 
-(in-package "COMMON-LISP-USER")
-
-
-
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (dolist (pair 
-	    '((:radio-buttons "gg:radio-buttons-loader")
-	      (:v-slider      "gg:v-slider-loader")))
-    (unless (get :garnet-modules (first pair))
-      (cl-user::garnet-load (second pair))))
-)
+(in-package :demo)
 
 (defun do-tour ()
 
@@ -37,7 +27,7 @@ and see if things seem to be working..."
   (opal:update MYWINDOW)
   (y-or-n-p "Continue?")
 
-  (create-instance 'MYTEXT opal:text 
+  (create-instance 'MYTEXT opal:text
     (:left 200)(:top 80)
     (:string "Hello World"))
   (opal:add-component MYAGG MYTEXT)
@@ -79,7 +69,7 @@ and see if things seem to be working..."
   (s-value MYTEXT :justification :center)
   (opal:update MYWINDOW)
   (y-or-n-p "Continue?")
-  
+
   (create-instance 'MYBUTTONS gg:radio-button-panel
      (:items '(:center :left :right))
      (:left 350)(:top 20)

@@ -11,39 +11,24 @@
 ;;; $Id::                                                             $
 ;;
 
-
-(in-package "KR")
+(in-package "COMMON-LISP-USER")
 
-(eval-when (:execute :load-toplevel :compile-toplevel)
-  (export '(SCHEMA
-	    CREATE-INSTANCE CREATE-PROTOTYPE CREATE-RELATION CREATE-SCHEMA
-	    FORMULA O-FORMULA
-	    SCHEMA-P RELATION-P IS-A-P HAS-SLOT-P FORMULA-P
-	    S-VALUE G-VALUE G-CACHED-VALUE G-LOCAL-VALUE GV GVL GV-LOCAL
-	    GET-VALUE GET-LOCAL-VALUE
-	    DOVALUES DOSLOTS
-	    DEFINE-METHOD KR-SEND CALL-PROTOTYPE-METHOD APPLY-PROTOTYPE-METHOD
-	    METHOD-TRACE
-	    WITH-CONSTANTS-DISABLED WITH-TYPES-DISABLED
-	    WITH-DEMONS-DISABLED WITH-DEMON-DISABLED WITH-DEMON-ENABLED
-	    CHANGE-FORMULA MOVE-FORMULA RECOMPUTE-FORMULA COPY-FORMULA KR-PATH
-	    MARK-AS-CHANGED MARK-AS-INVALID
-	    PS CALL-ON-PS-SLOTS NAME-FOR-SCHEMA
-	    DECLARE-CONSTANT SLOT-CONSTANT-P
-	    DESTROY-SLOT DESTROY-SCHEMA DESTROY-CONSTRAINT
-	    DEF-KR-TYPE G-TYPE S-TYPE CHECK-SLOT-TYPE KR-BOOLEAN
-	    GET-TYPE-DOCUMENTATION SET-TYPE-DOCUMENTATION GET-TYPE-DEFINITION
-	    GET-DECLARATIONS GET-SLOT-DECLARATIONS
-	    G-FORMULA-VALUE S-FORMULA-VALUE
-	    SELF-OLD-VALUE
-	    )))
+(defvar *debug-kr-mode* t)
+
+
+(in-package :kr)
+
+(defparameter *dont-load-modules-twice* t
+  "*dont-load-modules-twice* tells whether to re-load modules
+if a user loads garnet-loader.lisp a second time.")
+
 
 
 (defparameter *kr-version* "2.3.4")
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defvar *special-kr-optimization*
-    '(optimize 
+    '(optimize
       (speed 3)
       #-allegro (safety 0) #+allegro (safety 1)
       (space 0)
@@ -64,7 +49,7 @@
 ;; The internal representation of a schema is as a structure, where the
 ;; <name> slot holds the name (or internal number) of the schema and the
 ;; <slots> slot holds a p-list of slot names and slot values.
-;; 
+;;
 (defstruct (schema (:predicate is-schema)
                    (:print-function print-the-schema))
   name      ; the schema name, or a number
@@ -93,7 +78,7 @@
 ;; This structure is similar to a schema, but is used to store formulas.
 ;; It prints out with an F instead of an S, and it uses the same positions for
 ;; different functions.
-;; 
+;;
 (defstruct (a-formula (:include schema) (:print-function print-the-schema))
   #-(and)
   number			   ; valid/invalid bit, and sweep mark.  Actually stored in the
@@ -320,7 +305,7 @@
   (defparameter *is-parameter-slot-bit*  (1+ *is-local-only-slot-bit*)))
 
 
-(declaim (fixnum *local-mask* *constant-mask* *is-update-slot-mask* 
+(declaim (fixnum *local-mask* *constant-mask* *is-update-slot-mask*
 		 *inherited-mask* *is-parent-mask* *clear-slot-mask*
 		 *inherited-parent-mask* *not-inherited-mask*
 		 *not-parent-mask* *not-parent-constant-mask*
@@ -435,7 +420,7 @@
 
 #+EAGER
 ;; types of evaluation--normal, in a cycle, or evaluation of a new formula
-;; 
+;;
 (defvar *eval-type* :normal)
 
 #+EAGER
@@ -868,7 +853,7 @@ modified to be a full-slot structure."
   `(logand (a-formula-number ,thing) (lognot 1)))
 
 (defmacro set-cache-mark (thing mark)
-  `(set-formula-number 
+  `(set-formula-number
     ,thing
     (logior (logand (a-formula-number ,thing) 1) ,mark)))
 
@@ -1074,7 +1059,7 @@ the formula object itself is returned."
 
 
 ;; GET-VALUES
-;; 
+;;
 ;;(defmacro get-values (schema slot)
 ;;  `(let ((values (get-value ,schema ,slot)))
 ;;     (if (listp values)
@@ -1102,7 +1087,7 @@ the formula object itself is returned."
 ;; Used to look in the :UPDATE-SLOTS of the <schema> to determine whether the
 ;; <slot> has an associated demon.  This gives us the freedom to let different
 ;; schemata have demons on possibly different slots.
-;; 
+;;
 ;; Now, it uses the <slot>'s is-update-slot bit to check.  This bit is set at
 ;; create-instance time by traversing the :UPDATE-SLOTS list of the <schema>.
 ;;
@@ -1216,7 +1201,7 @@ Inputs:
 		    &rest body)
 "Executes <body> with <variable> bound to all the values of the <slot> in
 <schema>."
-  
+
   `(locally (declare ,*special-kr-optimization*)
      (let* ((schema ,@(if (eq schema :SELF)
 			`(*schema-self*)
@@ -1297,10 +1282,7 @@ Note that <relation> should be a slot name, not a schema."
       (s-value schema slot values)))
 
 
-
 ;;; Methods.
-;;
-
 (defmacro kr-send (schema slot &rest args)
   (let ((the-schema (gensym))
 	(the-function (gensym)))
@@ -1378,7 +1360,7 @@ Note that <relation> should be a slot name, not a schema."
 ;;; Schemas
 
 ;; CREATE-SCHEMA
-;; 
+;;
 ;; The keyword :OVERRIDE may be used to indicate that the schema should
 ;; be kept, if it exists, and newly specified slots should simply override
 ;; existing ones.  The default behavior is to wipe out the old schema.
@@ -1437,10 +1419,9 @@ in (create-schema ~S).~%   Ignoring the :NAME-PREFIX.~%"
 ;;
 ;; I am not sure the following enhancement will work because of the
 ;; quote around the instance name... [2005/12/20:rpg]
-#+allegro (excl::define-simple-parser create-instance second)
 (defmacro create-instance (name class &body body)
   "If CLASS is not nil, creates a schema with an IS-A slot set to that class.
-Otherwise, just creates a schema."
+   Otherwise, just creates a schema."
   (when (and (listp class)
 	     (eq (car class) 'QUOTE))
     ;; Prevent a common mistake.
@@ -1506,7 +1487,7 @@ inside a formula, it also sets up a dependency, just like gv would.")
 
 
 ;;; Internal debugging function
-;; 
+;;
 (defmacro with (schema slot &body form)
   `(let* ((*schema-self* (if (numberp ,schema) (s ,schema) ,schema))
 	  (*schema-slot* ,slot)

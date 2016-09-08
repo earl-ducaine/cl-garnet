@@ -27,19 +27,19 @@
 			   (:size :large)
 			   (:family :serif)))
 
-(defun make-menu (top-agg names x y) 
-  (let (menu-name shadow all-items feedback frame prev-item this-item)
+(defun make-menu (top-agg names x y)
+  (let (menu-name my-shadow all-items feedback frame prev-item this-item)
 
     (create-instance 'menu-name opal:aggregate
       (:left x)(:top y)(:width 500) (:height 500)
       (:window (g-value top-agg :window))
       (:overlapping T)) ;**NIL**
 
-    (create-instance 'shadow opal:rectangle
+    (create-instance 'my-shadow opal:rectangle
       (:left (o-formula (gvl :parent :left)))
       (:top (o-formula (gvl :parent :top)))
       ;; width and height set later
-      (:name :shadow)
+      (:name :my-shadow)
       (:filling-style opal:black-fill)
       (:line-style NIL))
 
@@ -51,7 +51,7 @@
       (:filling-style opal:white-fill)
       (:name :frame)
       (:line-style opal:line-2)
-      (:shadow shadow)
+      (:shadow my-shadow)
       (:left (o-formula (+ 5 (gvl :shadow :left)) 0))
       (:top (o-formula (+ 5 (gvl :shadow :top)) 0))
       (:width (o-formula (gvl :shadow :width) 0))
@@ -59,7 +59,7 @@
 
     (opal:add-components top-agg menu-name)
 
-    (opal:add-components menu-name shadow frame all-items)
+    (opal:add-components menu-name my-shadow frame all-items)
 
     (create-instance 'feedback opal:rectangle
       (:name :feedback)
@@ -74,11 +74,11 @@
       (:height (o-formula (+ 2 (gvl :obj-over :height)) 0)))
 
     (opal:add-components menu-name feedback)
-    
+
     ; link together
     (s-value menu-name :feedback feedback)
     (s-value menu-name :all-items all-items)
-    
+
     ; create items
     (dolist (label names)
       (setq this-item
@@ -99,23 +99,23 @@
       (opal:add-components all-items this-item)
       (setf prev-item this-item))
 
-    (s-value shadow :height (formula 
+    (s-value my-shadow :height (formula
 			     `(let ((toth 0))
 				(when *test-debug* (format T "menu1 height~%"))
 				(dolist (item (g-value ',all-items
 						       :components))
 				  (setf toth (+ 4 toth (gv item :height))))
 				(+ 6 toth)) 0))
-    (s-value shadow :width (formula 
+    (s-value my-shadow :width (formula
 			    `(let ((maxw 0))
 			       (when *test-debug* (format T "menu1 width~%"))
 			       (dolist (item  (g-value ',all-items
 						       :components))
 				 (setf maxw (MAX maxw (gv item :width))))
 			       (+ 8 maxw)) 0))
-    
+
     menu-name))
-  
+
 
 (defun make-fixed-menu1 (agg names x y)
   (let (menu outline-feedback all-items )
@@ -183,7 +183,7 @@
 	   (s-value pop-menu :top (inter::event-y inter::*current-event*))
 	   (inter:start-interactor pop-inter NIL))
 	  (T (format T "Got a ~s~%" which-item)))))
-	  
+
 (defparameter texty 5)
 
 (defun Create-text-obj (feedback)
@@ -197,7 +197,7 @@
     (opal:add-component aggnewobj obj)
     (incf texty (g-value obj :height))
     (s-value text-feedback-obj :top texty)
-    (s-value (g-value menu3 :all-items) :selected NIL) 
+    (s-value (g-value menu3 :all-items) :selected NIL)
     obj))
 
 (defun Create-New-Obj (interactor point-list)
@@ -226,7 +226,7 @@
 	       (2 opal:gray-fill)
 	       (3 opal:dark-gray-fill))))
 	  (setq *glo-tone* (if (eq *glo-tone* 3) 0 (1+ *glo-tone*)))))
-	  
+
     (opal:add-component aggnewobj obj)
     (s-value (g-value menu3 :all-items) :selected NIL)
     (when *test-debug* (format T "created ~s~%" obj))
@@ -239,7 +239,7 @@
   (setq pop-menu (make-fixed-menu1 aggmenu stringlist 0 0))
   (s-value pop-menu :visible NIL)
 
-  (create-instance 'pop-inter inter:menu-interactor 
+  (create-instance 'pop-inter inter:menu-interactor
     (:start-where NIL)
     (:feedback-obj (g-value pop-menu :feedback))
     (:running-where
@@ -261,7 +261,7 @@
 	 (s-value pop-menu :visible NIL)
 	 (s-value (g-value pop-menu :all-items) :selected NIL)
 	 ))))
-		     
+
 ;;-----------------------------------
 
 
@@ -279,7 +279,7 @@
   (opal:update vpmain)
 
   (setq vpmenu vpmain)
-  (s-value vpmain :aggregate 
+  (s-value vpmain :aggregate
 	   (create-instance 'aggmenu opal:aggregate (:overlapping T)))
 
   (create-instance 'aggmain opal:aggregate
@@ -309,7 +309,7 @@
   (opal:add-component aggmenu aggmain)
 
   (setq inter3
-	(create-instance 'main-menu-inter inter:menu-interactor 
+	(create-instance 'main-menu-inter inter:menu-interactor
 	  (:feedback-obj (g-value menu3 :feedback))
 	  (:start-where
 	   `(:element-of ,(g-value menu3 :all-items)))
@@ -336,7 +336,7 @@
 			(:y1 (o-formula (second (gvl :points))))
 			(:x2 (o-formula (third (gvl :points))))
 			(:y2 (o-formula (fourth (gvl :points))))
-			(:visible NIL)  
+			(:visible NIL)
 			(:points '(0 0 0 0))
 			(:line-style opal:dashed-line)))
 

@@ -14,53 +14,8 @@
 ;; Designed and implemented by Brad A. Myers
 
 
-(in-package "INTERACTORS")
+(in-package :interactors)
 
-;;; the exported functions
-(eval-when (:execute :load-toplevel :compile-toplevel)
-  (export '(
-	    ;; for animation
-	    start-animator Stop-Animator abort-animator animator-interactor
-	    animator-wrap animator-bounce Reset-All-Timer-Processes
-	    ;; entering and leaving main event loop
-	    main-event-loop exit-main-event-loop *garnet-break-key*
-	    ;; waiting for an interaction to complete
-	    Interaction-Complete Wait-Interaction-Complete
-	    ;;explicit control of interactors
-	    Change-Active Start-Interactor Abort-Interactor Stop-Interactor
-	    ;; Called by KR when :active or :window changes:
-	    Notice-Interactor-Slot-Changed
-	    ;; support for multiple priority levels
-	    priority-level normal-priority-level high-priority-level
-	    running-priority-level priority-level-list 
-	    ;; the next ones are for debugging
-	    Reset-Inter-Levels Print-Inter-Levels Print-Inter-Windows
-	    trace-inter untrace-inter *debug-next-inter* Do-All-Interactors
-	    ;; interactor event structure (copy of X's event structure)
-	    *Current-Event* *Garnet-Break-Key*
-	    event-x event-y event-char event-code event-mousep
-	    event-downp event-window event-timestamp make-event
-	    ;; for controlling double clicks
-	    *double-click-time*
-	    ;; key translations for text-inter
-	    Bind-Key Unbind-Key Unbind-All-Keys Set-Default-Key-Translations
-	    ;;transcripting functions
-	    Transcript-Events-To-File Close-Transcript
-	    Transcript-Events-From-File
-	    ;; useful utility functions
-	    Clip-And-Map Beep Insert-Text-Into-String Warp-Pointer
-	    Pop-Up-Win-And-Start-Interactor
-	    ;; functions for dealing with selection for button and menu
-	    Return-Final-Selection-Objs DeSelectObj SelectObj
-	    ;; the various exported interactor types
-	    interactor interactor-window button-interactor text-interactor
-	    two-point-interactor move-grow-interactor menu-interactor
-	    angle-interactor scroll-wheel-interactor
-	    ;; Export these if debugging is enabled.
-	    #+garnet-debug *int-debug* #+garnet-debug *int-trace*
-	    )))
-
-
 ;;; Variables used for noticing changed slots
 ;;
 
@@ -69,13 +24,13 @@
 with (Check-and-handle-changed-inters)")
 
 (defparameter *Inters-With-T-Window* NIL
-  "A list of all the interactors that have a (:window T).  
+  "A list of all the interactors that have a (:window T).
 This is needed because when new windows are  created,
 they need to be added to these interactor's lists.")
 
 (defparameter *Visible-Modal-Windows* NIL
   "A list of the windows that are modal (stealing all input)
-that are visible.  When this list is non-nil, only interactors 
+that are visible.  When this list is non-nil, only interactors
 in these windows will operate.  Note that sub-windows of these
 windows must have their :modal-p bit set.  This list is maintained
 automatically by update on interactor windows looking at the
@@ -83,7 +38,7 @@ automatically by update on interactor windows looking at the
 
 (defparameter *Special-Grab-Up-Inter* NIL
   "Holds a single interactor. When an interactor is supposed to work
-over multiple windows, it won't get events when the mouse is over 
+over multiple windows, it won't get events when the mouse is over
 other garnet windows.  This variable is used as a hack to make
 those events go to this interactor, when the interactor is running.
 The variable is set by turn-on{off}-mouse-moved.")
@@ -132,7 +87,7 @@ The variable is set by turn-on{off}-mouse-moved.")
 ;; Test for selective tracing. Put this around any print-out statements
 ;; ** Only generates code if #+garnet-debug feature is present at compile time
 ;;
-;; NOTE: inter is an interactor or may be one of: 
+;; NOTE: inter is an interactor or may be one of:
 ;;       :window -- trace things about interactor windows (create, destroy, etc.)
 ;;       :priority-level -- trace changes to priority levels
 ;;       :mouse -- trace set-interested-in-moved and ungrab-mouse
@@ -146,7 +101,7 @@ The variable is set by turn-on{off}-mouse-moved.")
   #-garnet-debug
   (declare (ignore inter body))
   )
-  
+
 (defmacro debug-p (inter)
   "Returns T or NIL based on whether should trace or not.  Should be same
 test as in if-debug (used when debugging value being passed as a parameter).
@@ -237,7 +192,7 @@ If no debug (because :garnet-debug is not on *features*), just generate NIL"
 
 
 ;;; General code.
- 
+
 (Defun Error-Print (slotdesc value shouldbe inter)
   (Error "The ~a of the interactor ~s should be a ~a,~%     but it is ~s.~%"
 	 slotdesc inter shouldbe value))
@@ -283,16 +238,16 @@ clears the variable."
 	  (if feedbackp " (Feedback-Obj)" "")
 	  val))
 
-(defmacro dbprint (slot obj val inter) 
+(defmacro dbprint (slot obj val inter)
   `(if-debug ,inter (dbprinter ,slot ,obj ,val NIL)))
 
-(defun dbprint-either (slot obj val inter feedbackp) 
-  `(if-debug ,inter (dbprinter ,slot ,obj ,val ,feedbackp))) 
+(defun dbprint-either (slot obj val inter feedbackp)
+  `(if-debug ,inter (dbprinter ,slot ,obj ,val ,feedbackp)))
 
-(defmacro dbprint-sel (slot obj val inter) 
+(defmacro dbprint-sel (slot obj val inter)
   `(if-debug ,inter (dbprinter ,slot ,obj ,val NIL)))
 
-(defmacro dbprint-feed (slot obj val inter) 
+(defmacro dbprint-feed (slot obj val inter)
   `(if-debug ,inter (dbprinter ,slot ,obj ,val T)))
 
 (defun dbstrprinter (obj feedbackp)
@@ -301,7 +256,7 @@ clears the variable."
 	  (g-value obj :string)
 	  (g-value obj :cursor-index)))
 
-(defmacro dbprint-str (obj inter feedbackp) 
+(defmacro dbprint-str (obj inter feedbackp)
   `(if-debug ,inter (dbstrprinter ,obj ,feedbackp)))
 
 
@@ -388,7 +343,7 @@ clears the variable."
 ;; sure that the interactor (or all the interactors at the priority level) are
 ;; aborted if becoming in-active.  You can also set the active slot
 ;; of an interactor directly.
-(defun Change-Active (inter-or-level 
+(defun Change-Active (inter-or-level
 		      &optional
 			(new-value (g-value inter-or-level :active)))
   "Call this to change the status of an interactor or interactor priority-level
@@ -400,14 +355,14 @@ immediately.  If Active=T then will run, if active=NIL, then will not run."
 			 (format T "Change interactor ~s TO active~%" inter-or-level))
 	       (s-value inter-or-level :active T))
 	     (progn
-	       (if-debug inter-or-level 
+	       (if-debug inter-or-level
 			 (format T "Change interactor ~s TO IN-active~%" inter-or-level))
 	       (s-value inter-or-level :active NIL)
 	       (unless (eq :start (get-local-value inter-or-level :current-state))
 		 (Kr-Send inter-or-level :Do-abort inter-or-level T NIL)
 		 (opal:update-all)))))
 	((is-a-p inter-or-level priority-level)
-	 (if new-value 
+	 (if new-value
 	     (progn
 	       (if-debug :priority-level
 			 (format T "Change priority level ~s TO active~%"
@@ -482,7 +437,7 @@ Event can be T to use the previous event."
   "Call this to abort the interactor if it is running."
   (Internal-abort-interactor inter)
   (opal:update-all))
-  
+
 (defun Internal-Abort-Interactor (inter)
   (Check-and-handle-changed-inters)
   (if-debug inter
@@ -608,7 +563,7 @@ but already there~%" inter level win)
   (let ((wins (Get-Interactor-Windows inter)))
     (if (listp wins)
 	(dolist (win wins)
-	  (Remove-Interactor-From-Level-Win inter level win 
+	  (Remove-Interactor-From-Level-Win inter level win
 					    ;; if just-moving, then
 					    ;; don't have to deal with
 					    ;; multi-win
@@ -652,7 +607,7 @@ but already there~%" inter level win)
 	 (setq prev-local local-list)
 	 (setq local-list (cdr local-list)))
        (setq glo-list (cdr glo-list)))
-    ;; 
+    ;;
     (if prev-local
 	;; then attach to end of first element
 	(setf (cdr prev-local) new-item)
@@ -714,7 +669,7 @@ but already there~%" inter level win)
    Does not call func on root-inter itself."
   (dolist (int (g-value root-inter :is-a-inv))
     (funcall func int)
-    (Do-All-Interactors func int))) 
+    (Do-All-Interactors func int)))
 
 ;; useful for debugging, gets rid of all interactors.  Doesn't
 ;; destroy them, but simply removes them from the levels.
@@ -751,7 +706,7 @@ but already there~%" inter level win)
 
 ;; destroys all the interactors on the window
 ;; Be careful not to destroy an interactor if on this window and other
-;; windows also.  
+;; windows also.
 (defun destroy-all-interactors (window)
   (if-debug :window (format T "Destroy all interactors for win ~s~%" window))
   ;; copy the list since destroy will modify the list
@@ -777,7 +732,7 @@ but already there~%" inter level win)
 	     (unless (eq (g-value actor :start-event) t)
 	       (setf *Special-Grab-Up-Inter* actor))
 	     )
-	    ((listp win)		; then do each one 
+	    ((listp win)		; then do each one
 	     (dolist (w win)
 	       (pushnew actor (g-value w :current-want-moved-interactors))
 	       (gem:set-interest-in-moved w T))
@@ -804,14 +759,14 @@ but already there~%" inter level win)
 		      (deleteplace actor
 				   (g-value w :current-want-moved-interactors)))
 		 (gem:set-interest-in-moved w NIL))))
-	    ((listp win)		; then do each one 
+	    ((listp win)		; then do each one
 	     (dolist (w win)
 	       (when (null
 		      (deleteplace actor
 				   (g-value w :current-want-moved-interactors)))
 		 (gem:set-interest-in-moved w NIL))))
 	    (t (error "Window slot of inter ~s has wrong form" actor))))))
-	
+
 ;; Adds the schema to the correct level and turns on mouse moved events,
 ;; if necessary
 (defun Add-to-level (an-interactor running-p need-mouse-moved just-moving)
@@ -833,7 +788,7 @@ but already there~%" inter level win)
 	     (or (not (eq (g-value an-interactor :start-event) t))
 		 (not (g-value an-interactor :active))))
     (turn-off-mouse-moved an-interactor)))
-  
+
 (defun Move-Levels (an-interactor from-running-p to-running-p needMouseMoved)
   (remove-from-level an-interactor from-running-p T)
   (add-to-level an-interactor to-running-p needMouseMoved T))
@@ -872,7 +827,7 @@ but already there~%" inter level win)
 	  ((eq old-window t)
 	   (dolist (win all-inter-windows)
 	     (deleteplace inter (g-value win :all-interactors))))
-	  ((listp old-window) 
+	  ((listp old-window)
 	   (dolist (win old-window)
 	     (when (schema-p win)
 	       (deleteplace inter (g-value win :all-interactors)))))))
@@ -882,7 +837,7 @@ but already there~%" inter level win)
 	  ((eq new-window t)
 	   (dolist (win all-inter-windows)
 	     (pushnew inter (g-value win :all-interactors))))
-	  ((listp new-window) 
+	  ((listp new-window)
 	   (dolist (win new-window)
 	     (when (schema-p win)
 	       (pushnew inter (g-value win :all-interactors))))))))
@@ -926,11 +881,11 @@ but already there~%" inter level win)
 			inter win level))
       (Add-Interactor-To-Level-Win inter level win T)
       ;; add inter to list of all the interactors for this window
-      (pushnew inter (g-value win :all-interactors)) 
+      (pushnew inter (g-value win :all-interactors))
       (when running-p
 	(pushnew inter (g-value win :current-want-moved-interactors))
 	(gem:set-interest-in-moved win T)))))
-      
+
 ;; pulls the aggregate object out of the :where field specified
 (defun Get-Gob-Of-Where (where)
   (cond ((null where) NIL)
@@ -962,10 +917,10 @@ but already there~%" inter level win)
   (declare (ignore save slot))
   (pushnew inter *Changed-Interactors*))
 
-  
+
 (defun Handle-All-Changed-Interactors ()
   ;; use temporary pointer, so more robust in case this procedure
-  ;; crashes, *Changed-Interactors* list will be NIL 
+  ;; crashes, *Changed-Interactors* list will be NIL
   (let ((l *Changed-Interactors*))
     (setq *Changed-Interactors* NIL)
     (dolist (inter l)
@@ -990,7 +945,7 @@ but already there~%" inter level win)
 
     (if (and new-window new-active)
 	;; then should be added to a level
-	(progn 
+	(progn
 	  ;; first, maintain the global list for inters using (:window T)
 	  (if (eq new-window T)
 	      (pushnew inter *Inters-With-T-Window*)
@@ -1052,7 +1007,7 @@ but already there~%" inter level win)
 	  (s1 T)
 	  (s2 NIL)
 	  (T NIL))))
-	
+
 
 ;;; Middle level dispatcher for events; called from i-windows
 ;;
@@ -1087,7 +1042,7 @@ but already there~%" inter level win)
 	    (return-from process-event))
 	  ;; if no modal windows visible, then use this
 	  ;; gross hack in case press window set move to another Garnet window.
-	  (when 
+	  (when
 	      (and *Special-Grab-Up-Inter*
 		   (not (eq (setq grab-win
 				  (g-value *Special-Grab-Up-Inter* :window))
@@ -1156,12 +1111,12 @@ but already there~%" inter level win)
 			      (setf found-one T)
 			      (when (and sorted-inters
 					 ex-value)
-				;; then set up skip set 
+				;; then set up skip set
 				(push ex-value skip-set)
 				(if-debug :priority-level
 					  (format T "**Pushing ~s into skip set~%"
 						  ex-value))))))
-					 
+
 			;; else not in window's assoclist
 			)
 		    ;; since active, check whether stop or not
@@ -1175,7 +1130,7 @@ but already there~%" inter level win)
 				(g-value glo-level :stop-when)
 				glo-level))))
 		  ;; else not active
-		  (progn 
+		  (progn
 		    (if-debug :priority-level ;; print that skipped
 			      (format T " **Skipped because this level is not active~%"))
 		    ;; check to see whether go to next level in other list
@@ -1222,7 +1177,7 @@ but already there~%" inter level win)
     (when index (nth (1+ index) sequence))))
 
 (defun Get-Running-where (an-interactor)
-  "Running where can either be supplied or generated.  
+  "Running where can either be supplied or generated.
 If generated, it might be from start-where or if running-where
 was (:xx *). See Fix-Running-Where for full details."
   (or (get-local-value an-interactor :generated-running-where)
@@ -1237,7 +1192,7 @@ checks to see if obj is any of the types in the list."
 			(when (is-a-p obj ty)
 			  (return-from checkobjtype T))) NIL)
 	(t (is-a-p obj type))))
-      
+
 (defun list-element-of-branch (agg control slot type win x y)
   (let ((lst (g-value agg slot)))
     (or (dolist (i lst)
@@ -1304,10 +1259,10 @@ checks to see if obj is any of the types in the list."
 
 
 (defun check-location (event which-where an-interactor)
-  "XXX FMG Not sure if this matches the code. 
-checks to see if x,y is inside WHERE, returns the object 
+  "XXX FMG Not sure if this matches the code.
+checks to see if x,y is inside WHERE, returns the object
 under the mouse if passes.  If WHERE is :element-of, this
-will be the element object.  If WHERE is :in or :in-box, 
+will be the element object.  If WHERE is :in or :in-box,
 then will be the object itself.  Returns NIL if fails
 ******** BUG ***NO WAY FOR OVERLAPPING OBJECTS TO HIDE EACH OTHER FROM
 ******** THE MOUSE!  (Have to use priority levels)"
@@ -1349,7 +1304,7 @@ then will be the object itself.  Returns NIL if fails
 		       ;; else check if window of object eq window of event
 		       (unless (eq win objwin) ; otherwise test here
 			 (if-debug an-interactor
-				   (format T " **WINDOWS DON'T MATCH** ev-win=~s obj-win=~s~%" 
+				   (format T " **WINDOWS DON'T MATCH** ev-win=~s obj-win=~s~%"
 					   win objwin))
 			 (return-from check-location NIL)))
 		   (if-debug an-interactor (format T "~s of ~s" control agg)
@@ -1441,7 +1396,7 @@ the same cases (for all the special keywords)."
 	(code (inter::event-code event))
 	(key-button (inter::event-char event))
 	(downp (inter::event-downp event)))
-    
+
     (cond ((eq event-desired key-button)
 	   (cond ((eq key-button :window-enter) :window-exit)
 		 ((eq key-button :window-exit) :window-exit)
@@ -1454,19 +1409,19 @@ the same cases (for all the special keywords)."
 		(not (eq key-button :timer))) ; timer doesn't
 	   ;; match keyboard
 	   #\RETURN)
-	  
+
 	  ((or (and (eq event-desired :any-mouseup) mousep (null downp)
 		    code)		; code is NIL for window-exit and -enter
 	       (and (eq event-desired :any-mousedown) mousep downp))
 	   :any-mouseup)
-	  
+
 	  ((and (eq event-desired :any-leftdown)
 		mousep downp (eq code inter::*left-button*)) :any-leftup)
 	  ((and (eq event-desired :any-middledown)
 		mousep downp (eq code inter::*middle-button*)) :any-middleup)
 	  ((and (eq event-desired :any-rightdown)
 		mousep downp (eq code inter::*right-button*)) :any-rightup)
-	  
+
 	  ((and (eq event-desired :any-leftup)
 		mousep (null downp) (eq code inter::*left-button*)) :any-leftup)
 	  ((and (eq event-desired :any-middleup)
@@ -1475,7 +1430,7 @@ the same cases (for all the special keywords)."
 		mousep (null downp) (eq code inter::*right-button*)) :any-rightup))))
 ;; if none of these pass, then the event doesn't match
 
-  
+
 
 ;; This procedure generates a stop event for an interactor based on its
 ;; :start-event.  This does not use an actual event from X, so it just picks
@@ -1513,7 +1468,7 @@ event, in case needed, and stores this in the interactor."
 	    ;; else if not start-event, always return NIL for moved
 	    NIL)))
 
-    ;; actual-event is not mouse-moved  
+    ;; actual-event is not mouse-moved
     (when (and (null events-desired) (eq :stop-event which-event))
       ;; when null, use the generated default stop event, if any
       (setq events-desired (g-value interact :generated-stop-event)))
@@ -1533,7 +1488,7 @@ event, in case needed, and stores this in the interactor."
 	       (return-from int-check-event nil)))
 	   ;; check allowable events
 	   (dolist (option events-desired)
-	     (if (eq option :except) (return-from int-check-event nil)) 
+	     (if (eq option :except) (return-from int-check-event nil))
 	     (when (setf stop-event
 			 (compare-and-get-possible-stop-event
                           actual-event option))
@@ -1541,7 +1496,7 @@ event, in case needed, and stores this in the interactor."
 	  ;; here, not a list
 	  (t (setf stop-event (compare-and-get-possible-stop-event
                                actual-event events-desired))))
-    
+
     (when stop-event			; then should return T, otherwise NIL
       (when (eq which-event :start-event)
 	;; set default stop-event in case needed
@@ -1550,9 +1505,9 @@ event, in case needed, and stores this in the interactor."
 
 (defun Fix-Running-Where (an-interactor new-obj-over)
   "If running-where is empty, then copies :start-where.
-Otherwise, checks to see if running-where is of the form '(:xx *), 
+Otherwise, checks to see if running-where is of the form '(:xx *),
 then changes running-where to be '(:xx new-obj-over).
-This is called from every interactor's start procedure 
+This is called from every interactor's start procedure
 if it is continuous."
   (let ((r-w (g-value an-interactor :running-where))
 	r-w-copy)
@@ -1595,24 +1550,24 @@ if it is continuous."
   (when set-waiting-level
     (Move-levels an-interactor T NIL NIL)))
 
-  
+
 
 ;;; Main General go procedure
 ;;
 
 (defun General-Go (an-interactor event)
-  "This is the main action procedure that makes the most 
-interactors go. This procedure implements the state machine.  
+  "This is the main action procedure that makes the most
+interactors go. This procedure implements the state machine.
 It is called by the main dispatcher when an event happens.
 The Event is the value returned by the window manager.
 This procedure calls the Do-xxx procedures in the
-interactor, which are specialized for the particular type 
+interactor, which are specialized for the particular type
 of interactor. The do-xxx procedures in turn call the
 xxx-action procedures.  These -action procedures my be
 supplied by outside applications.
 
-The complexity in the state machine implementation is that 
-the same event may cause two things, e.g., both going outside 
+The complexity in the state machine implementation is that
+the same event may cause two things, e.g., both going outside
 and stop. We cannot count on getting different events for this."
   (let ((state (get-local-value an-interactor :current-state))
 	(active (g-value an-interactor :active))
@@ -1631,7 +1586,7 @@ and stop. We cannot count on getting different events for this."
     ;; now, must have both :active and :window as Non-NIL
     (unless (and active window)
       (unless (eq :start state)
-	(if-debug an-interactor (format T "** Implicit become inactive~%")) 
+	(if-debug an-interactor (format T "** Implicit become inactive~%"))
 	(Kr-Send an-interactor :Do-abort an-interactor T event)
 	(opal:update-all)
 	)
@@ -1689,7 +1644,7 @@ and stop. We cannot count on getting different events for this."
 			      (check-location event :running-where an-interactor))
 			(setf should-stop
 			      (check-event event :stop-event an-interactor))
-			
+
 			(if (null obj)	;went outside
 			    (progn
 			      (if-debug :short
@@ -1712,7 +1667,7 @@ and stop. We cannot count on getting different events for this."
 				  (progn
 				    (if-debug :short
 					      (format T "running ~s~%" an-interactor))
-				    (setq return-val 
+				    (setq return-val
 					  (Kr-Send an-interactor
 						   :Do-running an-interactor obj event)))))))))
 	(:outside (Check-and-handle-debug-next-inter an-interactor)
@@ -1744,7 +1699,7 @@ and stop. We cannot count on getting different events for this."
 							:Do-back-inside an-interactor
 							obj event))
 			      (when should-stop
-				(setq return-val 
+				(setq return-val
 				      (Kr-Send an-interactor
 					       :Do-stop an-interactor obj event))))))))
 	(otherwise (error "** illegal state ~s" state))))
@@ -1817,7 +1772,7 @@ and stop. We cannot count on getting different events for this."
   (deleteplace an-interactor *changed-interactors*)
 
   ;; if on T-list, remove it; does nothing if not there
-  (deleteplace an-interactor *Inters-With-T-Window*) 
+  (deleteplace an-interactor *Inters-With-T-Window*)
   ;; if special, remove it
   (when (eq an-interactor *Special-Grab-Up-Inter*)
     (setq *Special-Grab-Up-Inter* NIL))
@@ -1826,7 +1781,7 @@ and stop. We cannot count on getting different events for this."
   (Handle-Inter-List-for-Window (g-value an-interactor :copy-old-window)
 				NIL an-interactor)
   (Remove-from-all-levels an-interactor)
-  
+
   (let ((in-obj (g-local-value an-interactor :operates-on)))
     (when (and (schema-p in-obj)
 	       (not (kr::slot-constant-p in-obj :operates-on)))

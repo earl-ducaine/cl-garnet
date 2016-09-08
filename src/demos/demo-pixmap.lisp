@@ -19,7 +19,7 @@
 ;;
 
 
-(in-package :DEMO-PIXMAP)
+(in-package :demo-pixmap)
 
 (unless (get :garnet-modules :text-buttons)
   (common-lisp-user::garnet-load "gadgets:text-buttons-loader"))
@@ -52,8 +52,7 @@
   (:width *square-size*)
   (:height *square-size*))
 
-
-(defun CHANGE-RECTANGLE-COLOR (dum xy)
+(defun change-rectangle-color (dum xy)
   (declare (ignore dum))
   (let ((pixarray (g-value *pm* :pixarray))
 	(selected-obj (g-value color-prop :feedback :obj-over)))
@@ -63,7 +62,6 @@
 	  (setf (aref pixarray x y) (g-value newfill :foreground-color :colormap-index))
 	  (opal:change-item the-array newfill x y))
 	(opal:update *w3* t)))))
-
 
 (defun find-fill-style (index)
   (do ((styles (g-value opal:filling-style :is-a-inv) (cdr styles)))
@@ -160,7 +158,7 @@
   (:foreground-color opal:white))
 
 (create-instance 'color-boxes opal:aggregadget
-  (:parts `(	   
+  (:parts `(
     (:WHITE-BOX ,COLOR-BOX
       (:FILLING-STYLE ,my-white-fill)
       (:TOP 40))
@@ -191,7 +189,7 @@
 )))
 
 (create-instance 'label-texts opal:aggregadget
-  (:parts `(	   
+  (:parts `(
     (:COLOR-SELECTION ,OPAL:MULTI-TEXT
       (:STRING "Color-Selection")
       (:FONT ,(create-instance nil OPAL:FONT
@@ -322,7 +320,7 @@
 	  (cond ((equal string "Read")
 		 (Do-Read (g-value *input-file-name-box* :value)))
 		((equal string "Save")
-		 (demos-controller:message 
+		 (demos-controller:message
 		  "Saving into ~A... "
 		  (g-value *output-file-name-box* :value))
 		 (opal::write-xpm-file
@@ -334,7 +332,7 @@
 		 (s-value *output-file-name-box* :visible nil)
 		 (s-value *input-file-name-box* :visible nil)
 		 (opal:update *w3*)
-		 (opal:make-ps-file *w3* 
+		 (opal:make-ps-file *w3*
 				    (g-value *output-file-name-box* :value))
 		 (s-value read-save :visible T)
 		 (s-value *output-file-name-box* :visible T)
@@ -342,7 +340,7 @@
 		 (opal:update *w3*))
 		((equal string "Quit")
 		 (Do-stop)))))
-     
+
      (:left 10) (:top 90))
   (opal:add-components a3 read-save *input-file-name-box* *output-file-name-box*)
 

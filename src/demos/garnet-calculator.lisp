@@ -134,7 +134,7 @@
 ;;;		  get the name of the app window, then you use
 ;;;		  "(kr:g-value <app-window> :app-object)"
 ;;;
-;;;	- gcalc uses the special Opal object "k-framed-text" defined above 
+;;;	- gcalc uses the special Opal object "k-framed-text" defined above
 ;;;
 ;;;		- Clearly, this object must be loaded before running gcalc
 
@@ -180,7 +180,7 @@
 
 (defvar      *greeting-font*         (opal:get-standard-font
                                       :serif :italic :very-large))
-(defconstant +greeting+
+(defvar +greeting+
 "
 
 The Garnet Calculator
@@ -190,13 +190,13 @@ by
 David S. Kosbie")
 
 
-(defconstant +cut-paste-column+
-       '(       ("Copy"  #\X    copy-button)
-	        ("Paste" #\P    paste-button)
-	        ("Keys"  #\K    keys-button)
-	        ("Quit"  #\Q    quit-button) )  )
+(defvar +cut-paste-column+
+  '(("Copy"  #\X    copy-button)
+    ("Paste" #\P    paste-button)
+    ("Keys"  #\K    keys-button)
+    ("Quit"  #\Q    quit-button) )  )
 
-(defconstant +button-list+		 
+(defvar +button-list+
   '(    (	("1/x"  #\i    1/x-button)
 		("INV"  #\I    inv-button)
 		("e"    #\e    e-button)
@@ -246,11 +246,11 @@ David S. Kosbie")
 
 (defun my-/ (a b) (if (zerop b) :error (/ a b)))
 
-(defconstant ++-op-spec+ (cons #'+     1))
-(defconstant +--op-spec+ (cons #'-     1))
-(defconstant +*-op-spec+ (cons #'*     2))
-(defconstant +/-op-spec+ (cons 'my-/  2))
-(defconstant +^-op-spec+ (cons #'expt  3))
+(defvar ++-op-spec+ (cons #'+     1))
+(defvar +--op-spec+ (cons #'-     1))
+(defvar +*-op-spec+ (cons #'*     2))
+(defvar +/-op-spec+ (cons 'my-/  2))
+(defvar +^-op-spec+ (cons #'expt  3))
 
 
                      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -327,7 +327,7 @@ David S. Kosbie")
 			(kr:g-value result :string)
 			new-string))
   (do-update app-object result)))
-  
+
 (defun do-number (app-object digit)
  (let ((result-string (kr:g-value app-object :result :string))
        (memories      (kr:g-value app-object :memories))
@@ -348,7 +348,7 @@ David S. Kosbie")
         (if (string= result-string "0")
             (set-result app-object digit)
             (add-to-end app-object digit)))))))
-	 
+
 (defun convert-to-drg (app-object number)
  (if (complexp number)
   :error
@@ -410,7 +410,7 @@ David S. Kosbie")
   (careful-set-result app-object
     (cond ((eq prev-key #\I)
            (convert-to-drg app-object (asin (get-result app-object))))
-          ((zerop result) 
+          ((zerop result)
            0)
           (t
            (sin (get-radians-result app-object)))))))
@@ -494,14 +494,14 @@ David S. Kosbie")
   (set-result app-object 0))
 
 (defun TAN-BUTTON (app-object)
- (let ((prev-key (kr:g-value app-object :prev-key)) 
+ (let ((prev-key (kr:g-value app-object :prev-key))
        (result (get-result app-object)))
   (kr:s-value app-object :new-number? T)
   (kr:s-value app-object :prev-key #\t)
   (set-result app-object
     (cond ((eq prev-key #\I)
            (convert-to-drg app-object (atan (get-result app-object))))
-          ((zerop result) 
+          ((zerop result)
            0)
           (t
            (tan (get-radians-result app-object)))))))
@@ -678,7 +678,7 @@ top-tag
 	   (declare (ignore win))
 	   (common-lisp-user::Garnet-Note-Quitted "GARNET-CALCULATOR"))
        (g-value main-window :destroy-hooks)))
-   
+
 
     (kr:s-value main-window :aggregate main-agg)
     (kr:s-value app-object :main-window main-window)
@@ -876,7 +876,7 @@ top-tag
   (if (kr:schema-p *Demo-App-Obj*)
       (warn "Garnet-Calc demo is already running -- must do-stop first.")
       (setf *Demo-App-Obj* (start-calc :double-buffered-p double-buffered-p)))
-  
+
   (unless dont-enter-main-event-loop #-cmu (inter:main-event-loop))
   )
 

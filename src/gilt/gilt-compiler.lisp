@@ -14,14 +14,14 @@
 
 (defvar *debug-gilt-mode* nil)
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (proclaim
-   (if *debug-gilt-mode*
-       (and (boundp 'Garnet-Compile-Debug-Settings)
-	    Garnet-Compile-Debug-Settings)
-       ;; Global default settings.
-       (and (boundp 'Default-Garnet-Proclaim) 
-	    Default-Garnet-Proclaim))))
+;; (eval-when (:compile-toplevel :load-toplevel :execute)
+;;   (proclaim
+;;    (if *debug-gilt-mode*
+;;        (and (boundp 'Garnet-Compile-Debug-Settings)
+;; 	    Garnet-Compile-Debug-Settings)
+;;        ;; Global default settings.
+;;        (and (boundp 'Default-Garnet-Proclaim)
+;; 	    Default-Garnet-Proclaim))))
 
 
 
@@ -69,21 +69,28 @@
 
 (defvar gilt-files
   '(
-    "gilt-functions" "path-functions" "filter-functions"
-    "gilt-font-imp" "motif-gilt-font-props"
-    "gilt-gadget-utils" "gilt-gadgets" "motif-gilt-gadgets"
-    "gilt"
-     "motif-gilt-save"
-     "motif-gilt-read"
-    "color-imp" "motif-color-props"
-    "line-imp" "motif-line-props"
-    "fill-imp" "motif-fill-props"
-    "align"
-    
-    "value-control"
-    "enable-control"
-    "error-check"
-		     ))
+    ;; "gilt-functions"
+    ;; "path-functions"
+    ;; "filter-functions"
+    ;; "gilt-font-imp"
+    ;; "motif-gilt-font-props"
+    ;; "gilt-gadget-utils"
+    ;; "gilt-gadgets"
+    ;; "motif-gilt-gadgets"
+    ;; "gilt"
+    ;; "motif-gilt-save"
+    ;; "motif-gilt-read"
+    ;; "color-imp"
+    ;; "motif-color-props"
+    ;; "line-imp"
+    ;; "motif-line-props"
+    ;; "fill-imp"
+    ;; "motif-fill-props"
+    ;; "align"
+    ;; "value-control"
+    ;; "enable-control"
+    ;; "error-check"
+    ))
 
 (dolist (file gilt-files)
   (let ((gilt-str (concatenate 'string "gilt:" file)))

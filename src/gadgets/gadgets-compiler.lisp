@@ -53,14 +53,14 @@
 
 (defvar *debug-gadgets-mode* nil)
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (proclaim
-   (if *debug-gadgets-mode*
-       (and (boundp 'Garnet-Compile-Debug-Settings)
-	    Garnet-Compile-Debug-Settings)
-       ;; Global default settings.
-       (and (boundp 'Default-Garnet-Proclaim) 
-	    Default-Garnet-Proclaim))))
+;; (eval-when (:compile-toplevel :load-toplevel :execute)
+;;   (proclaim
+;;    (if *debug-gadgets-mode*
+;;        (and (boundp 'Garnet-Compile-Debug-Settings)
+;; 	    Garnet-Compile-Debug-Settings)
+;;        ;; Global default settings.
+;;        (and (boundp 'Default-Garnet-Proclaim)
+;; 	    Default-Garnet-Proclaim))))
 
 
 ;; Only loads this file when not compiling all of Garnet.
@@ -69,83 +69,83 @@
 
 (eval-when (:load-toplevel :compile-toplevel :execute)
   (garnet-mkdir-if-needed Garnet-Gadgets-Pathname))
-		    
+
 (Defvar Garnet-Gadgets-Files
   '(
-    "GAD-scroll-parts"			; Helper modules containing definitions for 
-    "GAD-slider-parts"			; scroll bar and slider objects
-    "GAD-v-arrows"
-    "GAD-v-boxes"
-    "GAD-h-arrows"
-    "GAD-h-boxes"
+    ;; "GAD-scroll-parts"			; Helper modules containing definitions for
+    ;; "GAD-slider-parts"			; scroll bar and slider objects
+    ;; "GAD-v-arrows"
+    ;; "GAD-v-boxes"
+    ;; "GAD-h-arrows"
+    ;; "GAD-h-boxes"
 
-    "v-scroll-bar"
-    "h-scroll-bar"
-    "v-slider"
-    "h-slider"
-    "trill-device"			; A horizontal slider without the shaft
+    ;; "v-scroll-bar"
+    ;; "h-scroll-bar"
+    ;; "v-slider"
+    ;; "h-slider"
+    ;; "trill-device"			; A horizontal slider without the shaft
 
-    "GAD-button-parts"			; Helper module for button and menu objects
-    "x-buttons"
-    "text-buttons"
-    "radio-buttons"
+    ;; "GAD-button-parts"			; Helper module for button and menu objects
+    ;; "x-buttons"
+    ;; "text-buttons"
+    ;; "radio-buttons"
 
-    "error-gadget-utils"
-    "error-gadget"
-    "scrolling-menu"
+    ;; "error-gadget-utils"
+    ;; "error-gadget"
+    ;; "scrolling-menu"
 
-    "scrolling-input-string"
-    "scrolling-labeled-box"
-    "scrolling-unlabeled-box"
+    ;; "scrolling-input-string"
+    ;; "scrolling-labeled-box"
+    ;; "scrolling-unlabeled-box"
 
-    "gauge"				; Semi-circular gauge
-    "menu"
-    "labeled-box"			; A box with editable text and a label
-    "arrow-line"			; A line/arrowhead combination
-    "graphics-selection"		; Selection squares for move-grow interaction
-    "option-button"
-    "popup-menu-button"
-    "save-load-functions"
-    "save-gadget"
-    "load-gadget"
+    ;; "gauge"				; Semi-circular gauge
+    ;; "menu"
+    ;; "labeled-box"			; A box with editable text and a label
+    ;; "arrow-line"			; A line/arrowhead combination
+    ;; "graphics-selection"		; Selection squares for move-grow interaction
+    ;; "option-button"
+    ;; "popup-menu-button"
+    ;; "save-load-functions"
+    ;; "save-gadget"
+    ;; "load-gadget"
 
-    "browser-gadget"
-    "polyline-functions"
-    "polyline-creator"
-    "multi-selection"
-    "menubar-functions" "menubar"
+    ;; "browser-gadget"
+    ;; "polyline-functions"
+    ;; "polyline-creator"
+    ;; "multi-selection"
+    ;; "menubar-functions" "menubar"
 
-    "scrolling-window-parts"
-    "scrolling-window"
+    ;; "scrolling-window-parts"
+    ;; "scrolling-window"
 
-    "prop-value-gadgets"
-    "prop-sheet"
-    "prop-sheet-win"
+    ;; "prop-value-gadgets"
+    ;; "prop-sheet"
+    ;; "prop-sheet-win"
 
-    "motif-parts"
-    "motif-v-scroll-bar"
-    "motif-h-scroll-bar"
-    "motif-trill-device"
-    "motif-slider"
-    "motif-text-buttons"
-    "motif-check-buttons"
-    "motif-radio-buttons"
-    "motif-menu"
-    "motif-gauge"
-    "motif-scrolling-labeled-box"
-    "motif-prop-sheet-win"
-    "motif-scrolling-window"
-    "motif-error-gadget"
-    "motif-option-button"
-    "motif-scrolling-menu"
-    "motif-save-gadget"
-    "motif-load-gadget"
-    "motif-menubar"
-    
-    "multifont-gadget"
-    "scrolling-window-multifont"
-    "standard-edit"
-    "mouseline"
+    ;; "motif-parts"
+    ;; "motif-v-scroll-bar"
+    ;; "motif-h-scroll-bar"
+    ;; "motif-trill-device"
+    ;; "motif-slider"
+    ;; "motif-text-buttons"
+    ;; "motif-check-buttons"
+    ;; "motif-radio-buttons"
+    ;; "motif-menu"
+    ;; "motif-gauge"
+    ;; "motif-scrolling-labeled-box"
+    ;; "motif-prop-sheet-win"
+    ;; "motif-scrolling-window"
+    ;; "motif-error-gadget"
+    ;; "motif-option-button"
+    ;; "motif-scrolling-menu"
+    ;; "motif-save-gadget"
+    ;; "motif-load-gadget"
+    ;; "motif-menubar"
+
+    ;; "multifont-gadget"
+    ;; "scrolling-window-multifont"
+    ;; "standard-edit"
+    ;; "mouseline"
     ))
 
 (dolist (file Garnet-Gadgets-Files)

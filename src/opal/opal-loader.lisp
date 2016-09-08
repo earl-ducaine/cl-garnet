@@ -58,5 +58,4 @@
 (setf (get :garnet-modules :opal) t)
 (format t "...Done Opal.~%")
 
-(gem:init-device :X NIL)
-
+;;(gem:init-device)

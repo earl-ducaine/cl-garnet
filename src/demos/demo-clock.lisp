@@ -8,21 +8,17 @@
 ;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;;; $Id$
-
 ;;; This is intended as a test and demonstration of the
 ;;; angle interactor as part of the Garnet project
 ;;;
 ;;; Designed and implemented by Ed Pervin
 
-
-(in-package :DEMO-CLOCK)
+
+(in-package :demo-clock)
 
 (declaim (special HAND))
 
-(defparameter *test-debug* NIL)
-
-;------------------------------------------------------------
+(defparameter *test-debug* nil)
 
 (defparameter clock-circle nil)
 (defparameter ghost-circle nil)
@@ -53,7 +49,7 @@
 		   (:top (o-formula (second (gvl :box))))
 		   (:width (o-formula (third (gvl :box))))
 		   (:height (o-formula (fourth (gvl :box)))))
-  
+
   ;;; create feedback object for moving clock
   (create-instance 'ghost-circle opal:circle
 		   (:draw-function :xor)
@@ -107,10 +103,10 @@
 		   (:angle (o-formula (/ (gv minute-hand :angle) 12.0)))
 		   (:length (o-formula
 			     (floor (* 3 (gv clock-circle :width)) 16))))
-  
+
   ;;; put clock aggregate together
   (opal:add-components clock-agg clock-circle minute-hand hour-hand ghost-circle)
-  
+
   ;;; add numbers 1 to 12 and tick-marks to clock-agg
   (dotimes (i 12)
     (let ((cos30*i (cos (* pi/6 i)))
@@ -157,7 +153,7 @@
 		   (:obj-to-change nil)
 		   (:feedback-obj ghost-circle)
 		   (:attach-point :where-hit))
-  
+
   ;;; create interactor whick adjusts time on clock (using right mouse button)
   (create-instance 'adjust-clock inter::angle-interactor
 		   (:window clock-window)
@@ -186,7 +182,7 @@
 			(s-value minute-hand :angle
 				 (+ (g-value minute-hand :angle) delta))
 			(opal:update clock-window))))
-		   
+
   ;; This interactor advances the clock 5 minutes when you hit SPACE
   (create-instance NIL inter:button-interactor
 		   (:window clock-window)
@@ -196,7 +192,7 @@
 		   (:stop-action
 		    #'(lambda (an-interactor final-obj-over)
 			(declare (ignore an-interactor final-obj-over))
-			(s-value minute-hand :angle 
+			(s-value minute-hand :angle
 				 (- (g-value minute-hand :angle) pi/6)))))
 
   ;; This interactor allows using the scroll wheel to adjust the clock.
@@ -212,7 +208,7 @@
 			  (first (g-value an-interactor :start-event)))
 		      (+ (g-value minute-hand :angle) pi/30)
 		      (- (g-value minute-hand :angle) pi/30))))))
-    
+
   (opal:update clock-window)
   ;;; print instructions
   (Format T "~%Demo-Clock:
@@ -220,7 +216,7 @@
   button and move in a circle to change time (the minute hand will follow
   the mouse. If you have a scroll wheel you can adjust the clock by rolling the
   scroll wheel back and forth. Type space to advance clock by 5 minutes.~%")
-  (unless dont-enter-main-event-loop #-cmu (inter:main-event-loop))
+  (unless dont-enter-main-event-loop (inter:main-event-loop))
   )
 
 (defun Do-Stop ()

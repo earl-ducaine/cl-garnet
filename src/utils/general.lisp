@@ -18,26 +18,32 @@
 ;; This file defines a host of Lisp utilities used by other Garnet code.
 
 
+(in-package "COMMON-LISP-USER")
+
+(defvar *debug-utils-mode* t)
+
 (in-package "GARNET-UTILS")
 
-(eval-when (:execute :load-toplevel :compile-toplevel)
-  (export '(WHILE
-            UNTIL
-            TILL
-            DO2LISTS
-            DOLIST2
-            M
-            M1
-            STRING+
-            ADD-TO-LIST
-            VERIFY-BINDING
-            SAFE-FUNCTIONP
-            SHELL-EXEC
-            DIRECTORY-P
-            PROBE-DIRECTORY
 
-            PI/2  PI3/2  2PI -2PI SHORT-PI
-            )))
+;;(eval-when (:execute :load-toplevel :compile-toplevel)
+  ;; (export '(WHILE
+  ;;           UNTIL
+  ;;           TILL
+  ;;           DO2LISTS
+  ;;           DOLIST2
+  ;;           M
+  ;;           M1
+  ;;           STRING+
+  ;;           ADD-TO-LIST
+  ;;           VERIFY-BINDING
+  ;;           SAFE-FUNCTIONP
+  ;;           SHELL-EXEC
+  ;;           DIRECTORY-P
+  ;;           PROBE-DIRECTORY
+
+  ;;           PI/2  PI3/2  2PI -2PI SHORT-PI
+  ;;           ))
+;;)
 
 
 (defconstant pi/2 (/ pi 2))
@@ -164,7 +170,7 @@ uppercase characters before checking if it is bound in the package."
                                   (if (or (eq access :external)
                                           access-internal-p)
                                       ;; verify that symbol-2 is not a function
-                                      (when (boundp symbol-2) 
+                                      (when (boundp symbol-2)
                                         (values (read-from-string string)))
                                       )))
                         (find-symbol suffix symbol-1))))))
@@ -175,7 +181,7 @@ uppercase characters before checking if it is bound in the package."
 
 
 (defun VERIFY-BINDING-AUX (string start)
-  "Split the string at the colon(s) to return either the package name 
+  "Split the string at the colon(s) to return either the package name
 or the symbol name if called where the first character is a colon."
   (let ((str-len (length string)))
     (when (> str-len start)
@@ -191,9 +197,9 @@ or the symbol name if called where the first character is a colon."
           ;; FMG --- Just use lisp utilities to do this stuff.
           (let* ((colon (position #\: string :start start :test #'char=))
                  (new-string (subseq string start colon)))
-            (list (not (null colon)) 
+            (list (not (null colon))
                   new-string
-                  (or colon (1- str-len)) 
+                  (or colon (1- str-len))
                   access-internal-p)))))))
 
 ;;;
@@ -255,10 +261,10 @@ or the symbol name if called where the first character is a colon."
                               :wait NIL :output :stream :error :stream)))
         (values (ccl:external-process-output-stream p)
                 (ccl:external-process-error-stream p)))
-      
+
       #-(or allegro cmu ccl sbcl)
       (error "Don't know how to execute shell functions in this lisp")
-      
+
       (let ((output-string (make-array '(0)
                                        :element-type 'character
                                        :fill-pointer 0 :adjustable T)))
@@ -321,4 +327,6 @@ or the symbol name if called where the first character is a colon."
            (concatenate 'string "test -d " (shell-quote pathname) " && echo 1")))
       (unless (equal "" (shell-exec command-string))
         T))))
-                   
+
+
+(setf (get :garnet-modules :utils) T)

@@ -13,35 +13,32 @@
 ;;
 
 
-(in-package "COMMON-LISP-USER")
 
-(defvar *debug-kr-mode* nil)
+;; (eval-when (:compile-toplevel :load-toplevel :execute)
+;;   (proclaim
+;;    (if *debug-kr-mode*
+;;        (and (boundp 'Garnet-Compile-Debug-Settings)
+;; 	    Garnet-Compile-Debug-Settings)
+;;        ;; Global default settings.
+;;        (and (boundp 'Default-Garnet-Proclaim)
+;; 	    Default-Garnet-Proclaim))))
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (proclaim
-   (if *debug-kr-mode*
-       (and (boundp 'Garnet-Compile-Debug-Settings)
-	    Garnet-Compile-Debug-Settings)
-       ;; Global default settings.
-       (and (boundp 'Default-Garnet-Proclaim) 
-	    Default-Garnet-Proclaim))))
+;; (eval-when (:execute :load-toplevel :compile-toplevel)
+;;   (garnet-mkdir-if-needed Garnet-KR-Pathname))
 
-(eval-when (:execute :load-toplevel :compile-toplevel)
-  (garnet-mkdir-if-needed Garnet-KR-Pathname))
+;; (Defparameter Garnet-KR-Files
+;;   '("kr-macros"
+;;     "kr-doc"
+;;     "kr"
+;;     "constraints"))
 
-(Defparameter Garnet-KR-Files 
-  '("kr-macros"
-    "kr-doc"
-    "kr"
-    "constraints"))
+;; (with-compilation-unit ()
+;;   (dolist (file Garnet-KR-Files)
+;;     (let ((gfile (concatenate 'string "kr:" file)))
+;;       (garnet-compile gfile)
+;;       (garnet-load gfile))))
 
-(with-compilation-unit ()
-  (dolist (file Garnet-KR-Files)
-    (let ((gfile (concatenate 'string "kr:" file)))
-      (garnet-compile gfile)
-      (garnet-load gfile))))
+;; (garnet-copy-files Garnet-Kr-Src Garnet-Kr-Pathname
+;; 		   '("kr-loader.lisp"))
 
-(garnet-copy-files Garnet-Kr-Src Garnet-Kr-Pathname
-		   '("kr-loader.lisp"))
-
-(setf (get :garnet-modules :kr) T)
+;; (setf (get :garnet-modules :kr) T)

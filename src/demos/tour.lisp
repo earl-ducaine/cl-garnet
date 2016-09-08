@@ -8,23 +8,15 @@
 ;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; $Id::                                                             $	
+;;; $Id::                                                             $
 
 ;;; This is the loader file for the special Garnet Tour
 
-(in-package :COMMON-LISP-USER)
-(use-package '(:COMMON-LISP :KR :KR-DEBUG :GARNET-DEBUG))
+(in-package :demo)
+;;;(use-package '(:COMMON-LISP :KR :KR-DEBUG :GARNET-DEBUG))
+;; (use-package :KR)
 
 (defvar MYWINDOW NIL)
-
-(dolist (file '("gg:radio-buttons-loader" 
-                "gg:v-slider-loader"
-                "gg:menu-loader"
-                "gg:v-scroll-loader"))
-   (garnet-load file))
-
-(dolist (file '("demos:mge" "demos:demo-othello" "demos:tour-transcript"))
-   (garnet-load file))
 
 (create-instance 'moving-rectangle opal:rectangle
 		 (:box '(80 20 100 150))

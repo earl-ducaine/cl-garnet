@@ -69,13 +69,12 @@
   (gg:line-constraint-do-go)
 
   ;; connect lapidary to the constraint gadget
-  (s-value gg::*constraint-gadget* :obj-to-constrain 
+  (s-value gg::*constraint-gadget* :obj-to-constrain
 	   (o-formula (car (gv lapidary::*selection-info* :p-selected))))
-  (s-value gg::*constraint-gadget* :obj-to-reference 
+  (s-value gg::*constraint-gadget* :obj-to-reference
 	   (o-formula (car (gv lapidary::*selection-info* :s-selected))))
-  (s-value gg::*constraint-gadget* :top-level-agg 
+  (s-value gg::*constraint-gadget* :top-level-agg
 	   (o-formula (gvl :obj-to-constrain :window :editor-agg)))
-;  (box-constraint-do-go)
 ;  (line-constraint-do-go)
   (format t "Setting up property menus~%")
 ;  (line-do-go)
@@ -117,13 +116,13 @@
   (selection-do-stop)
   (create-object-do-stop)
   (text-do-stop)
-;  (format t "Destroying box constraint menu~%")
-;  (box-constraint-do-stop)
+  (format t "Destroying box constraint menu~%")
+  (gg:box-constraint-do-stop)
 ;  (format t "Destroying line constraint menu~%")
 ;  (line-constraint-do-stop)
   (format t "Destroying property menus~%")
 ;  (line-do-stop)
-;  (shade-do-stop) 
+;  (shade-do-stop)
 ;  (draw-fct-do-stop)
   (format t "Destroying copy and instance interactors...~%")
   (copy-instance-inter-do-stop)
@@ -176,15 +175,15 @@
 
 (defun clean-up ()
   (let ((windows (g-value *selection-info* :window)))
-    ;; create a new window first, so that lapidary's interactors will not 
+    ;; create a new window first, so that lapidary's interactors will not
     ;; be blown away
     (s-value *selection-info* :window nil)
     (make-drawing-window)
-    
+
     ;; now destroy the windows
     (dolist (window windows)
 	    (opal:destroy window))
-    
+
     ;; reset the slots related to selection in *selection-info*
     (s-value *selection-info* :p-selected nil)
     (s-value *selection-info* :s-selected nil)

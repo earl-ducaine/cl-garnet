@@ -18,33 +18,33 @@
 ;;     7/28/96 RGA --- changed to use garnet-compile/load
 ;;     4/ 5/93 Dave Kosbie - created
 
-(in-package "COMMON-LISP-USER")
+;; (in-package "COMMON-LISP-USER")
 
-(defvar *debug-utils-mode* nil)
+;; (defvar *debug-utils-mode* nil)
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (proclaim
-   (if *debug-utils-mode*
-       (and (boundp 'Garnet-Compile-Debug-Settings)
-	    Garnet-Compile-Debug-Settings)
-       ;; Global default settings.
-       (and (boundp 'Default-Garnet-Proclaim) 
-	    Default-Garnet-Proclaim))))
+;; (eval-when (:compile-toplevel :load-toplevel :execute)
+;;   (proclaim
+;;    (if *debug-utils-mode*
+;;        (and (boundp 'Garnet-Compile-Debug-Settings)
+;; 	    Garnet-Compile-Debug-Settings)
+;;        ;; Global default settings.
+;;        (and (boundp 'Default-Garnet-Proclaim)
+;; 	    Default-Garnet-Proclaim))))
 
-(eval-when (:execute :load-toplevel :compile-toplevel)
-  (garnet-mkdir-if-needed Garnet-Utils-Pathname))
+;; (eval-when (:execute :load-toplevel :compile-toplevel)
+;;   (garnet-mkdir-if-needed Garnet-Utils-Pathname))
 
-(Defparameter Garnet-Utils-Files
-  '(
-    "general"
-    ))
+;; (Defparameter Garnet-Utils-Files
+;;   '(
+;;     "general"
+;;     ))
 
-(dolist (file Garnet-Utils-Files)
-  (let ((gfile (concatenate 'string "utils:" file)))
-    (garnet-compile gfile)
-    (garnet-load gfile)))
+;; (dolist (file Garnet-Utils-Files)
+;;   (let ((gfile (concatenate 'string "utils:" file)))
+;;     (garnet-compile gfile)
+;;     (garnet-load gfile)))
 
-(garnet-copy-files Garnet-Utils-Src Garnet-Utils-Pathname
-		   '("utils-loader.lisp"))
+;; (garnet-copy-files Garnet-Utils-Src Garnet-Utils-Pathname
+;; 		   '("utils-loader.lisp"))
 
-(setf (get :garnet-modules :utils) T)
+;; (setf (get :garnet-modules :utils) T)

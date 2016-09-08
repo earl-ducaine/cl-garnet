@@ -96,7 +96,7 @@
       (force-output *trans-to-file*)
       win)))
 
-;; recursively add all the subwindows of the windows in win-list 
+;; recursively add all the subwindows of the windows in win-list
 (defun Add-All-Subwindows (win-list)
   (do* ((lst win-list (cdr lst))
 	(item (car lst)(car lst))
@@ -104,7 +104,7 @@
        ((null lst))
     (nconc lst (copy-list (g-value item :child))))
   (remove-duplicates win-list :from-end T))
- 
+
 ;; Uses *current-event*
 (defun Read-Transcript-Event ()
   (let ((val (read-char *trans-from-file* NIL NIL)))
@@ -177,9 +177,9 @@
 	 (block eventloop
 	   (loop
 	      (setf new-ev (Read-Transcript-Event))
-	      (if new-ev 
+	      (if new-ev
 		  (progn
-		    (if-debug :event 
+		    (if-debug :event
 			      (format t "~%<><><><> Event from transcript ~s~%"
 				      new-ev))
 		    (if *trans-wait-elapsed-time*
@@ -238,7 +238,7 @@
   (declare (ignore display))
   (let ((result
 	 (gem:event-handler
-	  (g-value gem:device-info :current-root) 
+	  (g-value gem:device-info :current-root)
 	  T)))
     (if (eq result :abort)
 	result
@@ -371,7 +371,7 @@
 	 (format t
 		 "Exiting main event loop because of *garnet-break-key*"))
 	(exit-main-event-loop))
- 
+
       (setf (event-char *Current-Event*) c
 	    (event-mousep *Current-Event*) nil
 	    (event-code *Current-Event*) code
@@ -412,21 +412,21 @@
       (return-from button-press t))
     (setf c (gem:translate-mouse-character window code state event-key))
     (if-debug
-     :event 
+     :event
      (format
       t "~%<><><><> Button down ~s event=~s code=~s state=~s window=~s"
       c event-key code state window)
      (format t " time=~s x=~s  y=~S~%" time x y))
-    (setf (event-char *Current-Event*) c		
+    (setf (event-char *Current-Event*) c
 	  (event-mousep *Current-Event*) t
 	  (event-x *Current-Event*) x
 	  (event-y *Current-Event*) y
  	  (event-code *Current-Event*) code
-	  (event-downp *Current-Event*) t 
+	  (event-downp *Current-Event*) t
 	  (event-window *Current-Event*) window
 	  (event-timestamp *Current-Event*) time
 	  (event-state *Current-Event*) state
-	  )	
+	  )
     (trans-out-and-process-current-event))
   t)
 
@@ -437,11 +437,11 @@
     ;; FMG Do we have to do this again?
     (unless window
       (return-from button-release t))	; if window was just destroyed, exit.
-    (if-debug :event 
+    (if-debug :event
       (format t "~%<><><><> Button Up ~s event=~s code=~s state=~s window=~s"
 	      c event-key code state window)
       (format t " time=~s x=~s  y=~s~%" time x y))
-    (setf (event-char *Current-Event*) c		
+    (setf (event-char *Current-Event*) c
 	  (event-mousep *Current-Event*) t
 	  (event-x *Current-Event*) x
 	  (event-y *Current-Event*) y
@@ -457,27 +457,27 @@
 (defun Window-Enter (window x y time)
   (unless window
     (return-from Window-Enter t))	; if window was just destroyed, exit.
-  (if-debug :event 
+  (if-debug :event
 	    (format t "~%<><><><> Enter Window ~s event=~s"
 		    window :window-enter)
 	    (format t " time=~s x=~s  y=~S~%" time x y))
-  (setf (event-char *Current-Event*) :Window-enter		
+  (setf (event-char *Current-Event*) :Window-enter
 	(event-mousep *Current-Event*) t
 	(event-x *Current-Event*) x
 	(event-y *Current-Event*) y
 	(event-code *Current-Event*) NIL
-	(event-downp *Current-Event*) NIL 
+	(event-downp *Current-Event*) NIL
 	(event-window *Current-Event*) window
 	(event-timestamp *Current-Event*) time
 	(event-state *Current-Event*) NIL
-	)	
+	)
   (trans-out-and-process-current-event)
   t)
 
 (defun Window-Leave (window x y time)
   (unless window
     (return-from Window-Leave t))	; if window was just destroyed, exit.
-  (if-debug :event 
+  (if-debug :event
 	    (format t "~%<><><><> Leave Window ~s event=~s"
 		    window :window-Leave)
 	    (format t " time=~s x=~s  y=~S~%" time x y))
@@ -486,10 +486,10 @@
 	(event-x *Current-Event*) x
 	(event-y *Current-Event*) y
 	(event-code *Current-Event*) NIL
-	(event-downp *Current-Event*) NIL 
+	(event-downp *Current-Event*) NIL
 	(event-window *Current-Event*) window
 	(event-timestamp *Current-Event*) time
-	(event-state *Current-Event*) NIL)	
+	(event-state *Current-Event*) NIL)
   (trans-out-and-process-current-event)
   t)
 
@@ -519,7 +519,7 @@
 	  (event-y *Current-Event*) current-y
 	  (event-window *Current-Event*) window
 	  (event-timestamp *Current-Event*) 0)
-  
+
     (trans-out-and-process-current-event T)) ; T --> Motion Notify
   t)
 
@@ -592,7 +592,7 @@
 (defun do-client-message (event-window type data format display)
   (cond ((and (eq format 32)
 	      (eq type :WM_PROTOCOLS)
-	      (eq (xlib:atom-name 
+	      (eq (xlib:atom-name
 		   display
 		   (aref (the (simple-array (unsigned-byte 32) (5)) data) 0))
 		  :WM_DELETE_WINDOW))
@@ -639,7 +639,9 @@
 	    (if (eq exit-when-no-window-visible :on)
 		(setq opal::*inside-main-event-loop* t)
 		(setq opal::*inside-main-event-loop* :dont-care))
+;;	    (opal::m-e-l-new)		; Defined in opal/process.lisp
 	    (opal::m-e-l)		; Defined in opal/process.lisp
+
 	    (setq opal::*inside-main-event-loop* NIL)
 	    (gem:discard-pending-events root-window 5))))))
 
@@ -678,7 +680,7 @@ by the protected-eval code."
 	     (default-event-handler
 		 (g-value gem:DEVICE-INFO :current-root)))
 	  ))))
-  
+
 (defun Wait-Interaction-Complete (&optional window-to-raise)
   "Processes events, but this procedure does not exit unless the
   Interaction-Complete procedure is called.  The value returned by
@@ -748,12 +750,12 @@ by the protected-eval code."
                                               (list window))))
   (pushnew window all-inter-windows)
   (Change-window-multi-grab window NIL)	     ; initialize for single-window inters
-  (s-value window :priority-level-assoc NIL) ; associates interactors with this window 
+  (s-value window :priority-level-assoc NIL) ; associates interactors with this window
   (Handle-New-Window-for-T-Inters window)
   (call-prototype-method window)
   (if (and (g-value window :modal-p)
 	   (Win-Visible window))
-      (progn 
+      (progn
 	(s-value window :old-modal-and-visible T)
 	(pushnew window *Visible-Modal-Windows*))
       (s-value window :old-modal-and-visible NIL))
@@ -774,4 +776,3 @@ by the protected-eval code."
     (grab-mouse a-window))
   (when an-interactor
     (start-interactor an-interactor)))
-

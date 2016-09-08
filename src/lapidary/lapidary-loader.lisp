@@ -33,7 +33,7 @@ Change log:
 (unless (boundp 'Garnet-Lapidary-PathName)
   (error "Load 'Garnet-Loader' first to set Garnet-Lapidary-PathName before loading lapidary."))
 
-;;; Load Aggregadgets unless already loaded  (this will load the lower 
+;;; Load Aggregadgets unless already loaded  (this will load the lower
 ;;; layers of Garnet if necessary)
 #|
 #+cmu
@@ -82,12 +82,6 @@ Change log:
   (merge-pathnames "lapidary/" Garnet-Src-Pathname))
 
 ;;; If at cmu, then set up the search lists
-#+cmu
-(progn
-  (setf (ext:search-list "constraint-gadget:")
-	(list (namestring Garnet-Constraint-Gadget-PathName)))
-  (setf (ext:search-list "constraint-gadget-src:")
-	(list (namestring Garnet-Constraint-Gadget-Src))))
 
 
 (defparameter Garnet-Constraint-Gadget-Loader
@@ -97,57 +91,9 @@ Change log:
 (load Garnet-Constraint-Gadget-Loader)
 
 
-;; ---- Load Lapidary itself
-
-(Defparameter Garnet-Lapidary-Files
-  '(
-        "lapidary-functions-loader" ; only load if not already loaded
-	"parameters"
-        "defs"
-        "macros"
-	"lapidary"  
-	"dialog-parts2" "event-card" "card" "card1"
-	"start-where" "prompt"
-        "lapidary-objects"
-	"feedback-objs" 
-	"support-misc"
-	"support-selection1"	"support-selection2"   	"selection"
-	"create-object"
-	"delete-object"
-        "delete-window"
-	"move-grow"
-	"aggregates"
-	"aggparam" "create-parameters"
-	"properties"
-        "line-imp" "line-props"
-	"fill-imp" "fill-props"
-	"color-imp" "color-props"
-	"shapes"
-	"lap-draw"
-	"support-menu-editor"		        "new-editor"
-        "text"   "text-properties"
-        "gadgetcopy"
-	"save-link-parameters"
-        "lapidary-save"	"lapidary-read"	"support-save-restore" "save-restore"
-	"add-gadget"
-	"choice-inter" "text-inter"
-	"move-grow-box" "support-move-grow-inter" "move-grow-inter" 
-	"angle-inter" "two-point-inter"
-    "support-inter" "by-demo"
-    "interactors" "interactors-menu"
-))
-
-(dolist (file Garnet-Lapidary-Files)
-  (garnet-load (concatenate 'string "lapidary:" file)))
-
 (setf (get :garnet-modules :lapidary)  t)
-;;; (provide 'lapidary)
 (setf lapidary::*load-db* nil)
-
-;;; cause the functions in kr to be exported to the user. Otherwise
-;;; user created formulas may crash
 
 (use-package :KR)
 
 (format t "...Done Lapidary.~%")
-

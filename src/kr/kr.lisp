@@ -22,7 +22,7 @@
 ;;   - parameter-slot     ; not implemented
 
 
-(in-package "KR")
+(in-package :kr)
 
 (declaim (inline clear-one-slot))
 (defun clear-one-slot (schema slot entry)
@@ -200,7 +200,7 @@ RETURNS: the inherited value, or NIL."
     *no-value*))
 
 ;; G-CACHED-VALUE
-;; 
+;;
 (declaim (inline g-cached-value))
 (defun g-cached-value (schema slot)
   "Returns the value of the <slot> in the <schema>.  If this is a formula, it
@@ -261,7 +261,7 @@ to a schema."
 		      (mod (incf *debug-index*) *debug-names-length*)))
 	  schema)))
 
-;; 
+;;
 (defun make-new-schema-name (schema name)
   "Creates symbols for all automatic schema names that happen to
 be printed out."
@@ -607,7 +607,7 @@ if necessary."
     (let ((newlen (+ curlen *types-array-inc*)))
      (setf types-array     (copy-extend-array types-array     curlen newlen)
            type-fns-array  (copy-extend-array type-fns-array  curlen newlen)
-           type-docs-array (copy-extend-array type-docs-array curlen newlen))))   
+           type-docs-array (copy-extend-array type-docs-array curlen newlen))))
    ;; in any case, return current code, then add one to it
    (prog1
        *next-type-code*
@@ -709,7 +709,7 @@ Always returns the CODE of the resulting type (whether new or not)"
 (defparameter *warning-level* 0)
 
 ;; Helper function
-;; 
+;;
 (defun re-evaluate-formula (schema-self schema-slot current-formula entry #+EAGER eval-type)
   (let ((*schema-self* schema-self)
 	(*schema-slot* schema-slot)
@@ -777,7 +777,7 @@ Always returns the CODE of the resulting type (whether new or not)"
 
 ;; We are working with a formula.  Note that broken links leave
 ;; the formula valid.
-;; 
+;;
 (defun g-value-formula-value (schema-self slot formula entry)
   (let ((*schema-self* schema-self))
     (if (cache-is-valid formula)
@@ -903,7 +903,7 @@ recomputed, propagating the change as needed.
 This may be used for implementation of formulas which depend on some
 non-KR value."
   (let* ((entry (slot-accessor schema slot))
-	 (formula (when entry (sl-value entry))))      
+	 (formula (when entry (sl-value entry))))
     (when (formula-p formula)
       (let ((bits (sl-bits entry)))
 	(unless *within-g-value*
@@ -1184,7 +1184,7 @@ current value of the slot."
 	(when (and the-bits (is-parent the-bits))
 	  (let ((*setting-formula-p* T))
 	    (update-inherited-values schema slot value T)))
-      
+
 	;; Notify all dependents that the value changed.
 	(when is-depended
 	  (let ((*warning-on-disconnected-formula* nil))
@@ -1344,7 +1344,7 @@ taking care of possible constraints."
 	    (set-cache-is-valid formula NIL)
 	    #+EAGER
 	    (progn
-	      ;; set the formula's fixed bit back to nil to indicate it should 
+	      ;; set the formula's fixed bit back to nil to indicate it should
 	      ;; be evaluated during this iteration of the constraint solver
 	      (set-fixed-bit formula nil)
 	      (when (not in-pq)
@@ -1368,7 +1368,7 @@ taking care of possible constraints."
 	;; new inherited value is different from its old value.
 	(unless (equal old-value new-value)
 	  (add-to-reeval schema slot))
-      
+
 	(let ((was-parent (and bits (is-parent bits))))
 	  (when was-parent
 	    ;; Was this slot inherited by other schemata?  If so, make sure
@@ -1455,7 +1455,7 @@ i.e., one which does not use a link."
 	    ;; dependency is a DIRECT one, i.e., if the name of the
 	    ;; schema we are destroying is wired into the formula.  If
 	    ;; this is a link, leave things as they are.
-	    (let ((the-form 
+	    (let ((the-form
 		   (or (a-formula-lambda formula) ; for o-formulas
 		       (and (setf bizarre
 				  ;; This should always be a
@@ -1621,7 +1621,7 @@ The <function> is called with:
 	T))))
 
 
-(defun call-on-ps-slots (schema function 
+(defun call-on-ps-slots (schema function
 			 &key (control t)
 			      inherit
 			      (indent NIL)
@@ -1779,17 +1779,17 @@ The <function> is called with:
 
   A control schema may be used to determine which options are printed, which
   ones are ignored, etc.  See the manual for details.
-  
+
   <control> can be one of the following:
  -  T, which means that the <schema> itself is used as the control schema;
  -  :DEFAULT, which means that the schema KR:PRINT-SCHEMA-CONTROL is used;
  -  any schema, which is used as the control schema.
  -  NIL, which means that the <schema> is printed in its entirety (i.e. no
     schema control.)
-  
+
   If <inherit> is non-nil, slots that have been inherited are also printed.
   <indent> is used for debugging and should not be set by the user."
-  
+
   (let ((*standard-output* stream))
     (call-on-ps-slots schema 'SLOT-PRINTER
 		      :control control :inherit inherit :indent indent

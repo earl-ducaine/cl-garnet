@@ -49,7 +49,7 @@ parts of the file
 
 (declaim (special CREATE-OR-EDIT CURRENT-STATE DRAW-WIN MOVER-GROWER
 		  MOVING-AGG MOVING-ARROWLINE NEW-MOVING-ARROWLINE
-		  MOVING-DOUBLEARROWLINE 
+		  MOVING-DOUBLEARROWLINE
 		  MOVING-LINE MOVING-OVAL MOVING-RECT MOVING-ROUNDTANGLE
 		  PALETTE-FEEDBACK TEXT-FEEDBACK
 		  TOOLS-MENU TOP-DRAW-AGG WIN PS-READ-WIN GRID-WIN SAVE-WIN
@@ -107,7 +107,7 @@ parts of the file
     (:stop-when :if-any)))
 
 ;; need a priority level higher than the motif-tab priority level so
-;; text editing will take precedence over accelerators 
+;; text editing will take precedence over accelerators
 (pushnew *garnetdraw-high-priority* inter:priority-level-list)
 (pushnew *garnetdraw-high-running-priority* inter:priority-level-list)
 
@@ -148,7 +148,7 @@ individual objects.
     (:x2 (o-formula (third (gvl :points))))
     (:y2 (o-formula (fourth (gvl :points))))
     (:grow-p t))
-  
+
   (create-instance 'new-moving-arrowline garnet-gadgets:Arrow-Line
     (:points (list 0 0 0 0))
     (:x1 (o-formula (first (gvl :points))))
@@ -204,7 +204,7 @@ individual objects.
   ;; moving-arrowline is just created so that can read old garnetdraw files
   (create-instance 'moving-arrowline moving-doublearrowline
     (:arrowhead-p 2))
-  
+
   (create-instance 'MOVING-RECT opal:rectangle
     (:box (list 0 0 0 0))
     (:left (o-formula (first (gvl :box))))
@@ -278,11 +278,11 @@ individual objects.
     (:string "")
     (:visible (o-formula (gvl :obj-over)))
     (:group-p NIL)
-    (:left (o-formula (first (gvl :box))))		 
+    (:left (o-formula (first (gvl :box))))
     (:top (o-formula (second (gvl :box))))))
 
-	      
-			
+
+
 #|
 ====================================================================
 DIALOG BOX FUNCTIONS
@@ -311,7 +311,7 @@ DIALOG BOX FUNCTIONS
 	  (with-constants-disabled
 	   (load *document-name*))
 
-	  (unless (schema-p *DRAW-AGG*) 
+	  (unless (schema-p *DRAW-AGG*)
 	    ;; then is a new style file, have to set *draw-agg*
 	    (setf *draw-agg* common-lisp-user::*Garnet-Object-Just-Created*))
 	  (s-value MOVER-GROWER :start-where (list :element-of-or-none
@@ -323,13 +323,13 @@ DIALOG BOX FUNCTIONS
 		   (list :in *DRAW-AGG*))
 
 	  (gg:Standard-Initialize-Gadget MAIN-MENU MOVER-GROWER *DRAW-AGG*)
-  
+
 	  ;; This is necessary because the items functions are called
 	  ;; by the motif-menu sitting in the submenus
 	  (dolist (menu (g-value MAIN-MENU :menubar-items :components))
 	    (gg:Standard-Initialize-Gadget (g-value menu :submenu)
 					   MOVER-GROWER *DRAW-AGG*))
-  	  
+
 	  (with-constants-disabled
 	    (opal:add-component TOP-DRAW-AGG *DRAW-AGG* :where :back))
 	  (s-value WIN :title (file-namestring *document-name*)))
@@ -345,7 +345,7 @@ DIALOG BOX FUNCTIONS
   (with-open-file (*standard-output* *document-name*
 		   :direction :output :if-exists :supersede)
     (format T ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;~%")
-    (format T ";;; This file created by GARNETDRAW ~a~%" 
+    (format T ";;; This file created by GARNETDRAW ~a~%"
 	  GarnetDraw-Version)
   (format T ";;; on ~a~%" (inter::time-to-string))
   (format T ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;~%~%")
@@ -375,8 +375,7 @@ DIALOG BOX FUNCTIONS
 (defun Save-Sel-Fn (g v)
   (declare (ignore g))
   (setq *document-name* v)
-  (Write-Draw-Agg)
-  )
+  (Write-Draw-Agg))
 
 #|
 ====================================================================
@@ -399,7 +398,7 @@ DIALOG BOXES
 	  (:modal-p T)
 	  (:top 40)
 	  (:button-panel-items '("OK" "Cancel"))
-	  
+
 	  (:selection-function 'Save-Sel-Fn)
 	  (:parts `(:dir-input
 		    :file-menu
@@ -482,12 +481,12 @@ DIALOG BOXES
 	      (:left 10) (:top 10)
 	      (:font ,(opal:get-standard-font NIL :bold-italic :large))
 	      (:string "Reading..."))
-	     
+
 	     (:OK-cancel-buttons :modify
 		     (:top ,(o-formula (+ (gvl :parent :file-input :top)
 					  (gvl :parent :file-input :height)
 					  20))))))))
-	     
+
   (setf PS-Read-WIN (g-value *Read-DB* :window))
   )
 
@@ -538,11 +537,11 @@ added here for cut, paste, copy, and various font functions.
   (declare (ignore menubar bar-item submenu-item))
   (Save-File))
 
-			     
+
 (defun GetFontFromMenu (submenu-item old-font)
   (cond
     ((equal submenu-item " Fixed ")
-     (opal:get-standard-font :fixed 
+     (opal:get-standard-font :fixed
 			     (g-value old-font :face)
 			     (g-value old-font :size)))
     ((equal submenu-item " Serif ")
@@ -594,7 +593,7 @@ added here for cut, paste, copy, and various font functions.
       (dolist (item (g-value MOVER-GROWER :value))
 	(when (g-value item :text-p)
 	  (with-constants-disabled
-		(s-value item :font 
+		(s-value item :font
 		       (GetFontFromMenu submenu-item (g-value item :font)))))))
   ;; Always set the global state
   (let* ((text-state (g-value TOOLS-MENU :text-tool :text-state))
@@ -604,7 +603,7 @@ added here for cut, paste, copy, and various font functions.
 
 (defun gridtoggle (menubar bar-item submenu-item)
   (declare (ignore menubar bar-item submenu-item))
-  (if (g-value GRID-OBJ :gridon) 
+  (if (g-value GRID-OBJ :gridon)
       (progn ; turn if off, and make menu so it will turn it on
 	(s-value GRID-OBJ :gridon NIL)
 	(gg:menubar-set-title *Grid-Menu-Item* " Turn Grid On "))
@@ -614,7 +613,7 @@ added here for cut, paste, copy, and various font functions.
 
 (defun gridvisible (menubar bar-item submenu-item)
   (declare (ignore menubar bar-item submenu-item))
-  (if (g-value GRID-OBJ :gridvis) 
+  (if (g-value GRID-OBJ :gridvis)
       (progn ; turn if off, and make menu so it will turn it on
 	(s-value GRID-OBJ :gridvis NIL)
 	(gg:menubar-set-title *Grid-Vis-Item* " Show Grid Dots "))
@@ -633,7 +632,7 @@ added here for cut, paste, copy, and various font functions.
 ;;; This is called by BOTH the accelerator and the edit-polyline-inter.
 ;;; Basically, if an object is selected and that object is a polyline,
 ;;; then edit it.  Else, if the obj passed to the function is a polyline,
-;;; edit that instead.  
+;;; edit that instead.
 (defun reshape-fn (inter obj &optional extra)
   (declare (ignore inter extra))
   (s-value POLYGON-MAKER :reshape-called-p T)
@@ -658,11 +657,15 @@ added here for cut, paste, copy, and various font functions.
     (:title-font (opal:get-standard-font :sans-serif :bold :large))
     (:item-font (opal:get-standard-font :sans-serif :bold :medium))
     (:accel-font (opal:get-standard-font :sans-serif :bold :medium))
-    (:items 
-     '(("  File  " NIL 
-	((" Open " openfun) (" New " newfun) (" Save " savefun)
-	 (" Save As " saveasfun) (" Create PS " psfun) (" Quit " quitfun)))
-       ("  Edit  " NIL 
+    (:items
+     '(("  File  " NIL
+	((" Open " openfun)
+	 (" New " newfun)
+	 (" Save " savefun)
+	 (" Save As " saveasfun)
+	 (" Create PS " psfun)
+	 (" Quit " quitfun)))
+       ("  Edit  " NIL
 	((" Cut " gg:standard-cut) (" Copy " gg:standard-copy)
 	 (" Paste " gg:standard-paste-same-place)
 	 (" Clear " gg:standard-delete)
@@ -735,7 +738,7 @@ where it goes.
 	       (:image
 		,(opal:read-image
 		  (merge-pathnames "line.bm"
-				   (merge-pathnames "garnetdraw/" 
+				   (merge-pathnames "garnetdraw/"
 						    common-lisp-user::garnet-bitmap-pathname))))))))
 
        (:rect-tool ,opal:aggregadget
@@ -808,7 +811,7 @@ where it goes.
 				   (merge-pathnames
 				    "garnetdraw/"
 				    common-lisp-user::garnet-bitmap-pathname))))))))
-				       
+
        (:arrowline-tool ,opal:aggregadget
 	(:feedback-object ,new-moving-arrowline)
 	(:creator-object ,creator-arrowline)
@@ -820,7 +823,7 @@ where it goes.
 	       (:image
 		,(opal:read-image
 		  (merge-pathnames "linearrow.bm"
-		    (merge-pathnames 
+		    (merge-pathnames
 		     "garnetdraw/"
 		     common-lisp-user::garnet-bitmap-pathname))))))))
        (:doublearrowline-tool ,opal:aggregadget
@@ -834,7 +837,7 @@ where it goes.
 	       (:image
 		,(opal:read-image
 		  (merge-pathnames "doublelinearrow.bm"
-				   (merge-pathnames 
+				   (merge-pathnames
 				    "garnetdraw/"
 				    common-lisp-user::garnet-bitmap-pathname))))))))))
     (:interactors
@@ -844,7 +847,7 @@ where it goes.
 	(:final-feedback-obj ,TOOL-FEEDBACK)
 	(:how-set :set)
 	(:start-where ,(o-formula (list :element-of (gvl :operates-on))))))))
-					
+
   (s-value TOOLS-MENU :selected (car (g-value TOOLS-MENU :components)))
   (s-value TOOL-FEEDBACK :obj-over (car (g-value TOOLS-MENU :components))))
 
@@ -886,7 +889,7 @@ new style into the *STORED-LINE-STYLES* list, and returns it.
     ;; or was created.
     new-line-style))
 
-	    
+
 
 
 #|
@@ -970,7 +973,7 @@ selected in the line palette.
 
 			;; set line style to be new line style
 			(s-value thing :line-style new-line-style)))))))
-	
+
 	(:start-where ,(o-formula (list :element-of (gvl :operates-on)
 					:type opal:line)))))))
 
@@ -1003,7 +1006,7 @@ object using the current state aggregadget.
 
 	      ;; set line style to be new line style
 	      (s-value thing :line-style new-line-style))))
-	  
+
 	(dolist (thing (g-value MOVER-GROWER :value))
 	  (unless (g-value thing :group-p)
 	    (s-value thing :filling-style
@@ -1078,7 +1081,7 @@ earlier.
 			   item
 			   (opal:halftone (nth (gvl :rank)
 					       (gvl :parent :items))))))))
-					     
+
   (create-instance 'STIPPLE-PALETTE opal:aggregadget
     (:left 90)
     (:top (o-formula (if (g-value opal:color :color-p) 442 477)))
@@ -1156,7 +1159,7 @@ earlier.
 
 
   (create-instance 'COLOR-PALETTE opal:aggregadget
-    (:left 90) (:top 477)		 
+    (:left 90) (:top 477)
     (:selected NIL)
     (:items (copy-list the-color-list))
     (:parts
@@ -1191,7 +1194,7 @@ earlier.
   (Create-Stipple-Palette)        ; Creates STIPPLE-PALETTE
   (if (g-value opal:color :color-p)
       (Create-Color-Palette))     ; Creates COLOR-PALETTE
-  
+
   ;; Set the initial selected values
   (s-value (g-value stipple-palette :patterns-agg) :selected
 	   (nth 16 (g-value (g-value stipple-palette :patterns-agg) :components)))
@@ -1246,7 +1249,7 @@ line-styles and filling-styles.
 ====================================================================
 |#
 
-(defun Create-Current-State ()		 
+(defun Create-Current-State ()
   (create-instance 'CURRENT-STATE opal:aggregadget
     (:left 2) (:top 446) (:width 52) (:height 52)
     (:parts
@@ -1313,11 +1316,11 @@ line-styles and filling-styles.
 	(:start-action
 	 ,#'(lambda (inter obj)
 	      (let* ((feedback-obj (g-value inter :operates-on :feedback))
-		     (fill (g-value feedback-obj :obj-over :filling-style))) 
+		     (fill (g-value feedback-obj :obj-over :filling-style)))
 		(s-value feedback-obj :fast-redraw-filling-style
 			 (or fill opal:white-fill)))
 	      (call-prototype-method inter obj)))))))
-							  
+
 
   (let* ((selectable-objs (g-value CURRENT-STATE :selectable-objs))
 	 (frame (g-value selectable-objs :frame))
@@ -1335,7 +1338,7 @@ line-styles and filling-styles.
   )
 
 (defun Create-Main-Window ()
-  
+
   ;; This is the main window.
   (create-instance 'WIN inter:interactor-window
     (:left 10) (:top 40) (:width 750) (:height 512)
@@ -1358,7 +1361,7 @@ line-styles and filling-styles.
 	 (declare (ignore win))
 	 (common-lisp-user::Garnet-Note-Quitted "GARNETDRAW"))
      (g-value win :destroy-hooks)))
-  
+
   (Create-Moving-Prototypes) ; Creates MOVING-RECT, MOVING-OVAL, etc.
   (Create-Text-Feedback)     ; Creates TEXT-FEEDBACK
   (Create-Main-Menubar)      ; Creates MAIN-MENU
@@ -1369,7 +1372,7 @@ line-styles and filling-styles.
   (Create-Color-List)
 
   (Create-Current-State)     ; Creates CURRENT-STATE
-  
+
   (opal:add-components TOP-AGG
 		       TOOLS-MENU TOOL-FEEDBACK
 		       CURRENT-STATE line-palette line-feedback
@@ -1391,7 +1394,7 @@ line-styles and filling-styles.
 						    " Show Grid Dots "))
   (gg:menubar-disable-component *Grid-Vis-Item*) ; not implemented yet
   (gg:menubar-disable-component
-   (gg:find-submenu-component main-menu "  Edit  " " Reshape "))  
+   (gg:find-submenu-component main-menu "  Edit  " " Reshape "))
   )
 
 
@@ -1431,7 +1434,7 @@ This is the gadget used to move and scale different graphical objects.
     (:movegrow-lines-p t)
     (:value NIL)
     (:running-where t))
-  
+
   )
 
 #|
@@ -1518,7 +1521,7 @@ Used to make polygons when the polygon tool is the one being used.
 
 
 (defun Create-Draw-Window ()
-  
+
   ;; This is the window in which the drawings are done.
   (create-instance 'DRAW-WIN inter:interactor-window
     (:left 55)
@@ -1535,7 +1538,7 @@ Used to make polygons when the polygon tool is the one being used.
 
   (s-value DRAW-WIN :aggregate
 	   (create-instance 'TOP-DRAW-AGG opal:aggregate))
-                          
+
   ;; The *DRAW-AGG* is used to actually store the actual drawings.
 
   (setf *DRAW-AGG* (create-instance NIL opal:aggregadget
@@ -1550,7 +1553,7 @@ Used to make polygons when the polygon tool is the one being used.
 
   (opal:add-components TOP-DRAW-AGG
 		       *DRAW-AGG* MOVER-GROWER MOVING-LINE MOVING-RECT
-		       moving-oval MOVING-ROUNDTANGLE TEXT-FEEDBACK 
+		       moving-oval MOVING-ROUNDTANGLE TEXT-FEEDBACK
 		       new-moving-arrowline moving-doublearrowline
 		       polygon-maker)
   )
@@ -1655,7 +1658,7 @@ Used to make polygons when the polygon tool is the one being used.
 			   (let ((current-font (g-value TOOLS-MENU :text-tool
 							:text-state :font)))
 			     (s-value feed :font
-				      (opal:get-standard-font 
+				      (opal:get-standard-font
 				       (g-value current-font :family)
 				       (g-value current-font :face)
 				       (g-value current-font :size))))
@@ -1678,7 +1681,7 @@ Used to make polygons when the polygon tool is the one being used.
 		     (:left (o-formula (first (gvl :box))))
 		     (:top (o-formula (second (gvl :box))))
 		     (:text-p t)
-		     (:font (opal:get-standard-font 
+		     (:font (opal:get-standard-font
 			     (g-value current-font :family)
 			     (g-value current-font :face)
 			     (g-value current-font :size)))
@@ -1708,7 +1711,7 @@ Used to make polygons when the polygon tool is the one being used.
 	   (opal:destroy item))
 	 (setf *temp-list* NIL)))
     (:window `(,draw-win ,WIN)))
-  
+
   )
 
 
@@ -1720,13 +1723,13 @@ Used to make polygons when the polygon tool is the one being used.
   (s-value MAIN-MENU :accelerator-windows `(,WIN ,DRAW-WIN))
 
   (gg:Standard-Initialize-Gadget MAIN-MENU MOVER-GROWER *DRAW-AGG*)
-  
+
   ;; This is necessary because the items functions are called
   ;; by the motif-menu sitting in the submenus
   (dolist (menu (g-value MAIN-MENU :menubar-items :components))
     (gg:Standard-Initialize-Gadget (g-value menu :submenu)
 				   MOVER-GROWER *DRAW-AGG*))
-  
+
   (Create-Query-Gadget)      ; Creates *Q-BOX*
   (Create-File-DB)           ; Creates SAVE-WIN, *SAVE-DB*
   (Create-Grid-DB)           ; Creates GRID-WIN, *GRID-DB*
@@ -1734,7 +1737,7 @@ Used to make polygons when the polygon tool is the one being used.
   (Create-Interactors)
 
   (opal:update WIN T)
-  
+
   (Format T "~%GARNET DRAW v1.0:
 
 To Draw an object:
@@ -1801,19 +1804,19 @@ To edit a polygon(s):
      move the mouse over the polygon you want to edit and hit meta-r.
 
 ~%")
-  
+
   (unless dont-enter-main-event-loop #-cmu (inter:main-event-loop))
   )
 
 (defun Do-Stop ()
   (opal:destroy WIN)
-  
+
   ;; These interactors were probably not active when WIN was destroyed, so
   ;; we must destroy them explicitly.
   (dolist (sym '(NEW-ITEM CREATE-OR-EDIT EDIT-POLYLINE-INTER))
     (if (and (boundp sym) (schema-p (eval sym)))
 	(opal:destroy (eval sym))))
-  
+
   ;; These prototype objects were not added to a window themselves, so we
   ;; must destroy them explicitly.
   (dolist (sym '(PALETTE-ITEM COLOR-PALETTE-ITEM MOVING-AGG

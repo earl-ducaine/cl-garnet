@@ -12,7 +12,7 @@
 
 
 ;;; Opal:Create-Instances.Lisp
-;; 
+;;
 ;;  This file contains all the calls to KR:Create-Instance which are in Opal.
 ;;  They appear in the order in which they are listed in the overall Opal
 ;;  hierarchy, which is listed first.  Please keep it that way!
@@ -108,7 +108,7 @@
 ;; 	opal:WINDOW
 
 
-(in-package "OPAL")
+(in-package :opal)
 
 
 ;;; Some premature optimization.
@@ -124,7 +124,7 @@
 (declaim (inline q-max))
 (defun q-max (x y)
   "Two-argument fixnum version of max."
-  #+cmu 
+  #+cmu
   (declare (values fixnum))
   (declare (fixnum x y))
   (if (< x y) y x))
@@ -150,7 +150,7 @@
   (dolist (instance (copy-list (g-local-value quality :is-a-inv)))
     (destroy instance))
   (destroy-me quality))
-			   
+
 
 (create-instance 'FONT-FROM-FILE graphic-quality
   :declare ((:parameters :font-path :font-name)
@@ -224,7 +224,7 @@
 		      (create-instance NIL font-from-file
 		        (:font-name font-name)))
 	        (progn
-		  (warn "~A not allowed for :~A slot of font; substituting default-font." 
+		  (warn "~A not allowed for :~A slot of font; substituting default-font."
 			(car font-name)
 			(cdr font-name))
 		  default-font-from-file))))))))
@@ -302,7 +302,7 @@ avoiding wasted objects.
   (defun reset-first-allocatable-colormap-index (root-window)
     (setf first-time T)
     (first-allocatable-colormap-index root-window))
-  
+
   (defun set-first-allocatable-colormap-index (root-window value)
     (declare (ignore root-window))
     (setf *first-allocatable-colormap-index* value)))
@@ -349,7 +349,7 @@ avoiding wasted objects.
 	  (gem:colormap-property root-window :FREE-COLORS (list old-index)))
 	(incf (the fixnum (gethash new-index *colormap-index-table* 0))))
       new-index))))
-	
+
 
 (define-method :destroy-me COLOR (hue)
   (when gem:*color-screen-p*
@@ -364,7 +364,7 @@ avoiding wasted objects.
 				   :FREE-COLORS (list index)))))))
   (destroy-schema hue))
 
-				    
+
 (create-instance 'RED color
   (:red 1.0) (:green 0.0) (:blue 0.0))
 
@@ -733,7 +733,7 @@ avoiding wasted objects.
 		(let* ((min-x 9999)
 		       (line-style (gvl :line-style))
 		       (lsthickness (if line-style
-					(* 2 (q-max 1 (gv line-style 
+					(* 2 (q-max 1 (gv line-style
 							:line-thickness)))
 					0)))
 		  (do ((point point-list (cddr point)))
@@ -1007,7 +1007,7 @@ avoiding wasted objects.
 )
 
 ;;; To create a window for displaying gobs, create a schema which is
-;;  an instance of the window class described below specifying slots 
+;;  an instance of the window class described below specifying slots
 ;;  as needed. For example:
 ;;
 ;;  (create-instance my-window window
@@ -1024,7 +1024,7 @@ avoiding wasted objects.
 			   :top :left :width :height :cursor :title :icon-title
 			   :display :background-color :icon-bitmap
 			   :draw-on-children :modal-p :save-under)
-	    (:local-only-slots (:drawable nil) (:window nil) 
+	    (:local-only-slots (:drawable nil) (:window nil)
 			       (:parent nil) (:destroy-hooks nil)))
   (:left 0)
   (:top 0)
@@ -1077,4 +1077,3 @@ avoiding wasted objects.
   (:foreground-color cyan))
 (create-instance 'PURPLE-FILL filling-style
   (:foreground-color purple))
-
