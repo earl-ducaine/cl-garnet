@@ -5,7 +5,7 @@
 * Garnet is a Graphical User Interface Toolkit
 
   It has a long storied history and has been dormant for many years.
-  An overview of it's history can be found on [Cliki](http://www.cliki.net/garnet)
+  An overview of it's history can be found on [[http://www.cliki.net/garnet][Cliki]]
 
   Yet it is mostly functional and suprisingly complete, and it remains
   one of the only pure CL GUI Toolkits fully open source.
