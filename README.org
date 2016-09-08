@@ -26,7 +26,7 @@
 
    The easiest way to install and run the demo apps is:
 
-   1) Make sure you have Quicklisp installed.
+   1) Make sure you have [[https://www.quicklisp.org/beta/#installation][Quicklisp]] installed.
    2) Clone the Garnet repo to a convenient location:
 
       clone git https://github.com/earl-ducaine/cl-garnet ~/garnet
