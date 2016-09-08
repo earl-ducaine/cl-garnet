@@ -17,8 +17,8 @@
    so I'm targetting a minimal, modern, convenient platform: Ubuntu
    16.04/SBCL 1.3.1.debian.  Other somewhat modern versions of Ubuntu
    and SBCL are likely to work.  Other GNU/Linux distributions are
-   also likely to work.  MAC and Windows probably won't, neither most
-   likely will other CLs.  But once things are cleaned up, it
+   also likely to work.  Mac and Windows probably won't, neither (most
+   likely) will other CLs.  But once things are cleaned up, it
    shouldn't be hard to support a wide variety of platforms as long as
    they support ANSI Common Lisp and CLX.
 
