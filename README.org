@@ -35,23 +35,28 @@
       in Quicklisp's local-projects folder and delete Quicklisp's
       system index. (to force it to research directories)
 
-      cd ~/quicklisp/local-projects
-      ln -s ~/garnet .
-      rm ~/quicklisp/local-projects/system-index.txt
+      #+BEGIN_SRC bash
+        cd ~/quicklisp/local-projects
+        ln -s ~/garnet .
+        rm ~/quicklisp/local-projects/system-index.txt
+      #+END_SRC
 
    4) You should now be able to load the repo and all its dependancies
       via Quicklisp, and run the demo or begin using the library.
 
-      (ql:quickload  :xoanon.gui.garnet.asd)
-      (demos-controller::do-go)
-
+      #+BEGIN_SRC lisp
+        (ql:quickload  :xoanon.gui.garnet.asd)
+        (demos-controller::do-go)
+      #+END_SRC
 
    Note that ASDF integration is not quite working flawlessly.  So,
    you'll find it difficult to reload the library more than once into
    a single lisp session.  Also, sometimes it's necessary to delete
    your ASDF cache.  Something like the following: 
 
-   rm -rf ~/.cache/common-lisp
+   #+BEGIN_SRC bash
+     rm -rf ~/.cache/common-lisp
+   #+END_SRC
 
    Or one of the sub folders.  But I like rebuilding everything from
    time to time.
