@@ -6,34 +6,31 @@
 ;;; Carnegie Mellon University, and has been placed in the public   ;;;
 ;;; domain.                                                         ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; $Id$
 
-
 ;;; This file contains the main demos controller
 ;;;
 ;;; ** Call (Do-Go) to start and (Do-Stop) to stop **
 ;;;
 ;;; Designed and implemented by Osamu Hashimoto
-;;;
 
-
+
+
 (in-package :DEMOS-CONTROLLER)
 
 (declaim (special WIN1 AGG1 BT QBT DEMOS-MOUSELINE WIN2 TEXT))
 
 ;; Load multifont stuff.
-(unless (get :garnet-modules :multifont)
-   (load (merge-pathnames "multifont-loader" common-lisp-user::Garnet-Opal-PathName)
-         :verbose T))
+;; (unless (get :garnet-modules :multifont)
+;;    (load (merge-pathnames "multifont-loader" common-lisp-user::Garnet-Opal-PathName)
+;;          :verbose T))
 
-(dolist (file '("x-buttons-loader"
-		"text-buttons-loader"
-		"scrolling-window-loader"
-		"mouseline-loader"))
-  (common-lisp-user::garnet-load (concatenate 'string "gadgets:" file)))
+;; (dolist (file '("x-buttons-loader"
+;; 		"text-buttons-loader"
+;; 		"scrolling-window-loader"
+;; 		"mouseline-loader"))
+;;   (common-lisp-user::garnet-load (concatenate 'string "gadgets:" file)))
 
-(common-lisp-user::garnet-load "demos:demo-logo")
+;; (common-lisp-user::garnet-load "demos:demo-logo")
 
 (defparameter *package-list*
    '(("3d" DEMO-3D)
@@ -124,7 +121,12 @@ devised by David Goldberg at Xerox PARC.")
   (demo-logo:do-go :dont-enter-main-event-loop T)
 
   (create-instance 'win1 inter:interactor-window
-    (:left 0)(:top 240)(:width 270)(:height 430)
+    (:left 0)
+    (:top 240)
+    ;; (:width 270)
+    ;; (:height 430)
+    (:width 10)
+    (:height 10)
     (:title "Demos Controller")
     (:aggregate (create-instance 'agg1 opal:aggregate)))
 
@@ -169,6 +171,8 @@ devised by David Goldberg at Xerox PARC.")
     (:total-width 700)
     (:total-height (o-formula (+ 5 (gvl :inner-aggregate :height)) 200)))
 
+  (s-value win1 :height (o-formula (floor (* 1.1 (gv agg1 :height)))))
+  (s-value win1 :width (o-formula (floor (* 1.1 (gv agg1 :width)))))
 
   (opal:update win1)
   (opal:update win2)
@@ -190,10 +194,10 @@ Click the button to start the demo."))
   (opal:update win2)
 
   ;;if not CMU CommonLisp, then start the main event loop to look for events
-  #-cmu (inter:main-event-loop)
+  (inter:main-event-loop)
 )
 
-(defun Do-Stop ()
+(defun do-stop ()
     (dolist (item *running*)
       (unless (string= item "logo")
 	(ignore-errors
@@ -208,9 +212,7 @@ Click the button to start the demo."))
     (opal:destroy win1)
     (opal:destroy win2)
     (setq win1 NIL)
-  ;;if not CMU CommonLisp, then exit the main event loop
-    #-cmu (inter:exit-main-event-loop)
-)
+    (inter:exit-main-event-loop))
 
 (defun quit* (inter obj)
     (declare (ignore inter obj))

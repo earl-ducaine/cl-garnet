@@ -1696,20 +1696,23 @@ pixmap format in the list of valid formats."
   (declare (ignore root-window))
   (stringp arg))
 
+(defparameter dpi 151)
+;;; (defparameter scale-factor (/ dpi 96))
+(defparameter scale-factor 1.3321671)
 
 (defvar *Fixed-Font-Family*      "courier")
 (defvar *Serif-Font-Family*      "times")
 (defvar *Sans-Serif-Font-Family* "helvetica")
 
-(defvar *Small-Font-Size*      10)
-(defvar *Medium-Font-Size*     12)
-(defvar *Large-Font-Size*      18)
-(defvar *Very-Large-Font-Size* 24)
+(defvar *Small-Font-Size*      (floor (* scale-factor 10)))
+(defvar *Medium-Font-Size*     (floor (* scale-factor 12)))
+(defvar *Large-Font-Size*      (floor (* scale-factor 18)))
+(defvar *Very-Large-Font-Size* (floor (* scale-factor 24)))
 
-(defvar *Small-Font-Point-Size*      100)
-(defvar *Medium-Font-Point-Size*     120)
-(defvar *Large-Font-Point-Size*      180)
-(defvar *Very-Large-Font-Point-Size* 240)
+(defvar *Small-Font-Point-Size*      (floor (* scale-factor 100)))
+(defvar *Medium-Font-Point-Size*     (floor (* scale-factor 120)))
+(defvar *Large-Font-Point-Size*      (floor (* scale-factor 180)))
+(defvar *Very-Large-Font-Point-Size* (floor (* scale-factor 240)))
 
 
 ;; Returns either a string which describes the font using X conventions,
