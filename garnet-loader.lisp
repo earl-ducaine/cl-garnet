@@ -2,43 +2,45 @@
 
 (in-package :COMMON-LISP-USER)
 
-(defparameter Garnet-Version-Number "3.3")
-(pushnew :GARNET *features*)
-(pushnew :GARNET-V3 *features*)
-(setf *features* (delete :GARNET-V3.0 *features*))
-(pushnew :GARNET-V3.3 *features*)
+;; Not likely to be anywhere in the world where this would be useful.
+(defparameter garnet-version-number "3.3.post")
+(pushnew :garnet *features*)
+(pushnew :garnet-v3 *features*)
+(pushnew :garnet-v3.3.post *features*)
 
-;;; The following variables are used for customizing various aspects
-;;  of building to allow debugging or build faster systems.
-;;
-
-;; The :GARNET-DEBUG feature allows many different kinds of run-time
+;; The :garnet-debug feature allows many different kinds of run-time
 ;; checking, and also loads some extra test code. After you have
 ;; debugged your code and want it to run faster, remove :GARNET-DEBUG
 ;; from the *features* list and RECOMPILE all of Garnet and your code.
 ;; The result will be smaller and somewhat faster.
 ;;
-;; To remove :GARNET-DEBUG from the *features* list, either defvar
+;; To remove :garnet-debug from the *features* list, either defvar
 ;; Garnet-Garnet-Debug to NIL before you load the garnet-loader, or
 ;; simply edit the following defvar to set Garnet-Garnet-Debug to nil.
-(defvar Garnet-Garnet-Debug t)
-(if Garnet-Garnet-Debug
+;;
+;; TODO (ed): I have a pathological hatred of using *features*.  I find it makes
+;; for hideously ugly code.  So, at some point this should be changed
+;; to a runtime special variable that dynamically controls this.  That
+;; will forfit code size, but will still allow for optimizing
+;; production code.
+(defvar garnet-garnet-debug t)
+(if garnet-garnet-debug
     (pushnew :garnet-debug *features*)
     (setf *features* (delete :garnet-debug *features*)))
-
 
 ;; The following variable affects compiler policy. Setting it to T
 ;; uses the settings in *garnet-compile-debug-settings*. Setting it to
 ;; NIL uses the ones in *garnet-compile-production-settings*. By
 ;; default we simply mirror Garnet-Garnet-Debug.
-(defvar Garnet-Compile-Debug-Mode Garnet-Garnet-Debug
+(defvar garnet-compile-debug-mode garnet-garnet-debug
   "Setting this variable to T sets the policy for the entire system
 to make it more debuggable.")
 
-(defvar Garnet-Compile-Debug-Settings
-  '(optimize (speed 2) (safety 3) (debug 3)
-    #-(or ccl sbcl) (space 2.5) #+(or ccl sbcl) (space 2)
-    #+ccl (compilation-speed 3))
+(defvar garnet-compile-debug-settings
+  '(optimize (speed 2)
+    (safety 3)
+    (debug 3)
+    (space 2))
   "Use these settings for globally debugging the system or for debugging
 a specific module. They emphasize debuggability at the cost of some speed.
 
@@ -52,23 +54,18 @@ With SBCL:
 
 - They allow all possible debugging features.")
 
-(defvar Garnet-Compile-Production-Settings
+(defvar garnet-compile-production-settings
   '(optimize (speed 3)
-    #+allegro (safety 1) #-allegro (safety 0)
+    (safety 0)
     (space 1)
-    #-cmu (debug 1) #+cmu (debug 0.5)
-    (compilation-speed 0)
-    #+cmu (ext:inhibit-warnings 3))
-  "Production compiler policy settings. Emphasize speed, de-emphasize debugging.")
+     (debug 1)
+    (compilation-speed 0))
+  "production compiler policy settings. emphasize speed, de-emphasize debugging.")
 
-#+(and sbcl (not garnet-debug))
-(declaim (sb-ext:muffle-conditions sb-ext:compiler-note))
-
-
-(defvar Default-Garnet-Proclaim
-  (if Garnet-Compile-Debug-Mode
-      Garnet-Compile-Debug-Settings
-      Garnet-Compile-Production-Settings)
+(defvar default-garnet-proclaim
+  (if garnet-compile-debug-mode
+      garnet-compile-debug-settings
+      garnet-compile-production-settings)
   "Set compiler optimization settings.
 
 1. If you want everything debugged, set Garnet-Compile-Debug-Mode to t.
@@ -81,11 +78,10 @@ With SBCL:
    to nil and leave everything else alone.")
 
 
- (when Default-Garnet-Proclaim
-   (proclaim Default-Garnet-Proclaim))
+(when default-garnet-proclaim
+  (proclaim default-garnet-proclaim))
 
- 
- ;;; Defpackages.
+  ;;; Defpackages.
 (progn
    (defpackage :GARNET-UTILS (:use :COMMON-LISP) (:nicknames :GU))
    (defpackage :KR-DEBUG (:use :COMMON-LISP))
