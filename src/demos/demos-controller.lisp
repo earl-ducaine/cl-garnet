@@ -119,7 +119,6 @@ devised by David Goldberg at Xerox PARC.")
     ("virtual-agg" "Demonstrates virtual aggregates.")
     ))
 
-
 (defun Do-Go ()
   (setq *running* NIL)
   (demo-logo:do-go :dont-enter-main-event-loop T)
@@ -157,8 +156,7 @@ devised by David Goldberg at Xerox PARC.")
 
   (create-instance 'demos-mouseline gg:mouselinepopup
     (:windows win1)
-    #+garnet-processes (:wait-amount 2)
-    #-garnet-processes (:wait-amount NIL))
+    (:wait-amount 2))
 
   (opal:add-components agg1 bt qbt demos-mouseline)
 
@@ -190,7 +188,7 @@ Click the button to start the demo."))
   (s-value win2 :v-scroll :wheel-up :start-where (list :element-of-or-none (g-value text :parent)))
   (s-value win2 :v-scroll :wheel-down :start-where (list :element-of-or-none (g-value win2 :parent)))
   (opal:update win2)
-  
+
   ;;if not CMU CommonLisp, then start the main event loop to look for events
   #-cmu (inter:main-event-loop)
 )
@@ -202,7 +200,7 @@ Click the button to start the demo."))
 	  (funcall
 	   (intern "DO-STOP"
 		   (cadar
-		    (member item 
+		    (member item
 			    *package-list*
 			    :key #'car
 			    :test #'string=)))))))
@@ -219,7 +217,7 @@ Click the button to start the demo."))
     (do-stop))
 
 (defun start (objlist)
-    (when (string= (first objlist) "logo") 
+    (when (string= (first objlist) "logo")
 	  (opal:set-text text " ")
 	  (opal:update win2)
 	  (demo-logo:re-animate)
@@ -235,7 +233,7 @@ Click the button to start the demo."))
 				       :test #'string=))))
 
       (when (member (car objlist) *unloaded* :test #'string=)
-            (load 
+            (load
               (merge-pathnames
 	       (string-downcase package-name) common-lisp-user::Garnet-Demos-PathName))
             (setq *unloaded* (remove (car objlist) *unloaded* :test #'string=)))
@@ -284,10 +282,8 @@ Click the button to start the demo."))
 (defun Message (format &rest args)
   (if text
       (progn (opal:go-to-end-of-text text)
-	     (opal:insert-text 
+	     (opal:insert-text
 	      text
 	      (apply #'format nil format args))
 	     (opal:update win2))
       (apply #'format t format args)))
-		    
-		     

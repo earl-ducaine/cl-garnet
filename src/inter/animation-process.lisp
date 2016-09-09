@@ -31,7 +31,7 @@ from this array.  An index into this array is sent with the timer
 event so that we will know which interactor to wake up.")
 
 ;; set by default-event-handler.
-(defparameter *Process-With-Main-Event-Loop* NIL) 
+(defparameter *Process-With-Main-Event-Loop* NIL)
 
 (defparameter *All-Timer-Processes* NIL)
 
@@ -95,8 +95,8 @@ debugger, otherwise NIL"
        (return))
      (send-timer-event inter)
      (when once (return))
-     ;; now, make sure other processes run 
-     #+allegro      (mp:process-allow-schedule)  
+     ;; now, make sure other processes run
+     #+allegro      (mp:process-allow-schedule)
      #+ccl          (ccl:process-allow-schedule)
      #+sb-thread    (sb-thread:thread-yield)
      ;; This causes CMUCL to give an error when it kills the main
@@ -110,13 +110,6 @@ debugger, otherwise NIL"
     (when timer-process (internal-kill-timer-process timer-process))
     (s-value inter :timer-event-process NIL)))
 
-#-garnet-processes			; not possible in other lisps
-(defun launch-timer-process (inter time once)
-  "This only works in Allegro, CMUCL, CCL, and SBCL"
-  (declare (ignore inter time once))
-  )
-  
-#+garnet-processes
 (defun launch-timer-process (inter time once)
   "Spawn a process which is waiting for timer events"
 
@@ -124,25 +117,7 @@ debugger, otherwise NIL"
     (when timer-process (internal-kill-timer-process timer-process))
     ;;; DZG (xlib:intern-atom opal::*default-x-display* ':TIMER_EVENT)
     (setf timer-process
-	  #+allegro
-	  (mp:process-run-function
-	   "Garnet Timer"
-	   ;; This runs at priority 0, so it will be
-	   ;; lower than main-event-loop-process.
-	   #'(lambda ()
-	       (Timer-Process-Main-Loop inter time once)))
-	  #+(and cmu mp)
-	  (mp:make-process
-	   #'(lambda ()
-	       (Timer-Process-Main-Loop inter time once))
-	   :name "Garnet Timer")
-	  #+ccl
-	  (ccl:process-run-function 
-	   "Garnet Timer"
-	   #'(lambda ()
-	       (Timer-Process-Main-Loop inter time once)))
-	  #+sb-thread
-	  (sb-thread:make-thread 
+	  (sb-thread:make-thread
 	   #'(lambda ()
 	       (Timer-Process-Main-Loop inter time once))
 	   :name "Garnet Timer")

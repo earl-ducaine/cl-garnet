@@ -17,7 +17,7 @@
 ;;;  will display the :help-string line of any object as a string.
 ;;;  The default position is at the bottom of the window, but that can
 ;;;  be overridden.  The MouseLinePopup pops up a window displaying
-;;;  the help string text. 
+;;;  the help string text.
 ;;;
 ;;;  Slots for MouseLine:
 ;;;    :left - default 5
@@ -29,7 +29,7 @@
 ;;;
 ;;;  Slots for MouseLinePopup
 ;;;      :start-event - event to cause immediate pop-up.  Default
-;;;                     :SHIFT-CONTROL-META-LEFTDOWN 
+;;;                     :SHIFT-CONTROL-META-LEFTDOWN
 ;;;      :windows - windows whose objects to search through.  The
 ;;;           default is the single window containing the MouseLinePopup gadget
 ;;;      :wait-amount - time in seconds to wait before popping up window.
@@ -38,23 +38,7 @@
 ;;;  Slot of objects that move over:
 ;;;     :help-string - must contain a string of helpful information, or NIL
 
-#|
-============================================================
-Change log:
-   8-25-96 Russell Almond -- Changed windows list to include popup windows 
-          necessary for Mac Behavior problems.
-   8-12-93 Brad Myers - When no process, then always use :wait-amount of 0.
-                      - when pop-up already vis. and move, changes to new obj
-   7-27-93 Andrew Mickish - To implement lazy loading of text-buttons for demo,
-                            check :garnet-modules hash table
-   6-25-93 Brad Myers - Added delayed invocation
- 13-Oct-92 Brad Myers - created based on idea from Wayne Johnson and
-                        Ken Meltsner
-============================================================
-|#
-
-
-(in-package "GARNET-GADGETS")
+(in-package :garnet-gadgets)
 
 (eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(MouseLine MouseLinePopup)))
@@ -74,14 +58,11 @@ Change log:
       (when process-status (inter::Kill-Timer-Process inter))
       (s-value inter :waiting-over-obj obj)
       (if obj
-	  (progn 
+	  (progn
 	    (s-value inter :timer-wait-status :started)
 	    (inter::launch-timer-process inter wait-amount T))
 	  (progn
 	    (s-value inter :timer-wait-status NIL))))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 
 (defun MouseLineTimerHandler (inter)
   ;; if wasn't killed, then should be still over the object, so display it
@@ -90,8 +71,7 @@ Change log:
 
 (defun MouseLineRunAction (inter prev-obj new-obj)
   (declare (ignore prev-obj))
-  (let ((wait-amount #+garnet-processes (g-value inter :wait-amount)
-		     #-garnet-processes NIL))
+  (let ((wait-amount  (g-value inter :wait-amount)))
     (if (and wait-amount
 	     (> wait-amount 0))
 	(Launch-MouseLine-Process inter new-obj wait-amount)
@@ -160,7 +140,7 @@ Change log:
       (:string ,(o-formula (gvl :parent :string)))
       (:left ,(o-formula (gvl :parent :left)))
       (:top ,(o-formula (gvl :parent :top))))))
-  (:interactors 
+  (:interactors
    `((:checkit ,inter:menu-interactor
       (:start-where ,(o-formula (list :list-leaf-element-of
 				      (gvl :operates-on)
@@ -182,7 +162,7 @@ Change log:
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun HidePopMouseLine (inter obj) 
+(defun HidePopMouseLine (inter obj)
   (declare (ignore obj))
   (inter::Kill-Timer-Process inter)
   (s-value inter :waiting-over-obj NIL)
@@ -210,8 +190,7 @@ Change log:
 
 (defun PopMouseLineRunning-Action (inter prev new)
   (declare (ignore prev))
-  (let ((wait-amount #+garnet-processes (g-value inter :wait-amount)
-		     #-garnet-processes NIL)
+  (let ((wait-amount  (g-value inter :wait-amount))
 	win)
     (if (and wait-amount
 	     (> wait-amount 0))
@@ -280,8 +259,8 @@ Change log:
   (:string "<No info>") ; set directly by interactor
   (:popup NIL)
   (:popupwin NIL)
-  
-  (:interactors 
+
+  (:interactors
    `((:pop-checkit ,inter:menu-interactor
       (:window ,(o-formula (Set-Want-Enter-Leave (gvl :operates-on :all-wins))))
       (:start-where ,(o-formula (list :list-leaf-element-of
@@ -316,7 +295,7 @@ Change log:
       (:waiting-priority ,MouseLinePriorityLevel)
       (:running-priority ,MouseLinePriorityLevel)
       (:final-function InsideOutsideHandler))
-     
+
      (:pop-immediate-show ,inter:menu-interactor
       (:start-where ,(o-formula (list :list-leaf-element-of
 				      (gvl :operates-on)
@@ -350,16 +329,12 @@ Change log:
       (:string ,(o-formula (gvl :parent :popup :string)))
       (:left 5)
       (:top 5)))))
-      
+
 (define-method :initialize mouselinepopup (ml)
    (call-prototype-method ml)
    (let ((kr::*demons-disabled* NIL) ; turn on all demons
 	 (parts (create-instance NIL MouseLinePopupParts))
 	 window)
-     #-garnet-processes (when (g-value ml :wait-amount)
-       (fresh-line)
-       (format T "*** WARNING: wait-amount being ignored in mouseline because
-***          this lisp does not support multiple processes."))
      (s-value parts :popup ml)
      (setq window (create-instance NIL inter:interactor-window
 		    (:omit-title-bar-p T)
@@ -373,45 +348,37 @@ Change log:
      (s-value ml :popup parts)
      (s-value ml :popupwin window)
      (opal:Update window)))
-      
+
 (define-method :destroy-me mouselinepopup (popup &optional erase)
   (let ((popup-win (g-value popup :popupwin)))
     ;; abort the interactors because destroying the window seems to
-    ;; generate an error when the interactors are running 
+    ;; generate an error when the interactors are running
     (inter:abort-interactor (g-value popup :pop-checkit))
     (inter:abort-interactor (g-value popup :pop-immediate-show))
     (when popup-win
       (opal:destroy popup-win))
     (call-prototype-method popup erase)))
 
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-#+garnet-test
-(eval-when (:execute :load-toplevel :compile-toplevel)
- (export '(Mouseline-Go Mouseline-Stop)))
-
-#+garnet-test
 (defun MouseLine-Go ()
-    (unless (get :garnet-modules :text-buttons)
-      (common-lisp-user::garnet-load "gg:text-buttons-loader"))
-    (create-instance 'MouseLine-Win inter:interactor-window
-      (:title "MouseLine Tester Window")
-      (:aggregate (create-instance 'MouseLine-Agg opal:aggregate)))
-    (create-instance 'Extra-MouseLine-Win inter:interactor-window
-      (:top 320)(:height 85)
-      (:title "Extra MouseLine Window")
-      (:aggregate (create-instance 'MouseLine-Extra-Agg opal:aggregate)))
-    (opal:add-components MouseLine-Extra-Agg
-			 (create-instance NIL opal:rectangle
-			   (:left 10)(:top 10)(:width 40)(:height 40)
-			   (:filling-style opal:green-fill)
-			   (:help-string "Green rectangle")))
-    (opal:add-components MouseLine-Agg
-			 (create-instance NIL opal:rectangle
-			   (:left 10)(:top 10)(:width 40)(:height 40)
-			   (:filling-style opal:blue-fill)
-			   (:help-string "Blue Rectangle"))
+  (unless (get :garnet-modules :text-buttons)
+    (common-lisp-user::garnet-load "gg:text-buttons-loader"))
+  (create-instance 'MouseLine-Win inter:interactor-window
+    (:title "MouseLine Tester Window")
+    (:aggregate (create-instance 'MouseLine-Agg opal:aggregate)))
+  (create-instance 'Extra-MouseLine-Win inter:interactor-window
+    (:top 320)(:height 85)
+    (:title "Extra MouseLine Window")
+    (:aggregate (create-instance 'MouseLine-Extra-Agg opal:aggregate)))
+  (opal:add-components MouseLine-Extra-Agg
+		       (create-instance NIL opal:rectangle
+			 (:left 10)(:top 10)(:width 40)(:height 40)
+			 (:filling-style opal:green-fill)
+			 (:help-string "Green rectangle")))
+  (opal:add-components MouseLine-Agg
+		       (create-instance NIL opal:rectangle
+			 (:left 10)(:top 10)(:width 40)(:height 40)
+			 (:filling-style opal:blue-fill)
+			 (:help-string "Blue Rectangle"))
 		       (create-instance NIL opal:circle
 			 (:left 10)(:top 30)(:width 40)(:height 40)
 			 (:filling-style opal:red-fill)
@@ -426,21 +393,18 @@ Change log:
 		       (create-instance 'mouselinepopup-obj gg:mouselinepopup
 			 (:windows (list Extra-MouseLine-Win MouseLine-Win)))
 		       )
-    (opal:add-components mouseline-subagg
-			 (create-instance NIL opal:rectangle
-			   (:left 10)(:top 100)
-			   (:help-string "Plain rectangle"))
-			 (create-instance NIL opal:text
-			   (:left 120)(:top 100)
-			   (:string "no message with me")))
-    (opal:update MouseLine-Win)
-    (opal:update Extra-MouseLine-Win)
-    "Moving around updates mouseline, hitting :SHIFT-CONTROL-META-LEFTDOWN
+  (opal:add-components mouseline-subagg
+		       (create-instance NIL opal:rectangle
+			 (:left 10)(:top 100)
+			 (:help-string "Plain rectangle"))
+		       (create-instance NIL opal:text
+			 (:left 120)(:top 100)
+			 (:string "no message with me")))
+  (opal:update MouseLine-Win)
+  (opal:update Extra-MouseLine-Win)
+  "Moving around updates mouseline, hitting :SHIFT-CONTROL-META-LEFTDOWN
 pops up a window")
 
-#+garnet-test
 (defun MouseLine-Stop ()
   (opal:destroy MouseLine-Win)
   (opal:destroy Extra-MouseLine-Win))
-
-

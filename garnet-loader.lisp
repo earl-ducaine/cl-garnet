@@ -1,62 +1,5 @@
-;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: COMMON-LISP-USER; Base: 10 -*-
-;;    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;    ;;
-;;          The Garnet User Interface Development Environment.      ;;
-;;    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;    ;;
-;;  This code was written as part of the Garnet project at          ;;
-;;  Carnegie Mellon University, and has been placed in the public   ;;
-;;  domain.  If you are using this code or any part of Garnet,      ;;
-;;  please contact garnet@cs.cmu.edu to be put on the mailing list. ;;
-;;    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;    ;;
-;;
-;; $Id::                                                             $
+;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: COMMON-LISP-USER  -*-
 
-;;; This file loads all the garnet modules.
-;;
-;; ** To prevent certain parts from being loaded, first set
-;;      common-lisp-user::load-XX-p to NIL.
-;; ** To get some of the parts which are not loaded by default to be
-;;    loaded, set common-lisp-user::load-XX-p to T.
-;; ** To override where something is loaded from, set
-;;    Garnet-xx-PathName before loading this file and/or Garnet-xx-src
-;;
-;; The controlling variables are:
-;;
-;;      load-clx-p          (Default: NIL => clx not loaded)
-;;      load-utils-p        (Default: T   => utilities loaded)
-;;      load-kr-p           (Default: T   => kr loaded)
-;;      load-kr-doc-p       (Default: NIL => kr-doc *NOT* loaded)
-;;      load-gworld-p       (Default: T   => gworld loaded for Mac)
-;;      load-gem-p          (Default: T   => gem loaded)
-;;      load-opal-p         (Default: T   => opal loaded)
-;;      load-inter-p        (Default: T   => interactors loaded)
-;;      load-truetype-p     (default: T   => truetype support loaded)
-;;      load-multifont-p    (Default: NIL => multifont *NOT* loaded)
-;;      load-gesture-p      (Default: NIL => gestures *NOT* loaded)
-;;      load-ps-p           (Default: T   => ps loaded)
-;;      load-aggregadgets-p (Default: T   => aggregadgets loaded)
-;;      load-aggregraphs-p  (Default: NIL => aggregraphs *NOT* loaded)
-;;      load-gadgets-p      (Default: NIL => gadgets *NOT* loaded)
-;;      load-debug-p        (Default: T   => debugging tools loaded)
-;;      load-demos-p        (Default: NIL => demos *NOT* loaded)
-;;      load-c32-p          (Default: NIL => C32 *NOT* loaded)
-;;      load-gilt-p         (Default: NIL => gilt *NOT* loaded)
-;;      load-protected-eval-p (Default: <lisp dependent> =>
-;;                            protected-eval loaded for lisps with
-;;                            multi-processor support.
-;;
-;; Part of this file lists the file names where the various parts of
-;; Garnet come from. While the system attempts to determine the
-;; appropriate information automatically, it may need to be entered
-;; manually.
-;;
-;; To override any particular file name place, it is only necessary to
-;; assign the variable name Garnet-XX-Pathname before this file is loaded
-;; (since they are defined here using defvar, the old name will stay in
-;; affect).
-;;
-;;
-
-
 (in-package :COMMON-LISP-USER)
 
 (defparameter Garnet-Version-Number "3.3")
@@ -65,23 +8,6 @@
 (setf *features* (delete :GARNET-V3.0 *features*))
 (pushnew :GARNET-V3.3 *features*)
 
-
-;; The :GARNET-PROCESSES keyword goes on the *features* list if this
-;; version of lisp supports multiple processes. Then things like the
-;; animation interactor can use the #+garnet-processes switch, instead
-;; of referring explicitly to different versions of lisp.
-;;
-;; In reality, process code still needs to be conditionalized
-;; per-implementation.
-(pushnew :GARNET-PROCESSES *features*)
-
-#+allegro
-(defvar Garnet-Readtable *readtable*
-  "This variable is used by Allegro to restore the old value of the
-*readtable* when a saved image is restarted (see opal:make-image in
-opal/utils.lisp).")
-
-
 ;;; The following variables are used for customizing various aspects
 ;;  of building to allow debugging or build faster systems.
 ;;

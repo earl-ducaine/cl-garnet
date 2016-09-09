@@ -356,8 +356,8 @@ Click right mouse button to zoom out by a factor of 2.")
 	 (red (/ (first color-triple) 256))
 	 (green (/ (second color-triple) 256))
 	 (blue (/ (third color-triple) 256)))
-    (gem:color-to-index 
-     gem::*root-window* 
+    (gem:color-to-index
+     gem::*root-window*
      (create-instance nil opal:color
        (:red red)
        (:green green)
@@ -381,7 +381,7 @@ Click right mouse button to zoom out by a factor of 2.")
     (create-dialogs)
 
     (create-colormap)
-      
+
     (create-feedback-rectangles)
     (create-interactors)
   ))
@@ -515,7 +515,7 @@ Radius --- the radius of the plot around the center.")
 	      (:foreground-color opal:blue)
 	      (:background-color opal:white))
 	*w-agg* (create-instance nil opal:aggregate))
-    
+
   (s-value *w* :aggregate *w-agg*)
   (update *w*)
 
@@ -551,7 +551,7 @@ Radius --- the radius of the plot around the center.")
   (setf *banner*
 	(create-instance 'BANNER opal:text
 	  (:string "Mandelbrot Set Explorer")))
-  
+
   (setf *buttons*
 	(create-instance 'BUTTONS garnet-gadgets:motif-text-button-panel
            ;; can't be constant since we want to center it.
@@ -604,7 +604,7 @@ Radius --- the radius of the plot around the center.")
 			  (round (gvl :width) 2))))
      (:top (o-formula (+ (opal:gv-bottom slider) 5)))
      (:string (o-formula (format nil "~D" (gv slider :value)))))
-     
+
   (setf *prop*
 	(create-instance 'PROP prop-sheet
 	   (:left 75)
@@ -616,7 +616,7 @@ Radius --- the radius of the plot around the center.")
 	     ("Radius" ,(o-formula (format nil "~A" *radius*)))))))
 
   (s-value prop :help-string prop-help)
-  
+
   (setf *indicator*
 	(create-instance 'indicator garnet-gadgets:motif-h-scroll-bar
 	   (:left (o-formula (- (round (gvl :parent :window :width) 2)
@@ -676,7 +676,7 @@ Radius --- the radius of the plot around the center.")
 	      (:left 10) (:top 10)
 	      (:font ,(opal:get-standard-font NIL :bold-italic :large))
 	      )
-	     
+
 	     (:OK-cancel-buttons :modify
 		     (:top ,(o-formula (+ (gvl :parent :file-input :top)
 					  (gvl :parent :file-input :height)
@@ -705,22 +705,12 @@ Radius --- the radius of the plot around the center.")
 	     (format nil "Percent Complete: ~D"
 		     (ceiling (* done 100))))))
 
-
 (declaim (inline mm))
+
 (defun mm ()
-  #+(and :cmu :garnet-processes) (mp:make-process #'m)
-  #+:allegro (mp:process-run-function "Plotter" #'m)
-  #+:sb-thread (sb-thread:make-thread #'m :name "Plotter")
-  #-:garnet-processes (m)
-)
+  (sb-thread:make-thread #'m :name "Plotter"))
 
-
-#+:cmu
-(declaim (ext:start-block m))
-
-;;;
 ;;; Function to plot a point in the pixmap.
-;;;
 (declaim (inline plot-point))
 (defun plot-point (x y color)
   (declare (optimize (speed 3) (safety 0) (space 0)))
@@ -784,7 +774,7 @@ Radius --- the radius of the plot around the center.")
        (declare (fixnum y))
        (update-indicator y)
        (opal:update *gw*)
-       #+(and :cmu :garnet-processes) (mp:process-yield)
+       (sb-thread:thread-yield)
        (dotimes (x w)
 	 (declare (fixnum x))
 	 (let ((rec (+ (* s (- x half-w)) recen))
@@ -887,7 +877,7 @@ Radius --- the radius of the plot around the center.")
 	     (parse-integer trimmed-line :junk-allowed t))
 	   (unless red
 	     (return))
-	   (multiple-value-setq (green next) 
+	   (multiple-value-setq (green next)
 	     (parse-integer trimmed-line :start next :junk-allowed t))
 	   (unless green
 	     (return))
@@ -908,5 +898,3 @@ Radius --- the radius of the plot around the center.")
 	   (lisp::%top-level)))
     (make-image "fmand" :executable t :init-function #'fmand-top-level)
   ))
-
-

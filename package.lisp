@@ -274,7 +274,10 @@ Glyphs information is obtained by ZPB-TTF. Font rasterization is made by CL-VECT
 
 (defpackage :garnet-gadgets
   (:use :common-lisp :kr)
-  (:nicknames :gg))
+  (:nicknames :gg)
+  (:export
+   :mouseline-go
+   :mouseline-stop))
 
 (defpackage :test
   (:use :common-lisp))
