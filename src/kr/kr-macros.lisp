@@ -18,12 +18,6 @@
 
 (in-package :kr)
 
-(defparameter *dont-load-modules-twice* t
-  "*dont-load-modules-twice* tells whether to re-load modules
-if a user loads garnet-loader.lisp a second time.")
-
-
-
 (defparameter *kr-version* "2.3.4")
 
 (eval-when (:compile-toplevel :load-toplevel :execute)

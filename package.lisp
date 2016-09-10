@@ -281,3 +281,14 @@ Glyphs information is obtained by ZPB-TTF. Font rasterization is made by CL-VECT
 
 (defpackage :test
   (:use :common-lisp))
+
+(defpackage :GARNET-UTILS (:use :COMMON-LISP) (:nicknames :GU))
+(defpackage :KR-DEBUG (:use :COMMON-LISP))
+
+(defpackage :KR (:use :COMMON-LISP :KR-DEBUG))
+(defpackage :OPAL (:use :COMMON-LISP :KR))
+
+(defpackage :GARNET-DEBUG (:use :COMMON-LISP :KR :OPAL) (:nicknames :GD))
+(defpackage :GILT (:use :COMMON-LISP :KR))
+(defpackage :C32 (:use :COMMON-LISP :KR))
+(defpackage :LAPIDARY (:use :COMMON-LISP :KR))

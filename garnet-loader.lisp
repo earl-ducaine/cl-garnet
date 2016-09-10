@@ -81,17 +81,7 @@ With SBCL:
 (when default-garnet-proclaim
   (proclaim default-garnet-proclaim))
 
-  ;;; Defpackages.
 (progn
-   (defpackage :GARNET-UTILS (:use :COMMON-LISP) (:nicknames :GU))
-   (defpackage :KR-DEBUG (:use :COMMON-LISP))
-   (defpackage :KR (:use :COMMON-LISP :KR-DEBUG))
-   (defpackage :OPAL (:use :COMMON-LISP :KR))
-
-   (defpackage :GARNET-DEBUG (:use :COMMON-LISP :KR :OPAL) (:nicknames :GD))
-   (defpackage :GILT (:use :COMMON-LISP :KR))
-   (defpackage :C32 (:use :COMMON-LISP :KR))
-   (defpackage :LAPIDARY (:use :COMMON-LISP :KR))
    (defpackage :AGATE (:use :COMMON-LISP :KR))
    (defpackage :DEMO-3D (:use :COMMON-LISP :KR) (:export DO-GO DO-STOP))
    (defpackage :DEMO-MULTIWIN (:use :KR :COMMON-LISP) (:export DO-GO DO-STOP))
@@ -146,12 +136,6 @@ With SBCL:
    (defpackage :DEMO-MOVELINE (:use :KR :COMMON-LISP) (:export DO-GO DO-STOP))
    )
 
-;;;(use-package '(:kr :kr-debug :garnet-debug))
-
- 
-(defparameter *dont-load-modules-twice* t
-  "*dont-load-modules-twice* tells whether to re-load modules
-if a user loads garnet-loader.lisp a second time.")
 
 ;; load-XX-p control whether the various parts are loaded or not
 ;; Because these use defvar, if they are set before this file is

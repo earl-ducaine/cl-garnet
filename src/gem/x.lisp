@@ -1704,15 +1704,15 @@ pixmap format in the list of valid formats."
 (defvar *Serif-Font-Family*      "times")
 (defvar *Sans-Serif-Font-Family* "helvetica")
 
-(defvar *Small-Font-Size*      (floor (* scale-factor 10)))
-(defvar *Medium-Font-Size*     (floor (* scale-factor 12)))
-(defvar *Large-Font-Size*      (floor (* scale-factor 18)))
-(defvar *Very-Large-Font-Size* (floor (* scale-factor 24)))
+(defvar *Small-Font-Size*      (ceiling (* scale-factor 10)))
+(defvar *Medium-Font-Size*     (ceiling (* scale-factor 12)))
+(defvar *Large-Font-Size*      (ceiling (* scale-factor 18)))
+(defvar *Very-Large-Font-Size* (ceiling (* scale-factor 24)))
 
-(defvar *Small-Font-Point-Size*      (floor (* scale-factor 100)))
-(defvar *Medium-Font-Point-Size*     (floor (* scale-factor 120)))
-(defvar *Large-Font-Point-Size*      (floor (* scale-factor 180)))
-(defvar *Very-Large-Font-Point-Size* (floor (* scale-factor 240)))
+(defvar *Small-Font-Point-Size*      (ceiling (* scale-factor 100)))
+(defvar *Medium-Font-Point-Size*     (ceiling (* scale-factor 120)))
+(defvar *Large-Font-Point-Size*      (ceiling (* scale-factor 180)))
+(defvar *Very-Large-Font-Point-Size* (ceiling (* scale-factor 240)))
 
 
 ;; Returns either a string which describes the font using X conventions,
