@@ -292,3 +292,57 @@ Glyphs information is obtained by ZPB-TTF. Font rasterization is made by CL-VECT
 (defpackage :GILT (:use :COMMON-LISP :KR))
 (defpackage :C32 (:use :COMMON-LISP :KR))
 (defpackage :LAPIDARY (:use :COMMON-LISP :KR))
+
+
+(defpackage :AGATE (:use :COMMON-LISP :KR))
+(defpackage :DEMO-3D (:use :COMMON-LISP :KR) (:export DO-GO DO-STOP))
+(defpackage :DEMO-MULTIWIN (:use :KR :COMMON-LISP) (:export DO-GO DO-STOP))
+(defpackage :DEMO-MULTIFONT (:use :COMMON-LISP KR) (:export DO-GO DO-STOP))
+(defpackage :DEMO-ANIMATOR (:use :COMMON-LISP :KR) (:export DO-GO DO-STOP))
+(defpackage :DEMO-ANGLE (:use :KR :COMMON-LISP) (:export DO-GO DO-STOP))
+(defpackage :DEMO-OTHELLO (:use :KR :COMMON-LISP) (:nicknames :DOTH)
+	    (:export DO-GO DO-STOP START-GAME STOP-GAME SET-SCORE))
+(defpackage :DEMO-PIXMAP (:use :COMMON-LISP :KR) (:export DO-GO DO-STOP))
+(defpackage :DEMO-ARITH (:use :KR :COMMON-LISP) (:export DO-GO DO-STOP))
+(defpackage :DEMO-SCHEMA-BROWSER (:use :COMMON-LISP :KR)
+	    (:export DO-GO DO-STOP SCHEMA-BROWSER SCHEMA-BROWSER-WIN
+		     SCHEMA-BROWSER-TOP-AGG))
+(defpackage :DEMO-ARRAY (:use :COMMON-LISP :KR) (:export DO-GO DO-STOP))
+(defpackage :DEMO-SCROLLBAR (:use :COMMON-LISP :KR)
+	    (:export DO-GO DO-STOP
+		     MAC-obj MAC-Go MAC-Stop
+		     Open-obj Open-Go Open-Stop
+		     NEXT-obj NEXT-Go NEXT-Stop
+		     Motif-obj Motif-Go Motif-Stop))
+(defpackage :DEMO-CLOCK (:use :KR :COMMON-LISP) (:export DO-GO DO-STOP))
+(defpackage :DEMO-SEQUENCE (:use :COMMON-LISP :KR) (:export DO-GO DO-STOP))
+(defpackage :DEMO-EDITOR (:use :KR :COMMON-LISP) (:export DO-GO DO-STOP))
+(defpackage :DEMO-TEXT (:use :COMMON-LISP :KR) (:export DO-GO DO-STOP))
+(defpackage :DEMO-FILE-BROWSER (:use :COMMON-LISP :KR)
+	    (:export DO-GO DO-STOP FILE-BROWSER FILE-BROWSER-WIN
+		     FILE-BROWSER-TOP-AGG))
+(defpackage :DEMO-TRUCK (:use :KR :COMMON-LISP) (:export DO-GO DO-STOP))
+(defpackage :DEMO-GADGETS (:use :COMMON-LISP :KR) (:export DO-GO DO-STOP))
+(defpackage :DEMO-TWOP (:use :KR :COMMON-LISP) (:export DO-GO DO-STOP))
+(defpackage :DEMO-GESTURE (:use :KR :COMMON-LISP) (:export DO-GO DO-STOP))
+(defpackage :DEMO-UNISTROKES (:use :COMMON-LISP :KR :INTER) (:export DO-GO DO-STOP))
+(defpackage :DEMO-GRAPH (:use :COMMON-LISP :KR)
+	    (:export DO-GO DO-STOP SCHEMA-GRAPH DEMO-GRAPH-ERROR-GADGET ROOT-BOX
+		     RELAYOUT DEMO-GRAPH-WIN))
+(defpackage :DEMO-VIRTUAL-AGG (:use :COMMON-LISP :KR) (:export DO-GO DO-STOP))
+(defpackage :DEMO-GROW (:use :KR :COMMON-LISP) (:export DO-GO DO-STOP))
+(defpackage :DEMO-XASPERATE (:use :COMMON-LISP :KR) (:export DO-GO DO-STOP))
+(defpackage :DEMO-LOGO (:use :COMMON-LISP :KR) (:export DO-GO DO-STOP RE-ANIMATE))
+(defpackage :DEMOS-CONTROLLER (:use :COMMON-LISP :KR) (:export DO-GO DO-STOP MESSAGE))
+(defpackage :DEMO-MANYOBJS (:use :COMMON-LISP :KR) (:export DO-GO DO-STOP MOVE))
+(defpackage :DEMO-MENU (:use :COMMON-LISP :KR) (:export DO-GO DO-STOP))
+(defpackage :GARNET-CALCULATOR (:use :COMMON-LISP :KR)
+	    (:export START-CALC STOP-CALC DO-GO DO-STOP))
+(defpackage :DEMO-MODE (:use :COMMON-LISP :KR) (:export DO-GO DO-STOP))
+(defpackage :GARNETDRAW (:use :COMMON-LISP :KR) (:export DO-GO DO-STOP))
+(defpackage :DEMO-MOTIF (:use :COMMON-LISP :KR) (:export DO-GO DO-STOP))
+(defpackage :MGE (:use :COMMON-LISP :KR)
+	    (:export DO-GO DO-STOP
+		     CREATE-PIECE DESTROY-PIECE DESTROY-ALL-PIECES
+		     GO-INITIALIZE EDITOR-SHOW-WINDOW))
+(defpackage :DEMO-MOVELINE (:use :KR :COMMON-LISP) (:export DO-GO DO-STOP))
