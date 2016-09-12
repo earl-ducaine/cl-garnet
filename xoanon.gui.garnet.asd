@@ -429,12 +429,13 @@
 	     (:file "by-demo")
 	     (:file "interactors")
 	     (:file "interactors-menu")))
-   (:module test
-	    :depends-on (:gem)
-	    :components
-	    ((:file "test-gem")
-	     ))))
-
+   ;; (:module test
+   ;; 	    :depends-on (:gem)
+   ;; 	    :components
+   ;; 	    ((:file "test-gem")
+   ;; 	     ))))
+   ))
+   
 (in-package :common-lisp-user)
 
 (format t "To run various app eval one of the following:")
