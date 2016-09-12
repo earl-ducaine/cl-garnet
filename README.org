@@ -30,7 +30,7 @@
    2) Clone the Garnet repo to a convenient location:
 
       #+BEGIN_SRC bash
-        clone git https://github.com/earl-ducaine/cl-garnet ~/garnet
+        git clone https://github.com/earl-ducaine/cl-garnet ~/garnet
       #+END_SRC
 
    3) Make sure your Lisp isn't running, then create a symbolic link
@@ -47,7 +47,7 @@
       via Quicklisp, and run the demo or begin using the library.
 
       #+BEGIN_SRC lisp
-        (ql:quickload  :xoanon.gui.garnet.asd)
+        (ql:quickload  :xoanon.gui.garnet)
         (demos-controller::do-go)
       #+END_SRC
 

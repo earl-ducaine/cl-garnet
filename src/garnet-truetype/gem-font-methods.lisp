@@ -120,7 +120,7 @@ using X conventions, or a cons of the bad value and slot."
 
 (defun x-character-width (root-window opal-font the-char-code)
   (let ((glyph (zpb-ttf:index-glyph the-char-code (g-value opal-font :xfont))))
-    (* (xft::font-units->pixels-x root-window opal-font) (zpb-ttf:advance-width glyph)))))
+    (* (xft::font-units->pixels-x root-window opal-font) (zpb-ttf:advance-width glyph))))
 
 ;;; RETURNS: the maximum character width for the font; if <min-too> is non-nil,
 ;;; returns both maximum and minimum width, as multiple values.  This function
