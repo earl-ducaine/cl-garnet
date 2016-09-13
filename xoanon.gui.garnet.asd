@@ -17,8 +17,7 @@
 	    :pathname ""
 	    :depends-on (:package)
 	    :components
-	    ((:file "garnet-prepare-compile")
-	     (:file "garnet-loader")
+	    ((:file "garnet-loader")
 	     (:file "src/utils/general")))
    (:module kr
    	    :pathname "src/kr"
@@ -86,8 +85,7 @@
    	    :pathname "src/inter"
    	    :depends-on (:utils :gem :kr :opal)
    	    :components
-	    ((:file "inter-compiler")
-	     (:file "garnet-keytrans")
+	    ((:file "garnet-keytrans")
 	     (:file "define-mouse-keys")
 	     (:file "x-define-keys")
 	     (:file "x-inter")

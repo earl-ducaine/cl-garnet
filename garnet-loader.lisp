@@ -84,7 +84,6 @@ With SBCL:
 ;; load-XX-p control whether the various parts are loaded or not
 ;; Because these use defvar, if they are set before this file is
 ;; loaded, their original value will be used.
-(unless (boundp '*Garnet-Going-To-Compile*)
   (defvar load-gworld-p t)
   (defvar load-gem-p T)
   (defvar load-opal-p T)
@@ -104,7 +103,7 @@ With SBCL:
   (defvar load-protected-eval-p T)
   (defvar load-lapidary-p t)
   (defvar load-gilt-p NIL)
-  (defvar load-c32-p NIL))
+  (defvar load-c32-p NIL)
 
 ;; update-locking-p controls whether process locks will be activated
 ;; around the update method (this keeps two processes from calling update
@@ -138,30 +137,6 @@ With SBCL:
     ;; Let system determine directory path.
     (pathname-directory *load-truename*)))
   "Root of the Garnet directory tree.")
-
-
-
-
-(format t "*garnet-load-truename*: ~s~%"  *garnet-load-truename*)
-(format t "*load-truename*: ~s~%"  *load-truename*)
-
-
-
-
-;; ripped from the bowels of asdf-install... [2006/01/05:rpg]
-(defun directorify (name)
-  ;; input name may or may not have a training #\/, but we know we
-  ;; want a directory
-  (let ((path (pathname name)))
-    (if (pathname-name path)
-        ;; The pathname lacks a trailing slash.
-        (merge-pathnames
-         (make-pathname :directory `(:relative ,(pathname-name path)))
-         (make-pathname :directory (pathname-directory path)
-                        :host (pathname-host path)))
-        ;; The pathname is OK as it stands.
-        path)))
-
 
 (defun append-directory (directory sub-directory)
   "This is a little utility for accessing the subdirectory of a
@@ -271,16 +246,6 @@ directory. It assumes that 'sub-directory' is directly under
 (defvar Garnet-Gesture-Data-Pathname
   (append-directory Garnet-Lib-Pathname "gesture"))
 
-
-;;;----------------------------------------------------------
-
-;; When compiling, the binaries will be in the same directories as the
-;; source files, so make all the path names be the same
-;;
-;; After compilation is finished, the user should move all the binaries
-;; into their own directories, as specified by the pathnames above.
-(defvar *Garnet-Going-To-Compile* nil)
-
 ;;; Names of loader files.
 (defparameter Garnet-Gem-Loader (merge-pathnames "gem-loader" Garnet-Gem-PathName))
 
@@ -298,10 +263,7 @@ directory. It assumes that 'sub-directory' is directly under
 (defparameter Garnet-Lapidary-Loader (merge-pathnames "lapidary-loader" Garnet-Lapidary-PathName))
 (defparameter garnet-protected-eval-Loader (merge-pathnames "protected-eval-loader" Garnet-Protected-Eval-PathName))
 
-
-;;;--------------------------------------------------------------------
 ;; Packages to load and the locations of those packages.
-
 (defparameter Garnet-Load-Alist
 ;;; Target directories (binarys)
   `(("gg"                 . ,Garnet-Gadgets-PathName)
