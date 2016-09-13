@@ -296,6 +296,11 @@ Glyphs information is obtained by ZPB-TTF. Font rasterization is made by CL-VECT
 
 (defpackage :AGATE (:use :COMMON-LISP :KR))
 (defpackage :DEMO-3D (:use :COMMON-LISP :KR) (:export DO-GO DO-STOP))
+
+(defpackage :XOMAX
+  (:use :COMMON-LISP :KR)
+  (:export DO-GO DO-STOP))
+
 (defpackage :DEMO-MULTIWIN (:use :KR :COMMON-LISP) (:export DO-GO DO-STOP))
 (defpackage :DEMO-MULTIFONT (:use :COMMON-LISP KR) (:export DO-GO DO-STOP))
 (defpackage :DEMO-ANIMATOR (:use :COMMON-LISP :KR) (:export DO-GO DO-STOP))

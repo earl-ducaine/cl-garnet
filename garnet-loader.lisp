@@ -125,36 +125,6 @@ With SBCL:
   "If T, uses process locks to keep Update in a process from interrupting
    itself in a different process.")
 
-(defvar Multiple-Garnet-Binary-Directories T
-  "T if you want the name of the binary directory to vary with the
-   version of garnet, handy if you are debugging with multiple Lisp
-   versions. NIL means store binaries under the \"bin\" directory.")
-
-(format T "~&** Loading Garnet Version ~a~%" Garnet-Version-Number)
-
-;; The following sets the pathname of the garnet directory. All the
-;; rest of the pathnames will depend on this pathname.
-;;
-
-;;; CLX
-;; Don't configure CLX any more. It should be made available through
-;; other means, such as quicklisp. Instead, we (require :clx).
-;;
-;; Now do this in build script. I.e. could also use quicklisp if
-;; desired. If not using the build script, you must put something here
-;; that loads CLX.
-(require :clx)
-#+sbcl
-(require :sb-posix)                     ;might be done by CLX, but if so
-                                        ;the REQUIRE will just be a NO-OP
-
-;;;(defvar *garnet-source-directory* (asdf:system-source-directory :xoanon.gui.garnet))
-;; (defvar Your-Garnet-Pathname *garnet-source-directory*)
-;;;(break)
-;;; Garnet Root pathname
-;;
-
-
 (defvar Your-Garnet-Pathname
   ;; Ansi compliant way to find the build directory.
   ;; If this doesn't work for some reason, just hard-code the pathname
