@@ -1,7 +1,11 @@
+
+
 (in-package "COMMON-LISP-USER")
 
 (defparameter *garnet-load-truename* *load-truename*)
 
+(setf (get :garnet-modules :inter) t)
+(setf (get :garnet-modules :multifont) t)
 
 (asdf:defsystem :xoanon.gui.garnet
   ;; sb-posix means that currently only sbcl can load Garnet.
@@ -62,7 +66,8 @@
 	     (:file "virtual-aggregates")
 	     (:file "pixmaps")
 	     (:file "open-and-close")
-	     (:file "opal-init")))
+	     (:file "opal-init")
+	     (:file "multifont-loader")))
    ;; (:module truetype
    ;; 	    :pathname "src/truetype"
    ;; 	    :depends-on (:utils :gem :kr :opal)
@@ -436,7 +441,7 @@
    ;; 	    ((:file "test-gem")
    ;; 	     ))))
    ))
-   
+
 (in-package :common-lisp-user)
 
 (format t "To run various app eval one of the following:")

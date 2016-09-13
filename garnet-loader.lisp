@@ -77,11 +77,8 @@ With SBCL:
 3. Otherwise (for 'production' builds) just set Garnet-Compile-Debug-Mode
    to nil and leave everything else alone.")
 
-
 (when default-garnet-proclaim
   (proclaim default-garnet-proclaim))
-
-
 
 
 ;; load-XX-p control whether the various parts are loaded or not

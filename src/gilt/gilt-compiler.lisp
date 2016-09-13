@@ -31,13 +31,6 @@
 (unless (boundp 'Garnet-Gilt-PathName)
   (error "Load 'Garnet-Loader' first to set Garnet-Gilt-PathName before loading this file."))
 
-
-;; Only loads this file when not compiling all of Garnet.
-(unless (or (get :garnet-modules :multifont)
-	    (and (boundp 'common-lisp-user::compile-opal-p) common-lisp-user::compile-opal-p
-		 (boundp 'common-lisp-user::compile-inter-p) common-lisp-user::compile-inter-p))
-  (garnet-load "opal:multifont-loader"))
-
 ;; Only loads these file when not compiling all of Garnet.
 (dolist (pair '((:text-buttons "text-buttons-loader")
 		(:x-buttons "x-buttons-loader")

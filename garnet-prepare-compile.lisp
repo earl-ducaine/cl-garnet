@@ -7,42 +7,12 @@
 ;;  domain.                                                          ;;
 ;;-------------------------------------------------------------------;;
 
-;;; $Id::                                                             $
-;;
-
-
-;;; This file prepares to compile all the garnet modules.  Of course, you
-;;  need to have write priviledges on all the directories where the files
-;;  are stored.  (These directories are set in garnet-loader).
-;;
-;;  First load this file: 	garnet-prepare-compile
-;;  Then load 			garnet-loader
-;;  Then load 			garnet-compiler
-;;
-;;  The result will be that all the files will be compiled and loaded (the
-;;  initial files need to be loaded before later files can be compiled
-;;  anyway).  Note that this process does *NOT* check for compile errors,
-;;  that is up to you.
-;;
-;;  ** To prevent certain parts from being compiled, first set
-;;       user::compile-XX-p to NIL.
-;;  ** To have the demos or lapidary be loaded after they are
-;;  	 compiled, set user::load-demos-p
-;;  	 to T (the default is to NOT load these after compiling them
-;;  ** To override where something is loaded from, set Garnet-xx-PathName before
-;;       loading this file.
-;;
+;; Legacy compilation stuff.  Needs to be cleaned up.
 
 (defvar Garnet-Garnet-Debug t)
 
-
 (in-package :COMMON-LISP-USER)
 
-(defvar compile-utils-p T)
-(defvar compile-kr-p T)
-(defvar compile-kr-doc-p NIL)
-(defvar compile-gworld-p T)
-(defvar compile-gem-p T)
 (defvar compile-opal-p T)
 #-(and)(defvar compile-truetype-p t)
 (defvar compile-inter-p T)

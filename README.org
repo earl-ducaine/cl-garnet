@@ -20,7 +20,14 @@
    also likely to work.  Mac and Windows probably won't, neither (most
    likely) will other CLs.  But once things are cleaned up, it
    shouldn't be hard to support a wide variety of platforms as long as
-   they support ANSI Common Lisp and CLX.
+   they support ANSI Common Lisp and CLX.  You may also need
+   additional xfont libraries loaded, e.g.
+   you're using Ubuntu
+   #+BEGIN_SRC bash
+     apt-get install xfonts-100dpi
+   #+END_SRC
+
+
 
 ** Installing/Running
 
