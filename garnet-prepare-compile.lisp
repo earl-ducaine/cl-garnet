@@ -32,32 +32,6 @@
 ;;  ** To override where something is loaded from, set Garnet-xx-PathName before
 ;;       loading this file.
 ;;
-;;  The controlling variables are:
-;;
-;;   compile-utils-p        (Default: T   => utils compiled and loaded)
-;;   compile-kr-p           (Default: T   => kr compiled and loaded)
-;;   compile-kr-doc-p       (Default: NIL => kr-doc compiled and loaded)
-;;   compile-gem-p          (Default: T   => gem compiled and loaded)
-;;   compile-opal-p         (Default: T   => opal compiled and loaded)
-;;   compile-truetype-p     (Default: T   => truetype compiled and loaded)
-;;   compile-inter-p        (Default: T   => interactors compiled and loaded)
-;;   compile-gesture-p      (Default: T   => gestures compiled and loaded)
-;;   compile-ps-p           (Default: T   => PS module compiled and loaded)
-;;   compile-aggregadgets-p (Default: T   => aggregadgets compiled & loaded)
-;;   compile-gadgets-p      (Default: T   => gadgets compiled and loaded)
-;;   compile-debug-p        (Default: T   => debug compiled and loaded)
-;;   compile-demos-p        (Default: T   => demos compiled but *not* loaded)
-;;   compile-gilt-p         (Default: T   => gilt compiled and loaded)
-;;   compile-c32-p          (Default: T   => C32 compiled and loaded)
-;;   compile-protected-eval-p (Default: T => protected-eval compiled
-;;                                           and loaded)
-;;
-;;  To override any particular file name place, it is only necessary to
-;;  assign the variable name Garnet-XX-Pathname before this file is loaded
-;;  (since they are defined here using defvar, the old name will stay in affect).
-;;
-
-
 
 (defvar Garnet-Garnet-Debug t)
 
@@ -85,8 +59,6 @@
 
 ;;; first, don't load anything, just load garnet-loader to set up file names
 (defvar load-utils-p NIL)
-(defvar load-kr-p NIL)
-(defvar load-kr-doc-p NIL)
 (defvar load-gworld-p NIL)
 (defvar load-gem-p NIL)
 (defvar load-opal-p NIL)
@@ -106,8 +78,6 @@
 
 (defparameter load-utils-p-copy (if (boundp 'load-utils-p)
 				    load-utils-p T))
-(defparameter load-kr-p-copy (if (boundp 'load-kr-p)
-				 load-kr-p T))
 (defparameter load-gworld-p-copy (if (boundp 'load-gworld-p)
 				     load-gworld-p T))
 (defparameter load-gem-p-copy (if (boundp 'load-gem-p)

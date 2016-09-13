@@ -150,11 +150,7 @@
   (editor-menu-do-stop)
 
   (lapidary-beeps 3)
-  (format t "~%~%Lapidary stopped.~%~%")
-;  (opal:destroy create-list-interactor)
-;  #-cmu (inter:exit-main-event-loop)
-;  #-cmu (when user::launch-process-p (opal:launch-main-event-loop-process))
-)
+  (format t "~%~%Lapidary stopped.~%~%"))
 
 ;;; tries to fix lapidary without destroying all windows
 (defun fix-it ()

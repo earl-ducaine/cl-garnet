@@ -88,9 +88,6 @@ With SBCL:
 ;; Because these use defvar, if they are set before this file is
 ;; loaded, their original value will be used.
 (unless (boundp '*Garnet-Going-To-Compile*)
-  (defvar load-utils-p T)
-  (defvar load-kr-p T)
-  (defvar load-kr-doc-p T)
   (defvar load-gworld-p t)
   (defvar load-gem-p T)
   (defvar load-opal-p T)
@@ -111,12 +108,6 @@ With SBCL:
   (defvar load-lapidary-p t)
   (defvar load-gilt-p NIL)
   (defvar load-c32-p NIL))
-
-
- 
-;; launch-process-p controls whether Garnet will launch
-;; a separate process to detect keyboard and mouse events.
-(defvar launch-process-p T)
 
 ;; update-locking-p controls whether process locks will be activated
 ;; around the update method (this keeps two processes from calling update
@@ -475,20 +466,8 @@ Example:
       (compile-file src-pathname))))
 
 
-
-;;; ----------------------------------------
-;;
-;; The real load
-;;
-
 (format t "...Loading Garnet ...~%")
 (setf *load-verbose* t)
-
-
-;; Now back to loading Garnet
-(format t "****** Check for load-kr-doc-p: ~s~%" load-kr-doc-p)
-
-(if load-kr-doc-p (garnet-load "kr:kr-doc"))
 
 
 (format T "~%****** NOT Loading Aggregraphs *******

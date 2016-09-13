@@ -624,8 +624,7 @@
 
 ;; Now that default-event-handler is defined, launch it for non-CMUCL.
 ;; launch-process-p is defined in garnet-loader.lisp
-(when common-lisp-user::launch-process-p
-  (opal:launch-main-event-loop-process))
+(opal:launch-main-event-loop-process)
 
 (defun main-event-loop (&key (exit-when-no-window-visible :on))
   "Event handler for the interactor windows"
