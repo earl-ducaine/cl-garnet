@@ -459,28 +459,19 @@ may help in troubleshooting."
         (if x-stipple (set-gc gem-gc xlib-gc :stipple x-stipple))))
     (set-gc gem-gc xlib-gc :function x-draw-fn)))
 
-
-
-
-;;; -------------------------------------------------- X Windows Handling
-
-
 (defun do-all-garnet-windows (clx-window)
-  "Iterates over all CLX windows.  Clean-Up calls
-this function with the root CLX window."
+  "Iterates over all CLX windows.  Clean-Up calls this function with
+the root CLX window."
   (let ((windows (if (member :garnet (xlib:drawable-plist clx-window))
 		     (list clx-window))))
     (dolist (w (xlib:query-tree clx-window))
       (setf windows (append windows (do-all-garnet-windows w))))
     windows))
 
-
-(defun x-all-garnet-windows (root-window)
+(defun x-all-garnet-windows ()
   "Returns a list of all the X windows that were created by Garnet.
 These are raw windows, NOT Opal windows!"
-  (declare (ignore root-window))
   (do-all-garnet-windows *default-x-root*))
-
 
 (defun x-beep (root-window)
   (declare (ignore root-window))
@@ -2633,8 +2624,6 @@ the X drawable."
   (declare (ignore root-window))
   (getf (xlib:drawable-plist x-window) :garnet))
 
-
-
 (defun x-window-has-grown (window width height)
   "RETURNS: true if the <window>'s old buffer was smaller
 (in at least one dimension) than the new <width> and <height>."
@@ -2644,7 +2633,6 @@ the X drawable."
          (or (> height (xlib:drawable-height old-buffer))
              (> width  (xlib:drawable-width old-buffer))))))
 
-
 (defun x-window-to-image (window left top width height)
   "Create an image from (a piece of) a window."
   (let ((drawable (g-value window :drawable)))
@@ -2652,19 +2640,11 @@ the X drawable."
 	(xlib:get-image drawable :format :z-pixmap :x left :y top
 			:width width :height height))))
 
-
 (defun x-write-an-image (root-window pathname image)
   (declare (ignore root-window))
   (xlib:write-bitmap-file pathname image))
 
-
-
-;;; --------------------------------------------------
-
-
-
 (defun attach-X-methods (x-device)
-
   (attach-method x-device :all-garnet-windows #'x-all-garnet-windows)
   (attach-method x-device :beep #'x-beep)
   (attach-method x-device :bit-blit #'x-bit-blit)

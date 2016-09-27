@@ -1,16 +1,14 @@
 ;;;-*- Mode: COMMON-LISP; Package: COMMON-LISP-USER -*-
 
-(in-package :COMMON-LISP-USER)
+(in-package :multi-garnet)
 
-(use-package '(:kr :kr-debug :garnet-debug :mg))
 
-;; =================================================================================
 ;; This file contains code for a large Multi-Garnet example: a scatterplot
 ;; displaying a set of points, with several different interaction modes.
 ;; This is implemented with multi-way Multi-Garnet constraints between the
 ;; data values, the screen positions of the points, and the positions of
 ;; the X and Y-axes.
-
+;;
 ;; To try this example, compile and load this file.  Then, execute
 ;; (user::create-scatterplot-demo) to create the window displaying the
 ;; scatterplot.  Then, try manipulating the plot points and axes,
@@ -18,19 +16,20 @@
 ;; the window.
 
 
-;; =================================================================================
-;; global variables used later in the file (defined here to prevent warning messages)
+
+;; global variables used later in the file (defined here to prevent
+;; warning messages)
 
 (defvar *scatterplot-demo-window* nil)
 (defvar *data* nil)
 (defvar *plot-1* nil)
 (defvar *plot-2* nil)
 
-;;
-;; =================================================================================
-;; *scatterplot-demo-parameters* contains fonts and line-styles and filling-styles used
-;; in the scatterplots.  These are connected to the graphic objects by
-;; formulas.  They can be easily changed by changing this one structure.
+
+;; *scatterplot-demo-parameters* contains fonts and line-styles and
+;; filling-styles used in the scatterplots.  These are connected to
+;; the graphic objects by formulas.  They can be easily changed by
+;; changing this one structure.
 
 (create-instance
  '*scatterplot-demo-parameters* nil
@@ -286,7 +285,7 @@
 						(setf top (+ otop oheight 10))))
 			)
 	   ))
- 
+
  ;; :screen-min, :screen-max, :world-min, :axis-cn etc are inherited from
  ;; *v-axis*.  In *h-axis*, the screen coords refer to x-coordinates,
  ;; rather than y-coordinates.
@@ -421,11 +420,11 @@
 ;; =================================================================================
 ;; Scatterplot demo buttons, used to set the different interaction modes
 
-(eval-when (eval compile load)
-  (load (merge-pathnames "radio-buttons-loader" Garnet-Gadgets-PathName))
-  (load (merge-pathnames "x-buttons-loader" Garnet-Gadgets-PathName))
-  (load (merge-pathnames "text-buttons-loader" Garnet-Gadgets-PathName))
-  )
+;; (eval-when (eval compile load)
+;;   (load (merge-pathnames "radio-buttons-loader" Garnet-Gadgets-PathName))
+;;   (load (merge-pathnames "x-buttons-loader" Garnet-Gadgets-PathName))
+;;   (load (merge-pathnames "text-buttons-loader" Garnet-Gadgets-PathName))
+;;   )
 
 (defvar *inter-modes-strings-and-keywords*
     '("Change Data"             :change-points
@@ -458,7 +457,7 @@
    (:mode-cn (m-constraint :max (value mode)
 			   (setf mode (mode-string-to-keyword value))))
    )
-  ;; 
+  ;;
   ;; The "X-Scale = Y-Scale" button adds an equality constraint between the
   ;; X-axis and Y-axis scales of *plot-1* if it is set.
   (create-instance
@@ -545,7 +544,7 @@
  (:cn-obj nil)
  (:cn-obj-type *screen-point*)
  (:cn-obj-plan-cn nil)
- (:cn-obj-plan-cn-value nil) 
+ (:cn-obj-plan-cn-value nil)
  (:cn-obj-use-plan (o-formula (gv *use-plan-button* :value)))
  (:start-action
    #'(lambda (inter obj pts)
@@ -650,7 +649,7 @@
 				    (gvl :cn-obj :x-axis :world-max)
 				    (gvl :cn-obj :y-axis :world-min)
 				    (gvl :cn-obj :y-axis :world-max)))
- 
+
  )
 
 ;; *sp-scale-points-inter* allows scaling all of the screen points in a
@@ -696,7 +695,7 @@
 				    (gvl :cn-obj :x-axis :world-max)
 				    (gvl :cn-obj :y-axis :world-min)
 				    (gvl :cn-obj :y-axis :world-max)))
- 
+
  )
 
 ;; *sp-move-axis-inter* allows moving an axis.  The :offset and :scale
@@ -813,7 +812,7 @@
 			    (y-axis-label "Y")
 			    (y-axis-low 0.0)
 			    (y-axis-high 100.0)
-			    (bbox '(0 0 100 100)))			    
+			    (bbox '(0 0 100 100)))
   (let* ((x-axis (create-instance nil *h-axis*
 				  (:label x-axis-label)))
 	 (y-axis (create-instance nil *v-axis*
@@ -917,4 +916,3 @@
     (create-scatterplot-interactors)
     (update)
     ))
-
