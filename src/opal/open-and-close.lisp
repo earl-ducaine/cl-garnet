@@ -113,7 +113,8 @@
     (gem:init-device)
     (setf root-window (g-value gem:device-info :current-root))
     (with-constants-disabled
-      (s-value opal::COLOR :color-p gem:*color-screen-p*))
+      ;; Depreciated.  All screens are considered to be color
+      (s-value opal::COLOR :color-p t))
     (with-constants-disabled
 	(do-all-instances text
 	  #'(lambda (txt)

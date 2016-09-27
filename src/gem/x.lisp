@@ -149,17 +149,6 @@ may help in troubleshooting."
 
 (defun x-set-screen-color-attribute-variables (root-window)
   (declare (ignore root-window))
-;;;             (let* ((*print-pretty* NIL)
-;;;                    (colormap-string (string-upcase
-;;;                                      (princ-to-string opal::*default-x-colormap*))))
-;;;               (if (or (search "PSEUDO-COLOR" colormap-string)
-;;;                       (search "DIRECT-COLOR" colormap-string)
-;;;                       (search "GRAY-SCALE" colormap-string))
-;;;                   (setq *is-this-a-color-screen?* t)
-;;;                   (setq *is-this-a-color-screen?* nil)))
-  ;;incorporated Nick Levine's patch into the code.
-  ;;[1995/09/11:goldman]
-  ;;further patched this to add *read-write-colormap-cells-p* [1995/12/08:goldman]
   (let ((color-screen-types '(:pseudo-color
                               :direct-color
                               :static-color
@@ -392,7 +381,6 @@ may help in troubleshooting."
 ;;  These were split into two macros because the draw method for opal:bitmap
 ;;  also needs to use the first macro now...
 
-
 (defun set-filling-style (filling-style gem-gc xlib-gc root-window x-draw-fn)
   (declare (optimize (speed 3) (safety 1) (space 0) (debug 2)))
   (when filling-style
@@ -416,10 +404,7 @@ may help in troubleshooting."
     (set-gc gem-gc xlib-gc :function x-draw-fn)))
 
 
-
-
 ;;; -------------------------------------------------- X Windows Handling
-
 
 (defun do-all-garnet-windows (clx-window)
   "Iterates over all CLX windows.  Clean-Up calls
@@ -2281,8 +2266,6 @@ integer.  We want to specify nice keywords instead of those silly
   (gem:set-draw-function-alist root-window)
   (dolist (fn-pair *function-alist*)
     (setf (get (car fn-pair) :x-draw-function) (cdr fn-pair))))
-
-
 
 (defun x-set-draw-function-alist (root-window)
   (declare (ignore root-window))

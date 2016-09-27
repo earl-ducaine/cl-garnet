@@ -312,7 +312,7 @@ avoiding wasted objects.
   (:red 1.0)
   (:green 1.0)
   (:blue 1.0)
-  (:color-p gem:*color-screen-p*)  ; Set by initialize-x11-values
+  (:color-p t)    ;; depreciated, all screens are considered to be 'color'
   (:xcolor (o-formula
 	    (let ((name (gvl :color-name)))
 	      (if name
@@ -337,17 +337,16 @@ avoiding wasted objects.
       new-index))))
 
 (define-method :destroy-me COLOR (hue)
-  (when gem:*color-screen-p*
-    (let ((index (g-cached-value hue :colormap-index)))
-      (dolist (device (g-value gem:DEVICE-INFO :active-devices))
-	(let ((root-window (g-value device :root-window)))
-	  (when (and index
-		     ;;replaced the old array with a hash-table
-		     (zerop (decf (gethash index *colormap-index-table*)))
-		     (>= index (first-allocatable-colormap-index root-window)))
-	    (gem:colormap-property root-window
-				   :FREE-COLORS (list index)))))))
-  (destroy-schema hue))
+	       (let ((index (g-cached-value hue :colormap-index)))
+		 (dolist (device (g-value gem:DEVICE-INFO :active-devices))
+		   (let ((root-window (g-value device :root-window)))
+		     (when (and index
+				;;replaced the old array with a hash-table
+				(zerop (decf (gethash index *colormap-index-table*)))
+				(>= index (first-allocatable-colormap-index root-window)))
+		       (gem:colormap-property root-window
+					      :FREE-COLORS (list index))))))
+	       (destroy-schema hue))
 
 
 (create-instance 'RED color
