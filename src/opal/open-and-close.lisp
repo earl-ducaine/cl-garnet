@@ -114,14 +114,6 @@
     (setf root-window (g-value gem:device-info :current-root))
     (with-constants-disabled
       (s-value opal::COLOR :color-p gem:*color-screen-p*))
-    ;; you can't call alloc-color-cells on a :true-color or
-    ;; :static-color screen...conditionalized it. [1995/12/08:goldman]
-    (when gem:*read-write-colormap-cells-p*
-      (let ((indices (gem:colormap-property root-window :ALLOC-COLOR-CELLS)))
-	(reset-first-allocatable-colormap-index root-window)
-	(set-first-allocatable-colormap-index root-window (car indices))
-	(gem:colormap-property root-window :FREE-COLORS indices)))
-    ;; Re-initialize fonts
     (with-constants-disabled
 	(do-all-instances text
 	  #'(lambda (txt)

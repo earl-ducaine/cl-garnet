@@ -289,15 +289,10 @@ avoiding wasted objects.
       (*first-allocatable-colormap-index* 1))
 
   (defun first-allocatable-colormap-index (root-window)
+    "Noop.  Get rid of all calls to this."
     (when first-time
-      ;; Find out the first colormap index that you are actually allowed to
-      ;; allocate and deallocate.
-      ;;THIS WON'T WORK ON A TRUE-COLOR SCREEN! [1995/12/08:goldman]
-      (when gem:*read-write-colormap-cells-p*
-	(setq *first-allocatable-colormap-index*
-	      (gem:colormap-property root-window :FIRST-ALLOCATABLE-INDEX)))
       (setf first-time NIL))
-    *first-allocatable-colormap-index*)
+    1)
 
   (defun reset-first-allocatable-colormap-index (root-window)
     (setf first-time T)
@@ -339,17 +334,7 @@ avoiding wasted objects.
 	   (new-index (gem:colormap-property root-window :ALLOC-COLOR
 					     (gvl :xcolor))))
       (declare (fixnum old-index new-index))
-      ;;changed the following [1995/12/08:goldman]
-      (when gem:*read-write-colormap-cells-p*
-	(when (and old-index
-		   (>= old-index
-		       (the fixnum (first-allocatable-colormap-index root-window)))
-		   (zerop (the fixnum
-			       (decf (the fixnum (gethash old-index *colormap-index-table*))))))
-	  (gem:colormap-property root-window :FREE-COLORS (list old-index)))
-	(incf (the fixnum (gethash new-index *colormap-index-table* 0))))
       new-index))))
-
 
 (define-method :destroy-me COLOR (hue)
   (when gem:*color-screen-p*

@@ -29,19 +29,12 @@
       display-number)))
 
 (defun verify-display-can-be-opened ()
-  (let* ((full-display-name (get-full-display-name))
-         (d-name (if full-display-name
-                     (get-display-name full-display-name)
-                     (machine-instance)))
-         (d-number (get-display-number full-display-name))
-         (val nil)
-         (errorp nil))
+  (let* (val errorp)
     (unwind-protect
          (progn
            (multiple-value-setq (val errorp)
              (ignore-errors
-               (xlib:open-default-display)
-               ))
+               (xlib:open-default-display)))
            (if errorp
                (error "Could not open a display for ~S.
      You must already be running X to load or compile Garnet. Your
@@ -77,16 +70,14 @@ executing the command \"xhost +\" on the machine where the windows
 will be displayed, if it is different from the machine running Garnet.
 This disables security and is not recommended for ordinary use, but it
 may help in troubleshooting."
-                      full-display-name)))
+                      (get-full-display-name))))
       (when val
         (xlib:close-display val)))
-    T))
-
+    t))
 
 (verify-display-can-be-opened)
 
-
-(defvar *debug-gem-mode* nil)
+(defvar *debug-gem-mode*)
 (defvar *default-x-display-name*)
 
 ;; Moved here from opal:defs.lisp for the sake of modularity. This is
@@ -102,14 +93,13 @@ may help in troubleshooting."
   line-style-gc
   filling-style-gc)
 
-
 (defun display-info-printer (s stream ignore)
   (format stream "#<GEM-DISPLAY-INFO ~A>" (display-info-display s)))
 
+;;; A graphic context structure
 (defstruct (gem-gc (:print-function gem-gc-print-function))
   gcontext
   opal-style                            ; This is either a line or filling style
-
   function
   foreground
   background
@@ -123,13 +113,10 @@ may help in troubleshooting."
   fill-rule
   stipple
   clip-mask
-  ;; The clip-mask actually stored in
-  ;; the xlib:gcontext -- except if the
-  ;; clip-mask is :none, in which case
-  ;; this contains a list like '(nil 0 0 0)
-  ;; (to avoid unnecessary consing)
-  stored-clip-mask
-  )
+  ;; The clip-mask actually stored in the xlib:gcontext -- except if
+  ;; the clip-mask is :none, in which case this contains a list like
+  ;; '(nil 0 0 0) (to avoid unnecessary consing)
+  stored-clip-mask)
 
 (defun gem-gc-print-function (gc stream depth)
   (declare (ignore depth))
@@ -138,9 +125,7 @@ may help in troubleshooting."
           (gem-gc-clip-mask gc)))
 
 (setf (documentation '*default-x-display-name* 'variable)
-      "This is an unfortunately misnamed entity, since it is actually
-       an X HOSTNAME and not a display name in the sense of being a
-       string display designator.")
+      "Essentially the X HOSTNAME as string.")
 
 (defvar *default-x-display*)
 (defvar *default-x-display-number*)
@@ -153,7 +138,6 @@ may help in troubleshooting."
 (defvar *white*)
 (defvar *black*)
 (defvar *function-alist*)
-(defvar *HP-display-type?* nil)
 (defvar *color-screen-p* nil)
 
 (defvar *read-write-colormap-cells-p*
@@ -184,15 +168,12 @@ may help in troubleshooting."
         (screen-type (xlib::visual-info-class
                       (xlib::screen-root-visual-info
                        *default-x-screen*))))
-    (setq *color-screen-p*
-          (if (member screen-type color-screen-types :test #'eq)
-              screen-type
-              nil))
-    (setq *read-write-colormap-cells-p*
-          (and *color-screen-p*
-               (member screen-type '(:direct-color :pseudo-color) :test #'eq))))
-  (setq *HP-display-type?* (and *color-screen-p* (zerop gem:*black*))))
-
+    (unless (eq screen-type :true-color)
+      (error  (concatenate 'string
+	      "Garnett only supports true-color display.  All other "
+	      "displays, i.e. :direct-color or :quickdraw, have been "
+	      "depreciated")))
+    (setq *color-screen-p* :true-color)))
 
 (defun x-color-to-index (root-window a-color)
   (declare (ignore root-window))
@@ -360,23 +341,6 @@ may help in troubleshooting."
 		  (setq s (cdr s))
 		  (setq v (cdr v))))))))))
 
-
-;;; The HP has a non-traditional assignment of black=0 and white=1, but to
-;;; get XOR to work correctly, we have to draw black objects as 1 and white
-;;; objects as 0.  This macro checks whether the display is an HP, and then
-;;; flips the black and white indices for XOR.
-;;;
-(defmacro HP-XOR-hack (x-draw-function index)
-  `(if (and *HP-display-type?*
-            (eq ,x-draw-function ,boole-xor))
-       (if (eql *black* ,index)
-           *white*
-           (if (eql *white* ,index)
-               *black*
-               ,index))
-       ,index))
-
-
 (defun set-line-style (line-style gem-gc xlib-gc root-window x-draw-fn)
   (declare (optimize (speed 3) (safety 1)))
   (when line-style
@@ -392,13 +356,9 @@ may help in troubleshooting."
           (when (or draw-fn-changed?
                     (not (eq line-style (gem-gc-opal-style gem-gc))))
             (set-gc gem-gc xlib-gc :foreground
-                    (HP-XOR-hack
-                     x-draw-fn
-                     (g-value line-style :foreground-color :colormap-index)))
+                     (g-value line-style :foreground-color :colormap-index))
             (set-gc gem-gc xlib-gc :background
-                    (HP-XOR-hack
-                     x-draw-fn
-                     (g-value line-style :background-color :colormap-index))))
+                     (g-value line-style :background-color :colormap-index)))
 
           (unless (eq line-style (gem-gc-opal-style gem-gc))
             (setf (gem-gc-opal-style gem-gc) line-style)
@@ -442,13 +402,9 @@ may help in troubleshooting."
         (when (or (set-gc gem-gc xlib-gc :function x-draw-fn)
                   (not (eq filling-style (gem-gc-opal-style gem-gc))))
           (set-gc gem-gc xlib-gc :foreground
-                  (HP-XOR-hack
-                   x-draw-fn
-                   (g-value filling-style :foreground-color :colormap-index)))
+                   (g-value filling-style :foreground-color :colormap-index))
           (set-gc gem-gc xlib-gc :background
-                  (HP-XOR-hack
-                   x-draw-fn
-                   (g-value filling-style :background-color :colormap-index))))
+                   (g-value filling-style :background-color :colormap-index)))
 
         (unless (eq filling-style (gem-gc-opal-style gem-gc))
           (setf (gem-gc-opal-style gem-gc) filling-style)
@@ -534,7 +490,7 @@ operate on the window's buffer instead."
                        :exposures-p NIL)))
 
 
-
+;;; we assume the use of true color.  So colormap-property is a noop.
 (defun x-colormap-property (root-window property &optional a b c)
   "Returns various things, depending on which <property> is requested:
 :COLOR-LOOKUP -- looks up <a> (a color name) and returns three values,
