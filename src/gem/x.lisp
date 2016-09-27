@@ -2228,21 +2228,6 @@ pixmap format in the list of valid formats."
   (setq *screen-width* (xlib:screen-width *default-x-screen*))
   (setq *screen-height* (xlib:screen-height *default-x-screen*))
   (setq *default-x-root* (xlib:screen-root *default-x-screen*))
-  ;; We must call xlib:open-display a second time to get to the
-  ;; colormap, because it turns out that if we simply used the
-  ;; *default-x-display* to get at the colormap, then every time
-  ;; xlib:alloc-color was called it would cause an implicit
-  ;; xlib:display-force-output.  (Except that in CMUCL you cannot use
-  ;; two displays at one time.)
-  ;;
-  ;; TODO: so?  Doesn't CLX ever guarentee that there wouldn't be an
-  ;; force output, i.e. when the buffer is full?  So, why would we
-  ;; worry about it here?
-  (setq *default-x-colormap*
-        (xlib:screen-default-colormap
-         (nth *default-x-screen-number*
-              (xlib:display-roots
-               (xlib:open-default-display)))))
   (setq *white* (xlib:screen-white-pixel *default-x-screen*))
   (setq *black* (xlib:screen-black-pixel *default-x-screen*))
   ;; Added :button-press and :key-press so garnet-debug:ident will work.
@@ -2270,8 +2255,8 @@ integer.  We want to specify nice keywords instead of those silly
 (defun x-set-draw-function-alist (root-window)
   (declare (ignore root-window))
   (setq *function-alist*
-        (cond ((zerop *white*)              ; Sparc
-               `((:clear . ,boole-clr)      ; (color, *white* = 0)
+        (cond (t
+               `((:clear . ,boole-clr)
                  (:set . ,boole-set)
                  (:copy . ,boole-1)
                  (:no-op . ,boole-2)
@@ -2286,41 +2271,7 @@ integer.  We want to specify nice keywords instead of those silly
                  (:and-inverted . ,boole-andc1)
                  (:and-reverse . ,boole-andc2)
                  (:or-inverted . ,boole-orc1)
-                 (:or-reverse . ,boole-orc2)))
-              (*color-screen-p* ; HP
-               `((:clear . ,boole-set)         ; (color, *white* = 1)
-                 (:set . ,boole-clr)
-                 (:copy . ,boole-1)
-                 (:no-op . ,boole-2)
-                 (:copy-inverted . ,boole-c1)
-                 (:invert . ,boole-c2)
-                 (:and . ,boole-ior)
-                 (:or . ,boole-and)
-                 (:xor . ,boole-xor)
-                 (:equiv . ,boole-eqv)
-                 (:nand . ,boole-nand)
-                 (:nor . ,boole-nor)
-                 (:and-inverted . ,boole-orc1)
-                 (:and-reverse . ,boole-orc2)
-                 (:or-inverted . ,boole-andc1)
-                 (:or-reverse . ,boole-andc2)))
-              (t                        ; IBM-RT (black-and-white)
-               `((:clear . ,boole-set)  ; (black-and-white, *white* = 1)
-                 (:set . ,boole-clr)
-                 (:copy . ,boole-1)
-                 (:no-op . ,boole-2)
-                 (:copy-inverted . ,boole-c1)
-                 (:invert . ,boole-c2)
-                 (:and . ,boole-ior)
-                 (:or . ,boole-and)
-                 (:xor . ,boole-eqv)
-                 (:equiv . ,boole-xor)
-                 (:nand . ,boole-nor)
-                 (:nor . ,boole-nand)
-                 (:and-inverted . ,boole-orc1)
-                 (:and-reverse . ,boole-orc2)
-                 (:or-inverted . ,boole-andc1)
-                 (:or-reverse . ,boole-andc2)))))
+                 (:or-reverse . ,boole-orc2)))))
   ;; For erasing buffers
   (setq *copy* (cdr (assoc :copy *function-alist*))))
 
