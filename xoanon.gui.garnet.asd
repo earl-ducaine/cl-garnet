@@ -1,4 +1,6 @@
 
+;;; This file was written by Earl Ducaine and is released under the
+;;; MIT license.
 
 (in-package "COMMON-LISP-USER")
 

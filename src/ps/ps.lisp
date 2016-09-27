@@ -155,7 +155,7 @@
 	/dash-pattern exch def  /line-join exch def  /line-cap exch def
 	/line-color exch def  /radius exch def
 	/height exch def  /width exch def  /top exch def  /left exch def
-        
+
 	% Draw filling
 	newpath
 	left thickness add top thickness sub
@@ -338,8 +338,8 @@ ArcDict /mtrx matrix put
 	    /base-y exch def  /top exch def
 	    /left exch 1 sub def % XXX: I don't know why!
 
-	    % Calculate distance to add between each character, based on the 
-	    % width expected by Opal, the width expected by postscript, and 
+	    % Calculate distance to add between each character, based on the
+	    % width expected by Opal, the width expected by postscript, and
 	    % the number of characters to distribute the change over.
 	    /x-dist opal-width s stringwidth pop sub s length div def
 
@@ -529,7 +529,7 @@ ArcDict /mtrx matrix put
 
 (defparameter *motif-window-frame-fn*
   "
-/DrawMotifWindowFrame { % label left top w h 
+/DrawMotifWindowFrame { % label left top w h
 			% leftmargin topmargin rightmargin bottommargin => -
   30 dict begin
 
@@ -1024,7 +1024,7 @@ ArcDict /mtrx matrix put
 
 ;   These methods are executed on a "first pass" through the aggregate tree
 ; in order to find out which postscript functions will be used by the objects.
-; 
+;
 
 (define-method :ps-register-fn OPAL:TEXT (obj)
   (pushnew *text-fn* *required-ps-fns*)
@@ -1076,7 +1076,7 @@ ArcDict /mtrx matrix put
 	  (push (cons image (make-piximage-name)) *piximage-list*)
 	  (setf *file-uses-color-p* t))
 	(call-prototype-method obj))))
-  
+
 
 
 (define-method :ps-register-fn OPAL:VIRTUAL-AGGREGATE (obj)
@@ -1127,15 +1127,15 @@ Requires a Garnet WINDOW (or list of windows), and a PostScript
 output FILE-NAME.  Optional arguments that affect the position
 and appearance of the picture are:
 
-POSITION-X - :LEFT, :CENTER, or :RIGHT. Default :CENTER.  
+POSITION-X - :LEFT, :CENTER, or :RIGHT. Default :CENTER.
 
-POSITION-Y - :TOP, :CENTER, or :BOTTOM.  Default :CENTER. 
+POSITION-Y - :TOP, :CENTER, or :BOTTOM.  Default :CENTER.
 
 LEFT-MARGIN, RIGHT-MARGIN, TOP-MARGIN, BOTTOM-MARGIN - Distance in
 points, default 72.
 
 LEFT, TOP - Distance in points, or default NIL to use POSITION-X
-and POSITION-Y. 
+and POSITION-Y.
 
 SCALE-X, SCALE-Y - Scale factor for image.  Default is NIL, which means
 the image will be automatically scaled to fit on the page.
@@ -1158,7 +1158,7 @@ COLOR-P - T or NIL controls use of color.  Default T.
 
 BACKGROUND-COLOR - Opal color, background fill.  Default is opal:white.
 
-TITLE, CREATOR, FOR, COMMENT - Strings for header comments. 
+TITLE, CREATOR, FOR, COMMENT - Strings for header comments.
 "
   (let (region-left region-right region-top region-bottom
 	region-width region-height)
@@ -1398,7 +1398,7 @@ TITLE, CREATOR, FOR, COMMENT - Strings for header comments.
     (translate left (- *print-area-height* top)) ; XXX
 
     (ps-window win borders-p subwindows-p clip-p)
-    (grestore) 
+    (grestore)
    (trailer-comments debug)))
 
 
@@ -1484,7 +1484,7 @@ TITLE, CREATOR, FOR, COMMENT - Strings for header comments.
 	 (if (not clip-p)
 	     (translate (- (g-value top-agg :left))
 			(g-value top-agg :top)))
-	 ;; maybe pass the window background color to the frame proc 
+	 ;; maybe pass the window background color to the frame proc
 	 (print-window-background win)
 	 (when top-agg
 	   (kr-send top-agg :ps-object top-agg))
@@ -1553,8 +1553,8 @@ TITLE, CREATOR, FOR, COMMENT - Strings for header comments.
 	      (format t "0 0 ~S ~S [0 0 0] 0 0 [] -1 [~A dup dup] DrawRectangle~%"
 		      (g-value win :width) (g-value win :height)
 		      (ps-number (float (/ (+ red green blue) 3)))))))))
-	      
-    
+
+
 ;    A filling-style is called 'arbitrary' if it is not one of the pre-defined
 ; opal halftones like opal:gray-fill, and has BLACK and WHITE as the foreground
 ; and background colors.  Opal:diamond-fill is considered an arbitrary filling-
@@ -1582,7 +1582,7 @@ TITLE, CREATOR, FOR, COMMENT - Strings for header comments.
   (let* ((image (g-value style :stipple :image))
 	 (image-name (cdr (assoc image *image-list*))))
     ;; The following arguments are pushed on the stack to be passed
-    ;; to FillPattern by FillShape. 
+    ;; to FillPattern by FillShape.
 
     (format T "[ ~A ~A ~A "
 	    ;;; XXX: Optimize with BLACK and WHITE color tokens
@@ -1620,7 +1620,7 @@ TITLE, CREATOR, FOR, COMMENT - Strings for header comments.
 	(setf digit
 	      (+ digit (* (if (> col max-col)
 			      0
-			      (if flip-p 
+			      (if flip-p
 				  (aref a (- max-row row) col)
 				  (if (eq (aref a (- max-row row) col) gem::*black*)
 				      0 1)))
@@ -1634,41 +1634,8 @@ TITLE, CREATOR, FOR, COMMENT - Strings for header comments.
 	    (terpri)
 	    (write-char #\ ))))
     (format t ">~%DefImage~%~%")))
-  
 
 
-;    This function looks at the image in the filling-style of the object.
-; When the filling-style was created, a two-dimensional array was stored with
-; it (called A below).  This function goes through the array of 1's and 0's
-; and generates corresponding hex numbers.
-;    The hex numbers are generated with respect to a full-byte representation
-; of the array.  That is, zeroes are filled in at the end of an array row if
-; the width is not an integral number of bytes.  This is required by the
-; postscript function that will be called with the data.
-;
-#+apple
-(defun print-image-info (image image-name)
-  (if (eq gem::*MAC-BUFFER* (class-of image))
-      ;; IMAGE is a CLOS MAC-BUFFER object (an instance of ccl::Gworld)
-      (let* ((size (slot-value image 'ccl::size))
-             (width (ccl:point-h size))
-             (height (ccl:point-v size))
-             (pixarray (getf (slot-value image 'gem::plist) :pixarray))
-             (flip-p NIL))
-        (print-bit-array image-name pixarray width height flip-p))
-
-      (let ((width 8)
-            (height 8)
-            (flip-p T))
-        (format T "/~A /~A-font ~S ~S <~%" image-name image-name width height)
-        (dotimes (row height)
-          (let ((digit (ccl:rref image (#-ccl-3 :pattern.array #+ccl-3 :pattern.pat row) :storage :pointer)))
-            (write (if flip-p (- #xff digit) digit) :base 16)
-            (write-char #\ )))
-        (format t ">~%DefImage~%~%"))))
-
-
-#-apple
 (defun print-image-info (image image-name)
   ;; Need to have z-type images to get information from
   (let* ((flip-p (unless (xlib:image-z-p image)
@@ -1679,22 +1646,6 @@ TITLE, CREATOR, FOR, COMMENT - Strings for header comments.
 	 (a (xlib:image-z-pixarray image)))
     (print-bit-array image-name a width height flip-p)))
 
-
-#+apple
-(defun print-piximage-info (image image-name)
-  ;; IMAGE is a CLOS MAC-BUFFER object (an instance of ccl::Gworld)
-  (let* ((size (slot-value image 'ccl::size))
-         (width (ccl:point-h size))
-         (height (ccl:point-v size))
-         (pixarray (getf (slot-value image 'gem::plist) :pixarray)))
-    (format T "/~A <~%" image-name)
-    (dotimes (row height)
-      (dotimes (col width)
-        (format T "~6,'0X" (aref pixarray row col)))
-      (terpri))
-    (format t ">~%def~%~%")))
-
-#-apple
 (defun print-piximage-info (image image-name)
   (let* ((width (xlib:image-width image))
 	 (height (xlib:image-height image))
@@ -1727,7 +1678,6 @@ TITLE, CREATOR, FOR, COMMENT - Strings for header comments.
       (terpri))
     (format t ">~%def~%~%")))
 
-    
 ; Works for either filling-styles or line-styles
 (defun print-color-info (style ground)
   (if style
@@ -1982,8 +1932,8 @@ TITLE, CREATOR, FOR, COMMENT - Strings for header comments.
       (format T "~S ~S ~S ~S 0 360 " center-x center-y radius radius)
       (print-graphic-qualities obj)
       (format T "DrawEllipse~%"))))
-      
-	   
+
+
 
 ;;;
 ;;;  Roundtangles
@@ -2002,7 +1952,7 @@ TITLE, CREATOR, FOR, COMMENT - Strings for header comments.
 	(format T "~S ~S ~S ~S ~S " left top width height radius)
 	(print-graphic-qualities obj)
 	(format T "DrawRoundtangle~%")))))
-  
+
 ;;;
 ;;;  Rectangles
 ;;;
@@ -2108,7 +2058,7 @@ TITLE, CREATOR, FOR, COMMENT - Strings for header comments.
 		(g-value obj :width) (g-value obj :height)
 		image-name))
       (call-prototype-method obj)))
-	
+
 
 
 ;;

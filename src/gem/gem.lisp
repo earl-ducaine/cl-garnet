@@ -21,11 +21,7 @@
   "An a-list which associates device types with the function to be called
      to initialize them.")
 
-
-
 ;;; Methods mechanism
-
-
 (defun attach-method (device method-name method)
   (let ((number (find-or-create-name method-name))
 	(methods (g-value device :methods)))
@@ -40,17 +36,11 @@
 	(s-value device :methods array)))
     (setf (aref methods number) method)))
 
-
-
 (defun set-window-methods (window device)
   (s-value window :device device)
   (s-value window :methods (g-value device :methods)))
 
-
-
 ;;; Interface definitions
-
-
 (eval-when (:execute :compile-toplevel :load-toplevel)
   (defun find-or-create-name (name)
     (let ((pos (position name *method-names*)))
@@ -172,15 +162,15 @@
        (export ',macro-name))))
 
 
-;;;This schema is kind of a bridge between GEM and OPAL. It's mostly
+;; This schema is kind of a bridge between GEM and OPAL. It's mostly
 ;; used in OPAL but because it's used in GEM as well, it needs to be
 ;; in this file for modularity's sake.
-;;
+
 ;; The :current-root slot indicates the current device. This is used
 ;; for all calls to Gem which occur in places where explicit device
 ;; information is not available. The :active-devices slot contains the
 ;; list of all the devices that have been initialized.
-(create-schema 'DEVICE-INFO
+(create-schema 'device-info
 	       (:current-root NIL)
 	       (:active-devices NIL))
 

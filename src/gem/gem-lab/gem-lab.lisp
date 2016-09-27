@@ -2,3 +2,8 @@
 
 (defun run-all-garnet-windows ()
   (x-all-garnet-windows *default-x-root*))
+
+
+;;; create window
+;;; draw on window
+;;; apply bitmap

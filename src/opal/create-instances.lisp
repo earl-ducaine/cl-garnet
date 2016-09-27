@@ -289,15 +289,10 @@ avoiding wasted objects.
       (*first-allocatable-colormap-index* 1))
 
   (defun first-allocatable-colormap-index (root-window)
+    "Noop.  Get rid of all calls to this."
     (when first-time
-      ;; Find out the first colormap index that you are actually allowed to
-      ;; allocate and deallocate.
-      ;;THIS WON'T WORK ON A TRUE-COLOR SCREEN! [1995/12/08:goldman]
-      (when gem:*read-write-colormap-cells-p*
-	(setq *first-allocatable-colormap-index*
-	      (gem:colormap-property root-window :FIRST-ALLOCATABLE-INDEX)))
       (setf first-time NIL))
-    *first-allocatable-colormap-index*)
+    1)
 
   (defun reset-first-allocatable-colormap-index (root-window)
     (setf first-time T)
@@ -317,7 +312,7 @@ avoiding wasted objects.
   (:red 1.0)
   (:green 1.0)
   (:blue 1.0)
-  (:color-p gem:*color-screen-p*)  ; Set by initialize-x11-values
+  (:color-p t)    ;; depreciated, all screens are considered to be 'color'
   (:xcolor (o-formula
 	    (let ((name (gvl :color-name)))
 	      (if name
@@ -339,30 +334,19 @@ avoiding wasted objects.
 	   (new-index (gem:colormap-property root-window :ALLOC-COLOR
 					     (gvl :xcolor))))
       (declare (fixnum old-index new-index))
-      ;;changed the following [1995/12/08:goldman]
-      (when gem:*read-write-colormap-cells-p*
-	(when (and old-index
-		   (>= old-index
-		       (the fixnum (first-allocatable-colormap-index root-window)))
-		   (zerop (the fixnum
-			       (decf (the fixnum (gethash old-index *colormap-index-table*))))))
-	  (gem:colormap-property root-window :FREE-COLORS (list old-index)))
-	(incf (the fixnum (gethash new-index *colormap-index-table* 0))))
       new-index))))
 
-
 (define-method :destroy-me COLOR (hue)
-  (when gem:*color-screen-p*
-    (let ((index (g-cached-value hue :colormap-index)))
-      (dolist (device (g-value gem:DEVICE-INFO :active-devices))
-	(let ((root-window (g-value device :root-window)))
-	  (when (and index
-		     ;;replaced the old array with a hash-table
-		     (zerop (decf (gethash index *colormap-index-table*)))
-		     (>= index (first-allocatable-colormap-index root-window)))
-	    (gem:colormap-property root-window
-				   :FREE-COLORS (list index)))))))
-  (destroy-schema hue))
+	       (let ((index (g-cached-value hue :colormap-index)))
+		 (dolist (device (g-value gem:DEVICE-INFO :active-devices))
+		   (let ((root-window (g-value device :root-window)))
+		     (when (and index
+				;;replaced the old array with a hash-table
+				(zerop (decf (gethash index *colormap-index-table*)))
+				(>= index (first-allocatable-colormap-index root-window)))
+		       (gem:colormap-property root-window
+					      :FREE-COLORS (list index))))))
+	       (destroy-schema hue))
 
 
 (create-instance 'RED color

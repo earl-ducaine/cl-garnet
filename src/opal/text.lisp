@@ -1,43 +1,5 @@
 ;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: OPAL; Base: 10 -*-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;         The Garnet User Interface Development Environment.      ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; This code was written as part of the Garnet project at          ;;;
-;;; Carnegie Mellon University, and has been placed in the public   ;;;
-;;; domain.  If you are using this code or any part of Garnet,      ;;;
-;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; 22-May-94 Andrew Mickish -- Used (gv :self) instead of kr::*schema-self*
-;;; 08-Apr-94 Andrew Mickish -- Changed cursor height for Mac version
-;;; 20-Dec-93 Andrew Mickish -- Fixed gem:Text-Extents call to take a font
-;;;               as a parameter, not the text object.
-;;; 06-Oct-93 Andrew Mickish -- Removed obsolete :text-extents slot; used
-;;;               WIDTH returned by xlib:text-extents instead of difference
-;;;               between LEFT-BEARING and RIGHT-BEARING
-;;; 17-Sep-93 Andrew Mickish -- Removed left-bearing from :draw method;
-;;;               fixed :width formula accordingly
-;;;  9-Sep-93 Andrew Mickish -- Fixed :cursor-offset formula to put the cursor
-;;;               more between characters
-;;;  1-Sep-93 Andrew Mickish -- Used :cut-string-structs slot instead of
-;;;               kr::self-old-value; Created :prev-len to replace :x-substr
-;;; 30-Aug-93 Andrew Mickish -- Fixed Move-Cursor-Up/Down-One-Line
-;;; 17-Aug-93 Andrew Mickish -- Removed reference to kr::*NO-VALUE*
-;;; 30-Jul-93 Andrew Mickish -- New opal:text obviates all cursor- and multi-
-;;;               text versions
-;;; 10-Jun-93 Andrew Mickish -- Renamed black-xor-hack to HP-XOR-Hack
-;;;  6-Apr-93 koz Converted with-*-styles macros to set-*-style fns
-;;;               And omitted "clip-mask" as argument to draw function.
-;;;               And changed hack to "black-xor-hack" (now a macro)
-;;; 15-Apr-92 ecp Fixed bug where cursor was not appearing on color screen
-;;;                 with black = 0 when draw-function = :xor.
-;;; 23-Oct-91 ecp Fix for when drawing cursor on color screen with black = 0.
-;;;  4-Feb-91 ecp Cursor of cursor-multi-text now has draw function :xor.
-;;; 23-Mar-90 ecp  New slot :fill-background-p for text objects.
-;;; 14-Mar-90 ecp Move-cursor-* functions added.
-;;; 28-Feb-90 ecp Cursor of cursor-multi-text now has same draw
-;;;		  function as the text itself.
-;;;
+
 (in-package "OPAL")
 
 (declaim (fixnum *cursor-width* *cursor-half-width* *cursor+++half+++width*))
