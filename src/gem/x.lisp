@@ -173,7 +173,6 @@ may help in troubleshooting."
           *white*)))
 
 
-
 ;; The following two variables used to be in Inter/i-windows.lisp; they
 ;; have been moved here because nobody seems to be using them.
 ;;
@@ -228,9 +227,6 @@ may help in troubleshooting."
      (if stipple-schema
 	 (get-stipple-schema-pixmap stipple-schema ,root-window nil))))
 
-
-
-
 ;;; With-styles works like xlib:with-gcontext except it takes a gob
 ;;  and extracts all the relevant things for you. This is a win for
 ;;  the simple draw methods; it will be a lose for performance. See
@@ -403,9 +399,6 @@ may help in troubleshooting."
         (if x-stipple (set-gc gem-gc xlib-gc :stipple x-stipple))))
     (set-gc gem-gc xlib-gc :function x-draw-fn)))
 
-
-;;; -------------------------------------------------- X Windows Handling
-
 (defun do-all-garnet-windows (clx-window)
   "Iterates over all CLX windows.  Clean-Up calls
 this function with the root CLX window."
@@ -486,15 +479,6 @@ operate on the window's buffer instead."
   (case property
     (:ALLOC-COLOR
      (xlib:alloc-color *default-x-colormap* a))
-    (:FIRST-ALLOCATABLE-INDEX
-     (let* ((indices (xlib:alloc-color-cells *default-x-colormap* 1))
-            (index (car indices)))
-       (xlib:free-colors *default-x-colormap* indices)
-       index))
-    (:FREE-COLORS
-     (xlib:free-colors *default-x-colormap* a))
-    (:LOOKUP-COLOR
-     (xlib:lookup-color *default-x-colormap* a))
     (:MAKE-COLOR
      (xlib:make-color :red a :green b :blue c))
     (:QUERY-COLORS
@@ -2216,16 +2200,6 @@ pixmap format in the list of valid formats."
   (setq *screen-width* (xlib:screen-width *default-x-screen*))
   (setq *screen-height* (xlib:screen-height *default-x-screen*))
   (setq *default-x-root* (xlib:screen-root *default-x-screen*))
-  ;; We must call xlib:open-display a second time to get to the
-  ;; colormap, because it turns out that if we simply used the
-  ;; *default-x-display* to get at the colormap, then every time
-  ;; xlib:alloc-color was called it would cause an implicit
-  ;; xlib:display-force-output.  (Except that in CMUCL you cannot use
-  ;; two displays at one time.)
-  ;;
-  ;; TODO: so?  Doesn't CLX ever guarentee that there wouldn't be an
-  ;; force output, i.e. when the buffer is full?  So, why would we
-  ;; worry about it here?
   (setq *default-x-colormap*
         (xlib:screen-default-colormap
          (nth *default-x-screen-number*
