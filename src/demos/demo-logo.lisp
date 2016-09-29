@@ -1,21 +1,16 @@
 ;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: DEMO-LOGO; Base: 10 -*-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;         The Garnet User Interface Development Environment.      ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; This code was written as part of the Garnet project at          ;;;
-;;; Carnegie Mellon University, and has been placed in the public   ;;;
-;;; domain.  If you are using this code or any part of Garnet,      ;;;
-;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;; The Garnet User Interface Development Environment.
+;;;
+;;; This code was written as part of the Garnet project at
+;;; Carnegie Mellon University, and has been placed in the public
+;;; domain.  If you are using this code or any part of Garnet,
+;;; please contact garnet@cs.cmu.edu to be put on the mailing list.
+;;;
 ;;;
 ;;; Designed and implemented by Brad Myers
 ;;;
 ;;; Garnet logo designed by MaryJo Dowling at CMU
-;;;
-
-
-
 
 (in-package :DEMO-LOGO)
 
@@ -401,7 +396,7 @@
   (setq win (create-instance NIL inter:interactor-window
 		      (:title "Garnet Logo")
 		      (:left 0)(:top 0)
-                      (:width 270)(:height 235)
+		      (:width 270)(:height 235)
 		      (:double-buffered-p double-buffered-p)
 		      (:aggregate (setq top-agg
 					(create-instance NIL opal:aggregate)))))
