@@ -495,13 +495,6 @@ operate on the window's buffer instead."
      (xlib:free-colors *default-x-colormap* a))
     (:LOOKUP-COLOR
      (xlib:lookup-color *default-x-colormap* a))
-    (:LOOKUP-RGB
-     (let* ((xcolor (xlib:lookup-color *default-x-colormap* a)))
-       (break)
-       ;; The PS module needs the RGB values
-       (values (xlib:color-red xcolor)
-               (xlib:color-green xcolor)
-               (xlib:color-blue xcolor))))
     (:MAKE-COLOR
      (xlib:make-color :red a :green b :blue c))
     (:QUERY-COLORS

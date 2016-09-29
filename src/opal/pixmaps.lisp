@@ -222,13 +222,15 @@
 		 ;; colormap, but some I got from DOI topographic
 		 ;; pictures do.... [2003/09/15:rpg]
 		 ;; Original fix broke under SBCL.
-		 (unless (search "NONE" line :test #'string-equal)
-		   (setf (aref color-sequence cind)
-			 (gem:colormap-property
-			  root-window
-			  :ALLOC-COLOR
-			  (gem:colormap-property root-window
-						 :LOOKUP-COLOR line)))))))
+		 ;; (unless (search "NONE" line :test #'string-equal)
+		 ;;   (break)
+		 ;;   (setf (aref color-sequence cind)
+		 ;; 	 (gem:colormap-property
+		 ;; 	  root-window
+		 ;; 	  :ALLOC-COLOR
+		 ;; 	  (gem:colormap-property root-window
+		 ;; 				 :LOOKUP-COLOR line))))
+		 )))
 	    ;; Eat garbage between color information and pixels.
 	    ;; Some pixmap files have no garbage, some have a single line
 	    ;; of the comment /* pixels */, and non-meltsner-format files

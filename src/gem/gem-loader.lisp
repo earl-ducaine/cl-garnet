@@ -24,7 +24,7 @@
 ;;;  Load Gem  ...
 (Defvar Garnet-Gem-Files
   '(
-    "gem"
+;;    "gem"
 ;;    "define-methods"
 ;;;    "x"
     ))

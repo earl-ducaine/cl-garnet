@@ -316,14 +316,8 @@ avoiding wasted objects.
   (:xcolor (o-formula
 	    (let ((name (gvl :color-name)))
 	      (if name
-		  (multiple-value-bind (red green blue)
-		      (gem:colormap-property (gv gem:device-info :current-root)
-					     :LOOKUP-RGB name)
-		    ;; The PS module needs the RGB values
-		    (s-value (gv :self) :red red)
-		    (s-value (gv :self) :green green)
-		    (s-value (gv :self) :blue blue)
-		    name)
+		  (progn
+		    (format t "should never get here"))
 		  (gem:colormap-property
 		   (gv gem:device-info :current-root)
 		   :MAKE-COLOR (gvl :red) (gvl :green) (gvl :blue))))))
