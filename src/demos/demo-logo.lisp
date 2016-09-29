@@ -1,34 +1,16 @@
 ;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: DEMO-LOGO; Base: 10 -*-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;         The Garnet User Interface Development Environment.      ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; This code was written as part of the Garnet project at          ;;;
-;;; Carnegie Mellon University, and has been placed in the public   ;;;
-;;; domain.  If you are using this code or any part of Garnet,      ;;;
-;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;; The Garnet User Interface Development Environment.
+;;;
+;;; This code was written as part of the Garnet project at
+;;; Carnegie Mellon University, and has been placed in the public
+;;; domain.  If you are using this code or any part of Garnet,
+;;; please contact garnet@cs.cmu.edu to be put on the mailing list.
+;;;
 ;;;
 ;;; Designed and implemented by Brad Myers
 ;;;
 ;;; Garnet logo designed by MaryJo Dowling at CMU
-;;;
-
-#|
-============================================================
-Change log:
-   2/15/94 Andrew Mickish - Made fast implementation for Mac:
-             - Put window at :top = 45
-             - "GARNET" letters are XOR and fast-redraw
-             - Other strings are redraw-type fast-redraw
-             - DoColors sets the :fast-redraw-line-style of the other strings
-   5/20/92 Brad Myers - When click, animation starts over with Star big
-   4/14/92 Brad Myers - In black and white, star should be filled with white
-   4/13/92 Brad Myers - started based on Demo-Fade
-============================================================
-|#
-
-
 
 (in-package :DEMO-LOGO)
 
@@ -168,7 +150,7 @@ Change log:
 
 (defparameter polylinelist NIL)
 
-(defun Create-Logo (agg)
+(defun create-logo (agg)
   (let ((cnt 0))
     (setq polylinelist NIL)
     (dolist (i new-point-list)
@@ -219,8 +201,8 @@ Change log:
 
 (defparameter violet-to-red NIL)
 (defparameter red-to-violet NIL)
-(defparameter rgbvalues 
-  '((1.00 0.00 0.52) (1.00 0.01 0.85) (0.82 0.03 1.00) (0.49 0.01 1.00) 
+(defparameter rgbvalues
+  '((1.00 0.00 0.52) (1.00 0.01 0.85) (0.82 0.03 1.00) (0.49 0.01 1.00)
     (0.14 0.01 1.00) (0.00 0.19 1.00) (0.01 0.52 1.00) (0.03 0.86 1.00)
     (0.00 1.00 0.82) (0.02 1.00 0.49) (0.00 1.00 0.15) (0.18 1.00 0.01)
     (0.52 1.00 0.02) (0.83 1.00 0.00) (1.00 0.81 0.00) (1.00 0.48 0.00)
@@ -300,7 +282,7 @@ Change log:
 			     (:top init-y)
 			     (:font font)
 			     (:visible T)))
-      
+
       (when (> (setq h (g-value obj :height)) maxwh)
 	(setq maxwh h))
       (when (> (setq w (g-value obj :width)) maxwh)
@@ -313,8 +295,8 @@ Change log:
     ; now set the lefts
     (dolist (obj objs-list)
       (s-value obj :left cur-x)
-      (s-value obj :initial-x cur-x) 
-      (s-value obj :initial-y init-y) 
+      (s-value obj :initial-x cur-x)
+      (s-value obj :initial-y init-y)
       (incf cur-x maxwh))
     (setq FirstLetterObjs objs-list)
     (setq FirstLetterOffset (+ 2 maxw))))
@@ -324,7 +306,7 @@ Change log:
 (defparameter Fader NIL)
 (defparameter win NIL)
 ;;; status cycles between :beginning, :little and :letters-are-down
-(defparameter status :beginning) 
+(defparameter status :beginning)
 
 ;;; Restore to :beginning
 (defun Reset ()
@@ -389,7 +371,7 @@ Change log:
 		  (s-value obj :visible T))
 		(opal:update win)
 		(setf status :little))
-    (:little 
+    (:little
      (Circle-Down 30)
      (if (g-value opal:color :color-p)
 	 (dolist (obj objs-list)
@@ -398,7 +380,7 @@ Change log:
      (setf status :letters-are-down))
     (:letters-are-down (reset))
     (T (error "status bad ~s" status))))
-     
+
 (defun Re-Animate ()
   (loop
    (go-to-next-status)
@@ -414,7 +396,7 @@ Change log:
   (setq win (create-instance NIL inter:interactor-window
 		      (:title "Garnet Logo")
 		      (:left 0)(:top 0)
-                      (:width 270)(:height 235)
+		      (:width 270)(:height 235)
 		      (:double-buffered-p double-buffered-p)
 		      (:aggregate (setq top-agg
 					(create-instance NIL opal:aggregate)))))
@@ -439,7 +421,8 @@ Change log:
   (Go-To-Next-Status) ;; will circle-down and blink
   (create-instance 'starter inter:button-interactor
 		   (:start-where `(:in ,win))
-		   (:start-event '(:any-keyboard :any-mousedown))
+		   (:start-event '(:double-leftdown))
+;;		    '(:any-keyboard :any-mousedown))
 		   (:window win)
 		   (:continuous NIL)
 		   (:final-function

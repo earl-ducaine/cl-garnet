@@ -39,7 +39,7 @@ You can get a list of all Garnet windows by referencing the variable
 opal::*garnet-windows*."))
 
 (defun clean-up (&optional (how-to :orphans-only))
-  "options are: 
+  "options are:
   1) :opal => destroy all garnet windows by calling xlib:destroy-window on
               orphaned clx-windows and opal:destroy on non-orphaned windows
   2) :opal-set-agg-to-nil => same as above, but before calling opal:destroy,
@@ -55,7 +55,7 @@ opal::*garnet-windows*."))
 	 (root (g-value gem:device-info :current-root))
 	 ;; Store all drawables that were created by Garnet in clx-window-list
 	 (clx-window-list (unless (eq how-to :help)
-			    (gem:all-garnet-windows root))))
+			    (gem:all-garnet-windows))))
     (case how-to
       ;; destroy all Garnet windows by calling xlib:destroy-window on orphaned
       ;; clx-windows and opal:destroy on non-orphaned windows.

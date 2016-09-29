@@ -1,4 +1,6 @@
 
+;;; This file was written by Earl Ducaine and is released under the
+;;; MIT license.
 
 (in-package "COMMON-LISP-USER")
 
@@ -362,6 +364,17 @@
    ;; 	    :pathname "src/garnet-truetype/test-truetype"
    ;; 	    :components
    ;; 	    ((:file "hello-world")))
+
+   (:module multi-garnet
+	    :pathname "multi-garnet"
+	    :depends-on (:build :lapidary)
+	    :serial t
+	    :components
+	    ((:file "package")
+	     (:file "sky-blue")
+	     (:file "multi-garnet")
+	     (:file "scatterplot")
+	     (:file "examples")))
    (:module lapidary
 	    :pathname "src/lapidary"
 	    :depends-on (:build :lapidary2 :gadgets :gilt :c32)

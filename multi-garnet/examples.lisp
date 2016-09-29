@@ -1,4 +1,4 @@
-;;;-*- Package: :user; Syntax: Common-Lisp; Mode: Lisp -*-; 
+;;;-*- Package: :user; Syntax: Common-Lisp; Mode: Lisp -*-;
 
 ;; =================================================================================
 
@@ -7,22 +7,29 @@
 ;; load a few auxiliary functions), and then select and execute the
 ;; examples below.
 
-(in-package "COMMON-LISP-USER")
+(in-package :multi-garnet)
 
-(use-package '(:kr :kr-debug :garnet-debug :mg))
-
-;; If the Garnet background process for updating windows is not reliable,
-;; the following advice can be used to update the window every time the
-;; constraint graph changes, so you don't need to manually update the
-;; window all of the time when running the example code.
+;; If the Garnet background process for updating windows is not
+;; reliable, the following advice can be used to update the window
+;; every time the constraint graph changes, so you don't need to
+;; manually update the window all of the time when running the example
+;; code.
+;;
 ;; (excl:advise mg::mg-add-constraint :after nil nil (update))
 ;; (excl:advise mg::mg-remove-constraint :after nil nil (update))
+;;
 ;; to reverse these changes, do
+;;
 ;; (excl:unadvise mg::mg-add-constraint)
 ;; (excl:unadvise mg::mg-remove-constraint)
-
-;; to see message when cycle detected, do: (setq mg::*sky-blue-cycle-warning* t)
-;; to see message on backtracking, do: (setq mg::*sky-blue-backtracking-warning* t)
+;;
+;; to see message when cycle detected, do:
+;;
+;; (setq mg::*sky-blue-cycle-warning* t)
+;;
+;; to see message on backtracking, do:
+;;
+;; (setq mg::*sky-blue-backtracking-warning* t)
 
 (defvar *demo-window* nil)
 
@@ -928,7 +935,7 @@
 (update)
 
 ;; now run gadgets, all tied together
-(run) 
+(run)
 
 ;;
 ;; =================================================================================

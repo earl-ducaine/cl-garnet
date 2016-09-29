@@ -29,19 +29,12 @@
       display-number)))
 
 (defun verify-display-can-be-opened ()
-  (let* ((full-display-name (get-full-display-name))
-         (d-name (if full-display-name
-                     (get-display-name full-display-name)
-                     (machine-instance)))
-         (d-number (get-display-number full-display-name))
-         (val nil)
-         (errorp nil))
+  (let* (val errorp)
     (unwind-protect
          (progn
            (multiple-value-setq (val errorp)
              (ignore-errors
-               (xlib:open-default-display)
-               ))
+               (xlib:open-default-display)))
            (if errorp
                (error "Could not open a display for ~S.
      You must already be running X to load or compile Garnet. Your
@@ -77,16 +70,14 @@ executing the command \"xhost +\" on the machine where the windows
 will be displayed, if it is different from the machine running Garnet.
 This disables security and is not recommended for ordinary use, but it
 may help in troubleshooting."
-                      full-display-name)))
+                      (get-full-display-name))))
       (when val
         (xlib:close-display val)))
-    T))
-
+    t))
 
 (verify-display-can-be-opened)
 
-
-(defvar *debug-gem-mode* nil)
+(defvar *debug-gem-mode*)
 (defvar *default-x-display-name*)
 
 ;; Moved here from opal:defs.lisp for the sake of modularity. This is
@@ -102,14 +93,13 @@ may help in troubleshooting."
   line-style-gc
   filling-style-gc)
 
-
 (defun display-info-printer (s stream ignore)
   (format stream "#<GEM-DISPLAY-INFO ~A>" (display-info-display s)))
 
+;;; A graphic context structure
 (defstruct (gem-gc (:print-function gem-gc-print-function))
   gcontext
   opal-style                            ; This is either a line or filling style
-
   function
   foreground
   background
@@ -123,13 +113,10 @@ may help in troubleshooting."
   fill-rule
   stipple
   clip-mask
-  ;; The clip-mask actually stored in
-  ;; the xlib:gcontext -- except if the
-  ;; clip-mask is :none, in which case
-  ;; this contains a list like '(nil 0 0 0)
-  ;; (to avoid unnecessary consing)
-  stored-clip-mask
-  )
+  ;; The clip-mask actually stored in the xlib:gcontext -- except if
+  ;; the clip-mask is :none, in which case this contains a list like
+  ;; '(nil 0 0 0) (to avoid unnecessary consing)
+  stored-clip-mask)
 
 (defun gem-gc-print-function (gc stream depth)
   (declare (ignore depth))
@@ -138,9 +125,7 @@ may help in troubleshooting."
           (gem-gc-clip-mask gc)))
 
 (setf (documentation '*default-x-display-name* 'variable)
-      "This is an unfortunately misnamed entity, since it is actually
-       an X HOSTNAME and not a display name in the sense of being a
-       string display designator.")
+      "Essentially the X HOSTNAME as string.")
 
 (defvar *default-x-display*)
 (defvar *default-x-display-number*)
@@ -153,7 +138,6 @@ may help in troubleshooting."
 (defvar *white*)
 (defvar *black*)
 (defvar *function-alist*)
-(defvar *HP-display-type?* nil)
 (defvar *color-screen-p* nil)
 
 (defvar *read-write-colormap-cells-p*
@@ -165,17 +149,6 @@ may help in troubleshooting."
 
 (defun x-set-screen-color-attribute-variables (root-window)
   (declare (ignore root-window))
-;;;             (let* ((*print-pretty* NIL)
-;;;                    (colormap-string (string-upcase
-;;;                                      (princ-to-string opal::*default-x-colormap*))))
-;;;               (if (or (search "PSEUDO-COLOR" colormap-string)
-;;;                       (search "DIRECT-COLOR" colormap-string)
-;;;                       (search "GRAY-SCALE" colormap-string))
-;;;                   (setq *is-this-a-color-screen?* t)
-;;;                   (setq *is-this-a-color-screen?* nil)))
-  ;;incorporated Nick Levine's patch into the code.
-  ;;[1995/09/11:goldman]
-  ;;further patched this to add *read-write-colormap-cells-p* [1995/12/08:goldman]
   (let ((color-screen-types '(:pseudo-color
                               :direct-color
                               :static-color
@@ -184,15 +157,12 @@ may help in troubleshooting."
         (screen-type (xlib::visual-info-class
                       (xlib::screen-root-visual-info
                        *default-x-screen*))))
-    (setq *color-screen-p*
-          (if (member screen-type color-screen-types :test #'eq)
-              screen-type
-              nil))
-    (setq *read-write-colormap-cells-p*
-          (and *color-screen-p*
-               (member screen-type '(:direct-color :pseudo-color) :test #'eq))))
-  (setq *HP-display-type?* (and *color-screen-p* (zerop gem:*black*))))
-
+    (unless (eq screen-type :true-color)
+      (error  (concatenate 'string
+	      "Garnett only supports true-color display.  All other "
+	      "displays, i.e. :direct-color or :quickdraw, have been "
+	      "depreciated")))
+    (setq *color-screen-p* :true-color)))
 
 (defun x-color-to-index (root-window a-color)
   (declare (ignore root-window))
@@ -203,7 +173,6 @@ may help in troubleshooting."
           *white*)))
 
 
-
 ;; The following two variables used to be in Inter/i-windows.lisp; they
 ;; have been moved here because nobody seems to be using them.
 ;;
@@ -258,9 +227,6 @@ may help in troubleshooting."
      (if stipple-schema
 	 (get-stipple-schema-pixmap stipple-schema ,root-window nil))))
 
-
-
-
 ;;; With-styles works like xlib:with-gcontext except it takes a gob
 ;;  and extracts all the relevant things for you. This is a win for
 ;;  the simple draw methods; it will be a lose for performance. See
@@ -360,23 +326,6 @@ may help in troubleshooting."
 		  (setq s (cdr s))
 		  (setq v (cdr v))))))))))
 
-
-;;; The HP has a non-traditional assignment of black=0 and white=1, but to
-;;; get XOR to work correctly, we have to draw black objects as 1 and white
-;;; objects as 0.  This macro checks whether the display is an HP, and then
-;;; flips the black and white indices for XOR.
-;;;
-(defmacro HP-XOR-hack (x-draw-function index)
-  `(if (and *HP-display-type?*
-            (eq ,x-draw-function ,boole-xor))
-       (if (eql *black* ,index)
-           *white*
-           (if (eql *white* ,index)
-               *black*
-               ,index))
-       ,index))
-
-
 (defun set-line-style (line-style gem-gc xlib-gc root-window x-draw-fn)
   (declare (optimize (speed 3) (safety 1)))
   (when line-style
@@ -392,13 +341,9 @@ may help in troubleshooting."
           (when (or draw-fn-changed?
                     (not (eq line-style (gem-gc-opal-style gem-gc))))
             (set-gc gem-gc xlib-gc :foreground
-                    (HP-XOR-hack
-                     x-draw-fn
-                     (g-value line-style :foreground-color :colormap-index)))
+                     (g-value line-style :foreground-color :colormap-index))
             (set-gc gem-gc xlib-gc :background
-                    (HP-XOR-hack
-                     x-draw-fn
-                     (g-value line-style :background-color :colormap-index))))
+                     (g-value line-style :background-color :colormap-index)))
 
           (unless (eq line-style (gem-gc-opal-style gem-gc))
             (setf (gem-gc-opal-style gem-gc) line-style)
@@ -432,7 +377,6 @@ may help in troubleshooting."
 ;;  These were split into two macros because the draw method for opal:bitmap
 ;;  also needs to use the first macro now...
 
-
 (defun set-filling-style (filling-style gem-gc xlib-gc root-window x-draw-fn)
   (declare (optimize (speed 3) (safety 1) (space 0) (debug 2)))
   (when filling-style
@@ -442,13 +386,9 @@ may help in troubleshooting."
         (when (or (set-gc gem-gc xlib-gc :function x-draw-fn)
                   (not (eq filling-style (gem-gc-opal-style gem-gc))))
           (set-gc gem-gc xlib-gc :foreground
-                  (HP-XOR-hack
-                   x-draw-fn
-                   (g-value filling-style :foreground-color :colormap-index)))
+                   (g-value filling-style :foreground-color :colormap-index))
           (set-gc gem-gc xlib-gc :background
-                  (HP-XOR-hack
-                   x-draw-fn
-                   (g-value filling-style :background-color :colormap-index))))
+                   (g-value filling-style :background-color :colormap-index)))
 
         (unless (eq filling-style (gem-gc-opal-style gem-gc))
           (setf (gem-gc-opal-style gem-gc) filling-style)
@@ -459,28 +399,19 @@ may help in troubleshooting."
         (if x-stipple (set-gc gem-gc xlib-gc :stipple x-stipple))))
     (set-gc gem-gc xlib-gc :function x-draw-fn)))
 
-
-
-
-;;; -------------------------------------------------- X Windows Handling
-
-
 (defun do-all-garnet-windows (clx-window)
-  "Iterates over all CLX windows.  Clean-Up calls
-this function with the root CLX window."
+  "Iterates over all CLX windows.  Clean-Up calls this function with
+the root CLX window."
   (let ((windows (if (member :garnet (xlib:drawable-plist clx-window))
 		     (list clx-window))))
     (dolist (w (xlib:query-tree clx-window))
       (setf windows (append windows (do-all-garnet-windows w))))
     windows))
 
-
-(defun x-all-garnet-windows (root-window)
+(defun x-all-garnet-windows ()
   "Returns a list of all the X windows that were created by Garnet.
 These are raw windows, NOT Opal windows!"
-  (declare (ignore root-window))
   (do-all-garnet-windows *default-x-root*))
-
 
 (defun x-beep (root-window)
   (declare (ignore root-window))
@@ -534,7 +465,7 @@ operate on the window's buffer instead."
                        :exposures-p NIL)))
 
 
-
+;;; we assume the use of true color.  So colormap-property is a noop.
 (defun x-colormap-property (root-window property &optional a b c)
   "Returns various things, depending on which <property> is requested:
 :COLOR-LOOKUP -- looks up <a> (a color name) and returns three values,
@@ -545,23 +476,6 @@ operate on the window's buffer instead."
   (case property
     (:ALLOC-COLOR
      (xlib:alloc-color *default-x-colormap* a))
-    (:ALLOC-COLOR-CELLS
-     (xlib:alloc-color-cells *default-x-colormap* 1))
-    (:FIRST-ALLOCATABLE-INDEX
-     (let* ((indices (xlib:alloc-color-cells *default-x-colormap* 1))
-            (index (car indices)))
-       (xlib:free-colors *default-x-colormap* indices)
-       index))
-    (:FREE-COLORS
-     (xlib:free-colors *default-x-colormap* a))
-    (:LOOKUP-COLOR
-     (xlib:lookup-color *default-x-colormap* a))
-    (:LOOKUP-RGB
-     (let* ((xcolor (xlib:lookup-color *default-x-colormap* a)))
-       ;; The PS module needs the RGB values
-       (values (xlib:color-red xcolor)
-               (xlib:color-green xcolor)
-               (xlib:color-blue xcolor))))
     (:MAKE-COLOR
      (xlib:make-color :red a :green b :blue c))
     (:QUERY-COLORS
@@ -585,10 +499,6 @@ affects an area of <width> by <height>."
               :background (xlib:screen-black-pixel screen))))
     (xlib:put-image to gc from :x 0 :y 0 :width width :height height)
     (xlib:free-gcontext gc)))
-
-
-
-
 
 (defun x-create-cursor (root-window source mask
                         foreground background
@@ -2287,16 +2197,6 @@ pixmap format in the list of valid formats."
   (setq *screen-width* (xlib:screen-width *default-x-screen*))
   (setq *screen-height* (xlib:screen-height *default-x-screen*))
   (setq *default-x-root* (xlib:screen-root *default-x-screen*))
-  ;; We must call xlib:open-display a second time to get to the
-  ;; colormap, because it turns out that if we simply used the
-  ;; *default-x-display* to get at the colormap, then every time
-  ;; xlib:alloc-color was called it would cause an implicit
-  ;; xlib:display-force-output.  (Except that in CMUCL you cannot use
-  ;; two displays at one time.)
-  ;;
-  ;; TODO: so?  Doesn't CLX ever guarentee that there wouldn't be an
-  ;; force output, i.e. when the buffer is full?  So, why would we
-  ;; worry about it here?
   (setq *default-x-colormap*
         (xlib:screen-default-colormap
          (nth *default-x-screen-number*
@@ -2326,12 +2226,9 @@ integer.  We want to specify nice keywords instead of those silly
   (dolist (fn-pair *function-alist*)
     (setf (get (car fn-pair) :x-draw-function) (cdr fn-pair))))
 
-
-
 (defun x-set-draw-function-alist (root-window)
   (declare (ignore root-window))
   (setq *function-alist*
-        (cond ((zerop *white*)              ; Sparc
                `((:clear . ,boole-clr)      ; (color, *white* = 0)
                  (:set . ,boole-set)
                  (:copy . ,boole-1)
@@ -2348,40 +2245,6 @@ integer.  We want to specify nice keywords instead of those silly
                  (:and-reverse . ,boole-andc2)
                  (:or-inverted . ,boole-orc1)
                  (:or-reverse . ,boole-orc2)))
-              (*color-screen-p* ; HP
-               `((:clear . ,boole-set)         ; (color, *white* = 1)
-                 (:set . ,boole-clr)
-                 (:copy . ,boole-1)
-                 (:no-op . ,boole-2)
-                 (:copy-inverted . ,boole-c1)
-                 (:invert . ,boole-c2)
-                 (:and . ,boole-ior)
-                 (:or . ,boole-and)
-                 (:xor . ,boole-xor)
-                 (:equiv . ,boole-eqv)
-                 (:nand . ,boole-nand)
-                 (:nor . ,boole-nor)
-                 (:and-inverted . ,boole-orc1)
-                 (:and-reverse . ,boole-orc2)
-                 (:or-inverted . ,boole-andc1)
-                 (:or-reverse . ,boole-andc2)))
-              (t                        ; IBM-RT (black-and-white)
-               `((:clear . ,boole-set)  ; (black-and-white, *white* = 1)
-                 (:set . ,boole-clr)
-                 (:copy . ,boole-1)
-                 (:no-op . ,boole-2)
-                 (:copy-inverted . ,boole-c1)
-                 (:invert . ,boole-c2)
-                 (:and . ,boole-ior)
-                 (:or . ,boole-and)
-                 (:xor . ,boole-eqv)
-                 (:equiv . ,boole-xor)
-                 (:nand . ,boole-nor)
-                 (:nor . ,boole-nand)
-                 (:and-inverted . ,boole-orc1)
-                 (:and-reverse . ,boole-orc2)
-                 (:or-inverted . ,boole-andc1)
-                 (:or-reverse . ,boole-andc2)))))
   ;; For erasing buffers
   (setq *copy* (cdr (assoc :copy *function-alist*))))
 
@@ -2633,8 +2496,6 @@ the X drawable."
   (declare (ignore root-window))
   (getf (xlib:drawable-plist x-window) :garnet))
 
-
-
 (defun x-window-has-grown (window width height)
   "RETURNS: true if the <window>'s old buffer was smaller
 (in at least one dimension) than the new <width> and <height>."
@@ -2644,7 +2505,6 @@ the X drawable."
          (or (> height (xlib:drawable-height old-buffer))
              (> width  (xlib:drawable-width old-buffer))))))
 
-
 (defun x-window-to-image (window left top width height)
   "Create an image from (a piece of) a window."
   (let ((drawable (g-value window :drawable)))
@@ -2652,19 +2512,11 @@ the X drawable."
 	(xlib:get-image drawable :format :z-pixmap :x left :y top
 			:width width :height height))))
 
-
 (defun x-write-an-image (root-window pathname image)
   (declare (ignore root-window))
   (xlib:write-bitmap-file pathname image))
 
-
-
-;;; --------------------------------------------------
-
-
-
 (defun attach-X-methods (x-device)
-
   (attach-method x-device :all-garnet-windows #'x-all-garnet-windows)
   (attach-method x-device :beep #'x-beep)
   (attach-method x-device :bit-blit #'x-bit-blit)

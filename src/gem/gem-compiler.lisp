@@ -20,15 +20,15 @@
        (and (boundp 'Garnet-Compile-Debug-Settings)
 	    Garnet-Compile-Debug-Settings)
        ;; Global default settings.
-       (and (boundp 'Default-Garnet-Proclaim) 
+       (and (boundp 'Default-Garnet-Proclaim)
 	    Default-Garnet-Proclaim))))
 
 
 (Defvar Garnet-Gem-Files
   '(
-    "gem"
-    "define-methods"
-    "x"
+;;    "gem"
+;;    "define-methods"
+;;    "x"
     ))
 
 (eval-when (:execute :load-toplevel :compile-toplevel)

@@ -289,15 +289,10 @@ avoiding wasted objects.
       (*first-allocatable-colormap-index* 1))
 
   (defun first-allocatable-colormap-index (root-window)
+    "Noop.  Get rid of all calls to this."
     (when first-time
-      ;; Find out the first colormap index that you are actually allowed to
-      ;; allocate and deallocate.
-      ;;THIS WON'T WORK ON A TRUE-COLOR SCREEN! [1995/12/08:goldman]
-      (when gem:*read-write-colormap-cells-p*
-	(setq *first-allocatable-colormap-index*
-	      (gem:colormap-property root-window :FIRST-ALLOCATABLE-INDEX)))
       (setf first-time NIL))
-    *first-allocatable-colormap-index*)
+    1)
 
   (defun reset-first-allocatable-colormap-index (root-window)
     (setf first-time T)
@@ -307,9 +302,17 @@ avoiding wasted objects.
     (declare (ignore root-window))
     (setf *first-allocatable-colormap-index* value)))
 
-
-
+;;; :xcolor and :colormap-index map to CLX' color and pixel concepts.
+;;; color is a device independant RGB triplet whereas pixel is a
+;;; device dependant RGB triplet encoded as a 32bit integer.  To
+;;; simplify the only case now found in the real world, truecolor
+;;; displays, we assume that there is only on pixmap and that that
+;;; pixmap is truecolor and hardware defined. (Refer to the CLX
+;;; documentation for more information on this) So, no need to
+;;; allocate, deallocate colors from a color map, just translate them
+;;; from color to pixel as the hardware has defined.
 (create-instance 'COLOR GRAPHIC-QUALITY
+  ;; note, :color-name is now depreciated.
   :declare ((:parameters :red :green :blue :color-name)
 	    (:type ((real 0 1) :red :green :blue)
 		   ((or string atom) :color-name))
@@ -317,53 +320,20 @@ avoiding wasted objects.
   (:red 1.0)
   (:green 1.0)
   (:blue 1.0)
-  (:color-p gem:*color-screen-p*)  ; Set by initialize-x11-values
-  (:xcolor (o-formula
-	    (let ((name (gvl :color-name)))
-	      (if name
-		  (multiple-value-bind (red green blue)
-		      (gem:colormap-property (gv gem:device-info :current-root)
-					     :LOOKUP-RGB name)
-		    ;; The PS module needs the RGB values
-		    (s-value (gv :self) :red red)
-		    (s-value (gv :self) :green green)
-		    (s-value (gv :self) :blue blue)
-		    name)
-		  (gem:colormap-property
-		   (gv gem:device-info :current-root)
-		   :MAKE-COLOR (gvl :red) (gvl :green) (gvl :blue))))))
+  (:color-p t)    ;; depreciated, all screens are considered to be 'color'
+  (:xcolor
+   (o-formula
+    (gem:colormap-property
+     (gv gem:device-info :current-root)
+     :MAKE-COLOR (gvl :red) (gvl :green) (gvl :blue))))
   (:colormap-index
    (o-formula
-    (let* ((root-window (gv gem:device-info :current-root))
-	   (old-index (g-cached-value (gv :self) :colormap-index))
-	   (new-index (gem:colormap-property root-window :ALLOC-COLOR
-					     (gvl :xcolor))))
-      (declare (fixnum old-index new-index))
-      ;;changed the following [1995/12/08:goldman]
-      (when gem:*read-write-colormap-cells-p*
-	(when (and old-index
-		   (>= old-index
-		       (the fixnum (first-allocatable-colormap-index root-window)))
-		   (zerop (the fixnum
-			       (decf (the fixnum (gethash old-index *colormap-index-table*))))))
-	  (gem:colormap-property root-window :FREE-COLORS (list old-index)))
-	(incf (the fixnum (gethash new-index *colormap-index-table* 0))))
-      new-index))))
-
+    (gem:colormap-property
+     (gv gem:device-info :current-root)
+     :ALLOC-COLOR (gvl :xcolor)))))
 
 (define-method :destroy-me COLOR (hue)
-  (when gem:*color-screen-p*
-    (let ((index (g-cached-value hue :colormap-index)))
-      (dolist (device (g-value gem:DEVICE-INFO :active-devices))
-	(let ((root-window (g-value device :root-window)))
-	  (when (and index
-		     ;;replaced the old array with a hash-table
-		     (zerop (decf (gethash index *colormap-index-table*)))
-		     (>= index (first-allocatable-colormap-index root-window)))
-	    (gem:colormap-property root-window
-				   :FREE-COLORS (list index)))))))
-  (destroy-schema hue))
-
+	       (destroy-schema hue))
 
 (create-instance 'RED color
   (:red 1.0) (:green 0.0) (:blue 0.0))

@@ -1,6 +1,10 @@
 ;;;-*- Mode: COMMON-LISP; Package: MULTI-GARNET -*-
 
-(in-package "MULTI-GARNET")
+(in-package :multi-garnet)
+
+(eval-when (:load-toplevel :execute)
+  (when (fboundp 'disable-multi-garnet)
+    (disable-multi-garnet)))
 
 (defvar *multi-garnet-version* "2.2")
 
@@ -116,7 +120,7 @@
   ;; and initialize others
   (create-mg-constraint :strength (sb:cn-strength cn)
 			:methods (loop for mt in (sb:cn-methods cn)
-				     collect (clone-mg-method mt)) 
+				     collect (clone-mg-method mt))
 			:variable-paths (cn-variable-paths cn)
 			:variable-names (cn-variable-names cn)))
 
@@ -379,7 +383,7 @@
 	 (value ,value)
 	 )
      ;; before checks
-     
+
      ;; if prohibit-constraints=t, check that new and old values of slot are not constraints
      ,@(if prohibit-constraints
 	   '(
@@ -401,12 +405,12 @@
 		 (remove-constraint-from-slot obj slot old-value)))
 	     )
 	 )
-	 
+
      ;; actually set object slot
      (call-hook-save-fn kr::s-value-fn obj slot value)
-     
+
      ;; after checks
-     
+
      ;; add new constraint in slot
      ,@(if auto-activate-constraints
 	   '(
@@ -422,7 +426,7 @@
 	     (save-invalidated-path-constraints obj slot)
 	     )
 	 )
-     
+
      value))
 
 ;; fn that sets slot only, by calling saved s-value-fn
@@ -947,7 +951,7 @@
 	do (recursively-update-formulas formula more-roots))
     ))
 
-(defun recursively-update-formulas (formula done) 
+(defun recursively-update-formulas (formula done)
   ;; break recursion if this formula is a member of done, which includes all
   ;; formulas we have updated (in which case there is a loop), as well as
   ;; formulas we know that we are going to update later.
@@ -1157,7 +1161,7 @@
 		;; create dummy os, so we won't accidently activate
 		;; this cn by storing it in an object slot.
 		:os (os nil :var-input-cn)
-		:name (create-new-name "var-input-cn")			
+		:name (create-new-name "var-input-cn")
 		))))
     (sb:set-sb-slot cn :variable-input-value val)
     (sb:set-sb-slot cn :input-flag t)
@@ -1409,6 +1413,7 @@
   (loop for (fn hook-fn) on *fn-to-hook-plist* by #'CDDR
       always (eql (symbol-function fn) (symbol-function hook-fn))))
 
+
 ;; ***** fn to update mg slot when var value changed *****
 ;; defined here because it uses macro set-slot-basic
 
@@ -1425,3 +1430,6 @@
 	     :invalidate-paths t))
 	))
     ))
+
+(eval-when (:load-toplevel :execute)
+  (enable-multi-garnet))
