@@ -80,6 +80,31 @@ With SBCL:
 (when default-garnet-proclaim
   (proclaim default-garnet-proclaim))
 
+
+;; load-XX-p control whether the various parts are loaded or not
+;; Because these use defvar, if they are set before this file is
+;; loaded, their original value will be used.
+  (defvar load-gworld-p t)
+  (defvar load-gem-p T)
+  (defvar load-opal-p T)
+  (defvar load-inter-p T)
+  #-(and)
+  (defvar load-truetype-p nil)
+  #-(and)
+  (defvar load-truetype-p T)
+  (defvar load-multifont-p NIL)
+  (defvar load-gesture-p NIL)
+  (defvar load-ps-p T)
+  (defvar load-aggregadgets-p T)
+  (defvar load-aggregraphs-p NIL)
+  (defvar load-debug-p #+garnet-debug T #-garnet-debug NIL)
+  (defvar load-gadgets-p NIL)
+  (defvar load-demos-p NIL)
+  (defvar load-protected-eval-p T)
+  (defvar load-lapidary-p t)
+  (defvar load-gilt-p NIL)
+  (defvar load-c32-p NIL)
+
 (defvar Your-Garnet-Pathname
   ;; Ansi compliant way to find the build directory.
   ;; If this doesn't work for some reason, just hard-code the pathname

@@ -216,19 +216,7 @@
 			      divisor))))))
 		(t
 		 (if meltsner-format
-		     (setq line (read-from-string line)))
-		 ;;		 (break)
-		 ;; I don't know why some xpms have a "None" entry in their
-		 ;; colormap, but some I got from DOI topographic
-		 ;; pictures do.... [2003/09/15:rpg]
-		 ;; Original fix broke under SBCL.
-		 (unless (search "NONE" line :test #'string-equal)
-		   (setf (aref color-sequence cind)
-			 (gem:colormap-property
-			  root-window
-			  :ALLOC-COLOR
-			  (gem:colormap-property root-window
-						 :LOOKUP-COLOR line)))))))
+		     (setq line (read-from-string line))))))
 	    ;; Eat garbage between color information and pixels.
 	    ;; Some pixmap files have no garbage, some have a single line
 	    ;; of the comment /* pixels */, and non-meltsner-format files

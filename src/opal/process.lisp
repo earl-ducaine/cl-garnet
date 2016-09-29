@@ -9,7 +9,6 @@
 
 (in-package "OPAL")
 
-;;;  Global variables
 (defparameter *main-event-loop-process* nil
   "The variable which is a handle to the main-event-loop process.")
 
@@ -41,38 +40,6 @@
 		       (discard-all-pending-events)))))
       (setf *inside-main-event-loop* nil))))
 
-;; #+allegro
-;;    ;; RGA --- The optional tty parameter ensures that processes will not
-;;    ;; clobber each other's I/O.
-;; (defun launch-main-event-loop-process (&optional (tty excl:*initial-terminal-io*))
-;;   "Spawn a process which is doing Garnet interaction all of the time.
-;;    RETURN the process."
-;;   (when (eq (type-of *main-event-loop-process*) 'mp:process)
-;;     (mp:process-kill *main-event-loop-process*))
-;;   (setf *main-event-loop-process*
-;; 	(mp:process-run-restartable-function
-;; 	 "Garnet event loop"
-;; 	 #'(lambda (t-io)
-;; 	     ;; RGA --- This gets around a "feature" of Allegro 4.1
-;; 	     ;; which does not allow background processes to do io.
-;; 	     ;; Note that the main process function is now a function
-;; 	     ;; of one arg which is bound to *terminal-io*
-;; 	     (setq *terminal-io* t-io)
-;; 	     (setq *query-io* t-io)
-;; 	     (setq *standard-input* t-io)
-;; 	     (setq *standard-output* t-io)
-;; 	     (setq *error-output* t-io)
-;; 	     (setq *trace-output* t-io)
-;; 	     ;; Don't bind *debug-io* because RGA suggests other problems
-;; 	     ;; might arise
-;; 	     ;;(setq *debug-io* t-io)
-;; 	     ;; The actual loop.
-;; 	     (m-e-l))
-;; 	 tty))
-;;   (setf (mp:process-priority *main-event-loop-process*) 1)
-;;   *main-event-loop-process*)
-
-;;; SBCL main-event-loop-process
 (defun launch-main-event-loop-process ()
   "Spawn a process which is doing Garnet interaction all of the time.
    RETURN the process."
@@ -83,54 +50,7 @@
 	(sb-thread:make-thread #'m-e-l :name "Garnet event loop"))
   *main-event-loop-process*)
 
-;; #+(and cmu mp)
-;; (defun launch-main-event-loop-process ()
-;;   "Spawn a process which is doing Garnet interaction all of the time.
-;;    RETURN the process."
-;;   (when (mp:processp *main-event-loop-process*)
-;;     (mp:destroy-process *main-event-loop-process*))
-;;   (setf *main-event-loop-process*
-;; 	(mp:make-process #'m-e-l :name "Garnet event loop"))
-;;   (setf mp::*idle-process* mp::*initial-process*)
-;;   ;; Lower the timeout for serve-event to give good process response.
-;;   (setf lisp::*max-event-to-usec* 50000)
-;;   (setf lisp::*max-event-to-sec* 0)
-;;   *main-event-loop-process*)
-
-;; #+ccl
-;; (defun launch-main-event-loop-process ()
-;;   "Spawn a process which is doing Garnet interaction all of the time.
-;;    RETURN the process."
-;;   (when (ccl::processp *main-event-loop-process*)
-;;     (ccl:process-kill *main-event-loop-process*))
-;;   (setf *main-event-loop-process*
-;; 	(ccl:process-run-function "Garnet event loop" #'m-e-l))
-;;   *main-event-loop-process*)
-
-;; #-(or allegro (and cmu mp) ccl sb-thread)
-;; (defun launch-main-event-loop-process ())
-
-;;  Define opal:kill-main-event-loop-process
-
-;; #+allegro
-;; (defun kill-main-event-loop-process ()
-;;   "
-;;   Kill the current main-event-loop process.
-;;   "
-;;   (when (eq (type-of *main-event-loop-process*) 'mp:process)
-;;     (mp:process-kill *main-event-loop-process*)
-;;     (setf *main-event-loop-process* nil)))
-
-;; #+(and cmu mp)
-;; (defun kill-main-event-loop-process ()
-;;   "
-;;   Kill the current main-event-loop process.
-;;   "
-;;   (when (and *main-event-loop-process*
-;;              (mp:processp *main-event-loop-process*))
-;;     (mp:destroy-process *main-event-loop-process*)
-;;     (setf *main-event-loop-process* nil)))
-
+;;;  Define opal:kill-main-event-loop-process
 (defun kill-main-event-loop-process ()
   "Kill the current main-event-loop process."
   (let ((p *main-event-loop-process*))
@@ -139,59 +59,15 @@
       (setf *main-event-loop-process* nil)
       (sb-thread:terminate-thread p))))
 
-;; #+ccl
-;; (defun kill-main-event-loop-process ()
-;;   "Kill the current main-event-loop process."
-;;   (let ((p *main-event-loop-process*))
-;;     (when (and p (ccl::processp p))
-;;       (setf *main-event-loop-process* nil)
-;;       (ccl:process-kill p))))
-
-
-;; #-(or allegro (and cmu mp) ccl sb-thread)
-;; (defun kill-main-event-loop-process ())
-
 ;;; Define running-p functions
-;;
-
 (defun main-event-loop-process-running-p ()
   (and *main-event-loop-process*
-       ;; #+allegro
-       ;; (mp:process-active-p *main-event-loop-process*)
-       ;; #+(and cmu mp)
-       ;; (equal "Run" (mp:process-whostate *main-event-loop-process*))
-       ;; #+ccl
-       ;; (ccl::process-active-p *main-event-loop-process*)
-       (sb-thread:thread-alive-p *main-event-loop-process*)
-       ))
+       (sb-thread:thread-alive-p *main-event-loop-process*)))
 
 (defun running-main-event-loop-process-elsewhere-p ()
   (and *main-event-loop-process*
        (not (eq *main-event-loop-process*
-		#+(or allegro (and cmu mp)) mp:*current-process*
-		#+sb-thread sb-thread:*current-thread*
-		#+ccl ccl:*current-process*
-		#-(or allegro (and cmu mp) ccl sb-thread) T)
-	    )))
-
-;;;  Define process lock functions
-
-;; update-locking-p controls whether process locks will be activated
-;; around the update method (this keeps two processes from calling update
-;; at the same time).
-(defvar update-locking-p T
-  "If T, uses process locks to keep Update in a process from interrupting
-   itself in a different process.")
-
-;; #-(and) ;;ccl version; doesn't seem to work
-;; (defmacro with-update-lock-held (&body body)
-;;   `(ccl:with-lock-grabbed (gem:*update-lock*)
-;;      ,@body))
-
-
-;; (defmacro with-update-lock-held (&body body)
-;;   `(mp:with-lock-held (gem:*update-lock*)
-;;      ,@body))
+		sb-thread:*current-thread*))))
 
 (defmacro with-update-lock-held (&body body)
   `(unwind-protect
@@ -207,34 +83,13 @@
 ;;; threads to support this.
 (defun update-start-fn (win)
   (declare (ignore win))
-  ;; #+ALLEGRO
-  ;; (if common-lisp-user::update-locking-p
-  ;;     (unless (eq (mp:process-lock-locker gem:*update-lock*) mp:*current-process*)
-  ;; 	;; Lock only if lock is held by a different process, or unlocked.
-  ;; 	(mp:process-lock gem:*update-lock*)))
-  ;; #+ccl
-  ;; (when common-lisp-user::update-locking-p
-  ;;   (ccl:without-interrupts
-  ;;     (unless (eq (ccl::%%lock-owner gem:*update-lock*) ccl:*current-process*)
-  ;; 	(ccl:grab-lock gem:*update-lock*))))
-  (when update-locking-p
     (sb-sys:without-interrupts
       (unless (sb-thread:holding-mutex-p gem:*update-lock*)
 	(sb-sys:allow-with-interrupts
-	  (sb-thread:grab-mutex gem:*update-lock*))))))
+	  (sb-thread:grab-mutex gem:*update-lock*)))))
 
 (defun update-stop-fn (win)
   (declare (ignore win))
-  ;; #+ALLEGRO
-  ;; (if (and common-lisp-user::update-locking-p
-  ;; 	   (eq (mp:process-lock-locker gem:*update-lock*) mp:*current-process*))
-  ;;     (mp:process-unlock gem:*update-lock*))
-  ;; #+ccl
-  ;; (when common-lisp-user::update-locking-p
-  ;;   (ccl:without-interrupts
-  ;;     (when (eq (ccl::%%lock-owner gem:*update-lock*) ccl:*current-process*)
-  ;; 	(ccl:release-lock gem:*update-lock*))))
-  (when update-locking-p
     (sb-sys:without-interrupts
       (when (sb-thread:holding-mutex-p gem:*update-lock*)
-	(sb-thread:release-mutex gem:*update-lock*)))))
+	(sb-thread:release-mutex gem:*update-lock*))))
