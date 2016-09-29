@@ -1,22 +1,11 @@
 ;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: DEMO-PIXMAP; Base: 10 -*-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;         The Garnet User Interface Development Environment.      ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; This code was written as part of the Garnet project at          ;;;
-;;; Carnegie Mellon University, and has been placed in the public   ;;;
-;;; domain.  If you are using this code or any part of Garnet,      ;;;
-;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; change log
-;;
-;; 31-May-94 Andrew Mickish - For Mac, reference :xcolor instead of :colormap-index
-;; 30-May-94 Marty Geier - Changed main window positions in do-go
-;; 26-Jul-93 Andrew Mickish - Added more schema names to special proclamation
-;; 16-Jun-93 Andrew Mickish - Added check in Change-Rectangle-Color for null
-;;             selection; get-values ---> g-value; Removed hard-coded reference
-;;             to CMU's pixmap directory.
-;; 12-Jun-92 ECP Created out of demo-array
-;;
+
+;;; The Garnet User Interface Development Environment.
+;;;
+;;; This code was written as part of the Garnet project at Carnegie
+;;; Mellon University, and has been placed in the public domain.  If
+;;; you are using this code or any part of Garnet, please contact
+;;; garnet@cs.cmu.edu to be put on the mailing list.
 
 
 (in-package :demo-pixmap)
