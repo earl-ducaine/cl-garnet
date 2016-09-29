@@ -105,13 +105,6 @@ With SBCL:
   (defvar load-gilt-p NIL)
   (defvar load-c32-p NIL)
 
-;; update-locking-p controls whether process locks will be activated
-;; around the update method (this keeps two processes from calling update
-;; at the same time).
-(defvar update-locking-p T
-  "If T, uses process locks to keep Update in a process from interrupting
-   itself in a different process.")
-
 (defvar Your-Garnet-Pathname
   ;; Ansi compliant way to find the build directory.
   ;; If this doesn't work for some reason, just hard-code the pathname

@@ -25,8 +25,8 @@
 (Defvar Garnet-Gem-Files
   '(
     "gem"
-    "define-methods"
-    "x"
+;;    "define-methods"
+;;;    "x"
     ))
 
 (unless (get :garnet-modules :gem)

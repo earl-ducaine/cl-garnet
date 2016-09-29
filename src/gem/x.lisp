@@ -486,8 +486,6 @@ operate on the window's buffer instead."
   (case property
     (:ALLOC-COLOR
      (xlib:alloc-color *default-x-colormap* a))
-    (:ALLOC-COLOR-CELLS
-     (xlib:alloc-color-cells *default-x-colormap* 1))
     (:FIRST-ALLOCATABLE-INDEX
      (let* ((indices (xlib:alloc-color-cells *default-x-colormap* 1))
             (index (car indices)))
@@ -499,6 +497,7 @@ operate on the window's buffer instead."
      (xlib:lookup-color *default-x-colormap* a))
     (:LOOKUP-RGB
      (let* ((xcolor (xlib:lookup-color *default-x-colormap* a)))
+       (break)
        ;; The PS module needs the RGB values
        (values (xlib:color-red xcolor)
                (xlib:color-green xcolor)
@@ -526,10 +525,6 @@ affects an area of <width> by <height>."
               :background (xlib:screen-black-pixel screen))))
     (xlib:put-image to gc from :x 0 :y 0 :width width :height height)
     (xlib:free-gcontext gc)))
-
-
-
-
 
 (defun x-create-cursor (root-window source mask
                         foreground background
@@ -2270,7 +2265,6 @@ integer.  We want to specify nice keywords instead of those silly
 (defun x-set-draw-function-alist (root-window)
   (declare (ignore root-window))
   (setq *function-alist*
-        (cond ((zerop *white*)              ; Sparc
                `((:clear . ,boole-clr)      ; (color, *white* = 0)
                  (:set . ,boole-set)
                  (:copy . ,boole-1)
@@ -2287,40 +2281,6 @@ integer.  We want to specify nice keywords instead of those silly
                  (:and-reverse . ,boole-andc2)
                  (:or-inverted . ,boole-orc1)
                  (:or-reverse . ,boole-orc2)))
-              (*color-screen-p* ; HP
-               `((:clear . ,boole-set)         ; (color, *white* = 1)
-                 (:set . ,boole-clr)
-                 (:copy . ,boole-1)
-                 (:no-op . ,boole-2)
-                 (:copy-inverted . ,boole-c1)
-                 (:invert . ,boole-c2)
-                 (:and . ,boole-ior)
-                 (:or . ,boole-and)
-                 (:xor . ,boole-xor)
-                 (:equiv . ,boole-eqv)
-                 (:nand . ,boole-nand)
-                 (:nor . ,boole-nor)
-                 (:and-inverted . ,boole-orc1)
-                 (:and-reverse . ,boole-orc2)
-                 (:or-inverted . ,boole-andc1)
-                 (:or-reverse . ,boole-andc2)))
-              (t                        ; IBM-RT (black-and-white)
-               `((:clear . ,boole-set)  ; (black-and-white, *white* = 1)
-                 (:set . ,boole-clr)
-                 (:copy . ,boole-1)
-                 (:no-op . ,boole-2)
-                 (:copy-inverted . ,boole-c1)
-                 (:invert . ,boole-c2)
-                 (:and . ,boole-ior)
-                 (:or . ,boole-and)
-                 (:xor . ,boole-eqv)
-                 (:equiv . ,boole-xor)
-                 (:nand . ,boole-nor)
-                 (:nor . ,boole-nand)
-                 (:and-inverted . ,boole-orc1)
-                 (:and-reverse . ,boole-orc2)
-                 (:or-inverted . ,boole-andc1)
-                 (:or-reverse . ,boole-andc2)))))
   ;; For erasing buffers
   (setq *copy* (cdr (assoc :copy *function-alist*))))
 
