@@ -57,6 +57,9 @@
 ;; similar.
 
 
+(defun generate-default-pixmap (height width)
+  (gem:create-image-array nil width height depth))
+
 (defun read-xpm-file (pathname &optional root-window)
   (declare (type (or pathname string stream) pathname))
   (unless root-window

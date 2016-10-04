@@ -13,12 +13,7 @@
 ;;;
 
 
-(in-package :DEMO-ANIMATOR)
-
-(defvar DEMO-ANIMATOR-INIT
-    (dolist (gadget '("gadgets:text-buttons-loader"))
-	    (common-lisp-user::garnet-load gadget))
-  )
+(in-package :demo-animator)
 
 (defparameter pixmapfilename "eye")
 (defparameter numpixmapfiles 12)
@@ -45,9 +40,10 @@
 (defparameter moving-circle NIL)
 (defparameter moving-button NIL)
 (defparameter moving-pixmap NIL)
-(declaim (special TOP-WIN WRAPPING-CIRCLE ANIMATOR-PIXMAP
-		  ANIMATOR-BUTTON BOUNCING-BUTTON FIXED-BUTTON
-		  PIXMAP-BUTTON ANIMATOR-CIRCLE ANIMATING-PIXMAP))
+
+(declaim (special top-win wrapping-circle animator-pixmap
+		  animator-button bouncing-button fixed-button
+		  pixmap-button animator-circle animating-pixmap))
 
 (defun do-go (&key dont-enter-main-event-loop (double-buffered-p T))
   (let (agg)
@@ -166,7 +162,7 @@
     (opal:update top-win)
     (format T "Click on buttons to start and stop animations~%")
     (unless dont-enter-main-event-loop
-      #-(and cmu mp) (inter:main-event-loop))))
+      (inter:main-event-loop))))
 
 (defun do-stop ()
   (opal:destroy top-win))
