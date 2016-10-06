@@ -1,17 +1,5 @@
 
 ;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: DEMO-ANIMATOR; Base: 10 -*-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;         The Garnet User Interface Development Environment.      ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; This code was written as part of the Garnet project at          ;;;
-;;; Carnegie Mellon University, and has been placed in the public   ;;;
-;;; domain.  If you are using this code or any part of Garnet,      ;;;
-;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;;;
-;;; Designed and implemented by Brad Myers
-;;;
 
 (defpackage :pixmap-lab
   (:use :common-lisp :kr)
@@ -21,14 +9,20 @@
 
 (defparameter pixmapfilename "eye")
 
-(defparameter pixmaps
-  (list (opal:read-xpm-file (merge-pathnames
-			     "eye1.xpm"
-			     common-lisp-user::garnet-pixmap-pathname))))
+
+(defparameter *pixmap* (opal:read-xpm-file
+			(merge-pathnames
+			 "eye1.xpm"
+			 common-lisp-user::garnet-pixmap-pathname)))
+
+
+(defun draw-on-pixmap ()
+  )
+
+
 
 (defun do-go (&key dont-enter-main-event-loop (double-buffered-p t))
   (let (agg)
-    ;;;create top-level window
     (create-instance 'TOP-WIN inter:interactor-window
       (:left 500)
       (:top 100)
@@ -44,8 +38,7 @@
     ;; controller know (if it's there).
     (when (fboundp 'common-lisp-user::garnet-note-quitted)
       (pushnew
-       #'(lambda (win)
-	   (declare (ignore win))
+       (lambda (win)
 	   (common-lisp-user::garnet-note-quitted "demo-animator"))
        (g-value top-win :destroy-hooks)))
 
@@ -53,7 +46,7 @@
       (:left 5)
       (:top 168)
       (:count 0)
-      (:image (o-formula (nth (gvl :count) pixmaps))))
+      (:image (o-formula *pixmap*)))
 
     (opal:add-components agg pixmap)
     (opal:update top-win)
@@ -61,3 +54,15 @@
 
 (defun do-stop ()
   (opal:destroy top-win))
+
+
+
+;; Drawing on the screen using anti eliasing algorithms with
+;; transparentcy has the following steps:
+
+;; 1. requires that we get a snapshot of the current window.
+
+(get-image <drawable>)
+
+;; (as a zimage), convert the zimage to an array, draw on the array,
+;; then replay the window with the new value.
