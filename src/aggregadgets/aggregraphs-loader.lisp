@@ -32,10 +32,10 @@ Change log:
 ;; ---- Load aggregraphs themselves
 (Defvar Garnet-Aggregraphs-Files
   '(
-    "rectangle-conflict-object"
-    "aggregraphs"
-    "scalable-aggregraph"
-    "scalable-aggregraph-image"
+    ;; "rectangle-conflict-object"
+    ;; "aggregraphs"
+    ;; "scalable-aggregraph"
+    ;; "scalable-aggregraph-image"
     ))
 
 ;; Now load aggregraphs if not already loaded
@@ -47,6 +47,3 @@ Change log:
 
 (setf (get :garnet-modules :aggregraphs)  t)
 (format t "...Done Aggregraphs.~%")
-
-
-

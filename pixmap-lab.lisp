@@ -16,13 +16,57 @@
 			 common-lisp-user::garnet-pixmap-pathname)))
 
 
+
+(defparameter *pixmap-array* nil)
+
 (defun draw-on-pixmap ()
   )
 
 
+(defparameter agg nil)
+
+
+
+
+(defun draw-on-pixmap (x y value)
+  (let ((pixmap-array (xlib:image-z-pixarray (g-value pixmap :image))))
+    (setf (aref pixmap-array x y) value)
+    (setf (xlib:image-z-pixarray (g-value pixmap :image)) pixmap-array )
+    (create-instance 'pixmap opal:pixmap
+      (:left 5)
+      (:top 168)
+      (:count 0)
+      (:image (o-formula *pixmap*)))
+    (opal:add-components agg pixmap)
+    (opal:update top-win)))
+
+
+(defun draw-on-pixmap (x y value)
+  (let ((pixmap-array (xlib:image-z-pixarray (g-value pixmap :image))))
+    (setf (aref pixmap-array x y) value)
+    (setf (xlib:image-z-pixarray (g-value pixmap :image)) pixmap-array )
+    ;; (create-instance 'pixmap opal:pixmap
+    ;;   (:left 5)
+    ;;   (:top 168)
+    ;;   (:count 0)
+    ;;   (:image (o-formula *pixmap*)))
+    ;; (opal:add-components agg pixmap)
+    (opal:update top-win)))
+
+
+
+(defun run-draw-on-pixmap ()
+  (draw-on-pixmap 1 1 2)
+  (draw-on-pixmap 2 2 2)
+  (draw-on-pixmap 3 3 3)
+  (draw-on-pixmap 4 4 3)
+  (draw-on-pixmap 5 5 3)
+  (draw-on-pixmap 6 6 3)
+  (draw-on-pixmap 7 7 3)
+  (draw-on-pixmap 7 7 3)
+  )
 
 (defun do-go (&key dont-enter-main-event-loop (double-buffered-p t))
-  (let (agg)
     (create-instance 'TOP-WIN inter:interactor-window
       (:left 500)
       (:top 100)
@@ -49,8 +93,11 @@
       (:image (o-formula *pixmap*)))
 
     (opal:add-components agg pixmap)
-    (opal:update top-win)
-    (inter:main-event-loop)))
+    (opal:update top-win))
+
+
+(defun run-event-loop ()
+  (inter:main-event-loop))
 
 (defun do-stop ()
   (opal:destroy top-win))
@@ -62,7 +109,7 @@
 
 ;; 1. requires that we get a snapshot of the current window.
 
-(get-image <drawable>)
+;; (get-image <drawable>)
 
 ;; (as a zimage), convert the zimage to an array, draw on the array,
 ;; then replay the window with the new value.
