@@ -29,31 +29,43 @@
 
 
 (defun draw-on-pixmap (x y value)
-  (let ((pixmap-array (xlib:image-z-pixarray (g-value pixmap :image))))
+  (let* ((xlib-image (g-value pixmap :image))
+	 (pixmap-array (xlib:image-z-pixarray xlib-image)))
     (setf (aref pixmap-array x y) value)
-    (setf (xlib:image-z-pixarray (g-value pixmap :image)) pixmap-array )
-    (create-instance 'pixmap opal:pixmap
-      (:left 5)
-      (:top 168)
-      (:count 0)
-      (:image (o-formula *pixmap*)))
-    (opal:add-components agg pixmap)
-    (opal:update top-win)))
-
-
-(defun draw-on-pixmap (x y value)
-  (let ((pixmap-array (xlib:image-z-pixarray (g-value pixmap :image))))
-    (setf (aref pixmap-array x y) value)
-    (setf (xlib:image-z-pixarray (g-value pixmap :image)) pixmap-array )
+    (setf (xlib:image-z-pixarray xlib-image) pixmap-array)
+    (s-value pixmap :image xlib-image)
+    ;;(opal:remove-component agg pixmap)
     ;; (create-instance 'pixmap opal:pixmap
     ;;   (:left 5)
     ;;   (:top 168)
     ;;   (:count 0)
-    ;;   (:image (o-formula *pixmap*)))
-    ;; (opal:add-components agg pixmap)
-    (opal:update top-win)))
+    ;;   (:image (o-formula pixmap)))
+    ;;(opal:add-components agg pixmap)
+    (opal:update-all top-win)))
 
+(defun draw-on-window (win x y value)
+  (let* ((x-pixmap (gv win :buffer))
+	 (pixmap-array (xlib:get-raw-image
+			x-pixmap
+			:x 0
+			:y 0
+			:width (xlib:drawable-width x-pixmap)
+			:height (xlib:drawable-height x-pixmap)
+			:format :z-pixmap)))
+    (setf (aref pixmap-array (compute-index x y width height)) value)
+    (xlib:put-raw-image x-pixmap
+			(xlib:create-gcontext :drawable x-pixmap)
+			pixmap-array
+			:depth (xlib:drawable-depth x-pixmap)
+			:x 0
+			:y 0
+			:width (xlib:drawable-width x-pixmap)
+			:height (xlib:drawable-height x-pixmap)
+			:format :z-pixmap)
+    (opal:update-all top-win)))
 
+(defun run-draw-on-window ()
+  (draw-on-window top-win 7 7 3))
 
 (defun run-draw-on-pixmap ()
   (draw-on-pixmap 1 1 2)
@@ -63,8 +75,7 @@
   (draw-on-pixmap 5 5 3)
   (draw-on-pixmap 6 6 3)
   (draw-on-pixmap 7 7 3)
-  (draw-on-pixmap 7 7 3)
-  )
+  (draw-on-pixmap 7 7 3))
 
 (defun do-go (&key dont-enter-main-event-loop (double-buffered-p t))
     (create-instance 'TOP-WIN inter:interactor-window

@@ -13,16 +13,14 @@
 
 ;;; Windows
 
-;;; Class Window 
+;;; Class Window
 ;;; To create a window for displaying gobs, create a schema which is an
 ;;; instance of the window class described below specifying slots as
 ;;; needed. For example:
-;;; 
+;;;
 ;;; (create-instance my-window opal:window
 ;;;   (:width 100)
 ;;;   (:height 100))
-;;; 
-
 (define-method :point-in-gob window (gob x y)
   (declare (fixnum x y))
   (and (<= 0 x (g-value gob :width))
@@ -36,8 +34,8 @@
 				   (g-value a-window :width)
 				   (g-value a-window :height)
 				   (gem:window-depth a-window))))
-    ;; We need to associate a window pointer with the pixmap, in order to
-    ;; be able to find the method.
+    ;; We need to associate a window pointer with the pixmap, in order
+    ;; to be able to find the method.
     (gem:set-drawable-to-window a-window pixmap)
     pixmap))
 

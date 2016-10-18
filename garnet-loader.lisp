@@ -84,17 +84,17 @@ With SBCL:
 ;; load-XX-p control whether the various parts are loaded or not
 ;; Because these use defvar, if they are set before this file is
 ;; loaded, their original value will be used.
-  (defvar load-gworld-p t)
-  (defvar load-gem-p T)
-  (defvar load-opal-p T)
+;;  (defvar load-gworld-p t)
+;;;  (defvar load-gem-p T)
+;;  (defvar load-opal-p T)
   (defvar load-inter-p T)
   #-(and)
   (defvar load-truetype-p nil)
   #-(and)
   (defvar load-truetype-p T)
-  (defvar load-multifont-p NIL)
-  (defvar load-gesture-p NIL)
-  (defvar load-ps-p T)
+;;  (defvar load-multifont-p NIL)
+;;  (defvar load-gesture-p NIL)
+;;  (defvar load-ps-p T)
   (defvar load-aggregadgets-p T)
   (defvar load-aggregraphs-p NIL)
   (defvar load-debug-p #+garnet-debug T #-garnet-debug NIL)
@@ -118,18 +118,18 @@ With SBCL:
     (pathname-directory *garnet-load-truename*)))
   "Root of the Garnet directory tree.")
 
-(defvar Your-Garnet-Pathname-old
-  ;; Ansi compliant way to find the build directory.
-  ;; If this doesn't work for some reason, just hard-code the pathname
-  ;; here.
-  (namestring
-   (make-pathname
-    :directory
-    ;; Hard coded directory path example.
-    ;; '(:ABSOLUTE "usr" "local" "lib" "lisp" "garnet")
-    ;; Let system determine directory path.
-    (pathname-directory *load-truename*)))
-  "Root of the Garnet directory tree.")
+;; (defvar Your-Garnet-Pathname-old
+;;   ;; Ansi compliant way to find the build directory.
+;;   ;; If this doesn't work for some reason, just hard-code the pathname
+;;   ;; here.
+;;   (namestring
+;;    (make-pathname
+;;     :directory
+;;     ;; Hard coded directory path example.
+;;     ;; '(:ABSOLUTE "usr" "local" "lib" "lisp" "garnet")
+;;     ;; Let system determine directory path.
+;;     (pathname-directory *load-truename*)))
+;;   "Root of the Garnet directory tree.")
 
 (defun append-directory (directory sub-directory)
   "This is a little utility for accessing the subdirectory of a
@@ -418,8 +418,8 @@ Example:
       (compile-file src-pathname))))
 
 
-(format t "...Loading Garnet ...~%")
-(setf *load-verbose* t)
+;; (format t "...Loading Garnet ...~%")
+;;(setf *load-verbose* t)
 
 
 (format T "~%****** NOT Loading Aggregraphs *******

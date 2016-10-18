@@ -18,7 +18,7 @@ Change log:
 |#
 
 (format t "Loading Lapidary...~%")
-(setf *load-verbose* t)
+;; (setf *load-verbose* t)
 
 ;; expand the amount of memory available so that garbage collections do
 ;; not occur
@@ -49,18 +49,20 @@ Change log:
 
 
 ;; load necessary gadgets
-(dolist (loader-file '("text-buttons-loader"
-			"error-gadget-loader"
-                 	"arrow-line-loader"
-		 	"labeled-box-loader"
-		 	"x-buttons-loader"
-	 	 	"v-slider-loader"
-		 	"scrolling-labeled-box-loader"
-		 	"radio-buttons-loader"
-	 	 	"scrolling-window-loader"
-		 	"scrolling-menu-loader"
-			"menubar-loader"
-			"prop-sheet-win-loader"))
+(dolist (loader-file '(
+		       ;; "text-buttons-loader"
+		       ;; 	"error-gadget-loader"
+                       ;; 	"arrow-line-loader"
+		       ;; 	"labeled-box-loader"
+		       ;; 	"x-buttons-loader"
+	 	       ;; 	"v-slider-loader"
+		       ;; 	"scrolling-labeled-box-loader"
+		       ;; 	"radio-buttons-loader"
+	 	       ;; 	"scrolling-window-loader"
+		       ;; 	"scrolling-menu-loader"
+		       ;; 	"menubar-loader"
+		       ;; "prop-sheet-win-loader"
+		       ))
   (garnet-load (concatenate 'string "gadgets:" loader-file)))
 
 ;;; first load c32
