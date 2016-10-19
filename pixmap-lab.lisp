@@ -1,4 +1,5 @@
 
+
 ;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: DEMO-ANIMATOR; Base: 10 -*-
 
 (defpackage :pixmap-lab
@@ -29,9 +30,11 @@
 
 
 (defun draw-on-pixmap (x y value)
-  (let ((pixmap-array (xlib:image-z-pixarray (g-value pixmap :image))))
+  (let ((image (g-value pixmap :image))
+	(pixmap-array (xlib:image-z-pixarray image)))
     (setf (aref pixmap-array x y) value)
-    (setf (xlib:image-z-pixarray (g-value pixmap :image)) pixmap-array )
+    (setf (xlib:image-z-pixarray image) pixmap-array)
+
     (create-instance 'pixmap opal:pixmap
       (:left 5)
       (:top 168)
