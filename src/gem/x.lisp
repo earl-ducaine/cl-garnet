@@ -959,64 +959,6 @@ pixmap format in the list of valid formats."
 			       (- width thickness)
 			       (- height thickness) NIL)))))
 
-(defun draw-on-window (window x y value)
-  (let* ((drawable (drawable (the-drawable window)))
-	 (pixmap-array (xlib:image-z-pixarray drawable)))
-    (setf (aref pixmap-array x y) value)
-    (setf (xlib:image-z-pixarray xlib-image) pixmap-array)
-    (s-value pixmap :image xlib-image)
-    ;;(opal:remove-component agg pixmap)
-    ;; (create-instance 'pixmap opal:pixmap
-    ;;   (:left 5)
-    ;;   (:top 168)
-    ;;   (:count 0)
-    ;;   (:image (o-formula pixmap)))
-    ;;(opal:add-components agg pixmap)
-    (opal:update-all top-win)))
-
-(defun run-draw-on-pixmap ()
-  (draw-on-pixmap 1 1 2)
-  (draw-on-pixmap 2 2 2)
-  (draw-on-pixmap 3 3 3)
-  (draw-on-pixmap 4 4 3)
-  (draw-on-pixmap 5 5 3)
-  (draw-on-pixmap 6 6 3)
-  (draw-on-pixmap 7 7 3)
-  (draw-on-pixmap 7 7 3)
-  )
-
-(defun pixmap-draw-rectangle (drawable xlib-gc-line
-			      x
-			      y
-			      width
-			      height)
-
-
-
-(defun pixmap-x-draw-rectangle (window left top width height function
-				line-style fill-style)
-  (declare (fixnum left top width height))
-  (when (< width 1)
-    (setf width 1))
-  (when (< height 1)
-    (setf height 1))
-  (let* ((display-info (g-value window :display-info))
-         (root-window (display-info-root-window display-info))
-         (drawable (the-drawable window))
-         (thickness (if line-style
-                        (max (g-value line-style :line-thickness) 1) 0)))
-    (setf function (get function :x-draw-function))
-    (let* ((line-style-gc (display-info-line-style-gc display-info))
-	   (xlib-gc-line (gem-gc-gcontext line-style-gc))
-	   (half-thickness (truncate thickness 2)))
-      (set-line-style line-style line-style-gc xlib-gc-line
-		      root-window function)
-      (pixmap-draw-rectangle drawable xlib-gc-line
-			   (+ left half-thickness)
-			   (+ top half-thickness)
-			   (- width thickness)
-			   (- height thickness)))))
-
 (defun x-draw-roundtangle (window left top width height
 			   x-radius y-radius function
 			   line-style fill-style)

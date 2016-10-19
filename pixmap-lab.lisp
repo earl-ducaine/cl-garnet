@@ -43,26 +43,66 @@
     ;;(opal:add-components agg pixmap)
     (opal:update-all top-win)))
 
-(defun draw-on-window (win x y value)
-  (let* ((x-pixmap (gv win :buffer))
-	 (pixmap-array (xlib:get-raw-image
-			x-pixmap
+(defun get-x-window-drawable (win)
+  (gv top-win :drawable))
+
+
+(defun translate-to-z-index (x y width height)
+  (let* ((row (* y width)))
+    (+ row x)))
+
+(defun draw-on-window (win x value)
+  (let* ((pixmap-array (xlib:get-raw-image
+			(get-x-window-drawable win)
 			:x 0
 			:y 0
 			:width (xlib:drawable-width x-pixmap)
 			:height (xlib:drawable-height x-pixmap)
 			:format :z-pixmap)))
-    (setf (aref pixmap-array (compute-index x y width height)) value)
-    (xlib:put-raw-image x-pixmap
-			(xlib:create-gcontext :drawable x-pixmap)
+    (setf (aref pixmap-array (* x 4)) (first value))
+    (setf (aref pixmap-array (+ (* x 4) 1)) (second value))
+    (setf (aref pixmap-array (+ (* x 4) 2)) (third value))
+    (xlib:put-raw-image (gv top-win :drawable)
+			(xlib:create-gcontext :drawable x-drawable)
 			pixmap-array
-			:depth (xlib:drawable-depth x-pixmap)
+			:depth (xlib:drawable-depth x-drawable)
 			:x 0
 			:y 0
-			:width (xlib:drawable-width x-pixmap)
-			:height (xlib:drawable-height x-pixmap)
+			:width (xlib:drawable-width x-drawable)
+			:height (xlib:drawable-height x-drawable)
 			:format :z-pixmap)
-    (opal:update-all top-win)))
+    (xlib:display-force-output (gem::the-display top-win))))
+
+(defun run-draw-on-window ()
+  (let ((x-win (get-x-window-drawable win))
+	(x-win-width (xlib:drawable-width x-win))
+	(x-win-height (xlib:drawable-height x-win)))
+    (dotimes (i 150)
+      (draw-on-window
+       win
+       (translate-to-z-index i i x-win-width x-win-height)
+       '(255 0 0)))))
+
+
+
+(defun vector-draw-triangle-on-window ()
+  (let ((image (aa-misc:make-image 300 200 #(255 255 255))))
+    (aa-misc:show-image image)
+    image)
+  (let ((state (aa:make-state)))       ; create the state
+    (aa:line-f state 200 50 250 150)   ; describe the 3 sides
+    (aa:line-f state 250 150 50 100)   ; of the triangle
+    (aa:line-f state 50 100 200 50)
+    (let* ((image (aa-misc:make-image 300 200 #(255 255 255)))
+	   (put-pixel (aa-misc:image-put-pixel image #(0 0 0))))
+      (aa:cells-sweep state put-pixel) ; render it
+      (aa-misc:show-image image)
+      image
+      )))
+
+
+
+
 
 (defun run-draw-on-window ()
   (draw-on-window top-win 7 7 3))
