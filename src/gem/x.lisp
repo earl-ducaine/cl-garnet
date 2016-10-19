@@ -924,9 +924,6 @@ pixmap format in the list of valid formats."
                       root-window (get function :x-draw-function))
       (xlib:draw-points drawable xlib-gc-line point-list))))
 
-
-
-
 (defun x-draw-rectangle (window left top width height function
                          line-style fill-style)
   (declare (fixnum left top width height))
@@ -961,8 +958,6 @@ pixmap format in the list of valid formats."
 			       (+ top half-thickness)
 			       (- width thickness)
 			       (- height thickness) NIL)))))
-
-
 
 (defun x-draw-roundtangle (window left top width height
 			   x-radius y-radius function
