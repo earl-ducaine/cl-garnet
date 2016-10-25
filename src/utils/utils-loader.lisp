@@ -19,16 +19,16 @@
 (format t "Loading Utils...~%")
 
 ;; check first to see if pathname variable is set
-(unless (boundp 'Garnet-Utils-PathName)
-  (error
-   "Load 'Garnet-Loader' first to set Garnet-Utils-PathName before loading Utils."))
+;; (unless (boundp 'Garnet-Utils-PathName)
+;;   (error
+;;    "Load 'Garnet-Loader' first to set Garnet-Utils-PathName before loading Utils."))
 
 (Defparameter Garnet-Utils-Files '(
-	"general"
+;;	"general"
 	))
 
 (dolist (file Garnet-Utils-Files)
   (garnet-load (concatenate 'string "utils:" file)))
 
-(setf (get :garnet-modules :utils)  t)
-(format t "...Done Utils.~%")
+;; (setf (get :garnet-modules :utils)  t)
+;; (format t "...Done Utils.~%")

@@ -255,7 +255,7 @@ directory. It assumes that 'sub-directory' is directly under
     ("contrib"            . ,Garnet-Contrib-PathName)
     ("protected-eval"     . ,Garnet-Protected-Eval-PathName)
 ;;; Source directories.
-    ("utils-src"          . ,Garnet-Utils-Src)
+;;;    ("utils-src"          . ,Garnet-Utils-Src)
     ("kr-src"             . ,Garnet-KR-Src)
     ("gworld-src"         . ,Garnet-Gworld-Src)
     ("gem-src"            . ,Garnet-Gem-Src)
