@@ -35,7 +35,8 @@
    	    :components
 	    ((:file "gem")
 	     (:file "define-methods")
-	     (:file "x")))
+	     (:file "x")
+	     (:file "anti-alias-graphics")))
    (:module opal
    	    :pathname "src/opal"
    	    :depends-on (:utils :gem :kr)

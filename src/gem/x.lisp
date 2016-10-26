@@ -172,16 +172,13 @@ may help in troubleshooting."
           *black*
           *white*)))
 
-
 ;; The following two variables used to be in Inter/i-windows.lisp; they
 ;; have been moved here because nobody seems to be using them.
-;;
 (defvar *mouse-debug* nil
   "When true, *mouse-throw-aways* will increment each time a mouse-moved
    event is thrown away")
 
 (defvar *mouse-throw-aways* 0)
-
 
 ;; Debugging only
 (defparameter *debug-on* NIL)
@@ -196,7 +193,6 @@ may help in troubleshooting."
        (format t "~%~A ~{ ~S~}" (car ,arguments) (cdr ,arguments))))
 
 (defvar *x-font-faces* '(:roman :bold :italic :bold-italic))
-
 
 (defun get-stipple-schema-pixmap (stipple-schema root-window bitmap-p)
   (let ((root-plist (g-value stipple-schema :root-pixmap-plist)))
@@ -220,7 +216,6 @@ may help in troubleshooting."
 		   stipple-schema))
 	      (format
 	       t "WARNING -- no :image slot in schema ~A~%" stipple-schema))))))
-
 
 (defmacro get-x-stipple (style-schema root-window)
   `(let ((stipple-schema (g-value ,style-schema :stipple)))
@@ -366,17 +361,14 @@ may help in troubleshooting."
                 (set-gc gem-gc xlib-gc :stipple x-stipple))
               (set-gc gem-gc xlib-gc :fill-style :solid)))))))
 
-
 ;;; Set Styles Functions (from opal: new-defs.lisp)
-;;
 
-;;; This is called by with-*-styles, and it replaces the old :x-tiles slot.
-;;  It gets the *-style's :stipple, and checks its :root-pixmap-plist slot for
-;;  an entry for this Root.  If so, it returns it.  Else, it creates the
-;;  entry and places it at the head of the plist.
-;;  These were split into two macros because the draw method for opal:bitmap
-;;  also needs to use the first macro now...
-
+;; This is called by with-*-styles, and it replaces the old :x-tiles
+;; slot.  It gets the *-style's :stipple, and checks its
+;; :root-pixmap-plist slot for an entry for this Root.  If so, it
+;; returns it.  Else, it creates the entry and places it at the head
+;; of the plist.  These were split into two macros because the draw
+;; method for opal:bitmap also needs to use the first macro now...
 (defun set-filling-style (filling-style gem-gc xlib-gc root-window x-draw-fn)
   (declare (optimize (speed 3) (safety 1) (space 0) (debug 2)))
   (when filling-style
@@ -418,14 +410,11 @@ These are raw windows, NOT Opal windows!"
   (xlib:bell *default-x-display*)
   (xlib:display-force-output *default-x-display*))
 
-
 ;;; This assumes that the <window> has a gcontext.
-;;;
 (defun x-bit-blit (window source s-x s-y width height destination d-x d-y)
   (xlib:copy-area source
                   (g-value window :buffer-gcontext)
                   s-x s-y width height destination d-x d-y))
-
 
 (defun x-black-white-pixel (window)
   "Returns: the black and white pixel for the screen of the <window>, as
@@ -433,7 +422,6 @@ multiple values."
   (let ((screen (display-info-screen (g-value window :display-info))))
     (values (xlib:screen-black-pixel screen)
             (xlib:screen-white-pixel screen))))
-
 
 (defun x-character-width (root-window opal-font the-char-code)
   (declare (ignore root-window))
@@ -463,7 +451,6 @@ operate on the window's buffer instead."
       (xlib:clear-area (the-drawable window)
                        :x x :y y :width width :height height
                        :exposures-p NIL)))
-
 
 ;;; we assume the use of true color.  So colormap-property is a noop.
 (defun x-colormap-property (root-window property &optional a b c)
@@ -522,7 +509,6 @@ for the two fonts."
 
 ;; The following deals with cases where the display provides pixmaps
 ;; with depths different from bits-per-pixel.
-;;
 (defun get-pixmap-formats ()
   "Return valid pixmap formats for this display."
   (xlib:display-pixmap-formats *default-x-display*))

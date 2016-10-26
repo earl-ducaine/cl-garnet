@@ -232,18 +232,13 @@
 	(eval `(adjust ,key))))))
 
 
-;;;
-;;; Macros shared by "mac.lisp" and "x.lisp"
-;;;
 
 ;;; Given an Opal window, return the display structure that is attached
 ;;; to it.
-;;;
 (defmacro the-display (window)
   `(display-info-display (g-value ,window :display-info)))
 
 ;;; RETURNS: the buffer for the <window>, if this is a double-buffered
 ;;; window, or the main drawable otherwise.
-;;;
 (defmacro the-drawable (window)
   `(or (g-local-value ,window :buffer) (g-value ,window :drawable)))
