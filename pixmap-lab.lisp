@@ -13,34 +13,55 @@
 (defun run-draw-triangle-on-window ()
   (when *top-win*
     (opal:destroy *top-win*))
-  (setf *top-win* (do-go))
+  (setf *top-win* (create-window 100 100))
     (draw-triangle-on-window *top-win*))
 
+(defparameter *triagle-coordinates*
+  '((40 10)
+    (10 20)
+    (46 30)))
+
+(defun generate-polygon-sides (points)
+  ;; closing side.
+  (let* ((sides '()))
+    (push `( ,@(first (reverse points)) ,@(first points)) sides)
+    (reduce (lambda (last-point point)
+	      (push `( ,@last-point ,@point) sides)
+	      point)
+	    points)
+    (reverse sides)))
 
 (defun draw-triangle-on-window (win)
-  (let ((my-array (gem::vector-draw-triangle-on-array 50 50)))
-    (dotimes (i (* 50 50))
+  (let* ((height (gv win :height))
+	 (width (gv win :width))
+	 (cl-vector-image
+	  (gem::vector-create-polygon-on-surface
+	   height width
+	   #(150 200 255)
+	   #(30 10 0)
+	   (generate-polygon-sides *triagle-coordinates*))))
+    (dotimes (i (* height width))
       (gem::draw-on-window
        win
        i
        (list
-	(row-major-aref my-array (* i 3))
-	(row-major-aref my-array (+ (* i 3) 1))
-	(row-major-aref my-array (+ (* i 3) 2)))))))
+	(row-major-aref cl-vector-image (* i 3))
+	(row-major-aref cl-vector-image (+ (* i 3) 1))
+	(row-major-aref cl-vector-image (+ (* i 3) 2)))))))
 
 
 
-(defun do-go ()
+(defun create-window (height width)
   (let ((top-win (create-instance nil inter:interactor-window
 		   (:left 500)
 		   (:top 100)
 		   (:double-buffered-p t)
-		   (:width 50)
-		   (:height 50)
+		   (:width width)
+		   (:height height)
 		   (:title "GARNET Animator Demo")
 		   (:icon-title "Animator"))))
     (let ((agg (create-instance NIL opal:aggregate)))
-      (s-value top-win :aggregate agg)
+;;;      (s-value top-win :aggregate agg)
       (opal:update top-win)
       top-win)))
 
