@@ -1,5 +1,5 @@
 
-
+(in-package :gem)
 
 (defun x-draw-rectangle (window left top width height function
                          line-style fill-style)
