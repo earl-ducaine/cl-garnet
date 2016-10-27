@@ -595,8 +595,6 @@ pixmap format in the list of valid formats."
   (make-array (list height width)
               :element-type (pixarray-element-type depth)))
 
-
-
 (defun x-create-pixmap (window width height depth
                         &optional image bitmap-p data-array)
   (declare (ignore data-array))

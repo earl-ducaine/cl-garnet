@@ -7,10 +7,7 @@
 (defun get-x-window-drawable (win)
   (gv win :drawable))
 
-(defparameter
-
-
-
+;;;;;(defparameter
 
 (defun draw-on-window (win x value)
   (let* ((pixmap-array (xlib:get-raw-image
@@ -34,6 +31,17 @@
 			:format :z-pixmap)
     (xlib:display-force-output (gem::the-display win))))
 
+(defun transfer-surface-window (win cl-vector-image)
+  (let* ((height (gv win :height))
+	 (width (gv win :width)))
+    (dotimes (i (* height width))
+      (gem::draw-on-window
+       win
+       i
+       (list
+	(row-major-aref cl-vector-image (* i 3))
+	(row-major-aref cl-vector-image (+ (* i 3) 1))
+	(row-major-aref cl-vector-image (+ (* i 3) 2)))))))
 
 (defun create-surface  (height width background-rgb)
   (let ((state (aa:make-state))

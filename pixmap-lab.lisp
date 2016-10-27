@@ -8,12 +8,12 @@
 (defparameter agg nil)
 (defparameter *top-win* nil)
 
-(load "src/gem/anti-alias-graphics.lisp")
+;;;;(load "src/gem/anti-alias-graphics.lisp")
 
 (defun run-draw-triangle-on-window ()
   (when *top-win*
     (opal:destroy *top-win*))
-  (setf *top-win* (create-window 100 100))
+  (setf *top-win* (create-window 100 110))
     (draw-triangle-on-window *top-win*))
 
 (defparameter *triagle-coordinates*
@@ -40,16 +40,7 @@
 	   #(150 200 255)
 	   #(30 10 0)
 	   (generate-polygon-sides *triagle-coordinates*))))
-    (dotimes (i (* height width))
-      (gem::draw-on-window
-       win
-       i
-       (list
-	(row-major-aref cl-vector-image (* i 3))
-	(row-major-aref cl-vector-image (+ (* i 3) 1))
-	(row-major-aref cl-vector-image (+ (* i 3) 2)))))))
-
-
+    (gem::transfer-surface-window win cl-vector-image)))
 
 (defun create-window (height width)
   (let ((top-win (create-instance nil inter:interactor-window

@@ -1,0 +1,37 @@
+
+
+
+* gem  -- Design & Documentation
+
+  Garnet's gem module provides an interface to the the platform's graphics
+  system.  Gaphic fascilities are represented using three
+  abstractions:
+
+  1. gesture stream
+  2. window management
+  3. surface drawing, composing, rendering pipeline.
+
+  Interfaces to all the modules are closely bound (unfortunately) to
+  the underlying CLX library, i.e. X11. This is especially apparent
+  with respect to window management.
+
+* Window management
+
+** Basic setup for a graphical application.
+
+
+
+   <proposed>
+   Windows provide a rectangular, graphical area onto which something can be
+   drawn.  XLib provides a hierarchical organization that controls how
+   child windows are displayed by their parent.  However in gem there
+   are no child windows an application can have multiple 'application'
+   windows, which in the terms of X11 are all siblings.  That means
+   any window can obscure any other window by specifying a stacking
+   z-order.
+
+** The gem Window API
+   
+   
+
+* 
