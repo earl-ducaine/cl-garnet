@@ -129,12 +129,12 @@ directory. It assumes that 'sub-directory' is directly under
 ;;; Pathnames.
 ;; (defvar Garnet-Utils-Src
 ;;   (append-directory Garnet-Src-Pathname "utils"))
-(defvar Garnet-Utils-Pathname
-  (append-directory Garnet-Binary-Pathname "utils"))
-(defvar Garnet-KR-Src
-  (append-directory Garnet-Src-Pathname "kr"))
-(defvar Garnet-KR-Pathname
-  (append-directory Garnet-Binary-Pathname "kr"))
+;; (defvar Garnet-Utils-Pathname
+;;   (append-directory Garnet-Binary-Pathname "utils"))
+;; (defvar Garnet-KR-Src
+;;   (append-directory Garnet-Src-Pathname "kr"))
+;; (defvar Garnet-KR-Pathname
+;;   (append-directory Garnet-Binary-Pathname "kr"))
 (defvar Garnet-Gworld-Src
   (append-directory Garnet-Src-Pathname "gworld"))
 (defvar Garnet-Gworld-Pathname
@@ -235,8 +235,8 @@ directory. It assumes that 'sub-directory' is directly under
 ;;; Target directories (binarys)
   `(("gg"                 . ,Garnet-Gadgets-PathName)
     ("gadgets"            . ,Garnet-Gadgets-PathName)
-    ("utils"              . ,Garnet-Utils-PathName)
-    ("kr"                 . ,Garnet-KR-PathName)
+;;    ("utils"              . ,Garnet-Utils-PathName)
+;;    ("kr"                 . ,Garnet-KR-PathName)
     ("gworld"             . ,Garnet-Gworld-Pathname)
     ("gem"                . ,Garnet-Gem-Pathname)
     ("opal"               . ,Garnet-Opal-Pathname)
@@ -256,7 +256,7 @@ directory. It assumes that 'sub-directory' is directly under
     ("protected-eval"     . ,Garnet-Protected-Eval-PathName)
 ;;; Source directories.
 ;;;    ("utils-src"          . ,Garnet-Utils-Src)
-    ("kr-src"             . ,Garnet-KR-Src)
+    ;; ("kr-src"             . ,Garnet-KR-Src)
     ("gworld-src"         . ,Garnet-Gworld-Src)
     ("gem-src"            . ,Garnet-Gem-Src)
     ("opal-src"           . ,Garnet-Opal-Src)

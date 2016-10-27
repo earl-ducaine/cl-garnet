@@ -17,9 +17,10 @@
     (draw-triangle-on-window *top-win*))
 
 (defparameter *triagle-coordinates*
-  '((40 10)
-    (10 20)
-    (46 30)))
+  '((40 30)
+    (10 40)
+    (46 60)
+    (50 45)))
 
 (defun generate-polygon-sides (points)
   ;; closing side.

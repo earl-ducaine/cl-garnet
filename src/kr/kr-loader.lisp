@@ -1,5 +1,5 @@
 ;;; -*- Mode: COMMON-LISP; Package: COMMON-LISP-USER -*-
-;; 
+;;
 ;; ______________________________________________________________________
 ;;
 ;; The Garnet User Interface Development Environment
@@ -20,15 +20,16 @@
 (format t "Loading KR...~%")
 
 ;; check first to see if pathname variable is set
-(unless (boundp 'Garnet-Kr-PathName)
-  (error
-   "Load 'Garnet-Loader' first to set Garnet-Kr-PathName before loading KR."))
+;; (unless (boundp 'Garnet-Kr-PathName)
+;;   (error
+;;    "Load 'Garnet-Loader' first to set Garnet-Kr-PathName before loading KR."))
 
 (Defparameter Garnet-Kr-Files
-  '("kr-macros"
-    "kr-doc"
-    "kr"
-    "constraints"))
+  '(;; "kr-macros"
+;;    "kr-doc"
+;;    "kr"
+    ;; "constraints"
+    ))
 
 (dolist (file Garnet-Kr-Files)
   (garnet-load (concatenate 'string "kr:" file)))
