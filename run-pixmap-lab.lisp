@@ -6,6 +6,10 @@
 
 (in-package :pixmap-lab)
 
+
+
+
+
 (defun draw-triangle-on-window ()
   (do-go)
   (let ((my-array

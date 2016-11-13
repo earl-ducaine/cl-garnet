@@ -18,8 +18,9 @@
 (defun transfer-surface-window (win cl-vector-image)
   (let* ((height (gv win :height))
 	 (width (gv win :width))
+	 (drawable (get-x-window-drawable win))
 	 (pixmap-array (xlib:get-raw-image
-			(get-x-window-drawable win)
+			drawable
 			:x 0
 			:y 0
 			:width width
@@ -34,15 +35,19 @@
 	(row-major-aref cl-vector-image (+ (* i 3) 1))
 	(row-major-aref cl-vector-image (+ (* i 3) 2)))))
     (xlib:put-raw-image (gv win :drawable)
-			(xlib:create-gcontext :drawable (get-x-window-drawable win))
-			pixmap-array
-			:depth (xlib:drawable-depth (get-x-window-drawable win))
-			:x 0
-			:y 0
-			:width (xlib:drawable-width (get-x-window-drawable win))
-			:height (xlib:drawable-height (get-x-window-drawable win))
-			:format :z-pixmap)
-    (xlib:display-force-output (gem::the-display win))))
+    			(xlib:create-gcontext :drawable drawable)
+    			pixmap-array
+    			:depth (xlib:drawable-depth (get-x-window-drawable win))
+    			:x 0
+    			:y 0
+    			:width width
+    			:height height
+    			:format :z-pixmap)))
+
+
+
+
+    ;; (xlib:display-finish-output (gem::the-display win))))
 
 (defun create-surface  (width height background-rgb)
   (let ((state (aa:make-state))

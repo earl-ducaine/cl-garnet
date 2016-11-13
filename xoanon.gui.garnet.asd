@@ -12,7 +12,7 @@
 (asdf:defsystem :xoanon.gui.garnet
   ;; sb-posix means that currently only sbcl can load Garnet.
   :depends-on (:clx :zpb-ttf :cl-vectors :cl-paths-ttf :cl-aa :cl-fad
-			      :cl-store :trivial-features :cl-aa-misc)
+		    :cl-store :trivial-features :cl-aa-misc)
   :components
   ((:file "package")
    (:module utils
@@ -356,17 +356,14 @@
 	     (:file "clx-truetype-utils")
 	     (:file "font-cache")
  	     (:file "gem-font-methods")
-;; 	     (:file "truetype")
+	     ;; 	     (:file "truetype")
 	     ))
-
 ;;; /mnt/pixel-512/dev/garnet/garnet-git/
-
    ;; (:module garnet-truetype-test
    ;; 	    :depends-on (:garnet-truetype)
    ;; 	    :pathname "src/garnet-truetype/test-truetype"
    ;; 	    :components
    ;; 	    ((:file "hello-world")))
-
    (:module multi-garnet
 	    :pathname "multi-garnet"
 	    :depends-on (:build :lapidary)
@@ -448,6 +445,24 @@
 	     (:file "by-demo")
 	     (:file "interactors")
 	     (:file "interactors-menu")))
+   (:module debug-clx
+	    :pathname "debug"
+	    :depends-on (:debug :lapidary)
+	    :components
+	    ((:file "debug")
+	     (:file "describe")
+	     (:file "event-test")
+	     (:file "keytrans")
+	     (:file "trace")
+	     (:file "util")))
+   ;; (:module gworld
+   ;; 	    :pathname "src/gworld"
+   ;; 	    :depends-on (:build :lapidary)
+   ;; 	    :components
+   ;; 	    ((:file "gcable-macptrs")
+   ;; 	     (:file "utility")
+   ;; 	     (:file "pixmaps")
+   ;; 	     (:file "gworld")))
    ;; (:module test
    ;; 	    :depends-on (:gem)
    ;; 	    :components

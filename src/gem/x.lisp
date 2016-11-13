@@ -1532,7 +1532,9 @@ pixmap format in the list of valid formats."
        t))))
 
 (defun x-flush-output (window)
-  (xlib:display-force-output (the-display window)))
+  ;;(xlib:display-force-output (the-display window)))
+  (xlib:display-finish-output (the-display window)))
+
 
 ;;; RETURNS: the maximum character width for the font; if <min-too> is non-nil,
 ;;; returns both maximum and minimum width, as multiple values.  This function
