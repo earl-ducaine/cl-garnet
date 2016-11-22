@@ -32,53 +32,53 @@
 ;; uses the settings in *garnet-compile-debug-settings*. Setting it to
 ;; NIL uses the ones in *garnet-compile-production-settings*. By
 ;; default we simply mirror Garnet-Garnet-Debug.
-(defvar garnet-compile-debug-mode garnet-garnet-debug
-  "Setting this variable to T sets the policy for the entire system
-to make it more debuggable.")
+;; (defvar garnet-compile-debug-mode garnet-garnet-debug
+;;   "Setting this variable to T sets the policy for the entire system
+;; to make it more debuggable.")
 
-(defvar garnet-compile-debug-settings
-  '(optimize (speed 2)
-    (safety 3)
-    (debug 3)
-    (space 2))
-  "Use these settings for globally debugging the system or for debugging
-a specific module. They emphasize debuggability at the cost of some speed.
+;; (defvar garnet-compile-debug-settings
+;;   '(optimize (speed 2)
+;;     (safety 3)
+;;     (debug 3)
+;;     (space 2))
+;;   "Use these settings for globally debugging the system or for debugging
+;; a specific module. They emphasize debuggability at the cost of some speed.
 
-With SBCL:
+;; With SBCL:
 
-- These settings are type-safe.
+;; - These settings are type-safe.
 
-- They prevent functions declared inline from being expanded inline.
-  Note that as part of this version I have tried to make most
-  non-syntactic macros into inline functions.
+;; - They prevent functions declared inline from being expanded inline.
+;;   Note that as part of this version I have tried to make most
+;;   non-syntactic macros into inline functions.
 
-- They allow all possible debugging features.")
+;; - They allow all possible debugging features.")
 
-(defvar garnet-compile-production-settings
-  '(optimize (speed 3)
-    (safety 0)
-    (space 1)
-     (debug 1)
-    (compilation-speed 0))
-  "production compiler policy settings. emphasize speed, de-emphasize debugging.")
+;; (defvar garnet-compile-production-settings
+;;   '(optimize (speed 3)
+;;     (safety 0)
+;;     (space 1)
+;;      (debug 1)
+;;     (compilation-speed 0))
+;;   "production compiler policy settings. emphasize speed, de-emphasize debugging.")
 
-(defvar default-garnet-proclaim
-  (if garnet-compile-debug-mode
-      garnet-compile-debug-settings
-      garnet-compile-production-settings)
-  "Set compiler optimization settings.
+;; (defvar default-garnet-proclaim
+;;   (if garnet-compile-debug-mode
+;;       garnet-compile-debug-settings
+;;       garnet-compile-production-settings)
+;;   "Set compiler optimization settings.
 
-1. If you want everything debugged, set Garnet-Compile-Debug-Mode to t.
+;; 1. If you want everything debugged, set Garnet-Compile-Debug-Mode to t.
 
-2. If you want to debug specific modules, set Garnet-Compile-Debug-Mode
-   to nil. Then set the variable in the modules you want debugged to enable
-   debugging that module.
+;; 2. If you want to debug specific modules, set Garnet-Compile-Debug-Mode
+;;    to nil. Then set the variable in the modules you want debugged to enable
+;;    debugging that module.
 
-3. Otherwise (for 'production' builds) just set Garnet-Compile-Debug-Mode
-   to nil and leave everything else alone.")
+;; 3. Otherwise (for 'production' builds) just set Garnet-Compile-Debug-Mode
+;;    to nil and leave everything else alone.")
 
-(when default-garnet-proclaim
-  (proclaim default-garnet-proclaim))
+;; (when default-garnet-proclaim
+;;   (proclaim default-garnet-proclaim))
 
 
 ;;  (defvar load-inter-p T)

@@ -42,12 +42,8 @@
     			:y 0
     			:width width
     			:height height
-    			:format :z-pixmap)))
-
-
-
-
-    ;; (xlib:display-finish-output (gem::the-display win))))
+    			:format :z-pixmap))
+  (xlib:display-finish-output (gem::the-display win)))
 
 (defun create-surface  (width height background-rgb)
   (let ((state (aa:make-state))

@@ -507,10 +507,7 @@
 (defun set-subwindow-mode (a-window mode)
   (gem:set-window-property a-window :SUBWINDOW-MODE mode))
 
-
-
 ;;; This now returns the drawable it creates.
-;;;
 (defun create-drawable (a-window)
   (let ((display-info (initialize-display a-window)))
     ;; Make sure the window has an attached display-info.
@@ -547,13 +544,10 @@
 			(not (g-value a-window :position-by-hand))
 			(not (g-value a-window :position-by-hand))
 			(if (g-value a-window :omit-title-bar-p) :on :off))))
-
 	(gem:set-drawable-to-window a-window drawable)
 	(set-wm-icon a-window (g-value a-window :icon-bitmap))
-
 	(if (g-value a-window :draw-on-children)
 	  (set-subwindow-mode a-window :include-inferiors))
-
 	(setf (g-value a-window :drawable) drawable)
 	(if (g-value a-window :double-buffered-p)
 	  (let ((buffer (create-buffer a-window)))
@@ -561,12 +555,10 @@
 	    (gem:set-window-property a-window :BUFFER-GCONTEXT
 				     (list buffer black-pixel background))
 	    (clear-buffer a-window)))
-
 	(s-value a-window :top-border-width border-width)
 	(s-value a-window :left-border-width border-width)
 	(s-value a-window :bottom-border-width border-width)
 	(s-value a-window :right-border-width border-width)
-
         ;; Andyism = minor Edism + verbose comment
         ;;
         ;; The :very-first-exposure slot was invented for X windows to prevent
@@ -583,20 +575,16 @@
         ;; instruction at the end of the update method.
         #-cmu
 	(s-value a-window :very-first-exposure t)
-
 	;; set the cursor to hemlock's cursor or specified cursor/mask combo
 	;; (cursor-file . mask-file)
 	(set-window-cursor a-window
 			   drawable
 			   (g-value a-window :cursor))
-
 	;; bring up the window, and display it
 	(if (g-value a-window :visible)
 	  (gem:map-and-wait a-window drawable))
 	(s-value a-window :old-parent (g-value a-window :parent))
 	drawable))))
-
-
 
 (defun fix-window-properties (a-window changed-slots drawable)
   (let ((make-new-buffer nil)

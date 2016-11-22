@@ -1,5 +1,7 @@
 ;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: DEMO-ANIMATOR; Base: 10 -*-
 
+;;
+
 (defpackage :pixmap-lab
   (:use :common-lisp :kr)
   (:export do-go do-stop))
@@ -8,13 +10,16 @@
 (defparameter agg nil)
 (defparameter *top-win* nil)
 (defparameter *xlib-display* nil)
+(defparameter *pixmap-lab-std-out* *standard-output*)
+
+(load "/home/rett/dev/garnet/cl-garnet/macro-patch.lisp")
+
 
 ;;;;(load "src/gem/anti-alias-graphics.lisp")
 ;; (xlib::describe-trace (get-the-xlib-display *top-window*))
 
 (defun get-the-xlib-display (garnet-window)
   (gem::the-display garnet-window))
-
 
 
 (defun display-trace-history ()
@@ -31,6 +36,19 @@
     (10 40)
     (46 60)
     (50 45)))
+
+
+
+(defun interactive ()
+  (ql:quickload :xoanon.gui.garnet)
+  (load "/home/rett/dev/garnet/cl-garnet/pixmap-lab.lisp")
+  (in-package :pixmap-lab)
+
+  (trace xlib::get-put-items)
+  (trace xlib::put-raw-image :break t)
+  (run-draw-triangle-on-window)
+  (sb-ext:exit)
+  (run-draw-triangle-on-window))
 
 (defun generate-polygon-sides (points)
   ;; closing side.
@@ -54,7 +72,7 @@
     (gem::transfer-surface-window win cl-vector-image)))
 
 (defun create-window (height width)
-  (let ((top-win (create-instance nil inter:interactor-window
+  (let ((top-win (create-instance nil opal::window
 		   (:left 500)
 		   (:top 100)
 		   (:double-buffered-p t)
@@ -62,10 +80,10 @@
 		   (:height height)
 		   (:title "GARNET Animator Demo")
 		   (:icon-title "Animator"))))
-    (let ((agg (create-instance NIL opal:aggregate)))
+;;    (let ((agg (create-instance NIL opal:aggregate)))
 ;;;      (s-value top-win :aggregate agg)
       (opal:update top-win)
-      top-win)))
+      top-win))
 
 (defun run-event-loop ()
   (inter:main-event-loop))

@@ -1,0 +1,19 @@
+
+
+* X11 -- The good parts
+
+  
+** The X11 model
+
+   The X11 system was developed in the early 80s at a time when
+   bit-mapped desplays were still a relatively new phenominon.
+   Earlier graphic systems, such as the Apollo or Lisp Machine systems
+   started with a very definite, primitive conception of a graphical
+   environment that included such things as mice, keyboards, monitors,
+   processes, etc.  As each system evolved, the tendancy was for the
+   graphic system to become more and more general as it needed to
+   accomidate additional hardware conficgurations, and program use
+   cases.
+
+
+   The X11 system
