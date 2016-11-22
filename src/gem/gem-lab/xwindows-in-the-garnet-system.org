@@ -7,7 +7,7 @@
 
    The X11 system was developed in the early 80s at a time when
    bit-mapped desplays were still a relatively new phenominon.
-   Earlier graphic systems, such as the Apollo or Lisp Machine systems
+   Earlier graphic systems, such as the Alto or Lisp Machine systems
    started with a very definite, primitive conception of a graphical
    environment that included such things as mice, keyboards, monitors,
    processes, etc.  As each system evolved, the tendancy was for the
@@ -16,4 +16,9 @@
    cases.
 
 
-   The X11 system
+   The X11 system Itself was based on the W window system, a window
+   system for the V operating system, a Unix-like micro-code based
+   system that ran on a wide set of hetrogeneounos mini computer based
+   workstations. 
+
+   The X11 system is 
