@@ -127,6 +127,17 @@
    Like xlib:display-image-lsb-first-p except that, display is assumed so
    it takes no arguments.
 
+** with-xlib
+  Like xlib:with-xlib that, display is assumed so it takes no
+  arguments.  Not clear what the purpose is of the call.
+
+** display-force-output
+
+** display-finish-output
+
+** screen-root
+
+
 
 ** CLX calls not exposed
 
@@ -138,4 +149,8 @@
    - display-plist
    - display-resource-id-mask <informational only>
    - display-roots <used to retrieve screens>
-   - 
+   - display-vendor <not reliably useful>
+   - display-protocol-version <see: display-vendor>
+   - display-xid <Doesn't seem useful>
+   - screen-backing-stores
+
