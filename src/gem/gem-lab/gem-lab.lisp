@@ -22,4 +22,4 @@
 (defun alocate-color ()
   ;; get the pixel (device dependant 32 bit value) of a color (device
   ;; independant triplet of reals).
-  (xlib:alloc-color the-colormap run-make-color)
+  (xlib:alloc-color the-colormap run-make-color))

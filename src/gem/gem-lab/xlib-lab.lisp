@@ -6,10 +6,21 @@
 
 (in-package :xlib-lab)
 
+
+;; To Run
+;; (ql:quickload :xoanon.gui.garnet)
+;; (load "/home/rett/dev/garnet/garnet/src/gem/gem-lab/xlib-lab.lisp")
+;; (load "/home/rett/dev/garnet/garnet/src/gem/gem-lab/gem-pixmap-lab.lisp")
+;; (in-package :xlib-lab)
+;; (trace-display)
+;; (setf *top-win* (create-window :width 400 :height 410))
+;; (draw-triangle-on-window (first *app-windows*))
+
 (defparameter *system-initialized* nil)
 (defparameter *display* nil)
 (defparameter *screen* nil)
 (defparameter *root-window* nil)
+(defparameter *color-map* nil)
 
 (defun init-xlib ()
   (setf *display* (xlib:open-default-display))
@@ -21,18 +32,32 @@
   (setf *root-window* (xlib:screen-root *screen*))
   (unless *root-window*
     (error "Unable to get valid root window of the screen."))
+  (setf *color-map* (xlib:screen-default-colormap *screen*))
+  (unless *color-map*
+    (error "Unable to get valid root window of the screen."))
   (setf *system-initialized* t))
 
-(defparameter app-window nil)
+;; toplevel windows of the application
+(defparameter *app-windows* nil)
 
-(defun create-window (&key x y width height)
-  (setf app-window
-	(xlib:create-window :parent *root-window*
-			    :x 10
-			    :y 15
-			    :width 200
-			    :height 250))
-  (xdisplay-force-output *display))
+;; simplified model.  All calls
+;; 1) perform any needed initialization in X
+;; 2) map window if needed
+;; 3) flush buffer
+(defun create-window (&key (x 0) (y 0) width height)
+  (unless *system-initialized*
+    (init-xlib))
+  (let ((app-window
+	 (xlib:create-window :parent *root-window*
+			     :x x
+			     :y y
+			     :width width
+			     :height height)))
+    (push app-window *app-windows*)
+    (xlib:map-window app-window)
+    (xlib:display-force-output *display*)))
+
+
 
 ;; TODO -- can we assume:
 ;; #<XLIB:BITMAP-FORMAT unit 32 pad 32 LSB first>
@@ -187,6 +212,10 @@
     (init-xlib))
   (xlib:screen-root-depth *screen*))
 
+(defun trace-display ()
+  (unless *system-initialized*
+    (init-xlib))
+  (xlib:trace-display *display*))
 
 
 

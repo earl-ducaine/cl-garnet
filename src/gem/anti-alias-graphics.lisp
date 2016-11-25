@@ -55,6 +55,11 @@
   (multiple-value-bind (state image) (create-surface width height background-rgb)
     (dolist (side sides)
       (apply #'aa:line-f `(,state ,@side)))
-    (aa:cells-sweep state (aa-misc:image-put-pixel image forground-rgb)) ; render it
-    (aa-misc:show-image image)
+    (aa:cells-sweep state
+		    (aa-misc:image-put-pixel image forground-rgb)
+		    (lambda (alpha red green blue)
+		      (format t  "alpha: ~S, red: ~S, green: ~S, blue: ~S~%" alpha red green blue)
+		      pixel)
+		    ) ; render it
+    ;; (aa-misc:show-image image)
     image))
