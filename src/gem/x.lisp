@@ -28,54 +28,54 @@
         (error "The display specification  \"~A\" is invalid: bad display number" display))
       display-number)))
 
-(defun verify-display-can-be-opened ()
-  (let* (val errorp)
-    (unwind-protect
-         (progn
-           (multiple-value-setq (val errorp)
-             (ignore-errors
-               (xlib:open-default-display)))
-           (if errorp
-               (error "Could not open a display for ~S.
-     You must already be running X to load or compile Garnet. Your
-DISPLAY environment variable must be set with the name of the machine
-on which the Garnet windows will be displayed. Ordinarily this should
-be done automagically for you. You can see the value of this variable
-by typing \"printenv DISPLAY\" at the shell prompt.
+;; (defun verify-display-can-be-opened ()
+;;   (let* (val errorp)
+;;     (unwind-protect
+;;          (progn
+;;            (multiple-value-setq (val errorp)
+;;              (ignore-errors
+;;                (xlib:open-default-display)))
+;;            (if errorp
+;;                (error "Could not open a display for ~S.
+;;      You must already be running X to load or compile Garnet. Your
+;; DISPLAY environment variable must be set with the name of the machine
+;; on which the Garnet windows will be displayed. Ordinarily this should
+;; be done automagically for you. You can see the value of this variable
+;; by typing \"printenv DISPLAY\" at the shell prompt.
 
-The DISPLAY environment variable should look something like one of the
-following:
+;; The DISPLAY environment variable should look something like one of the
+;; following:
 
-  \"localhost:12.0\"
-  \"desktop.cs.cmu.edu:0.0\"
-  \"unix:0.0\"
-  \":0.0\"
-  \":0\"
+;;   \"localhost:12.0\"
+;;   \"desktop.cs.cmu.edu:0.0\"
+;;   \"unix:0.0\"
+;;   \":0.0\"
+;;   \":0\"
 
-The first case is usually the result of an SSH tunnel setting the
-environment variable. This is either enabled by ssh -X or ssh -Y or by
-your ssh configuration. Further explanation is beyond the scope of
-this error message.
+;; The first case is usually the result of an SSH tunnel setting the
+;; environment variable. This is either enabled by ssh -X or ssh -Y or by
+;; your ssh configuration. Further explanation is beyond the scope of
+;; this error message.
 
-The second case is common in secure local networks with shared NFS
-file systems, of which there are no longer any instances in the known
-universe.
+;; The second case is common in secure local networks with shared NFS
+;; file systems, of which there are no longer any instances in the known
+;; universe.
 
-The last three values will usually be more efficient when you want the
-Garnet windows to appear on the display of the machine that Garnet is
-running on.
+;; The last three values will usually be more efficient when you want the
+;; Garnet windows to appear on the display of the machine that Garnet is
+;; running on.
 
-     If you find that this error occurs inexplicably, you can try
-executing the command \"xhost +\" on the machine where the windows
-will be displayed, if it is different from the machine running Garnet.
-This disables security and is not recommended for ordinary use, but it
-may help in troubleshooting."
-                      (get-full-display-name))))
-      (when val
-        (xlib:close-display val)))
-    t))
+;;      If you find that this error occurs inexplicably, you can try
+;; executing the command \"xhost +\" on the machine where the windows
+;; will be displayed, if it is different from the machine running Garnet.
+;; This disables security and is not recommended for ordinary use, but it
+;; may help in troubleshooting."
+;;                       (get-full-display-name))))
+;;       (when val
+;;         (xlib:close-display val)))
+;;     t))
 
-(verify-display-can-be-opened)
+;;(verify-display-can-be-opened)
 
 (defvar *debug-gem-mode*)
 (defvar *default-x-display-name*)
@@ -2091,12 +2091,12 @@ pixmap format in the list of valid formats."
          (display-info-display (g-value window :display-info)))
         string))
 
-;;; Routines used to get name of display, and extract
-;;  display number and screen number.
-;;  Normally, the name of a display is of the form
-;;  "displayname:displaynumber.screennumber"
-(defun get-full-display-name ()
-  (sb-posix:getenv "DISPLAY"))
+;; ;;; Routines used to get name of display, and extract
+;; ;;  display number and screen number.
+;; ;;  Normally, the name of a display is of the form
+;; ;;  "displayname:displaynumber.screennumber"
+;; (defun get-full-display-name ()
+;;   (sb-posix:getenv "DISPLAY"))
 
 ;; FMG Rewrote the following three functions just to make
 ;; them lispier.
@@ -2522,7 +2522,6 @@ the X drawable."
   (attach-method x-device :reparent #'x-reparent)
   (attach-method x-device :set-clip-mask #'x-set-clip-mask)
   (attach-method x-device :set-cut-buffer #'x-set-cut-buffer)
-  (attach-method x-device :set-device-variables #'x-set-device-variables)
   (attach-method x-device :set-screen-color-attribute-variables #'x-set-screen-color-attribute-variables)
   (attach-method x-device :set-draw-function-alist #'x-set-draw-function-alist)
   (attach-method x-device :set-draw-functions #'x-set-draw-functions)
@@ -2560,11 +2559,11 @@ the X drawable."
   ;; Set up all the GEM variables used to identify display, screen,
   ;; etc. These are needed by discard-all-pending-events (in
   ;; process.lisp), which is called by launch-main-event-loop-process.
-  (gem:set-device-variables root-window full-display-name)
+  (set-device-variables root-window full-display-name)
   (gem:set-screen-color-attribute-variables root-window))
 
 ;;; Make the initializer function available to the outside world.
-(setf (get :garnet-modules :gem) t)
+;; (setf (get :garnet-modules :gem) t)
 
 (defmacro event-handler-debug (message &rest args)
   `(format t "event-handler ~S   ~S~%" ,message ',args))
