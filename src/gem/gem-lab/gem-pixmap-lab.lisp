@@ -29,11 +29,6 @@
   (setf *top-win* (create-window 400 410))
   (draw-triangle-on-window *top-win*))
 
-(defparameter *triagle-coordinates*
-  '((40 30)
-    (10 40)
-    (46 60)
-    (100 145)))
 
 (defun interactive ()
   (ql:quickload :xoanon.gui.garnet)
@@ -60,25 +55,51 @@
   (let* ((height (xlib:drawable-height win))
 	 (width (xlib:drawable-width win))
 	 (cl-vector-image
-	  (gem::vector-create-polygon-on-surface
+	  (vector-create-polygon-on-surface
 	   height width
 	   #(150 200 255)
-	   #(30 10 0)
+	   #(255 200 150)
 	   (generate-polygon-sides *triagle-coordinates*))))
     (transfer-surface-window win cl-vector-image)))
 
 (defparameter *pixmap-array* nil)
 
-(xlib:image-z-pixarray *pixmap-array*)
+;;; (xlib:image-z-pixarray *pixmap-array*)
 
 (defun translate-color (&key red green blue )
   (xlib:alloc-color *color-map*
 		    (xlib:make-color :red red :green green :blue blue)))
 
-(defun draw-on-window (pixmap-array-2d x value)
-  (setf (row-major-aref (xlib:image-z-pixarray *pixmap-array*) x)
-	value))
 
+(defparameter *triagle-coordinates*
+  '((100 30)
+    (10 40)
+    (46 100)
+    (100 145)))
+
+(defun draw-on-window (image-z-pixarray x value)
+    (setf (row-major-aref image-z-pixarray x)
+	  value)
+    image-z-pixarray)
+
+(defun vector-create-polygon-on-surface (height width background-rgb
+					 forground-rgb sides)
+  (multiple-value-bind (state image) (gem::create-surface width height background-rgb)
+    (dolist (side sides)
+      (apply #'aa:line-f `(,state ,@side)))
+    (aa:cells-sweep state (aa-misc:image-put-pixel image forground-rgb))
+    image))
+
+(defparameter *color-cache* nil)
+
+(defun get-color (r g b)
+  (let* ((hash-key (+ (ash r 16) (ash g 8) b))
+	 (hash-value (gethash hash-key *color-cache*)))
+    (or hash-value
+	(setf (gethash hash-key *color-cache*)
+	      (xlib:alloc-color *color-map* (xlib:make-color :red (/ r 255)
+							     :green (/ g 255)
+							     :blue (/ b 255)))))))
 (defun transfer-surface-window (win cl-vector-image)
   (let* ((height (xlib:drawable-height win))
 	 (width (xlib:drawable-width win))
@@ -90,41 +111,21 @@
 			:height height
 			:format :z-pixmap)))
     (setf *pixmap-array* pixmap-array)
-    (dotimes (i (* height width))
-      (draw-on-window
-       pixmap-array
-       i
-       (xlib:alloc-color *color-map* (xlib:make-color :red (/ (row-major-aref cl-vector-image (* i 3)) 255.0)
-			:green (/ (row-major-aref cl-vector-image (+ (* i 3) 1)) 255.0)
-			:blue (/ (row-major-aref cl-vector-image (+ (* i 3) 2)) 255.0)))
-       ;; (list
-       ;; 	:red (/ (row-major-aref cl-vector-image (* i 3)) 255.0)
-       ;; 	:green (/ (row-major-aref cl-vector-image (+ (* i 3) 1)) 255.0)
-       ;; 	:blue (/ (row-major-aref cl-vector-image (+ (* i 3) 2)) 255.0))
-       ))
-    (xlib:put-image  win
-		     (xlib:create-gcontext :drawable win)
-		     pixmap-array
-		     :x 0
-		     :y 0
-		     :width (xlib:drawable-width win)
-		     :height (xlib:drawable-height win))
-    (display-force-output)))
-
-
-;; (defun create-window (height width)
-;;   (let ((top-win (create-instance nil opal::window
-;; 		   (:left 500)
-;; 		   (:top 100)
-;; 		   (:double-buffered-p t)
-;; 		   (:width width)
-;; 		   (:height height)
-;; 		   (:title "GARNET Animator Demo")
-;; 		   (:icon-title "Animator"))))
-;; ;;    (let ((agg (create-instance NIL opal:aggregate)))
-;; ;;;      (s-value top-win :aggregate agg)
-;;       (opal:update top-win)
-;;       top-win))
+    (let ((image-z-pixarray (xlib:image-z-pixarray *pixmap-array*)))
+      (dotimes (i (* height width))
+	(setf (row-major-aref image-z-pixarray i)
+	      (get-color (row-major-aref cl-vector-image (* i 3))
+			 (row-major-aref cl-vector-image (+ (* i 3) 1))
+			 (row-major-aref cl-vector-image (+ (* i 3) 2)))))
+      (setf (xlib:image-z-pixarray *pixmap-array*) image-z-pixarray)
+      (xlib:put-image  win
+		       (xlib:create-gcontext :drawable win)
+		       pixmap-array
+		       :x 0
+		       :y 0
+		       :width (xlib:drawable-width win)
+		       :height (xlib:drawable-height win))
+      (display-force-output))))
 
 (defun run-event-loop ()
   (inter:main-event-loop))
