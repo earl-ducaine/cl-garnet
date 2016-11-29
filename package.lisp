@@ -90,6 +90,42 @@
 	   self-old-value
 	   ))
 
+
+(defpackage :jewel
+  (:use :common-lisp :kr :kr-debug)
+  (:export *exposure-event-mask*
+	   *fixed-font-family*
+	   *large-font-point-size*
+	   *large-font-size*
+	   *medium-font-point-size*
+	   *medium-font-size*
+	   *sans-serif-font-family*
+	   *serif-font-family*
+	   *small-font-point-size*
+	   *small-font-size*
+	   *very-large-font-point-size*
+	   *very-large-font-size*
+	   *black*
+	   *color-screen-p*
+	   *function-alist*
+	   *read-write-colormap-cells-p*
+	   *screen-height*
+	   *screen-width*
+	   *update-lock*
+	   *white*
+	   device-info
+	   copy-display-info
+	   default-font-from-file
+	   display-info
+	   display-info-display
+	   display-info-filling-style-gc
+	   display-info-line-style-gc
+	   display-info-root-window
+	   display-info-screen
+	   init-device
+	   make-display-info))
+
+
 (defpackage :gem
   (:use :common-lisp :kr :kr-debug)
   (:export *exposure-event-mask*

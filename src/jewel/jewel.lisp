@@ -12,7 +12,7 @@
 ;;; macros which dispatch on the :methods slot of a window (or font)
 ;;; to find the appropriate method for each device.
 
-(in-package :gem)
+(in-package :jewel)
 
 (defvar *method-names* nil
   "Holds the method names.  This is used to create the Gem interface macros.")
@@ -185,7 +185,7 @@
   (create-schema 'x-device (:root-window *root-window*) (:device-type :x))
   (attach-x-methods x-device)
   (initialize-device-values (get-full-display-name) *root-window*)
-  (s-value device-info :current-root *root-window*)
+  ;; (s-value device-info :current-root *root-window*)
   (s-value device-info :current-device x-device)
   (pushnew x-device (g-value device-info :active-devices))
   (let ((display-info (initialize-device *root-window*)))
