@@ -7,7 +7,7 @@
 ;;  domain.                                                          ;;
 ;;-------------------------------------------------------------------;;
 
-;;; $Id$	
+;;; $Id$
 ;;
 
 (in-package "COMMON-LISP")
@@ -111,7 +111,7 @@ Please consult your lisp's user manual for instructions.~%")
   ;; current value, instead of being reinitialized to the default.  This will
   ;; keep the #k<> and #f() reader macros active in the saved image.
   #+allegro
-  (progn  
+  (progn
     (when verbose (format t "~%Copying readtable..."))
     (copy-readtable *readtable* common-lisp-user::Garnet-Readtable)
     (setf (cdr (assoc '*readtable* excl:*cl-default-special-bindings*))
@@ -148,6 +148,11 @@ Please consult your lisp's user manual for instructions.~%")
 
     (when verbose (format t "collected.~%")))
 
+  (defparameter common-lisp-user::*herald-items* nil)
+  (setf (getf common-lisp-user::*herald-items* :garnet)
+	`("    Garnet Version " ,common-lisp-user::Garnet-Version-Number))
+
+
   (when verbose (format t "Saving image..."))
   #+allegro (setq excl:*read-init-files* t)
   #+allegro (setq excl:*restart-init-function* #'garnet-restart-function)
@@ -162,7 +167,7 @@ Please consult your lisp's user manual for instructions.~%")
     ;; So we append garnet-restart-function to the end of the
     ;; initializations rather than pushing it onto the front.
     (setf ext:*after-save-initializations*
- 	  (append  ext:*after-save-initializations* (list #'garnet-restart-function))) 
+ 	  (append  ext:*after-save-initializations* (list #'garnet-restart-function)))
     (apply #'ext:save-lisp filename extra-args))
 
   #+ccl
@@ -170,14 +175,14 @@ Please consult your lisp's user manual for instructions.~%")
     (pushnew #'garnet-restart-function ccl:*lisp-startup-functions*)
     (apply #'ccl:save-application filename extra-args))
 
-  
+
   #+sbcl
   (progn
 ;;    (pushnew #'garnet-restart-function sb-ext:*init-hooks*)
     (setf sb-ext:*init-hooks*
 	  (append sb-ext:*init-hooks* (list #'garnet-restart-function)))
     (apply #'sb-ext:save-lisp-and-die filename extra-args))
-  
+
   (when verbose (format t "saved.~%"))
 
   #-sbcl ;; SBCL quits automatically.

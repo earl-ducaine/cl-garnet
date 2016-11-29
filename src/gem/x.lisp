@@ -130,7 +130,7 @@
 (defvar *default-x-display*)
 (defvar *default-x-display-number*)
 (defvar *default-x-screen-number*)
-(defvar *default-x-screen*)
+(defparameter *default-x-screen* nil)
 (defvar *default-x-root*)
 (defvar *default-x-colormap*)
 (defvar *screen-width*)
@@ -2128,7 +2128,7 @@ pixmap format in the list of valid formats."
         0)))
 
 
-(defun x-set-device-variables (ignore-me full-display-name)
+(defun x-set-device-variables (full-display-name)
   (setf *default-x-display-number*
         (if full-display-name
             (get-display-number full-display-name)
@@ -2559,7 +2559,7 @@ the X drawable."
   ;; Set up all the GEM variables used to identify display, screen,
   ;; etc. These are needed by discard-all-pending-events (in
   ;; process.lisp), which is called by launch-main-event-loop-process.
-  (set-device-variables root-window full-display-name)
+  (x-set-device-variables full-display-name)
   (gem:set-screen-color-attribute-variables root-window))
 
 ;;; Make the initializer function available to the outside world.

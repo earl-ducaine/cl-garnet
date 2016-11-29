@@ -88,7 +88,7 @@
     (aa:cells-sweep state (aa-misc:image-put-pixel image forground-rgb))
     image))
 
-(defparameter *color-cache* nil)
+(defparameter *color-cache* (make-hash-table))
 
 (defun get-color (r g b)
   (let* ((hash-key (+ (ash r 16) (ash g 8) b))
