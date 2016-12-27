@@ -44,7 +44,7 @@
 ;; 1) perform any needed initialization in X
 ;; 2) map window if needed
 ;; 3) flush buffer
-(defun create-window (&key (x 0) (y 0) width height)
+(defun create-window (width height &key (x 0) (y 0) )
   (unless *system-initialized*
     (init-xlib))
   (let ((app-window
@@ -55,7 +55,8 @@
 			     :height height)))
     (push app-window *app-windows*)
     (xlib:map-window app-window)
-    (xlib:display-force-output *display*)))
+    (xlib:display-force-output *display*)
+    app-window))
 
 
 

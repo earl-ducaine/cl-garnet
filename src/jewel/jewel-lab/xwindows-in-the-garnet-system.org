@@ -1,7 +1,5 @@
 
-
 * X11 -- The good parts
-
   
 ** The X11 model
 
@@ -93,7 +91,6 @@
     various types of functionality and making it much easier to reason
     about the interface as a whole.
 
-** 
 
 * Displays and Screens
 
@@ -106,10 +103,16 @@
   screen.
 
   Display and screen information can be thought of as read only system
-  properties.  Requests for display and screen information
-  implicitly initialize display and screen structure based on the most
+  properties.  Requests for display and screen information implicitly
+  initialize display and screen structure based on the most
   appropriate values.  This initialization need not be performed by
   the client application.
+
+
+  ::TODO--DeleteMe:: 
+  There there are two display and screens.  There are only a couple of
+  addition items that need to be done
+
 
 ** display-bitmap-format
    Like xlib:display-bitmap-format except that, display is assumed so
