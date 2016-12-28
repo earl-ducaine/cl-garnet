@@ -183,3 +183,105 @@
     (bt:with-lock-held (timeout-condition-lock)
       (bt:condition-wait timeout-condition-variable timeout-condition-lock :timeout 5))
     (setf *stop-p* t)))
+
+
+
+
+
+;; processing event:
+;; - Get next scheduled in milliseconds
+;; - Set event interval: list, function (taking one paramiter iteration), number
+;; - event name
+;; - event function to be called
+
+(defclass processing-event ()
+  ((event-interval :initarg :event-interval)
+   (run-index :initform 0)
+   (event-function :initform 0 :initarg :event-function)))
+
+(defmethod get-next-scheduled-interval ((event processing-event))
+  (with-slots (event-interval run-index) event
+    (etypecase event-interval
+      (sequence (first event-interval))
+      (number event-interval)
+      (function (funcall event-interval run-index)))))
+
+(defun run-get-next-scheduled-interval ()
+  (let ((sequence-event
+	 (make-instance 'processing-event
+			:event-interval '(1 2 1 2)
+			:event-function
+			(lambda (self)
+			  (format t "" (slot-value event 'event-function))))
+	  (make-instance 'processing-event
+			:event-interval '(1 2 1 2)
+			:event-function
+			(lambda (self)
+			  (format t "" (slot-value event 'event-function))))
+
+
+
+
+			))
+	(number-event (make-instance 'processing-event))
+	(function-event (make-instance 'processing-event)))
+    (setf (slot-value sequence-event 'event-interval) '(1 2 1 2))
+    (setf (slot-value number-event 'event-interval) 1)
+    (setf (slot-value function-event 'event-interval)
+	  (lambda (index)
+	    index))
+    (dolist (event (list sequence-event number-event function-event))
+      (format t "Next scheduled interval ~s~%"
+	      (get-next-scheduled-interval event)))))
+
+;; Events run on a single thread, without preemption.  On account of
+;; that they need to return before subsequent events can be run.  It
+;; is up to the scheduler to decide what to do if an event can't be
+;; run because it was still waiting for a prior event to finish.  But
+;; in any case, too many long running events will cause some evenents
+;; to not be run when they are required to.
+(defmethod run-event ((event processing-event))
+  (funcall (slot-value event 'event-function) event))
+
+
+(defparameter *event-queue* '())
+
+;;; Next event in milliseconds
+(defparameter *next-event* 0)
+
+(defparameter obj (make-instance
+   'processing-event
+   :event-interval '(1 2 1 2)
+   :event-function
+   (lambda (self)
+     (format t "Printing processing-event: ~s~% " (slot-value self 'run-index)))))
+
+
+(defparameter obj1 (make-instance
+   'processing-event
+   :event-interval '(2 2 3 8)
+   :event-function
+   (lambda (self)
+     (format t "Printing processing-event: ~s~% " (slot-value self 'run-index)))))
+
+(defparameter event-record
+  (list (get-next-scheduled-interval obj) obj))
+
+(defparameter event-record1
+  (list (get-next-scheduled-interval obj1) obj1))
+
+
+(defun run-build-queue ()
+  (setf *event-queue* '())
+  (setf *event-queue* (append  *event-queue* (list event-record)))
+  (setf *event-queue* (append  *event-queue* (list event-record1))))
+
+
+
+(defparameter processing-event
+  (make-instance
+   'processing-event
+   :event-interval '(1 2 1 2)
+   :event-function
+   (lambda (self)
+     (format t "Printing processing-event: ~s~% " (slot-value event 'run-index)))))
