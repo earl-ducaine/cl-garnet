@@ -179,10 +179,10 @@
 
 (defun condition-wait (timeout-condition-variable timeout-condition-lock)
   (iter:iter
-    (iter:until *stop-p*)
-    (bt:with-lock-held (timeout-condition-lock)
-      (bt:condition-wait timeout-condition-variable timeout-condition-lock :timeout 5))
-    (setf *stop-p* t)))
+   (iter:until *stop-p*)
+   (bt:with-lock-held (timeout-condition-lock)
+     (bt:condition-wait timeout-condition-variable timeout-condition-lock :timeout 5))
+   (setf *stop-p* t)))
 
 
 
@@ -206,33 +206,29 @@
       (number event-interval)
       (function (funcall event-interval run-index)))))
 
-(defun run-get-next-scheduled-interval ()
-  (let ((sequence-event
-	 (make-instance 'processing-event
-			:event-interval '(1 2 1 2)
-			:event-function
-			(lambda (self)
-			  (format t "" (slot-value event 'event-function))))
-	  (make-instance 'processing-event
-			:event-interval '(1 2 1 2)
-			:event-function
-			(lambda (self)
-			  (format t "" (slot-value event 'event-function))))
-
-
-
-
-			))
-	(number-event (make-instance 'processing-event))
-	(function-event (make-instance 'processing-event)))
-    (setf (slot-value sequence-event 'event-interval) '(1 2 1 2))
-    (setf (slot-value number-event 'event-interval) 1)
-    (setf (slot-value function-event 'event-interval)
-	  (lambda (index)
-	    index))
-    (dolist (event (list sequence-event number-event function-event))
-      (format t "Next scheduled interval ~s~%"
-	      (get-next-scheduled-interval event)))))
+;; (defun run-get-next-scheduled-interval ()
+;;   (let ((sequence-event
+;; 	 (make-instance 'processing-event
+;; 			:event-interval '(1 2 1 2)
+;; 			:event-function
+;; 			(lambda (self)
+;; 			  (format t "" (slot-value event 'event-function))))
+;; 	  (make-instance 'processing-event
+;; 			 :event-interval '(1 2 1 2)
+;; 			 :event-function
+;; 			 (lambda (self)
+;; 			   (format t "" (slot-value event 'event-function))))
+;; 	  ))
+;;     (number-event (make-instance 'processing-event))
+;;     (function-event (make-instance 'processing-event)))
+;;   (setf (slot-value sequence-event 'event-interval) '(1 2 1 2))
+;;   (setf (slot-value number-event 'event-interval) 1)
+;;   (setf (slot-value function-event 'event-interval)
+;; 	(lambda (index)
+;; 	  index))
+;;   (dolist (event (list sequence-event number-event function-event))
+;;     (format t "Next scheduled interval ~s~%"
+;; 	    (get-next-scheduled-interval event)))))
 
 ;; Events run on a single thread, without preemption.  On account of
 ;; that they need to return before subsequent events can be run.  It
@@ -244,31 +240,73 @@
   (funcall (slot-value event 'event-function) event))
 
 
-(defparameter *event-queue* '())
 
 ;;; Next event in milliseconds
 (defparameter *next-event* 0)
 
-(defparameter obj (make-instance
-   'processing-event
-   :event-interval '(1 2 1 2)
-   :event-function
-   (lambda (self)
-     (format t "Printing processing-event: ~s~% " (slot-value self 'run-index)))))
+(defun build-events ()
+  (list (make-instance
+	 'processing-event
+	 :event-interval 1
+	 :event-function
+	 (lambda (self)
+	   (format t "Printing processing-event1: ~s~% "
+		   (slot-value self 'run-index))))
+	(make-instance
+	 'processing-event
+	 :event-interval 2
+	 :event-function
+	 (lambda (self)
+	   (format t "Printing processing-event2: ~s~% "
+		   (slot-value self 'run-index))))
+	(make-instance
+	 'processing-event
+	 :event-interval 3
+	 :event-function
+	 (lambda (self)
+	   (format t "Printing processing-event3: ~s~% "
+		   (slot-value self 'run-index))))))
+
+(defparameter *events* (build-events))
+
+(defparameter *event-queue* '())
 
 
-(defparameter obj1 (make-instance
-   'processing-event
-   :event-interval '(2 2 3 8)
-   :event-function
-   (lambda (self)
-     (format t "Printing processing-event: ~s~% " (slot-value self 'run-index)))))
+(defun insert-at (list index newelt)
+  (if (= 0 index)
+      (cons newelt list)
+      (push newelt (cdr (nthcdr (- index 1) list))))
+  list)
 
-(defparameter event-record
-  (list (get-next-scheduled-interval obj) obj))
+(defun schedule-event (event)
+  (let ((new-event-queue-item
+	 (list
+	  (slot-value event 'event-interval)
+	  event)))
+    (if *event-queue*
+	(insert-at
+	 *event-queue*
+	 (do ((segment *event-queue* (cdr segment))
+	      (i 0 (+ 1 i)))
+	     ((or (null segment)
+		  (> (car (car segment))
+		     (car new-event-queue-item)))
+	      i))
+	 new-event-queue-item)
+	(push new-event-queue-item *event-queue*))))
 
-(defparameter event-record1
-  (list (get-next-scheduled-interval obj1) obj1))
+
+Scheduling steps
+(
+
+
+
+
+;; (defparameter event-record
+;;   (list (get-next-scheduled-interval obj) obj))
+
+;; (defparameter event-record1
+;;   (list (get-next-scheduled-interval obj1) obj1))
 
 
 (defun run-build-queue ()
@@ -278,10 +316,10 @@
 
 
 
-(defparameter processing-event
-  (make-instance
-   'processing-event
-   :event-interval '(1 2 1 2)
-   :event-function
-   (lambda (self)
-     (format t "Printing processing-event: ~s~% " (slot-value event 'run-index)))))
+;; (defparameter processing-event
+;;   (make-instance
+;;    'processing-event
+;;    :event-interval '(1 2 1 2)
+;;    :event-function
+;;    (lambda (self)
+;;      (format t "Printing processing-event: ~s~% " (slot-value event 'run-index)))))
