@@ -40,6 +40,14 @@
 ;; toplevel windows of the application
 (defparameter *app-windows* nil)
 
+
+;; The WM_DESTROY_WINDOW protocol.  Since I forget it everytimes I
+;; stop programming CLX for a while (meaning that particular bit of
+;; knowlege is practically aways in the forgotten state.)
+;;
+;;
+
+
 ;; simplified model.  All calls
 ;; 1) perform any needed initialization in X
 ;; 2) map window if needed

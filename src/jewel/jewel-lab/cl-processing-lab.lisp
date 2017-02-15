@@ -139,7 +139,7 @@
     (xlib-lab::transfer-surface-window win cl-vector-image)))
 
 ;; draws on existing window
-(defun redraw-triangle-on-window (win frames frame-index)
+(defun draw-frame-on-window (win frame)
   (let* ((height (xlib:drawable-height win))
 	 (width (xlib:drawable-width win))
 	 (cl-vector-image
@@ -147,7 +147,7 @@
 	   height width
 	   #(150 200 255)
 	   #(255 200 150)
-	   (xlib-lab::generate-polygon-sides (nth frame-index frames)))))
+	   (xlib-lab::generate-polygon-sides frame))))
     (xlib-lab::transfer-surface-window win cl-vector-image)))
 
 (defun run-draw-triangle-on-window ()
@@ -244,7 +244,9 @@
     image))
 
 
-(net.tuxee.vectors-doc::test)
+(defun run-tests ()
+  (net.tuxee.vectors-doc::test)
+  )
 
 (defparameter string-path
   (zpb-ttf:with-font-loader
@@ -274,24 +276,17 @@
     (net.tuxee.vectors-doc::show-annotated-path path)))
 
 
+(defun my-generate-annotated-path (path)
+  (let ((annotated-path (paths:path-annotated path)))
+    (net.tuxee.vectors-doc::create-graph annotated-path)))
 
-(defun my-generate-annotated-path (path &rest args &key reference &allow-other-keys)
-  (apply #'paths:create-graph
-	 (when path (paths:path-annotated path))
-	 :subgraphs (mapcar #'path-annotated
-   			    (if (listp reference) reference (list reference)))
-	 :allow-other-keys t
-	 args)
-  )
+(defun generate-rasterized-path (path)
+    (net.tuxee.vectors-doc::create-graph path))
 
-(defun my-show-annotated-path (&rest args)
-;;  (aa-misc:show-image
-  (apply #'my-generate-annotated-path args)
-  )
-;;   ))
+(defun my-show-annotated-path (path)
+  (aa-misc:show-image (generate-rasterized-path path)))
 
-
-(defun run-my-show-annotated-path ()
+(defun generate-swervy-rectangle ()
   (let ((path (paths:create-path :polygon)))
     (paths:path-reset path (paths:make-point 25 15))
     (paths:path-extend path (paths:make-straight-line) (paths:make-point 250 25))
@@ -308,79 +303,8 @@
 							  (paths:make-point 60 90))
 						    (paths:make-point 70 40))
 		       (paths:make-point 55 55))
-    (my-show-annotated-path path)))
+    path))
 
-
-
-
-
-
-
-(defun my-create-graph (graph &key subgraphs (width 800) (height 600) (auto-size t) (scale 1.0)
-                     (background #(255 255 255)))
-
-
-
-(defun run-rasterize-path ()
-  (let ((path (paths:create-path :polygon)))
-    (paths:path-reset path (paths:make-point 25 15))
-    (paths:path-extend path (paths:make-straight-line) (paths:make-point 250 25))
-    (paths:path-extend path (paths:make-bezier-curve (list (paths:make-point 300 40)
-							   (paths:make-point 400 150)
-							   (paths:make-point 200 100)))
-		       (paths:make-point 250 250))
-    (paths:path-extend path (paths:make-arc 100 200 :x-axis-rotation -0.8)
-		       (paths:make-point 25 250))
-    (paths:path-extend path (paths:make-catmull-rom (paths:make-point 10 270)
-						    (list (paths:make-point 10 200)
-							  (paths:make-point 40 160)
-							  (paths:make-point 25 120)
-							  (paths:make-point 60 90))
-						    (paths:make-point 70 40))
-		       (paths:make-point 55 55))
-    (net.tuxee.vectors-doc::create-graph path)))
-
-
-
-(defun run-save-annotated-path ()
-  (let ((string-path
-	 (zpb-ttf:with-font-loader
-	     (loader "~/dev/garnet/cl-garnet/src/jewel/jewel-lab/FreeSerifBoldItalic.ttf")
-	   (paths-ttf:paths-from-string loader "Hello World!"
-					:offset (paths:make-point 200 550)
-					:scale-x 0.3
-					:scale-y -0.3))))
-    (net.tuxee.vectors-doc::save-annotated-path "string-path.pnm"
-						string-path
-						:auto-size :border)))
-
-
-(net.tuxee.vectors-doc::save-annotated-path "string-path.pnm"
-		     string-path
-		     :auto-size :border)
-
-
-
-
-;; (zpb-ttf:with-font-loader (loader "~/dev/garnet/cl-garnet/src/jewel/jewel-lab/FreeSerifBoldItalic.ttf")
-;;   (paths-from-string loader "Hello World!"
-;;                      :offset (make-point 200 550)
-;;                      :scale-x 0.3
-;;                      :scale-y -0.3))
-
-
-(setf net.tuxee.vectors-doc::*target*
-      (merge-pathnames "src/jewel/jewel-lab/image-tests/"
-		       (asdf:system-source-directory :jewel)))
-
-(setf aa-misc::*external-viewer* "display")
-
-(defun show-annotated-path (&rest args)
-  (setf aa-misc::*external-viewer* "display")
-  (aa-misc:show-image (apply #'generate-annotated-path args)))
-
-
-(defparameter *path* nil)
 
 (defun elipse (x-position y-position width height)
   (let* ((rotation 0.2)
@@ -425,7 +349,7 @@
 	(t (/ remaining-time remaining-frames))))
 
 
-(defun run-redraw-triangle-on-window ()
+(defun animate-triangle-on-window ()
   (setf *top-win* (xlib-lab::create-window 400 410))
   (let* ((frame-count 10)
 	 (fps 2)
@@ -437,13 +361,12 @@
 	    total-time
 	    original-time-each-frame)
     (dotimes (i frame-count)
-      (redraw-triangle-on-window *top-win* *frames* i)
+      (draw-frame-on-window *top-win* (nth i *frames*))
       (sleep (compute-duration-next-sleep
 	      (- 360 i)
 	      ;; emulate things getting further behind.
 	      (- (* fps (- 360 i)) i)
 	      original-time-each-frame)))))
-
 
 
 
@@ -472,13 +395,7 @@
 
 
 (defparameter *frame-queue* '())
-
-
-
-
 (defparameter *timeout-queue* '())
-
-
 
 (defun wait (seconds)
   (let ((wait-queue (sb-thread:make-waitqueue))
@@ -493,14 +410,9 @@
 ;;   (let ((wait-mutex ))
 ;;     (bt::condition-wait *wait-queue* wait-mutex :timeout seconds)))
 
-
-
 (defparameter *timeout-condition-variable* (bt:make-condition-variable))
 (defparameter *timeout-condition-lock* (bt:make-lock))
-
 (defparameter *stop-p* nil)
-
-
 (defparameter *timeout-thread* nil)
 
 (defun run-make-thread ()
@@ -512,16 +424,12 @@
 			   *timeout-condition-lock*))
 			:name "timeout-thread")))
 
-
 (defun condition-wait (timeout-condition-variable timeout-condition-lock)
   (iter:iter
     (iter:until *stop-p*)
     (bt:with-lock-held (timeout-condition-lock)
       (bt:condition-wait timeout-condition-variable timeout-condition-lock :timeout 5))
     (setf *stop-p* t)))
-
-
-
 
 
 ;; processing event:
@@ -575,8 +483,6 @@
 (defmethod run-event ((event processing-event))
   (funcall (slot-value event 'event-function) event))
 
-
-
 ;;; Next event in milliseconds
 (defparameter *next-event* 0)
 
@@ -604,9 +510,7 @@
 		   (slot-value self 'run-index))))))
 
 (defparameter *events* (build-events))
-
 (defparameter *event-queue* '())
-
 
 (defun insert-at (list index newelt)
   (if (= 0 index)
@@ -659,3 +563,80 @@
 ;;    :event-function
 ;;    (lambda (self)
 ;;      (format t "Printing processing-event: ~s~% " (slot-value event 'run-index)))))
+
+(defun my-create-graph-no-annotation (graph &key subgraphs
+					      (width 800)
+					      (height 600)
+					      (auto-size t)
+					      (scale 1.0)
+					      (background #(255 255 255)))
+  (when auto-size
+    (let (min-x max-x
+		min-y max-y)
+      (flet ((update-limits (graph)
+               (loop for (color . paths) in graph
+                  do (multiple-value-bind (x1 y1 x2 y2) (paths-bounding-box paths scale)
+                       (when x1
+                         (when (or (null min-x) (< x1 min-x)) (setf min-x x1))
+                         (when (or (null max-x) (> x2 max-x)) (setf max-x x2))
+                         (when (or (null min-y) (< y1 min-y)) (setf min-y y1))
+                         (when (or (null max-y) (> y2 max-y)) (setf max-y y2)))))))
+        (when graph
+          (update-limits graph))
+        (when subgraphs
+          (mapcar #'update-limits subgraphs)))
+      (ecase auto-size
+        (:border
+         (setf width (max 1 (+ (max 0 min-x) max-x))
+               height (max 1 (+ (max 0 min-y) max-y))))
+        (t
+         (setf width (max 1 max-x)
+               height (max 1 max-y))))))
+  (let ((image (aa-misc:make-image width height background)))
+    (when graph
+      (loop for (color . paths) in graph
+         do (rasterize-paths paths image color 1.0 scale)))
+    (dolist (subgraph subgraphs)
+      (loop for (color . paths) in subgraph
+         do (rasterize-paths paths image color 0.3 scale)))
+    image))
+
+(defun run-my-show-annotated-path ()
+  (let ((annotated-path (paths:path-annotated (generate-swervy-rectangle))))
+  (my-show-path annotated-path)))
+
+(defun show-path (path)
+  (aa-misc:show-image (net.tuxee.vectors-doc::create-graph path)))
+
+(defun run-my-show-path ()
+  (let ((path  (generate-swervy-rectangle))
+	(background #(255 255 255)))
+    (multiple-value-bind (x1 y1 x2 y2)
+	(net.tuxee.vectors-doc::paths-bounding-box path 1.0)
+      (let* ((width (- x2 x1))
+	     (height (- y2 y1))
+	     (background-color #(230 245 255)))
+	(let ((image (aa-misc:make-image width height background)))
+          (net.tuxee.vectors-doc::rasterize-paths path image background-color)
+	    (aa-misc:show-image image))))))
+
+(defun run-rasterize-path ()
+  (let ((path (generate-swervy-rectangle)))
+    (net.tuxee.vectors-doc::create-graph path)))
+
+(defun run-save-annotated-path ()
+  (setf net.tuxee.vectors-doc::*target*
+	(merge-pathnames "src/jewel/jewel-lab/image-tests/"
+			 (asdf:system-source-directory :jewel)))
+  (setf aa-misc::*external-viewer* "display")
+  (let ((string-path
+	 (zpb-ttf:with-font-loader
+	     (loader "~/dev/garnet/cl-garnet/src/jewel/jewel-lab/FreeSerifBoldItalic.ttf")
+	   (paths-ttf:paths-from-string loader "Hello World!"
+					:offset (paths:make-point 200 550)
+					:scale-x 0.3
+					:scale-y -0.3))))
+    (net.tuxee.vectors-doc::save-annotated-path "string-path.pnm"
+						string-path
+						:auto-size :border)))
+(defparameter *path* nil)

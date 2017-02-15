@@ -760,19 +760,11 @@ pixmap format in the list of valid formats."
             (if current-win
 		(getf (xlib:drawable-plist current-win) :garnet)))))
 
-#-(and cmu mp)
 (defun x-discard-pending-events (root-window &optional (timeout 1))
   (declare (ignore root-window))
   (xlib:event-case (*default-x-display* :discard-p t :timeout timeout)
     (:destroy-notify () NIL) ; get rid of warnings
     (otherwise () t)))
-
-#+(and cmu mp)
-(defun x-discard-pending-events (root-window &optional (timeout 1))
-  (declare (ignore root-window timeout))
-  (ext:flush-display-events *default-x-display*))
-
-
 
 ;; These two 2x2x2 arrays are used as a correction to a flaw in xlib:draw-arc
 (defparameter *left-adjustment*
