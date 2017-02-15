@@ -9,6 +9,22 @@
     (46 100)
     (100 145)))
 
+(defparameter *triagle-coordinates2*
+  '((100 30)
+    (10 60)
+    (46 100)
+    (100 145)))
+
+
+(defparameter *frames*
+  (let  (result)
+    (reverse (dotimes (i 10)
+	       (push `((100 30)
+		       (,(+ 10 (* i 3)) 40)
+		       (46 100)
+		       (100 145)) result)))
+    result))
+
 
 (defun proc (name lambda-list body)
   (declare (ignore name)
@@ -122,9 +138,329 @@
 	   (xlib-lab::generate-polygon-sides *triagle-coordinates*))))
     (xlib-lab::transfer-surface-window win cl-vector-image)))
 
+;; draws on existing window
+(defun redraw-triangle-on-window (win frames frame-index)
+  (let* ((height (xlib:drawable-height win))
+	 (width (xlib:drawable-width win))
+	 (cl-vector-image
+	  (xlib-lab::vector-create-polygon-on-surface
+	   height width
+	   #(150 200 255)
+	   #(255 200 150)
+	   (xlib-lab::generate-polygon-sides (nth frame-index frames)))))
+    (xlib-lab::transfer-surface-window win cl-vector-image)))
+
 (defun run-draw-triangle-on-window ()
   (setf *top-win* (xlib-lab::create-window 400 410))
   (draw-triangle-on-window *top-win*))
+
+(defun flatten (path)
+  (if (not (listp path))
+      (list path)
+      (loop for item in path nconc (flatten item))))
+
+(defun path-map-line (path function)
+  "Iterate over all the line on the contour of the path."
+  (loop with iterator = (paths:path-iterator-segmented path)
+     for previous-knot = nil then knot
+     for (interpolation knot end-p) = (multiple-value-list (paths:path-iterator-next iterator))
+     while knot
+     when previous-knot
+     do (funcall function previous-knot knot)
+     until end-p
+     finally (when knot
+               (funcall function knot (nth-value 1 (paths:path-iterator-next iterator))))))
+
+(defun paths-bounding-box (paths &optional (scale 1.0))
+  (let ((state (aa-bin:make-state))
+        min-x max-x
+        min-y max-y)
+    (flet ((do-line (p1 p2)
+             (aa-bin:line-f state
+                     (* scale (paths:point-x p1)) (* scale (paths:point-y p1))
+                     (* scale (paths:point-x p2)) (* scale (paths:point-y p2))))
+           (do-cell (x y alpha)
+             (declare (ignore alpha))
+             (cond
+               (min-x
+                (cond
+                  ((< x min-x) (setf min-x x))
+                  ((> x max-x) (setf max-x x)))
+                (cond
+                  ((< y min-y) (setf min-y y))
+                  ((> y max-y) (setf max-y y))))
+               (t
+                (setf min-x x
+                      max-x x
+                      min-y y
+                      max-y y)))))
+      (loop for path in (flatten paths)
+         do (path-map-line path #'do-line))
+      (aa-bin:cells-sweep state #'do-cell (lambda (&rest args) (declare (ignore args)))))
+    (when min-x
+      (values min-x min-y (1+ max-x) (1+ max-y)))))
+
+(defun rasterize-paths (paths image &optional (color #(0 0 0)) (opacity 1.0) (scale 1.0))
+  (let ((state (aa:make-state)))
+    (flet ((do-line (p1 p2)
+             (aa:line-f state
+                     (* scale (paths:point-x p1)) (* scale (paths:point-y p1))
+                     (* scale (paths:point-x p2)) (* scale (paths:point-y p2)))))
+      (loop for path in (flatten paths)
+         do (path-map-line path #'do-line)))
+    (aa-bin:cells-sweep state (aa-misc:image-put-pixel image color opacity))))
+
+(defun create-graph (graph &key subgraphs (width 800) (height 600) (auto-size t) (scale 1.0)
+                     (background #(255 255 255)))
+  (when auto-size
+    (let (min-x max-x
+          min-y max-y)
+      (flet ((update-limits (graph)
+               (loop for (color . paths) in graph
+                  do (multiple-value-bind (x1 y1 x2 y2) (paths-bounding-box paths scale)
+                       (when x1
+                         (when (or (null min-x) (< x1 min-x)) (setf min-x x1))
+                         (when (or (null max-x) (> x2 max-x)) (setf max-x x2))
+                         (when (or (null min-y) (< y1 min-y)) (setf min-y y1))
+                         (when (or (null max-y) (> y2 max-y)) (setf max-y y2)))))))
+        (when graph
+          (update-limits graph))
+        (when subgraphs
+          (mapcar #'update-limits subgraphs)))
+      (ecase auto-size
+        (:border
+         (setf width (max 1 (+ (max 0 min-x) max-x))
+               height (max 1 (+ (max 0 min-y) max-y))))
+        (t
+         (setf width (max 1 max-x)
+               height (max 1 max-y))))))
+  (let ((image (aa-misc:make-image width height background)))
+    (when graph
+      (loop for (color . paths) in graph
+         do (rasterize-paths paths image color 1.0 scale)))
+    (dolist (subgraph subgraphs)
+      (loop for (color . paths) in subgraph
+         do (rasterize-paths paths image color 0.3 scale)))
+    image))
+
+
+(net.tuxee.vectors-doc::test)
+
+(defparameter string-path
+  (zpb-ttf:with-font-loader
+      (loader "~/dev/garnet/cl-garnet/src/jewel/jewel-lab/FreeSerifBoldItalic.ttf")
+    (paths-ttf:paths-from-string loader "Hello World!"
+				 :offset (paths:make-point 200 550)
+				 :scale-x 0.3
+				 :scale-y -0.3)))
+
+(defun run-show-annotated-path ()
+    (let ((path (paths:create-path :polygon)))
+    (paths:path-reset path (paths:make-point 25 15))
+    (paths:path-extend path (paths:make-straight-line) (paths:make-point 250 25))
+    (paths:path-extend path (paths:make-bezier-curve (list (paths:make-point 300 40)
+                                               (paths:make-point 400 150)
+                                               (paths:make-point 200 100)))
+                 (paths:make-point 250 250))
+    (paths:path-extend path (paths:make-arc 100 200 :x-axis-rotation -0.8)
+                 (paths:make-point 25 250))
+    (paths:path-extend path (paths:make-catmull-rom (paths:make-point 10 270)
+                                        (list (paths:make-point 10 200)
+                                              (paths:make-point 40 160)
+                                              (paths:make-point 25 120)
+                                              (paths:make-point 60 90))
+                                        (paths:make-point 70 40))
+                 (paths:make-point 55 55))
+    (net.tuxee.vectors-doc::show-annotated-path path)))
+
+
+
+(defun my-generate-annotated-path (path &rest args &key reference &allow-other-keys)
+  (apply #'paths:create-graph
+	 (when path (paths:path-annotated path))
+	 :subgraphs (mapcar #'path-annotated
+   			    (if (listp reference) reference (list reference)))
+	 :allow-other-keys t
+	 args)
+  )
+
+(defun my-show-annotated-path (&rest args)
+;;  (aa-misc:show-image
+  (apply #'my-generate-annotated-path args)
+  )
+;;   ))
+
+
+(defun run-my-show-annotated-path ()
+  (let ((path (paths:create-path :polygon)))
+    (paths:path-reset path (paths:make-point 25 15))
+    (paths:path-extend path (paths:make-straight-line) (paths:make-point 250 25))
+    (paths:path-extend path (paths:make-bezier-curve (list (paths:make-point 300 40)
+							   (paths:make-point 400 150)
+							   (paths:make-point 200 100)))
+		       (paths:make-point 250 250))
+    (paths:path-extend path (paths:make-arc 100 200 :x-axis-rotation -0.8)
+		       (paths:make-point 25 250))
+    (paths:path-extend path (paths:make-catmull-rom (paths:make-point 10 270)
+						    (list (paths:make-point 10 200)
+							  (paths:make-point 40 160)
+							  (paths:make-point 25 120)
+							  (paths:make-point 60 90))
+						    (paths:make-point 70 40))
+		       (paths:make-point 55 55))
+    (my-show-annotated-path path)))
+
+
+
+
+
+
+
+(defun my-create-graph (graph &key subgraphs (width 800) (height 600) (auto-size t) (scale 1.0)
+                     (background #(255 255 255)))
+
+
+
+(defun run-rasterize-path ()
+  (let ((path (paths:create-path :polygon)))
+    (paths:path-reset path (paths:make-point 25 15))
+    (paths:path-extend path (paths:make-straight-line) (paths:make-point 250 25))
+    (paths:path-extend path (paths:make-bezier-curve (list (paths:make-point 300 40)
+							   (paths:make-point 400 150)
+							   (paths:make-point 200 100)))
+		       (paths:make-point 250 250))
+    (paths:path-extend path (paths:make-arc 100 200 :x-axis-rotation -0.8)
+		       (paths:make-point 25 250))
+    (paths:path-extend path (paths:make-catmull-rom (paths:make-point 10 270)
+						    (list (paths:make-point 10 200)
+							  (paths:make-point 40 160)
+							  (paths:make-point 25 120)
+							  (paths:make-point 60 90))
+						    (paths:make-point 70 40))
+		       (paths:make-point 55 55))
+    (net.tuxee.vectors-doc::create-graph path)))
+
+
+
+(defun run-save-annotated-path ()
+  (let ((string-path
+	 (zpb-ttf:with-font-loader
+	     (loader "~/dev/garnet/cl-garnet/src/jewel/jewel-lab/FreeSerifBoldItalic.ttf")
+	   (paths-ttf:paths-from-string loader "Hello World!"
+					:offset (paths:make-point 200 550)
+					:scale-x 0.3
+					:scale-y -0.3))))
+    (net.tuxee.vectors-doc::save-annotated-path "string-path.pnm"
+						string-path
+						:auto-size :border)))
+
+
+(net.tuxee.vectors-doc::save-annotated-path "string-path.pnm"
+		     string-path
+		     :auto-size :border)
+
+
+
+
+;; (zpb-ttf:with-font-loader (loader "~/dev/garnet/cl-garnet/src/jewel/jewel-lab/FreeSerifBoldItalic.ttf")
+;;   (paths-from-string loader "Hello World!"
+;;                      :offset (make-point 200 550)
+;;                      :scale-x 0.3
+;;                      :scale-y -0.3))
+
+
+(setf net.tuxee.vectors-doc::*target*
+      (merge-pathnames "src/jewel/jewel-lab/image-tests/"
+		       (asdf:system-source-directory :jewel)))
+
+(setf aa-misc::*external-viewer* "display")
+
+(defun show-annotated-path (&rest args)
+  (setf aa-misc::*external-viewer* "display")
+  (aa-misc:show-image (apply #'generate-annotated-path args)))
+
+
+(defparameter *path* nil)
+
+(defun elipse (x-position y-position width height)
+  (let* ((rotation 0.2)
+	 (path (paths:make-circle-path x-position y-position width height rotation)))
+    (setf *path* path)))
+  ;;   (format t "path: ~S~%" path)))
+  ;; (show-annotated-path path)))
+
+
+(defun run-elipse ()
+  (elipse 100 50 90 40))
+
+
+
+
+
+
+;; The idea is to compute next frame based on the 'wall' clock.  A
+;; hacky strategy to smooth out jitter is to:
+;;
+;; 1) always show all the frames with some potentially human
+;;    detectible interval between them.
+;; 2) catch up if frames are taking more time than scheduled.
+;;
+
+
+;;internal-time-units-per-second
+;; (get-internal-real-time)
+
+(defun compute-duration-next-sleep (remaining-frames remaining-time original-time-each-frame)
+  (cond ((< original-time-each-frame  (/ remaining-time remaining-frames))
+	 ;; reduce the time by 20%
+	 (* (/ remaining-time remaining-frames) (/ 4 5)))
+	;; other wise schedule remaining time fairly between frames.
+	;; Don't worry if original-time-each-fram is greater than this
+	;; number.  It just means that in a previous iteration we over
+	;; compensated when we reduced by 20%.  The only time
+	;; difference would be large and problematic are cases where
+	;; there are a low number of frames with a relatively high
+	;; fps.  A case we don't care about from a human perception
+	;; perspective.
+	(t (/ remaining-time remaining-frames))))
+
+
+(defun run-redraw-triangle-on-window ()
+  (setf *top-win* (xlib-lab::create-window 400 410))
+  (let* ((frame-count 10)
+	 (fps 2)
+	 (total-time (/ frame-count fps))
+	 (original-time-each-frame (/ 1 fps)))
+    (format t "frame-count: ~S; fps ~S;  total-time ~S;  original-time-each-frame ~S"
+	    frame-count
+	    fps
+	    total-time
+	    original-time-each-frame)
+    (dotimes (i frame-count)
+      (redraw-triangle-on-window *top-win* *frames* i)
+      (sleep (compute-duration-next-sleep
+	      (- 360 i)
+	      ;; emulate things getting further behind.
+	      (- (* fps (- 360 i)) i)
+	      original-time-each-frame)))))
+
+
+
+
+
+;; (setf *top-win* (xlib-lab::create-window 400 410))
+;; (let ((frames (list *triagle-coordinates* *triagle-coordinates2*)))
+;;   (redraw-triangle-on-window *top-win* frames 0)
+;;   (sleep 3)
+;;   (redraw-triangle-on-window *top-win* frames 1)))
+
+;; (defun run-draw ()
+;;   ;; draw object twice with pause
+;;   ;; *triagle-coordinates2*
+;;   (dotimes (i 2)
+;;     redraw-triangle-on-window (*top-win* frame-index)
+;;     ))
+
 
 
 
@@ -179,10 +515,10 @@
 
 (defun condition-wait (timeout-condition-variable timeout-condition-lock)
   (iter:iter
-   (iter:until *stop-p*)
-   (bt:with-lock-held (timeout-condition-lock)
-     (bt:condition-wait timeout-condition-variable timeout-condition-lock :timeout 5))
-   (setf *stop-p* t)))
+    (iter:until *stop-p*)
+    (bt:with-lock-held (timeout-condition-lock)
+      (bt:condition-wait timeout-condition-variable timeout-condition-lock :timeout 5))
+    (setf *stop-p* t)))
 
 
 
@@ -296,8 +632,8 @@
 	(push new-event-queue-item *event-queue*))))
 
 
-Scheduling steps
-(
+;; Scheduling steps
+;; (
 
 
 
