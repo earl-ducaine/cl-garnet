@@ -1,4 +1,81 @@
 
+* Understanding X Windows
+  Objects of the X Windo
+
+** Objects of the X Window system
+
+*** Objects, relaionships and operations
+    Objects of the X Window system, their relationships and operations
+    that can be performed on them.  Like mathmatics, it's important to
+    draw a distinction between descriptions of concepts we use to
+    fascilitate understanding and the formal definition of objects.
+    The objects of an API are most rigorously defined by the code used
+    to implement them.  More abstractly, like the axioms of a
+    mathmatical system, they are statements about a system that are
+    taken to be true.  
+
+    Within the domain of describing a practical API it's useful to
+    adopt the familiar languange of objects, operations and
+    relationships.  But, it should be noted that these are arbitrary
+    concepts.  Using Euclidian geometry as an example, and taking
+    Hilberts formulation of its axioms, we have:
+
+    - For every two points A and B there exists a line a that contains
+      them both.
+
+    - There exist at least two points on a line
+
+    - For every three points A, B, C not situated on the same line
+      there exists a plane α that contains all of them
+
+    But this could be (clumsily) re-articulated
+
+    - For every containership that has been distincly pointed twice,
+      there exists a way to line it as well.
+
+    - For every containership that has been lined, there is a way to
+      distincly point it twice.
+
+    - If a containership M cannot be simultaniously and distincly
+      pointed in the manner of A, B, and C, while also being lined by
+      some l, then that containership M can still be planed in the manner
+      of α. 
+
+    Note, that what I've done above isn't mathmatical (nor is it
+    grammatical), it's just substiuding different words.  Mathmatics
+    does have objects and types and relations, but depending on the
+    context these can be intechanged when it's convenient to think of
+    them as different things.  We should bear in mind that even though
+    these things are, by convention, more distinct in APIs, it may be
+    to our advantage to step out of the connenional notion of the
+    graphical objects likes points and lines, being the 'things' and
+    relationships being 'pointers' and operations being methods.
+
+*** X Windows objects: displays, screens, windows
+    The actual reason for me starting this document is to clarify, and
+    hopefully cement, in my own mind, what is the most confusing
+    aspect of the X Windows system the high level container objects.
+    A naive approach to creating a gui API from scratch might will
+    start off with the highest level container object being the
+    Window.  An application which presents a gui to the user in a
+    modern gui environment would request one or more windows and fill
+    them with widgets for the user to interact with.  The programmer's
+    main job would be defining those widgets and hooking them up to
+    code snippets that perform various activities when the widets are
+    manipulated in a certain way.  
+
+    This, in fact, is not too far off from how many gui toolkits work.
+    However, X Windows works on a much lower level, and a conciderable
+    amount of programming or at least understanding an planning needs
+    to happen before you create your first top level window.  X
+    Windows defines three types of objects whose everyday meaning is
+    that of an areas upon which something can be display: display,
+    screen, window.
+
+**** Display
+
+     The display can be thought of as the user input and graphical
+     output devices of a workstation.
 
 
 * Windows management funcions 
