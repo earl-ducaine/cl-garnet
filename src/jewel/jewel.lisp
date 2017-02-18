@@ -1,11 +1,10 @@
 ;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: GEM; Base: 10 -*-
-;;-------------------------------------------------------------------;;
-;;          The Garnet User Interface Development Environment.       ;;
-;;-------------------------------------------------------------------;;
-;;  This code was written as part of the Garnet project at           ;;
-;;  Carnegie Mellon University, and has been placed in the public    ;;
-;;  domain.                                                          ;;
-;;-------------------------------------------------------------------;;
+
+;;          The Garnet User Interface Development Environment.
+
+;;  This code was written as part of the Garnet project at
+;;  Carnegie Mellon University, and has been placed in the public
+;;  domain.
 
 ;;; This file defines gem-method, which is used to declare, create,
 ;;; and export the generic Gem methods.  Methods are implemented as

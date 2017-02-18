@@ -250,7 +250,8 @@
 
 (defparameter string-path
   (zpb-ttf:with-font-loader
-      (loader "~/dev/garnet/cl-garnet/src/jewel/jewel-lab/FreeSerifBoldItalic.ttf")
+      (loader (merge-pathnames "src/jewel/jewel-lab/FreeSerifBoldItalic.ttf"
+			 (asdf:system-source-directory :jewel)))
     (paths-ttf:paths-from-string loader "Hello World!"
 				 :offset (paths:make-point 200 550)
 				 :scale-x 0.3
@@ -349,17 +350,17 @@
 	(t (/ remaining-time remaining-frames))))
 
 
-(defun animate-triangle-on-window ()
+(defun run-animate-triangle-on-window ()
   (setf *top-win* (xlib-lab::create-window 400 410))
   (let* ((frame-count 10)
 	 (fps 2)
 	 (total-time (/ frame-count fps))
 	 (original-time-each-frame (/ 1 fps)))
-    (format t "frame-count: ~S; fps ~S;  total-time ~S;  original-time-each-frame ~S"
-	    frame-count
-	    fps
-	    total-time
-	    original-time-each-frame)
+    ;; (format t "frame-count: ~S; fps ~S;  total-time ~S;  original-time-each-frame ~S"
+    ;; 	    frame-count
+    ;; 	    fps
+    ;; 	    total-time
+    ;; 	    original-time-each-frame)
     (dotimes (i frame-count)
       (draw-frame-on-window *top-win* (nth i *frames*))
       (sleep (compute-duration-next-sleep
@@ -631,7 +632,8 @@
   (setf aa-misc::*external-viewer* "display")
   (let ((string-path
 	 (zpb-ttf:with-font-loader
-	     (loader "~/dev/garnet/cl-garnet/src/jewel/jewel-lab/FreeSerifBoldItalic.ttf")
+	     (loader (merge-pathnames "src/jewel/jewel-lab/FreeSerifBoldItalic.ttf"
+			 (asdf:system-source-directory :jewel)))
 	   (paths-ttf:paths-from-string loader "Hello World!"
 					:offset (paths:make-point 200 550)
 					:scale-x 0.3
