@@ -77,6 +77,43 @@
     envirnment that is distributed, highly flexible and of adequate
     performance.
 
+**** The Programmed Development Environment
+
+     One of of the great things about Lisp is the degree to which your
+     development environment can be programming.  In effect you build
+     your development environment as you build your application.  The
+     knowlege you gain from programming your development tools expands
+     your understanding of the problem domain in which your
+     applicaition dwells and conversely your application gives your
+     development tools real concrete use case that they can be applied
+     to immediately.  With respect to CLX, we will be interacting with
+     a system that's both complex, sometimes not well document, with
+     some parts obsolete, with a dearth of best practices, ocassional
+     bit rot, and very complex network interactions.  In addition
+     we'll have to cope with threading issues and some situations in
+     which the repl is not quite invisible with respect to the
+     behavior of the system.  
+
+     Our development environment, therefore, must ease our access to
+     the CLX API and provide insight into what's happening behind the
+     scenes. So, firstly we'd like a top level function that will give
+     us and entry point to the scafolding we're going to create.  That
+     object is the special: 
+
+     #+BEGIN_SRC lisp  :tangle main.c
+       (defpackage :pde-clx 
+         (:documentation "package for all our CLX 'programmed develop environment' tools")
+         (:use :cl))
+
+       (in-package :pde-clx)
+
+       (defparameter *pde-clx* (make-instance 'pde-clx)
+         "Entrypoint to the development environment.  For a list of functions
+          evaluate this special variable in the repl.")
+     #+END_SRC
+
+     
+
 **** The Display
      In the days of mini-computer, when X Windows was developed, one
      typical configuration for graphic workstations was a shared
@@ -108,26 +145,6 @@
 
        (get-default-display)
      #+END_SRC
-
-   #+BEGIN_SRC c  :tangle app_main.h
-     /* -*- mode: c;  -*-
-        file: app_main.h
-     */
-
-     #ifndef __APP_MAIN_H__
-     #define __APP_MAIN_H__
-
-     #include <ecl/ecl.h>
-
-     int app_main();
-
-     #endif /* APP_MAIN_H */
-   #+END_SRC
-
-
-
-
-
 
 
 

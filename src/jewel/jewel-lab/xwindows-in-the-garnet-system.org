@@ -10,11 +10,11 @@
    environment that included such things as mice, keyboards, monitors,
    processes, etc.  As each system evolved, the tendancy was for the
    graphic system to become more and more general as it needed to
-   accomidate additional hardware conficgurations, and program use
+   accomidate additional hardware configurations, and program use
    cases.
 
 
-   The X11 system Itself was based on the W window system, a window
+   The X11 system itself was based on the W window system, a window
    system for the V operating system, a Unix-like micro-code based
    system that ran on a wide set of hetrogeneounos mini-computer-based
    workstations. 
