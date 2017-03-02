@@ -41,11 +41,14 @@
 
 
 
+
+
 (ql:quickload :closer-mop)
 
 (defpackage :pde-clx
   (:documentation "package for all our CLX 'programmed develop environment' tools")
-  (:use :cl :closer-mop))
+  (:use :cl :closer-mop)
+  (:shadowing-import-from :closer-mop :defmethod :defgeneric :standard-generic-function))
 
 (in-package :pde-clx)
 
@@ -57,18 +60,49 @@
   "Entrypoint to the development environment.  For a list of functions
           evaluate this special variable in the repl.")
 
-
-
+(defun create-anonymous-class ()
+  (make-instance 'standard-class
+		 :direct-superclasses (list (find-class 'plane))
+		 :direct-slots `((:name x
+					:initform 0
+					:initfunction (lambda () 0)
+					:initargs (:x)
+					:readers (position-x)
+					:writers ((setf position-x)))
+				 (:name y
+					:initform 0
+					:initfunction (lambda () 0)
+					:initargs (:y)
+					:readers (position-y)
+					:writers ((setf position-y))))
+		 :direct-default-initargs '()))
 ;; some examples
 ;; fare-mop
 
 (defclass test-class ()
     (slot1 slot2 slot3))
 
-(defun run-compute-slots ()
-    (compute-slots (find-class  'test-class))
-    (class-of object))
 
+(defparameter clx-app
+  (let ((class (make-instance 'standard-class)))
+    (finalize-inheritance class)
+    class))
+
+
+(defun run-ensure-class ()
+  (ensure-class 'display
+		:direct-slots (list (list :name 'altitude
+					  :initform '0
+					  :initfunction (lambda () 0)))
+		:direct-default-initargs '()))
+
+
+
+
+(defun run-compute-slots ()
+    (format t "~s~%" (compute-slots (find-class  'test-class)))
+;;;    (class-of object
+    )
 
 (defun run-add-direct-method ()
   ;; tbd
@@ -77,17 +111,33 @@
 (defun run-allocate-instance ()
   (allocate-instance (find-class 'test-class)))
 
-(defun run-readers-for-class-meta-objects ()
-  (let ((class (find-class 'test-class))
-	(class-meta-object-readers '(class-default-initargs
-				     class-direct-default-init-args
+
+(defun compute-function (unqualified-symbol-name)
+  (symbol-function (find-symbol (symbol-name unqualified-symbol-name))))
+
+(defun run-finalize-class ()
+  (readers-for-class-meta-objects clx-app))
+
+(defun readers-for-class-meta-objects (class)
+  (let ((class-meta-object-readers '(
+				     class-default-initargs
+				     class-direct-default-initargs
 				     class-direct-slots
 				     class-direct-subclasses
 				     class-direct-superclasses
 				     class-finalized-p
 				     class-name
-				     class-precedence-list
-				     class-prototype
-				     class-slots)))
+;;				     class-precedence-list
+;;				     class-prototype
+;;				     class-slots
+				     )))
     (dolist (f class-meta-object-readers)
-      (funcall (function f)
+      (format t "Property ~s: ~s~%" f (funcall (compute-function f) class)))))
+
+
+(defun run-readers-for-class-meta-objects ()
+  (readers-for-class-meta-objects (find-class 'test-class)))
+
+
+
+	      ;; (funcall (function f) class)))))
