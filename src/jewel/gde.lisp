@@ -1,6 +1,4 @@
 
-
-
 ;; MOP classes
 ;; standard-object
 ;; funcallable-standard-object
@@ -34,11 +32,6 @@
 ;; slot-boundp-using-class
 ;; slot-makeunbound-using-class
 ;; slot value-using-call
-
-
-
-
-
 
 
 
@@ -83,11 +76,85 @@
     (slot1 slot2 slot3))
 
 
-(defparameter clx-app
-  (let ((class (make-instance 'standard-class)))
+
+
+;; Creating a custom class not based on standard class
+
+
+class-direct-default-initargs
+class-direct-slots
+class-direct-superclasses
+documentation
+class-name
+
+
+;; Create a standard class object that generates objects with a
+;; superclass of class
+(defparameter base-class-metaobject-class
+  (make-instance 'standard-class
+		 :direct-default-initargs '()
+		 :direct-slots '()
+		 :direct-superclasses (list (find-class 'class))
+		 :documentation "This class is not based on standard class"))
+
+;; Create an object with a superclass of class.  Note, however this
+;; class object is not instantiable, because make-instance has not
+;; been specialized to handle it, i.e. base-class-metaobject-class is
+;; of type standard-class. But base-class of (anonymous) type
+;; base-class-metaobject-class which has no specializers.
+
+(defparameter base-class
+  (make-instance base-class-metaobject-class))
+
+(defun name-anonymous-class (class name)
+  (setf (class-name class) name)
+  (setf (find-class name) class))
+
+(defun run-name-anonymous-class ()
+  (name-anonymous-class
+   base-class-metaobject-class
+   'base-class-metaobject-class))
+
+(defmethod make-instance ((c base-class-metaobject-class) &rest initargs)
+  (declare (ignore initargs))
+  (make-instance 'standard-object))
+
+;; create an objects which inherits from class
+
+(make-instance (make-instance 'class))
+
+
+(defclass display-metaclass ()
+    ((introspection-methods :initform '())
+     clx-classes))
+
+
+(defparameter display-class
+  (let ((class (make-instance
+		'standard-class)))
+    (finalize-inheritance class)
+    (make-instance
+     'standard-method :function (lambda () ))
+    class))
+
+
+
+
+
+
+(defparameter clx-app-class
+  (let ((class (make-instance
+		'standard-class
+		:direct-slots '((:name display-class)
+				(:name screen-class)
+				(:name window-class)))))
+
     (finalize-inheritance class)
     class))
 
+
+(defun mop-add-slot (class)
+  (
 
 (defun run-ensure-class ()
   (ensure-class 'display
