@@ -153,8 +153,19 @@ class-name
     class))
 
 
-(defun mop-add-slot (class)
-  (
+;; (defun mop-add-slot (class)
+;;   (
+
+(def-js-class 'my-function-class (type)
+		    (setf (~> this type) type)
+		    (setf (~> this color) "red")
+		    (setf (~> this get-info)
+			  (lambda ()
+			    (concatenate 'string
+					 (~> this color) ' '
+					 (~> this type) ' apple'))))
+
+
 
 (defun run-ensure-class ()
   (ensure-class 'display
