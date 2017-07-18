@@ -29,10 +29,10 @@
 ;;;    "x"
     ))
 
-(unless (get :garnet-modules :gem)
-  (dolist (file Garnet-Gem-Files)
-    (load (merge-pathnames file Garnet-Gem-PathName)
-	  :verbose T)))
+;; (unless (get :garnet-modules :gem)
+;;   (dolist (file Garnet-Gem-Files)
+;;     (load (merge-pathnames file Garnet-Gem-PathName)
+;; 	  :verbose T)))
 
 (setf (get :garnet-modules :gem) t)
 (format t "...Done Gem.~%")
