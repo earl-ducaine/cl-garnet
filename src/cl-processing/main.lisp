@@ -26,17 +26,6 @@
 	   (:blue ,b)
 	   (:red ,r))))
 
-
-;; (create-instance 'line opal:polyline
-  ;;   (:point-list '(10 50 50 10 90 10 130 50))
-  ;;   (:filling-style opal:light-gray-fill)
-  ;;   (:line-style opal:line-4)))
-  
-
-    ;; (setf *default-size-and-posision*
-
-    ;; )
-
 (defparameter *default-size-and-posision*
   '(:left 10 :top 10 :width 400 :height 300))
 (defparameter *current-size-and-posision* *default-size-and-posision*)
