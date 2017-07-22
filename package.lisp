@@ -1,3 +1,8 @@
+
+
+
+
+
 (defpackage :garnet-utils
   (:use :common-lisp)
   (:nicknames :gu)
@@ -87,9 +92,11 @@
 	   get-slot-declarations
 	   g-formula-value
 	   s-formula-value
-	   self-old-value
-	   ))
+	   self-old-value))
 
+(defpackage :cl-processing
+  (:use :common-lisp :kr)
+  (:export))
 
 (defpackage :jewel
   (:use :common-lisp :kr :kr-debug)

@@ -1409,7 +1409,7 @@ in (create-schema ~S).~%   Ignoring the :NAME-PREFIX.~%"
   `(create-schema ,name ,@slots))
 
 
-;; CREATE-INSTANCE
+;; create-instance
 ;;
 ;; I am not sure the following enhancement will work because of the
 ;; quote around the instance name... [2005/12/20:rpg]

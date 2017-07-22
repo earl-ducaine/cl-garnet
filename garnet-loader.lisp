@@ -81,35 +81,36 @@
 ;;   (proclaim default-garnet-proclaim))
 
 
-;;  (defvar load-inter-p T)
-;;  (defvar load-aggregadgets-p T)
 ;;  (defvar load-aggregraphs-p NIL)
-  (defvar load-debug-p #+garnet-debug T #-garnet-debug NIL)
-  (defvar load-gadgets-p NIL)
-  (defvar load-demos-p NIL)
-  (defvar load-protected-eval-p T)
-  (defvar load-lapidary-p t)
-  (defvar load-gilt-p NIL)
-  (defvar load-c32-p NIL)
+;;   (defvar load-debug-p #+garnet-debug T #-garnet-debug NIL)
+;;  (defvar load-gadgets-p NIL)
+;;   (defvar load-demos-p NIL)
+;;   (defvar load-protected-eval-p T)
+;;  (defvar load-lapidary-p t)
+;;  (defvar load-gilt-p NIL)
+;;   (defvar load-c32-p NIL)
 
 (defvar Your-Garnet-Pathname
-  ;; Ansi compliant way to find the build directory.
-  ;; If this doesn't work for some reason, just hard-code the pathname
-  ;; here.
-  (namestring
-   (make-pathname
-    :directory
-    ;; Hard coded directory path example.
-    ;; '(:ABSOLUTE "usr" "local" "lib" "lisp" "garnet")
-    ;; Let system determine directory path.
-    (pathname-directory *garnet-load-truename*)))
-  "Root of the Garnet directory tree.")
+  (asdf:system-source-directory :xoanon.gui.garnet)
+  "Root of the Garnet source directory tree.")
+
+;; ;; Ansi compliant way to find the build directory.
+;; ;; If this doesn't work for some reason, just hard-code the pathname
+;; ;; here.
+;; (namestring
+;;  (make-pathname
+;;   :directory
+;;   ;; Hard coded directory path example.
+;;   ;; '(:ABSOLUTE "usr" "local" "lib" "lisp" "garnet")
+;;   ;; Let system determine directory path.
+;;   (pathname-directory *garnet-load-truename*)))
+;; "Root of the Garnet directory tree.")
 
 
 (defun append-directory (directory sub-directory)
   "This is a little utility for accessing the subdirectory of a
-directory. It assumes that 'sub-directory' is directly under
-'directory'."
+   directory. It assumes that 'sub-directory' is directly under
+   'directory'."
   (let ((dir (pathname-directory directory))
         (subdir (if (listp sub-directory)
                     sub-directory
@@ -117,28 +118,21 @@ directory. It assumes that 'sub-directory' is directly under
     (make-pathname :directory (append dir subdir))))
 
 
-(defun Get-Garnet-Binary-Pathname ()
+(defun get-garnet-binary-pathname ()
   (let ((directory-name "src"))
-    (append-directory Your-Garnet-Pathname directory-name)))
+    (append-directory your-garnet-pathname directory-name)))
 
 
-(defvar Garnet-Src-Pathname (append-directory  Your-Garnet-Pathname "src"))
-(defvar Garnet-Lib-Pathname (append-directory Your-Garnet-Pathname "lib"))
-(defvar Garnet-Binary-Pathname (Get-Garnet-Binary-Pathname))
+(defvar garnet-src-pathname (append-directory  your-garnet-pathname "src"))
+(defvar garnet-lib-pathname (append-directory your-garnet-pathname "lib"))
+(defvar garnet-binary-pathname (get-garnet-binary-pathname))
 
-;;; Pathnames.
-;; (defvar Garnet-Utils-Src
-;;   (append-directory Garnet-Src-Pathname "utils"))
-;; (defvar Garnet-Utils-Pathname
-;;   (append-directory Garnet-Binary-Pathname "utils"))
-;; (defvar Garnet-KR-Src
-;;   (append-directory Garnet-Src-Pathname "kr"))
 ;; (defvar Garnet-KR-Pathname
 ;;   (append-directory Garnet-Binary-Pathname "kr"))
-(defvar Garnet-Gworld-Src
-  (append-directory Garnet-Src-Pathname "gworld"))
-(defvar Garnet-Gworld-Pathname
-  (append-directory Garnet-Binary-Pathname "gworld"))
+;; (defvar Garnet-Gworld-Src
+;;   (append-directory Garnet-Src-Pathname "gworld"))
+;; (defvar Garnet-Gworld-Pathname
+;;   (append-directory Garnet-Binary-Pathname "gworld"))
 (defvar Garnet-Gem-Src
   (append-directory Garnet-Src-Pathname "gem"))
 (defvar Garnet-Gem-Pathname
@@ -231,13 +225,13 @@ directory. It assumes that 'sub-directory' is directly under
 (defparameter garnet-protected-eval-Loader (merge-pathnames "protected-eval-loader" Garnet-Protected-Eval-PathName))
 
 ;; Packages to load and the locations of those packages.
-(defparameter Garnet-Load-Alist
+(defparameter garnet-load-alist
 ;;; Target directories (binarys)
   `(("gg"                 . ,Garnet-Gadgets-PathName)
     ("gadgets"            . ,Garnet-Gadgets-PathName)
-;;    ("utils"              . ,Garnet-Utils-PathName)
-;;    ("kr"                 . ,Garnet-KR-PathName)
-    ("gworld"             . ,Garnet-Gworld-Pathname)
+    ;;    ("utils"              . ,Garnet-Utils-PathName)
+    ;;    ("kr"                 . ,Garnet-KR-PathName)
+    ;;    ("gworld"             . ,Garnet-Gworld-Pathname)
     ("gem"                . ,Garnet-Gem-Pathname)
     ("opal"               . ,Garnet-Opal-Pathname)
     ("truetype"           . ,Garnet-Truetype-PathName)
@@ -257,7 +251,7 @@ directory. It assumes that 'sub-directory' is directly under
 ;;; Source directories.
 ;;;    ("utils-src"          . ,Garnet-Utils-Src)
     ;; ("kr-src"             . ,Garnet-KR-Src)
-    ("gworld-src"         . ,Garnet-Gworld-Src)
+    ;;    ("gworld-src"         . ,Garnet-Gworld-Src)
     ("gem-src"            . ,Garnet-Gem-Src)
     ("opal-src"           . ,Garnet-Opal-Src)
     #-(and)
@@ -332,17 +326,14 @@ Otherwise just load the filename as given."
   "Creates the directory if it does not exist."
   (ensure-directories-exist dirname :verbose t))
 
-(defun Garnet-Compile (filename)
+(defun garnet-compile (filename)
   "Compile a single Garnet file, finding the source in the Garnet
-source tree and installing the result in the corresponding directory
-in the binary tree.
-
-Example:
-    (garnet-compile \"gadgets:gauge\")
-    Takes the source file from Garnet-Gadgets-Src, compiles it, and
-    saves the binary file in Garnet-Gadgets-Pathname (the binary
-    gadgets directory)."
-
+   source tree and installing the result in the corresponding
+   directory in the binary tree.
+   Example:
+   (garnet-compile \"gadgets:gauge\") akes the source file from
+   Garnet-Gadgets-Src, compiles it, and aves the binary file in
+   Garnet-Gadgets-Pathname (the binary adgets directory)."
   (let* ((pos (position #\: filename))
          (module (if pos
                      (subseq filename 0 pos)
@@ -372,33 +363,21 @@ Example:
                                       :type (or type "lisp")
                                       :device (pathname-device module-src-directory)
                                       :directory (pathname-directory module-src-directory)))
-         #+cmu
-         (err-pathname (make-pathname :name name
-                                      :type (or type "err")
-                                      :device (pathname-device module-src-directory)
-                                      :directory (pathname-directory module-src-directory)))
-         (bin-pathname (make-pathname :name name
-                                      :type *compiler-extension*
-                                      :device (pathname-device module-bin-directory)
-                                      :directory (pathname-directory module-bin-directory))))
-    (force-output *error-output*)
-    (format T "~&Compiling ~s~%" src-pathname)
-    (format T "for output to ~s~%" bin-pathname)
-    (force-output)
-    ;; sds: make sure that bin/foo directory is already there
-    (garnet-mkdir-if-needed bin-pathname)
-    (let ((*compile-verbose* Garnet-Garnet-Debug)
-          (*compile-print* Garnet-Garnet-Debug))
-      (compile-file src-pathname))))
-
-
-;; (format t "...Loading Garnet ...~%")
-;;(setf *load-verbose* t)
-
-
-(format T "~%****** NOT Loading Aggregraphs *******
-** To load aggregraph programs, execute (load Garnet-Aggregraphs-Loader)~%")
-
+         (bin-pathname (progn
+			  (format t "Never make it here (hopefully).")
+			  (make-pathname :name name
+					 :type *compiler-extension*
+					 :device (pathname-device module-bin-directory)
+					 :directory (pathname-directory module-bin-directory)))))
+	 (force-output *error-output*)
+	 (format T "~&Compiling ~s~%" src-pathname)
+	 (format T "for output to ~s~%" bin-pathname)
+	 (force-output)
+	 ;; sds: make sure that bin/foo directory is already there
+	 (garnet-mkdir-if-needed bin-pathname)
+	 (let ((*compile-verbose* Garnet-Garnet-Debug)
+	       (*compile-print* Garnet-Garnet-Debug))
+	   (compile-file src-pathname))))
 
 ;; RGA added two auxiliary functions for doing file manipulations.
 ;; Right now they are used to copy the xxx-loader files into the
@@ -412,17 +391,17 @@ Example:
   to binary directory."
   (dolist (file file-list)
     (let ((src (merge-pathnames file src-dir))
-          (dest (merge-pathnames file bin-dir)))
+	  (dest (merge-pathnames file bin-dir)))
       ;; Yes this conses up the wazoo. But it's only used during builds.
       (with-open-file (s src :element-type '(unsigned-byte 8))
-        (let ((buffer (make-array (file-length s) :element-type '(unsigned-byte 8))))
-          (read-sequence buffer s)
-          (with-open-file (d dest
-                             :direction :output
-                             :if-does-not-exist :create
-                             :if-exists :overwrite
-                             :element-type '(unsigned-byte 8))
-            (write-sequence buffer d)))))))
+	(let ((buffer (make-array (file-length s) :element-type '(unsigned-byte 8))))
+	  (read-sequence buffer s)
+	  (with-open-file (d dest
+			     :direction :output
+			     :if-does-not-exist :create
+			     :if-exists :overwrite
+			     :element-type '(unsigned-byte 8))
+	    (write-sequence buffer d)))))))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (setf sb-ext:*muffled-warnings* 'sb-kernel::uninteresting-redefinition))

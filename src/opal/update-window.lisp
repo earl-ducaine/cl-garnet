@@ -533,6 +533,7 @@ This is done to avoid unnecessary total updates."
 	(setq total-p T))
 
       (when invalid-slots
+	(format t "processing invalid slots")
 	(setq invalid-slots (fix-invalid-slots invalid-slots win-info a-window))
 	(if (process-invalid-slots invalid-slots win-info a-window drawable)
 	    (setq total-p T)))

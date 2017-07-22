@@ -446,6 +446,11 @@
 	     (:file "by-demo")
 	     (:file "interactors")
 	     (:file "interactors-menu")))
+   (:module cl-processing
+	    :pathname "src/cl-processing"
+	    :depends-on (:debug :lapidary)
+	    :components
+	    ((:file "main")))
    (:module debug-clx
 	    :pathname "debug"
 	    :depends-on (:debug :lapidary)

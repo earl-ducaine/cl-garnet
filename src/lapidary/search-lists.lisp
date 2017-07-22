@@ -1,4 +1,4 @@
-(setf load-lapidary-p t)
+;; (setf load-lapidary-p t)
 ;(setf Garnet-KR-PathName "/afs/cs/user/dzg/garnet/kr/new/")
 ;(setf Garnet-Opal-PathName "/afs/cs/user/ecp/garnet/opal/new/")
 ;(setf Garnet-Inter-PathName "/afs/cs/user/bam/garnet/inter/new/")
