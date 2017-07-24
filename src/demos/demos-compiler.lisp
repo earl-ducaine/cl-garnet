@@ -13,14 +13,6 @@
 
 (defvar *debug-demos-mode* nil)
 
-;; (eval-when (:compile-toplevel :load-toplevel :execute)
-;;   (proclaim
-;;    (if *debug-demos-mode*
-;;        (and (boundp 'Garnet-Compile-Debug-Settings)
-;; 	    Garnet-Compile-Debug-Settings)
-;;        ;; Global default settings.
-;;        (and (boundp 'Default-Garnet-Proclaim)
-;; 	    Default-Garnet-Proclaim))))
 
 
 (unless (get :garnet-modules :multifont)
@@ -41,43 +33,6 @@
 					; this variable before loading if only want
 					; to compile some of these files
   '(
-    ;; "demo-3d"
-    ;; "demo-angle"
-    ;; "demo-animator"
-    ;; "demo-arith"
-    ;; "demo-array"
-    ;; "garnet-calculator"
-    ;; "demo-virtual-agg"
-    ;; "demo-clock"
-    ;; "demo-editor"
-    ;; "demo-file-browser"
-    ;; "demo-gadgets"
-    ;; "demo-gesture"
-    ;; "demo-graph"
-    ;; "demo-grow"
-    ;; "demo-logo"
-    ;; "demo-manyobjs"
-    ;; "demo-menu"
-    ;; "demo-mode"
-    ;; "demo-motif"
-    ;; "demo-moveline"
-    ;; "demo-multifont"
-    ;; "demo-multiwin"
-    ;; "demo-pixmap"
-    ;; "demo-schema-browser"
-    ;; "demo-scrollbar"
-    ;; "demo-sequence"
-    ;; "demo-text"
-    ;; "demo-truck"
-    ;; "demo-twop"
-    ;; "mge"
-    ;; "demo-othello"
-    ;; "demo-xasperate"
-    ;; "demo-unistrokes"
-    ;; "garnetdraw"
-    ;; "demos-controller"
-    ;; "tour"
-    ;; "tour-transcript"
     ))
 
 (dolist (file Garnet-Demos-Files)

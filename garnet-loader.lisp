@@ -7,7 +7,7 @@
 (pushnew :garnet *features*)
 (pushnew :garnet-v3 *features*)
 (pushnew :garnet-v3.3.post *features*)
-
+(pushnew :garnet-test *features*)
 ;; The :garnet-debug feature allows many different kinds of run-time
 ;; checking, and also loads some extra test code. After you have
 ;; debugged your code and want it to run faster, remove :GARNET-DEBUG

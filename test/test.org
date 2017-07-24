@@ -1,0 +1,16 @@
+
+
+
+
+* Manual tests
+
+  
+** Demos
+
+
+   | When run         | Demo          |
+   |------------------+---------------|
+   | <2017-07-21 Fri> | demo-angle    |
+   | <2017-07-21 Fri> | demo-animator |
+   |                  |               |
+   |                  |               |

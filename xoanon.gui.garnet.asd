@@ -451,7 +451,8 @@
 	    :depends-on (:debug :lapidary)
 	    :components
 	    ((:file "package")
-	     (:file "main")))
+	     (:file "main")
+	     (:file "console")))
    (:module debug-clx
 	    :pathname "debug"
 	    :depends-on (:debug :lapidary)

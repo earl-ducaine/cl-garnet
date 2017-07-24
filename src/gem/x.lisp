@@ -875,8 +875,6 @@ pixmap format in the list of valid formats."
 			  root-window function)
 	  (xlib:draw-line drawable xlib-gc-line x1 y1 x2 y2)))))
 
-
-
 (defun x-draw-lines (window point-list function line-style fill-style)
   (let* ((display-info (g-value window :display-info))
          (root-window (display-info-root-window display-info))
@@ -894,8 +892,6 @@ pixmap format in the list of valid formats."
 	  (set-line-style line-style line-style-gc xlib-gc-line
 			  root-window function)
 	  (xlib:draw-lines drawable xlib-gc-line point-list)))))
-
-
 
 (defun x-draw-points (window point-list function line-style)
   (let* ((display-info (g-value window :display-info))

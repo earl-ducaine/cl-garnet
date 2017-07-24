@@ -50,15 +50,15 @@
       pos)))
 
 
-;;; This macro creates a macro such as gem:clear-area.  The name is
-;;  determined by the <method-name> (which should be a keyword).  The
-;;  <args> are used for the macro definition.
-;;  The first of the <args> must be a window, which determines the device
-;;  (and hence the method).  The generated macro simply does a funcall on the
-;;  appropriate method for the device, passing all the arguments verbatim.
+;; This macro creates a macro such as gem:clear-area.  The name is
+;; determined by the <method-name> (which should be a keyword).  The
+;; <args> are used for the macro definition.
+;; The first of the <args> must be a window, which determines the device
+;; (and hence the method).  The generated macro simply does a funcall on the
+;; appropriate method for the device, passing all the arguments verbatim.
 ;;
-;;  Things are handled properly when <args> contains &rest, &optional, or
-;;  &key parameters."
+;; Things are handled properly when <args> contains &rest, &optional, or
+;; &key parameters."
 
 ;; XXX FMG the above appears to be incorrect: the following generates a defun
 ;; while the commented out code below generates a defmacro (and the one below
@@ -68,13 +68,11 @@
   (let ((function-name (intern (symbol-name method-name) (find-package "GEM")))
 	(has-rest (find '&rest args)))
     `(progn
-
        ;; Make sure the method name is defined when we load this.
        (find-or-create-name ,method-name)
-
-       ;; Define the interface function itself, which will dispatch on its
-       ;; first argument (a window) to find the appropriate device-specific
-       ;; argument.
+       ;; Define the interface function itself, which will dispatch on
+       ;; its first argument (a window) to find the appropriate
+       ;; device-specific argument.
        (defun ,function-name (,@args)
 	 (,(if has-rest 'APPLY 'FUNCALL)
 	   (aref (g-value ,(car args) :METHODS)
