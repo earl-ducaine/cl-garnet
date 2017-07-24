@@ -1,31 +1,56 @@
 (in-package :cl-processing)
 
-(defun size (new-width new-height)
-  (destructuring-bind (&key left top width height)
-      *current-size-and-posision*
-    (setf *current-size-and-posision*
-	  (list left
-		top
-		(or new-width width)
-		(or new-height height)))))
+(defparameter *width* nil)
+(defparameter *height* nil)
 
-(defmacro background (r g b)
-  `(setf *current-background-color*
-	 (create-instance nil opal:color
-	   (:green ,g)
-	   (:blue ,b)
-	   (:red ,r))))
+(defun size (width height)
+  (setf *width* width)
+  (setf *height* height))
+
+(defun convert-to-color-channels (color-composite)
+  (let* ((color (- 255 color-composite))
+	 (r (/  (ldb (byte 3 5) color) (expt 2 3)))
+	 (g (/ (ldb (byte 3 2) color) (expt 2 3)))
+	 (b (/ (ldb (byte 2 0) color) (expt 2 2))))
+    (values r g b)))
+
+(defun background (color)
+  (multiple-value-bind (r g b) (convert-to-color-channels color)
+    (setf *current-background-color*
+	  (create-instance nil opal:color
+	    (:green g)
+	    (:blue b)
+	    (:red r)))))
+
+(defun stroke (stroke-col)
+  (multiple-value-bind (r g b) (convert-to-color-channels stroke-col)
+    (setf *current-stroke-color*
+	  (create-instance nil opal:color
+	    (:green g)
+	    (:blue b)
+	    (:red r)))))
 
 (defun no-stroke ()
-  'no-op)
+  (setf *current-stroke-color* nil))
 
-(defmacro proc-fill (r g b)
-  `(setf *current-fill-color*
-	 (create-instance nil opal:color
-	   (:green ,g)
-	   (:blue ,b)
-	   (:red ,r))))
+(defun fill-256-color (color)
+  (multiple-value-bind (r g b) (convert-to-color-channels color)
+  (setf *current-fill-color*
+	(create-instance nil opal:color
+	  (:green g)
+	  (:blue b)
+	  (:red r)))))
 
+(defun fill-three-chanel (r g b)
+  (setf *current-fill-color*
+	(create-instance nil opal:color
+	  (:green (/ g 255.0))
+	  (:blue (/ b 255.0))
+	  (:red (/ r 255.0)))))
+
+(defparameter *current-line-style* nil)
+(defparameter *current-drawable* nil)
+(defparameter *current-stroke-color* nil)
 (defparameter *default-size-and-posision*
   '(:left 10 :top 10 :width 400 :height 300))
 (defparameter *current-size-and-posision* *default-size-and-posision*)
@@ -38,17 +63,35 @@
 (defparameter *win* *default-background-color*)
 
 (defun create-polyline (points)
-  (let ((line (create-instance 'new-rect opal:polyline))
+  (let* ((fill-style (create-instance nil opal:filling-style
+		       (:foreground-color *current-fill-color*)))  
+	 (line (create-instance 'new-rect opal:polyline
+		 (:filling-style fill-style)))
 	figure)
     (dolist (point points)
       (push (car point) figure)
       (push (cadr point) figure))
-    ;;(s-value line :point-list '(10 50 50 10 90 10 130 50))
     (s-value line :point-list (reverse figure))
-    (s-value line :filling-style opal:light-gray-fill)
-    (s-value line :line-style opal:line-4)))
+    ))
 
-(defmacro rect (left top width height)
+
+(defun ellipse (x y width height)
+  (let* ((left (- x (/ width 2)))
+	 (top (- y (/ height 2)))
+	 (width width)
+	 (height height))
+    (setf *current-drawable*
+	  (let* ((fill-style (create-instance nil opal:filling-style
+			       (:foreground-color *current-fill-color*))))  
+    (create-instance 'new-ellipse opal:oval
+      (:left left)
+      (:top top)
+      (:width width)
+      (:height height)
+      (:filling-style fill-style)
+      (:line-style *current-line-style*))))))
+   
+(defun rect (left top width height)
   (let* ((p1 (list left top))
 	 (p2 (list (+ left width) top))
 	 (p3 (list (+ left width) (+ top height)))
@@ -57,55 +100,21 @@
     (create-polyline points)))
 
 (defun create-win (left top width height)
-  ;; Create a small window at the upper left corner of the screen
   (setf *win* (create-instance 'win inter:interactor-window))
   (s-value *win* :left left)
   (s-value *win* :top top)
   (s-value *win* :width width)
   (s-value *win* :height height))
-    
-(defun create-processing-window-new ()
-  (rect 10 10 100 25)
-  ;;(create-polyline '((10 50) (50 10) (90 10) (130 50)))
-  ;; create an aggregate for the window
-  (create-win 20 20 300 150)
+
+(defparameter *last-start-window-point* '(20 20))
+
+(defun do-processing ()
+  (create-win (car *last-start-window-point*)
+	      (cadr *last-start-window-point*)
+	       *width* *height*)
   (s-value win :aggregate (create-instance 'agg opal:aggregate))
-  ;; create the string
-  ;; add the string to the aggregate
-  ;; (opal:add-component agg hello)
-  (opal:add-component agg new-rect)
-  ;; Cause the window and string to be displayed
+  (opal:add-component agg *current-drawable*)
   (opal:update win))
-
-
-
-(defun create-processing-window ()
-  (rect 10 10 200 50)
-  ;; Create a small window at the upper left corner of the screen
-  (create-instance 'win inter:interactor-window
-    (:left 10)
-    (:top 10)
-    (:width 200)
-    (:height 50))
-  ;; create an aggregate for the window
-  (s-value win :aggregate (create-instance 'agg opal:aggregate))
-  ;; create the string
-  (create-instance 'hello opal:text
-    (:left 10)
-    (:top 20)
-    (:background-color opal:black)
-    (:foreground-color opal:black)
-    (:string "hello world"))
-  (create-instance 'line opal:polyline
-    (:point-list '(10 50 50 10 90 10 130 50))
-    (:filling-style opal:light-gray-fill)
-    (:line-style opal:line-4))
-  ;; add the string to the aggregate
-  ;; (opal:add-component agg hello)
-  (opal:add-component agg new-rect)
-  ;; Cause the window and string to be displayed
-  (opal:update win))
-
 
 (defun modify-processing-window ()
   ;; Opal also strives to make it easy to change the picture.  To change
@@ -119,14 +128,5 @@
   (opal:update WIN)
 
   (create-instance 'opal:line-style opal:graphic-quality
-		  (:background-color opal:black)
-		  (:forground-color opal:black)))
-
-
-
-
-;; size(400, 400);
-;; background(255);
-;; noStroke();
-;; fill(0);
-;; rect(width/4, height/4, width/2, height/2);
+    (:background-color opal:black)
+    (:forground-color opal:black)))

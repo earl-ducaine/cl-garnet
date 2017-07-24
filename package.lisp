@@ -94,10 +94,6 @@
 	   s-formula-value
 	   self-old-value))
 
-(defpackage :cl-processing
-  (:use :common-lisp :kr)
-  (:export))
-
 (defpackage :jewel
   (:use :common-lisp :kr :kr-debug)
   (:export *exposure-event-mask*

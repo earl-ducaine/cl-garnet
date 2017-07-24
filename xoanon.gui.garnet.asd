@@ -450,7 +450,8 @@
 	    :pathname "src/cl-processing"
 	    :depends-on (:debug :lapidary)
 	    :components
-	    ((:file "main")))
+	    ((:file "package")
+	     (:file "main")))
    (:module debug-clx
 	    :pathname "debug"
 	    :depends-on (:debug :lapidary)
