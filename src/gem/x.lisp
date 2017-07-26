@@ -1551,7 +1551,8 @@ pixmap format in the list of valid formats."
 
 (defparameter dpi 151)
 ;;; (defparameter scale-factor (/ dpi 96))
-(defparameter scale-factor 1.3321671)
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defparameter scale-factor 1))
 
 (defvar *Fixed-Font-Family*      "courier")
 (defvar *Serif-Font-Family*      "times")

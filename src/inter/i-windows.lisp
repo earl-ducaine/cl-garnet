@@ -10,7 +10,7 @@
 ;;; $Id$
 
 
-(in-package "INTERACTORS")
+(in-package :interactors)
 
 ;; Hitting the key *garnet-break-key* will cause an exit from the
 ;; main-event-loop and exit from replaying a transcript.

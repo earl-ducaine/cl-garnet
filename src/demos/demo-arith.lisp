@@ -1,44 +1,35 @@
 ;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: DEMO-ARITH; Base: 10 -*-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;         The Garnet User Interface Development Environment.      ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; This code was written as part of the Garnet project at          ;;;
-;;; Carnegie Mellon University, and has been placed in the public   ;;;
-;;; domain.  If you are using this code or any part of Garnet,      ;;;
-;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
-;;;This file is a sample of a visual programming arithmetic expression
+;;;
+;;; The Garnet User Interface Development Environment.
+;;;
+;;; This code was written as part of the Garnet project at Carnegie
+;;; Mellon University, and has been placed in the public domain.  If
+;;; you are using this code or any part of Garnet, please contact
+;;; garnet@cs.cmu.edu to be put on the mailing list.
+;;;
+;;; This file is a sample of a visual programming arithmetic expression
 ;;; editor created with Garnet.
 ;;;
-;;;** Call (demo-arith:Do-Go) to start and (demo-arith:Do-Stop) to stop **
+;;; (demo-arith:Do-Go) to start and (demo-arith:Do-Stop) to stop
 ;;;
-;;;Designed and implemented by Brad A. Myers
+;;; Designed and implemented by Brad A. Myers
 
-
-
-(in-package :DEMO-ARITH)
+(in-package :demo-arith)
 
 ;;;  Load text-buttons-loader, graphics-loader, and arrow-line-loader
 ;;;  unless already loaded
-;;;
 (defvar DEMO-ARITH-INIT
   (progn
     ;;;  Load ps-loader.
     (common-lisp-user::garnet-load "ps:ps-loader")
-
     (dolist (gadget '("text-buttons-loader" "arrow-line-loader"
 		      "scrolling-window-loader"))
       (common-lisp-user::garnet-load (concatenate 'string "gadgets:" gadget)))
-
     ;;; Load gesture-loader
     (common-lisp-user::garnet-load "gestures:gesture-loader")))
 
 
-;;;------------------------------------------------------------------------
-;;;Global variables
-;;;------------------------------------------------------------------------
+;;; Global variables
 
 (defparameter *Mode-Menu* NIL) ; menu of object types to create
 (defparameter *Selection-Obj* NIL) ; the object that holds the selection
@@ -48,12 +39,11 @@
 		  TIMES-BOX DIVIDE-BOX TOP-WIN SCROLL-WIN TOP-AGG
 		  MYARROWLINE MYLINEFEEDBACK))
 
-;;;------------------------------------------------------------------------
-;;;Utility Functions
-;;;------------------------------------------------------------------------
+;;; Utility Functions
 
 (defun Init-Slot (obj slot new-val)
-  (g-value obj slot) ; need to do this to set up the dependencies
+  ;; need to do this to set up the dependencies
+  (g-value obj slot) 
   (s-value obj slot new-val))
 
 ; convert s to an integer or return NIL
@@ -78,71 +68,92 @@
         (return-from Protected-Divide '**)))
     (apply '/ args))))
 
-;;;------------------------------------------------------------------------
-;;;First create the prototypes for the box and lines
-;;;------------------------------------------------------------------------
-
+;;; First create the prototypes for the box and lines
 (create-instance 'MYARROWLINE garnet-gadgets:arrow-line
-   (:from-obj NIL) ;set this with the object this arrow is from
-   (:to-obj NIL)   ;set this with the object this arrow is from
-;;  (:x1 (o-formula (opal:gv-right (gvl :from-obj))))
-;;  (:y1 (o-formula (opal:gv-center-y (gvl :from-obj))))
-;;  (:x2 (o-formula (gvl :to-obj :left)))
-;;  (:y2 (o-formula (opal:gv-center-y (gvl :to-obj))))
-   (:xy1 (o-formula (xy-obj-edge (gvl :from-obj) (gvl :to-obj) (gvl :xy1))
-                    (list 0 0)))
-   (:xy2 (o-formula (xy-obj-edge (gvl :to-obj) (gvl :from-obj) (gvl :xy2))
-                    (list 0 0)))
-   (:x1 (o-formula (first (gvl :xy1))))
-   (:y1 (o-formula (second (gvl :xy1))))
-   (:x2 (o-formula (first (gvl :xy2))))
-   (:y2 (o-formula (second (gvl :xy2))))
-   (:value (o-formula (gvl :from-obj :value)))
-   (:open-p NIL) 
-   (:visible (o-formula (and (gvl :from-obj)(gvl :to-obj))))
-   (:line-p T)) ;so that the selection object will know what kind this is
+  ;; set this with the object this arrow is from
+  (:from-obj NIL)
+  ;; set this with the object this arrow is from
+  (:to-obj NIL)   
+  ;;  (:x1 (o-formula (opal:gv-right (gvl :from-obj))))
+  ;;  (:y1 (o-formula (opal:gv-center-y (gvl :from-obj))))
+  ;;  (:x2 (o-formula (gvl :to-obj :left)))
+  ;;  (:y2 (o-formula (opal:gv-center-y (gvl :to-obj))))
+  (:xy1 (o-formula (xy-obj-edge (gvl :from-obj) (gvl :to-obj) (gvl :xy1))
+		   (list 0 0)))
+  (:xy2 (o-formula (xy-obj-edge (gvl :to-obj) (gvl :from-obj) (gvl :xy2))
+		   (list 0 0)))
+  (:x1 (o-formula (first (gvl :xy1))))
+  (:y1 (o-formula (second (gvl :xy1))))
+  (:x2 (o-formula (first (gvl :xy2))))
+  (:y2 (o-formula (second (gvl :xy2))))
+  (:value (o-formula (gvl :from-obj :value)))
+  (:open-p NIL) 
+  (:visible (o-formula (and (gvl :from-obj)(gvl :to-obj))))
+  ;; so that the selection object will know what kind this is
+  (:line-p T)) 
 
-(create-instance 'ARITH-BOX opal:aggregadget
-   (:box (list 20 20 NIL NIL)) ; this will be set by the
-                   ; interactors with the position
-                   ; of this object.
-   (:left (o-formula (first (gvl :box))))
-   (:top (o-formula (second (gvl :box))))
-   (:width 30) (:height 30)
-   (:lines-to-me NIL)   ;Keep track of lines pointing
-   (:lines-from-me NIL) ;to me, in case I am deleted.
-   (:editable NIL)
-   (:line-p NIL) ;so that the selection object will know what kind this is
-   (:func T) ; the function to execute or numerical value
-   (:func-to-execute (o-formula (gvl :func)))
-   (:string (o-formula (symbol-name (gvl :func))))
-   (:value (o-formula (let ((func (gvl :func-to-execute))
-                in-vals val final-val)
-            (dolist (i (gvl :lines-to-me))
-              (setq val (gv i :value))
-              (if (numberp val)
-                  (push val in-vals)
-                  (setq final-val '**)))
-            (or final-val
-                (and in-vals (if (my-function-p func)
-				 (apply func in-vals)))
-                '**))))
-   (:parts
-    `((:frame ,opal:circle
-       (:left ,(o-formula (first (gvl :parent :box))))
-       (:top ,(o-formula (second (gvl :parent :box))))
-       (:diam ,(o-formula (max (gvl :parent :width)
-                   (gvl :parent :height))))
-       (:width ,(o-formula (gvl :diam)))
-       (:height ,(o-formula (gvl :diam))))
-      (:label ,opal:text
-       (:string ,(o-formula (gvl :parent :string) ""))
-       (:actual-heightp T)
-       (:font ,(create-instance NIL opal:font
-          (:size :very-large) (:face :bold)))
-       ;;center me in the box
-       (:left ,(o-formula (opal:gv-center-x-is-center-of (gvl :parent))))
-       (:top ,(o-formula (opal:gv-center-y-is-center-of (gvl :parent))))))))
+;;; Potentially, we want to be able to use this in macros.
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  ;; compute the diameter of a circle that enscribes a rectangles with
+  ;; both figures having coincident centers, and width and height
+  ;; being the demensions of the rectangle.
+  (defun compute-diameter (width height)
+    (let* ((padding (/ width 3))
+	   (x (+ padding (/ width 2)))
+	   (y (+ padding (/ height 2)))
+	   (result (floor (sqrt (+ (expt x 2) (expt y 2))))))
+      (format t "width: ~s, height: ~s, result:~s~%"
+	      (expt x 2)
+	      (expt y 2)
+	      result)
+      result)))
+
+(create-instance 'arith-box opal:aggregadget
+  (:box (list 20 20 NIL NIL)) ; this will be set by the
+  ;; interactors with the position of this object.
+  (:left (o-formula (first (gvl :box))))
+  (:top (o-formula (second (gvl :box))))
+  (:width 30) (:height 30)
+  (:lines-to-me NIL)   ;Keep track of lines pointing
+  (:lines-from-me NIL) ;to me, in case I am deleted.
+  (:editable NIL)
+  ;; so that the selection object will know what kind this is
+  (:line-p NIL)
+  ;; the function to execute or numerical value
+  (:func T) 
+  (:func-to-execute (o-formula (gvl :func)))
+  (:string (o-formula (symbol-name (gvl :func))))
+  (:value (o-formula (let ((func (gvl :func-to-execute))
+			   in-vals val final-val)
+		       (dolist (i (gvl :lines-to-me))
+			 (setq val (gv i :value))
+			 (if (numberp val)
+			     (push val in-vals)
+			     (setq final-val '**)))
+		       (or final-val
+			   (and in-vals (if (my-function-p func)
+					    (apply func in-vals)))
+			   '**))))
+  (:parts
+   `((:frame ,opal:circle
+	     (:left ,(o-formula (first (gvl :parent :box))))
+	     (:top ,(o-formula (second (gvl :parent :box))))
+	     ;; Make the circle diameter large enough to enscribe the
+	     ;; box in which the symbol sits.
+	     (:diam ,(o-formula  (compute-diameter (gvl :parent :width)
+						   (gvl :parent :height))))
+	     ;; (:diam ,(o-formula (max (gvl :parent :width)
+	     ;; 			     (gvl :parent :height))))
+	     (:width ,(o-formula (gvl :diam)))
+	     (:height ,(o-formula (gvl :diam))))
+     (:label ,opal:text
+	     (:string ,(o-formula (gvl :parent :string) ""))
+	     (:actual-heightp T)
+	     (:font ,(create-instance NIL opal:font
+		       (:size :very-large) (:face :bold)))
+	     ;;center me in the box
+	     (:left ,(o-formula (opal:gv-center-x-is-center-of (gvl :parent))))
+	     (:top ,(o-formula (opal:gv-center-y-is-center-of (gvl :parent))))))))
 
 (create-instance 'plus-box arith-box (:func '+))
 (create-instance 'minus-box arith-box (:func '-))
