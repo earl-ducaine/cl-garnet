@@ -12,12 +12,38 @@
 ;;; This is intended as a test and demonstration of the text interactor
 ;;; as part of the Garnet project.
 ;;; 
-;;; ** Call (Do-Go) to start and (Do-Stop) to stop **
+;;; Call (Do-Go) to start and (Do-Stop) to stop
 ;;;
 ;;; Designed by Brad A. Myers
 ;;; Implemented by Richard McDaniel
 
 (in-package :cl-processing)
+
+(defun read-stream-into-string (stream)
+  (let ((scratch (make-string 4096)))
+    (loop for read = (read-sequence scratch stream)
+          while (plusp read) sum read)))
+
+(defun read-stream-into-string (stream)
+  (let ((data ""))
+    (do ((char (read-char stream nil)
+	       (read-char stream nil)))
+	((null char)
+	 data)
+      (setf data (concatenate 'string  data (string char))))))
+
+(defun save-buffer-to-file (buffer file)
+  (let ((file-pathname
+	 (etypecase file
+		     (string (pathname file))
+		     (pathname  file)
+		     (stream (pathname (truename file)))))
+	(buffer-string
+	 (etypecase buffer
+		     (stream (read-stream-into-string buffer))
+		     (string  buffer))))
+    (with-open-file (buffer-file file-pathname :direction :output :if-exists :supersede)
+      (write-string buffer-string))))
 
 (declaim (special focus-inter mouse-inter text1 text2 win top message
 		  pull-down scroll-win1 scroll-win2))
@@ -196,22 +222,20 @@
    )
 
 
-;; The main procedure.  Initializes all garnet gadgets and interactors.
-(defun Do-Go (&key dont-enter-main-event-loop double-buffered-p)
+;; The main procedure.  Initializes all garnet gadgets and
+;; interactors.
+(defun do-go (&key dont-enter-main-event-loop double-buffered-p)
   (declare (ignore double-buffered-p))
-  
-  ;; Create the main window.
+  ;; create the main window.
   (create-instance 'win inter:interactor-window
     (:title "Multifont Demonstration")
     (:top 100)
     (:left 150)
     (:height 254)
-    (:background-color opal:black)
-    )
+    (:background-color opal:black))
   (create-instance 'top opal:aggregate)
   (s-value win :aggregate top)
   (opal:update win)
-
   ;; If we get clobbered by the window manager, let the demos
   ;; controller know (if it's there).
   (when (fboundp 'common-lisp-user::Garnet-Note-Quitted)
@@ -220,7 +244,6 @@
 	 (declare (ignore win))
 	 (common-lisp-user::Garnet-Note-Quitted "DEMO-MULTIFONT"))
      (g-value win :destroy-hooks)))
-  
   ;; Create the message bar
   (create-instance 'message opal:multifont-text
     (:left 0)
@@ -229,11 +252,8 @@
     (:auto-scroll-p nil)
     (:text-width (o-formula (gv win :width)))
     (:line-style opal:white-line)
-    (:fill-background-p nil)
-    )
-
+    (:fill-background-p nil))
   (opal:add-component top message)
-   
   ;; Create the menubar.
   (create-instance 'pull-down garnet-gadgets:motif-menubar
     (:foreground-color opal:motif-green)
@@ -250,19 +270,14 @@
 	       ((:Small) (:Medium)
 		(:Large) (:Very-Large)))))
     (:bar-above-these-items '(NIL ("Italic" "Toggle Lisp Mode") NIL NIL))
-    (:min-menubar-width (o-formula (gv win :width)))
-    )
-   
+    (:min-menubar-width (o-formula (gv win :width))))
   (opal:add-component top pull-down)
-
   ;; Create the top window of the demo.
   (create-instance 'text1 opal:multifont-text ; This is the internal multifont
     (:word-wrap-p t)			      ; text object.
     (:auto-scroll-p T)
     (:fast-redraw-p :rectangle)
-    (:fast-redraw-filling-style opal:motif-gray-fill)
-    )
-   
+    (:fast-redraw-filling-style opal:motif-gray-fill) )
   (create-instance 'scroll-win1 gg:motif-scrolling-window-with-bars
     (:left 0)
     (:top (g-value pull-down :height))
@@ -276,21 +291,17 @@
     (:total-width (o-formula (+ (gv text1 :width) (gv text1 :left)) 200))
     (:total-height (o-formula (+ (gv text1 :top) (gv text1 :height)) 200))
     (:h-scroll-bar-p nil)
-    (:v-scroll-bar-p t)
-    )
+    (:v-scroll-bar-p t))
   (s-value text1 :text-width (o-formula (gv scroll-win1 :clip-window :width)))
   (s-value text1 :scrolling-window scroll-win1)
-
   (opal:update scroll-win1)
   (opal:add-component (g-value scroll-win1 :inner-aggregate) text1)
-
   ;; Create the lower window of the demo.
   (create-instance 'text2 opal:multifont-text
     (:word-wrap-p t)
     (:auto-scroll-p T)
     (:fast-redraw-p :rectangle)
-    (:fast-redraw-filling-style opal:motif-gray-fill)
-    )
+    (:fast-redraw-filling-style opal:motif-gray-fill))
   (create-instance 'scroll-win2 gg:motif-scrolling-window-with-bars
     (:left 0)
     (:top (o-formula (+ (g-value pull-down :height) (gv scroll-win1 :height)
@@ -303,11 +314,9 @@
     (:total-width (o-formula (gv text2 :width) 200))
     (:total-height (o-formula (gv text2 :height) 200))
     (:h-scroll-bar-p nil)
-    (:v-scroll-bar-p t)
-    )
+    (:v-scroll-bar-p t))
   (s-value text2 :text-width (o-formula (gv scroll-win2 :clip-window :width)))
   (s-value text2 :scrolling-window scroll-win2)
-
   (opal:update scroll-win2)
   (opal:add-component (g-value scroll-win2 :inner-aggregate) text2)
 
@@ -377,12 +386,8 @@ Font changing:
  ^-shift-< = smaller font  ^-shift-> = bigger font
  ^1 ^2 ^3 ^4 = small, medium, large and very-large fonts~%")
 
-
   (unless dont-enter-main-event-loop
-    #-cmu (inter:main-event-loop)
-    )
-  )
-
+    (inter:main-event-loop)))
 
 ;; Do-stop kills the parent window which will destroy all internal garnet
 ;; objects and gadgets.

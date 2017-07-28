@@ -12,7 +12,7 @@
 (asdf:defsystem :xoanon.gui.garnet
   ;; sb-posix means that currently only sbcl can load Garnet.
   :depends-on (:clx :zpb-ttf :cl-vectors :cl-paths-ttf :cl-aa :cl-fad
-		    :cl-store :trivial-features :cl-aa-misc)
+		    :cl-store :trivial-features :cl-aa-misc :alexandria)
   :components
   ((:file "package")
    (:module utils

@@ -41,3 +41,5 @@
 	 (width-pixels (get-screen-width-pixels))
 	 (dpi (/ height-pixels height-inch)))
     (/ dpi 72)))
+
+
