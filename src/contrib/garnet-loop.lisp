@@ -270,7 +270,10 @@ or evaluated literal expression that it is passed as a second argument."
  (let ((display (if awindow
                     (opal::display-info-display (g-value awindow :display-info))
 		    ;; (let ((win1 (caar (opal::get-table-contents))))
-		    (let ((win1 (caar (opal::get-table-contents))))
+		    (let ((win1
+			   ;;(caar (opal::get-table-contents))
+			   (car (reverse opal::*garnet-windows*))
+			    ))
 		       (if win1
 			   (xlib:window-display win1)
                            opal::*default-x-display*)))))
@@ -280,7 +283,10 @@ or evaluated literal expression that it is passed as a second argument."
 (defun update-all-windows ()
   #-release-garnet
  "Update items on the display until done."
- (do ((display  (let ((win1 (caar (opal::get-table-contents))))
+ (do ((display  (let ((win1
+		       (car (reverse opal::*garnet-windows*))
+		       ;; (caar (opal::get-table-contents))
+			))
 		       (if win1
 			   (xlib:window-display win1)
                            *default-x-display*))))
@@ -326,7 +332,10 @@ when they happen."
   (funcall grepl-prompt-function :stream *standard-output*)
   (let ((display (if awindow
                      (display-info-display (g-value awindow :display-info))
-		     (let ((win1 (caar (get-table-contents))))
+		     (let ((win1
+			   (car (reverse opal::*garnet-windows*))
+			    ;; (caar (get-table-contents))
+			     ))
 		       (if win1
 			   (xlib:window-display win1)
                            *default-x-display*)))))

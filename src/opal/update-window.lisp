@@ -55,7 +55,7 @@
 ;;  16-Apr-92 ecp Call xlib:display-force-output if any slots are invalid.
 ;;   9-Apr-92 ecp Removed patches of 4-Oct-91 from inner loop of update method.
 ;;  01-Apr-92 koz & Mickish Added a check in (**) loop for fast redraw objects
-;;                          which handles the case when the parent has never 
+;;                          which handles the case when the parent has never
 ;;                          been updated
 ;;  31-Mar-92 ecp Fixed yet another bug: changing position of subwindow.
 ;;  26-Mar-92 koz Fixed method for propagating changes to the bboxes of
@@ -209,14 +209,14 @@ This is done to avoid unnecessary total updates."
 					 (null invalid-copys)
 					 (g-value a-window :exposed-bbox)))
 		 buffer)
-      (if exposed-bbox 
+      (if exposed-bbox
 	(progn
 	  (bbox-to-clip-mask exposed-bbox exposed-clip-mask)
 	  (erase-bbox exposed-bbox a-window nil))
 	(if buffer
 	  (clear-buffer a-window)
 	  (gem:clear-area a-window)))
-     
+
       (dothings (invalid-objects-list
 		 invalid-objects invalid-xors invalid-copys)
 	(dolist (object invalid-objects-list)
@@ -343,7 +343,7 @@ This is done to avoid unnecessary total updates."
 		    (g-local-value object :update-slots-values))
 	      (if (g-value object :visible)
 		  ;; Object is a VISIBLE NORMAL OBJ
-		  (if (bbox-valid-p obj-old-bbox)	
+		  (if (bbox-valid-p obj-old-bbox)
 		      ;;object IS and WAS visible
 		      (when (update-slots-values-changed object 0 obj-update-info)
 			(merge-bbox win-old-bbox obj-old-bbox)
@@ -474,7 +474,7 @@ This is done to avoid unnecessary total updates."
 			 ;; the old values are also needed by merge-bbox below
 			 (copy-bbox-fn parent-old-bbox parent-bbox)
 			 (merge-bbox parent-bbox new-bbox))
-		  
+
 
 		       ;; Now, if for any dimension, both:
 		       ;;  * old-bbox defines boundary of parent-bbox
@@ -521,7 +521,7 @@ This is done to avoid unnecessary total updates."
 
 (define-method :update opal::window (a-window &optional (total-p NIL))
   (declare (optimize (speed 3) (safety 1)))
-  (with-update-lock-held
+  (bordeaux-threads:with-recursive-lock-held  (gem:*update-lock*)
     (let* ((win-info (g-local-value a-window :win-update-info))
 	   (drawable (g-local-value a-window :drawable))
 	   (window-agg (g-local-value a-window :aggregate))
@@ -537,7 +537,7 @@ This is done to avoid unnecessary total updates."
 	(setq invalid-slots (fix-invalid-slots invalid-slots win-info a-window))
 	(if (process-invalid-slots invalid-slots win-info a-window drawable)
 	    (setq total-p T)))
-   
+
       ;; If this is a total update, call the :fix-update-slots method on every
       ;; object in the window that has one.
       (when total-p
@@ -556,7 +556,7 @@ This is done to avoid unnecessary total updates."
 	   (when (and (schema-p vob) (eq a-window (g-local-value vob :window)))
 	     (fix-update-slots vob)))
 	 (free-list invalid-vobs))
-	       
+
       (let* ((invalid-objects (win-update-info-invalid-objects win-info))
 	     (invalid-xors    (win-update-info-invalid-xor-fastdraws win-info))
 	     (invalid-copys   (win-update-info-invalid-copy-fastdraws win-info))
@@ -575,7 +575,7 @@ This is done to avoid unnecessary total updates."
 	  (setf (win-update-info-invalid-objects        win-info) nil
 		(win-update-info-invalid-xor-fastdraws  win-info) nil
 		(win-update-info-invalid-copy-fastdraws win-info) nil))
-  
+
 	;; At this point, we try to abort if possible -- only do the main part
 	;; of update if something really has changed...
 	(when (or total-p partial-p)
@@ -599,7 +599,7 @@ This is done to avoid unnecessary total updates."
 		    (do-total-update invalid-objects invalid-xors invalid-copys a-window
 				     window-agg buffer exposed-clip-mask
 				     line-style-gc filling-style-gc))
-      
+
 		  ;;else this is a PARTIAL window update.
 		  (do-partial-update invalid-objects invalid-xors invalid-copys a-window
 				     window-agg buffer exposed-clip-mask

@@ -1991,7 +1991,7 @@ pixmap format in the list of valid formats."
 
 
 (defparameter *update-lock*
-  (sb-thread:make-mutex :name "UPDATE-LOCK"))
+  (bordeaux-threads:make-recursive-lock "UPDATE-LOCK"))
 
 ;;; Does a map-window, and then waits for it to actually appear on the
 ;;; screen.  The waiting is necessary, because otherwise objects in
@@ -2000,7 +2000,7 @@ pixmap format in the list of valid formats."
 (defun x-map-and-wait (a-window drawable)
   (let ((display (the-display a-window)))
     (when (eq (xlib:window-map-state drawable) :unmapped)
-      (sb-thread:with-recursive-lock (*update-lock*)
+      (bordeaux-threads:with-recursive-lock-held (*update-lock*)
         (xlib:map-window drawable)
         (xlib:display-force-output display))
       (loop

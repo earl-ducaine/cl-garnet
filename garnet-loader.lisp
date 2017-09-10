@@ -403,5 +403,5 @@ Otherwise just load the filename as given."
 			     :element-type '(unsigned-byte 8))
 	    (write-sequence buffer d)))))))
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (setf sb-ext:*muffled-warnings* 'sb-kernel::uninteresting-redefinition))
+;; (eval-when (:compile-toplevel :load-toplevel :execute)
+;;   (setf sb-ext:*muffled-warnings* 'sb-kernel::uninteresting-redefinition))

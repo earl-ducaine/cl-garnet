@@ -117,7 +117,7 @@ debugger, otherwise NIL"
     (when timer-process (internal-kill-timer-process timer-process))
     ;;; DZG (xlib:intern-atom opal::*default-x-display* ':TIMER_EVENT)
     (setf timer-process
-	  (sb-thread:make-thread
+	  (bordeaux-threads:make-thread
 	   #'(lambda ()
 	       (Timer-Process-Main-Loop inter time once))
 	   :name "Garnet Timer")

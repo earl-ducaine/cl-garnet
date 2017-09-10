@@ -43,53 +43,54 @@
 (defun launch-main-event-loop-process ()
   "Spawn a process which is doing Garnet interaction all of the time.
    RETURN the process."
-  (when (and (typep *main-event-loop-process* 'sb-thread:thread)
-	     (sb-thread:thread-alive-p *main-event-loop-process*))
-    (sb-thread:terminate-thread *main-event-loop-process*))
+  (when (and (bordeaux-threads:threadp  *main-event-loop-process*)
+	     (bordeaux-threads:thread-alive-p *main-event-loop-process*))
+    (bordeaux-threads::destroy-thread *main-event-loop-process*))
   (setf *main-event-loop-process*
-	(sb-thread:make-thread #'m-e-l :name "Garnet event loop"))
+	(bordeaux-threads:make-thread #'m-e-l :name "Garnet event loop"))
   *main-event-loop-process*)
 
 ;;;  Define opal:kill-main-event-loop-process
 (defun kill-main-event-loop-process ()
   "Kill the current main-event-loop process."
   (let ((p *main-event-loop-process*))
-    (when (and (typep p 'sb-thread:thread)
-	       (sb-thread:thread-alive-p p))
+    (when (and (bordeaux-threads:threadp p)
+	       (bordeaux-threads:thread-alive-p p))
       (setf *main-event-loop-process* nil)
-      (sb-thread:terminate-thread p))))
+      (bordeaux-threads:destroy-thread p))))
 
 ;;; Define running-p functions
 (defun main-event-loop-process-running-p ()
   (and *main-event-loop-process*
-       (sb-thread:thread-alive-p *main-event-loop-process*)))
+       (bordeaux-threads:thread-alive-p *main-event-loop-process*)))
 
 (defun running-main-event-loop-process-elsewhere-p ()
   (and *main-event-loop-process*
        (not (eq *main-event-loop-process*
-		sb-thread:*current-thread*))))
-
-(defmacro with-update-lock-held (&body body)
-  `(unwind-protect
-	(progn
-	  (update-start-fn nil)
-	  ,@body)
-     (update-stop-fn nil)))
+		(bordeaux-threads:current-thread)))))
+;; because
+;; (defmacro with-update-lock-held (&body body)
+;;   `(unwind-protect
+;; 	(progn
+;; 	  (update-start-fn nil)
+;; 	  ,@body)
+;;      (update-stop-fn nil)))
 
 
 ;;; Only supports SBCL.
 
-;;; TODO: apply a bit more analysis to the this and use trivial gray
-;;; threads to support this.
-(defun update-start-fn (win)
-  (declare (ignore win))
-    (sb-sys:without-interrupts
-      (unless (sb-thread:holding-mutex-p gem:*update-lock*)
-	(sb-sys:allow-with-interrupts
-	  (sb-thread:grab-mutex gem:*update-lock*)))))
+;;; Note, the only safe way to use without-interrupts is in conjuction
+;;; with sb-sys:interupt-thread, i.e. it doesn't block ordinary os
+;;; interrupts.  No aspect of the
+;; (defun update-start-fn (win)
+;;   (declare (ignore win))
+;;     (sb-sys:without-interrupts
+;;       (unless (sb-thread:holding-mutex-p gem:*update-lock*)
+;; 	(sb-sys:allow-with-interrupts
+;; 	  (sb-thread:grab-mutex gem:*update-lock*)))))
 
-(defun update-stop-fn (win)
-  (declare (ignore win))
-    (sb-sys:without-interrupts
-      (when (sb-thread:holding-mutex-p gem:*update-lock*)
-	(sb-thread:release-mutex gem:*update-lock*))))
+;; (defun update-stop-fn (win)
+;;   (declare (ignore win))
+;;     (sb-sys:without-interrupts
+;;       (when (sb-thread:holding-mutex-p gem:*update-lock*)
+;; 	(sb-thread:release-mutex gem:*update-lock*))))
