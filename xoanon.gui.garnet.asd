@@ -71,7 +71,8 @@
 	     (:file "pixmaps")
 	     (:file "open-and-close")
 	     (:file "opal-init")
-	     (:file "multifont-loader")))
+	     ;; (:file "multifont-loader")
+	     ))
    ;; (:module truetype
    ;; 	    :pathname "src/truetype"
    ;; 	    :depends-on (:utils :gem :kr :opal)

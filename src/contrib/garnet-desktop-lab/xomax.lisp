@@ -25,6 +25,38 @@
    (opal:set-text text2 nil)
    (inter:set-focus focus-inter text1))
 
+
+
+;; This is used in the "New" submenu of "File."  This function clears the
+;; two windows of text.
+(defun open-fn (gadget menu-item value)
+  (declare (ignore gadget menu-item value))
+  (let ((current-text-gaget (gv focus-inter :obj-to-change)))
+    (opal:set-text current-text-gaget (run-generate-multifont-text-from-file))
+    (opal:update win)))
+
+(defun generate-multifont-text-from-file (file-name)
+  ;;(alexandria:read-file-into-string
+  (let ((lines '()))
+    (with-open-file (stream file-name :direction :input)
+      (do ((line (read-line stream nil :eof)
+		 (read-line stream nil :eof)))
+	  ((eq line :eof)
+	   (reverse lines))
+	(push line lines)))))
+
+(defun  run-generate-multifont-text-from-file ()
+  (generate-multifont-text-from-file
+   "/home/rett/dev-remote/garnet/cl-garnet/src/contrib/garnet-desktop-lab/xomax.lisp"))
+
+;; This is used in the "New" submenu of "File."  This function clears the
+;; two windows of text.
+(defun save-fn (gadget menu-item value)
+   (declare (ignore gadget menu-item value))
+   (opal:set-text text1 nil)
+   (opal:set-text text2 nil)
+   (inter:set-focus focus-inter text1))
+
 ;; The is the "Quit" selection of "File."  It exits the main loop.
 (defun quit-fn (gadget menu-item value)
    (declare (ignore gadget menu-item value))
@@ -92,8 +124,8 @@
          (opal:change-font-of-selection multifont nil :italic :toggle-first)
 	 (gg:auto-scroll multifont))))
 
-;; This is the "Bold" selection of the "Edit" menu.  It toggles the current
-;; font to be bold.
+;; This is the "Bold" selection of the "Edit" menu.  It toggles the
+;; current font to be bold.
 (defun bold-fn (gadget menu-item value)
    (declare (ignore gadget menu-item value))
    (let ((multifont (g-value focus-inter :obj-to-change)))
@@ -101,8 +133,8 @@
          (opal:change-font-of-selection multifont nil :bold :toggle-first)
 	 (gg:auto-scroll multifont))))
 
-;; This is the "Font Bigger" selection of the "Edit" menu.  It toggles the
-;; current font to be one size larger.
+;; This is the "Font Bigger" selection of the "Edit" menu.  It toggles
+;; the current font to be one size larger.
 (defun bigger-fn (gadget menu-item value)
    (declare (ignore gadget menu-item value))
    (let ((multifont (g-value focus-inter :obj-to-change)))
@@ -134,152 +166,8 @@
      (s-value focus-inter :match-parens-p lisp-mode)
      (s-value mouse-inter :match-parens-p lisp-mode)))
 
-;; The main procedure.  Initializes all garnet gadgets and interactors.
-(defun Do-Go (&key dont-enter-main-event-loop double-buffered-p)
-  (declare (ignore double-buffered-p))
-
-  ;; Create the main window.
-  (create-instance 'win inter:interactor-window
-    (:title "Multifont Demonstration")
-    (:top 100)
-    (:left 150)
-    (:height 254)
-    (:background-color opal:black))
-
-  (create-instance 'top opal:aggregate)
-  (s-value win :aggregate top)
-  (opal:update win)
-
-  ;; If we get clobbered by the window manager, let the demos
-  ;; controller know (if it's there).
-  (when (fboundp 'common-lisp-user::Garnet-Note-Quitted)
-    (pushnew
-     #'(lambda (win)
-	 (declare (ignore win))
-	 (common-lisp-user::Garnet-Note-Quitted "DEMO-MULTIFONT"))
-     (g-value win :destroy-hooks)))
-
-  ;; Create the message bar
-  (create-instance 'message opal:multifont-text
-    (:left 0)
-    (:top (o-formula (- (gv win :height) 19)))
-    (:word-wrap-p nil)
-    (:auto-scroll-p nil)
-    (:text-width (o-formula (gv win :width)))
-    (:line-style opal:white-line)
-    (:fill-background-p nil))
-
-  (opal:add-component top message)
-
-  ;; Create the menubar.
-  (create-instance 'pull-down garnet-gadgets:motif-menubar
-    (:foreground-color opal:motif-green)
-    (:items '(("File" nil
-	       (("New" new-fn) ("Open") ("Save") ("Quit" quit-fn)))
-	      ("Edit" nil
-	       (("Copy" copy-fn) ("Cut" cut-fn) ("Paste" paste-fn)
-		("Italic" italic-fn) ("Bold" bold-fn)
-		("Font Bigger" bigger-fn) ("Font Smaller" smaller-fn)
-		("Toggle Lisp Mode" lisp-fn)))
-	      ("Font" change-font
-	       ((:Fixed) (:Serif) (:Sans-Serif)))
-	      ("Size" change-size
-	       ((:Small) (:Medium)
-		(:Large) (:Very-Large)))))
-    (:bar-above-these-items '(NIL ("Italic" "Toggle Lisp Mode") NIL NIL))
-    (:min-menubar-width (o-formula (gv win :width))))
-
-  (opal:add-component top pull-down)
-
-  ;; Create the top window of the demo.
-  (create-instance 'text1 opal:multifont-text ; This is the internal multifont
-    (:word-wrap-p t)			      ; text object.
-    (:auto-scroll-p T)
-    (:fast-redraw-p :rectangle)
-    (:fast-redraw-filling-style opal:motif-gray-fill))
-
-  (create-instance 'scroll-win1 gg:motif-scrolling-window-with-bars
-    (:left 0)
-    (:top (g-value pull-down :height))
-    (:width (o-formula (- (gv win :width) (* 2 (gvl :border-width)))))
-    (:height (o-formula (- (floor
-			    (/ (- (gv win :height)
-				  23 ;; height of paren-matching message
-				  (g-value pull-down :height)) 2))
-			   (* 2 (gvl :border-width)))))
-    (:parent-window win)
-    (:total-width (o-formula (+ (gv text1 :width) (gv text1 :left)) 200))
-    (:total-height (o-formula (+ (gv text1 :top) (gv text1 :height)) 200))
-    (:h-scroll-bar-p nil)
-    (:v-scroll-bar-p t))
-
-  (s-value text1 :text-width (o-formula (gv scroll-win1 :clip-window :width)))
-  (s-value text1 :scrolling-window scroll-win1)
-
-  (opal:update scroll-win1)
-  (opal:add-component (g-value scroll-win1 :inner-aggregate) text1)
-
-  ;; Create the lower window of the demo.
-  (create-instance 'text2 opal:multifont-text
-    (:word-wrap-p t)
-    (:auto-scroll-p T)
-    (:fast-redraw-p :rectangle)
-    (:fast-redraw-filling-style opal:motif-gray-fill))
-
-  (create-instance 'scroll-win2 gg:motif-scrolling-window-with-bars
-    (:left 0)
-    (:top (o-formula (+ (g-value pull-down :height) (gv scroll-win1 :height)
-			(* 2 (gvl :border-width)))))
-    (:width (o-formula (- (gv win :width) (* 2 (gvl :border-width)))))
-    (:height (o-formula (- (gv win :height) (gvl :top)
-			   23 ;; height of paren-matching message
-			   (* 2 (gvl :border-width)))))
-    (:parent-window win)
-    (:total-width (o-formula (gv text2 :width) 200))
-    (:total-height (o-formula (gv text2 :height) 200))
-    (:h-scroll-bar-p nil)
-    (:v-scroll-bar-p t))
-
-  (s-value text2 :text-width (o-formula (gv scroll-win2 :clip-window :width)))
-  (s-value text2 :scrolling-window scroll-win2)
-
-  (opal:update scroll-win2)
-  (opal:add-component (g-value scroll-win2 :inner-aggregate) text2)
-
-  ;; Create a focus interactor so that keyboard events may be entered
-  ;; into the text objects.
-  (create-instance 'focus-inter inter:focus-multifont-textinter
-    (:window `(,win ,(g-value scroll-win1 :clip-window)
-		    ,(g-value scroll-win1 :inner-window)
-		    ,(g-value scroll-win2 :clip-window)
-		    ,(g-value scroll-win2 :inner-window)))
-    (:match-obj message))
-
-  ;; Create a selection interactor to handle mouse events on the text
-  ;; objects.
-  (create-instance 'mouse-inter inter:selection-interactor
-    (:window `(,win ,(g-value scroll-win1 :clip-window)
-		    ,(g-value scroll-win1 :inner-window)
-		    ,(g-value scroll-win2 :clip-window)
-		    ,(g-value scroll-win2 :inner-window)))
-    (:focus-interactor focus-inter)
-    (:text-list `(,text2 ,text1))
-    (:start-where `(:list-element-of ,mouse-inter :text-list :type
-				     ,opal:multifont-text))
-    (:match-obj message))
-
-  (inter:set-focus focus-inter text1)
-  (opal:update win)
-
-  ;; Currently, open and save remain unimplemented. Their
-  ;; corresponding menubar entries have been grayed to reflect this.
-  (let ((bar (garnet-gadgets:get-bar-component pull-down "File")))
-    (garnet-gadgets:menubar-disable-component
-     (garnet-gadgets:get-submenu-component bar "Open"))
-    (garnet-gadgets:menubar-disable-component
-     (garnet-gadgets:get-submenu-component bar "Save")))
-
-  (Format T "~%Demo-Multifont:
+(defparameter *usage-string*
+"~%Demo-Multifont:
   This creates and edits two multifont text objects within two motif-scrolling-
   window-with-bars.
   Clicking the cursor in the text objects will set the cursor to that object
@@ -312,6 +200,136 @@ Font changing:
  ^-shift-< = smaller font  ^-shift-> = bigger font
  ^1 ^2 ^3 ^4 = small, medium, large and very-large fonts~%")
 
+;; The main procedure.  Initializes all garnet gadgets and
+;; interactors.
+(defun do-go (&key dont-enter-main-event-loop double-buffered-p)
+  (declare (ignore double-buffered-p))
+  ;; Create the main window.
+  (create-instance 'win inter:interactor-window
+    (:title "Multifont Demonstration")
+    (:top 100)
+    (:left 150)
+    (:height 254)
+    (:background-color opal:black))
+  (create-instance 'top opal:aggregate)
+  (s-value win :aggregate top)
+  (opal:update win)
+  ;; If we get clobbered by the window manager, let the demos
+  ;; controller know (if it's there).
+  (when (fboundp 'common-lisp-user::Garnet-Note-Quitted)
+    (pushnew
+     #'(lambda (msg-win)
+	 (declare (ignore msg-win))
+	 (common-lisp-user::Garnet-Note-Quitted "DEMO-MULTIFONT"))
+     (g-value win :destroy-hooks)))
+  ;; Create the message bar
+  (create-instance 'message opal:multifont-text
+    (:left 0)
+    (:top (o-formula (- (gv win :height) 19)))
+    (:word-wrap-p nil)
+    (:auto-scroll-p nil)
+    (:text-width (o-formula (gv win :width)))
+    (:line-style opal:white-line)
+    (:fill-background-p nil))
+  (opal:add-component top message)
+  ;; Create the menubar.
+  (create-instance 'pull-down garnet-gadgets:motif-menubar
+    (:foreground-color opal:motif-green)
+    (:items '(("File" nil
+	       (("New" new-fn)
+		("Open" open-fn)
+		("Save" save-fn)
+		("Quit" quit-fn)))
+	      ("Edit" nil
+	       (("Copy" copy-fn) ("Cut" cut-fn) ("Paste" paste-fn)
+		("Italic" italic-fn) ("Bold" bold-fn)
+		("Font Bigger" bigger-fn) ("Font Smaller" smaller-fn)
+		("Toggle Lisp Mode" lisp-fn)))
+	      ("Font" change-font
+	       ((:Fixed) (:Serif) (:Sans-Serif)))
+	      ("Size" change-size
+	       ((:Small) (:Medium)
+		(:Large) (:Very-Large)))))
+    (:bar-above-these-items '(NIL ("Italic" "Toggle Lisp Mode") NIL NIL))
+    (:min-menubar-width (o-formula (gv win :width))))
+  (opal:add-component top pull-down)
+  ;; Create the top window of the demo.
+  (create-instance 'text1 opal:multifont-text ; This is the internal multifont
+    (:word-wrap-p t)			      ; text object.
+    (:auto-scroll-p T)
+    (:fast-redraw-p :rectangle)
+    (:fast-redraw-filling-style opal:motif-gray-fill))
+  (create-instance 'scroll-win1 gg:motif-scrolling-window-with-bars
+    (:left 0)
+    (:top (g-value pull-down :height))
+    (:width (o-formula (- (gv win :width) (* 2 (gvl :border-width)))))
+    (:height (o-formula (- (floor
+			    (/ (- (gv win :height)
+				  23 ;; height of paren-matching message
+				  (g-value pull-down :height)) 2))
+			   (* 2 (gvl :border-width)))))
+    (:parent-window win)
+    (:total-width (o-formula (+ (gv text1 :width) (gv text1 :left)) 200))
+    (:total-height (o-formula (+ (gv text1 :top) (gv text1 :height)) 200))
+    (:h-scroll-bar-p nil)
+    (:v-scroll-bar-p t))
+  (s-value text1 :text-width (o-formula (gv scroll-win1 :clip-window :width)))
+  (s-value text1 :scrolling-window scroll-win1)
+  (opal:update scroll-win1)
+  (opal:add-component (g-value scroll-win1 :inner-aggregate) text1)
+  ;; Create the lower window of the demo.
+  (create-instance 'text2 opal:multifont-text
+    (:word-wrap-p t)
+    (:auto-scroll-p T)
+    (:fast-redraw-p :rectangle)
+    (:fast-redraw-filling-style opal:motif-gray-fill))
+  (create-instance 'scroll-win2 gg:motif-scrolling-window-with-bars
+    (:left 0)
+    (:top (o-formula (+ (g-value pull-down :height) (gv scroll-win1 :height)
+			(* 2 (gvl :border-width)))))
+    (:width (o-formula (- (gv win :width) (* 2 (gvl :border-width)))))
+    (:height (o-formula (- (gv win :height) (gvl :top)
+			   23 ;; height of paren-matching message
+			   (* 2 (gvl :border-width)))))
+    (:parent-window win)
+    (:total-width (o-formula (gv text2 :width) 200))
+    (:total-height (o-formula (gv text2 :height) 200))
+    (:h-scroll-bar-p nil)
+    (:v-scroll-bar-p t))
+  (s-value text2 :text-width (o-formula (gv scroll-win2 :clip-window :width)))
+  (s-value text2 :scrolling-window scroll-win2)
+  (opal:update scroll-win2)
+  (opal:add-component (g-value scroll-win2 :inner-aggregate) text2)
+  ;; Create a focus interactor so that keyboard events may be entered
+  ;; into the text objects.
+  (create-instance 'focus-inter inter:focus-multifont-textinter
+    (:window `(,win ,(g-value scroll-win1 :clip-window)
+		    ,(g-value scroll-win1 :inner-window)
+		    ,(g-value scroll-win2 :clip-window)
+		    ,(g-value scroll-win2 :inner-window)))
+    (:match-obj message))
+  ;; Create a selection interactor to handle mouse events on the text
+  ;; objects.
+  (create-instance 'mouse-inter inter:selection-interactor
+    (:window `(,win ,(g-value scroll-win1 :clip-window)
+		    ,(g-value scroll-win1 :inner-window)
+		    ,(g-value scroll-win2 :clip-window)
+		    ,(g-value scroll-win2 :inner-window)))
+    (:focus-interactor focus-inter)
+    (:text-list `(,text2 ,text1))
+    (:start-where `(:list-element-of ,mouse-inter :text-list :type
+				     ,opal:multifont-text))
+    (:match-obj message))
+  (inter:set-focus focus-inter text1)
+  (opal:update win)
+  ;; Currently, open and save remain unimplemented. Their
+  ;; corresponding menubar entries have been grayed to reflect this.
+  ;; (let ((bar (garnet-gadgets:get-bar-component pull-down "File")))
+  ;;   (garnet-gadgets:menubar-disable-component
+  ;;    (garnet-gadgets:get-submenu-component bar "Open"))
+  ;;   (garnet-gadgets:menubar-disable-component
+  ;;    (garnet-gadgets:get-submenu-component bar "Save")))
+  (Format T *usage-string*)
   (unless dont-enter-main-event-loop
     (inter:main-event-loop)))
 
@@ -322,5 +340,5 @@ Font changing:
    (opal:destroy pull-down)
    (opal:destroy win)
   ;;for demo-controller
-   (unless (and (fboundp 'Common-Lisp-User::Garnet-Note-Quitted)
-                (Common-Lisp-User::Garnet-Note-Quitted "DEMO-MULTIFONT"))))
+   (unless (and (fboundp 'common-lisp-user::garnet-note-quitted)
+                (common-lisp-user::garnet-note-quitted "DEMO-MULTIFONT"))))

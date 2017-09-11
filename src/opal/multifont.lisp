@@ -36,7 +36,7 @@
 ;;    to point to the very beginning of a fragment (frag-pos = 0) unless
 ;;    the cursor is at the very beginning of the line.  If the fragment
 ;;    position is zero and there exists a previous fragment, the cursor must
-;;    be set to point to the last character in the previous fragment. 
+;;    be set to point to the last character in the previous fragment.
 ;; E) The state of the selection pointer consists of four parts: line,
 ;;    position, fragment, and fragment position.  A selection area is
 ;;    highlighted by setting the multifont-text's :selection-p to true,
@@ -289,11 +289,10 @@
 		    :first-mark :last-mark)
 		  (g-value MULTIFONT-TEXT :do-not-dump-slots)))
 
-
 ;;; Helper Functions for Methods
 
-;; This function will check an input in the :strings format to see whether or
-;; not it is syntactically correct.
+;; This function will check an input in the :strings format to see
+;; whether or not it is syntactically correct.
 (defun check-text (text)
   (if (listp text)
       (if (cdr (last text))
@@ -316,7 +315,7 @@
 				  (and (stringp (car frag))
 				       (let ((specs-list (cdr frag)))
 					 (if (listp specs-list)
-					     (and  
+					     (and
 					      (let ((font (first specs-list)))
 						(or (is-a-p font opal:font)
 						    (is-a-p font opal:font-from-file)))
@@ -367,8 +366,7 @@
 
 ;; Use this to add a fragment to the free list.
 (defun free-frag (frag)
-  (declare (ignore frag))
-)
+  (declare (ignore frag)))
 
 ;;(defun free-frag (frag)
 ;;  (setf (frag-next frag) *Free-Frag-Head*)
@@ -626,7 +624,7 @@
 	    (setf (frag-object-p right-frag) T)
 	    (let ((obj (frag-object left-frag)))
 	      (setf (frag-object right-frag) obj)
-	      (setf (frag-length right-frag) (if (mark-p obj) 0 1)))	     
+	      (setf (frag-length right-frag) (if (mark-p obj) 0 1)))
 	    (setf (frag-font right-frag) NIL)
 	    (setf (frag-fcolor right-frag) NIL)
 	    (setf (frag-bcolor right-frag) NIL)
@@ -635,7 +633,7 @@
 	    (setf (frag-descent right-frag) 0)
 	    (setf (frag-start-highlight right-frag)
 		  (frag-start-highlight left-frag))
-	    (setf (frag-end-highlight right-frag) 
+	    (setf (frag-end-highlight right-frag)
 		  (frag-end-highlight left-frag)))
 	  (setf (frag-length right-frag) 0)))
       (progn
@@ -679,10 +677,10 @@
 	   (setf (frag-end-highlight left-frag) 0)))))
     right-frag))
 
-
-;; Determine all attributes (other than fragments) of the given line by
-;; running through all of its constituent fragments.  Remove zero length
-;; fragments from line (except for the first fragment which is a special case)
+;; Determine all attributes (other than fragments) of the given line
+;; by running through all of its constituent fragments.  Remove zero
+;; length fragments from line (except for the first fragment which is
+;; a special case)
 (defun calculate-size-of-line (gob my-line)
   (let ((length 0)
 	(width 0)
@@ -744,7 +742,7 @@
 		(setf (mark-line obj) my-line)
 		(progn
 		  (s-value obj :multifont-x-offset width)
-		  (s-value obj :multifont-line my-line)))))		 
+		  (s-value obj :multifont-line my-line)))))
 	  (incf length (frag-length frag))
 	  (incf width (frag-width frag))
 	  (when (and prev-frag (fonts-equal-p prev-frag frag))
@@ -761,11 +759,9 @@
     (s-value my-line :ascent ascent)
     (s-value my-line :descent descent)))
 
-
-;; This returns necessary computations to update the position of the cursor.
-;; Given the line and character offset of the cursor, this will return the
-;; fragment, fragment offset, and pixel offset.
-;;
+;; This returns necessary computations to update the position of the
+;; cursor.  Given the line and character offset of the cursor, this
+;; will return the fragment, fragment offset, and pixel offset.
 (defun calculate-cursor-pos (my-line my-position)
   (declare (fixnum my-position))
   (let ((frag-offset my-position)
@@ -785,8 +781,8 @@
 		    (setq frag-offset 0)))
 	      (unless (zerop frag-offset)
 		(incf x-offset (frag-width cursor-frag))))
-	    (incf x-offset 
-		  (the fixnum (opal:string-width 
+	    (incf x-offset
+		  (the fixnum (opal:string-width
 			       (frag-font cursor-frag)
 			       (subseq (the simple-string (frag-string cursor-frag))
 				       0 frag-offset)))))
@@ -817,7 +813,7 @@
 	new-line
 	(last-frag (g-value my-line :last-frag)))
     (declare (fixnum length))
-    
+
     (if (frag-break-p last-frag)
 
 	(progn
@@ -862,7 +858,7 @@
 		  (setq prev-frag (frag-prev prev-frag)))
 		(setf (frag-next prev-frag) NIL)
 		(setf (frag-break-p prev-frag) break-p))
-	      
+
 	      (s-value my-line :first-frag NIL))
 
 	  (s-value new-line :first-frag cut-frag)
@@ -979,7 +975,7 @@
 		      (pop frags)
 		      (list (list " " last-font last-fcolor last-bcolor)))
 		     ans)))))))))
-     
+
 
 ;; Put a space at the end of every line.  The space represents a newline.
 (defun add-spaces (text)
@@ -1761,7 +1757,7 @@
 ;; Put the pertinent information about a font into a convenient format.
 (defun extract-key-from-font (font)
   (list (g-value font :family) (g-value font :face) (g-value font :size)))
- 
+
 (defun update-font (old-font my-font family size italic bold first-face)
   (if my-font
       my-font
@@ -1928,7 +1924,7 @@
 	    (change-font-frag new-frag my-font
 			      family size italic bold key))
 	(declare (fixnum dec-pos))
-	(change-font-frag frag my-font 
+	(change-font-frag frag my-font
 			  family size italic bold key))
       (calculate-size-of-line gob my-line))))
 
@@ -1981,7 +1977,7 @@
 
 
 ;;; COLOR stuff
- 
+
 (defun change-color-frag (frag fcolor &optional bcolor)
   (unless (frag-object-p frag)
     (let* ((old-fcolor (frag-fcolor frag))
@@ -2162,7 +2158,7 @@
      (declare (fixnum i))))
 
 
-;; Returns character cursor passed over, or #\newline if we went to a 
+;; Returns character cursor passed over, or #\newline if we went to a
 ;; new line, or nil if at end of text.
 (defun GO-TO-NEXT-CHAR (gob)
   (let* ((my-line (g-value gob :cursor-line))
@@ -2238,7 +2234,7 @@
 	  char))))
 
 
-;; Returns character cursor passed over, or #\newline if cursor went to a 
+;; Returns character cursor passed over, or #\newline if cursor went to a
 ;; new line, or nil if at beginning of text.
 (defun GO-TO-PREV-CHAR (gob)
   (reset-font gob)
@@ -2677,7 +2673,7 @@
            (cursor-high (higher-cursor cursor-line cursor-pos
 				       select-line select-pos))
 	   (frag-pos 0)
-	   frag first-font first-face) 
+	   frag first-font first-face)
      (declare (fixnum frag-pos))
       (if cursor-high
 	(progn
@@ -2978,7 +2974,7 @@
 						my-line next-frag nil) 0)))
 		(values (new-frag-with-font my-font fcolor bcolor
 					    my-line frag next-frag) 0))))))
-    (T 
+    (T
         (let ((right-frag (split-frag frag frag-position)))
           (when (eq frag (g-value my-line :last-frag))
             (s-value my-line :last-frag right-frag))
@@ -3550,7 +3546,7 @@
                                        (string char)
                                        (format NIL "~s" char))))))
       (setq str (concatenate 'string str (string space))))))
-	       
+
 
 ;; Returns word deleted.
 (defun DELETE-PREV-WORD (gob)
@@ -3873,7 +3869,7 @@
           (setf (car text) (append line (car text)))
           (push line text)))
       text)))
-      
+
 (defun delete-text (gob start-line start-frag start-pos
                         end-line end-frag end-pos)
   (let (text prev-line)
@@ -3904,7 +3900,7 @@
 	  (undo-wrap-line gob prev-line))))
     (reset-font gob)
     text))
-      
+
 ;; Returns copied portion in text format.
 (defun COPY-SELECTED-TEXT (gob)
   (unless (g-value gob :selection-p)

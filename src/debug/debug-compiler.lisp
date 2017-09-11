@@ -9,7 +9,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Changes:
 ;;; 10/2/03 RGA --- New compile/load protocol
-;;; 10/2/03 RGA --- Changed this back, is it really necessary to explicitly call 
+;;; 10/2/03 RGA --- Changed this back, is it really necessary to explicitly call
 ;;;                 gc during compilation?
 ;;;  6/26/03 rpg         Figured that the +allegro-3.1 should be +allegro.
 ;;;  7/28/96 RGA --- changed to use garnet-compile/load
@@ -29,7 +29,7 @@
        (and (boundp 'Garnet-Compile-Debug-Settings)
 	    Garnet-Compile-Debug-Settings)
        ;; Global default settings.
-       (and (boundp 'Default-Garnet-Proclaim) 
+       (and (boundp 'Default-Garnet-Proclaim)
 	    Default-Garnet-Proclaim))))
 
 
@@ -58,7 +58,7 @@
   (let ((gfile (concatenate 'string "debug:" file)))
     (garnet-compile gfile)))
 
-(garnet-copy-files Garnet-debug-Src Garnet-debug-Pathname
-		   '("debug-loader.lisp"))
+;; (garnet-copy-files Garnet-debug-Src Garnet-debug-Pathname
+;; 		   '("debug-loader.lisp"))
 
 (setf (get :garnet-modules :debug) T)

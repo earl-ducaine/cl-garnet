@@ -20,7 +20,7 @@
        (and (boundp '*garnet-compile-debug-settings*)
 	    *garnet-compile-debug-settings*)
        ;; Global default settings.
-       (and (boundp '*default-garnet-proclaim*) 
+       (and (boundp '*default-garnet-proclaim*)
 	    *default-garnet-proclaim*))))
 
 
@@ -48,7 +48,7 @@
     (garnet-compile gfile)
     (garnet-load gfile)))
 
-(garnet-copy-files Garnet-Truetype-Src Garnet-Truetype-Pathname
-		   '("truetype-loader.lisp"))
+;; (garnet-copy-files Garnet-Truetype-Src Garnet-Truetype-Pathname
+;; 		   '("truetype-loader.lisp"))
 
 (setf (get :garnet-modules :truetype) T)

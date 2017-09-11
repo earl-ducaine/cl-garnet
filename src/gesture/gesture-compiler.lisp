@@ -47,8 +47,8 @@
     (unless (string= file "agate")
     (garnet-load gfile))))
 
-(garnet-copy-files Garnet-gesture-Src Garnet-gesture-Pathname
-		   '("gesture-loader.lisp"))
+;; (garnet-copy-files Garnet-gesture-Src Garnet-gesture-Pathname
+;; 		   '("gesture-loader.lisp"))
 
 
 #+allegro-V3.1 (gc t)

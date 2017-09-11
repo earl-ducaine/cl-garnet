@@ -88,8 +88,8 @@ Change log:
   (garnet-load (concatenate 'string "c32:" file))
   )
 
-(garnet-copy-files Garnet-c32-Src Garnet-c32-Pathname
-		   '("c32-loader.lisp"))
+;; (garnet-copy-files Garnet-c32-Src Garnet-c32-Pathname
+;; 		   '("c32-loader.lisp"))
 
 (setf (get :garnet-modules :C32) t)
 

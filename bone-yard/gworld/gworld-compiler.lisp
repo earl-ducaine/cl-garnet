@@ -41,9 +41,9 @@
     (garnet-compile gfile)
     (garnet-load gfile)))
 
-(garnet-copy-files Garnet-Gworld-Src Garnet-Gworld-Pathname
-;;		   '("gworld-loader.lisp")
-		   )
+;; (garnet-copy-files Garnet-Gworld-Src Garnet-Gworld-Pathname
+;; ;;		   '("gworld-loader.lisp")
+;; 		   )
 
 
 (setf (get :garnet-modules :gworld) t)

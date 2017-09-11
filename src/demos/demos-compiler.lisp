@@ -39,5 +39,5 @@
   (let ((gfile (concatenate 'string "demos:" file)))
     (garnet-compile gfile)))
 
-(garnet-copy-files Garnet-Demos-Src Garnet-Demos-Pathname
-		   '("demos-loader.lisp"))
+;; (garnet-copy-files Garnet-Demos-Src Garnet-Demos-Pathname
+;; 		   '("demos-loader.lisp"))

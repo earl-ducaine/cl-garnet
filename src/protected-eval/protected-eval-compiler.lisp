@@ -53,8 +53,8 @@
       (garnet-load peval-str))))
 
 
-(garnet-copy-files Garnet-Protected-Eval-Src Garnet-Protected-Eval-Pathname
-		   '("protected-eval-loader.lisp"))
+;; (garnet-copy-files Garnet-Protected-Eval-Src Garnet-Protected-Eval-Pathname
+;; 		   '("protected-eval-loader.lisp"))
 
 
 (progn

@@ -51,9 +51,9 @@
     (garnet-compile gfile)
     (garnet-load gfile)))
 
-(garnet-copy-files Garnet-Aggregadgets-Src Garnet-Aggregadgets-Pathname
-		   '("aggregadgets-loader.lisp"
-		     "aggregraphs-loader.lisp"))
+;; (garnet-copy-files Garnet-Aggregadgets-Src Garnet-Aggregadgets-Pathname
+;; 		   '("aggregadgets-loader.lisp"
+;; 		     "aggregraphs-loader.lisp"))
 
 (setf (get :garnet-modules :aggregadgets) t)
 (setf (get :garnet-modules :aggregraphs) t)

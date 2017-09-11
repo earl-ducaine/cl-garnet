@@ -91,12 +91,12 @@
     (garnet-load gilt-str))
   #+allegroV3.1(common-lisp-user::gc t))
 
-(garnet-copy-files Garnet-Gilt-Src Garnet-Gilt-Pathname
-		   '("filter-functions-loader.lisp"
-		     "gilt-loader.lisp"
-		     "gilt-functions-loader.lisp"
-		     "path-functions-loader.lisp"
-		     ))
+;; (garnet-copy-files Garnet-Gilt-Src Garnet-Gilt-Pathname
+;; 		   '("filter-functions-loader.lisp"
+;; 		     "gilt-loader.lisp"
+;; 		     "gilt-functions-loader.lisp"
+;; 		     "path-functions-loader.lisp"
+;; 		     ))
 
 
 (setf (get :garnet-modules :gilt) t)

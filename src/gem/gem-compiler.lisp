@@ -37,7 +37,7 @@
 ;;     (garnet-compile gfile)
 ;;     (garnet-load gfile)))
 
-(garnet-copy-files Garnet-Gem-Src Garnet-Gem-Pathname
-		   '("gem-loader.lisp"))
+;; (garnet-copy-files Garnet-Gem-Src Garnet-Gem-Pathname
+;; 		   '("gem-loader.lisp"))
 
 (setf (get :garnet-modules :gem) T)
