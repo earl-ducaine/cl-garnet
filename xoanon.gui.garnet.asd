@@ -284,6 +284,14 @@
 	     (:file "tour")
 	     (:file "tour-transcript")
 	     ))
+   (:module :garnet-desktop-lab
+	    :pathname "src/contrib/garnet-desktop-lab"
+	    :depends-on (:demos)
+	    :components
+	    ((:file "package")
+	     (:file "garnet-desktop-lab")
+	     (:file "xomax")
+	     (:file "app-launcher")))
    (:module lapidary2
    	    :pathname "src/lapidary"
    	    :depends-on (:utils :build)

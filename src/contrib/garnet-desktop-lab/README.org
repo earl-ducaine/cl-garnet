@@ -1,0 +1,48 @@
+
+
+
+* Garnet Lab
+
+  Playing around with various concepts and ideas about how to Garnet
+  for a Lisp desktop.  Perhaps something along the lines of what Gnome
+  is gtk.
+
+** Desktop application:
+   
+   1) Launcher
+   2) Text editor
+   3) Vector drawing tool
+   4) Bitmap drawing tool
+   5) Envirnonment/configuration browser
+   6) Package manager
+
+
+
+** Installing (proposed)
+   
+   1) Make sure you have [[https://www.quicklisp.org/beta/#installation][Quicklisp]] installed and Garnet installed in a
+      way that quicklisp/asdf can [[https://github.com/earl-ducaine/cl-garnet][find it]]. (it's not in the Quicklisp
+      repo.)
+   2) Clone the Garnet repo to a convenient location:
+
+      #+BEGIN_SRC bash
+        clone git https://github.com/earl-ducaine/garnet-desktop-lab ~/garnet-desktop-lab
+      #+END_SRC
+
+   3) Make sure your Lisp isn't running, then create a symbolic link
+      in Quicklisp's local-projects folder and delete Quicklisp's
+      system index. (to force it to re-search directories)
+
+      #+BEGIN_SRC bash
+        cd ~/quicklisp/local-projects
+        ln -s ~/garnet-desktop-lab .
+        rm ~/quicklisp/local-projects/system-index.txt
+      #+END_SRC
+
+   4) You should now be able to load the repo and all its dependancies
+      via Quicklisp, and run the demo or begin using the library.
+
+      #+BEGIN_SRC lisp
+        (ql:quickload  :xoanon.gui.garnet.asd)
+        (demos-controller::do-go)
+      #+END_SRC
