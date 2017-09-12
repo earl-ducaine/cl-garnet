@@ -82,58 +82,9 @@
 ;;
 ;;  Written by Andrew Mickish
 
-
-;;;  Change Log:
-;;  08/19/93 Rajan Parthasarathy - Modified :underline's :x1 & :width
-;;           slots (as suggested by Poelman) in MOTIF-MENU-ITEM to consider
-;;           variable width fonts.
-;;  07/26/93 Andrew Mickish - Added special proclamation to eliminate warning
-;;  06/30/93 Andrew Mickish - Fixed :fast-redraw-filling-style formula
-;;  06/22/93 Andrew Mickish - Added checks for NIL :items list in formulas
-;;           for :max-item-width and :items-height.
-;;  06/16/93 Andrew Mickish - Fixed more :visible formulas to look at parent's
-;;           visibility; set :old-items of aggrelist in *-local-item methods
-;;  02/23/93 Andrew Mickish - Added :string-set-func
-;;  02/22/93 Andrew Mickish - Made MOTIF-MENU-TEXT-LABEL-PROTOTYPE a stand-
-;;           alone object for use in the MOTIF-MENUBAR
-;;  02/10/93 Andrew Mickish - Added items-type and accelerators-type
-;;  02/09/93 Andrew Mickish - Added dependency on :items list so that
-;;           the aggrelist's :fix-update-slots method will be invoked;
-;;           Removed kr-path calls from MOTIF-MENU-ITEM
-;;  01/05/93 Rajan Parthasarathy - Created MOTIF-MENU-ITEM and set it
-;;           to be the prototype of MOTIF-MENU-ITEM-LIST.  Also, the
-;;           way to check to see if an item is active is to look at
-;;           the :active-p slot of the item.  Previously, it was to
-;;           look up the item in the :inactive-items slot of the menu
-;;  12/15/92 Andrew Mickish - Added type and parameter declarations
-;;  06/16/92 Andrew Mickish - Added objects in :items list
-;;  04/30/92 Andrew Micksih - Called get-standard-font for fonts
-;;  02/27/92 Andrew Mickish - Removed :leftdown from MOTIF-MENU-KEY-INTER
-;;  02/11/92 Andrew Mickish - Added :maybe-constant list
-;;  11/06/91 Andrew Mickish - Changed the feedback object from a MOTIF-BOX
-;;           to two fast redraw polylines
-;;  10/13/91 Andrew Mickish - Added :leftdown case in MOTIF-MENU-KEY-INTER
-;;           so the keyboard selection will follow the mouse
-;;  10/08/91 Andrew Mickish - Turned off fast-redraw in selection box
-;;  05/09/91 Andrew Mickish - In MOTIF-MENU, changed :global-accel-chars,
-;;           :global-accel-strings, and :local-accel-chars to contiain NIL
-;;           elements when some accelerator characters are not supplied; and
-;;           changed :start-event in MOTIF-MENU-ACCELERATOR-INTER to delete
-;;           these NIL elements from its list
-;;  03/01/91 Andrew Mickish - Created
+(in-package :garnet-gadgets)
 
-
-(in-package "GARNET-GADGETS")
-
-(eval-when (:execute :load-toplevel :compile-toplevel)
-  (export '(Motif-Menu Motif-Menu-Accelerator-Inter))
-  #+garnet-test
-  (export '(Motif-Menu-Go Motif-Menu-Stop
-	    Demo-Motif-Menu Motif-Menu-Win Motif-Menu-Top-Agg))
-
-  (proclaim '(special MOTIF-BAR-ITEM)))
-
-(create-instance 'MOTIF-MENU-TEXT-LABEL-PROTOTYPE opal:text
+(create-instance 'xomax-menu-text-label-prototype opal:text
   (:constant '(:actual-heightp))
   (:left (o-formula
 	  (let* ((p0 (gvl :parent))
@@ -155,12 +106,10 @@
   (:fast-redraw-filling-style
    (o-formula (gv (kr-path 0 :parent :parent :parent) :foreground-fill))))
 
-
-
-;;  Can't use kr-path in ouside references from MOTIF-MENU-ITEM because
-;;  instances can be manipulated as independent components in the menubar.
-;;
-(create-instance 'MOTIF-MENU-ITEM opal:aggregadget
+;;  Can't use kr-path in ouside references from xomax-menu-item
+;;  because instances can be manipulated as independent components in
+;;  the menubar.
+(create-instance 'xomax-menu-item opal:aggregadget
   (:left (o-formula (gvl :parent :left)))
   (:top (o-formula (+ (gvl :parent :top)
 		      (* (gvl :rank) (gvl :parent :parent :item-height)))))
@@ -227,10 +176,9 @@
       (:line-style ,(o-formula (gv (kr-path 0 :parent) :line-style)))
       (:fast-redraw-p :rectangle)
       (:fast-redraw-filling-style
-       ,(o-formula (gvl :parent :parent :foreground-fill))))
-     )))
+       ,(o-formula (gvl :parent :parent :foreground-fill)))))))
 
-(create-instance 'MOTIF-MENU-ITEM-LIST opal:aggrelist
+(create-instance 'xomax-menu-item-list opal:aggrelist
    (:constant '(:rank-margin :pixel-margin :fixed-width-p :fixed-height-p
 		:direction))
    (:left (o-formula (+ 2 (gv (kr-path 0 :parent) :left))))
@@ -241,9 +189,9 @@
    (:items (o-formula (gv (kr-path 0 :parent) :items)))
    (:item-to-string-function (o-formula (gv (kr-path 0 :parent)
 					    :item-to-string-function)))
-   (:item-prototype MOTIF-MENU-ITEM))
+   (:item-prototype xomax-menu-item))
 
-(create-instance 'MOTIF-MENU-BAR-LIST opal:aggrelist
+(create-instance 'xomax-menu-bar-list opal:aggrelist
    (:constant '(:rank-margin :pixel-margin :fixed-width-p :fixed-height-p
 		:direction))
    (:left (o-formula (+ 4 (gv (kr-path 0 :parent) :left))))
@@ -284,13 +232,12 @@
 			(gv (kr-path 0 :parent :parent :parent)
 			    :thin-highlight-line-style)))))))))
 
-
-(create-instance 'MOTIF-MENU-KEY-INTER inter:button-interactor
+(create-instance 'motif-menu-key-inter inter:button-interactor
   (:active (o-formula (and (gvl :window)
 			   (gvl :operates-on :keyboard-selection-p))))
   (:window (o-formula (gv-local :self :operates-on :window)))
-  (:continuous NIL)
-  (:start-where T)
+  (:continuous nil)
+  (:start-where t)
   (:start-event (list #\return
 		      :uparrow :rightarrow :downarrow :leftarrow))
   (:final-function
@@ -375,8 +322,7 @@
 			     :keyboard-selection
 			     (g-value item :item-obj)))))))))))
 
-
-(create-instance 'MOTIF-MENU-ACCEL-INTER inter:button-interactor
+(create-instance 'xomax-menu-accel-inter inter:button-interactor
   (:active (o-formula (and (gvl :window)
 			   (gvl :operates-on :keyboard-selection-p))))
   (:window (o-formula (gv-local :self :operates-on :window)))
@@ -396,30 +342,24 @@
 				  (g-value gadget :menu-item-list :components)))
 		  (action (g-value selection :action))
 		  (prev-sel (g-value gadget :value-obj)))
-
 	     (when (g-value (nth rank (g-value gadget :menu-item-list :components))
 			    :active-p)
-
 	       ;; Propagate new selection toward :value slot
 	       (s-value gadget :value-obj selection)
 	       (s-value selection :selected T)
 	       (if (and prev-sel (not (eq prev-sel selection)))
 		   (s-value prev-sel :selected NIL))
-
 	       ;; Make interim feedback flash if no final-feedback
 	       (unless (g-value gadget :final-feedback-p)
 		 (s-value selection :interim-selected T)
 		 (opal:update (g-value gadget :window))
 		 (sleep .25)
 		 (s-value selection :interim-selected NIL))
-
 	       ;; Global function for all items
 	       (kr-send gadget :selection-function gadget selection)
-
 	       ;; Local function assigned to item.
 	       ;; If this is in a menubar, you have to call the item
 	       ;; function with THREE arguments. Otherwise, with 2 args
-
 	       (when action
 		 (if (AND (g-value gadget :bar-item)
 			  (boundp 'MOTIF-BAR-ITEM)
@@ -429,7 +369,6 @@
 			      (g-value gadget :bar-item :menu-obj)	 ;  The bar-item
 			      (g-value selection :item-obj))		 ;  The item
 		     (funcall action gadget (g-value selection :item-obj)))))))))))
-
 
 (create-instance 'MOTIF-MENU-PRESS-INTER inter:menu-interactor
   (:window (o-formula (gv-local :self :operates-on :window)))
@@ -448,17 +387,13 @@
    #'(lambda (interactor obj-under-mouse)
        (let* ((gadget (g-value interactor :operates-on))
 	      (action (g-value obj-under-mouse :action)))
-
 	 (s-value obj-under-mouse :interim-selected NIL)
 	 (s-value gadget :value-obj obj-under-mouse)
-
 	 ;; Global function executed whenever selections change
 	 (kr-send gadget :selection-function gadget obj-under-mouse)
-
 	 ;; Local function assigned to item
 	 ;; If this is in a menubar, you have to call the item
 	 ;; function with THREE arguments.  Otherwise, with 2 args
-
 	 (when action
 	   (if (AND (g-value gadget :bar-item)
 		    (boundp 'MOTIF-BAR-ITEM)
@@ -516,7 +451,6 @@
 	       (string-capitalize (string-trim ":" item)))
 	   "")))
   (:final-feedback-p T)
-
   (:foreground-color opal:MOTIF-GRAY)
   (:item-font opal:default-font)
   (:accel-font opal:default-font)
@@ -626,7 +560,7 @@
 
   (:active-p (o-formula (> (length (gvl :items))
 			   (length (gvl :inactive-items)))))
-  (:text-label-prototype MOTIF-MENU-TEXT-LABEL-PROTOTYPE)
+  (:text-label-prototype xomax-menu-text-label-prototype)
   (:parts
    `((:FRAME ,MOTIF-BOX
 	     (:constant (:depressed-p))
@@ -635,8 +569,8 @@
 	     (:width ,(o-formula (gv (kr-path 0 :parent) :frame-width)))
 	     (:height ,(o-formula (gv (kr-path 0 :parent) :frame-height)))
 	     (:depressed-p NIL))
-     (:MENU-ITEM-LIST ,MOTIF-MENU-ITEM-LIST)
-     (:BAR-LIST ,MOTIF-MENU-BAR-LIST)
+     (:MENU-ITEM-LIST ,xomax-menu-item-list)
+     (:BAR-LIST ,xomax-menu-bar-list)
      (:FEEDBACK-OBJ-TOPLINE ,opal:polyline
 			    (:feedback-width ,(o-formula (- (gv (kr-path 0 :parent) :frame-width) 10)))
 			    (:feedback-height ,(o-formula (- (gv (kr-path 0 :parent) :item-height) 6)))
@@ -685,10 +619,8 @@
 	       (:fast-redraw-line-style NIL))))
   (:interactors
    `((:PRESS ,motif-menu-press-inter)
-     (:ACCEL ,motif-menu-accel-inter)
+     (:ACCEL ,xomax-menu-accel-inter)
      (:KEY ,motif-menu-key-inter))))
-
-
 
 ;; This interactor is used in conjunction with a set of motif-menu gadgets
 ;; to implement the global accelerator feature.  An instance of this
@@ -733,14 +665,11 @@
 	       (progn
 		 (setf menu-rank local-menu-rank)
 		 (setf char-rank local-char-rank))))
-
 	 (let* ((menu (nth menu-rank (g-value interactor :menus)))
 		(selection (nth char-rank (g-value menu :menu-item-list
 						   :components)))
 		(action (g-value selection :action))
 		(prev-sel (g-value menu :value-obj)))
-
-
 	   ;; Check to see whether corresponding item is inactive
 	   (when (g-value selection :active-p)
 	     ;; Propagate new selection toward :value slot
@@ -748,21 +677,17 @@
 	     (s-value selection :selected T)
 	     (if (and prev-sel (not (eq prev-sel selection)))
 		 (s-value prev-sel :selected NIL))
-
 	     ;; Make interim feedback flash if no final-feedback
 	     (unless (g-value menu :final-feedback-p)
 	       (s-value selection :interim-selected T)
 	       (opal:update (g-value menu :window))
 	       (sleep .25)
 	       (s-value selection :interim-selected NIL))
-
 	     ;; Execute associated functions
 	     (kr-send menu :selection-function menu selection)
-
 	     ;; Local item function.
 	     ;; If this is in a menubar, you have to call the item
 	     ;; function with THREE arguments, otherwise, with 2 args.
-
 	     (when action
 	       (if (AND (g-value menu :bar-item)
 			(boundp 'MOTIF-BAR-ITEM)
@@ -773,13 +698,11 @@
 			    (g-value selection :item-obj))	     ;; The item
 		   (funcall action menu (g-value selection :item-obj))))))
 
-
 	 ;; Gotta check this to see that the interactor wasn't already
 	 ;; destroyed.
 	 (when (schema-p interactor)
 	   ;; Now execute the user's :final-function
 	   (kr-send interactor :final-function interactor obj-over))))))
-
 
 (define-method :add-local-item MOTIF-MENU (gadget item &rest args)
   (let ((accel NIL) where locator key)
@@ -829,7 +752,6 @@ handled manually within the function."
 	  (opal::Recursive-Add-Component
 	   (g-value inst :menu-item-list) rank))))))
 
-
 (define-method :remove-local-item MOTIF-MENU (gadget &optional item
 						     &key (key #'opal:no-func))
   (let* ((items (or (g-local-value gadget :items)
@@ -861,7 +783,6 @@ handled manually within the function."
 	  (opal:remove-local-component alist comp-to-destroy))
       (opal:destroy comp-to-destroy))))
 
-
 (define-method :remove-item MOTIF-MENU (gadget &optional item
 					       &key (key #'opal::no-func))
     (opal::Gadget-Remove-Item gadget item :menu-item-list key))
@@ -875,26 +796,19 @@ handled manually within the function."
     (opal::Aggrelist-Edit-String-Func gadget-obj aggrel str-obj
 				      final-event final-string :rank)))
 
-
-
-
 ;;;  DEMO FUNCTION
-;;
+(defvar bold-font (opal:get-standard-font nil :bold nil))
 
-#+garnet-test
-(defvar BOLD-FONT (opal:get-standard-font NIL :bold NIL))
-
-#+garnet-test
-(defun MOTIF-MENU-GO (&key dont-enter-main-event-loop not-double-buffered-p)
+(defun xomax-menu-go (&key dont-enter-main-event-loop not-double-buffered-p)
   (create-instance 'MOTIF-MENU-WIN inter:interactor-window
      (:double-buffered-p (not not-double-buffered-p))
      (:title "Motif Menu")
      (:left 750)(:top 10)(:width 210)(:height 200)
      (:background-color opal:motif-blue))
-  (s-value MOTIF-MENU-WIN
+  (s-value motif-menu-win
 	   :aggregate
-	   (create-instance 'MOTIF-MENU-TOP-AGG opal:aggregate))
-  (create-instance 'DEMO-MOTIF-MENU MOTIF-MENU
+	   (create-instance 'motif-menu-top-agg opal:aggregate))
+  (create-instance 'demo-motif-menu motif-menu
      (:left 34) (:top 20)
      (:foreground-color opal:MOTIF-BLUE)
      (:items `(("Restore size" Restore-Size-Fn)
@@ -923,39 +837,36 @@ handled manually within the function."
   (opal:add-components MOTIF-MENU-TOP-AGG
 		       DEMO-MOTIF-MENU)
   (opal:update MOTIF-MENU-WIN)
-  (unless dont-enter-main-event-loop #-cmu (inter:main-event-loop))
-  )
+  (unless dont-enter-main-event-loop
+    (inter:main-event-loop)))
 
-
-#+garnet-test
-(defun MOTIF-MENU-STOP ()
+(defun motif-menu-stop ()
   (opal:destroy MOTIF-MENU-WIN))
 
-#+garnet-test
-(defun Restore-Size-Fn (g v)
+(defun restore-size-fn (g v)
   (declare (ignore g v))
   (format t "Restore-Size-Fn called~%~%"))
-#+garnet-test
-(defun Move-Window-Fn (g v)
+
+(defun move-window-fn (g v)
   (declare (ignore g v))
   (format t "Move-Window-Fn called~%~%"))
-#+garnet-test
-(defun Resize-Window-Fn (g v)
+
+(defun resize-window-fn (g v)
   (declare (ignore g v))
   (format t "Resize-Window-Fn called~%~%"))
-#+garnet-test
-(defun Iconify-Window-Fn (g v)
+
+(defun iconify-window-fn (g v)
   (declare (ignore g v))
   (format t "Iconify-Window-Fn called~%~%"))
-#+garnet-test
-(defun Full-Zoom-Fn (g v)
+
+(defun full-zoom-fn (g v)
   (declare (ignore g v))
   (format t "Full-Zoom-Fn called~%~%"))
-#+garnet-test
-(defun Lower-Window-Fn (g v)
+
+(defun lower-window-fn (g v)
   (declare (ignore g v))
   (format t "Lower-Window-Fn called~%~%"))
-#+garnet-test
-(defun Kill-Window-Fn (g v)
+
+(defun kill-window-fn (g v)
   (declare (ignore g v))
   (format t "Kill-Window-Fn called~%~%"))

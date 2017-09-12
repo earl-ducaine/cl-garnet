@@ -25,18 +25,15 @@
    (opal:set-text text2 nil)
    (inter:set-focus focus-inter text1))
 
-
-
 ;; This is used in the "New" submenu of "File."  This function clears the
 ;; two windows of text.
 (defun open-fn (gadget menu-item value)
   (declare (ignore gadget menu-item value))
   (let ((current-text-gaget (gv focus-inter :obj-to-change)))
     (opal:set-text current-text-gaget (run-generate-multifont-text-from-file))
-    (opal:update win)))
+    (opal:update win)));
 
 (defun generate-multifont-text-from-file (file-name)
-  ;;(alexandria:read-file-into-string
   (let ((lines '()))
     (with-open-file (stream file-name :direction :input)
       (do ((line (read-line stream nil :eof)
@@ -62,7 +59,6 @@
    (declare (ignore gadget menu-item value))
    (Do-Stop))
 
-
 ;; This is used in the "Color" menu.  It changes the color.
 (defun change-color (gadget menu-item value)
    (declare (ignore gadget menu-item))
@@ -71,7 +67,8 @@
          (opal:change-color-of-selection multifont value)
 	 (gg:auto-scroll multifont))))
 
-;; This is used in the "Font" menu.  It changes the family of the current font.
+;; This is used in the "Font" menu.  It changes the family of the
+;; current font.
 (defun change-font (gadget menu-item value)
    (declare (ignore gadget menu-item))
    (let ((multifont (g-value focus-inter :obj-to-change)))
@@ -253,9 +250,10 @@ Font changing:
     (:bar-above-these-items '(NIL ("Italic" "Toggle Lisp Mode") NIL NIL))
     (:min-menubar-width (o-formula (gv win :width))))
   (opal:add-component top pull-down)
-  ;; Create the top window of the demo.
-  (create-instance 'text1 opal:multifont-text ; This is the internal multifont
-    (:word-wrap-p t)			      ; text object.
+  ;; Create the top window of the demo.  This is the internal
+  ;; multifont text object.
+  (create-instance 'text1 opal:multifont-text
+    (:word-wrap-p t)
     (:auto-scroll-p T)
     (:fast-redraw-p :rectangle)
     (:fast-redraw-filling-style opal:motif-gray-fill))
@@ -275,6 +273,7 @@ Font changing:
     (:v-scroll-bar-p t))
   (s-value text1 :text-width (o-formula (gv scroll-win1 :clip-window :width)))
   (s-value text1 :scrolling-window scroll-win1)
+  (s-value (gv text1 :cursor) :filling-style opal:green-fill)
   (opal:update scroll-win1)
   (opal:add-component (g-value scroll-win1 :inner-aggregate) text1)
   ;; Create the lower window of the demo.

@@ -315,6 +315,16 @@ Glyphs information is obtained by ZPB-TTF. Font rasterization is made by CL-VECT
   (:use :common-lisp :kr)
   (:nicknames :gg)
   (:export
+   :motif-menubar :motif-bar-item :make-motif-submenu-win
+   ;; Creation Functions
+   :make-motif-menubar
+   :make-motif-bar-item
+   :make-motif-submenu-item
+   :motif-menubar-go
+   :motif-menubar-stop
+   :demo-motif-menubar
+   :motif-menubar-win
+   :motif-menubar-top-agg
    :mouseline-go
    :mouseline-stop))
 

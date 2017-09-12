@@ -1,30 +1,29 @@
 ;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: GARNET-GADGETS; Base: 10 -*-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;         The Garnet User Interface Development Environment.      ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; This code was written as part of the Garnet project at          ;;;
-;;; Carnegie Mellon University, and has been placed in the public   ;;;
-;;; domain.  If you are using this code or any part of Garnet,      ;;;
-;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; The Garnet User Interface Development Environment.
+;;;
+;;; This code was written as part of the Garnet project at Carnegie
+;;; Mellon University, and has been placed in the public domain.  If
+;;; you are using this code or any part of Garnet, please contact
+;;; garnet@cs.cmu.edu to be put on the mailing list.
 ;;;
 ;;;  Motif Menubar
-;;;
 ;;;
 ;;;  Customizable slots:
 ;;;    1)  Left, top
 ;;;    3)  Title-font, item-font, accel-font
 ;;;    5)  Selection-function - a function to be executed when any item is
 ;;;           selected.  Takes the parameters (gadget menu-item submenu-item).
-;;;    6)  Items - A list with the format
+;;;    6)  Items - A list with the format:
 ;;;           '(("m1" m1func ("m1,1"..."m1,N"))
 ;;;             ("m2" m2func (("m2,1" m2,1func)...("m2,N" m2,Nfunc)))
 ;;;             ...)
-;;;           Where "mN" is a string or atom that is the title of a menu,
-;;;        "mX,Y" is a string or atom in menu X, row Y,
-;;;        mNfunc is executed when any item in menu N is selected,
-;;;        mX,Yfunc is executed when item mX,Y is selected.
-;;;           These two functions take the same parameters as the
+;;;        Where "mN" is a string or atom that is the title of a menu,
+;;;        "mX,Y" is a string or atom in menu X, row Y, mNfunc is
+;;;        executed when any item in menu N is selected, mX,Yfunc is
+;;;        executed when item mX,Y is selected.
+;;;
+;;;        These two functions take the same parameters as the
 ;;;        selection-function.
 ;;;    7)  Accelerators - A list of accelerators, with the format
 ;;;             '((("s11" key11) .. ("s1N" key1N))
@@ -44,13 +43,14 @@
 ;;;           small, or 0, this slot is ignored.
 ;;;
 ;;;  Programming interface (Garnet way):
-;;;    1) Create an instance of motif-menubar with a value for the :items slot
-;;;    2) Use opal:add-component to put the instance in a window
+;;;  1) Create an instance of motif-menubar with a value for the
+;;;     :items slot
+;;;  2) Use opal:add-component to put the instance in a window
 ;;;
 ;;;  Caveats:
-;;;     New motif-bar-items should be created with the :enable slot set to NIL
-;;;  in order to keep their windows from being updated before they are added to
-;;;  a menubar.
+;;;  New motif-bar-items should be created with the :enable slot set
+;;;  to NIL in order to keep their windows from being updated before
+;;;  they are added to a menubar.
 
 ;;;  Pull Down Menus Demo:
 ;;;    The function below creates a window containing a pull down menu and
@@ -62,75 +62,27 @@
 ;;;
 ;;;  Designed and Implemented by Rajan Parthasarathy
 ;;;  Based heavily upon the GARNET menubar by Andrew Mickish & Pavan Reddy
-;;;
-;;;  CHANGE LOG:
-;;;
 
 
-;;;  01/14/97  Russell Almond (Thien Ngyen) - Code to make character
-;;;  accelerators case insensitive.  Added Right justified help item.
-;;;  12/06/94  Andrew Mickish - Added :modal-p formula to pop-up windows
-;;;  06/22/93  Andrew Mickish - Set :rank slot in :add-item methods
-;;;  06/15/93  Andrew Mickish - Removed references to :number-of-comps;
-;;;             Added :do-not-dump-slots for BAR-ITEM; Called Check-Bar-Item
-;;;             in Make-Bar-Item;  In :abort-action, check prev-baritem
-;;;             is non-NIL before s-valuing it; Added :fix-update-slots method
-;;;             for MOTIF-BAR-ITEM
-;;;  06/10/93  Andrew Mickish - Moved MOTIF-MENU-ITEM modifications (like the
-;;;             :active-p formula) into the MOTIF-SUBMENU definition
-;;;  05/16/93  Andrew Mickish - Put :width and :height formulas in BAR-ITEM
-;;;  04/23/93  Andrew Mickish - Added :do-not-dump-slots
-;;;  04/22/93  Andrew Mickish - Added :active-p
-;;;  04/18/93  Andrew Mickish - Removed ,@ from MOTIF-BAR-ITEM's :add-item
-;;;             method
-;;;  04/13/93  Andrew Mickish - Fixed bugs in change of 03/08/93
-;;;  03/17/93  Brad Myers - add special-popdown functions for gilt, etc.
-;;;  03/08/93  Andrew Mickish - Fixed :left and :top formulas of submenu-window
-;;;             so that offset is correct when menubar is in a subwindow;
-;;;             Type check :items with Check-Menubar-Items;  Added some slots
-;;;             to type declarations.
-;;;  03/03/93  Andrew Mickish - Fixed :string-set-func to work with bar-items
-;;;  02/24/93  Andrew Mickish - Added :string-set-func
-;;;  02/23/93  Andrew Mickish - Eliminated need to call notice-items-changed
-;;;             on the menubar (but apparently must be called internally on
-;;;             new submenus... Argh!)
-;;;  02/10/93  Andrew Mickish - Fixed typo (:font ---> :item-font) in
-;;;              MOTIF-SUBMENU, added :accel-font
-;;;  02/08/93  Andrew Mickish - :notice-items-changed ---> :fix-update-slots
-;;;  01/07/93  Rajan Parthasarathy - Created
+(in-package "garnet-gadgets")
 
-(in-package "GARNET-GADGETS")
 
-(eval-when (:execute :load-toplevel :compile-toplevel)
-  (export '(MOTIF-MENUBAR MOTIF-BAR-ITEM MAKE-MOTIF-SUBMENU-WIN
-	    ; Creation Functions
-	    Make-Motif-Menubar Make-Motif-Bar-Item Make-Motif-Submenu-Item))
-
-  ; Demo things
-  #+garnet-test
-  (export '(MOTIF-MENUBAR-GO MOTIF-MENUBAR-STOP DEMO-MOTIF-MENUBAR
-	    MOTIF-MENUBAR-WIN MOTIF-MENUBAR-TOP-AGG)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; First function is to display the submenu from gilt, etc.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Returns the new window if and only if a different bar-item is to be
 ;; displayed.  Gadget parameter is the top level menubar.
-(defun Motif-Menubar-popup-item (gadget)
+(defun motif-menubar-popup-item (gadget)
   (let (bar-item)
     ;; first, find the MOTIF-BAR-ITEM that is under the mouse
-    (setq bar-item (opal:point-to-component (g-value gadget :menubar-items)
-				      (inter:event-x inter:*current-event*)
-				      (inter:event-y inter:*current-event*)))
+    (setq bar-item (opal:point-to-component
+		    (g-value gadget :menubar-items)
+		    (inter:event-x inter:*current-event*)
+		    (inter:event-y inter:*current-event*)))
     (when bar-item
       (DoSpecialPopUpMenubar gadget bar-item))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; Returns a window that an instance of MOTIF-SUBMENU can be put into
-
-(defun MAKE-MOTIF-SUBMENU-WIN (a-bar-item a-submenu)
+;; Returns a window that an instance of motif-submenu can be put into
+(defun make-motif-submenu-win (a-bar-item a-submenu)
   (let ((win
 	 (create-instance NIL inter:interactor-window
 	   (:bar-item a-bar-item)
@@ -139,10 +91,10 @@
 					      :parent :foreground-color)))
 	   (:border-width 0)
 	   (:win-submenu a-submenu)
-	   (:omit-title-bar-p T)
-	   (:save-under T)         
-	   (:double-buffered-p T)  
-	   (:visible NIL)
+	   (:omit-title-bar-p t)
+	   (:save-under t)
+	   (:double-buffered-p t)
+	   (:visible nil)
 	   (:modal-p (o-formula (gv-local :self :bar-item :window :modal-p)))
 	   (:height (o-formula
 		     (gvl :win-submenu :height)))
@@ -180,13 +132,9 @@
     (s-value a-submenu :window win)
     win))
 
-
-
-
-;; This object is a text field in the menu bar.  
-;; An aggrelist of these items makes up the menu bar.
-;;
-(create-instance 'MOTIF-BAR-ITEM motif-gadget-prototype
+;; This object is a text field in the menu bar.  An aggrelist of these
+;; items makes up the menu bar.
+(create-instance 'motif-bar-item motif-gadget-prototype
    (:width (o-formula (gvl :text :width)))
    (:height (o-formula (gvl :text :height)))
    ; The mnemonic ":desc" is a description of a submenu.  The top-level :items
@@ -221,25 +169,27 @@
        (:top ,(o-formula (gvl :parent :top)))
        (:font ,(o-formula (gvl :parent :font)))
        (:string ,(o-formula (string (gvl :parent :string))))
-       (:line-style ,(o-formula 
+       (:line-style ,(o-formula
 		      (if (gvl :parent :enabled)
 			  opal:default-line-style
 			  (gvl :parent :disabled-line-style))))
        ))))
 
-;; This is the top level MOTIF-MENUBAR gadget -- the big mutha.
-;; Basically, it contains 3 parts -> a motif-box that represents
-;; the menubar, an aggrelist of bar-items, and a feedback object.
-;; It also has two interactors -- menubar-select: used for selecting
-;; stuff from the menubar, and menubar-accel, which does the 
-;; accelerator thang.
-
-(create-instance 'MOTIF-MENUBAR motif-gadget-prototype
+;; This is the top level motif-menubar gadget.  basically, it contains
+;; 3 parts:
+;; - a motif-box that represents the menubar
+;; - an aggrelist of bar-items
+;; - a feedback object
+;;
+;; It also has two interactors:
+;; - menubar-select: used for selecting stuff from the menubar
+;; - menubar-accel: which does the accelerator thing
+(create-instance 'motif-menubar motif-gadget-prototype
    :declare ((:parameters :left :top :items :title-font :item-font :accel-font
 			  :foreground-color :min-menubar-width :accelerators
 			  :bar-above-these-items :accelerator-windows
 			  :active-p :selection-function :help-style)
-	     (:type ((satisfies Check-Menubar-Items) :items)
+	     (:type ((satisfies check-menubar-items) :items)
 		    (list :accelerators :bar-above-these-items)
 		    ((or list (satisfies schema-p)) :accelerator-windows)
 		    (integer :min-menubar-width)
@@ -291,7 +241,7 @@
    (:special-popdown-func 'Put-Down-MenuBar-Popups)
    (:update-slots (cons :visible (g-value opal:aggrelist :update-slots)))
    (:old-visible T)
-   
+
    ;; slot :submenu-window-list set with list of all windows being used.
 
    (:parts
@@ -353,7 +303,7 @@
 			  (list (- left 5) (+ top ht 2)
 				(+ left wt 3) (+ top ht 2)
 				(+ left wt 3) (- top 1))))))
-       
+
        (:prev-baritem ,(o-formula
 			(gvl :parent :feedback-obj-topline :prev-baritem)))
        (:visible ,(o-formula (gvl :parent :feedback-obj-topline :visible)))
@@ -362,7 +312,7 @@
        (:fast-redraw-line-style ,(o-formula (gv (kr-path 0 :parent)
 						:foreground-line-style))))
       ))
-       
+
    (:interactors
     ;; The accelerator interactor.  Its menus are set to be all the
     ;; menus in the menubar.
@@ -376,8 +326,9 @@
 		   (dolist (a-baritem (gvl :operates-on :menubar-items :components))
 		     (push (gv a-baritem :submenu) l))
 		   l))))
-      ;; This is for clicking on a bar item, moving out of the submenu's window,
-      ;; etc. etc.
+      ;; (todo this is where the issue is with single vs double clicks?)
+      ;; This is for clicking on a bar item, moving out of the
+      ;; submenu's window, etc. etc.
       (:menubar-select ,inter:menu-interactor
        (:active ,(o-formula (gv-local :self :operates-on :window)))
        (:window ,(o-formula
@@ -404,12 +355,12 @@
        (:outside-action
 	,#'(lambda (inter outside prev)
 	     (call-prototype-method inter outside prev)
-	     
+
 	     ;; make sure the top level bar items stay selected since
 	     ;; sub-menus are showing
-	     
-	     (when (is-a-p prev MOTIF-BAR-ITEM)
-	       (s-value prev :interim-selected T))))
+
+	     (when (is-a-p prev motif-bar-item)
+	       (s-value prev :interim-selected t))))
        (:running-action
 	,#'(lambda (inter prev new)
 	     (let* ((prev-baritem (g-value inter :prev-baritem))
@@ -420,10 +371,8 @@
 				     ;; else is a sub-item, get its bar-item
 				     (g-local-value new :bar-item)))))
 	       (call-prototype-method inter prev new)
-
 	       ;; Now, when you get into a submenu window, you want to start
 	       ;; that submenu's interactor.
-	       
 	       (let ((curr-win (inter:event-window inter::*current-event*))
 		     (obj-wins (g-local-value inter :operates-on :submenu-window-list)))
 		 (if  (member curr-win obj-wins :test #'equal)
@@ -439,29 +388,24 @@
 						  :char :leftdown
 						  :mousep T :downp T
 						  :x ev-x
-						  :y ev-y 
+						  :y ev-y
 						  :timestamp (inter:event-timestamp ce))))
 		       (when (eq (g-local-value prev-baritem :submenu :press :current-state)
 				 :start)
 			 (inter:start-interactor (g-value submenu :press) ev))
-
 		       ;; For some weird reason, the first item that's been selected
 		       ;; in the newly popped up window don't have a feedback object
 		       ;; around them.  So here, we EXPLICITLY tell it to put a
 		       ;; feedback object around the FIRST item it selects, unless
 		       ;; that item is disabled.
-		       
 		       (when (AND
 			      (opal:point-in-gob first-obj-over ev-x ev-y)
 			      (g-value first-obj-over :enabled))
 			 (s-value submenu :value (g-value first-obj-over :item-obj))
 			 (s-value submenu :value-obj first-obj-over)
 			 (s-value first-obj-over :interim-selected T)))
-
 		     (unless (NULL prev-baritem)
-		       (s-value (g-local-value prev-baritem :submenu) :value-obj NIL)))
-		     )
-
+		       (s-value (g-local-value prev-baritem :submenu) :value-obj NIL))))
 	       ;; keep the interim selected of the bar item so it
 	       ;; shows up as highlighted when items in sub-menu selected.
 	       (if new-baritem
@@ -518,24 +462,23 @@
 	       (s-value inter :prev-baritem NIL))))
        ))))
 
-(s-value MOTIF-MENUBAR :do-not-dump-slots
+(s-value motif-menubar :do-not-dump-slots
 	 (append '(:submenu-window-list)
-		 (g-value MOTIF-MENUBAR :do-not-dump-slots)))
-(s-value MOTIF-BAR-ITEM :do-not-dump-slots
+		 (g-value motif-menubar :do-not-dump-slots)))
+
+(s-value motif-bar-item :do-not-dump-slots
 	 (append '(:submenu :submenu-window)
-		 (g-value MOTIF-BAR-ITEM :do-not-dump-slots)))
+		 (g-value motif-bar-item :do-not-dump-slots)))
+
 (let ((menubar-select (g-value MOTIF-MENUBAR :menubar-select)))
   (s-value menubar-select :do-not-dump-slots
 	   (append '(:prev-baritem)
 		   (g-value menubar-select :do-not-dump-slots))))
-	 
-
 
 ;; This function gets called when an item has been selected from
 ;; the submenu.  Basically, it hides the submenu's window and
 ;; calls the appropriate :selection-function and the item's
 ;; function
-
 (defun SUBMENU-SELECTION-FUNCTION (submenu submenu-item)
   (let* ((baritem (g-value submenu :bar-item))
 	 (bar-action (g-value baritem :action))
@@ -551,7 +494,7 @@
 	(kr-send a-menubar :selection-function
 		 a-menubar bar-obj (g-value submenu-item :item-obj)))
     ))
-				   
+
 ;; This is a submenu for the motif-menubar (surprise surprise!)
 ;; Its a motif-menu that inherits some slots from the top level
 ;; menubar.  Also, the accelerators for the menubar are given
@@ -562,7 +505,7 @@
 ;; :accelerators slot does.
 ;;
 ;; A submenu-item is just an instance of MOTIF-MENU-ITEM.  Which
-;; means any MOTIF-MENU-ITEM can be added to the menubar.  
+;; means any MOTIF-MENU-ITEM can be added to the menubar.
 
 (create-instance 'MOTIF-SUBMENU motif-menu
   (:bar-item NIL)
@@ -597,7 +540,7 @@
 	(:set-title-fn menubar-set-title-motif)
 	)))
      :bar-list :feedback-obj-topline :feedback-obj-bottomline :sel-box)))
-  
+
 ;;; Auxiliary function for MOTIF-MENUBAR's :fix-update-slots method.
 ;;; This function is used to establish the links between a bar-item and its
 ;;; submenu.  A new submenu is created and put in a new window.  This new
@@ -620,7 +563,7 @@
     (unless (member win submenu-window-list)
       (s-value a-menubar :submenu-window-list
 	       (cons win (copy-list submenu-window-list))))
-		     
+
     ; bookkeeping in case a-bar-item was not taken from storage
     (s-value a-bar-item :submenu new-submenu)
     (s-value a-bar-item :submenu-window win))
@@ -733,7 +676,7 @@
     (:background-color opal:motif-green)
     #-apple (:left 700)  #+apple (:left 300)
     (:top 45)(:height 360)(:width 600)
-    
+
     (:aggregate (create-instance 'MOTIF-MENUBAR-TOP-AGG opal:aggregate)))
   (opal:update MOTIF-MENUBAR-WIN)
 
@@ -807,7 +750,7 @@
 
   (opal:add-components MOTIF-MENUBAR-TOP-AGG
 		       motif-family-text motif-face-text motif-size-text motif-combo-text)
-  
+
   (opal:update MOTIF-MENUBAR-WIN)
  (unless dont-enter-main-event-loop #-cmu (inter:main-event-loop))
  )
@@ -853,7 +796,7 @@
       (dotimes (i (- n len 1))
 	(setf new-list
 	      (append new-list (list NIL)))))
-    
+
     (append (subseq new-list 0 n) (list item)
 	  (subseq new-list n))))
 
@@ -861,7 +804,7 @@
   (if (< n (length a-list))
       (append (subseq a-list 0 n) (subseq a-list (1+ n)))
       a-list))
-	  
+
 ;;;
 ;;;  EXPORTED FUNCTIONS
 ;;;
@@ -870,7 +813,7 @@
 
 
 ;
-; The parameter item may be either 
+; The parameter item may be either
 ; 1) An instance of MOTIF-BAR-ITEM, or
 ; 2) A sublist of an :items list
 ;
@@ -901,17 +844,17 @@
 
     ;; with the motif-menubar, you can specify accelerators
     ;; to be added as well.
-    
+
     (when (eq :accelerators (first args))
       ;; accel will be the user's new accelerator character
       (setf accel (second args))
       (setf args (cddr args)))
-    
+
     (when a-list
       (error "~S is already installed in ~S.~%" a-bar-item a-list))
-    
+
     (multiple-value-setq (where locator key) (opal::get-wheres args))
-    
+
     ; Add the bar-item as a component of the menubar
     (let* ((locator-comp (if (is-a-p locator MOTIF-BAR-ITEM)
 			    locator
@@ -943,7 +886,7 @@
 	     (insert-item-at-n (g-value a-menubar :bar-above-these-items)
 			       NIL rank))
     )
-    
+
     ; Do additional bookkeeping that attaches the bar-item to the menubar
     (let* ((win (g-value a-bar-item :submenu-window))
 	   (top-inter (g-value a-menubar :menubar-select))
@@ -994,7 +937,7 @@
     (opal:remove-local-component (g-value a-menubar :menubar-items) a-bar-item)
     (unless (eq a-bar-item item)
       (push a-bar-item (g-value a-menubar :storage)))
-      
+
     ; Change the top-level :items list
     (let ((old-desc (if (is-a-p a-bar-item MOTIF-BAR-ITEM)
 			(g-value a-bar-item :desc)
@@ -1047,7 +990,7 @@
       (setf args (cddr args)))
 
     (multiple-value-setq (where locator key) (opal::get-wheres args))
-    
+
     ;; item can be either a submenu-item or a list
     (if (schema-p item)
 	(let* ((new-item `(,(g-value item :item-obj)
@@ -1067,7 +1010,7 @@
 				   :test #'equal))
 	      (s-value a-bar-item :desc new-desc))
 	  (s-value (g-value submenu :menu-item-list) :old-items new-sub-desc)
-	  
+
 	  (kr:with-constants-disabled
 	      (opal:add-local-component (g-value submenu :menu-item-list)
 					item :at rank))
@@ -1077,7 +1020,7 @@
 						where locator key))
 	       (new-desc (list (first old-desc) (second old-desc)
 			       new-sub-desc)))
-	  
+
 	  (setf rank (position item new-sub-desc
 			       :test #'(lambda (x y)
 					 (equal x (funcall key y)))))
@@ -1100,7 +1043,7 @@
     (when a-menubar
       (let* ((a-list (g-value a-menubar :accelerators))
 	     (old-acc-list (nth (g-value submenu :bar-item :rank) a-list)))
-	(when old-acc-list 
+	(when old-acc-list
 	  (let ((new-acc-list (Insert-Item-At-N old-acc-list accel rank)))
 	    (s-value a-menubar :accelerators
 		     (substitute new-acc-list old-acc-list a-list))
@@ -1127,7 +1070,7 @@
 			     :test #'(lambda (x y)
 				       (equal x (funcall key y))))
 		   (1- (length Submenu-Components)))))
-    
+
     (unless rank
       (error "~S does not have ~S as its bar-item.~%"
 	     a-submenu-item a-bar-item))
@@ -1159,7 +1102,7 @@
 				  :test #'equal)))
 	  (s-value a-bar-item :desc new-desc))
       (s-value (g-value submenu :menu-item-list) :old-items new-sub-desc)
-      
+
       ;; Now you have to remove the accelerator from the menubar
       (when a-menubar
 	(let* ((accels (g-value a-menubar :accelerators))
@@ -1227,7 +1170,7 @@
 			(g-value a-menubar :items) :test #'equal)
 		  string)
 	  (mark-as-changed a-menubar :items))
-	 
+
 	 (t
 	  ; not installed, so just set local :desc list
 	  (rplaca (g-value a-bar-item :desc) string)
@@ -1274,7 +1217,7 @@
 	 (t
 	  (g-value a-submenu-item :desc)
 	  (s-value a-submenu-item :desc (list string))))))
-	  
+
     ; Else, print error message
     (t (error "~S is not an instance of ~S or ~S.~%" menubar-component
 	   MOTIF-BAR-ITEM MOTIF-MENU-ITEM)))
@@ -1442,7 +1385,7 @@
 				 (g-value gadget :menu-item-list :components)))
 		 (action (g-value selection :action))
 		 (prev-sel (g-value gadget :value-obj)))
-		   
+
 	    (when (g-value (nth rank (g-value gadget :menu-item-list :components))
 			   :active-p)
 
@@ -1458,14 +1401,14 @@
 		(opal:update (g-value gadget :window))
 		(sleep .25)
 		(s-value selection :interim-selected NIL))
-		     
+
 	      ;; Global function for all items
 	      (kr-send gadget :selection-function gadget selection)
-		    
+
 	      ;; Local function assigned to item.
 	      ;; If this is in a menubar, you have to call the item
 	      ;; function with THREE arguments. Otherwise, with 2 args
-		
+
 	      (when action
 		(if (AND (g-value gadget :bar-item)
 			 (boundp 'MOTIF-BAR-ITEM)
@@ -1475,7 +1418,3 @@
 			     (g-value gadget :bar-item :menu-obj)  ;; The bar-item
 			     (g-value selection :item-obj))        ;; The item
 		  (funcall action gadget (g-value selection :item-obj))))))))))
-
-
-
-
