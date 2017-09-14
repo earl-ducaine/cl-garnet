@@ -7,6 +7,10 @@
 ;;  domain.                                                          ;;
 ;;    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;    ;;
 
+;;; $Id$
+;;
+
+
 ;;;  Motif Menu
 ;;
 ;;  Features and operation of Motif-Menu:
@@ -33,7 +37,7 @@
 ;;     4)  V-spacing -- The distance between items.
 ;;     5)  H-align -- How to align items horizontally (:left, :center, or
 ;;                   :right).
-;;     6)  Items -- This can be:
+;;     6)  Items -- This can be: 
 ;;                  A list of strings, as in '("Large" ...), or
 ;;                  a list of atoms, as in '(:center ...), or
 ;;                  a list of string/function pairs, '(("Cut" Cut-FN)...)), or
@@ -73,7 +77,7 @@
 ;;            of the ITEM-OBJ.)
 ;;
 ;;  Motif-Menu demo:
-;;     This module contains a function which creates a window and a
+;;     This module contains a function which creates a window and a 
 ;;     menu.  To run it, enter (GARNET-GADGETS:motif-menu-go).
 ;;     To stop, enter (GARNET-GADGETS:motif-menu-stop).
 ;;
@@ -257,7 +261,7 @@
       (:left ,(o-formula (gv (kr-path 0 :parent) :left)))
       (:top ,(o-formula (gvl :obj-after :top)))
       (:width ,(o-formula (gv (kr-path 0 :parent) :width)))
-      (:height ,(o-formula (gv (kr-path 0 :parent) :height)))
+      (:height ,(o-formula (gv (kr-path 0 :parent) :height)))  
       (:item-after ,(o-formula (nth (gvl :rank) (gv (kr-path 0 :parent) :items))))
       (:obj-after
        ,(o-formula
@@ -305,10 +309,10 @@
 	   (#\return
 	    (let ((item-obj (g-value gadget :keyboard-selection))
 		  (action (g-value selection :action)))
-
+	       
 	      ;; Propagate new selection toward :value slot
 	      (s-value gadget :value-obj selection)
-
+	       
 	      ;; Make interim feedback flash
 	      (s-value selection :interim-selected T)
 	      (s-value selection :selected T)
@@ -320,12 +324,12 @@
 
 	      ;; Global function for all items
 	      (kr-send gadget :selection-function gadget selection)
-
+		    
 	      ;; RGA --- Needed to fix this function.
 	      ;; Local function assigned to item.
 	      ;; If this is in a menubar, you have to call the item
 	      ;; function with THREE arguments. Otherwise, with 2 args
-
+		
 	      (when action
 		(if (AND (g-value gadget :bar-item)
 			 (boundp 'MOTIF-BAR-ITEM)
@@ -396,7 +400,7 @@
 				  (g-value gadget :menu-item-list :components)))
 		  (action (g-value selection :action))
 		  (prev-sel (g-value gadget :value-obj)))
-
+		   
 	     (when (g-value (nth rank (g-value gadget :menu-item-list :components))
 			    :active-p)
 
@@ -412,14 +416,14 @@
 		 (opal:update (g-value gadget :window))
 		 (sleep .25)
 		 (s-value selection :interim-selected NIL))
-
+		     
 	       ;; Global function for all items
 	       (kr-send gadget :selection-function gadget selection)
-
+		    
 	       ;; Local function assigned to item.
 	       ;; If this is in a menubar, you have to call the item
 	       ;; function with THREE arguments. Otherwise, with 2 args
-
+		
 	       (when action
 		 (if (AND (g-value gadget :bar-item)
 			  (boundp 'MOTIF-BAR-ITEM)
@@ -451,7 +455,7 @@
 
 	 (s-value obj-under-mouse :interim-selected NIL)
 	 (s-value gadget :value-obj obj-under-mouse)
-
+	   
 	 ;; Global function executed whenever selections change
 	 (kr-send gadget :selection-function gadget obj-under-mouse)
 
@@ -466,7 +470,7 @@
 	       (funcall action
 			(g-value gadget :bar-item :parent :parent) ;; The menubar
 			(g-value gadget :bar-item :menu-obj)	   ;; The bar-item
-			(g-value obj-under-mouse :item-obj))	   ;; The item
+			(g-value obj-under-mouse :item-obj))	   ;; The item	    
 	       (funcall action
 			gadget
 			(g-value obj-under-mouse :item-obj))))))))
@@ -687,8 +691,8 @@
    `((:PRESS ,motif-menu-press-inter)
      (:ACCEL ,motif-menu-accel-inter)
      (:KEY ,motif-menu-key-inter))))
-
-
+      
+       
 
 ;; This interactor is used in conjunction with a set of motif-menu gadgets
 ;; to implement the global accelerator feature.  An instance of this
@@ -740,7 +744,7 @@
 		(action (g-value selection :action))
 		(prev-sel (g-value menu :value-obj)))
 
-
+	      
 	   ;; Check to see whether corresponding item is inactive
 	   (when (g-value selection :active-p)
 	     ;; Propagate new selection toward :value slot
@@ -748,21 +752,21 @@
 	     (s-value selection :selected T)
 	     (if (and prev-sel (not (eq prev-sel selection)))
 		 (s-value prev-sel :selected NIL))
-
+		
 	     ;; Make interim feedback flash if no final-feedback
 	     (unless (g-value menu :final-feedback-p)
 	       (s-value selection :interim-selected T)
 	       (opal:update (g-value menu :window))
 	       (sleep .25)
 	       (s-value selection :interim-selected NIL))
-
+		
 	     ;; Execute associated functions
 	     (kr-send menu :selection-function menu selection)
-
+		
 	     ;; Local item function.
 	     ;; If this is in a menubar, you have to call the item
 	     ;; function with THREE arguments, otherwise, with 2 args.
-
+		
 	     (when action
 	       (if (AND (g-value menu :bar-item)
 			(boundp 'MOTIF-BAR-ITEM)
@@ -770,7 +774,7 @@
 		   (funcall action
 			    (g-value menu :bar-item :parent :parent) ;; The menubar
 			    (g-value menu :bar-item :menu-obj)	     ;; The bar-item
-			    (g-value selection :item-obj))	     ;; The item
+			    (g-value selection :item-obj))	     ;; The item		
 		   (funcall action menu (g-value selection :item-obj))))))
 
 
@@ -780,7 +784,7 @@
 	   ;; Now execute the user's :final-function
 	   (kr-send interactor :final-function interactor obj-over))))))
 
-
+  
 (define-method :add-local-item MOTIF-MENU (gadget item &rest args)
   (let ((accel NIL) where locator key)
     ;; Strip off and bind the accelerator (if there is one)
@@ -927,7 +931,7 @@ handled manually within the function."
   )
 
 
-#+garnet-test
+#+garnet-test 
 (defun MOTIF-MENU-STOP ()
   (opal:destroy MOTIF-MENU-WIN))
 
