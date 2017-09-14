@@ -627,11 +627,10 @@ not selected, this does nothing."
   (kr-send an-interactor :running-action an-interactor
 	   final-obj-over NIL))
 
-;;;============================================================
-;;; Go procedure utilities
-;;;============================================================
 
-;;;remove from running level, put on start level, change state to
+;;; Go procedure utilities
+
+;;; remove from running level, put on start level, change state to
 ;;; start, call abort procedure.  Become-inactive ignored because :active
 ;;; set before this is called
 (defun menu-do-abort (an-interactor become-inactive event)
@@ -727,42 +726,43 @@ not selected, this does nothing."
 	  (kr-send an-interactor :Stop-Action an-interactor prev-obj-over))
 	(menu-do-abort an-interactor NIL NIL))))
 
-
-;;;;===========================================================
 ;;; Menu schema
-;;;============================================================
-
 (Create-Schema 'inter:menu-interactor
-		     (:is-a inter:interactor)
-		     (:name :First-Menu-interactor)
-		     (:start-action 'Menu-Int-Start-Action)
-		     (:running-action 'Menu-Int-Running-Action)
-		     (:stop-action 'Menu-Int-Stop-Action)
-		     (:abort-action 'Menu-Int-Abort-Action)
-		     (:outside-action 'Menu-Int-Outside-Action)
-		     (:back-inside-action 'Menu-Int-Back-Inside-Action)
-		     (:how-set :set)
-		     (:slots-to-set '(:interim-selected :selected :selected))
-		               ; slots: interim, in object, in aggregate
-		     (:remembered-last-object NIL)
-		     (:main-aggregate NIL)
-		     (:Go 'General-Go)  ; proc executed when events happen
-		     (:Do-Start 'Menu-Do-Start)     ; these are
-		     (:Do-Running 'Menu-Do-Running) ;   called by GO
-		     (:Do-Stop 'Menu-Do-Stop)       ;   to do
-		     (:Do-Explicit-Stop 'Menu-Explicit-Stop) ;for stop-interactor
-		     (:Do-Abort 'Menu-Do-Abort)     ;   the real work.
-		     (:Do-Outside 'Menu-Do-Outside) ;   They call the
-		     (:Do-Back-Inside 'Menu-Do-Back-Inside)  ; appropriate
-		     (:Do-Outside-Stop 'Menu-Do-Outside-Stop); -action procedures
-		     (:initialize 'Menu-Interactor-Initialize)) ;proc to call
-							   ; when created
+	       (:is-a inter:interactor)
+	       (:stop-event '(:any-leftdown :rightdown))
+	       (:name :First-Menu-interactor)
+	       (:start-action 'Menu-Int-Start-Action)
+	       (:running-action 'Menu-Int-Running-Action)
+	       (:stop-action 'Menu-Int-Stop-Action)
+	       (:abort-action 'Menu-Int-Abort-Action)
+	       (:outside-action 'Menu-Int-Outside-Action)
+	       (:back-inside-action 'Menu-Int-Back-Inside-Action)
+	       (:how-set :set)
+	       (:slots-to-set '(:interim-selected :selected :selected))
+					; slots: interim, in object, in aggregate
+	       (:remembered-last-object NIL)
+	       (:main-aggregate NIL)
+	       (:Go 'General-Go)
+	       ;; Proc executed when events happen. These are called
+	       ;; by GO to do for stop-interactor the real work.  They
+	       ;; call the appropriate action procedures
+	       (:Do-Start 'Menu-Do-Start)     
+	       (:Do-Running 'Menu-Do-Running) 
+	       (:Do-Stop 'Menu-Do-Stop)       
+	       (:Do-Explicit-Stop 'Menu-Explicit-Stop) 
+	       (:Do-Abort 'Menu-Do-Abort)
+	       (:Do-Outside 'Menu-Do-Outside)
+	       (:Do-Back-Inside 'Menu-Do-Back-Inside)
+	       (:Do-Outside-Stop 'Menu-Do-Outside-Stop)
+	       ;; proc to call when created
+	       (:initialize 'Menu-Interactor-Initialize))
 
-
-;;; Need special destroy to remove the extra final feedback objects that
-;;; may have been allocated
-(define-method :destroy-me menu-interactor (an-interactor &optional (erase T))
-  (if-debug an-interactor
-	    (format T "Menu special destroy ~s erase=~s~%" an-interactor erase))
-  (Destroy-Extra-Final-Feedback-Objs an-interactor erase)
-  (call-prototype-method an-interactor erase))
+;;; Need special destroy to remove the extra final feedback objects
+;;; that may have been allocated.
+(define-method :destroy-me
+    menu-interactor (an-interactor &optional (erase T))
+    (if-debug
+     an-interactor
+     (format T "Menu special destroy ~s erase=~s~%" an-interactor erase))
+    (Destroy-Extra-Final-Feedback-Objs an-interactor erase)
+    (call-prototype-method an-interactor erase))

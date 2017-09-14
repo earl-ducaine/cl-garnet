@@ -98,7 +98,6 @@
 ;;; 05/01/91  Andrew Mickish - Put in Garnet-Gadgets package
 
 
-
 (in-package "GARNET-GADGETS")
 
 (eval-when (:execute :load-toplevel :compile-toplevel)
@@ -106,12 +105,10 @@
 	    ;; Creation Functions
 	    Make-Menubar Make-Bar-Item Make-Submenu-Item))
   ;; Demo things
-  #+garnet-test
   (export '(MENUBAR-GO MENUBAR-STOP DEMO-MENUBAR MENUBAR-WIN MENUBAR-TOP-AGG)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; First function is to display the submenu from gilt, etc.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; First function is to display the submenu from gilt, etc.
 
 ;; Returns the new window if and only if a different bar-item is to be
 ;; displayed.  Gadget parameter is the top level menubar.
@@ -124,9 +121,6 @@
     (when bar-item
       (DoSpecialPopUpMenubar gadget bar-item))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
 (create-instance 'MENUBAR-TEXT-LABEL-PROTOTYPE opal:text
   (:left (o-formula
 	  (case (gvl :parent :h-align)
@@ -137,7 +131,6 @@
   (:top (o-formula (+ (gvl :parent :top) (gvl :parent :text-offset))))
   (:string (o-formula (gvl :parent :string)))
   (:font (o-formula (gvl :parent :font))))
-
 
 (defun Menubar-Get-Label (agg)
   (let ((alist (g-value agg :parent))
@@ -460,6 +453,7 @@
 		   (opal:update win))))))
        (:final-function
 	,#'(lambda (inter obj)
+	     (break)
 	     (let* ((is-bar (is-a-p obj BAR-ITEM))
 		    (baritem (if is-bar obj
 				 ;; else is a sub-item, get its bar-item
@@ -568,18 +562,18 @@
 ;;;
 
 
-#+garnet-test (defparameter *FONT-TO-SWAP* (create-instance NIL opal:font))
-#+garnet-test (defvar family-text NIL)
-#+garnet-test (defvar face-text NIL)
-#+garnet-test (defvar size-text NIL)
-#+garnet-test (defvar combo-text NIL)
+(defparameter *FONT-TO-SWAP* (create-instance NIL opal:font))
+(defvar family-text NIL)
+(defvar face-text NIL)
+(defvar size-text NIL)
+(defvar combo-text NIL)
 
 
 ;;; When we want to change an object's font, set the slots of *FONT-TO-SWAP*,
 ;;; then set the object to have that font.  (Opal does not notice when you
 ;;; just change the slots of a font.)
 ;;;
-#+garnet-test
+
 (defun Change-Font (text-obj &key family face size)
   (let ((old-font (g-value text-obj :font))
 	(new-font *FONT-TO-SWAP*))
@@ -602,37 +596,37 @@
 
 ;;; Some functions to call when items are selected
 ;;;
-#+garnet-test
+
 (defun Family-Fn (gadget slot value)
   (declare (ignore gadget))
   (change-font family-text slot value)
   (s-value family-text :string (string-downcase value)))
-#+garnet-test
+
 (defun Face-Fn (gadget slot value)
   (declare (ignore gadget))
   (change-font face-text slot value)
   (s-value face-text :string (string-downcase value)))
-#+garnet-test
+
 (defun Size-Fn (gadget slot value)
   (declare (ignore gadget))
   (change-font size-text slot value)
   (s-value size-text :string (string-downcase value)))
 
-#+garnet-test
+
 (defun Fixed-Fn (gadget slot value)
   (declare (ignore gadget slot value))
   (format t "Setting :family slot to :fixed.~%"))
-#+garnet-test
+
 (defun Serif-Fn (gadget slot value)
   (declare (ignore gadget slot value))
   (format t "Setting :family slot to :serif.~%"))
-#+garnet-test
+
 (defun Sans-Serif-Fn (gadget slot value)
   (declare (ignore gadget slot value))
   (format t "Setting :family slot to :sans-serif.~%"))
 
 
-#+garnet-test
+
 (defun Menubar-Go (&key dont-enter-main-event-loop)
 
   (create-instance 'MENUBAR-WIN inter:interactor-window
@@ -696,20 +690,12 @@
  (unless dont-enter-main-event-loop #-cmu (inter:main-event-loop))
  )
 
-
-
-;;;
 ;;;  MENUBAR-STOP
-;;;
 
-#+garnet-test
 (defun Menubar-Stop ()
   (opal:destroy MENUBAR-WIN))
 
-
-;;;
 ;;;  UTILITY FUNCTIONS USED BY EXPORTED FUNCTIONS
-;;;
 
 (defun Confirm-Menubar (a-menubar)
   (unless (is-a-p a-menubar MENUBAR)
