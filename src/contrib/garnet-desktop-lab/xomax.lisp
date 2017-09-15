@@ -253,11 +253,13 @@ Font changing:
     (:min-menubar-width (o-formula (gv win :width))))
   (opal:add-component top pull-down)
   ;; Create the top window of the demo.
-  (create-instance 'text1 opal:multifont-text ; This is the internal multifont
-    (:word-wrap-p t)			      ; text object.
+  (create-instance 'text1 opal:multifont-text
+    ;; This is the internal multifont text object.
+    (:word-wrap-p t)			      
     (:auto-scroll-p T)
     (:fast-redraw-p :rectangle)
     (:fast-redraw-filling-style opal:motif-gray-fill))
+  (s-value (gv text1 :cursor) :filling-style opal:green-fill)
   (create-instance 'scroll-win1 gg:motif-scrolling-window-with-bars
     (:left 0)
     (:top (g-value pull-down :height))
