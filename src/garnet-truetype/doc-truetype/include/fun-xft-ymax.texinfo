@@ -1,5 +1,0 @@
-@findex ymax
-@anchor{Function ymax}
-@deffn {Function} {ymax} bounding-box
-Returns top side y of @var{bounding-box}
-@end deffn

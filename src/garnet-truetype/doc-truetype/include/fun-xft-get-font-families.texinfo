@@ -1,5 +1,0 @@
-@findex get-font-families
-@anchor{Function get-font-families}
-@deffn {Function} {get-font-families}
-Returns cached font families.
-@end deffn

@@ -35,10 +35,7 @@
    	    :components
 	    ((:file "gem")
 	     (:file "define-methods")
-;;;	     (:file "drawing")
-	     (:file "x")
-;;;	     (:file "anti-alias-graphics")
-	     ))
+	     (:file "x")))
    (:module opal
    	    :pathname "src/opal"
    	    :depends-on (:utils :gem :kr)
@@ -73,20 +70,6 @@
 	     (:file "opal-init")
 	     ;; (:file "multifont-loader")
 	     ))
-   ;; (:module truetype
-   ;; 	    :pathname "src/truetype"
-   ;; 	    :depends-on (:utils :gem :kr :opal)
-   ;; 	    :components
-   ;; 	    ((:file "truetype-compiler")
-   ;; 	     ;;	     (:file "package-truetype")
-   ;; 	     (:file "clx-truetype-utils")
-   ;; 	     (:file "font-cache")
-   ;; 	     (:file "clx-truetype")))
-   ;; (:module truetype-test
-   ;; 	    :pathname "src/truetype/test-truetype"
-   ;; 	    :depends-on (:utils :gem :kr :opal :garnet-truetype)
-   ;; 	    :components
-   ;; 	    ((:file "hello-world")))
    (:module inter
    	    :pathname "src/inter"
    	    :depends-on (:utils :gem :kr :opal)
@@ -355,25 +338,6 @@
 	     (:file "value-control")
 	     (:file "enable-control")
 	     (:file "error-check")))
-   (:module garnet-truetype
-	    :description "antialiased TrueType using CLX and XRender"
-   	    :pathname "src/garnet-truetype"
-	    :version "0.1"
-	    :depends-on (:kr :opal :inter :gadgets :debug :protected-eval :demos :lapidary)
-	    :serial t
-	    :components
-	    ((:file "clx-truetype")
-	     (:file "clx-truetype-utils")
-	     (:file "font-cache")
- 	     (:file "gem-font-methods")
-	     ;; 	     (:file "truetype")
-	     ))
-;;; /mnt/pixel-512/dev/garnet/garnet-git/
-   ;; (:module garnet-truetype-test
-   ;; 	    :depends-on (:garnet-truetype)
-   ;; 	    :pathname "src/garnet-truetype/test-truetype"
-   ;; 	    :components
-   ;; 	    ((:file "hello-world")))
    (:module multi-garnet
 	    :pathname "multi-garnet"
 	    :depends-on (:build :lapidary)
@@ -472,19 +436,6 @@
 	     (:file "keytrans")
 	     (:file "trace")
 	     (:file "util")))
-   ;; (:module gworld
-   ;; 	    :pathname "src/gworld"
-   ;; 	    :depends-on (:build :lapidary)
-   ;; 	    :components
-   ;; 	    ((:file "gcable-macptrs")
-   ;; 	     (:file "utility")
-   ;; 	     (:file "pixmaps")
-   ;; 	     (:file "gworld")))
-   ;; (:module test
-   ;; 	    :depends-on (:gem)
-   ;; 	    :components
-   ;; 	    ((:file "test-gem")
-   ;; 	     ))))
    ))
 
 (in-package :common-lisp-user)

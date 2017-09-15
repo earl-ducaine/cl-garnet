@@ -1,5 +1,0 @@
-@findex baseline-to-baseline
-@anchor{Function baseline-to-baseline}
-@deffn {Function} {baseline-to-baseline} drawable font
-Returns distance between baselines of @var{font}. @var{drawable} must be window, pixmap or screen. ascent @code{-} descent @code{+} line gap
-@end deffn

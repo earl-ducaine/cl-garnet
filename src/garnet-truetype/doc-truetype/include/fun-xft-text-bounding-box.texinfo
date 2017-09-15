@@ -1,5 +1,0 @@
-@findex text-bounding-box
-@anchor{Function text-bounding-box}
-@deffn {Function} {text-bounding-box} drawable font string @&key start end
-Returns text bounding box. @var{drawable} must be window, pixmap or screen. Text bounding box is only for contours. Bounding box for space (#x20) is zero.
-@end deffn

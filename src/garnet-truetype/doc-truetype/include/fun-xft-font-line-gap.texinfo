@@ -1,5 +1,0 @@
-@findex font-line-gap
-@anchor{Function font-line-gap}
-@deffn {Function} {font-line-gap} drawable font
-Returns line gap of @var{font}. @var{drawable} must be window, pixmap or screen.
-@end deffn
