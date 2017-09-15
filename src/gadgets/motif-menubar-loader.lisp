@@ -31,7 +31,7 @@ Change log:
 (unless (get :garnet-modules :motif-menubar)
   (format t "Loading Motif-Menubar...~%")
   (dolist (pair '((:motif-parts "motif-parts")
-		  (:motif-menu "motif-menu-loader")
+;;		  (:motif-menu "motif-menu-loader")
 		  (:menubar-functions "menubar-functions")
 		  (:motif-menubar "motif-menubar")))
     (unless (get :garnet-modules (car pair))

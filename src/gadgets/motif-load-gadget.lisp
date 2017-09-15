@@ -1,33 +1,23 @@
 ;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: GARNET-GADGETS; Base: 10 -*-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;         The Garnet User Interface Development Environment.      ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; This code was written as part of the Garnet project at          ;;;
-;;; Carnegie Mellon University, and has been placed in the public   ;;;
-;;; domain.  If you are using this code or any part of Garnet,      ;;;
-;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+;;;
+;;; The Garnet User Interface Development Environment.
+;;;
+;;; This code was written as part of the Garnet project at Carnegie
+;;; Mellon University, and has been placed in the public domain.  If
+;;; you are using this code or any part of Garnet, please contact
+;;; garnet@cs.cmu.edu to be put on the mailing list.
+;;;
 ;;; This file contains the load gadget.  The functions for this gadget
 ;;; can be found in the save-load-functions.lisp file.
 ;;;
 ;;; Designed and Implemented by Rajan Parthasarathy
-;;;
 
-;;; Change log:
-;;;
-;;; 10/06/93  Andrew Mickish - :background-color ---> :foreground-color
-;;; 01/30/93  Rajan Parthasarathy - s-value'd the :initialize slot
-;;; 12/15/92  Andrew Mickish - Added type and parameter declarations
-;;; 06/26/92  Rajan Parthasarathy - Created
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(in-package "GARNET-GADGETS")
+(in-package :garnet-gadgets)
 
 (eval-when (:execute :load-toplevel :compile-toplevel)
-  (export '(MOTIF-LOAD-GADGET)))
+  (export '(motif-load-gadget)))
 
-(create-instance 'MOTIF-LOAD-GADGET OPAL:AGGREGADGET  
+(create-instance 'motif-load-gadget opal:aggregadget  
   :declare ((:parameters :parent-window :window-title :window-left :window-top
 			 :min-gadget-width :initial-directory :message-string
 			 :button-panel-items :button-panel-h-spacing
@@ -57,58 +47,50 @@
 			     :button-panel-items :button-panel-font
 			     :button-panel-h-spacing :min-gadget-width :modal-p
 			     :check-filenames-p :foreground-color))
-;;; Customizable slots
-  (:LEFT 10)
-  (:TOP 24)
-  (:PARENT-WINDOW NIL)
-  
+  (:left 10)
+  (:top 24)
+  (:parent-window nil)
   ;; Slots for window customization
-  (:WINDOW-TITLE "Load Window")
-  (:WINDOW-TOP (o-formula (if (gvl :parent-window)
+  (:window-title "Load Window")
+  (:window-top (o-formula (if (gvl :parent-window)
 			       (floor (- (gvl :parent-window :height)
 					 (gvl :window :height)) 2)
 			       0)))
-  (:WINDOW-LEFT (o-formula (if (gvl :parent-window)
+  (:window-left (o-formula (if (gvl :parent-window)
 			      (floor (- (gvl :parent-window :width)
 					(gvl :window :width)) 2)
 			      0)))
-
   ;; Slots for dir-input customization
-  (:DIR-INPUT-FIELD-FONT opal:default-font)
-  (:DIR-INPUT-LABEL-FONT (opal:get-standard-font NIL :BOLD NIL))
-   
+  (:dir-input-field-font opal:default-font)
+  (:dir-input-label-font (opal:get-standard-font nil :bold nil))   
   ;; Slots for message customization
-  (:MESSAGE-FONT (OPAL:GET-STANDARD-FONT :FIXED :ITALIC :SMALL))
-  (:MESSAGE-STRING "Fetching directory...")
-
+  (:message-font (opal:get-standard-font :fixed :italic :small))
+  (:message-string "fetching directory...")  
   ;; Slots for file-menu customization
-  (:NUM-VISIBLE 6)
-  (:FILE-MENU-FONT (opal:get-standard-font NIL :BOLD NIL))
-  (:INITIAL-DIRECTORY #-apple "./" #+apple ":")
-   
+  (:num-visible 6)
+  (:file-menu-font (opal:get-standard-font nil :bold nil))
+  (:initial-directory "./")
   ;; Slots for file-input customization
-  (:FILE-INPUT-FIELD-FONT opal:default-font)
-  (:FILE-INPUT-LABEL-FONT (opal:get-standard-font NIL :BOLD NIL))
-   
+  (:file-input-field-font opal:default-font)
+  (:file-input-label-font (opal:get-standard-font nil :bold nil))   
   ;; Slots for button customization
-  (:BUTTON-PANEL-ITEMS '("Load" "Cancel"))
-  (:BUTTON-PANEL-FONT OPAL:DEFAULT-FONT)
-  (:BUTTON-PANEL-H-SPACING 25)
-
+  (:button-panel-items '("Load" "Cancel"))
+  (:button-panel-font opal:default-font)
+  (:button-panel-h-spacing 25)
   ;; Other slots
-  (:MIN-GADGET-WIDTH 240)
-  (:MODAL-P NIL)
-  (:SELECTION-FUNCTION NIL)
-  (:CHECK-FILENAMES-P T)
-  (:FOREGROUND-COLOR opal:motif-light-blue)
-  
-;;; Non customizable slots
+  (:min-gadget-width 240)
+  (:modal-p nil)
+  (:selection-function nil)
+  (:check-filenames-p t)
+  (:foreground-color opal:motif-light-blue)  
+  ;; Non customizable slots
   (:destroy #'Save-Load-Gadget-Destroy)
   (:motif-load-gadget-p T)
-  (:parts `(
-
-;;; This is the box labeled "Directory"
-    (:DIR-INPUT ,GARNET-GADGETS:MOTIF-SCROLLING-LABELED-BOX
+  (:parts
+   `(
+     ;; This is the box labeled "Directory"
+     (:DIR-INPUT
+      ,GARNET-GADGETS:MOTIF-SCROLLING-LABELED-BOX
       (:LEFT ,(o-formula (gvl :parent :left) 10))
       (:TOP ,(o-formula (gvl :parent :top) 24))
       (:WIDTH ,(o-formula (gvl :parent :min-gadget-width) 240))
@@ -124,7 +106,7 @@
 			   (truename (gvl :parent :initial-directory)))))
       (:SELECTION-FUNCTION Update-File-Menu))
 
-;;;  This is the scrolling menu with a list of files in it
+     ;;  This is the scrolling menu with a list of files in it
 	    
     (:FILE-MENU ,GARNET-GADGETS:MOTIF-SCROLLING-MENU
       (:TOGGLE-P NIL)
@@ -158,7 +140,7 @@
       (:TITLE NIL)
       (:SELECTED-RANKS NIL))
 
-;;; This is the box that says "Filename"
+     ;; This is the box that says "Filename"
 	    
     (:FILE-INPUT ,GARNET-GADGETS:MOTIF-SCROLLING-LABELED-BOX
       (:LEFT ,(o-formula (gvl :parent :left)))
@@ -178,15 +160,15 @@
       (:LABEL-STRING "Filename:")
       (:VALUE ""))
 
-;;; This is the little message that appears everytime a directory is being
-;;; fetched	    
+     ;; This is the little message that appears everytime a directory is being
+     ;; fetched	    
 	   
     (:MESSAGE ,OPAL:TEXT
       (:LEFT ,(o-formula (+ (gvl :parent :left) 20) 30))
       (:TOP ,(o-formula (+ (gvl :parent :top) 24) 48))
       (:FONT ,(o-formula (gvl :parent :message-font))))
 
-;;; These are the two buttons for load and cancel
+     ;; These are the two buttons for load and cancel
 	    
     (:OK-CANCEL-BUTTONS ,GARNET-GADGETS:MOTIF-TEXT-BUTTON-PANEL
      (:CONSTANT (:KNOWN-AS :COMPONENTS :TEXT-BUTTON-PRESS :FINAL-FEEDBACK
@@ -204,22 +186,22 @@
 		   (setf maxbot (opal:bottom ob))))
 	       (+ maxbot 25))))
 
-     (:FOREGROUND-COLOR ,(o-formula (gvl :parent :foreground-color)))     
-     (:SELECTION-FUNCTION default-load-function)
-     (:FONT ,(o-formula (gvl :parent :button-panel-font)))
-     (:H-ALIGN :CENTER)
-     (:PIXEL-MARGIN NIL)
-     (:RANK-MARGIN NIL)
-     (:FIXED-HEIGHT-P T)
-     (:FIXED-WIDTH-P T)
-     (:INDENT 0)
-     (:V-SPACING 5)
-     (:H-SPACING ,(o-formula (gvl :parent :button-panel-h-spacing)))
-     (:DIRECTION :HORIZONTAL)
-     (:SHADOW-OFFSET 5)
-     (:TEXT-OFFSET 4)
-     (:FINAL-FEEDBACK-P NIL)
-     (:GRAY-WIDTH 3)
-     (:ITEMS ,(o-formula (gvl :parent :button-panel-items)))))))
+     (:foreground-color ,(o-formula (gvl :parent :foreground-color)))     
+     (:selection-function default-load-function)
+     (:font ,(o-formula (gvl :parent :button-panel-font)))
+     (:h-align :center)
+     (:pixel-margin nil)
+     (:rank-margin nil)
+     (:fixed-height-p t)
+     (:fixed-width-p t)
+     (:indent 0)
+     (:v-spacing 5)
+     (:h-spacing ,(o-formula (gvl :parent :button-panel-h-spacing)))
+     (:direction :horizontal)
+     (:shadow-offset 5)
+     (:text-offset 4)
+     (:final-feedback-p nil)
+     (:gray-width 3)
+     (:items ,(o-formula (gvl :parent :button-panel-items)))))))
 
-(s-value motif-load-gadget :initialize #'Save-Load-Gadget-Initialize)
+(s-value motif-load-gadget :initialize #'save-load-gadget-initialize)

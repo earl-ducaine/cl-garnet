@@ -17,8 +17,8 @@
 ;; Following are functions used in the menubar.  Each function is used
 ;; to control either a menu or a submenu item.
 
-;; This is used in the "New" submenu of "File."  This function clears the
-;; two windows of text.
+;; This is used in the "New" submenu of "File."  This function clears
+;; the two windows of text.
 (defun new-fn (gadget menu-item value)
    (declare (ignore gadget menu-item value))
    (opal:set-text text1 nil)
@@ -31,9 +31,8 @@
 ;; two windows of text.
 (defun open-fn (gadget menu-item value)
   (declare (ignore gadget menu-item value))
-  (let ((current-text-gaget (gv focus-inter :obj-to-change)))
-    (opal:set-text current-text-gaget (run-generate-multifont-text-from-file))
-    (opal:update win)))
+  (do-load))
+  
 
 (defun generate-multifont-text-from-file (file-name)
   ;;(alexandria:read-file-into-string
@@ -45,9 +44,9 @@
 	   (reverse lines))
 	(push line lines)))))
 
-(defun  run-generate-multifont-text-from-file ()
-  (generate-multifont-text-from-file
-   "/home/rett/dev-remote/garnet/cl-garnet/src/contrib/garnet-desktop-lab/xomax.lisp"))
+;; (defun  run-generate-multifont-text-from-file ()
+;;   (
+;;    "/home/rett/dev-remote/garnet/cl-garnet/src/contrib/garnet-desktop-lab/xomax.lisp"))
 
 ;; This is used in the "New" submenu of "File."  This function clears the
 ;; two windows of text.
@@ -321,6 +320,12 @@ Font changing:
 				     ,opal:multifont-text))
     (:match-obj message))
   (inter:set-focus focus-inter text1)
+  ;; Create a load dialog
+  (create-instance 'load-dialog garnet-gadgets:motif-load-gadget
+    (:modal-p t) 
+    (:initial-directory 
+     (namestring "~/"))
+    (:selection-function #'load-classifier))
   (opal:update win)
   ;; Currently, open and save remain unimplemented. Their
   ;; corresponding menubar entries have been grayed to reflect this.
@@ -342,3 +347,36 @@ Font changing:
   ;;for demo-controller
    (unless (and (fboundp 'common-lisp-user::garnet-note-quitted)
                 (common-lisp-user::garnet-note-quitted "DEMO-MULTIFONT"))))
+
+(defparameter *saved* nil)
+(defparameter *last-filename* nil)
+
+
+;; load-classifier loads a classifier from the given file.
+;;
+;; Parameters:
+;;    gadget - ignored
+;;    file   - file to load classifier from  
+(defun load-classifier (gadget file)
+  (declare (ignore gadget))
+  (let ((current-text-gaget (gv focus-inter :obj-to-change)))
+    (opal:set-text current-text-gaget (generate-multifont-text-from-file file))
+    (opal:update win)))
+
+;; do-load loads an existing classifier from a file. If the current 
+;; classifier has not been saved, it will prompt the user to save
+;; it.
+;;
+;; Parameters:
+;;     gadgets-object (ignored)
+;;     item-string (ignored)
+(defun do-load ()
+  (let (cancel)
+    ;; (unless *saved*
+    ;;   (setf cancel (gg:save-file-if-wanted save-dialog
+    ;; 					   *last-filename*
+    ;; 					   "Save classifier first?")))
+    ;; (unless
+	;; (or (eq cancel :cancel) (eq cancel 'ERROR))
+    (gg:display-load-gadget-and-wait load-dialog *last-filename*)))
+    ;; )

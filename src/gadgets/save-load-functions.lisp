@@ -85,56 +85,48 @@
 ;;; event lock.  Without process, works great.
 ;;;
 
-(in-package "GARNET-GADGETS")
+(in-package :garnet-gadgets)
 
 (eval-when (:execute :load-toplevel :compile-toplevel)
-  (export '(DISPLAY-SAVE-GADGET DESTROY-SAVE-GADGET HIDE-SAVE-GADGET
-	    DISPLAY-LOAD-GADGET DESTROY-LOAD-GADGET HIDE-LOAD-GADGET
+  (export '(display-save-gadget destroy-save-gadget hide-save-gadget
+	    display-load-gadget destroy-load-gadget hide-load-gadget
 	    display-save-gadget-and-wait display-load-gadget-and-wait
 	    save-file-if-wanted)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; This function gets called whenever the user hits
-;;; either the save or the cancel function in the save-window
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;; This function gets called whenever the user hits either the save
+;;; or the cancel function in the save-window
 (defun Default-Save-Function (gadget value)
   (let* ((save-gad (g-value gadget :parent))
 	 (dummy NIL))
-    
     (if (equalp value (cadr (g-value save-gad :button-panel-items)))
 	(progn
 	  (hide-save-gadget save-gad)                ;; Cancel button was hit
 	  (setf dummy :CANCEL)
 	  (when (g-value save-gad :waiting)
-	    (inter:interaction-complete dummy))
-	  )
-	
-;;; The idea here is to check to see if the filename is blank
-;;; and simply calling the :save-function
+	    (inter:interaction-complete dummy)))	
+	;; The idea here is to check to see if the filename is blank
+	;; and simply calling the :save-function
 	(if (string/= (g-value save-gad :file-input :value) "")
 	    (Check-Save-Filename save-gad
 				 (g-value save-gad :file-input :value))
-	    (inter:beep)))
-    ))
+	    (inter:beep)))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ;;; This is the default save function.  It first checks to see
 ;;; if the filename already exists.  If it does, it pops the
 ;;; query gadget and asks the user if he wants to save or abort
 ;;; If the user selects save, it uses write-gadget to write out
 ;;; the :top-aggregate slot.  Then, it hides the window
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (defun Check-Save-Filename (save-gad filename)
   (let* ((Prev-Dir (g-value save-gad :prev-dir))
 	 (full-fn (merge-pathnames Prev-Dir filename))
 	 (qg (g-value save-gad :query-window))
 	 (dummy NIL))
     (if (AND ;;Already exists
-	     (probe-file (merge-pathnames filename PREV-DIR))
-	     ;;User wants it checked
-	     (g-value save-gad :check-filenames-p))
+	 (probe-file (merge-pathnames filename PREV-DIR))
+	 ;;User wants it checked
+	 (g-value save-gad :check-filenames-p))
 	(progn
 	  (s-value qg :selection-function #'(lambda (gadget val)
 					      (declare (ignore gadget))
@@ -162,24 +154,20 @@
 		(kr-send save-gad :selection-function save-gad full-fn))
 	  (hide-save-gadget save-gad)
 	  (when (g-value save-gad :waiting)
-	    (inter:interaction-complete dummy))
-	  ))))
+	    (inter:interaction-complete dummy))))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; This function checks to see if the filename is valid
-;;; Invalid filenames are existing directory names, or
-;;; typing in a directory name (eg. ~/rajan/foo/baz/save.lisp)
-;;; If the name is invalid, we give a beep and tell the user
-;;; to re-edit the string.  So you gotta keep typing and
-;;; typing till you type a valid filename
+;;; This function checks to see if the filename is valid Invalid
+;;; filenames are existing directory names, or typing in a directory
+;;; name (eg. ~/rajan/foo/baz/save.lisp) If the name is invalid, we
+;;; give a beep and tell the user to re-edit the string.  So you gotta
+;;; keep typing and typing till you type a valid filename
 ;;;
-;;; NOTE: the way to make the cursor stay there when a bad
-;;; filename is typed is to modify the interactors running
-;;; action so that if it gets a return, it checks the
-;;; filename, and if there's an invalid filename, it beeps/
-;;; Otherwise it'll go on to (call-prototype-method)  However
-;;; it was too much of a hassle to add that.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; NOTE: the way to make the cursor stay there when a bad filename is
+;;; typed is to modify the interactors running action so that if it
+;;; gets a return, it checks the filename, and if there's an invalid
+;;; filename, it beeps/ Otherwise it'll go on to
+;;; (call-prototype-method) However it was too much of a hassle to add
+;;; that.
 (defun Check-Filename (gadget value)
   (let* ((save-gad (g-value gadget :parent))
 	 (save-win (g-value gadget :window))
@@ -193,8 +181,6 @@
       (s-value gadget :value "")
       (opal:update save-win)))))
 
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; This function is a helper function for update-file-menu.
 ;;; it takes any pathname and returns its TRUE value
 ;;; ie... /afs/cs/project/ -> /afs/cs/project
@@ -202,46 +188,36 @@
 ;;;  /.. -> /
 ;;; This function is nessesary for allegro which crashes on the
 ;;; .. and /../ cases and derivations thereof
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-
-
-#-(and)
-(defun real-path (path)
-  (let* ((trimmed (string-right-trim "/" path))
-         (len (length trimmed))
-         (prev-dir-test (or (string= trimmed "..")
-                            (not (>= len 3))
-                            (string= (subseq trimmed (- len 3) len) "/..")))
-         (truncat (remove #\/ (string-right-trim "." trimmed) :count 1
-                                                              :from-end t))
-         (last/ (position #\/ truncat :from-end t)))
-
-
-    (cond ((not prev-dir-test) path)
-          ((= (length truncat) 0) "/")
-          (t (remove-if #'(lambda (x) (declare (ignore x)) t)
-			truncat
-			:start (+ last/ 1)
-			:end (length truncat))))))
-
-
-#+(and)
 (defun real-path (path)
   (namestring (or (ignore-errors (truename path))
 		  *default-pathname-defaults*)))
 
-#-(and)
-(defun real-path (path)
-  (cond ((or (string= path "") (string= path "."))
-	 (namestring *default-pathname-defaults*))
-	(t path)))
+;; Two older versions of real-path
 
+;; (defun real-path (path)
+;;   (let* ((trimmed (string-right-trim "/" path))
+;;          (len (length trimmed))
+;;          (prev-dir-test (or (string= trimmed "..")
+;;                             (not (>= len 3))
+;;                             (string= (subseq trimmed (- len 3) len) "/..")))
+;;          (truncat (remove #\/ (string-right-trim "." trimmed) :count 1
+;; 			  :from-end t))
+;;          (last/ (position #\/ truncat :from-end t)))
+;;     (cond ((not prev-dir-test) path)
+;;           ((= (length truncat) 0) "/")
+;;           (t (remove-if #'(lambda (x) (declare (ignore x)) t)
+;; 			truncat
+;; 			:start (+ last/ 1)
+;; 			:end (length truncat))))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; This function updates the file menu.  It is called
-;;; whenever the directory is changed
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; (defun real-path (path)
+;;   (cond ((or (string= path "") (string= path "."))
+;; 	 (namestring *default-pathname-defaults*))
+;; 	(t path)))
+
+;;; This function updates the file menu.  It is called whenever the
+;;; directory is changed
 (defun Update-File-Menu (gadget value)
   (let* ((save-gad (g-value gadget :parent))
 	 (save-win (g-value save-gad :window))
@@ -253,25 +229,21 @@
 	      (progn
 		(setf dir-name (string-right-trim "/" val))
 		(setf dir-name (concatenate 'string
-					    dir-name "/"))
-		)
+					    dir-name "/")))
 	      (progn
 		(setf dir-name (directory-namestring val))
 		(s-value (g-value save-gad :file-input) :value
-			 (file-namestring val))
-		))
+			 (file-namestring val))))
 	  (s-value (g-value save-gad :dir-input) :value
 		   (directory-namestring (truename dir-name)))
-	  
 	  ;; The above crap gets the directory name of the current dir
-	  ;; The below (unless...) sets the :items slot of the menu
-	  ;; to be the contents of the directory
-
+	  ;; The below (unless...) sets the :items slot of the menu to
+	  ;; be the contents of the directory
 	  (when
-	      (OR
+	      (or
 	       (equal Prev-Dir "") ;; This is so that you can reload the dir
-	                           ;; contents after you change it
-	       (NOT (equal (truename dir-name)
+	       ;; contents after you change it
+	       (not (equal (truename dir-name)
 			   ;; RGA added ignore-errors to get out of
 			   ;; loosing situation where previous
 			   ;; directory is invalid.
@@ -280,14 +252,12 @@
 	    (s-value (g-value save-gad :message) :string
 		     (g-value save-gad :message-string))
 	    (opal:update save-win)
-	    
-	    (if (NOT (g-value save-gad :window :visible))
+	    (if (not (g-value save-gad :window :visible))
 		(put-filenames-in-menu save-gad dir-name)
 		(opal:with-hourglass-cursor
-		    (put-filenames-in-menu save-gad dir-name)))))
-	
-	;; When the directory is invalid, it will beep and put the previous
-	;; directory there
+		  (put-filenames-in-menu save-gad dir-name)))))	
+	;; When the directory is invalid, it will beep and put the
+	;; previous directory there
 	(progn
 	  (s-value (g-value save-gad :dir-input) :value
 		   (directory-namestring
@@ -297,33 +267,23 @@
 		      ;; directory is invalid.
 		      (if tn tn *default-pathname-defaults*))))
 	  (inter:beep)))
-    
     (opal:update save-win)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; This function gets the directory and puts it in the file
-;;; menu.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+;;; This function gets the directory and puts it in the file menu.
 (defparameter *wild-pathname* (make-pathname :name :wild :type :wild))
 
 (defun put-filenames-in-menu (save-gad dir-name)
   (let ((dir-list nil)
 	(file-list NIL)
-	(dir (directory (merge-pathnames dir-name *wild-pathname*)
-			;; cmucl has a few keyword options that
-			;; default to values we might not like...
-			#+cmu :check-for-subdirs #+cmu NIL
-			#+cmu :follow-links #+cmu NIL
-			))
+	(dir (directory (merge-pathnames dir-name *wild-pathname*)))
 	(save-win (g-value save-gad :window)))
     (dolist (pathname dir)
       (let ((filepart (make-pathname :directory nil :defaults pathname)))
 	(if (equal filepart #P"")
-	    ;; It's a directory. Extract the last component and
-	    ;; turn it into a relative directory pathname. This
-	    ;; will put a slash at the end of the namestring.
-	    ;; I'm hoping this will be portable.
+	    ;; It's a directory. Extract the last component and turn
+	    ;; it into a relative directory pathname. This will put a
+	    ;; slash at the end of the namestring.  I'm hoping this
+	    ;; will be portable.
 	    (push 
 	     (namestring
 	      (make-pathname
@@ -331,7 +291,6 @@
 	     dir-list)
 	    ;; It's a file.
 	    (push (namestring filepart) file-list))))
-    
     (setf file-list
 	  (append(sort dir-list #'(lambda (x y) (string< x y)))
 		 (sort file-list #'(lambda (x y) (string< x y)))))
@@ -342,64 +301,48 @@
     (s-value (g-value save-gad :file-menu :scroll-bar) :value 0)
     (opal:update save-win)))
 
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; This function is called when an object in the file-menu is
 ;;; selected.  It first converts the object so that it's full path-
 ;;; name is there, and then calls Update-File-Menu
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defun File-Menu-Selection (gadget value)
   (let ((prev-dir (g-value gadget :parent :prev-dir)))
     (Update-File-Menu gadget (merge-pathnames (g-value value :item)
 					      (truename Prev-Dir)))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; This function gets called whenever the user hits
-;;; either the load or the cancel function in the load-window
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defun Default-Load-Function (gadget val)
+;;; This function gets called whenever the user hits either the load
+;;; or the cancel function in the load-window
+(defun default-load-function (gadget val)
   (let* ((load-gad (g-value gadget :parent))
 	 (value (g-value load-gad :file-input :value))
-	 (dummy NIL))
-
+	 (dummy nil))
     (if (equalp val
 		(second (g-value load-gad :button-panel-items)))
 	(progn
-	  (hide-load-gadget load-gad)  ;; Cancel button was hit
-	  (setf dummy :CANCEL)
+	  (hide-load-gadget load-gad)  ;; cancel button was hit
+	  (setf dummy :cancel)
 	  (when (g-value load-gad :waiting)
-	    (inter:interaction-complete dummy))
-	  )
-
+	    (inter:interaction-complete dummy)))
 	(if (or (equalp value "")
-		(NOT (check-load-filename (g-value load-gad :file-input) value)))
+		(not (check-load-filename (g-value load-gad :file-input) value)))
 	    (inter:beep)
 	    (progn
-	      (setf dummy (Do-Load-File load-gad value))
+	      (setf dummy (do-load-file load-gad value))
 	      (when (g-value load-gad :waiting)
-		(inter:interaction-complete dummy)))
-	      ))
-    
-    ))
+		(inter:interaction-complete dummy)))))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; This simply loads the file
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defun Do-Load-File (load-gad filename)
+(defun do-load-file (load-gad filename)
   (hide-load-gadget load-gad)
   (kr-send load-gad :selection-function load-gad
-	   (merge-pathnames (g-value load-gad :prev-dir) filename))
-  )
+	   (merge-pathnames (g-value load-gad :prev-dir) filename)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; This function checks to see if the filename is valid
 ;;; Invalid filenames are existing directory names, or
 ;;; typing in a directory name (eg. ~/rajan/foo/baz/load.lisp)
 ;;; If the name is invalid, we give a beep and tell the user
 ;;; to re-edit the string.  So you gotta keep typing and
 ;;; typing till you type a valid filename
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defun Check-Load-Filename (gad value)
+(defun check-load-filename (gad value)
   (let* ((gadget (g-value gad :parent))
 	 (dir (g-value gadget :prev-dir))
 	 (valid-p T))
@@ -414,15 +357,13 @@
 	    (opal:update load-win)))))
     valid-p))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; This puts the save-gadget & load-gadget in its own window slot. 
 ;;; It also does some other basic initializing, like creating a query-gadget
 ;;; and it creates the return interactor, which comes on when you
 ;;; hit the return key
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defun SAVE-LOAD-GADGET-INITIALIZE (gad)
+(defun save-load-gadget-initialize (gad)
   (kr-send opal:aggregadget :initialize gad)
-  (let ((window (create-instance NIL inter:interactor-window
+  (let ((window (create-instance nil inter:interactor-window
 		  (:parent
 		   (o-formula (gvl :gadget :parent-window)))
 		  (:gadget gad)
@@ -438,12 +379,11 @@
 	(aggregate (create-instance NIL opal:aggregate)))
     (s-value window :aggregate aggregate)
     (opal:update window)
-;    (with-demon-enabled #'inter::inter-update-slot-invalidated
-      (opal:add-component aggregate gad)
-;      )
-    
-;; The following s-values are set here in case the user has a
-;; :window-left slot that depends on something in it's own window
+    ;; (with-demon-enabled #'inter::inter-update-slot-invalidated
+    (opal:add-component aggregate gad)
+    ;; )    
+    ;; The following s-values are set here in case the user has a
+    ;; :window-left slot that depends on something in it's own window
     (if (or
 	 (g-value gad :save-gadget-p)
 	 (g-value gad :motif-save-gadget-p))
@@ -454,9 +394,7 @@
 						      :foreground-color)))
 		   (:parent-window (if (g-value gad :parent-window)
 				       (g-value gad :parent-window)
-
 				       window)))))
-
     (s-value gad :prev-dir "../")
     ;; Each save-gadget must have its own customized item-to-string-function.
     ;; We are only allowed to pass one parameter to the i-to-s fn, so how do
@@ -481,30 +419,26 @@
 	       (:the-button (g-value gad :ok-cancel-buttons))
 	       (:continuous NIL)
 	       (:start-event #\RETURN)
-	       (:final-function #'(lambda (inter obj)
-				    (declare (ignore obj))
-				    (let ((g (g-value inter :the-button)))
-				      (if (or
-					   (g-value gad :save-gadget-p)
-					   (g-value gad :motif-save-gadget-p))
-					  (default-save-function
-					      g
-					      (first (g-value g :button-panel-items)))
-					  (default-load-function
-					      g
-					      (first (g-value g :button-panel-items)))
-					  ))))))
-
+	       (:final-function
+		#'(lambda (inter obj)
+		    (declare (ignore obj))
+		    (let ((g (g-value inter :the-button)))
+		      (if (or
+			   (g-value gad :save-gadget-p)
+			   (g-value gad :motif-save-gadget-p))
+			  (default-save-function
+			      g
+			      (first (g-value g :button-panel-items)))
+			  (default-load-function
+			      g
+			      (first (g-value g :button-panel-items)))))))))
     (Update-File-Menu (g-value gad :file-menu)
-		      (g-value gad :initial-directory))
-    ))
+		      (g-value gad :initial-directory))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ;;; This destroys the save gadget by destroying its window.  Since
 ;;; the save gadget is inside the window, it'll be destroyed too
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defun Save-Load-Gadget-Destroy (gad &optional erase)
+(defun save-load-gadget-destroy (gad &optional erase)
   (let ((agg (g-value gad :parent))
 	(window (g-value gad :window)))
     (if agg
@@ -516,44 +450,34 @@
 	(opal:destroy window))
     (call-prototype-method gad erase)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; This function displays the gadget by setting its window to be
 ;;; visible
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (defun display-save-gadget (gadget &optional init-filename wait-p)
   (let ((win (g-value gadget :window))
 	(dummy NIL))
-
     (opal:with-hourglass-cursor
 	(progn
 	  (when (or (g-value gadget :motif-save-gadget-p)
 		    (g-value gadget :save-gadget-p))
 	    (with-constants-disabled
 		(s-value (g-value gadget :query-window :button) :h-align :center)))
-	  
 	  (s-value win :left
 		   (o-formula (gvl :gadget :window-left)))
 	  (s-value win :top
 		   (o-formula (gvl :gadget :window-top)))
-	  
 	  ;; This updates the file menu in case any new files have
 	  ;; been added since the last time the gadget was displayed
 	  (let ((temp (g-value gadget :prev-dir)))
-
 	    ;; change directories if one was passed in
 	    (when (and init-filename (directory-namestring init-filename))
 	      (setf temp (directory-namestring init-filename)))
-
 	    (s-value gadget :prev-dir "")
 	    (Update-File-Menu (g-value gadget :file-menu)
 			      temp)
 	    (s-value gadget :prev-dir temp))
-	  
 	  (when init-filename
 	    (s-value (g-value gadget :file-input) :value
 		     (file-namestring init-filename)))
-	  
 	  (s-value win :visible T)
 	  (s-value win :modal-p
 		   (o-formula (gvl :gadget :modal-p)))
@@ -562,61 +486,43 @@
     (when wait-p
       (s-value gadget :waiting T)
       (setf dummy (inter:wait-interaction-complete)))
-    dummy
-    ))
-    
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; This displays the save gadget and waits for it to complete
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    dummy))
 
+;;; This displays the save gadget and waits for it to complete
 (defun display-save-gadget-and-wait (gadget &optional init-filename)
   (display-save-gadget gadget init-filename T))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; This function hides the gadget by setting the :visible slot of
 ;;; its window to be NIL
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (defun hide-save-gadget (gadget)
   (s-value (g-value gadget :window) :visible NIL)
   (s-value (g-value gadget :file-menu) :selected-ranks NIL)
   (opal:update (g-value gadget :window)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; This function displays the gadget by setting its window to be
 ;;; visible
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (defun display-load-gadget (gadget &optional init-filename)
   (display-save-gadget gadget init-filename))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; This displays the load gadget and waits for it to complete
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (defun display-load-gadget-and-wait (gadget &optional init-filename)
   (display-save-gadget-and-wait gadget init-filename))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; This function hides the gadget by setting the :visible slot of
-;;; its window to be NIL
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+;;; This function hides the gadget by setting the :visible slot of its
+;;; window to be NIL
 (defun hide-load-gadget (gadget)
   (hide-save-gadget gadget))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Save-File-If-Wanted pops up a query gadget asking "Save file first?"
-;;; If "No" is selected, it simply returns.  If "Cancel" is selected,
-;;; If "Yes" is selected, it displays the save gadget.  The saving is
-;;; done by the selection function of the save gadget.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defun Save-File-If-Wanted (save-gad &optional init-filename (query-string "Save file first?"))
+;;; Save-File-If-Wanted pops up a query gadget asking "Save file
+;;; first?"  If "No" is selected, it simply returns.  If "Cancel" is
+;;; selected, If "Yes" is selected, it displays the save gadget.  The
+;;; saving is done by the selection function of the save gadget.
+(defun save-file-if-wanted (save-gad &optional init-filename
+				       (query-string "Save file first?"))
   (let ((q-box (g-value save-gad :query-window))
 	(dummy NIL))
     (with-constants-disabled
-	(s-value (g-value q-box :button) :h-align :center))
+      (s-value (g-value q-box :button) :h-align :center))
     (s-value q-box
 	     :selection-function
 	     #'(lambda (g v)
@@ -624,11 +530,10 @@
 		 (cond
 		   ((equal v "Yes")
 		    (setf dummy
-			  (gg:display-save-gadget-and-wait save-gad init-filename)))
+			  (gg:display-save-gadget-and-wait
+			   save-gad init-filename)))
 		   ((equal v "Cancel") (setf dummy :CANCEL))
-		   (t (setf dummy :NO)))
-		 ))
+		   (t (setf dummy :NO)))))
     (opal:raise-window (g-value q-box :window))
     (gg:display-query-and-wait q-box query-string '("Yes" "No" "Cancel"))
-    dummy
-    ))
+    dummy))

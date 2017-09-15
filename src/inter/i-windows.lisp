@@ -232,8 +232,9 @@
     (write-transcript-event *current-event*))
   (process-current-event))
 
-;; since each clause returns NIL, this should loop until all pending events are
-;; processed, at which time the :timeout 0 will cause it to exit
+;; Since each clause returns NIL, this should loop until all pending
+;; events are processed, at which time the :timeout 0 will cause it to
+;; exit.
 (defun Trans-Check-CLX-Events (display)
   (declare (ignore display))
   (let ((result
@@ -244,32 +245,29 @@
 	result
 	T)))
 
-
-;;; Interactor Windows
+;; Interactor Windows
 ;;
-
+;; Holds a list of interactors that want to know about mouse moved
+;; events on this window
 (create-schema 'INTERACTOR-WINDOW
-  :declare ((:parameters :left top :width :height :border-width
-			 :max-width :max-height :min-width :min-height
-			 :cursor :title :icon-title :icon-bitmap
-			 :omit-title-bar-p :position-by-hand
-			 :draw-on-children :background-color
-			 :double-buffered-p :save-under :visible)
-	    (:type (integer :border-width)
-		   ((or null integer) :max-width :max-height :min-width
-		    :min-height)
-		   (cons :cursor)
-		   (string :title :icon-title)
-		   ((or null (is-a-p opal:bitmap)) :icon-bitmap)
-		   ((or null (is-a-p opal:color)) :background-color)
-		   (kr-boolean :omit-title-bar-p :position-by-hand
-			       :draw-on-children :double-buffered-p
-			       :save-under)))
-  (:is-a opal::window)
-  (:current-want-moved-interactors NIL)) ; holds a list of interactors that
-					 ; want to know about mouse moved
-					 ; events on this window
-
+	       :declare ((:parameters :left top :width :height :border-width
+				      :max-width :max-height :min-width :min-height
+				      :cursor :title :icon-title :icon-bitmap
+				      :omit-title-bar-p :position-by-hand
+				      :draw-on-children :background-color
+				      :double-buffered-p :save-under :visible)
+			 (:type (integer :border-width)
+				((or null integer) :max-width :max-height :min-width
+				 :min-height)
+				(cons :cursor)
+				(string :title :icon-title)
+				((or null (is-a-p opal:bitmap)) :icon-bitmap)
+				((or null (is-a-p opal:color)) :background-color)
+				(kr-boolean :omit-title-bar-p :position-by-hand
+					    :draw-on-children :double-buffered-p
+					    :save-under)))
+	       (:is-a opal::window)
+	       (:current-want-moved-interactors NIL))
 
 (defparameter *last-grab-mouse-window* NIL)
 
@@ -296,9 +294,8 @@
 	(s-value window :event-mask em)
 	(gem:set-window-property window :EVENT-MASK em)))))
 
-;; releases the mouse grab that X does when there is a down press.  This
-;; should be called before set-interest-in-moved
-;;
+;; Releases the mouse grab that X does when there is a down press.
+;; This should be called before set-interest-in-moved
 (defun ungrab-mouse (window)
   (if-debug :mouse (format t "ungrabbing mouse~%"))
   (when window
@@ -307,17 +304,19 @@
       (setf *last-grab-mouse-window* NIL)
       (gem:mouse-grab window NIL nil)))))
 
-;; iconified doesn't count as visible for the modal stuff
+;; Iconified doesn't count as visible for the modal stuff
 (defun Win-Visible (window)
   (let ((vis (g-value window :visible)))
     (and vis
 	 (not (eq vis :ICONIFIED)))))
 
 (define-method :update interactor-window (window &optional (total nil))
-  (opal::update-method-window window total) ; just call directly rather
-  ;; than using call-prototype-method
-  (Check-and-handle-changed-inters)	; if any interactors need fixing
-  ;; next make sure event mask is set correctly
+	       (opal::update-method-window window total)
+	       ;; just call directly rather than using
+	       ;; call-prototype-method
+	       (Check-and-handle-changed-inters)
+	       ;; if any interactors need fixing next make sure event
+	       ;; mask is set correctly
   (let ((drawable (get-local-value window :drawable))
 	(event-mask (get-local-value window :event-mask))
 	(old-modal-and-visible (get-local-value window
@@ -325,7 +324,6 @@
 	;; windows that are iconified don't count
 	(new-modal-and-visible (and (g-value window :modal-p)
 				    (Win-Visible window))))
-
     ;;; handle when window changes :visible and :modal-p
     (unless (eq old-modal-and-visible new-modal-and-visible)
       (s-value window :old-modal-and-visible new-modal-and-visible)
@@ -333,7 +331,6 @@
 	  (pushnew window *Visible-Modal-Windows*)
 	  ;; else becoming either not modal or not visible
 	  (deleteplace window *Visible-Modal-Windows*)))
-
     (unless event-mask		; then first time window has had a drawable
       (let* ((want-enter-leave (g-value window :want-enter-leave-events))
 	     (em (if (g-value window :want-running-em)
@@ -345,20 +342,18 @@
     (if (and drawable (eq event-mask gem:*exposure-event-mask*))
         (gem:set-interest-in-moved window NIL))))
 
-
-;;; Debugging tools
+;; Debugging tools
 ;;
-
-;; When true, *expose-throw-aways* will increment each time an exposure
-;; event is thrown away
+;; When true, *expose-throw-aways* will increment each time an
+;; exposure event is thrown away
 (defvar *expose-debug* nil)
 (defvar *expose-throw-aways* 0)
 
 (defun Key-Press (window x y state code time)
-  ;; state is the modifier-bits
-  ;; code is the lookup in keysym
+  ;; State is the modifier-bits code is the lookup in keysym
   (unless window
-    (return-from key-press t))	; if window was just destroyed, exit.
+    (return-from key-press t))
+  ;; if window was just destroyed, exit.
   (let ((c (gem:translate-character window x y state code time)))
     (when c
       (if-debug
@@ -371,7 +366,6 @@
 	 (format t
 		 "Exiting main event loop because of *garnet-break-key*"))
 	(exit-main-event-loop))
-
       (setf (event-char *Current-Event*) c
 	    (event-mousep *Current-Event*) nil
 	    (event-code *Current-Event*) code

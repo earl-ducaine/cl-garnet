@@ -29,7 +29,7 @@ Change log:
 (unless (get :garnet-modules :motif-option-button)
   (format t "Loading Motif-Option-Button...~%")
   (dolist (pair '((:motif-text-buttons "motif-text-buttons-loader")
-		  (:motif-menu "motif-menu-loader")
+;;		  (:motif-menu "motif-menu-loader")
 		  (:motif-option-button "motif-option-button")))
     (unless (get :garnet-modules (car pair))
       (load (merge-pathnames (cadr pair) Garnet-Gadgets-PathName)

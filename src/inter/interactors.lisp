@@ -1644,7 +1644,6 @@ and stop. We cannot count on getting different events for this."
 			      (check-location event :running-where an-interactor))
 			(setf should-stop
 			      (check-event event :stop-event an-interactor))
-
 			(if (null obj)	;went outside
 			    (progn
 			      (if-debug :short
@@ -1706,20 +1705,14 @@ and stop. We cannot count on getting different events for this."
     (opal:update-all)			; update all windows
     (not (eq return-val :stop))))
 
+;; Exported procedures
 
-
-;;; Exported procedures
-;;
-
-;;============================================================
 ;; Main, top level inter:interactor object
-
 (Create-Schema 'interactor
     :declare ((:type (inter-window-type :window)
 		     ((is-a-p inter::priority-level)
 		      :waiting-priority :running-priority)))
     (:current-state :start)
-
     (:self-deactivate NIL)
     (:window NIL)
     (:active T)

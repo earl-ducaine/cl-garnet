@@ -888,11 +888,11 @@
 
     ;; create a load dialog
     (create-instance 'LOAD-DIALOG garnet-gadgets:motif-load-gadget
-        (:parent-window TOP-WIN)
-    (:modal-p t) 
-    (:initial-directory 
-     (namestring common-lisp-user::Garnet-Gesture-Data-PathName))
-    (:selection-function #'load-classifier))
+      (:parent-window TOP-WIN)
+      (:modal-p t) 
+      (:initial-directory 
+       (namestring common-lisp-user::Garnet-Gesture-Data-PathName))
+      (:selection-function #'load-classifier))
 
     ;; create classifier menu 
     (create-instance 'CLASSIFIER-MENU garnet-gadgets:motif-text-button-panel

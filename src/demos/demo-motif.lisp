@@ -29,10 +29,14 @@
 (in-package :DEMO-MOTIF)
 
 (defvar DEMO-MOTIF-INIT
-  (dolist (file '("motif-v-scroll-loader" "motif-slider-loader"
-		  "motif-text-buttons-loader" "motif-check-buttons-loader"
-		  "motif-radio-buttons-loader" "motif-menu-loader"
-		  "motif-scrolling-labeled-box-loader" "motif-gauge-loader"
+  (dolist (file '("motif-v-scroll-loader"
+		  "motif-slider-loader"
+		  "motif-text-buttons-loader"
+		  "motif-check-buttons-loader"
+		  "motif-radio-buttons-loader"
+;;		  "motif-menu-loader"
+		  "motif-scrolling-labeled-box-loader"
+		  "motif-gauge-loader"
                   "motif-scrolling-window-loader"))
     (common-lisp-user::garnet-load (concatenate 'string "gadgets:" file))))
 
