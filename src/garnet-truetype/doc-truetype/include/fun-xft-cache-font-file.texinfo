@@ -1,5 +1,0 @@
-@findex cache-font-file
-@anchor{Function cache-font-file}
-@deffn {Function} {cache-font-file} pathname
-Caches font file.
-@end deffn

@@ -1,5 +1,0 @@
-@findex get-font-subfamilies
-@anchor{Function get-font-subfamilies}
-@deffn {Function} {get-font-subfamilies} font-family
-Returns font subfamilies for current @var{font-family}. For e.g. regular, italic, bold, etc.
-@end deffn

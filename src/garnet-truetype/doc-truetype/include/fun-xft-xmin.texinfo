@@ -1,5 +1,0 @@
-@findex xmin
-@anchor{Function xmin}
-@deffn {Function} {xmin} bounding-box
-Returns left side x of @var{bounding-box}
-@end deffn

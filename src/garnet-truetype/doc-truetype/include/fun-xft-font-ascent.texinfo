@@ -1,5 +1,0 @@
-@findex font-ascent
-@anchor{Function font-ascent}
-@deffn {Function} {font-ascent} drawable font
-Returns ascent of @var{font}. @var{drawable} must be window, pixmap or screen.
-@end deffn

@@ -1,5 +1,0 @@
-@findex screen-dpi
-@anchor{Function screen-dpi}
-@deffn {Function} {screen-dpi} screen
-Returns current dpi for @var{screen}.
-@end deffn

@@ -1,6 +1,0 @@
-@findex draw-text
-@anchor{Function draw-text}
-@deffn {Function} {draw-text} drawable gcontext font string x y @&key start end draw-background-p
-Draws text string using @var{font} on @var{drawable} with graphic context @var{gcontext}. @var{x}, @var{y} are the left point of base line. @var{start} and @var{end} are used for substring rendering.
-If @var{gcontext} has background color, text bounding box will be filled with it. Text line bounding box is bigger than text bounding box. @var{drawable} must be window or pixmap.
-@end deffn

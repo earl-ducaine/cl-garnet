@@ -1,5 +1,0 @@
-@findex screen-default-dpi
-@anchor{Function screen-default-dpi}
-@deffn {Function} {screen-default-dpi} screen
-Returns default dpi for @var{screen}. pixel width @code{*} 25.4/millimeters width
-@end deffn

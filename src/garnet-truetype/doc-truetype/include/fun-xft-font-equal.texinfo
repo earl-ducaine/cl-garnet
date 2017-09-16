@@ -1,5 +1,0 @@
-@findex font-equal
-@anchor{Generic-Function font-equal}
-@deffn {Generic Function} {font-equal} font1 font2
-Returns t if two font objects are equal, else returns nil.
-@end deffn

@@ -1,5 +1,0 @@
-@findex text-line-height
-@anchor{Function text-line-height}
-@deffn {Function} {text-line-height} drawable font string @&key start end
-Returns height of text line bounding box. @var{drawable} must be window, pixmap or screen.
-@end deffn
