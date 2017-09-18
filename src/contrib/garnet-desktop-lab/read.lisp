@@ -5,6 +5,12 @@
 
 (in-package :elisp)
 
+(defclass elisp-object (elisp-t)
+  )
+
+(defmethod readchar ((buffer elisp-buffer))
+  )
+
 (defclass buffer-text ()
     ((dotloc :initarg :dotloc :initform nil :accessor dotloc)
      (p1 :initarg :p1 :initform nil :accessor p1)
@@ -51,4 +57,3 @@
   )
 
 (defparameter unrch nil)
-  

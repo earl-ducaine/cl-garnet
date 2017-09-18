@@ -162,7 +162,7 @@
     (setf (win-update-info-old-aggregate win-info) window-agg))
   (create-drawable a-window))
 
-
+;; basically reset invalidated, dependant slots back to being valid?
 (defun fix-invalid-slots (invalid-slots win-info a-window)
   "Delete :width or :height from invalid-slots list of a window
 if those slots contain formulas, and if the values
@@ -177,7 +177,6 @@ This is done to avoid unnecessary total updates."
 		     (g-value a-window :height)))
 	(setq invalid-slots (delete :height invalid-slots)))
       invalid-slots)
-
 
 (defun process-invalid-slots (invalid-slots win-info a-window drawable)
   "Returns T iff update should become TOTAL update after this call."
@@ -533,7 +532,6 @@ This is done to avoid unnecessary total updates."
 	(setq total-p T))
 
       (when invalid-slots
-	(format t "processing invalid slots")
 	(setq invalid-slots (fix-invalid-slots invalid-slots win-info a-window))
 	(if (process-invalid-slots invalid-slots win-info a-window drawable)
 	    (setq total-p T)))

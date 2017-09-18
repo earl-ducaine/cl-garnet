@@ -17,20 +17,20 @@
 
 
 ;;;  Prompter Gadget
-;; 
+;;
 ;;   Features:
 ;;    This gadget is like the error or query gadget except that it
 ;;    prompts for an arbitrary lisp expression to read.  An optional
 ;;    "eval" allows the user to "eval" the expression before reading
 ;;    it.  The "*" and "+" symbols have their usual meaning.
-;; 
+;;
 ;;   The number of buttons supplied by default is dependent on the
 ;;   value of the :modal-p slot.  If the gadget is modal, an "OK" and
 ;;   a "Cancel" button are supplied.  If the gadget is not modal, an
 ;;   "OK", a "Apply" and a "Cancel" button are supplied.  The "OK" and
 ;;   "Apply" methods apply the selection function, with two args, the
-;;   error gadget and the value of the prompt (after reading).  
-;; 
+;;   error gadget and the value of the prompt (after reading).
+;;
 ;;   Prompter Gadget
 ;;   Customizable slots:
 ;;    1) :Parent-window - The window that the error window should be centered
@@ -43,14 +43,14 @@
 ;;    6) :button-names - the labels of the buttons.
 ;;                       Default: '("OK" "CANCEL") if modal
 ;;                       Default: '("OK" "APPLY" "CANCEL") if not modal
-;;    7) :eval? -- should eval button be included                   
+;;    7) :eval? -- should eval button be included
 ;;    8) :read-bindings --  List of variables with bindings (like a
 ;;                      let statement).  These bindings are put in
 ;;                      force when the input string is read.
 ;;    9) :read-package --- The package in which to inter newly read
 ;;    symbols (defaults to (find-package :user)
 ;;    10) :field-width --- width of the prompt field
-;; 
+;;
 ;;    The following slots should be considered :read-only, but may be
 ;;    of some interest.
 ;;    1) :Window-left, window-top, window-width, window-height - dimensions of
@@ -61,24 +61,24 @@
 ;;    5) :- --- The expression currently read.
 ;;    6) :modified? --- Was the value modified since the last time it
 ;;    was set.
-;; 
+;;
 ;;   Prompter Gadget Programmer's interface:
 ;;    In order to associate an error window with an application, an instance
 ;;    of the prompter-gadget should be created with the :parent-window slot
 ;;    set to the window of the application.  To activate the error
 ;;    window, call the function DISPLAY-PROMPT or
-;;    DISPLAY-PROMPT-AND-WAIT, which takes the instance of 
+;;    DISPLAY-PROMPT-AND-WAIT, which takes the instance of
 ;;    the prompter-gadget and the desired message as parameters.
 ;;    This is similar to the error and query gadgets.
-;; 
+;;
 ;;   DISPLAY-PROMPT-AND-WAIT returns two values.  The first is the
 ;;   value which was entered by the user in the prompter field and the
 ;;   second is the button pressed to return the value, which by
 ;;   default will be one of :ok or :cancel, under certain error
 ;;   condtions it could also return :abort.  In both cases the
 ;;   selection function lambda list is (prompter user-value
-;;   button-value). 
-;; 
+;;   button-value).
+;;
 ;;   Caveats:
 ;;    1) Update the parent window before instantiating the
 ;;       prompter-gadget
@@ -91,8 +91,7 @@
 ;;  Wait-Interaction-Complete" And fail to pass back the proper abort
 ;;  message.  I don't know what causes this problem.
 
-
-(in-package "GARNET-GADGETS")
+(in-package :garnet-gadgets)
 
 (export '(PROMPTER-GADGET DISPLAY-PROMPT DISPLAY-PROMPT-AND-WAIT))
 
@@ -151,13 +150,13 @@
     (kr-send prompter :selection-function prompter value but-value)
     (unless (eql but-value :apply)
       (when (schema-p window)		; May have been destroyed by
-					; :selection-function! 
+					; :selection-function!
 	(s-value window :visible NIL)
 	(opal:update window)))
     (when waiting (inter:interaction-complete (list value but-value)))))
 
-
-(kr:def-kr-type Package () 'Package)
+(or (kr:def-kr-type Package () 'Package)
+    t)
 
 ;; NOTE:  If :parent-window is specified, then the parent window must already
 ;; have been opal:update'd when the instance of ERROR-GADGET is created.
@@ -203,7 +202,7 @@
                   prompted evaluations as +; - is bound to currently
 		  read expression but not exported."
 	     )
-	     
+
    (:width (o-formula (MAX (gvl :text :width)
 			   (gvl :prompt :width)
 			   (gvl :button :width))))
@@ -232,14 +231,14 @@
    (:waiting NIL)			; if T, then OK should call interaction-complete.
 					; set by display-error
    (:button-names (o-formula (if (gvl :modal-p)
-				 '(:Ok :Cancel) 
+				 '(:Ok :Cancel)
 			       '(:OK :APPLY :CANCEL))))
    (:eval? t)					    ; if T, then "EVAL" button is included.
    (:read-bindings nil)				    ; List of variables with
    (:read-package (find-package :common-lisp-user)) ; bindings (like a let
 					            ; statement).  These bindings
 					            ; are put in force when the
-					            ; input string is read. 
+					            ; input string is read.
    (:+ nil) (:* nil)
    (:parts
     `(:text
@@ -270,7 +269,7 @@
 		  (declare (ignore value))
 		  (Prompter-Gadget-Eval-Func button T))) ; always use the value T
 	       (:parts
-		(;; :shadow :gray-outline :white-field 
+		(;; :shadow :gray-outline :white-field
 		 :text
 		 (:feedback-obj :omit)))
 ;;;	       (:interactors
@@ -352,7 +351,7 @@ abnormally."
 Use emacs-like commands to edit text.
 Press 'eval' to evaluate your expression.
 * is last returned value, + is last read value.
-Value returned is either last return value or 
+Value returned is either last return value or
 latest value read from input.
 ")
 
@@ -404,4 +403,3 @@ latest value read from input.
 #+garnet-test
 (defun prompter-gadget-stop ()
   (opal:destroy prompter-gadget-test-win))
-
