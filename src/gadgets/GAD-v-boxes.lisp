@@ -27,7 +27,6 @@ Change log:
 
 (in-package "GARNET-GADGETS")
 
-
 (create-instance 'TOP-SCR-TRILL opal:aggregadget
    (:left (o-formula (gv (kr-path 0 :parent) :trill-box-left)))
    (:top (o-formula (gv (kr-path 0 :parent) :top-scr-top)))
@@ -41,7 +40,6 @@ Change log:
       (:arrow ,up-arrow)))
    (:interactors
     `((:trill ,trill-inter))))
-
 
 (create-instance 'BOT-SCR-TRILL opal:aggregadget
    (:left (o-formula (gv (kr-path 0 :parent) :trill-box-left)))
@@ -58,7 +56,6 @@ Change log:
     `((:trill ,trill-inter
 	      (:extra-function ,#'VAL-2-FN)))))
 
-
 (create-instance 'TOP-PAGE-TRILL opal:aggregadget
    (:left (o-formula (gv (kr-path 0 :parent) :trill-box-left)))
    (:top (o-formula (gv (kr-path 0 :parent) :top-page-top)))
@@ -72,7 +69,6 @@ Change log:
       (:arrow ,page-up-arrow)))
    (:interactors
     `((:trill ,trill-inter))))
-
 
 (create-instance 'BOT-PAGE-TRILL opal:aggregadget
    (:left (o-formula (gv (kr-path 0 :parent) :trill-box-left)))
@@ -89,8 +85,6 @@ Change log:
     `((:trill ,trill-inter
 	      (:extra-function ,#'VAL-2-FN)))))
 
-
 ;;  Tell the world that GAD-v-boxes has been loaded
-;;
 (setf (get :garnet-modules :GAD-v-boxes) T)
 

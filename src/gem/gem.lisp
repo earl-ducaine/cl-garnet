@@ -50,20 +50,19 @@
       pos)))
 
 
-;; This macro creates a macro such as gem:clear-area.  The name is
-;; determined by the <method-name> (which should be a keyword).  The
-;; <args> are used for the macro definition.
-;; The first of the <args> must be a window, which determines the device
-;; (and hence the method).  The generated macro simply does a funcall on the
-;; appropriate method for the device, passing all the arguments verbatim.
+;; The name is determined by the <method-name> (which should be a
+;; keyword).  The <args> are used for the macro definition.  The first
+;; of the <args> must be a window, which determines the device (and
+;; hence the method).  The generated macro simply does a funcall on
+;; the appropriate method for the device, passing all the arguments
+;; verbatim.
 ;;
 ;; Things are handled properly when <args> contains &rest, &optional, or
 ;; &key parameters."
-
+;;
 ;; XXX FMG the above appears to be incorrect: the following generates a defun
 ;; while the commented out code below generates a defmacro (and the one below
 ;; that generates a defun as well).
-
 (defmacro gem-method (method-name (&rest args))
   (let ((function-name (intern (symbol-name method-name) (find-package "GEM")))
 	(has-rest (find '&rest args)))
@@ -99,7 +98,6 @@
 			(push symbol final)))))
 		 ;; Arguments list is OK as is.
 		 args)))
-
        ;; Export the interface function from the Gem package.
        (eval-when (:execute :load-toplevel :compile-toplevel) (export ',function-name)))))
 

@@ -2538,8 +2538,6 @@ the X drawable."
 
   ;; Defined in inter/x-inter.lisp
   (attach-method x-device :check-double-press 'x-check-double-press)
-  (attach-method x-device :compare-and-get-possible-stop-event
-		 'x-compare-and-get-possible-stop-event)
   (attach-method x-device :set-interest-in-moved 'x-set-interest-in-moved)
   (attach-method x-device :translate-mouse-character
 		 'x-translate-mouse-character)

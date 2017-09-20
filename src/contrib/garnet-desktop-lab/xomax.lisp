@@ -10,9 +10,7 @@
 ;;; Designed by Brad A. Myers
 ;;; Implemented by Richard McDaniel
 
-
 (in-package :xomax)
-
 
 ;; Following are functions used in the menubar.  Each function is used
 ;; to control either a menu or a submenu item.
@@ -25,14 +23,11 @@
    (opal:set-text text2 nil)
    (inter:set-focus focus-inter text1))
 
-
-
 ;; This is used in the "New" submenu of "File."  This function clears the
 ;; two windows of text.
 (defun open-fn (gadget menu-item value)
   (declare (ignore gadget menu-item value))
   (do-load))
-  
 
 (defun generate-multifont-text-from-file (file-name)
   ;;(alexandria:read-file-into-string
@@ -60,7 +55,6 @@
 (defun quit-fn (gadget menu-item value)
    (declare (ignore gadget menu-item value))
    (Do-Stop))
-
 
 ;; This is used in the "Color" menu.  It changes the color.
 (defun change-color (gadget menu-item value)
@@ -352,7 +346,6 @@ Font changing:
 
 (defparameter *saved* nil)
 (defparameter *last-filename* nil)
-
 
 ;; load-classifier loads a classifier from the given file.
 ;;
