@@ -2519,7 +2519,6 @@ the X drawable."
   (attach-method x-device :reparent #'x-reparent)
   (attach-method x-device :set-clip-mask #'x-set-clip-mask)
   (attach-method x-device :set-cut-buffer #'x-set-cut-buffer)
-  (attach-method x-device :set-screen-color-attribute-variables #'x-set-screen-cgolor-attribute-variables)
   (attach-method x-device :set-draw-function-alist #'x-set-draw-function-alist)
   (attach-method x-device :set-draw-functions #'x-set-draw-functions)
   (attach-method x-device :set-drawable-to-window #'x-set-drawable-to-window)
@@ -2555,7 +2554,7 @@ the X drawable."
   ;; etc. These are needed by discard-all-pending-events (in
   ;; process.lisp), which is called by launch-main-event-loop-process.
   (x-set-device-variables full-display-name)
-  (gem:set-screen-color-attribute-variables root-window))
+  (x-set-screen-color-attribute-variables root-window))
 
 ;;; Make the initializer function available to the outside world.
 ;; (setf (get :garnet-modules :gem) t)
