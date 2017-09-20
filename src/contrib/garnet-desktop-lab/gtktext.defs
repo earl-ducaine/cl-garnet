@@ -1,0 +1,963 @@
+;; -*- lisp -*-
+
+(define-object GtkTextBuffer (GObject))
+(define-object GtkTextMark (GObject))
+(define-object GtkTextTag (GObject))
+(define-object GtkTextTagTable (GObject))
+
+(define-boxed GtkTextIter
+  (copy gtk_text_iter_copy)
+  (free gtk_text_iter_free))
+
+(define-object GtkTextMark (GObject))
+
+(define-object GtkTextView (GtkContainer))
+
+(define-flags GtkTextSearchFlags
+  (visible-only GTK_TEXT_SEARCH_VISIBLE_ONLY)
+  (text-only GTK_TEXT_SEARCH_TEXT_ONLY))
+
+(define-enum GtkTextWindowType
+  (private GTK_TEXT_WINDOW_PRIVATE)
+  (widget GTK_TEXT_WINDOW_WIDGET)
+  (text GTK_TEXT_WINDOW_TEXT)
+  (left GTK_TEXT_WINDOW_LEFT)
+  (right GTK_TEXT_WINDOW_RIGHT)
+  (top GTK_TEXT_WINDOW_TOP)
+  (bottom GTK_TEXT_WINDOW_BOTTOM))
+
+
+;; TextMark
+
+(define-func gtk_text_mark_set_visible
+  none
+  ((GtkTextMark mark)
+   (bool setting)))
+
+(define-func gtk_text_mark_get_visible
+  bool
+  ((GtkTextMark mark)))
+
+(define-func gtk_text_mark_get_name
+  static_string
+  ((GtkTextMark mark)))
+
+(define-func gtk_text_mark_get_deleted
+  bool
+  ((GtkTextMark mark)))
+
+(define-func gtk_text_mark_get_buffer
+  GtkTextBuffer
+  ((GtkTextMark mark)))
+
+(define-func gtk_text_mark_get_left_gravity
+  bool
+  ((GtkTextMark mark)))
+
+
+;; TextTag
+
+(define-func gtk_text_tag_new
+  GtkTextTag
+  ((string name)))
+
+(define-func gtk_text_tag_get_priority
+  int
+  ((GtkTextTag tag)))
+
+(define-func gtk_text_tag_set_priority
+  none
+  ((GtkTextTag tag)
+   (int priority)))
+
+(define-func gtk_text_tag_event
+  bool
+  ((GtkTextTag tag)
+   (GObject event_object)
+   (GdkEvent event)
+   (GtkTextIter iter)))
+
+;; XXX text_attributes foo?
+
+
+;; TextTagTable
+
+(define-func gtk_text_tag_table_new
+  GtkTextTagTable
+  ())
+
+(define-func gtk_text_tag_table_add
+  none
+  ((GtkTextTagTable table)
+   (GtkTextTag tag)))
+
+(define-func gtk_text_tag_table_remove
+  none
+  ((GtkTextTagTable table)
+   (GtkTextTag tag)))
+
+(define-func gtk_text_tag_table_lookup
+  GtkTextTag
+  ((GtkTextTagTable table)
+   (string name)))
+
+;; XXX foreach
+
+(define-func gtk_text_tag_table_get_size
+  int
+  ((GtkTextTagTable table)))
+
+
+;; TextIter
+
+;; not in the usual API, defined locally
+(define-func gtk_text_iter_new
+  GtkTextIter
+  ())
+
+(define-func gtk_text_iter_get_offset
+  int
+  ((GtkTextIter iter)))
+
+(define-func gtk_text_iter_get_line
+  int
+  ((GtkTextIter iter)))
+
+(define-func gtk_text_iter_get_line_offset
+  int
+  ((GtkTextIter iter)))
+
+(define-func gtk_text_iter_get_line_index
+  int
+  ((GtkTextIter iter)))
+
+(define-func gtk_text_iter_get_visible_line_offset
+  int
+  ((GtkTextIter iter)))
+
+(define-func gtk_text_iter_get_visible_line_index
+  int
+  ((GtkTextIter iter)))
+
+(define-func gtk_text_iter_get_char
+  char
+  ((GtkTextIter iter)))
+
+(define-func gtk_text_iter_get_slice
+  string
+  ((GtkTextIter start)
+   (GtkTextIter end)))
+
+(define-func gtk_text_iter_get_text
+  string
+  ((GtkTextIter start)
+   (GtkTextIter end)))
+
+(define-func gtk_text_iter_get_visible_slice
+  string
+  ((GtkTextIter start)
+   (GtkTextIter end)))
+
+(define-func gtk_text_iter_get_visible_text
+  string
+  ((GtkTextIter start)
+   (GtkTextIter end)))
+
+(define-func gtk_text_iter_get_pixbuf
+  GdkPixbuf
+  ((GtkTextIter iter)))
+
+;; XXX get_marks, get_child_anchor, get_toggle_tags
+
+(define-func gtk_text_iter_begins_tag
+  bool
+  ((GtkTextIter iter)
+   (GtkTextTag tag)))
+
+(define-func gtk_text_iter_ends_tag
+  bool
+  ((GtkTextIter iter)
+   (GtkTextTag tag)))
+
+(define-func gtk_text_iter_toggles_tag
+  bool
+  ((GtkTextIter iter)
+   (GtkTextTag tag)))
+
+(define-func gtk_text_iter_has_tag
+  bool
+  ((GtkTextIter iter)
+   (GtkTextTag tag)))
+
+;; XXX get_tags
+
+(define-func gtk_text_iter_editable
+  bool
+  ((GtkTextIter iter)
+   (bool default_setting)))
+
+(define-func gtk_text_iter_can_insert
+  bool
+  ((GtkTextIter iter)
+   (bool default_editability)))
+
+(define-func gtk_text_iter_starts_word
+  bool
+  ((GtkTextIter iter)))
+
+(define-func gtk_text_iter_ends_word
+  bool
+  ((GtkTextIter iter)))
+
+(define-func gtk_text_iter_inside_word
+  bool
+  ((GtkTextIter iter)))
+
+(define-func gtk_text_iter_starts_sentence
+  bool
+  ((GtkTextIter iter)))
+
+(define-func gtk_text_iter_ends_sentence
+  bool
+  ((GtkTextIter iter)))
+
+(define-func gtk_text_iter_inside_sentence
+  bool
+  ((GtkTextIter iter)))
+
+(define-func gtk_text_iter_starts_line
+  bool
+  ((GtkTextIter iter)))
+
+(define-func gtk_text_iter_ends_line
+  bool
+  ((GtkTextIter iter)))
+
+(define-func gtk_text_iter_is_cursor_position
+  bool
+  ((GtkTextIter iter)))
+
+(define-func gtk_text_iter_get_chars_in_line
+  int
+  ((GtkTextIter iter)))
+
+(define-func gtk_text_iter_get_bytes_in_line
+  int
+  ((GtkTextIter iter)))
+
+;; XXX get_attributes, get_language
+
+(define-func gtk_text_iter_is_end
+  bool
+  ((GtkTextIter iter)))
+
+(define-func gtk_text_iter_is_start
+  bool
+  ((GtkTextIter iter)))
+
+(define-func gtk_text_iter_forward_char
+  bool
+  ((GtkTextIter iter)))
+
+(define-func gtk_text_iter_backward_char
+  bool
+  ((GtkTextIter iter)))
+
+(define-func gtk_text_iter_forward_chars
+  bool
+  ((GtkTextIter iter)
+   (int count)))
+
+(define-func gtk_text_iter_backward_chars
+  bool
+  ((GtkTextIter iter)
+   (int count)))
+
+(define-func gtk_text_iter_forward_line
+  bool
+  ((GtkTextIter iter)))
+
+(define-func gtk_text_iter_backward_line
+  bool
+  ((GtkTextIter iter)))
+
+(define-func gtk_text_iter_forward_lines
+  bool
+  ((GtkTextIter iter)
+   (int count)))
+
+(define-func gtk_text_iter_backward_lines
+  bool
+  ((GtkTextIter iter)
+   (int count)))
+
+(define-func gtk_text_iter_forward_word_end
+  bool
+  ((GtkTextIter iter)))
+
+(define-func gtk_text_iter_backward_word_start
+  bool
+  ((GtkTextIter iter)))
+
+(define-func gtk_text_iter_forward_word_ends
+  bool
+  ((GtkTextIter iter)
+   (int count)))
+
+(define-func gtk_text_iter_backward_sentence_starts
+  bool
+  ((GtkTextIter iter)
+   (int count)))
+
+(define-func gtk_text_iter_forward_sentence_end
+  bool
+  ((GtkTextIter iter)))
+
+(define-func gtk_text_iter_backward_sentence_start
+  bool
+  ((GtkTextIter iter)))
+
+(define-func gtk_text_iter_forward_sentence_ends
+  bool
+  ((GtkTextIter iter)
+   (int count)))
+
+(define-func gtk_text_iter_backward_sentence_starts
+  bool
+  ((GtkTextIter iter)
+   (int count)))
+
+(define-func gtk_text_iter_forward_cursor_position
+  bool
+  ((GtkTextIter iter)))
+
+(define-func gtk_text_iter_backward_cursor_position
+  bool
+  ((GtkTextIter iter)))
+
+(define-func gtk_text_iter_forward_cursor_positions
+  bool
+  ((GtkTextIter iter)
+   (int count)))
+
+(define-func gtk_text_iter_backward_cursor_positions
+  bool
+  ((GtkTextIter iter)
+   (int count)))
+
+(define-func gtk_text_iter_set_offset
+  none
+  ((GtkTextIter iter)
+   (int char_offsets)))
+
+(define-func gtk_text_iter_set_line
+  none
+  ((GtkTextIter iter)
+   (int line_number)))
+
+(define-func gtk_text_iter_set_line_offset
+  none
+  ((GtkTextIter iter)
+   (int line_offset)))
+
+(define-func gtk_text_iter_set_line_index
+  none
+  ((GtkTextIter iter)
+   (int line_index)))
+
+(define-func gtk_text_iter_forward_to_end
+  none
+  ((GtkTextIter iter)))
+
+(define-func gtk_text_iter_forward_to_line_end
+  bool
+  ((GtkTextIter iter)))
+
+(define-func gtk_text_iter_set_visible_line_offset
+  none
+  ((GtkTextIter iter)
+   (int char_on_line)))
+
+(define-func gtk_text_iter_set_visible_line_index
+  none
+  ((GtkTextIter iter)
+   (int byte_on_line)))
+
+(define-func gtk_text_iter_forward_to_tag_toggle
+  bool
+  ((GtkTextIter iter)
+   (GtkTextTag tag)))
+
+(define-func gtk_text_iter_backward_to_tag_toggle
+  bool
+  ((GtkTextIter iter)
+   (GtkTextTag tag)))
+
+;; XXX {forward,backward}_find_char
+
+(define-func gtk_text_iter_forward_search
+  bool
+  ((GtkTextIter iter)
+   (string str)
+   (GtkTextSearchFlags flags)
+   (GtkTextIter match_start)
+   (GtkTextIter match_end)
+   (GtkTextIter limit)))
+
+(define-func gtk_text_iter_backward_search
+  bool
+  ((GtkTextIter iter)
+   (string str)
+   (GtkTextSearchFlags flags)
+   (GtkTextIter match_start)
+   (GtkTextIter match_end)
+   (GtkTextIter limit)))
+
+(define-func gtk_text_iter_equal
+  bool
+  ((GtkTextIter lhs)
+   (GtkTextIter rhs)))
+
+(define-func gtk_text_iter_compare
+  int
+  ((GtkTextIter lhs)
+   (GtkTextIter rhs)))
+
+(define-func gtk_text_iter_in_range
+  bool
+  ((GtkTextIter iter)
+   (GtkTextIter start)
+   (GtkTextIter end)))
+
+(define-func gtk_text_iter_order
+  none
+  ((GtkTextIter first)
+   (GtkTextIter second)))
+
+
+;; TextBuffer
+
+(define-func gtk_text_buffer_new
+  GtkTextBuffer
+  ((GtkTextTagTable table (null-ok))))
+
+(define-func gtk_text_buffer_get_line_count
+  int
+  ((GtkTextBuffer buffer)))
+
+(define-func gtk_text_buffer_get_char_count
+  int
+  ((GtkTextBuffer buffer)))
+
+(define-func gtk_text_buffer_set_text
+  none
+  ((GtkTextBuffer buffer)
+   (string text)
+   (int len (= "-1"))))
+
+(define-func gtk_text_buffer_insert
+  none
+  ((GtkTextBuffer buffer)
+   (GtkTextIter iter)
+   (string text)
+   (int len (= "-1"))))
+
+(define-func gtk_text_buffer_insert_at_cursor
+  none
+  ((GtkTextBuffer buffer)
+   (string text)
+   (int len (= "-1"))))
+
+(define-func gtk_text_buffer_insert_interactive
+  bool
+  ((GtkTextBuffer buffer)
+   (GtkTextIter iter)
+   (string text)
+   (int len (= "-1"))
+   (bool default_editable)))
+
+(define-func gtk_text_buffer_insert_interactive_at_cursor
+  bool
+  ((GtkTextBuffer buffer)
+   (string text)
+   (int len (= "-1"))
+   (bool default_editable)))
+
+(define-func gtk_text_buffer_insert_range
+  none
+  ((GtkTextBuffer buffer)
+   (GtkTextIter iter)
+   (GtkTextIter start)
+   (GtkTextIter end)))
+
+(define-func gtk_text_buffer_insert_range_interactive
+  bool
+  ((GtkTextBuffer buffer)
+   (GtkTextIter iter)
+   (GtkTextIter start)
+   (GtkTextIter end)
+   (bool default_editable)))
+
+;; XXX insert_with_tags
+
+(define-func gtk_text_buffer_delete
+  none
+  ((GtkTextBuffer buffer)
+   (GtkTextIter start)
+   (GtkTextIter end)))
+
+(define-func gtk_text_buffer_delete_interactive
+  none
+  ((GtkTextBuffer buffer)
+   (GtkTextIter start)
+   (GtkTextIter end)
+   (bool default_editable)))
+
+(define-func gtk_text_buffer_get_text
+  string
+  ((GtkTextBuffer buffer)
+   (GtkTextIter start)
+   (GtkTextIter end)
+   (bool include_hidden_chars)))
+
+(define-func gtk_text_buffer_get_slice
+  string
+  ((GtkTextBuffer buffer)
+   (GtkTextIter start)
+   (GtkTextIter end)
+   (bool include_hidden_chars)))
+
+(define-func gtk_text_buffer_insert_pixbuf
+  none
+  ((GtkTextBuffer buffer)
+   (GtkTextIter iter)
+   (GdkPixbuf pixbuf)))
+
+;; XXX {insert,create}_child_anchor
+
+(define-func gtk_text_buffer_create_mark
+  GtkTextMark
+  ((GtkTextBuffer buffer)
+   (string mark_name)
+   (GtkTextIter where)
+   (bool left_gravity)))
+
+(define-func gtk_text_buffer_move_mark
+  none
+  ((GtkTextBuffer buffer)
+   (GtkTextMark mark)
+   (GtkTextIter where)))
+
+(define-func gtk_text_buffer_delete_mark
+  none
+  ((GtkTextBuffer buffer)
+   (GtkTextMark mark)))
+
+(define-func gtk_text_buffer_get_mark
+  GtkTextMark
+  ((GtkTextBuffer buffer)
+   (string name)))
+
+(define-func gtk_text_buffer_move_mark_by_name
+  none
+  ((GtkTextBuffer buffer)
+   (string name)
+   (GtkTextIter where)))
+
+(define-func gtk_text_buffer_delete_mark_by_name
+  none
+  ((GtkTextBuffer buffer)
+   (string name)))
+
+(define-func gtk_text_buffer_get_insert
+  GtkTextMark
+  ((GtkTextBuffer buffer)))
+
+(define-func gtk_text_buffer_get_selection_bound
+  GtkTextMark
+  ((GtkTextBuffer buffer)))
+
+(define-func gtk_text_buffer_place_cursor
+  none
+  ((GtkTextBuffer buffer)
+   (GtkTextIter where)))
+
+(define-func gtk_text_buffer_apply_tag
+  none
+  ((GtkTextBuffer buffer)
+   (GtkTextTag tag)
+   (GtkTextIter start)
+   (GtkTextIter end)))
+
+(define-func gtk_text_buffer_remove_tag
+  none
+  ((GtkTextBuffer buffer)
+   (GtkTextTag tag)
+   (GtkTextIter start)
+   (GtkTextIter end)))
+
+(define-func gtk_text_buffer_apply_tag_by_name
+  none
+  ((GtkTextBuffer buffer)
+   (string name)
+   (GtkTextIter start)
+   (GtkTextIter end)))
+
+(define-func gtk_text_buffer_remove_tag_by_name
+  none
+  ((GtkTextBuffer buffer)
+   (string name)
+   (GtkTextIter start)
+   (GtkTextIter end)))
+
+(define-func gtk_text_buffer_remove_all_tags
+  none
+  ((GtkTextBuffer buffer)
+   (GtkTextIter start)
+   (GtkTextIter end)))
+
+;; XXX create_tag
+
+(define-func gtk_text_buffer_get_iter_at_line_offset
+  none
+  ((GtkTextBuffer buffer)
+   (GtkTextIter iter)
+   (int line_number)
+   (int char_offset)))
+
+(define-func gtk_text_buffer_get_iter_at_line_index
+  none
+  ((GtkTextBuffer buffer)
+   (GtkTextIter iter)
+   (int line_number)
+   (int byte_index)))
+
+(define-func gtk_text_buffer_get_iter_at_offset
+  none
+  ((GtkTextBuffer buffer)
+   (GtkTextIter iter)
+   (int char_offset)))
+
+(define-func gtk_text_buffer_get_iter_at_line
+  none
+  ((GtkTextBuffer buffer)
+   (GtkTextIter iter)
+   (int line_number)))
+
+(define-func gtk_text_buffer_get_start_iter
+  none
+  ((GtkTextBuffer buffer)
+   (GtkTextIter iter)))
+
+(define-func gtk_text_buffer_get_end_iter
+  none
+  ((GtkTextBuffer buffer)
+   (GtkTextIter iter)))
+
+(define-func gtk_text_buffer_get_bounds
+  none
+  ((GtkTextBuffer buffer)
+   (GtkTextIter start)
+   (GtkTextIter end)))
+
+(define-func gtk_text_buffer_get_iter_at_mark
+  none
+  ((GtkTextBuffer buffer)
+   (GtkTextIter iter)
+   (GtkTextMark mark)))
+
+;; XXX get_iter_at_child_anchor
+
+(define-func gtk_text_buffer_get_modified
+  bool
+  ((GtkTextBuffer buffer)))
+
+(define-func gtk_text_buffer_set_modified
+  none
+  ((GtkTextBuffer buffer)
+   (bool setting)))
+
+;; XXX GtkClipboard?
+;(define-func gtk_text_buffer_add_selection_clipboard
+;  none
+;  ((GtkTextBuffer buffer)
+;   (GtkClipboard clipboard)))
+;
+;(define-func gtk_text_buffer_remove_selection_clipboard
+;  none
+;  ((GtkTextBuffer buffer)
+;   (GtkClipboard clipboard)))
+;
+;(define-func gtk_text_buffer_cut_clipboard
+;  none
+;  ((GtkTextBuffer buffer)
+;   (GtkClipboard clipboard)
+;   (bool default_editable)))
+;
+;(define-func gtk_text_buffer_copy_clipboard
+;  none
+;  ((GtkTextBuffer buffer)
+;   (GtkClipboard clipboard)))
+;
+;(define-func gtk_text_buffer_paste_clipboard
+;  none
+;  ((GtkTextBuffer buffer)
+;   (GtkClipboard clipboard)
+;   (GtkTextIter override_location (null-ok))
+;   (bool default_editable)))
+
+(define-func gtk_text_buffer_get_selection_bounds
+  bool
+  ((GtkTextBuffer buffer)
+   (GtkTextIter start)
+   (GtkTextIter end)))
+
+(define-func gtk_text_buffer_delete_selection
+  bool
+  ((GtkTextBuffer buffer)
+   (bool interactive)
+   (bool default_editable)))
+
+(define-func gtk_text_buffer_begin_user_action
+  none
+  ((GtkTextBuffer buffer)))
+
+(define-func gtk_text_buffer_end_user_action
+  none
+  ((GtkTextBuffer buffer)))
+
+
+;; TextView
+
+(define-func gtk_text_view_new
+  GtkWidget
+  ())
+
+(define-func gtk_text_view_new_with_buffer
+  GtkWidget
+  ((GtkTextBuffer buffer)))
+
+(define-func gtk_text_view_set_buffer
+  none
+  ((GtkTextView view)
+   (GtkTextBuffer buffer)))
+
+(define-func gtk_text_view_get_buffer
+  GtkTextBuffer
+  ((GtkTextView view)))
+
+(define-func gtk_text_view_scroll_to_iter
+  bool
+  ((GtkTextView view)
+   (GtkTextIter iter)
+   (double within_margin)
+   (bool use_align)
+   (double xalign)
+   (double yalign)))
+
+(define-func gtk_text_view_scroll_to_mark
+  none
+  ((GtkTextView view)
+   (GtkTextMark mark)
+   (double within_margin)
+   (bool use_align)
+   (double xalign)
+   (double yalign)))
+
+(define-func gtk_text_view_scroll_mark_onscreen
+  none
+  ((GtkTextView view)
+   (GtkTextMark mark)))
+
+(define-func gtk_text_view_move_mark_onscreen
+  bool
+  ((GtkTextView view)
+   (GtkTextMark mark)))
+
+(define-func gtk_text_view_place_cursor_onscreen
+  bool
+  ((GtkTextView view)))
+
+;; XXX GdkRectangle?
+;(define-func gtk_text_view_get_visible_rect
+;  none
+;  ((GtkTextView view)
+;   (GdkRectangle rect)))
+
+(define-func gtk_text_view_set_cursor_visible
+  none
+  ((GtkTextView view)
+   (bool setting)))
+
+(define-func gtk_text_view_get_cursor_visible
+  bool
+  ((GtkTextView view)))
+
+;; XXX GdkRectangle?
+;(define-func gtk_text_view_get_iter_location
+;  none
+;  ((GtkTextView view)
+;   (GtkTextIter iter)
+;   (GdkRectangle location)))
+
+(define-func gtk_text_view_get_iter_at_location
+  none
+  ((GtkTextView view)
+   (GtkTextIter iter)
+   (int x)
+   (int y)))
+
+;; XXX get_line_yrange, get_line_at_y, buffer_to_window_coords, window_to_buffer_coords
+
+(define-func gtk_text_view_get_window
+  GdkWindow
+  ((GtkTextView view)
+   (GtkTextWindowType type)))
+
+(define-func gtk_text_view_get_window_type
+  GtkTextWindowType
+  ((GtkTextView view)
+   (GdkWindow window)))
+
+(define-func gtk_text_view_set_border_window_size
+  none
+  ((GtkTextView view)
+   (GtkTextWindowType type)
+   (int size)))
+
+(define-func gtk_text_view_get_border_window_size
+  int
+  ((GtkTextView view)
+   (GtkTextWindowType type)))
+
+(define-func gtk_text_view_forward_display_line
+  bool
+  ((GtkTextView view)
+   (GtkTextIter iter)))
+
+(define-func gtk_text_view_backward_display_line
+  bool
+  ((GtkTextView view)
+   (GtkTextIter iter)))
+
+(define-func gtk_text_view_forward_display_line_end
+  bool
+  ((GtkTextView view)
+   (GtkTextIter iter)))
+
+(define-func gtk_text_view_backward_display_line_start
+  bool
+  ((GtkTextView view)
+   (GtkTextIter iter)))
+
+(define-func gtk_text_view_starts_display_line
+  bool
+  ((GtkTextView view)
+   (GtkTextIter iter)))
+
+(define-func gtk_text_view_move_visually
+  bool
+  ((GtkTextView view)
+   (GtkTextIter iter)
+   (int count)))
+
+;; XXX add_child_at_anchor
+
+(define-func gtk_text_view_add_child_in_window
+  none
+  ((GtkTextView view)
+   (GtkWidget child)
+   (GtkTextWindowType which_window)
+   (int xpos)
+   (int ypos)))
+
+(define-func gtk_text_view_move_child
+  none
+  ((GtkTextView view)
+   (GtkWidget child)
+   (int xpos)
+   (int ypos)))
+
+(define-func gtk_text_view_set_wrap_mode
+  none
+  ((GtkTextView view)
+   (GtkWrapMode wrap_mode)))
+
+(define-func gtk_text_view_get_wrap_mode
+  GtkWrapMode
+  ((GtkTextView view)))
+
+(define-func gtk_text_view_set_editable
+  none
+  ((GtkTextView view)
+   (bool setting)))
+
+(define-func gtk_text_view_get_editable
+  bool
+  ((GtkTextView view)))
+
+(define-func gtk_text_view_set_pixels_above_lines
+  none
+  ((GtkTextView view)
+   (int setting)))
+
+(define-func gtk_text_view_get_pixels_above_lines
+  int
+  ((GtkTextView view)))
+
+(define-func gtk_text_view_set_pixels_below_lines
+  none
+  ((GtkTextView view)
+   (int setting)))
+
+(define-func gtk_text_view_get_pixels_below_lines
+  int
+  ((GtkTextView view)))
+
+(define-func gtk_text_view_set_pixels_inside_wrap
+  none
+  ((GtkTextView view)
+   (int setting)))
+
+(define-func gtk_text_view_get_pixels_inside_wrap
+  int
+  ((GtkTextView view)))
+
+(define-func gtk_text_view_set_justification
+  none
+  ((GtkTextView view)
+   (GtkJustification setting)))
+
+(define-func gtk_text_view_get_justification
+  GtkJustification
+  ((GtkTextView view)))
+
+(define-func gtk_text_view_set_left_margin
+  none
+  ((GtkTextView view)
+   (int setting)))
+
+(define-func gtk_text_view_get_left_margin
+  int
+  ((GtkTextView view)))
+
+(define-func gtk_text_view_set_right_margin
+  none
+  ((GtkTextView view)
+   (int setting)))
+
+(define-func gtk_text_view_get_right_margin
+  int
+  ((GtkTextView view)))
+
+(define-func gtk_text_view_set_indent
+  none
+  ((GtkTextView view)
+   (int setting)))
+
+(define-func gtk_text_view_get_indent
+  int
+  ((GtkTextView view)))
+
+;; XXX set/get_tabs
+

@@ -1,8 +1,4 @@
 
-
-
-
-
 (defpackage :garnet-utils
   (:use :common-lisp)
   (:nicknames :gu)
@@ -58,6 +54,7 @@
 	   call-prototype-method
 	   apply-prototype-method
 	   method-trace
+	   *print-as-structure*
 	   with-constants-disabled
 	   with-types-disabled
 	   with-demons-disabled

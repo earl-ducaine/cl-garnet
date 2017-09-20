@@ -68,7 +68,6 @@
 	     (:file "pixmaps")
 	     (:file "open-and-close")
 	     (:file "opal-init")
-	     ;; (:file "multifont-loader")
 	     ))
    (:module inter
    	    :pathname "src/inter"
@@ -470,7 +469,6 @@
     "(demos-controller::do-go)"
     "(demo-scrollbar::do-go)"
     "(demo-sequence::do-go)"
-    "(demos-loader::do-go)"
     "(demo-text::do-go)"
     "(demo-truck::do-go)"
     "(demo-twop::do-go)"

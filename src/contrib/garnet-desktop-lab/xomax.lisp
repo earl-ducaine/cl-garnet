@@ -23,8 +23,8 @@
    (opal:set-text text2 nil)
    (inter:set-focus focus-inter text1))
 
-;; This is used in the "New" submenu of "File."  This function clears the
-;; two windows of text.
+;; This is used in the "New" submenu of "File."  This function clears
+;; the two windows of text.
 (defun open-fn (gadget menu-item value)
   (declare (ignore gadget menu-item value))
   (do-load))
@@ -249,7 +249,7 @@ Font changing:
   ;; Create the top window of the demo.
   (create-instance 'text1 opal:multifont-text
     ;; This is the internal multifont text object.
-    (:word-wrap-p t)			      
+    (:word-wrap-p t)
     (:auto-scroll-p T)
     (:fast-redraw-p :rectangle)
     (:fast-redraw-filling-style opal:motif-gray-fill))
@@ -318,8 +318,8 @@ Font changing:
   (inter:set-focus focus-inter text1)
   ;; Create a load dialog
   (create-instance 'load-dialog garnet-gadgets:motif-load-gadget
-    (:modal-p t) 
-    (:initial-directory 
+    (:modal-p t)
+    (:initial-directory
      (namestring "~/"))
     (:selection-function #'load-classifier))
   (opal:update win)
@@ -351,14 +351,14 @@ Font changing:
 ;;
 ;; Parameters:
 ;;    gadget - ignored
-;;    file   - file to load classifier from  
+;;    file   - file to load classifier from
 (defun load-classifier (gadget file)
   (declare (ignore gadget))
   (let ((current-text-gaget (gv focus-inter :obj-to-change)))
     (opal:set-text current-text-gaget (generate-multifont-text-from-file file))
     (opal:update win)))
 
-;; do-load loads an existing classifier from a file. If the current 
+;; do-load loads an existing classifier from a file. If the current
 ;; classifier has not been saved, it will prompt the user to save
 ;; it.
 ;;

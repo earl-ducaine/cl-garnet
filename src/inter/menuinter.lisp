@@ -112,7 +112,7 @@ Change log:
 (defun Clear-Finals (an-interactor feedback-objs-in-use)
   #-garnet-debug (declare (ignore an-interactor))
   (dolist (f feedback-objs-in-use)
-    (dbprint-feed :obj-over f NIL an-interactor)    
+    (dbprint-feed :obj-over f NIL an-interactor)
     (s-value f :obj-over NIL)))
 
 ;; This clears the final feedback objects and resets the list in the
@@ -159,7 +159,7 @@ Change log:
 	(Clear-Finals-And-Set an-interactor feedback-objs-in-use)
 	(when new-sel-obj
 	  ;; set feedback obj to it
-	  (let* ((final-feedback (find-final-feedback-obj an-interactor 
+	  (let* ((final-feedback (find-final-feedback-obj an-interactor
 					     final-feedback-proto)))
 	    (dbprint-feed :obj-over final-feedback new-sel-obj an-interactor)
 	    (s-value final-feedback :obj-over new-sel-obj)))))))
@@ -183,14 +183,14 @@ Change log:
 	    ; add new feedback obj unless one is there
 	    (unless feed-for-newval
 	      ; get a feedback obj to use
-	      (setq feed-for-newval 
+	      (setq feed-for-newval
 		    (find-final-feedback-obj an-interactor
 					      final-feedback-proto))
 	      (dbprint-feed :obj-over feed-for-newval newval an-interactor)
 	      (s-value feed-for-newval :obj-over newval))
 	    ; else remove the feedback obj
 	    (when feed-for-newval
-	      (dbprint-feed :obj-over feed-for-newval NIL an-interactor)    
+	      (dbprint-feed :obj-over feed-for-newval NIL an-interactor)
 	      (s-value feed-for-newval :obj-over NIL)
 	      (s-value an-interactor :final-feed-avail
 		       (cons feed-for-newval feedback-objs-avail))
@@ -225,10 +225,10 @@ Change log:
 	   )
 	  ;; if there is no final feedback object of the desired type
 	  ;; available, check to see if the the prototype final feedback has
-	  ;; been added to the :final-feedback-protos list. If it has not, 
+	  ;; been added to the :final-feedback-protos list. If it has not,
 	  ;; add it to this list and make the final feedback object be
-	  ;; the prototype. 
-	  ((not (member final-feedback-proto 
+	  ;; the prototype.
+	  ((not (member final-feedback-proto
 		   (setf final-feedback-protos
 			 (get-local-value inter :final-feedback-protos))))
 	   (setf final-feedback-obj final-feedback-proto)
@@ -295,7 +295,7 @@ not selected, this does nothing."
     ; now do aggregate
     (if (eq main-agg obj)
 	;; if no aggregate, then just clear any final-feedbacks
-	(Clear-Finals-And-Set an-interactor 
+	(Clear-Finals-And-Set an-interactor
 		      (get-local-value an-interactor :final-feed-inuse))
 	;; otherwise, do the aggregate and any final-feedback objects
 	(Calc-Set-Agg-Slot an-interactor main-agg obj how-set))
@@ -318,7 +318,7 @@ not selected, this does nothing."
 	    ((:list-add :list-remove :list-toggle) :list-add)
 	    ((:set :clear :toggle) :set)))
     ; first do object itself
-    (Calc-set-obj-slot an-interactor obj how-set  
+    (Calc-set-obj-slot an-interactor obj how-set
 			 (if (eq obj main-agg)
 			     NIL
 			     (g-value main-agg agg-selected-slot)))
@@ -367,7 +367,7 @@ not selected, this does nothing."
 						    an-interactor)
 				       (s-value other-obj obj-sel-slot NIL))))
 	  (otherwise)))			; is a number so do nothing
-  
+
   ;; now set the selected slot of the new object
     (let (val)
       (when (schema-p obj);; otherwise, can't set its selected slot!
@@ -416,11 +416,11 @@ not selected, this does nothing."
 	    (dbprint-sel obj-sel-slot other-obj NIL an-interactor)
 	    (s-value other-obj obj-sel-slot NIL))))
       ;; then clear out the aggregate's slot
-      (s-value main-agg agg-sel-slot NIL))) 
+      (s-value main-agg agg-sel-slot NIL)))
 
   (when (g-value an-interactor :final-feedback-obj) ; then we are doing final
 						    ; feedback objects
-    (Clear-Finals-And-Set an-interactor 
+    (Clear-Finals-And-Set an-interactor
 			  (get-local-value an-interactor :final-feed-inuse))))
 
 ;;; Sets the selected slot of the aggregate that the selected object is in
@@ -488,7 +488,7 @@ not selected, this does nothing."
 	       (t (dbprint-sel agg-sel-slot agg NIL an-interactor)
 		  (s-value agg agg-sel-slot NIL))) ; bad old value, remove it
 	 (List-Final-Feedback-Obj an-interactor newval NIL)) ; remove newval
-	(:list-toggle 
+	(:list-toggle
 	 (cond ((listp old-sel)
 		(if (member newval old-sel)
 		    (progn
@@ -500,7 +500,7 @@ not selected, this does nothing."
 				  ; a list which will be
 				  ; destructively modified by delete
 		      (List-Final-Feedback-Obj an-interactor newval NIL)) ;remove
-		    (progn 
+		    (progn
 		      (push newval (g-value agg agg-sel-slot))
 		      (dbprint-sel agg-sel-slot agg (g-value agg agg-sel-slot)
 				   an-interactor)
@@ -517,7 +517,7 @@ not selected, this does nothing."
 		(s-value agg agg-sel-slot val)
 		(List-Final-Feedback-Obj an-interactor newval T)) ;add
 	       (t (setq val (list newval))   ; bad old val, remove it
-		  (dbprint-sel agg-sel-slot agg val an-interactor) 
+		  (dbprint-sel agg-sel-slot agg val an-interactor)
 		  (s-value agg agg-sel-slot val)
 		  (List-Final-Feedback-Obj an-interactor newval T)))) ;add
 	(otherwise ; is a number, already incremented object's selected slot,
@@ -552,7 +552,7 @@ not selected, this does nothing."
   (unless (eq prev-obj-over new-obj-over)
     (let ((interim-sel-slot (interim-sel-slot an-interactor))
 	  (feedbackobj (g-value an-interactor :feedback-obj)))
-      (when feedbackobj 
+      (when feedbackobj
 	(dbprint-feed :obj-over feedbackobj new-obj-over an-interactor)
 	(s-value feedbackobj :obj-over new-obj-over))
       (when (and interim-sel-slot prev-obj-over
@@ -574,7 +574,7 @@ not selected, this does nothing."
   (unless (eq :last outside-control)
     (kr-send an-interactor :running-action
 	   an-interactor prev-obj-over NIL)))
-  
+
 (defun Menu-Int-Back-Inside-Action (an-interactor outside-control
 					       prev-obj-over new-obj-over)
   (if-debug an-interactor (format T "Menu int-back-inside, old = ~s, new= ~s~%"
@@ -600,7 +600,7 @@ not selected, this does nothing."
 	(s-value final-obj-over interim-sel-slot NIL))
       (when (schema-p main-agg)
 	(Calc-set-obj-slot an-interactor
-			 final-obj-over how-set 
+			 final-obj-over how-set
 			 ; old-object is the one that used to be selected,
 			 ; and get it from the aggregate, if any
 			 (if (eq final-obj-over main-agg)
@@ -646,7 +646,7 @@ not selected, this does nothing."
 (defun menu-do-start (an-interactor new-obj-over event)
   (declare (ignore event))
   (if-debug an-interactor (format T "Menu starting over ~s~%" new-obj-over))
-  
+
   (s-value an-interactor :remembered-last-object new-obj-over)
   (Fix-Running-Where an-interactor new-obj-over)
   (s-value an-interactor :main-aggregate
@@ -729,7 +729,6 @@ not selected, this does nothing."
 ;;; Menu schema
 (Create-Schema 'inter:menu-interactor
 	       (:is-a inter:interactor)
-	       (:stop-event '(:any-leftdown :rightdown))
 	       (:name :First-Menu-interactor)
 	       (:start-action 'Menu-Int-Start-Action)
 	       (:running-action 'Menu-Int-Running-Action)
@@ -746,10 +745,10 @@ not selected, this does nothing."
 	       ;; Proc executed when events happen. These are called
 	       ;; by GO to do for stop-interactor the real work.  They
 	       ;; call the appropriate action procedures
-	       (:Do-Start 'Menu-Do-Start)     
-	       (:Do-Running 'Menu-Do-Running) 
-	       (:Do-Stop 'Menu-Do-Stop)       
-	       (:Do-Explicit-Stop 'Menu-Explicit-Stop) 
+	       (:Do-Start 'Menu-Do-Start)
+	       (:Do-Running 'Menu-Do-Running)
+	       (:Do-Stop 'Menu-Do-Stop)
+	       (:Do-Explicit-Stop 'Menu-Explicit-Stop)
 	       (:Do-Abort 'Menu-Do-Abort)
 	       (:Do-Outside 'Menu-Do-Outside)
 	       (:Do-Back-Inside 'Menu-Do-Back-Inside)

@@ -140,8 +140,8 @@
 	   (:border-width 0)
 	   (:win-submenu a-submenu)
 	   (:omit-title-bar-p T)
-	   (:save-under T)         
-	   (:double-buffered-p T)  
+	   (:save-under T)
+	   (:double-buffered-p T)
 	   (:visible NIL)
 	   (:modal-p (o-formula (gv-local :self :bar-item :window :modal-p)))
 	   (:height (o-formula
@@ -183,7 +183,7 @@
 
 
 
-;; This object is a text field in the menu bar.  
+;; This object is a text field in the menu bar.
 ;; An aggrelist of these items makes up the menu bar.
 ;;
 (create-instance 'MOTIF-BAR-ITEM motif-gadget-prototype
@@ -221,7 +221,7 @@
        (:top ,(o-formula (gvl :parent :top)))
        (:font ,(o-formula (gvl :parent :font)))
        (:string ,(o-formula (string (gvl :parent :string))))
-       (:line-style ,(o-formula 
+       (:line-style ,(o-formula
 		      (if (gvl :parent :enabled)
 			  opal:default-line-style
 			  (gvl :parent :disabled-line-style))))
@@ -231,292 +231,291 @@
 ;; Basically, it contains 3 parts -> a motif-box that represents
 ;; the menubar, an aggrelist of bar-items, and a feedback object.
 ;; It also has two interactors -- menubar-select: used for selecting
-;; stuff from the menubar, and menubar-accel, which does the 
+;; stuff from the menubar, and menubar-accel, which does the
 ;; accelerator thang.
 
 (create-instance 'MOTIF-MENUBAR motif-gadget-prototype
-   :declare ((:parameters :left :top :items :title-font :item-font :accel-font
-			  :foreground-color :min-menubar-width :accelerators
-			  :bar-above-these-items :accelerator-windows
-			  :active-p :selection-function :help-style)
-	     (:type ((satisfies Check-Menubar-Items) :items)
-		    (list :accelerators :bar-above-these-items)
-		    ((or list (satisfies schema-p)) :accelerator-windows)
-		    (integer :min-menubar-width)
-		    ((or (is-a-p opal:font) (is-a-p opal:font-from-file))
-			 :title-font :item-font :accel-font)
-		    ((is-a-p opal:color) :foreground-color)
-		    (kr-boolean :active-p)
-		    (kr-boolean :help-style)
-		    ((or null function symbol) :selection-function)))
-   ; Customizable slots
-   (:left 0)(:top 0)
-   (:left-offset 0)
-   (:items NIL)
-   (:title-font (opal:get-standard-font NIL :bold NIL))
-   (:item-font (opal:get-standard-font NIL :bold NIL))
-   (:accel-font (opal:get-standard-font NIL :bold NIL))
-   (:min-menubar-width 0)
-   (:accelerators NIL)
-   (:bar-above-these-items NIL)
-   (:accelerator-windows (o-formula (gvl :window)))
-   (:active-p T)
-   ;; RGA --- forces final item to be right justified.
-   (:help-style NIL)  ;; T or Nil
+  :declare ((:parameters :left :top :items :title-font :item-font :accel-font
+			 :foreground-color :min-menubar-width :accelerators
+			 :bar-above-these-items :accelerator-windows
+			 :active-p :selection-function :help-style)
+	    (:type ((satisfies Check-Menubar-Items) :items)
+		   (list :accelerators :bar-above-these-items)
+		   ((or list (satisfies schema-p)) :accelerator-windows)
+		   (integer :min-menubar-width)
+		   ((or (is-a-p opal:font) (is-a-p opal:font-from-file))
+		    :title-font :item-font :accel-font)
+		   ((is-a-p opal:color) :foreground-color)
+		   (kr-boolean :active-p)
+		   (kr-boolean :help-style)
+		   ((or null function symbol) :selection-function)))
+					; Customizable slots
+  (:left 0)(:top 0)
+  (:left-offset 0)
+  (:items NIL)
+  (:title-font (opal:get-standard-font NIL :bold NIL))
+  (:item-font (opal:get-standard-font NIL :bold NIL))
+  (:accel-font (opal:get-standard-font NIL :bold NIL))
+  (:min-menubar-width 0)
+  (:accelerators NIL)
+  (:bar-above-these-items NIL)
+  (:accelerator-windows (o-formula (gvl :window)))
+  (:active-p T)
+  ;; RGA --- forces final item to be right justified.
+  (:help-style NIL)  ;; T or Nil
 
-   ; Internal slots
-   (:disabled-line-style (o-formula
-			  (create-instance NIL opal:line-style
-			    (:stipple opal::gray-fill-bitmap)
-			    (:background-color (gvl :foreground-color)))))
-   (:enabled-items
-    (o-formula (when (gvl :active-p)
-		 (let ((enabled-items NIL))
-		   (dovalues (component (gvl :menubar-items) :components
-					:in-formula T
-					:result enabled-items)
-		       (when (gv component :enabled)
-			 (push component enabled-items)))))))
-   (:list-of-all-enabled-objects
-    (o-formula (let ((l (copy-list (gvl :enabled-items))))
-		 (dolist (baritems (gvl :enabled-items))
-		   (setf l (append l (copy-list
+					; Internal slots
+  (:disabled-line-style (o-formula
+			 (create-instance NIL opal:line-style
+			   (:stipple opal::gray-fill-bitmap)
+			   (:background-color (gvl :foreground-color)))))
+  (:enabled-items
+   (o-formula (when (gvl :active-p)
+		(let ((enabled-items NIL))
+		  (dovalues (component (gvl :menubar-items) :components
+				       :in-formula T
+				       :result enabled-items)
+			    (when (gv component :enabled)
+			      (push component enabled-items)))))))
+  (:list-of-all-enabled-objects
+   (o-formula (let ((l (copy-list (gvl :enabled-items))))
+		(dolist (baritems (gvl :enabled-items))
+		  (setf l (append l (copy-list
 				     (gv-local baritems :submenu :enabled-items)))))
-		 l)))
-   (:running-where-list (o-formula (append (gvl :list-of-all-enabled-objects)
-					   (gvl :submenu-window-list))))
-   (:right (o-formula (+ (gvl :left) (gvl :width))))
-   (:destroy-me 'MENUBAR-DESTROY)
-   (:special-popup-func 'Motif-Menubar-popup-item)
-   (:special-popdown-func 'Put-Down-MenuBar-Popups)
-   (:update-slots (cons :visible (g-value opal:aggrelist :update-slots)))
-   (:old-visible T)
-   
-   ;; slot :submenu-window-list set with list of all windows being used.
+		l)))
+  (:running-where-list (o-formula (append (gvl :list-of-all-enabled-objects)
+					  (gvl :submenu-window-list))))
+  (:right (o-formula (+ (gvl :left) (gvl :width))))
+  (:destroy-me 'MENUBAR-DESTROY)
+  (:special-popup-func 'Motif-Menubar-popup-item)
+  (:special-popdown-func 'Put-Down-MenuBar-Popups)
+  (:update-slots (cons :visible (g-value opal:aggrelist :update-slots)))
+  (:old-visible T)
+  ;; slot :submenu-window-list set with list of all windows being used.
+  (:parts
+   ;; This is the box that appears behind the text and
+   ;; represents the menubar
+   `((:menubar-box ,motif-box
+		   (:left ,(o-formula (gvl :parent :left)))
+		   (:top ,(o-formula (gvl :parent :top)))
+		   (:height ,(o-formula (+ (gvl :parent :menubar-items :height) 14)))
+		   (:width ,(o-formula (max (+ (gvl :parent :menubar-items :width) 18)
+					    (gvl :parent :min-menubar-width)))))
 
-   (:parts
-    ;; This is the box that appears behind the text and
-    ;; represents the menubar
-    `((:menubar-box ,motif-box
-       (:left ,(o-formula (gvl :parent :left)))
-       (:top ,(o-formula (gvl :parent :top)))
-       (:height ,(o-formula (+ (gvl :parent :menubar-items :height) 14)))
-       (:width ,(o-formula (max (+ (gvl :parent :menubar-items :width) 18)
-				(gvl :parent :min-menubar-width)))))
+     ;; These are the menubar items themselves
+     (:menubar-items ,opal:aggrelist
+		     (:left ,(o-formula (+ (gvl :parent :left)
+					   (gvl :parent :left-offset) 9)))
+		     (:top ,(o-formula (+ (gvl :parent :top) 7)))
+		     (:items ,(o-formula (gvl :parent :items)))
+		     ;; RGA -- transmit help style info.
+		     (:right-justify-last ,(o-formula (gvl :parent :help-style)))
+		     (:justify-width ,(o-formula (- (gvl :parent :width) 18)))
+		     (:h-spacing 8)
+		     (:direction :horizontal)
+		     (:item-prototype ,MOTIF-BAR-ITEM)
+		     (:selection-function NIL)
+		     (:h-align :center))
 
-      ;; These are the menubar items themselves
-      (:menubar-items ,opal:aggrelist
-       (:left ,(o-formula (+ (gvl :parent :left)
-			     (gvl :parent :left-offset) 9)))
-       (:top ,(o-formula (+ (gvl :parent :top) 7)))
-       (:items ,(o-formula (gvl :parent :items)))
-       ;; RGA -- transmit help style info.
-       (:right-justify-last ,(o-formula (gvl :parent :help-style)))
-       (:justify-width ,(o-formula (- (gvl :parent :width) 18)))
-       (:h-spacing 8)
-       (:direction :horizontal)
-       (:item-prototype ,MOTIF-BAR-ITEM)
-       (:selection-function NIL)
-       (:h-align :center))
+     ;; feedback-obj-topline and bottom-line represent the
+     ;; feedback object that appears on the menubar.
+     (:feedback-obj-topline ,opal:polyline
+			    (:point-list ,(o-formula
+					   (if (gvl :prev-baritem)
+					       (let* ((ob (gvl :prev-baritem))
+						      (left (gv ob :left))
+						      (top (gv ob :top))
+						      (ht (gv ob :height))
+						      (wt (gv ob :width)))
+						 (list (- left 4) (+ top ht 3)
+						       (- left 4) (- top 2)
+						       (+ left wt 4) (- top 2))))))
+			    (:prev-baritem ,(o-formula
+					     (gvl :parent :menubar-select :prev-baritem)))
+			    (:visible ,(o-formula
+					(AND (gvl :prev-baritem)
+					     (gvl :prev-baritem :enabled))))
+			    (:line-style ,(o-formula (gv (kr-path 0 :parent) :highlight-line-style)))
+			    (:fast-redraw-p :redraw)
+			    (:fast-redraw-line-style ,(o-formula (gv (kr-path 0 :parent)
+								     :foreground-line-style))))
 
-      ;; feedback-obj-topline and bottom-line represent the
-      ;; feedback object that appears on the menubar.
-      (:feedback-obj-topline ,opal:polyline
-       (:point-list ,(o-formula
-		      (if (gvl :prev-baritem)
-			  (let* ((ob (gvl :prev-baritem))
-				 (left (gv ob :left))
-				 (top (gv ob :top))
-				 (ht (gv ob :height))
-				 (wt (gv ob :width)))
-			    (list (- left 4) (+ top ht 3)
-				  (- left 4) (- top 2)
-				  (+ left wt 4) (- top 2))))))
-       (:prev-baritem ,(o-formula
-			(gvl :parent :menubar-select :prev-baritem)))
-       (:visible ,(o-formula
-		   (AND (gvl :prev-baritem)
-			(gvl :prev-baritem :enabled))))
-       (:line-style ,(o-formula (gv (kr-path 0 :parent) :highlight-line-style)))
-       (:fast-redraw-p :redraw)
-       (:fast-redraw-line-style ,(o-formula (gv (kr-path 0 :parent)
-						:foreground-line-style))))
+     (:feedback-obj-bottomline ,opal:polyline
+			       (:point-list ,(o-formula
+					      (if (gvl :prev-baritem)
+						  (let* ((ob (gvl :prev-baritem))
+							 (left (gv ob :left))
+							 (top (gv ob :top))
+							 (ht (gv ob :height))
+							 (wt (gv ob :width)))
+						    (list (- left 5) (+ top ht 2)
+							  (+ left wt 3) (+ top ht 2)
+							  (+ left wt 3) (- top 1))))))
 
-      (:feedback-obj-bottomline ,opal:polyline
-       (:point-list ,(o-formula
-		      (if (gvl :prev-baritem)
-			(let* ((ob (gvl :prev-baritem))
-			       (left (gv ob :left))
-			       (top (gv ob :top))
-			       (ht (gv ob :height))
-			       (wt (gv ob :width)))
-			  (list (- left 5) (+ top ht 2)
-				(+ left wt 3) (+ top ht 2)
-				(+ left wt 3) (- top 1))))))
-       
-       (:prev-baritem ,(o-formula
-			(gvl :parent :feedback-obj-topline :prev-baritem)))
-       (:visible ,(o-formula (gvl :parent :feedback-obj-topline :visible)))
-       (:line-style ,(o-formula (gv (kr-path 0 :parent) :shadow-line-style)))
-       (:fast-redraw-p :redraw)
-       (:fast-redraw-line-style ,(o-formula (gv (kr-path 0 :parent)
-						:foreground-line-style))))
-      ))
-       
-   (:interactors
-    ;; The accelerator interactor.  Its menus are set to be all the
-    ;; menus in the menubar.
-    `((:menubar-accel ,motif-menu-accelerator-inter
-       (:active ,(o-formula (let ((o (gv-local :self :operates-on)))
-			      (and (gv o :active-p)
-				   (gv o :window)))))
-       (:window ,(o-formula (gvl :operates-on :accelerator-windows)))
-       (:menus ,(o-formula
-		 (let ((l NIL))
-		   (dolist (a-baritem (gvl :operates-on :menubar-items :components))
-		     (push (gv a-baritem :submenu) l))
-		   l))))
-      ;; This is for clicking on a bar item, moving out of the submenu's window,
-      ;; etc. etc.
-      (:menubar-select ,inter:menu-interactor
-       (:active ,(o-formula (gv-local :self :operates-on :window)))
-       (:window ,(o-formula
-		  (let ((main-win (gv-local :self :operates-on :window))
-			(submenu-wins (gv-local :self :operates-on
-						:submenu-window-list)))
-		    (if main-win
-			(if submenu-wins
-			    (cons main-win (copy-list submenu-wins))
-			    main-win)))
-		  ))
-       (:start-where ,(o-formula (list :list-element-of
-				       (gvl :operates-on)
-				       :list-of-all-enabled-objects)))
-       (:running-where ,(o-formula (list :list-element-of
-					 (gvl :operates-on)
-					 :running-where-list)))
-       (:feedback-obj ,(o-formula (gvl :operates-on :feedback-obj-topline)))
-       (:outside NIL)
-       (:start-action
-	,#'(lambda (inter obj)
-	     (call-prototype-method inter obj)
-	     (s-value (g-value inter :operates-on) :*bar-item-popped-up NIL)))
-       (:outside-action
-	,#'(lambda (inter outside prev)
-	     (call-prototype-method inter outside prev)
-	     
-	     ;; make sure the top level bar items stay selected since
-	     ;; sub-menus are showing
-	     
-	     (when (is-a-p prev MOTIF-BAR-ITEM)
-	       (s-value prev :interim-selected T))))
-       (:running-action
-	,#'(lambda (inter prev new)
-	     (let* ((prev-baritem (g-value inter :prev-baritem))
-		    (new-is-bar (is-a-p new MOTIF-BAR-ITEM))
-		    (new-baritem (when new
-				   (if new-is-bar
-				     new
-				     ;; else is a sub-item, get its bar-item
-				     (g-local-value new :bar-item)))))
-	       (call-prototype-method inter prev new)
+			       (:prev-baritem ,(o-formula
+						(gvl :parent :feedback-obj-topline :prev-baritem)))
+			       (:visible ,(o-formula (gvl :parent :feedback-obj-topline :visible)))
+			       (:line-style ,(o-formula (gv (kr-path 0 :parent) :shadow-line-style)))
+			       (:fast-redraw-p :redraw)
+			       (:fast-redraw-line-style ,(o-formula (gv (kr-path 0 :parent)
+									:foreground-line-style))))
+     ))
 
-	       ;; Now, when you get into a submenu window, you want to start
-	       ;; that submenu's interactor.
-	       
-	       (let ((curr-win (inter:event-window inter::*current-event*))
-		     (obj-wins (g-local-value inter :operates-on :submenu-window-list)))
-		 (if  (member curr-win obj-wins :test #'equal)
-		     (let* ((submenu (g-local-value prev-baritem :submenu))
-			    (first-obj-over
-			     (OR (g-value submenu :press :remembered-last-object)
-				 (first (g-value submenu :menu-item-list :components))))
-			    (ce inter::*current-event*)
-			    (ev-x (inter:event-x ce))
-			    (ev-y (inter:event-y ce))
-			    (ev (inter:make-event :window curr-win
-						  :code (inter:event-code ce)
-						  :char :leftdown
-						  :mousep T :downp T
-						  :x ev-x
-						  :y ev-y 
-						  :timestamp (inter:event-timestamp ce))))
-		       (when (eq (g-local-value prev-baritem :submenu :press :current-state)
-				 :start)
-			 (inter:start-interactor (g-value submenu :press) ev))
+  (:interactors
+   ;; The accelerator interactor.  Its menus are set to be all the
+   ;; menus in the menubar.
+   `((:menubar-accel ,motif-menu-accelerator-inter
+		     (:active ,(o-formula (let ((o (gv-local :self :operates-on)))
+					    (and (gv o :active-p)
+						 (gv o :window)))))
+		     (:window ,(o-formula (gvl :operates-on :accelerator-windows)))
+		     (:menus ,(o-formula
+			       (let ((l NIL))
+				 (dolist (a-baritem (gvl :operates-on :menubar-items :components))
+				   (push (gv a-baritem :submenu) l))
+				 l))))
+     ;; This is for clicking on a bar item, moving out of the submenu's window,
+     ;; etc. etc.
+     (:menubar-select ,inter:menu-interactor
+		      (:stop-event '(:any-leftdown :rightdown))
+		      (:active ,(o-formula (gv-local :self :operates-on :window)))
+		      (:window ,(o-formula
+				 (let ((main-win (gv-local :self :operates-on :window))
+				       (submenu-wins (gv-local :self :operates-on
+							       :submenu-window-list)))
+				   (if main-win
+				       (if submenu-wins
+					   (cons main-win (copy-list submenu-wins))
+					   main-win)))
+				 ))
+		      (:start-where ,(o-formula (list :list-element-of
+						      (gvl :operates-on)
+						      :list-of-all-enabled-objects)))
+		      (:running-where ,(o-formula (list :list-element-of
+							(gvl :operates-on)
+							:running-where-list)))
+		      (:feedback-obj ,(o-formula (gvl :operates-on :feedback-obj-topline)))
+		      (:outside NIL)
+		      (:start-action
+		       ,#'(lambda (inter obj)
+			    (call-prototype-method inter obj)
+			    (s-value (g-value inter :operates-on) :*bar-item-popped-up NIL)))
+		      (:outside-action
+		       ,#'(lambda (inter outside prev)
+			    (call-prototype-method inter outside prev)
 
-		       ;; For some weird reason, the first item that's been selected
-		       ;; in the newly popped up window don't have a feedback object
-		       ;; around them.  So here, we EXPLICITLY tell it to put a
-		       ;; feedback object around the FIRST item it selects, unless
-		       ;; that item is disabled.
-		       
-		       (when (AND
-			      (opal:point-in-gob first-obj-over ev-x ev-y)
-			      (g-value first-obj-over :enabled))
-			 (s-value submenu :value (g-value first-obj-over :item-obj))
-			 (s-value submenu :value-obj first-obj-over)
-			 (s-value first-obj-over :interim-selected T)))
+			    ;; make sure the top level bar items stay selected since
+			    ;; sub-menus are showing
 
-		     (unless (NULL prev-baritem)
-		       (s-value (g-local-value prev-baritem :submenu) :value-obj NIL)))
-		     )
+			    (when (is-a-p prev MOTIF-BAR-ITEM)
+			      (s-value prev :interim-selected T))))
+		      (:running-action
+		       ,#'(lambda (inter prev new)
+			    (let* ((prev-baritem (g-value inter :prev-baritem))
+				   (new-is-bar (is-a-p new MOTIF-BAR-ITEM))
+				   (new-baritem (when new
+						  (if new-is-bar
+						      new
+						      ;; else is a sub-item, get its bar-item
+						      (g-local-value new :bar-item)))))
+			      (call-prototype-method inter prev new)
 
-	       ;; keep the interim selected of the bar item so it
-	       ;; shows up as highlighted when items in sub-menu selected.
-	       (if new-baritem
-		   ;; this makes the subwindow NOT go away when move
-		   ;; outside subwindow
-		   (unless (eq new-baritem prev-baritem)
-		     (s-value inter :prev-baritem new-baritem)
-		     (if prev-baritem
-			 (let ((win (g-local-value prev-baritem :submenu-window))
-			       (prev-selected (g-local-value prev-baritem :submenu :press
-						       :remembered-last-object)))
-			   (s-value prev-baritem :interim-selected NIL)
-			   (when prev-selected
-			     (s-value prev-selected :interim-selected NIL))
-			   (s-value win :visible NIL)
-			   (opal:update win)))
-		     (if new-baritem
-			 (let ((win (g-value new-baritem :submenu-window)))
-			   (s-value (g-value new-baritem :submenu)
-				    :value-obj NIL)
-			   (s-value win :visible T)
-			   (opal:raise-window win)))))  ;; Call update
+			      ;; Now, when you get into a submenu window, you want to start
+			      ;; that submenu's interactor.
+
+			      (let ((curr-win (inter:event-window inter::*current-event*))
+				    (obj-wins (g-local-value inter :operates-on :submenu-window-list)))
+				(if  (member curr-win obj-wins :test #'equal)
+				     (let* ((submenu (g-local-value prev-baritem :submenu))
+					    (first-obj-over
+					     (OR (g-value submenu :press :remembered-last-object)
+						 (first (g-value submenu :menu-item-list :components))))
+					    (ce inter::*current-event*)
+					    (ev-x (inter:event-x ce))
+					    (ev-y (inter:event-y ce))
+					    (ev (inter:make-event :window curr-win
+								  :code (inter:event-code ce)
+								  :char :leftdown
+								  :mousep T :downp T
+								  :x ev-x
+								  :y ev-y
+								  :timestamp (inter:event-timestamp ce))))
+				       (when (eq (g-local-value prev-baritem :submenu :press :current-state)
+						 :start)
+					 (inter:start-interactor (g-value submenu :press) ev))
+
+				       ;; For some weird reason, the first item that's been selected
+				       ;; in the newly popped up window don't have a feedback object
+				       ;; around them.  So here, we EXPLICITLY tell it to put a
+				       ;; feedback object around the FIRST item it selects, unless
+				       ;; that item is disabled.
+
+				       (when (AND
+					      (opal:point-in-gob first-obj-over ev-x ev-y)
+					      (g-value first-obj-over :enabled))
+					 (s-value submenu :value (g-value first-obj-over :item-obj))
+					 (s-value submenu :value-obj first-obj-over)
+					 (s-value first-obj-over :interim-selected T)))
+
+				     (unless (NULL prev-baritem)
+				       (s-value (g-local-value prev-baritem :submenu) :value-obj NIL)))
+				)
+
+			      ;; keep the interim selected of the bar item so it
+			      ;; shows up as highlighted when items in sub-menu selected.
+			      (if new-baritem
+				  ;; this makes the subwindow NOT go away when move
+				  ;; outside subwindow
+				  (unless (eq new-baritem prev-baritem)
+				    (s-value inter :prev-baritem new-baritem)
+				    (if prev-baritem
+					(let ((win (g-local-value prev-baritem :submenu-window))
+					      (prev-selected (g-local-value prev-baritem :submenu :press
+									    :remembered-last-object)))
+					  (s-value prev-baritem :interim-selected NIL)
+					  (when prev-selected
+					    (s-value prev-selected :interim-selected NIL))
+					  (s-value win :visible NIL)
+					  (opal:update win)))
+				    (if new-baritem
+					(let ((win (g-value new-baritem :submenu-window)))
+					  (s-value (g-value new-baritem :submenu)
+						   :value-obj NIL)
+					  (s-value win :visible T)
+					  (opal:raise-window win)))))  ;; Call update
 	       ;;; this needs to be after the call-prototype-method,
 	       ;;; since that is where the :interim-selected will be
 	       ;;; turned off.
-	       (unless new-is-bar
-		 (when new-baritem
-		   (s-value new-baritem :interim-selected T))))
-	     ))
-       (:abort-action
-	,#'(lambda (inter last)
-	     (declare (ignore last))
-	     (let ((prev-baritem (g-value inter :prev-baritem)))
-	       (when prev-baritem
-		 (let ((prev-selected (g-value prev-baritem :submenu :press
-					       :remembered-last-object)))
+			      (unless new-is-bar
+				(when new-baritem
+				  (s-value new-baritem :interim-selected T))))
+			    ))
+		      (:abort-action
+		       ,#'(lambda (inter last)
+			    (declare (ignore last))
+			    (let ((prev-baritem (g-value inter :prev-baritem)))
+			      (when prev-baritem
+				(let ((prev-selected (g-value prev-baritem :submenu :press
+							      :remembered-last-object)))
 
-		   (s-value prev-baritem :interim-selected NIL)
-		   (when prev-selected
-		     (s-value prev-selected :interim-selected NIL)))
-		 (let ((win (g-value prev-baritem :submenu-window)))
-		   (s-value inter :prev-baritem NIL)
-		   (s-value win :visible NIL)
-		   (opal:update win))))))
+				  (s-value prev-baritem :interim-selected NIL)
+				  (when prev-selected
+				    (s-value prev-selected :interim-selected NIL)))
+				(let ((win (g-value prev-baritem :submenu-window)))
+				  (s-value inter :prev-baritem NIL)
+				  (s-value win :visible NIL)
+				  (opal:update win))))))
 
-       ;; This hides the submenu's window after an item has been selected
-       (:final-function
-	,#'(lambda (inter last)
-	     (declare (ignore last))
-	     (when (g-value inter :prev-baritem)
-	       (let ((win (g-value inter :prev-baritem :submenu :window)))
-		 (s-value win :visible NIL)
-		 (opal:update win))
-	       (s-value inter :prev-baritem NIL))))
-       ))))
+		      ;; This hides the submenu's window after an item has been selected
+		      (:final-function
+		       ,#'(lambda (inter last)
+			    (declare (ignore last))
+			    (when (g-value inter :prev-baritem)
+			      (let ((win (g-value inter :prev-baritem :submenu :window)))
+				(s-value win :visible NIL)
+				(opal:update win))
+			      (s-value inter :prev-baritem NIL))))
+		      ))))
 
 (s-value MOTIF-MENUBAR :do-not-dump-slots
 	 (append '(:submenu-window-list)
@@ -528,7 +527,7 @@
   (s-value menubar-select :do-not-dump-slots
 	   (append '(:prev-baritem)
 		   (g-value menubar-select :do-not-dump-slots))))
-	 
+
 
 
 ;; This function gets called when an item has been selected from
@@ -551,7 +550,7 @@
 	(kr-send a-menubar :selection-function
 		 a-menubar bar-obj (g-value submenu-item :item-obj)))
     ))
-				   
+
 ;; This is a submenu for the motif-menubar (surprise surprise!)
 ;; Its a motif-menu that inherits some slots from the top level
 ;; menubar.  Also, the accelerators for the menubar are given
@@ -562,7 +561,7 @@
 ;; :accelerators slot does.
 ;;
 ;; A submenu-item is just an instance of MOTIF-MENU-ITEM.  Which
-;; means any MOTIF-MENU-ITEM can be added to the menubar.  
+;; means any MOTIF-MENU-ITEM can be added to the menubar.
 
 (create-instance 'MOTIF-SUBMENU motif-menu
   (:bar-item NIL)
@@ -597,7 +596,7 @@
 	(:set-title-fn menubar-set-title-motif)
 	)))
      :bar-list :feedback-obj-topline :feedback-obj-bottomline :sel-box)))
-  
+
 ;;; Auxiliary function for MOTIF-MENUBAR's :fix-update-slots method.
 ;;; This function is used to establish the links between a bar-item and its
 ;;; submenu.  A new submenu is created and put in a new window.  This new
@@ -620,7 +619,7 @@
     (unless (member win submenu-window-list)
       (s-value a-menubar :submenu-window-list
 	       (cons win (copy-list submenu-window-list))))
-		     
+
     ; bookkeeping in case a-bar-item was not taken from storage
     (s-value a-bar-item :submenu new-submenu)
     (s-value a-bar-item :submenu-window win))
@@ -733,7 +732,7 @@
     (:background-color opal:motif-green)
     #-apple (:left 700)  #+apple (:left 300)
     (:top 45)(:height 360)(:width 600)
-    
+
     (:aggregate (create-instance 'MOTIF-MENUBAR-TOP-AGG opal:aggregate)))
   (opal:update MOTIF-MENUBAR-WIN)
 
@@ -807,7 +806,7 @@
 
   (opal:add-components MOTIF-MENUBAR-TOP-AGG
 		       motif-family-text motif-face-text motif-size-text motif-combo-text)
-  
+
   (opal:update MOTIF-MENUBAR-WIN)
  (unless dont-enter-main-event-loop #-cmu (inter:main-event-loop))
  )
@@ -853,7 +852,7 @@
       (dotimes (i (- n len 1))
 	(setf new-list
 	      (append new-list (list NIL)))))
-    
+
     (append (subseq new-list 0 n) (list item)
 	  (subseq new-list n))))
 
@@ -861,7 +860,7 @@
   (if (< n (length a-list))
       (append (subseq a-list 0 n) (subseq a-list (1+ n)))
       a-list))
-	  
+
 ;;;
 ;;;  EXPORTED FUNCTIONS
 ;;;
@@ -870,7 +869,7 @@
 
 
 ;
-; The parameter item may be either 
+; The parameter item may be either
 ; 1) An instance of MOTIF-BAR-ITEM, or
 ; 2) A sublist of an :items list
 ;
@@ -901,17 +900,17 @@
 
     ;; with the motif-menubar, you can specify accelerators
     ;; to be added as well.
-    
+
     (when (eq :accelerators (first args))
       ;; accel will be the user's new accelerator character
       (setf accel (second args))
       (setf args (cddr args)))
-    
+
     (when a-list
       (error "~S is already installed in ~S.~%" a-bar-item a-list))
-    
+
     (multiple-value-setq (where locator key) (opal::get-wheres args))
-    
+
     ; Add the bar-item as a component of the menubar
     (let* ((locator-comp (if (is-a-p locator MOTIF-BAR-ITEM)
 			    locator
@@ -943,7 +942,7 @@
 	     (insert-item-at-n (g-value a-menubar :bar-above-these-items)
 			       NIL rank))
     )
-    
+
     ; Do additional bookkeeping that attaches the bar-item to the menubar
     (let* ((win (g-value a-bar-item :submenu-window))
 	   (top-inter (g-value a-menubar :menubar-select))
@@ -994,7 +993,7 @@
     (opal:remove-local-component (g-value a-menubar :menubar-items) a-bar-item)
     (unless (eq a-bar-item item)
       (push a-bar-item (g-value a-menubar :storage)))
-      
+
     ; Change the top-level :items list
     (let ((old-desc (if (is-a-p a-bar-item MOTIF-BAR-ITEM)
 			(g-value a-bar-item :desc)
@@ -1047,7 +1046,7 @@
       (setf args (cddr args)))
 
     (multiple-value-setq (where locator key) (opal::get-wheres args))
-    
+
     ;; item can be either a submenu-item or a list
     (if (schema-p item)
 	(let* ((new-item `(,(g-value item :item-obj)
@@ -1067,7 +1066,7 @@
 				   :test #'equal))
 	      (s-value a-bar-item :desc new-desc))
 	  (s-value (g-value submenu :menu-item-list) :old-items new-sub-desc)
-	  
+
 	  (kr:with-constants-disabled
 	      (opal:add-local-component (g-value submenu :menu-item-list)
 					item :at rank))
@@ -1077,7 +1076,7 @@
 						where locator key))
 	       (new-desc (list (first old-desc) (second old-desc)
 			       new-sub-desc)))
-	  
+
 	  (setf rank (position item new-sub-desc
 			       :test #'(lambda (x y)
 					 (equal x (funcall key y)))))
@@ -1100,7 +1099,7 @@
     (when a-menubar
       (let* ((a-list (g-value a-menubar :accelerators))
 	     (old-acc-list (nth (g-value submenu :bar-item :rank) a-list)))
-	(when old-acc-list 
+	(when old-acc-list
 	  (let ((new-acc-list (Insert-Item-At-N old-acc-list accel rank)))
 	    (s-value a-menubar :accelerators
 		     (substitute new-acc-list old-acc-list a-list))
@@ -1127,7 +1126,7 @@
 			     :test #'(lambda (x y)
 				       (equal x (funcall key y))))
 		   (1- (length Submenu-Components)))))
-    
+
     (unless rank
       (error "~S does not have ~S as its bar-item.~%"
 	     a-submenu-item a-bar-item))
@@ -1159,7 +1158,7 @@
 				  :test #'equal)))
 	  (s-value a-bar-item :desc new-desc))
       (s-value (g-value submenu :menu-item-list) :old-items new-sub-desc)
-      
+
       ;; Now you have to remove the accelerator from the menubar
       (when a-menubar
 	(let* ((accels (g-value a-menubar :accelerators))
@@ -1227,7 +1226,7 @@
 			(g-value a-menubar :items) :test #'equal)
 		  string)
 	  (mark-as-changed a-menubar :items))
-	 
+
 	 (t
 	  ; not installed, so just set local :desc list
 	  (rplaca (g-value a-bar-item :desc) string)
@@ -1274,7 +1273,7 @@
 	 (t
 	  (g-value a-submenu-item :desc)
 	  (s-value a-submenu-item :desc (list string))))))
-	  
+
     ; Else, print error message
     (t (error "~S is not an instance of ~S or ~S.~%" menubar-component
 	   MOTIF-BAR-ITEM MOTIF-MENU-ITEM)))
@@ -1442,7 +1441,7 @@
 				 (g-value gadget :menu-item-list :components)))
 		 (action (g-value selection :action))
 		 (prev-sel (g-value gadget :value-obj)))
-		   
+
 	    (when (g-value (nth rank (g-value gadget :menu-item-list :components))
 			   :active-p)
 
@@ -1458,14 +1457,14 @@
 		(opal:update (g-value gadget :window))
 		(sleep .25)
 		(s-value selection :interim-selected NIL))
-		     
+
 	      ;; Global function for all items
 	      (kr-send gadget :selection-function gadget selection)
-		    
+
 	      ;; Local function assigned to item.
 	      ;; If this is in a menubar, you have to call the item
 	      ;; function with THREE arguments. Otherwise, with 2 args
-		
+
 	      (when action
 		(if (AND (g-value gadget :bar-item)
 			 (boundp 'MOTIF-BAR-ITEM)
@@ -1475,7 +1474,3 @@
 			     (g-value gadget :bar-item :menu-obj)  ;; The bar-item
 			     (g-value selection :item-obj))        ;; The item
 		  (funcall action gadget (g-value selection :item-obj))))))))))
-
-
-
-

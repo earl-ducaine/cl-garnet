@@ -1,0 +1,319 @@
+;; gnome-canvas.defs -- GnomeCanvas API definitions -*- lisp -*-
+;; $Id: gnome-canvas.defs,v 1.5 2002/01/31 06:02:41 jsh Exp $
+
+(import "gtk.defs")
+
+
+;; Types
+
+(define-object GnomeCanvas (GtkLayout))
+
+(define-object GnomeCanvasItem (GtkObject))
+
+(define-object GnomeCanvasGroup (GnomeCanvasItem))
+
+(define-object GnomeCanvasLine (GnomeCanvasItem))
+
+(define-object GnomeCanvasPolygon (GnomeCanvasItem))
+
+(define-object GnomeCanvasRE (GnomeCanvasItem))
+
+(define-object GnomeCanvasRect (GnomeCanvasRE))
+
+(define-object GnomeCanvasEllipse (GnomeCanvasRE))
+
+(define-object GnomeCanvasText (GnomeCanvasItem))
+
+(define-object GnomeCanvasWidget (GnomeCanvasItem))
+
+(define-object GnomeCanvasPixbuf (GnomeCanvasItem))
+
+(define-boxed GnomeCanvasPoints
+  (copy gnome_canvas_points_ref)
+  (free gnome_canvas_points_unref)
+  (conversion "sgtk_gnome_canvas_points_conversion"))
+
+(add-options
+ GnomeCanvasPoints (conversion "sgtk_gnome_canvas_points_conversion"))
+
+
+;; GnomeCanvas
+
+(define-func gnome_canvas_new
+  GtkWidget
+  ())
+
+(define-func gnome_canvas_new_aa
+  GtkWidget
+  ())
+
+(define-func gnome_canvas_root
+  GnomeCanvasGroup
+  ((GnomeCanvas canvas)))
+
+(define-func gnome_canvas_set_scroll_region
+  none
+  ((GnomeCanvas canvas)
+   (double x1)
+   (double y1)
+   (double x2)
+   (double y2)))
+
+(define-func gnome_canvas_get_scroll_region
+  none
+  ((GnomeCanvas canvas)
+   ((ret double) x1)
+   ((ret double) y1)
+   ((ret double) x2)
+   ((ret double) y2)))
+
+(define-func gnome_canvas_set_pixels_per_unit
+  none
+  ((GnomeCanvas canvas)
+   (double n)))
+
+(define-func gnome_canvas_scroll_to
+  none
+  ((GnomeCanvas canvas)
+   (int cx)
+   (int cy)))
+
+(define-func gnome_canvas_get_scroll_offsets
+  none
+  ((GnomeCanvas canvas)
+   ((ret int) cx)
+   ((ret int) cy)))
+
+(define-func gnome_canvas_update_now
+  none
+  ((GnomeCanvas canvas)))
+
+(define-func gnome_canvas_get_item_at
+  GnomeCanvasItem
+  ((GnomeCanvas canvas)
+   (double x)
+   (double y)))
+
+;(define-func gnome_canvas_request_update_uta
+;  none
+;  ((GnomeCanvas canvas)
+;   (ArtUta uta)))
+
+(define-func gnome_canvas_request_redraw
+  none
+  ((GnomeCanvas canvas)
+   (int x1)
+   (int y1)
+   (int x2)
+   (int y2)))
+
+(define-func gnome_canvas_w2c_affine
+  none
+  ((GnomeCanvas canvas)
+   ((fvec double 6) affine)))
+
+(define-func gnome_canvas_w2c
+  none
+  ((GnomeCanvas canvas)
+   (double wx)
+   (double wy)
+   ((ret int) cx)
+   ((ret int) cy)))
+
+(define-func gnome_canvas_w2c_d
+  none
+  ((GnomeCanvas canvas)
+   (double wx)
+   (double wy)
+   ((ret double) cx)
+   ((ret double) cy)))
+
+(define-func gnome_canvas_c2w
+  none
+  ((GnomeCanvas canvas)
+   (int cx)
+   (int cy)
+   ((ret double) wx)
+   ((ret double) wy)))
+
+(define-func gnome_canvas_window_to_world
+  none
+  ((GnomeCanvas canvas)
+   (double winx)
+   (double winy)
+   ((ret double) worldx)
+   ((ret double) worldy)))
+
+(define-func gnome_canvas_world_to_window
+  none
+  ((GnomeCanvas canvas)
+   (double worldx)
+   (double worldy)
+   ((ret double) winx)
+   ((ret double) winy)))
+
+(define-func gnome_canvas_get_color
+  bool
+  ((GnomeCanvas canvas)
+   (string spec)
+   (GdkColor color)))
+
+(define-func gnome_canvas_set_stipple_origin
+  none
+  ((GnomeCanvas canvas)
+   (GdkGC gc)))
+
+
+;; GnomeCanvasItem
+
+;in gnome-canvas-support.c
+;(define-func gnome_canvas_item_new
+;  GnomeCanvasItem
+;  ((GnomeCanvasGroup parent)
+;   (SCM type)
+;   (SCM args)))
+
+;in gnome-canvas-support.c
+;(define-func gnome_canvas_item_set
+;  none
+;  ((GnomeCanvasItem item)
+;   (SCM args)))
+
+(define-func gnome_canvas_item_move
+  none
+  ((GnomeCanvasItem item)
+   (double dx)
+   (double dy)))
+
+(define-func gnome_canvas_item_affine_relative
+  none
+  ((GnomeCanvasItem item)
+   ((fvec double 6) affine)))
+
+(define-func gnome_canvas_item_affine_absolute
+  none
+  ((GnomeCanvasItem item)
+   ((fvec double 6) affine)))
+
+;XXX these functions have apparently gone missing
+;(define-func gnome_canvas_item_scale
+;  none
+;  ((GnomeCanvasItem item)
+;   (double x)
+;   (double y)
+;   (double scale_x)
+;   (double scale_y)))
+;
+;(define-func gnome_canvas_item_rotate
+;  none
+;  ((GnomeCanvasItem item)
+;   (double x)
+;   (double y)
+;   (double angle)))
+
+(define-func gnome_canvas_item_raise
+  none
+  ((GnomeCanvasItem item)
+   (int positions)))
+
+(define-func gnome_canvas_item_lower
+  none
+  ((GnomeCanvasItem item)
+   (int positions)))
+
+(define-func gnome_canvas_item_raise_to_top
+  none
+  ((GnomeCanvasItem item)))
+
+(define-func gnome_canvas_item_lower_to_bottom
+  none
+  ((GnomeCanvasItem item)))
+
+(define-func gnome_canvas_item_show
+  none
+  ((GnomeCanvasItem item)))
+
+(define-func gnome_canvas_item_hide
+  none
+  ((GnomeCanvasItem item)))
+
+;(define-func gnome_canvas_item_grab
+;  none
+;  ((GnomeCanvasItem item)
+;   (uint event_mask)
+;   (GdkCursor cursor)
+;   (uint etime)))
+
+(define-func gnome_canvas_item_ungrab
+  none
+  ((GnomeCanvasItem item)
+   (uint etime)))
+
+(define-func gnome_canvas_item_w2i
+  none
+  ((GnomeCanvasItem item)
+   ((ret double) x)
+   ((ret double) y)))
+
+(define-func gnome_canvas_item_i2w
+  none
+  ((GnomeCanvasItem item)
+   ((ret double) x)
+   ((ret double) y)))
+
+(define-func gnome_canvas_item_i2w_affine
+  none
+  ((GnomeCanvasItem item)
+   ((fvec double 6) affine)))
+
+(define-func gnome_canvas_item_i2c_affine
+  none
+  ((GnomeCanvasItem item)
+   ((fvec double 6) affine)))
+
+(define-func gnome_canvas_item_reparent
+  none
+  ((GnomeCanvasItem item)
+   (GnomeCanvasGroup new_group)))
+
+(define-func gnome_canvas_item_grab_focus
+  none
+  ((GnomeCanvasItem item)))
+
+(define-func gnome_canvas_item_get_bounds
+  none
+  ((GnomeCanvasItem item)
+   ((ret double) x1)
+   ((ret double) y1)
+   ((ret double) x2)
+   ((ret double) y2)))
+
+;(define-func gnome_canvas_request_update
+;  none
+;  ((GnomeCanvasItem item)))
+
+
+;; GnomeCanvasGroup
+
+(define-func gnome_canvas_group_child_bounds
+  none
+  ((GnomeCanvasGroup group)
+   (GnomeCanvasItem item)))
+
+
+;; gnome-canvas-util
+
+(define-func sgtk_gnome_canvas_points_new
+  (GnomeCanvasPoints (copy nil))
+  ((SCM points))
+  (scm-name "gnome-canvas-points-new"))
+
+;; XXX ...
+
+
+;; Options
+
+(options
+ (includes "#include <gnome.h>")
+ (includes "#include \"rep-gnome.h\"")
+ (init-func "sgtk_gnome_init_gnome_canvas_glue"))

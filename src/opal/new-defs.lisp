@@ -49,7 +49,7 @@
 	 `(setf (update-info-bits ,object)
 		(logior (update-info-bits ,object) ,(ash 1 bit-position))))
 	((null value)
-	 ;; Value is NIL at compile time.	 
+	 ;; Value is NIL at compile time.
 	 `(setf (update-info-bits ,object)
 		(logand (update-info-bits ,object)
 			,(lognot (ash 1 bit-position)))))
@@ -95,7 +95,7 @@
 
 (defsetf update-info-on-fastdraw-list-p (object) (value)
   `(bit-setter ,object 4 ,value))
-	 
+
 
 (defun update-info-print-function (struct stream depth)
   (declare (ignore depth))
@@ -116,8 +116,7 @@
 	old-aggregate
         width
         height
-	exposed-bbox
-)
+	exposed-bbox)
 
 ;;; The invalid objects slot used to be unprintable because it had
 ;;; an extra item at the end, but that has been eliminated.
@@ -134,7 +133,7 @@
 
 (defvar *free-cons* NIL)
 
-(defvar *font-hash-table* (make-hash-table 
+(defvar *font-hash-table* (make-hash-table
 			   :test #'equal
 			   #+sb-thread :synchronized #+sb-thread t))
 
@@ -297,4 +296,3 @@
 ;;; reconnect-garnet is called.  This will be used by the gestures handler
 ;;; and multifont.
 (defparameter *auxilliary-reconnect-routines* ())
-
