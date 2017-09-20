@@ -53,16 +53,6 @@
 ;; First we load required gadgets.  In this demo, we use the menubar
 ;; and the motif-scrolling-window-with-bars gadgets.
 
-;; (eval-when (:compile-toplevel :load-toplevel :execute)
-  ;; Only loads this file when not compiling all of Garnet.
-  ;; (unless (get :garnet-modules :multifont)
-  ;;   (common-lisp-user::garnet-load "opal:multifont-loader"))
-  ;; Load menubar gadget.
-  ;; (unless (get :garnet-modules :motif-menubar)
-  ;;   (common-lisp-user::garnet-load "gadgets:motif-menubar-loader"))
-  ;; Load scrolling window gadget.
-  ;; (unless (get :garnet-modules :motif-scrolling-window)
-  ;;   (common-lisp-user::garnet-load "gadgets:motif-scrolling-window-loader")))
 ;; Following are functions used in the menubar.  Each function is used
 ;; to control either a menu or a submenu item.
 

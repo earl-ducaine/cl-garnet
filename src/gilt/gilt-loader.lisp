@@ -35,27 +35,6 @@ Change log:
 (unless (get :garnet-modules :multifont)
   (garnet-load "opal:multifont-loader"))
 
-;; (dolist (pair '((:motif-error-gadget "motif-error-gadget-loader")
-;; 		(:motif-prop-sheet-win "motif-prop-sheet-win-loader")
-;; 		(:multi-selection "multi-selection-loader")
-;; 		(:motif-text-buttons "motif-text-buttons-loader")
-;; 		(:motif-scrolling-labeled-box "motif-scrolling-labeled-box-loader")
-;; 		(:motif-scrolling-window "motif-scrolling-window-loader")
-;; 		(:motif-radio-buttons "motif-radio-buttons-loader")
-;; 		(:motif-menubar "motif-menubar-loader")
-;; 		(:motif-menu "motif-menu-loader")
-;; 		(:motif-check-buttons "motif-check-buttons-loader")
-;; 		(:motif-slider "motif-slider-loader")
-;; 		(:standard-edit "standard-edit-loader")
-;; 		#+lucid (:option-button "option-button-loader")
-;; 		#+lucid (:popup-menu-button "popup-menu-button-loader")
-;; 		))
-;;   (unless (get :garnet-modules (car pair))
-;;     (garnet-load (concatenate 'string "gadgets:" (cadr pair)))))
-
-#+allegroV3.1
-(gc t)
-
 (defparameter gilt-files
   '(
     "gilt-functions-loader" ; only load if not already loaded

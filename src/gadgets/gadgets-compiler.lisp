@@ -153,61 +153,6 @@
     (garnet-compile gadget-str)
     (garnet-load gadget-str)))
 
-;;;(format t "Copying gadget loader files to ~A~%" Garnet-Gadgets-Pathname)
-
-;; (garnet-copy-files Garnet-Gadgets-Src Garnet-Gadgets-Pathname
-;; 		   '("arrow-line-loader.lisp"
-;; 		     "browser-gadget-loader.lisp"
-;; 		     "error-gadget-loader.lisp"
-;; 		     "gadgets-loader.lisp"
-;; 		     "gauge-loader.lisp"
-;; 		     "graphics-loader.lisp"
-;; 		     "h-scroll-loader.lisp"
-;; 		     "h-slider-loader.lisp"
-;; 		     "labeled-box-loader.lisp"
-;; 		     "menu-loader.lisp"
-;; 		     "menubar-loader.lisp"
-;; 		     "motif-check-buttons-loader.lisp"
-;; 		     "motif-error-gadget-loader.lisp"
-;; 		     "motif-gauge-loader.lisp"
-;; 		     "motif-h-scroll-loader.lisp"
-;; 		     "motif-menu-loader.lisp"
-;; 		     "motif-menubar-loader.lisp"
-;; 		     "motif-option-button-loader.lisp"
-;; 		     "motif-prop-sheet-win-loader.lisp"
-;; 		     "motif-radio-buttons-loader.lisp"
-;; 		     "motif-save-gadget-loader.lisp"
-;; 		     "motif-scrolling-labeled-box-loader.lisp"
-;; 		     "motif-scrolling-menu-loader.lisp"
-;; 		     "motif-scrolling-window-loader.lisp"
-;; 		     "motif-slider-loader.lisp"
-;; 		     "motif-text-buttons-loader.lisp"
-;; 		     "motif-trill-device-loader.lisp"
-;; 		     "motif-v-scroll-loader.lisp"
-;; 		     "mouseline-loader.lisp"
-;; 		     "multi-selection-loader.lisp"
-;; 		     ;; "multifont-gadget-loader.lisp"
-;; 		     "option-button-loader.lisp"
-;; 		     "polyline-creator-loader.lisp"
-;; 		     "popup-menu-button-loader.lisp"
-;; 		     "prop-sheet-loader.lisp"
-;; 		     "prop-sheet-win-loader.lisp"
-;; 		     "prop-value-loader.lisp"
-;; 		     "radio-buttons-loader.lisp"
-;; 		     "save-gadget-loader.lisp"
-;; 		     "scrolling-input-string-loader.lisp"
-;; 		     "scrolling-labeled-box-loader.lisp"
-;; 		     "scrolling-unlabeled-box-loader.lisp"
-;; 		     "scrolling-menu-loader.lisp"
-;; 		     "scrolling-window-loader.lisp"
-;; 		     "standard-edit-loader.lisp"
-;; 		     "text-buttons-loader.lisp"
-;; 		     "trill-device-loader.lisp"
-;; 		     "v-scroll-loader.lisp"
-;; 		     "v-slider-loader.lisp"
-;; 		     "x-buttons-loader.lisp"))
-
-
 (progn
   (setf (get :garnet-modules :gadgets)  t)
   (setf (get :garnet-modules :GAD-scroll-parts) t)

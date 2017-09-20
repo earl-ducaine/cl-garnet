@@ -40,8 +40,8 @@
     (common-lisp-user::garnet-load "opal:multifont-loader"))
 
   ;; Load menubar gadget.
-  (unless (get :garnet-modules :motif-menubar)
-    (common-lisp-user::garnet-load "gadgets:motif-menubar-loader"))
+  ;; (unless (get :garnet-modules :motif-menubar)
+  ;;   (common-lisp-user::garnet-load "gadgets:motif-menubar-loader"))
 
   ;; Load scrolling window gadget.
   (unless (get :garnet-modules :motif-scrolling-window)

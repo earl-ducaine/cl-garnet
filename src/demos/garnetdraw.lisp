@@ -29,14 +29,15 @@
     (common-lisp-user::garnet-load "ps:ps-loader")
 
     ;;;  Load gadgets.
-    (dolist (file '("multi-selection-loader" "polyline-creator-loader"
-		    "arrow-line-loader"
-		    "motif-menubar-loader"
-		    "motif-trill-device-loader"
-		    "motif-error-gadget-loader"
-		    "motif-save-gadget-loader"
-		    "standard-edit-loader"))
-      (common-lisp-user::garnet-load (concatenate 'string "gadgets:" file)))))
+    ;; (dolist (file '("multi-selection-loader" "polyline-creator-loader"
+    ;; 		    "arrow-line-loader"
+    ;; 		    "motif-menubar-loader"
+    ;; 		    "motif-trill-device-loader"
+    ;; 		    "motif-error-gadget-loader"
+    ;; 		    "motif-save-gadget-loader"
+    ;; 		    "standard-edit-loader"))
+    ;;   (common-lisp-user::garnet-load (concatenate 'string "gadgets:" file)))
+    ))
 
 #|
 ====================================================================
