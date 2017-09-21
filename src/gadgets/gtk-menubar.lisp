@@ -339,7 +339,7 @@
 ;; and let the fix-update-slots method deal with the components is that the
 ;; item parameter can be an actual component to be added, so you should not
 ;; generate a new component via fix-update-slots.
-(define-method :add-item motif-menubar (a-menubar item &rest args)
+(define-method :add-item gtk-menubar (a-menubar item &rest args)
 	       (apply-prototype-method (concatenate 'list (list a-menubar item)
 						    args)))
 
@@ -347,7 +347,7 @@
 ;; The a-bar-item parameter can either be
 ;; 1) An instance of MOTIF-BAR-ITEM, or
 ;; 2) A sublist of the :items list
-(define-method :remove-item MOTIF-MENUBAR (a-menubar item)
+(define-method :remove-item gtk-menubar (a-menubar item)
 	       (apply-prototype-method (concatenate 'list (list a-menubar item)
 						    args)))
 
@@ -367,8 +367,8 @@
 ;; 2) A description of a submenu-item: (list string action) where "string" is
 ;;    a string or atom and "action" is a function
 ;;
-;; NOTE NOTE NOTE NOTE:  THE :ACCELERATOR KEYWORD *MUST* APPEAR BEFORE THE
-;; :WHEREs IF ANY ACCELERATORS ARE TO BE ADDED
+;; note note note note:  the :accelerator keyword *must* appear before the
+;; :wheres if any accelerators are to be added
 (define-method :add-item motif-bar-item (a-bar-item item &rest args)
 	       (apply-prototype-method
 		(concatenate 'list (list a-bar-item item) args)))
@@ -376,74 +376,26 @@
 ;; The item parameter can be either
 ;; 1) An instance of MOTIF-MENU-ITEM, or
 ;; 2) A string or atom
-(define-method :remove-item MOTIF-BAR-ITEM (a-bar-item &optional item
+(define-method :remove-item gtk-bar-item (a-bar-item &optional item
 						 &key (key #'opal:no-func))
-  (let* ((a-submenu-item (if (is-a-p item MOTIF-MENU-ITEM)
-			     (get-submenu-component a-bar-item
-							  (g-value item :item-obj))
-			     (get-submenu-component a-bar-item item)))
-	 (submenu (g-value a-bar-item :submenu))
-	 (Submenu-Components (g-value submenu :menu-item-list :components))
-	 (rank (if item
-		   (position a-submenu-item Submenu-Components
-			     :test #'(lambda (x y)
-				       (equal x (funcall key y))))
-		   (1- (length Submenu-Components)))))
-
-    (unless rank
-      (error "~S does not have ~S as its bar-item.~%"
-	     a-submenu-item a-bar-item))
-    ; If the user did not supply an item, then just remove the last component
-    (unless a-submenu-item
-      (setf a-submenu-item (nth rank Submenu-Components)))
-
-    (opal:remove-local-component (g-value a-submenu-item :parent) a-submenu-item)
-
-    ; Update the :items or :desc list
-    (let* ((a-menubar (and
-		       (g-value a-bar-item :parent)
-		       (g-value a-bar-item :parent :parent)))
-	   (old-desc (g-value a-bar-item :desc))
-	   (old-sub-desc (third old-desc))
-	   (item-obj (g-value a-submenu-item :item-obj))
-	   (action (g-value a-submenu-item :action))
-	   (new-sub-desc (remove (if action
-				     (list item-obj action)
-				     (list item-obj))
-				 old-sub-desc :test #'equal))
-	   (new-desc (substitute new-sub-desc old-sub-desc old-desc
-				 :test #'equal)))
-
-      (if a-menubar
-	  (s-value (g-value submenu :menu-item-list) :old-items
-	     (s-value a-menubar :items
-		      (substitute new-desc old-desc (g-value a-menubar :items)
-				  :test #'equal)))
-	  (s-value a-bar-item :desc new-desc))
-      (s-value (g-value submenu :menu-item-list) :old-items new-sub-desc)
-
-      ;; Now you have to remove the accelerator from the menubar
-      (when a-menubar
-	(let* ((accels (g-value a-menubar :accelerators))
-	       (a-list (nth (g-value a-bar-item :rank) accels)))
-	  (when a-list
-	    (let ((new-a-list (remove-item-at-n a-list rank)))
-	      (s-value a-menubar :accelerators
-		       (substitute new-a-list a-list accels))))))
-      )))
-
-(s-value MOTIF-MENUBAR :change-item (g-value opal:aggrelist :change-item))
-(s-value MOTIF-MENUBAR :remove-nth-item
-	 (g-value opal:aggrelist :remove-nth-item))
-(s-value MOTIF-BAR-ITEM :change-item #'menubar-change-item)
-(s-value MOTIF-BAR-ITEM :remove-nth-item (g-value opal:aggrelist :remove-nth-item))
-(s-value MOTIF-BAR-ITEM :set-submenu-fn #'set-submenu-fn)
-(s-value MOTIF-MENUBAR :get-bar-component-fn #'get-bar-component-fn)
+	       (call-prototype-method a-bar-item item key))
 
 
-;; Returns an instance of a motif-bar-item
+(s-value gtk-menubar :change-item (g-value opal:aggrelist :change-item))
 
-(defun Make-Motif-Bar-Item (&key desc font title)
+(s-value gtk-menubar :remove-nth-item
+	 (g-value opal:aggreliset :remove-nth-item))
+
+(s-value gtk-bar-item :change-item #'menubar-change-item)
+
+(s-value gtk-bar-item :remove-nth-item (g-value opal:aggrelist :remove-nth-item))
+
+(s-value gtk-bar-item :set-submenu-fn #'set-submenu-fn)
+
+(s-value gtk-menubar :get-bar-component-fn #'get-bar-component-fn)
+
+;; Returns an instance of a gtk-bar-item
+(defun make-motif-bar-item (&key desc font title)
   ;; Type-check the argument before creating an object for it.
   (when desc (Check-Bar-Item desc))
   (let* ((new-bar-item (create-instance NIL MOTIF-BAR-ITEM))
@@ -460,9 +412,8 @@
 	(s-value new-bar-item :desc (list title NIL NIL)))
     new-bar-item))
 
-;; Returns the title of a menubar-component, which could
-;; be a bar-item or a submenu-item
-
+;; Returns the title of a menubar-component, which could be a bar-item
+;; or a submenu-item
 (defun Menubar-Get-Title-Motif (menubar-component)
   (if (is-a-p menubar-component MOTIF-BAR-ITEM)
       (g-value menubar-component :menu-obj)
@@ -470,88 +421,20 @@
 
 (s-value MOTIF-BAR-ITEM :get-title-fn #'menubar-get-title-motif)
 
-; If the menubar-component is installed in a menubar, then the :items list is
-; changed.  Otherwise, the object's :desc slot is set.
-;
-(defun Menubar-Set-Title-Motif (menubar-component string)
-  (cond
+;; If the menubar-component is installed in a menubar, then the :items
+;; list is changed.  Otherwise, the object's :desc slot is set.
+(defun menubar-set-title-gtk (menubar-component string)
+  (menubar-set-title-motif menubar-component string))
 
-    ;; The parameter is a MOTIF-BAR-ITEM
-    ((is-a-p menubar-component MOTIF-BAR-ITEM)
-     (let* ((a-bar-item menubar-component)
-	    (a-menubar (and
-			(g-value a-bar-item :parent)
-			(g-value a-bar-item :parent :parent))))
-       (cond
-	 (a-menubar
-	  ; a-bar-item is installed, so set the :items list
-	  (rplaca (find (g-value a-bar-item :desc)
-			(g-value a-menubar :items) :test #'equal)
-		  string)
-	  (mark-as-changed a-menubar :items))
+(s-value motif-bar-item :set-title-fn #'menubar-set-title-motif)
 
-	 (t
-	  ; not installed, so just set local :desc list
-	  (rplaca (g-value a-bar-item :desc) string)
-	  (mark-as-changed a-bar-item :desc)))))
-
-    ;; The parameter is a MOTIF-MENU-ITEM
-    ((or
-      (is-a-p menubar-component MOTIF-MENU-ITEM))
-     (let* ((a-submenu-item menubar-component)
-	    (a-submenu-agg (g-value menubar-component :parent :parent)))
-       (cond
-	 (a-submenu-agg
-	  ; a-submenu-item is installed in a bar-item
-	  (let* ((a-bar-item (g-value a-submenu-agg :bar-item))
-		 (a-menubar (when a-bar-item
-			      (g-value a-bar-item :parent :parent))))
-	    (cond
-
-	      ; a-submenu-item is installed in a menubar
-	      (a-menubar
-	       (let* ((old-desc (g-value a-bar-item :desc))
-		      (old-items-desc
-		       (find old-desc (g-value a-menubar :items))))
-		 (dolist (desc (third old-items-desc))
-		   (when (and (equal (first desc)
-				     (g-value a-submenu-item :item-obj))
-			      (equal (second desc)
-				     (g-value a-submenu-item :action)))
-		     (rplaca desc string)
-		     (mark-as-changed a-menubar :items)))))
-
-	      ; a-submenu-item is not installed in a menubar
-	      (t
-	       (let* ((old-desc (g-value a-bar-item :desc)))
-		 (dolist (desc (third old-desc))
-		   (when (and (equal (first desc)
-				     (g-value a-submenu-item :item-obj))
-			      (equal (second desc)
-				     (g-value a-submenu-item :action)))
-		     (rplaca desc string)
-		     (mark-as-changed a-bar-item :items))))))))
-
-	 ; a-submenu-item is not installed in a bar-item
-	 (t
-	  (g-value a-submenu-item :desc)
-	  (s-value a-submenu-item :desc (list string))))))
-
-    ; Else, print error message
-    (t (error "~S is not an instance of ~S or ~S.~%" menubar-component
-	   MOTIF-BAR-ITEM MOTIF-MENU-ITEM)))
-  string)
-
-(s-value MOTIF-BAR-ITEM :set-title-fn #'menubar-set-title-motif)
-
-(define-method :Submenu-Components MOTIF-BAR-ITEM (a-bar-item)
+(define-method :submenu-components motif-bar-item (a-bar-item)
   (g-value a-bar-item :submenu :menu-item-list :components))
 
-;
-; The args parameter will (optionally) include the where, locator, and key
-; parameters that are sent to add-item.  The where refers to the placement
-; of the new submenu item among the current submenu items within b-item.
-;
+;; The args parameter will (optionally) include the where, locator,
+;; and key parameters that are sent to add-item.  The where refers to
+;; the placement of the new submenu item among the current submenu
+;; items within b-item.
 (define-method :Add-Submenu-Item MOTIF-MENUBAR (a-menubar b-item s-item &rest args)
   (let* ((a-bar-item (if (is-a-p b-item MOTIF-BAR-ITEM)
 			 b-item
@@ -561,13 +444,11 @@
       ;; accel will be the user's new accelerator character
       (setf accel (second args))
       (setf args (cddr args)))
-
     (multiple-value-setq (where locator key) (opal::get-wheres args))
     (opal:add-item a-bar-item s-item :accelerator accel where locator key)))
 
-;
-; After looking up the b-item to get a bar-item object, call opal:remove-item.
-;
+
+;; After looking up the b-item to get a bar-item object, call opal:remove-item.
 (define-method :Remove-Submenu-Item MOTIF-MENUBAR (a-menubar b-item s-item)
   (let* ((a-bar-item (if (is-a-p b-item MOTIF-BAR-ITEM)
 			 b-item
