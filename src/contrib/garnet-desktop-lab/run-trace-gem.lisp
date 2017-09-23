@@ -14,12 +14,26 @@
 ;;   (format *error-output* "error output ~a" y)
 ;;   (+ x y))
 
-(defvar *trace-output-stream-string*)
+(defvar *trace-output-stream*)
 
 (defun run-do-go ()
   (demo-3d:do-go)
-  (get-output-stream-string *trace-output*)
-  (setf *trace-output-stream-string* (get-output-stream-string *trace-output*)))
+  (setf *trace-output-stream*
+	(make-string-input-stream
+	 (let ((strings (process-trace-output-stream-string (get-output-stream-string *trace-output*))))
+	   (apply #'concatenate (cons 'string strings))))))
+
+
+(defun read-trace-output-stream
+    (&optional (trace-output-stream *trace-output-stream*))
+  (turn-on-trace-k-reader)
+  (let (items)
+    (do ((item (read trace-output-stream nil :eof)
+	       (read trace-output-stream nil :eof)))
+	((eql item :eof))
+      (push item items))
+    (turn-on-trace-k-reader)
+    items))
 
 (defun start-call-p (trace-string)
   (let ((end-digits
@@ -38,7 +52,8 @@
 ;; or
 ;;
 ;;   "#k<OPAL:DEFAULT-LINE-STYLE> #k<OPAL:WHITE-FILL>)"
-(defun process-trace-output-stream-string (&optional (trace-output-stream-string *trace-output-stream-string*))
+(defun process-trace-output-stream-string
+    (&optional (trace-output-stream-string *trace-output-stream-string*))
 ;;  (turn-on-trace-k-reader)
 ;;  (mapcar #'read-from-string
 	  (let (calls full-line)
@@ -102,6 +117,6 @@
 ;;;; (read-from-string  "(X-CREATE-PIXMAP #k<INTERACTOR-WINDOW-7158> 16 16 1 NIL NIL NIL)")
 
 
-(read-from-string readable-trace-stream)
-(defparameter trace-stream (make-string-input-stream readable-trace-stream))
-(read trace-stream)
+;; (read-from-string readable-trace-stream)
+;; (defparameter trace-stream (make-string-input-stream readable-trace-stream))
+;;; (read trace-stream)
