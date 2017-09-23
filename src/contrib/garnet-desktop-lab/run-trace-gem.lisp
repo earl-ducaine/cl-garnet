@@ -5,14 +5,25 @@
 (defparameter *error-output-bak* *error-output*)
 (defparameter *trace-output-bak* *trace-output*)
 
-(setf *trace-output* (make-string-output-stream))
 
 (trace-gem :x)
 
-(defvar *trace-output-stream*)
+;; Various stages of trace log processing
+;;
+;; *trace-output*        raw log stream because it's a stream once it's
+;;                       procecced it's empty.
+;;
+;; *trace-output-string*  Trace output separated into trimmed lines
+;;
+;;
+
+(defvar *raw-trace-output-string*)
+(defvar *trace-output-string*)
 (defvar *last-char* nil)
 
 (defun run-do-go ()
+  ;; reset stream
+  (setf *trace-output* (make-string-output-stream))
   (demo-3d:do-go))
 
 (defun read-until-next-white-space (stream)
@@ -24,34 +35,36 @@
       chars)))
 
 (defun read-trace-output-stream ()
+  (let ((raw-trace-output-string (get-output-stream-string *trace-output*)))
+  (setf *raw-trace-output-string* raw-trace-output-string)
   (let ((last-char nil)
 	(items nil)
 	(trace-output-stream
 	 (make-string-input-stream
 	  (let ((strings (process-trace-output-stream-string
-			  (get-output-stream-string *trace-output*))))
+			  raw-trace-output-string)))
+	    (setf *trace-output-string* strings)
 	    (apply #'concatenate (cons 'string strings))))))
     (flet ((read-from-trace-stream ()
 	     (setf last-char
 		   (read-char trace-output-stream nil :eof))
 	     (unread-char last-char trace-output-stream)
-	     (read trace-output-stream nil :eof)))
+	     (restart-case
+		 (handler-bind ((error #'(lambda (c)
+					   (invoke-restart 'my-restart c))))
+		   (read trace-output-stream nil :eof))
+	       (my-restart (&optional v)
+		 (format t "~s~%" v)
+		 (unread-char last-char trace-output-stream)
+		 (let ((as-string
+			(read-until-next-white-space trace-output-stream)))
+
       (turn-on-trace-k-reader)
-      (restart-case
-	  (handler-bind ((error #'(lambda (c)
-				    (invoke-restart 'my-restart c))))
-	    (do ((item
-		     (read-from-trace-stream) (read-from-trace-stream)))
-	      ((eql item :eof))
-	    (push item items))
-	  items)
-	(my-restart (&optional v)
-	  (format t "~s~%" v)
-	  (unread-char last-char trace-output-stream)
-	  (push (read-until-next-white-space trace-output-stream)
-		items)
-	  (turn-off-trace-k-reader)
-	  items)))))
+      (do ((item
+	    (read-from-trace-stream) (read-from-trace-stream)))
+	  ((eql item :eof))
+	(push item items))
+      items))))
 
 (defun start-call-p (trace-string)
   (let ((end-digits
@@ -72,26 +85,25 @@
 ;;   "#k<OPAL:DEFAULT-LINE-STYLE> #k<OPAL:WHITE-FILL>)"
 (defun process-trace-output-stream-string
     (&optional (trace-output-stream-string *trace-output-stream-string*))
-;;  (turn-on-trace-k-reader)
-;;  (mapcar #'read-from-string
-	  (let (calls full-line)
-	    (dolist (line
-		      (mapcar
-		       (lambda (string) (string-trim '(#\Space) string))
-		       (cl-ppcre:split #\Newline trace-output-stream-string))
-		     calls)
-	      (multiple-value-bind (call-level position) (start-call-p line)
-		(cond
-		  (call-level
-		   (let ((rest-line (subseq line (1+ position))))
-		     (when full-line
-		       (push full-line calls))
-		     (setf full-line rest-line)))
-		  (t
-		   (unless (> (length line) 2)
-		     (format t "very short trace line: ~s~%Previous full call ~s~%" line full-line))
-		   (setf full-line (concatenate 'string full-line " " line))))))))
-  ;;(turn-off-trace-k-reader))
+  (let (calls full-line)
+    (reverse
+     (dolist (line
+	       (mapcar
+		(lambda (string) (string-trim '(#\Space) string))
+		(cl-ppcre:split #\Newline trace-output-stream-string))
+	      (progn (push full-line calls) calls))
+       (multiple-value-bind (call-level position) (start-call-p line)
+	 (cond
+	   (call-level
+	    (let ((rest-line (subseq line (1+ position))))
+	      (when full-line
+		(push full-line calls))
+	      (setf full-line rest-line)))
+	   (t
+	    (unless (> (length line) 2)
+	      (format t "very short trace line: ~s~%Previous full call ~s~%" line full-line))
+	    (setf full-line (concatenate 'string full-line " " line)))))))))
+
 
 ;; (defun read-trace ()
 ;;   (apply #'concatenate (cons 'string TRACE-STRINGS)))
