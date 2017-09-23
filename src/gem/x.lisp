@@ -94,7 +94,7 @@
   filling-style-gc)
 
 (defun display-info-printer (s stream ignore)
-  (format stream "#<GEM-DISPLAY-INFO ~A>" (display-info-display s)))
+  (format stream "#G<GEM-DISPLAY-INFO ~A>" (display-info-display s)))
 
 ;;; A graphic context structure
 (defstruct (gem-gc (:print-function gem-gc-print-function))
@@ -120,7 +120,7 @@
 
 (defun gem-gc-print-function (gc stream depth)
   (declare (ignore depth))
-  (format stream "#<GEM-GC function ~A clip-mask ~A>"
+  (format stream "#G<GEM-GC function ~A clip-mask ~A>"
           (gem-gc-function gc)
           (gem-gc-clip-mask gc)))
 

@@ -10,7 +10,6 @@
 ;;; $Id$
 ;;;
 
-
 ;;; Make-PS-File
 ;;;
 ;;; The function Make-PS-File generates postscript files from Garnet
@@ -18,15 +17,12 @@
 ;;; printer or included in larger Scribe and LaTex documents.
 ;;;
 ;;; Designed and implemented by Andrew Mickish
-;;;
 
-
 (in-package "OPAL")
 
 (eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(Make-PS-File)))
 
-
 ;;;  POSTSCRIPT NOTES
 ;;;    When passing parameters, a value of -1 corresponds to NIL in Lisp.
 ;;;
