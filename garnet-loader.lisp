@@ -28,6 +28,9 @@
     (pushnew :garnet-debug *features*)
     (setf *features* (delete :garnet-debug *features*)))
 
+;; don't use feture mechanism to control *trace-x*
+(setf gem::*trace-x* t)
+
 ;; The following variable affects compiler policy. Setting it to T
 ;; uses the settings in *garnet-compile-debug-settings*. Setting it to
 ;; NIL uses the ones in *garnet-compile-production-settings*. By

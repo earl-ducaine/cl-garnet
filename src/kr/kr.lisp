@@ -334,7 +334,6 @@ be printed out."
 	  (format stream "~S" name)
 	  (when destroyed (format stream ")"))))))
 
-
 (defun name-for-schema (schema)
   "Given a schema, returns its printable name as a string.  The string
 CANNOT be destructively modified.

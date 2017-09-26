@@ -35,7 +35,9 @@
    	    :components
 	    ((:file "gem")
 	     (:file "define-methods")
-	     (:file "x")))
+	     (:file "x")
+	     (:file "x-inter")
+	     (:file "run-trace-gem" :depends-on (:gem))))
    (:module opal
    	    :pathname "src/opal"
    	    :depends-on (:utils :gem :kr)
@@ -76,7 +78,6 @@
 	    ((:file "garnet-keytrans")
 	     (:file "define-mouse-keys")
 	     (:file "x-define-keys")
-	     (:file "x-inter")
 	     (:file "interactors")
 	     (:file "accelerators")
 	     (:file "animation-process")
