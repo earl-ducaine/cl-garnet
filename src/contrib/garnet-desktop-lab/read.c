@@ -409,7 +409,6 @@ START and END optionally delimit a substring of STRING from which to read;\n\
   return Fcons (tem, make_number (read_from_string_index));
 }
 
-
 /* Use this for recursive reads, in contexts where internal tokens are
    not allowed. */
 static Lisp_Object read0 (Lisp_Object readcharfun) {
@@ -581,9 +580,8 @@ static Lisp_Object read_vector (Lisp_Object readcharfun) {
   return vector;
 }
   
-/* flag = 1 means check for ] to terminate rather than ) and .  flag =
-   -1 means check for starting with defun and make structure pure.  */
-
+/* flag = 1 means check for ] to terminate rather than ) and
+   flag = -1 means check for starting with defun and make structure pure.  */
 static Lisp_Object read_list (int flag, Lisp_Object readcharfun) {
   /* -1 means check next element for defun,
      0 means don't check,
@@ -696,7 +694,7 @@ static int read_escape (Lisp_Object readcharfun) {
 Lisp_Object Vobarray;
 Lisp_Object initial_obarray;
 
-/* CHECK_OBARRAY assumes the variable `tem' is available */
+/* CHECK_OBARRAY assumes the variable Item is available */
 #define CHECK_OBARRAY(obarray) \
   if (XTYPE (obarray) != Lisp_Vector) \
     { tem = obarray; obarray = initial_obarray; \
