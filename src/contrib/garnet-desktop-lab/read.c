@@ -593,38 +593,41 @@ static Lisp_Object read_list (int flag, Lisp_Object readcharfun) {
   val = Qnil;
   tail = Qnil;
   while (1) {
-      elt = read1 (readcharfun);
-      if (XTYPE (elt) == Lisp_Internal) {
-	  if (flag > 0) {
-	    if (XINT (elt) == ']') {
-		return val;
-	    }
-	      Fsignal (Qinvalid_read_syntax, Fcons (make_string (") or . in a vector", 18), Qnil));
-	    }
-	  if (XINT (elt) == ')') {
-	    return val;
-	  }
-	  if (XINT (elt) == '.') {
-	      if (!NULL (tail))
-		tail = Fsetcdr (tail, read0 (readcharfun));
-	      else
-		val = read0 (readcharfun);
-	      elt = read1 (readcharfun);
-	      if (XTYPE (elt) == Lisp_Internal && XINT (elt) == ')')
-		return val;
-	      Fsignal (Qinvalid_read_syntax, Fcons (make_string (". in wrong context", 18), Qnil));
-	    }
-	  Fsignal (Qinvalid_read_syntax, Fcons (make_string ("] in a vector", 13), Qnil));
+    elt = read1 (readcharfun);
+    if (XTYPE (elt) == Lisp_Internal) {
+      if (flag > 0) {
+	if (XINT (elt) == ']') {
+	  return val;
+	} else {
+	  Fsignal (Qinvalid_read_syntax,
+		   Fcons (make_string (") or . in a vector", 18),
+			  Qnil));
 	}
-      if (!NULL (tail))
-	tail = Fsetcdr (tail, (read_pure && flag <= 0 ? pure_cons : Fcons) (elt, Qnil));
-      else
-        tail = val = (read_pure && flag <= 0 ? pure_cons : Fcons) (elt, Qnil);
-      if (defunflag < 0)
-	defunflag = EQ (elt, Qdefun);
-      else if (defunflag > 0)
-	read_pure = 1;
+      }
+      if (XINT (elt) == ')') {
+	return val;
+      }
+      if (XINT (elt) == '.') {
+	if (!NULL (tail))
+	  tail = Fsetcdr (tail, read0 (readcharfun));
+	else
+	  val = read0 (readcharfun);
+	elt = read1 (readcharfun);
+	if (XTYPE (elt) == Lisp_Internal && XINT (elt) == ')')
+	  return val;
+	Fsignal (Qinvalid_read_syntax, Fcons (make_string (". in wrong context", 18), Qnil));
+      }
+      Fsignal (Qinvalid_read_syntax, Fcons (make_string ("] in a vector", 13), Qnil));
     }
+    if (!NULL (tail))
+      tail = Fsetcdr (tail, (read_pure && flag <= 0 ? pure_cons : Fcons) (elt, Qnil));
+    else
+      tail = val = (read_pure && flag <= 0 ? pure_cons : Fcons) (elt, Qnil);
+    if (defunflag < 0)
+      defunflag = EQ (elt, Qdefun);
+    else if (defunflag > 0)
+      read_pure = 1;
+  }
 }
 
 static int read_escape (Lisp_Object readcharfun) {

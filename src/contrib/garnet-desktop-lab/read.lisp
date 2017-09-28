@@ -5,6 +5,9 @@
 
 (in-package :elisp)
 
+(ql:quickload :esrap)
+(use-package ::esrap)
+
 (defparameter unrch nil)
 
 ;;; Elisp object
@@ -221,13 +224,15 @@
   (make-hash-table :test #'equal))
 
 (defun elisp-intern (symbol-string)
-  (let ((symbol (make-instance 'elisp-symbol)))
-    (with-slots   (name value function) symbol
-      (setf name (string-upcase symbol-string)
-	    value nil
-	    function nil)
-      (setf (gethash name *elisp-symbols*) symbol)
-      symbol)))
+  (let ((name (string-upcase symbol-string)))
+    (or (gethash name *elisp-symbols*)
+	(let ((symbol (make-instance 'elisp-symbol)))
+	  (with-slots   (name value function) symbol
+	    (setf name (string-upcase symbol-string)
+		  value nil
+		  function nil)
+	    (setf (gethash name *elisp-symbols*) symbol)
+	    symbol)))))
   
 
 ;; Note, we assume that we have the standard cast of characters.  In
@@ -250,12 +255,11 @@
 	(elisp-intern token))))
 
 (defparameter read1-tests
-  `((42 "43 (defu")
-    (nil "4i3 (defu")
+  `((43 "43 (defu")
     (,(elisp-intern "defun") "defun shell-mode ()")
+    (,(elisp-intern "4i3") "4i3 (defu")
     ( 43 "43")
     (42 ,(str "42" (string #\Newline) " "))))
-    
 
 (defun run-read1-tests ()
   (dolist (test read1-tests)
@@ -275,6 +279,7 @@
 		
 		
 
+  
 
 
 (defun readevalloop (readcharfun stream evalfun printflag)
@@ -365,5 +370,193 @@
 
 	(initially (setq i 0))
 	(for i next (if (> i 10) (terminate) (incf i)))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+;;; A semantic predicate for filtering out double quotes.
+
+(defun not-doublequote (char)
+  (not (eql #\" char)))
+
+(defun not-integer (string)
+  (when (find-if-not #'digit-char-p string)
+    t))
+
+;;; Utility rules.
+
+(defrule whitespace-characters (+ (or #\space #\tab #\newline #\Linefeed))
+  (:constant nil))
+
+
+(defparameter *whitespace-characters* '(#\space #\tab #\newline #\Linefeed))
+
+(defun is-not-special-char-p (char)
+  (and (graphic-char-p char)
+       (not (member char (union *whitespace-characters*
+				special-characters)))))
+
+(defrule alphanumeric (or (is-not-special-char-p character)))
+
+(defrule string-char (or (not-doublequote character) (and #\\ #\")))
+
+;;; Here we go: an S-expression is either a list or an atom, with
+;;; possibly leading whitespace.
+
+
+
+(defun non-newline-p (char)
+  (not (newline-p char)))
+
+(defun newline-p (char)
+  (and (member char '(#\Newline #\Linefeed #\Return))
+       t))
+
+(defrule non-newline (non-newline-p character))
+
+(defrule newline (newline-p character))
+
+(defrule comment-line  (and (? whitespace-characters)
+			    (+ #\;)
+			    (* non-newline)
+			    #\Newline))
+
+			  ;; (and 
+			  ;;      (* #\;)
+			  ;;      (+ non-newline)
+			  ;;      #\Newline)))
+			    (? #\Linefeed)))
+
+
+(defrule sexp (and (? whitespace-characters) (or magic list atom comment-line))
+  (:function second)
+  (:lambda (s &bounds start end)
+    (list s (cons start end))))
+
+(defrule magic "foobar"
+  (:constant :magic)
+  (:when (eq * :use-magic)))
+
+(defrule list (and #\( sexp (* sexp) (? whitespace-characters) #\)
+		   (? whitespace-characters))
+  (:destructure (p1 car cdr w1 p2 w2)
+    (declare (ignore p1 p2 w1 w2))
+    (cons car cdr)))
+
+(defrule atom (or string integer symbol))
+
+(defrule string (and #\" (* string-char) #\")
+  (:destructure (q1 string q2)
+    (declare (ignore q1 q2))
+    (text string)))
+
+(defrule integer (+ (or "0" "1" "2" "3" "4" "5" "6" "7" "8" "9"))
+  (:lambda (list)
+    (parse-integer (text list) :radix 10)))
+
+(defrule symbol (not-integer (+ alphanumeric))
+  ;; NOT-INTEGER is not strictly needed because ATOM considers INTEGER before
+  ;; a STRING, we know can accept all sequences of alphanumerics -- we already
+  ;; know it isn't an integer.
+  (:lambda (list)
+    (intern (text list))))
+
+;;;; Try these
+
+(parse 'sexp "FOO123")
+
+(parse 'sexp "123")
+
+(parse 'sexp "\"foo\"")
+
+(parse 'sexp "  (  1 2  3 (FOO\"foo\"123 )   )")
+
+(parse 'sexp "foobar")
+
+(let ((* :use-magic))
+  (parse 'sexp "foobar"))
+
+(describe-grammar 'sexp)
+
+(trace-rule 'sexp :recursive t)
+
+(parse 'sexp "(foo bar 1 quux)")
+
+(untrace-rule 'sexp :recursive t)
+
+(defparameter *orig* (rule-expression (find-rule 'sexp)))
+
+(change-rule 'sexp '(and (? whitespace) (or list symbol)))
+
+(parse 'sexp "(foo bar quux)")
+
+(parse 'sexp "(foo bar 1 quux)" :junk-allowed t)
+
+(change-rule 'sexp *orig*)
+
+(parse 'sexp "(foo bar 1 quux)" :junk-allowed t)
+
+
+
+(parse 'sexp "(defvar last)")
+
+(defparameter *parse-text* "(defvar last-input-start nil \"In a shell-mode buffer, marker for start of last unit of input.\")")
+
+(parse 'sexp *parse-text*)
+
+(defun top-level-filter (file-name)
+  (with-open-file (stream file-name)
+    (iter (for char next (or (read-char stream nil)
+			     (finish)))
+	  ;; eat up comments
+	  (when (char= char #\;)
+	    (iter (for char next (let ((comment-char (read-char stream nil)))
+				   (when (or (null comment-char)
+					     (char= comment-char #\Newline))
+				     (finish)))))
+	    (next-iteration))
+	  ;; eat up white space
+	  (when (member char '(#\Space #\Tab #\Return #\Linefeed))
+	    (next-iteration))
+	  (unread-char char stream)
+	  (finish))
+    (let ((el-file-contents
+	   (alexandria:read-stream-content-into-string stream)))
+      (when (and el-file-contents
+		 (> (length el-file-contents) 0))
+;;	el-file-contents))))
+	(parse 'sexp el-file-contents)))))
+
+	  
+	  (let ((val (read1 stream)))
+	    val))))
+	    (elisp-eval val)))))
+(parse 'sexp *parse-text*)
+
+
+(defun run-top-level-filter ()
+  (top-level-filter (str "/home/rett/dev/garnet/cl-garnet/src/contrib/"
+			 "garnet-desktop-lab/elisp/shell-partial.el")))
+
+
+
 
 
