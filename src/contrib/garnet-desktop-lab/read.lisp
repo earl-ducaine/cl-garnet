@@ -7,6 +7,96 @@
 
 (ql:quickload :esrap)
 (use-package ::esrap)
+(use-package ::alexandria)
+
+(defparameter special-characters '(#\" #\\ #\; #\?  #\( #\) #\. #\[ #\] #\#))
+(defparameter escape-character '(#\\))
+(defparameter generic-delimiters '(#\' #\` #\& #\% #\$ #\!))
+
+
+
+(defun not-doublequote (char)
+  (not (eql #\" char)))
+
+(defun is-not-special-char-p (char)
+  (and (graphic-char-p char)
+       (not (member char (union *whitespace-characters*
+				special-characters)))))
+
+
+
+(defparameter *whitespace-characters*
+  '(#\space #\tab #\Newline #\Return))
+
+(defun is-not-special-char-p (char)
+  (and (graphic-char-p char)
+       (not (member char (union *whitespace-characters*
+				special-characters)))))
+
+(defrule alphanumeric (or (is-not-special-char-p character)))
+
+(defrule string-char (or (not-doublequote character) (and #\\ #\")))
+
+(defrule whitespace-characters (+ (or #\space #\tab #\Newline #\Linefeed
+				      #\Return))
+  (:constant nil))
+
+(defrule string (and #\" (* string-char) #\")
+  (:destructure (q1 string q2)
+    (declare (ignore q1 q2))
+    (text string)))
+
+(defrule program-text (+ (or non-string string))
+  (:destructure (non-string str)
+		 (list non-string str)))
+
+(defrule programe-text2 (or (? whitespace-characters)
+			   (or magic list atom comment-line))
+  (:function second)
+  (:lambda (s &bounds start end)
+    (list s (cons start end))))
+
+
+(defrule non-string (+ alphanumeric)
+  (:lambda (text)
+    (text text)))
+
+
+;; comment
+(defrule program-text (or string  non-string))
+
+
+
+
+
+(defun textual-preprocessor (text)
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 (defparameter unrch nil)
 
@@ -17,7 +107,7 @@
 (defclass elisp-t (elisp-object)
   ())
 
-(defmethod readchar :around ((object elisp-tt))
+(defmethod readchar :around ((object elisp-t))
   (when unrch
     (let ((c unrch))
       (setf unrch nil)
@@ -367,7 +457,7 @@
 
 
 
-
+	
 	(initially (setq i 0))
 	(for i next (if (> i 10) (terminate) (incf i)))
 
@@ -559,4 +649,8 @@
 
 
 
+(defrule programe-text (and (? whitespace-characters) (or magic list atom comment-line))
+  (:function second)
+  (:lambda (s &bounds start end)
+    (list s (cons start end))))
 
