@@ -6,8 +6,8 @@
 (in-package :elisp)
 
 (ql:quickload :esrap)
-(use-package ::esrap)
-(use-package ::alexandria)
+(use-package :esrap)
+(use-package :alexandria)
 
 (defparameter special-characters '(#\" #\\ #\; #\?  #\( #\) #\. #\[ #\] #\#))
 (defparameter escape-character '(#\\))
@@ -18,13 +18,6 @@
 (defun not-doublequote (char)
   (not (eql #\" char)))
 
-(defun is-not-special-char-p (char)
-  (and (graphic-char-p char)
-       (not (member char (union *whitespace-characters*
-				special-characters)))))
-
-
-
 (defparameter *whitespace-characters*
   '(#\space #\tab #\Newline #\Return))
 
@@ -33,12 +26,23 @@
        (not (member char (union *whitespace-characters*
 				special-characters)))))
 
-(defrule alphanumeric (or (is-not-special-char-p character)))
+(defun is-not-special-char-p (char)
+  (and (graphic-char-p char)
+       (not (member char (union *whitespace-characters*
+				special-characters)))))
 
-(defrule string-char (or (not-doublequote character) (and #\\ #\")))
+;;(defrule alphanumeric (or (is-not-special-char-p character)))
 
-(defrule whitespace-characters (+ (or #\space #\tab #\Newline #\Linefeed
-				      #\Return))
+(defrule alphanumeric (graphic-char-p character))
+
+(defrule string-char (and (or (not-doublequote character) (and #\\ #\"))
+			  (graphic-char-p character)))
+
+(defrule comment (and #\! (* (graphic-char-p character)) #\Newline)
+  (:destructure (c comment nl)
+		(list c comment nl)))
+
+(defrule whitespace-characters (+ (or #\space #\tab #\Newline #\Return))
   (:constant nil))
 
 (defrule string (and #\" (* string-char) #\")
@@ -46,9 +50,9 @@
     (declare (ignore q1 q2))
     (text string)))
 
-(defrule program-text (+ (or non-string string))
-  (:destructure (non-string str)
-		 (list non-string str)))
+(defrule program-text (+ (or non-string string comment))
+  (:destructure (non-string &rest str)
+		 (cons non-string str)))
 
 (defrule programe-text2 (or (? whitespace-characters)
 			   (or magic list atom comment-line))
@@ -180,7 +184,7 @@
   "Don't use this yourself."
   (readchar *current-read-source*))
 					;
-;; export 
+;; export
 (defun elisp-load (file-str missing-ok)
   "Execute a file of Lisp code named FILE.
    First tries FILE with .elc appended, then tries with .el,
@@ -287,12 +291,12 @@
 (defun white-space-p (c)
   (or (char= c #\Space)
       (not (graphic-char-p c))))
-  
+
 
 (defun str (&rest args)
   (apply 'concatenate (cons 'string args)))
 
-;; delimiters:  '(#\' #\` #\& #\% #\$ #\!) 
+;; delimiters:  '(#\' #\` #\& #\% #\$ #\!)
 ;; #\Newline
 ;; alphanumericp: a-z, A-Z, 0-9,
 ;; White space:  #\Space and nongraphical-char-p
@@ -323,7 +327,7 @@
 		  function nil)
 	    (setf (gethash name *elisp-symbols*) symbol)
 	    symbol)))))
-  
+
 
 ;; Note, we assume that we have the standard cast of characters.  In
 ;; particular that our stream is either an ascii filestream or an
@@ -356,7 +360,7 @@
     (apply #'run-read1-test test)))
 
 (defun run-read1-test (expected-value stream-string)
-  (case 
+  (case
   (assert
    (with-input-from-string (stream stream-string)
      (apply comparator  (list expected-value (read1 stream))))
@@ -365,11 +369,11 @@
 
   ;; (with-input-from-string (stream "42")
   ;;   (read1 stream)))
-	     
-		
-		
 
-  
+
+
+
+
 
 
 (defun readevalloop (readcharfun stream evalfun printflag)
@@ -394,7 +398,7 @@
 		     (unread-char char stream)
 		     (let ((val (read1 stream)))
 		       (elisp-eval val))))
-	
+
 
 
 
@@ -446,7 +450,7 @@
 	   (setf c )))
 
 
-	
+
 	(let ((c #\Space)i)
 	  (iterate
 	   (for i next t)
@@ -457,7 +461,7 @@
 
 
 
-	
+
 	(initially (setq i 0))
 	(for i next (if (> i 10) (terminate) (incf i)))
 
@@ -529,7 +533,7 @@
 			    (* non-newline)
 			    #\Newline))
 
-			  ;; (and 
+			  ;; (and
 			  ;;      (* #\;)
 			  ;;      (+ non-newline)
 			  ;;      #\Newline)))
@@ -635,7 +639,7 @@
 ;;	el-file-contents))))
 	(parse 'sexp el-file-contents)))))
 
-	  
+
 	  (let ((val (read1 stream)))
 	    val))))
 	    (elisp-eval val)))))
@@ -653,4 +657,3 @@
   (:function second)
   (:lambda (s &bounds start end)
     (list s (cons start end))))
-
