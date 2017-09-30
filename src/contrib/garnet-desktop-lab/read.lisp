@@ -13,10 +13,14 @@
 (defparameter escape-character '(#\\))
 (defparameter generic-delimiters '(#\' #\` #\& #\% #\$ #\!))
 
-
+(defun non-string-char-p (char)
+  (and (not (eql #\" char))
+       (graphic-char-p char)
+       (not (eql #\! char))))
 
 (defun not-doublequote (char)
-  (not (eql #\" char)))
+  (and (not (eql #\" char))
+       (graphic-char-p char)))
 
 (defparameter *whitespace-characters*
   '(#\space #\tab #\Newline #\Return))
@@ -26,21 +30,20 @@
        (not (member char (union *whitespace-characters*
 				special-characters)))))
 
-(defun is-not-special-char-p (char)
-  (and (graphic-char-p char)
-       (not (member char (union *whitespace-characters*
-				special-characters)))))
-
 ;;(defrule alphanumeric (or (is-not-special-char-p character)))
+
 
 (defrule alphanumeric (graphic-char-p character))
 
-(defrule string-char (and (or (not-doublequote character) (and #\\ #\"))
-			  (graphic-char-p character)))
+(defrule string-char (or (not-doublequote character) (and #\\ #\")))
+
+(defrule non-string-char (or (non-string-char-p character) (and #\\ #\")))
+
 
 (defrule comment (and #\! (* (graphic-char-p character)) #\Newline)
   (:destructure (ex c nl)
-		 (cons (cons ex c) nl)))
+		(declare (ignore ex nl))
+		 (list :comment (coerce (cons #\! c) 'string))))
 
 (defrule whitespace-characters (+ (or #\space #\tab #\Newline #\Return))
   (:constant nil))
@@ -48,11 +51,16 @@
 (defrule string (and #\" (* string-char) #\")
   (:destructure (q1 string q2)
     (declare (ignore q1 q2))
-    (text string)))
+    (list :string string)))
 
-(defrule program-text (+ (or non-string string comment))
-  (:destructure (non-string &rest str)
-		 (cons non-string str)))
+(defrule non-comment (or string non-string)
+  (:destructure (string &rest str)
+		 (cons string str)))
+
+
+(defrule program-text (+ (or comment non-comment))
+  (:destructure (string &rest str)
+		 (cons string str)))
 
 (defrule programe-text2 (or (? whitespace-characters)
 			   (or magic list atom comment-line))
@@ -61,9 +69,9 @@
     (list s (cons start end))))
 
 
-(defrule non-string (+ alphanumeric)
+(defrule non-string (+ non-string-char)
   (:lambda (text)
-    (text text)))
+    (list :non-string (coerce text 'string))))
 
 
 ;; comment
