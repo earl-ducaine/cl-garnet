@@ -39,8 +39,8 @@
 			  (graphic-char-p character)))
 
 (defrule comment (and #\! (* (graphic-char-p character)) #\Newline)
-  (:destructure (c comment nl)
-		(list c comment nl)))
+  (:destructure (ex c nl)
+		 (cons (cons ex c) nl)))
 
 (defrule whitespace-characters (+ (or #\space #\tab #\Newline #\Return))
   (:constant nil))
@@ -67,7 +67,7 @@
 
 
 ;; comment
-(defrule program-text (or string  non-string))
+;;; (defrule program-text (or string  non-string))
 
 
 
