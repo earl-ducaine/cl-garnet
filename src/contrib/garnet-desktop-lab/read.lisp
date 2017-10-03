@@ -73,30 +73,70 @@
 
 
 
-(defun textual-preprocessor (text)
-)
+(defun textual-preprocessor (text))
+
+
+(defparameter current-call 'INTERACTORS::Find-Final-Feedback-Obj)
+
+(swank/sbcl::defxref :who-calls INTERACTORS::Find-Final-Feedback-Obj)
+
+(defparameter *ql-systems* (quicklisp-client:system-list))
+
+(defun who-calls (symbol)
+  (sb-introspect:who-calls symbol))
+
+(defun run-who-calls ()
+  (who-calls 'interactors::find-final-feedback-obj))
+
+(quicklisp-client:system-list)
+
+
+(quicklisp-client::name (first *ql-systems*))
+(quicklisp-client::system-file-name (first *ql-systems*))
+(quicklisp-client::release (first *ql-systems*))
+(quicklisp-client::dist (first *ql-systems*))
+(quicklisp-client::required-systems (first *ql-systems*))
+(quicklisp-client::metadata-name (first *ql-systems*))
+
+
+
+(ql:quickload 
+ (make-symbol (string-upcase (quicklisp-client::name (first *ql-systems*)))))
 
 
 
 
+(asdf::system-source-directory (asdf:find-system '1am))
 
 
 
+(defclass system (preference-mixin)
+  ((name
+    :initarg :name
+    :accessor name
+    :reader short-description)
+   (system-file-name
+    :initarg :system-file-name
+    :accessor system-file-name)
+   (release
+    :initarg :release
+    :accessor release
+    :reader preference-parent)
+   (dist
+    :initarg :dist
+    :accessor dist)
+   (required-systems
+    :initarg :required-systems
+    :accessor required-systems)
+   (metadata-name
+    :initarg :metadata-name
+    :accessor metadata-name))
+  (:default-initargs
+   :metadata-name "systems"))
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+;; build who-calls database for all quicklisp items
+INTERACTORS::Find-Final-Feedback-Obj
 
 
 
