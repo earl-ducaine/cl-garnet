@@ -90,6 +90,15 @@
 
 (defparameter *ql-systems* (quicklisp-client:system-list))
 
+
+;;; Operations that we'll need
+;;; All packages
+;;; All the symbols in a package
+;;; The root directory of the systmem that we're interested in
+;;; A function to check whether the symbol is define in one of the files
+
+
+
 (defun who-calls (symbol)
   (sb-introspect:who-calls symbol))
 
