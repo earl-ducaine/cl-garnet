@@ -1,3 +1,47 @@
+
+
+(defparameter *music-download-working-folder* #p"/home/rett/music/")
+
+
+(defparameter *last-out-stream* nil)
+(defparameter *last-err-stream* nil)
+(defparameter *last-err-code* nil)
+
+;; each item in the download queue should have the format:
+;; (:file-name <some-filename> :song-name <Some Name> :artist "Artists name")
+(defparameter *download-queue* '())
+(defparameter  *queue-lock*  (make-recursive-lock "queue-lock"))
+
+(defun enqueue-work-item (work-item)
+  (with-recursive-lock-held (*queue-lock*)
+    (push work-item *download-queue*)))
+
+(defun pop-work-item (work-item)
+  (let ((work-item))
+    (with-recursive-lock-held (*queue-lock*)
+      (setf work-item (pop *download-queue*)))
+    (download-decode-work-item work-item)))
+
+
+
+(defun download-decode-work-item (work-item)
+  (let ((*default-pathname-defaults* #p"/home/rett/music/")
+	(url "https://www.youtube.com/watch?v=eoWj65j27fA"))
+    (multiple-value-bind (out-stream err-stream code)
+	(asdf::run-program (list "youtube-dl" "-k" url) :output)
+      (setf *last-out-stream* out-stream)
+      (setf *last-err-stream* err-stream)
+      (setf *last-err-code* code)))
+  (
+
+
+
+(setf *default-pathname-defaults* #P"/dev")
+
+
+
+
+
 run-program
 
 
