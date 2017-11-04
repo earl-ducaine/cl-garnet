@@ -2,6 +2,8 @@
 
 (in-package :gem)
 
+(defvar *last-button-press* nil)
+
 ;;  Functions that will determine whether the display can be opened
 (defun get-full-display-name ()
   ;; If you have CLX, you most likely have this. (Except for allegro.)
@@ -94,6 +96,7 @@
   filling-style-gc)
 
 (defun display-info-printer (s stream ignore)
+  (declare (ignore ignore))
   (format stream "#G<GEM-DISPLAY-INFO ~A>" (display-info-display s)))
 
 ;;; A graphic context structure
@@ -157,6 +160,7 @@
         (screen-type (xlib::visual-info-class
                       (xlib::screen-root-visual-info
                        *default-x-screen*))))
+      (declare (ignore color-screen-types))
     (unless (eq screen-type :true-color)
       (error  (concatenate 'string
 	      "Garnett only supports true-color display.  All other "
@@ -193,6 +197,7 @@
        (format t "~%~A ~{ ~S~}" (car ,arguments) (cdr ,arguments))))
 
 (defvar *x-font-faces* '(:roman :bold :italic :bold-italic))
+(defparameter *root-window* nil)
 
 (defun get-stipple-schema-pixmap (stipple-schema root-window bitmap-p)
   (let ((root-plist (g-value stipple-schema :root-pixmap-plist)))
@@ -1270,9 +1275,7 @@ pixmap format in the list of valid formats."
 		     (create-garnet-event composite-event)
 		     nil))
 	     (format t "event: ~s!%" event)
-	     (push event composite-event)
-	     )
-	   )))
+	     (push event composite-event)))))
 
 (defun fetch-next-event (root-window ignore-keys)
   (let* ((display (the-display root-window))

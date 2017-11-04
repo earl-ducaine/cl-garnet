@@ -19,7 +19,10 @@
 	   pi/2
 	   pi3/2
 	   2pi -2pi
-	   short-pi))
+	   short-pi
+	   black
+	   white
+	   *garnet-break-key*))
 
 (defpackage :kr-debug
   (:use :common-lisp))
@@ -125,7 +128,6 @@
 	   init-device
 	   make-display-info))
 
-
 (defpackage :gem
   (:use :common-lisp :kr :kr-debug)
   (:export *exposure-event-mask*
@@ -158,17 +160,22 @@
 	   display-info-root-window
 	   display-info-screen
 	   init-device
-	   make-display-info))
+	   make-display-info)
+  (:import-from :garnet-utils :black)
+  (:import-from :garnet-utils :white))
 
 (defpackage :interactors
   (:use :common-lisp :kr)
   (:nicknames :inter)
-  (:export *garnet-break-key* *left-button* *trans-from-file*
+  (:import-from :garnet-utils *garnet-break-key*)
+  (:export *garnet-break-key*
+	   *left-button* *trans-from-file*
 	   ;; for animation
 	   start-animator Stop-Animator abort-animator animator-interactor
 	   animator-wrap animator-bounce Reset-All-Timer-Processes
 	   ;; entering and leaving main event loop
-	   main-event-loop exit-main-event-loop *garnet-break-key*
+	   main-event-loop
+	   exit-main-event-loop
 	   ;; waiting for an interaction to complete
 	   Interaction-Complete Wait-Interaction-Complete
 	   ;;explicit control of interactors
@@ -182,9 +189,16 @@
 	   Reset-Inter-Levels Print-Inter-Levels Print-Inter-Windows
 	   trace-inter untrace-inter *debug-next-inter* Do-All-Interactors
 	   ;; interactor event structure (copy of X's event structure)
-	   *Current-Event* *Garnet-Break-Key*
-	   event-x event-y event-char event-code event-mousep
-	   event-downp event-window event-timestamp make-event
+	   *Current-Event*
+	   event-x
+	   event-y
+	   event-char
+	   event-code
+	   event-mousep
+	   event-downp
+	   event-window
+	   event-timestamp
+	   make-event
 	   ;; for controlling double clicks
 	   *double-click-time*
 	   ;; key translations for text-inter
@@ -204,7 +218,6 @@
 	   ;; Export these if debugging is enabled.
 	   #+garnet-debug *int-debug* #+garnet-debug *int-trace*
 	   ))
-
 
 (defpackage :demo
   (:use :common-lisp :kr))
@@ -268,72 +281,118 @@
 (defpackage :test
   (:use :common-lisp))
 
-(defpackage :GARNET-UTILS (:use :COMMON-LISP) (:nicknames :GU))
-(defpackage :KR-DEBUG (:use :COMMON-LISP))
+(defpackage :opal
+  (:use :common-lisp :kr)
+  (:import-from :garnet-utils :black)
+  (:import-from :garnet-utils :white))
 
-(defpackage :KR (:use :COMMON-LISP :KR-DEBUG))
-(defpackage :OPAL (:use :COMMON-LISP :KR))
+(defpackage :garnet-debug
+  (:use :common-lisp :kr :opal) (:nicknames :gd))
 
-(defpackage :GARNET-DEBUG (:use :COMMON-LISP :KR :OPAL) (:nicknames :GD))
-(defpackage :GILT (:use :COMMON-LISP :KR))
-(defpackage :C32 (:use :COMMON-LISP :KR))
-(defpackage :LAPIDARY (:use :COMMON-LISP :KR))
+(defpackage :gilt (:use :common-lisp :kr))
 
+(defpackage :c32 (:use :common-lisp :kr))
 
-(defpackage :AGATE (:use :COMMON-LISP :KR))
-(defpackage :DEMO-3D (:use :COMMON-LISP :KR) (:export DO-GO DO-STOP))
+(defpackage :lapidary (:use :common-lisp :kr))
 
-(defpackage :XOMAX
-  (:use :COMMON-LISP :KR)
-  (:export DO-GO DO-STOP))
+(defpackage :agate (:use :common-lisp :kr))
 
-(defpackage :DEMO-MULTIWIN (:use :KR :COMMON-LISP) (:export DO-GO DO-STOP))
-(defpackage :DEMO-MULTIFONT (:use :COMMON-LISP KR) (:export DO-GO DO-STOP))
-(defpackage :DEMO-ANIMATOR (:use :COMMON-LISP :KR) (:export DO-GO DO-STOP))
-(defpackage :DEMO-ANGLE (:use :KR :COMMON-LISP) (:export DO-GO DO-STOP))
-(defpackage :DEMO-OTHELLO (:use :KR :COMMON-LISP) (:nicknames :DOTH)
-	    (:export DO-GO DO-STOP START-GAME STOP-GAME SET-SCORE))
-(defpackage :DEMO-PIXMAP (:use :COMMON-LISP :KR) (:export DO-GO DO-STOP))
-(defpackage :DEMO-ARITH (:use :KR :COMMON-LISP) (:export DO-GO DO-STOP))
-(defpackage :DEMO-SCHEMA-BROWSER (:use :COMMON-LISP :KR)
-	    (:export DO-GO DO-STOP SCHEMA-BROWSER SCHEMA-BROWSER-WIN
-		     SCHEMA-BROWSER-TOP-AGG))
-(defpackage :DEMO-ARRAY (:use :COMMON-LISP :KR) (:export DO-GO DO-STOP))
-(defpackage :DEMO-SCROLLBAR (:use :COMMON-LISP :KR)
-	    (:export DO-GO DO-STOP
-		     MAC-obj MAC-Go MAC-Stop
-		     Open-obj Open-Go Open-Stop
-		     NEXT-obj NEXT-Go NEXT-Stop
-		     Motif-obj Motif-Go Motif-Stop))
-(defpackage :DEMO-CLOCK (:use :KR :COMMON-LISP) (:export DO-GO DO-STOP))
-(defpackage :DEMO-SEQUENCE (:use :COMMON-LISP :KR) (:export DO-GO DO-STOP))
-(defpackage :DEMO-EDITOR (:use :KR :COMMON-LISP) (:export DO-GO DO-STOP))
-(defpackage :DEMO-TEXT (:use :COMMON-LISP :KR) (:export DO-GO DO-STOP))
-(defpackage :DEMO-FILE-BROWSER (:use :COMMON-LISP :KR)
-	    (:export DO-GO DO-STOP FILE-BROWSER FILE-BROWSER-WIN
-		     FILE-BROWSER-TOP-AGG))
-(defpackage :DEMO-TRUCK (:use :KR :COMMON-LISP) (:export DO-GO DO-STOP))
-(defpackage :DEMO-GADGETS (:use :COMMON-LISP :KR) (:export DO-GO DO-STOP))
-(defpackage :DEMO-TWOP (:use :KR :COMMON-LISP) (:export DO-GO DO-STOP))
-(defpackage :DEMO-GESTURE (:use :KR :COMMON-LISP) (:export DO-GO DO-STOP))
-(defpackage :DEMO-UNISTROKES (:use :COMMON-LISP :KR :INTER) (:export DO-GO DO-STOP))
-(defpackage :DEMO-GRAPH (:use :COMMON-LISP :KR)
-	    (:export DO-GO DO-STOP SCHEMA-GRAPH DEMO-GRAPH-ERROR-GADGET ROOT-BOX
-		     RELAYOUT DEMO-GRAPH-WIN))
-(defpackage :DEMO-VIRTUAL-AGG (:use :COMMON-LISP :KR) (:export DO-GO DO-STOP))
-(defpackage :DEMO-GROW (:use :KR :COMMON-LISP) (:export DO-GO DO-STOP))
-(defpackage :DEMO-XASPERATE (:use :COMMON-LISP :KR) (:export DO-GO DO-STOP))
-(defpackage :DEMO-LOGO (:use :COMMON-LISP :KR) (:export DO-GO DO-STOP RE-ANIMATE))
-(defpackage :DEMOS-CONTROLLER (:use :COMMON-LISP :KR) (:export DO-GO DO-STOP MESSAGE))
-(defpackage :DEMO-MANYOBJS (:use :COMMON-LISP :KR) (:export DO-GO DO-STOP MOVE))
-(defpackage :DEMO-MENU (:use :COMMON-LISP :KR) (:export DO-GO DO-STOP))
-(defpackage :GARNET-CALCULATOR (:use :COMMON-LISP :KR)
-	    (:export START-CALC STOP-CALC DO-GO DO-STOP))
-(defpackage :DEMO-MODE (:use :COMMON-LISP :KR) (:export DO-GO DO-STOP))
-(defpackage :GARNETDRAW (:use :COMMON-LISP :KR) (:export DO-GO DO-STOP))
-(defpackage :DEMO-MOTIF (:use :COMMON-LISP :KR) (:export DO-GO DO-STOP))
-(defpackage :MGE (:use :COMMON-LISP :KR)
-	    (:export DO-GO DO-STOP
-		     CREATE-PIECE DESTROY-PIECE DESTROY-ALL-PIECES
-		     GO-INITIALIZE EDITOR-SHOW-WINDOW))
-(defpackage :DEMO-MOVELINE (:use :KR :COMMON-LISP) (:export DO-GO DO-STOP))
+(defpackage :demo-3d (:use :common-lisp :kr) (:export do-go do-stop))
+
+(defpackage :xomax
+  (:use :common-lisp :kr)
+  (:export do-go do-stop))
+
+(defpackage :demo-multiwin (:use :kr :common-lisp) (:export do-go do-stop))
+
+(defpackage :demo-multifont (:use :common-lisp kr) (:export do-go do-stop))
+
+(defpackage :demo-animator (:use :common-lisp :kr) (:export do-go do-stop))
+
+(defpackage :demo-angle (:use :kr :common-lisp) (:export do-go do-stop))
+
+(defpackage :demo-othello (:use :kr :common-lisp) (:nicknames :doth)
+	    (:export do-go do-stop start-game stop-game set-score))
+
+(defpackage :demo-pixmap (:use :common-lisp :kr) (:export do-go do-stop))
+
+(defpackage :demo-arith (:use :kr :common-lisp) (:export do-go do-stop))
+
+(defpackage :demo-schema-browser (:use :common-lisp :kr)
+	    (:export do-go do-stop schema-browser schema-browser-win
+		     schema-browser-top-agg))
+(defpackage :demo-array (:use :common-lisp :kr) (:export do-go do-stop))
+
+(defpackage :demo-scrollbar (:use :common-lisp :kr)
+	    (:export do-go do-stop
+		     mac-obj mac-go mac-stop
+		     open-obj open-go open-stop
+		     next-obj next-go next-stop
+		     motif-obj motif-go motif-stop))
+(defpackage :demo-clock (:use :kr :common-lisp) (:export do-go do-stop))
+
+(defpackage :demo-sequence (:use :common-lisp :kr) (:export do-go do-stop))
+
+(defpackage :demo-editor (:use :kr :common-lisp) (:export do-go do-stop))
+
+(defpackage :demo-text (:use :common-lisp :kr) (:export do-go do-stop))
+
+(defpackage :demo-file-browser (:use :common-lisp :kr)
+	    (:export do-go do-stop file-browser file-browser-win
+		     file-browser-top-agg))
+(defpackage :demo-truck (:use :kr :common-lisp) (:export do-go do-stop))
+
+(defpackage :demo-gadgets (:use :common-lisp :kr) (:export do-go do-stop))
+
+(defpackage :demo-twop (:use :kr :common-lisp) (:export do-go do-stop))
+
+(defpackage :demo-gesture (:use :kr :common-lisp) (:export do-go do-stop))
+
+(defpackage :demo-unistrokes
+  (:use :common-lisp :kr :inter)
+  (:export do-go do-stop))
+
+(defpackage :demo-graph (:use :common-lisp :kr)
+	    (:export do-go do-stop schema-graph
+		     demo-graph-error-gadget root-box relayout
+		     demo-graph-win))
+
+(defpackage :demo-virtual-agg
+  (:use :common-lisp :kr)
+  (:export do-go do-stop))
+
+(defpackage :demo-grow (:use :kr :common-lisp) (:export do-go do-stop))
+
+(defpackage :demo-xasperate
+  (:use :common-lisp :kr)
+  (:export do-go do-stop))
+
+(defpackage :demo-logo
+  (:use :common-lisp :kr)
+  (:export do-go do-stop re-animate))
+
+(defpackage :demos-controller
+  (:use :common-lisp :kr)
+  (:export do-go do-stop message))
+
+(defpackage :demo-manyobjs
+  (:use :common-lisp :kr)
+  (:export do-go do-stop move))
+
+(defpackage :demo-menu (:use :common-lisp :kr) (:export do-go do-stop))
+
+(defpackage :garnet-calculator (:use :common-lisp :kr)
+	    (:export start-calc stop-calc do-go do-stop))
+
+(defpackage :demo-mode (:use :common-lisp :kr) (:export do-go do-stop))
+
+(defpackage :garnetdraw (:use :common-lisp :kr) (:export do-go do-stop))
+
+(defpackage :demo-motif (:use :common-lisp :kr) (:export do-go do-stop))
+
+(defpackage :mge (:use :common-lisp :kr)
+	    (:export do-go do-stop
+		     create-piece destroy-piece destroy-all-pieces
+		     go-initialize editor-show-window))
+
+(defpackage :demo-moveline (:use :kr :common-lisp) (:export do-go do-stop))

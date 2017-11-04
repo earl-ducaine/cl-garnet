@@ -14,11 +14,8 @@
 
 ;; Hitting the key *garnet-break-key* will cause an exit from the
 ;; main-event-loop and exit from replaying a transcript.
-(defvar *Garnet-Break-Key* :F1)
 
-
-;;;  Functions to deal with transcripts
-;;
+;;  Functions to deal with transcripts
 
 (defparameter *trans-from-file* NIL) ; file to read from
 (defparameter *trans-to-file* NIL) ; file to save to

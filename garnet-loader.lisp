@@ -1,6 +1,6 @@
 ;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: COMMON-LISP-USER  -*-
 
-(in-package :COMMON-LISP-USER)
+(in-package :common-lisp-user)
 
 ;; Not likely to be anywhere in the world where this would be useful.
 (defparameter garnet-version-number "3.3.post")
@@ -23,6 +23,7 @@
 ;; to a runtime special variable that dynamically controls this.  That
 ;; will forfit code size, but will still allow for optimizing
 ;; production code.
+
 (defvar garnet-garnet-debug t)
 (if garnet-garnet-debug
     (pushnew :garnet-debug *features*)
@@ -77,36 +78,6 @@
 ;; 3. Otherwise (for 'production' builds) just set Garnet-Compile-Debug-Mode
 ;;    to nil and leave everything else alone.")
 
-;; (when default-garnet-proclaim
-;;   (proclaim default-garnet-proclaim))
-
-
-;;  (defvar load-aggregraphs-p NIL)
-;;   (defvar load-debug-p #+garnet-debug T #-garnet-debug NIL)
-;;  (defvar load-gadgets-p NIL)
-;;   (defvar load-demos-p NIL)
-;;   (defvar load-protected-eval-p T)
-;;  (defvar load-lapidary-p t)
-;;  (defvar load-gilt-p NIL)
-;;   (defvar load-c32-p NIL)
-
-(defvar Your-Garnet-Pathname
-  (asdf:system-source-directory :xoanon.gui.garnet)
-  "Root of the Garnet source directory tree.")
-
-;; ;; Ansi compliant way to find the build directory.
-;; ;; If this doesn't work for some reason, just hard-code the pathname
-;; ;; here.
-;; (namestring
-;;  (make-pathname
-;;   :directory
-;;   ;; Hard coded directory path example.
-;;   ;; '(:ABSOLUTE "usr" "local" "lib" "lisp" "garnet")
-;;   ;; Let system determine directory path.
-;;   (pathname-directory *garnet-load-truename*)))
-;; "Root of the Garnet directory tree.")
-
-
 (defun append-directory (directory sub-directory)
   "This is a little utility for accessing the subdirectory of a
    directory. It assumes that 'sub-directory' is directly under
@@ -117,26 +88,18 @@
                     (list sub-directory))))
     (make-pathname :directory (append dir subdir))))
 
-
 (defun get-garnet-binary-pathname ()
   (let ((directory-name "src"))
-    (append-directory your-garnet-pathname directory-name)))
+    (append-directory org.xoanonos.asdf-app-config:*base-directory* directory-name)))
 
-
-(defvar garnet-src-pathname (append-directory  your-garnet-pathname "src"))
-(defvar garnet-lib-pathname (append-directory your-garnet-pathname "lib"))
+(defvar garnet-src-pathname (append-directory  org.xoanonos.asdf-app-config:*base-directory* "src"))
+(defvar garnet-lib-pathname (append-directory org.xoanonos.asdf-app-config:*base-directory* "lib"))
 (defvar garnet-binary-pathname (get-garnet-binary-pathname))
 
-;; (defvar Garnet-KR-Pathname
-;;   (append-directory Garnet-Binary-Pathname "kr"))
-;; (defvar Garnet-Gworld-Src
-;;   (append-directory Garnet-Src-Pathname "gworld"))
-;; (defvar Garnet-Gworld-Pathname
-;;   (append-directory Garnet-Binary-Pathname "gworld"))
-(defvar Garnet-Gem-Src
-  (append-directory Garnet-Src-Pathname "gem"))
-(defvar Garnet-Gem-Pathname
-  (append-directory Garnet-Binary-Pathname "gem"))
+;; (defvar Garnet-Gem-Src
+;;   (append-directory Garnet-Src-Pathname "gem"))
+;; (defvar Garnet-Gem-Pathname
+;;   (append-directory Garnet-Binary-Pathname "gem"))
 (defvar Garnet-Opal-Src
   (append-directory Garnet-Src-Pathname "opal"))
 (defvar Garnet-Opal-Pathname
@@ -208,9 +171,10 @@
   (append-directory Garnet-Lib-Pathname "gesture"))
 
 ;;; Names of loader files.
-(defparameter Garnet-Gem-Loader (merge-pathnames "gem-loader" Garnet-Gem-PathName))
+;;;(defparameter Garnet-Gem-Loader (merge-pathnames "gem-loader" Garnet-Gem-PathName))
 
 (defparameter Garnet-Inter-Loader (merge-pathnames "inter-loader" Garnet-Inter-PathName))
+
 ;;;(defparameter Garnet-Multifont-Loader (merge-pathnames "multifont-loader" Garnet-Opal-PathName))
 (defparameter Garnet-Gesture-Loader (merge-pathnames "gesture-loader" Garnet-Gesture-PathName))
 (defparameter Garnet-PS-Loader (merge-pathnames "ps-loader" Garnet-PS-PathName))
@@ -229,10 +193,7 @@
 ;;; Target directories (binarys)
   `(("gg"                 . ,Garnet-Gadgets-PathName)
     ("gadgets"            . ,Garnet-Gadgets-PathName)
-    ;;    ("utils"              . ,Garnet-Utils-PathName)
-    ;;    ("kr"                 . ,Garnet-KR-PathName)
-    ;;    ("gworld"             . ,Garnet-Gworld-Pathname)
-    ("gem"                . ,Garnet-Gem-Pathname)
+;;    ("gem"                . ,Garnet-Gem-Pathname)
     ("opal"               . ,Garnet-Opal-Pathname)
     ("truetype"           . ,Garnet-Truetype-PathName)
     ("inter"              . ,Garnet-Inter-PathName)
@@ -249,13 +210,8 @@
     ("contrib"            . ,Garnet-Contrib-PathName)
     ("protected-eval"     . ,Garnet-Protected-Eval-PathName)
 ;;; Source directories.
-;;;    ("utils-src"          . ,Garnet-Utils-Src)
-    ;; ("kr-src"             . ,Garnet-KR-Src)
-    ;;    ("gworld-src"         . ,Garnet-Gworld-Src)
-    ("gem-src"            . ,Garnet-Gem-Src)
+;;    ("gem-src"            . ,Garnet-Gem-Src)
     ("opal-src"           . ,Garnet-Opal-Src)
-    #-(and)
-    ("truetype-src"       . ,Garnet-Truetype-Src)
     ("inter-src"          . ,Garnet-Inter-Src)
     ("gesture-src"        . ,Garnet-Gesture-Src)
     ("gestures-src"       . ,Garnet-Gesture-Src)
@@ -270,12 +226,9 @@
     ("c32-src"            . ,Garnet-C32-Src)
     ("lapidary-src"       . ,Garnet-Lapidary-Src)
     ("contrib-src"        . ,Garnet-Contrib-Src)
-    ("protected-eval-src" . ,Garnet-Protected-eval-Src)
-    ))
+    ("protected-eval-src" . ,Garnet-Protected-eval-Src)))
 
-
 ;;; The actual loader code.
-;;
 (defun Add-Garnet-Load-Prefix (prefix pathname)
   (push (cons prefix pathname) Garnet-Load-Alist))
 

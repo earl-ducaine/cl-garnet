@@ -2,15 +2,20 @@
 ;;; This file was written by Earl Ducaine and is released under the
 ;;; MIT license.
 
-(in-package "COMMON-LISP-USER")
+(defpackage :org.xoanonos.asdf-app-config
+  (:export :*base-directory*
+	   :*garnet-load-truename*))
 
-(defparameter *garnet-load-truename* *load-truename*)
+(defparameter org.xoanonos.asdf-app-config:*base-directory*
+  (make-pathname :name nil :type nil :defaults *load-truename*))
+
+(defparameter org.xoanonos.asdf-app-config:*garnet-load-truename*
+  org.xoanonos.asdf-app-config:*base-directory*)
 
 (setf (get :garnet-modules :inter) t)
 (setf (get :garnet-modules :multifont) t)
 
-(asdf:defsystem :xoanon.gui.garnet
-  ;; sb-posix means that currently only sbcl can load Garnet.
+(asdf:defsystem :org.xoanonos.gui.garnet
   :depends-on (:clx :zpb-ttf :cl-vectors :cl-paths-ttf :cl-aa :cl-fad
 		    :cl-store :trivial-features :cl-aa-misc :alexandria :cl-ppcre)
   :components
@@ -20,7 +25,8 @@
 	    :depends-on (:package)
 	    :components
 	    ((:file "garnet-loader")
-	     (:file "src/utils/general")))
+	     (:file "src/utils/general")
+	     (:file "src/utils/global")))
    (:module kr
    	    :pathname "src/kr"
    	    :depends-on (:utils)
@@ -67,8 +73,7 @@
 	     (:file "virtual-aggregates")
 	     (:file "pixmaps")
 	     (:file "open-and-close")
-	     (:file "opal-init")
-	     ))
+	     (:file "opal-init")))
    (:module inter
    	    :pathname "src/inter"
    	    :depends-on (:utils :gem :kr :opal)
@@ -118,8 +123,7 @@
 	     (:file "rectangle-conflict-object")
 	     (:file "aggregraphs")
 	     (:file "scalable-aggregraph")
-	     (:file "scalable-aggregraph-image")
-	     ))
+	     (:file "scalable-aggregraph-image")))
    (:module gadgets
    	    :pathname "src/gadgets"
    	    :depends-on (:utils :gem :kr :opal :inter :ps :aggregadgets)
@@ -194,8 +198,7 @@
    	    :pathname "src/debug"
    	    :depends-on (:utils :gem :kr :opal :ps :gadgets)
    	    :components
-	    (
-	     ;;;(:file "debug-compiler")
+	    (;;;(:file "debug-compiler")
 	     (:file "debug-fns")
 	     (:file "objsize")
 	     (:file "inspector")
@@ -265,8 +268,7 @@
 	     (:file "garnetdraw")
 	     (:file "demos-controller")
 	     (:file "tour")
-	     (:file "tour-transcript")
-	     ))
+	     (:file "tour-transcript")))
    (:module :garnet-desktop-lab
 	    :pathname "src/contrib/garnet-desktop-lab"
 	    :depends-on (:demos)
@@ -309,8 +311,7 @@
 	     (:file "pop-up-ask-object")
 	     (:file "pop-up-functions")
 	     (:file "c32dialog")
-	     (:file "c32-lapidary")
-	     ))
+	     (:file "c32-lapidary")))
    (:module gilt
    	    :pathname "src/gilt"
    	    :depends-on (:gadgets)
@@ -434,8 +435,7 @@
 	     (:file "event-test")
 	     (:file "keytrans")
 	     (:file "trace")
-	     (:file "util")))
-   ))
+	     (:file "util")))))
 
 (in-package :common-lisp-user)
 
