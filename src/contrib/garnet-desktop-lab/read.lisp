@@ -81,8 +81,93 @@
 
 
 
-(defun textual-preprocessor (text)
-)
+(defun textual-preprocessor (text))
+
+
+(defparameter current-call 'INTERACTORS::Find-Final-Feedback-Obj)
+
+(swank/sbcl::defxref :who-calls INTERACTORS::Find-Final-Feedback-Obj)
+
+(defparameter *ql-systems* (quicklisp-client:system-list))
+
+
+;;; Operations that we'll need
+;;; All packages     (list-all-packages)
+;;; All the symbols in a package
+;;; The root directory of the systmem that we're interested in
+;;; A function to check whether the symbol is define in one of the files
+
+
+
+
+(defun run-dir-ancestor-p ()
+  (dir-ancestor-p
+   #P"/home/rett/quicklisp/dists/quicklisp/software/cl-fad-0.7.4/"
+   #P"/home/rett/quicklisp/dists/quicklisp/software/cl-fad-0.7.4/path.lisp"))
+
+
+(defun dir-ancestor-p (ancestor path)  
+  (let ((path (cl-fad:pathname-directory-pathname path)))
+    (cond ((cl-fad:pathname-equal ancestor path)
+	   t)
+	  ((not (cl-fad:pathname-equal path #p"/"))
+	   (dir-ancestor-p ancestor (cl-fad:pathname-parent-directory path)))
+	  (t
+	   nil))))
+
+
+
+(ql:quickload :cl-fad)
+(let ((ancestor  #P"/home/rett/quicklisp/dists/quicklisp/software/cl-fad-0.7.4/")
+      (path #P"/home/rett/quicklisp/dists/quicklisp/software/cl-fad-0.7.4/path.lisp"))
+  (cl-fad:pathname-equal ancestor (cl-fad:pathname-directory-pathname path)))
+
+(cl-fad:pathname-directory-pathname path)
+
+
+
+(defun run-get-all-functions-in-package ()
+  (get-all-functions-in-package (car (list-all-packages))))
+
+
+(defun get-all-functions-in-package (package)
+  (let (symbols)
+    (do-symbols (symbol package symbols)
+      (when (fboundp symbol)
+	(push symbol symbols)))))
+
+(defun get-source-directory ()
+    (asdf::system-source-directory (asdf:find-system 'cl-fad)))
+
+
+(let (source-locations)
+  (dolist (def  (run-get-all-functions-in-package) source-locations)
+    (sb-introspect:find-definition-source (fdefinition def))
+    (push (sb-introspect:find-definition-source (fdefinition def))
+	  source-locations)))
+
+
+
+(defun who-calls (symbol)
+  (sb-introspect:who-calls symbol))
+
+(defun run-who-calls ()
+  (who-calls 'interactors::find-final-feedback-obj))
+
+(quicklisp-client:system-list)
+
+
+(quicklisp-client::name (first *ql-systems*))
+(quicklisp-client::system-file-name (first *ql-systems*))
+(quicklisp-client::release (first *ql-systems*))
+(quicklisp-client::dist (first *ql-systems*))
+(quicklisp-client::required-systems (first *ql-systems*))
+(quicklisp-client::metadata-name (first *ql-systems*))
+
+
+
+(ql:quickload 
+ (make-symbol (string-upcase (quicklisp-client::name (first *ql-systems*)))))
 
 
 
@@ -91,20 +176,33 @@
 
 
 
+(defclass system (preference-mixin)
+  ((name
+    :initarg :name
+    :accessor name
+    :reader short-description)
+   (system-file-name
+    :initarg :system-file-name
+    :accessor system-file-name)
+   (release
+    :initarg :release
+    :accessor release
+    :reader preference-parent)
+   (dist
+    :initarg :dist
+    :accessor dist)
+   (required-systems
+    :initarg :required-systems
+    :accessor required-systems)
+   (metadata-name
+    :initarg :metadata-name
+    :accessor metadata-name))
+  (:default-initargs
+   :metadata-name "systems"))
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+;; build who-calls database for all quicklisp items
+INTERACTORS::Find-Final-Feedback-Obj
 
 
 
