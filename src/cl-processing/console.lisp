@@ -11,7 +11,7 @@
 ;;;
 ;;; This is intended as a test and demonstration of the text interactor
 ;;; as part of the Garnet project.
-;;; 
+;;;
 ;;; Call (Do-Go) to start and (Do-Stop) to stop
 ;;;
 ;;; Designed by Brad A. Myers
@@ -19,10 +19,10 @@
 
 (in-package :cl-processing)
 
-(defun read-stream-into-string (stream)
-  (let ((scratch (make-string 4096)))
-    (loop for read = (read-sequence scratch stream)
-          while (plusp read) sum read)))
+;; (defun read-stream-into-string (stream)
+;;   (let ((scratch (make-string 4096)))
+;;     (loop for read = (read-sequence scratch stream)
+;;           while (plusp read) sum read)))
 
 (defun read-stream-into-string (stream)
   (let ((data ""))
@@ -331,7 +331,7 @@
     (:start-where `(:list-element-of ,mouse-inter :text-list :type
 				     ,opal:multifont-text))
     (:match-obj message))
-      
+
   (inter:set-focus focus-inter text1)
   (opal:update win)
 
@@ -390,4 +390,3 @@ Font changing:
                 (Common-Lisp-User::Garnet-Note-Quitted "DEMO-MULTIFONT"))
    )
 )
-

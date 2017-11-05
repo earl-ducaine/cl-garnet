@@ -9,11 +9,6 @@
   ;; If you have CLX, you most likely have this. (Except for allegro.)
   (xlib::getenv "DISPLAY"))
 
-(defun get-display-name (display)
-  ;; The display name is everything up to the first colon.
-  (unless (find #\: display)
-    (error "The display specification  \"~A\" is ill-formed: missing colon" display))
-  (subseq display 0 (position #\: display)))
 
 (defun get-display-number (display)
   ;; The display number is everything from the colon to the period (if
@@ -29,6 +24,21 @@
       (unless (numberp display-number)
         (error "The display specification  \"~A\" is invalid: bad display number" display))
       display-number)))
+
+;; (defun get-display-number (display)
+;;   ;; The display number is everything from the colon to the period (if
+;;   ;; it is present).
+;;   (let* ((colon-pos (position #\: display :from-end t))
+;;          (period-pos (and colon-pos (position #\. display :start colon-pos))))
+;;     (unless colon-pos
+;;       (error "The display specification  \"~A\" is ill-formed: missing colon" display))
+;;     (let ((display-number
+;;            (ignore-errors
+;;              (parse-integer
+;;               (subseq display (1+ colon-pos) period-pos)))))
+;;       (unless (numberp display-number)
+;;         (error "The display specification  \"~A\" is invalid: bad display number" display))
+;;       display-number)))
 
 ;; (defun verify-display-can-be-opened ()
 ;;   (let* (val errorp)
@@ -1099,6 +1109,10 @@ pixmap format in the list of valid formats."
   (declare (ignore message args))
   )
 
+#+debug-event-handler
+(defmacro event-handler-debug (message &rest args)
+  `(format t "event-handler ~S   ~S~%" ,message ',args))
+
 
 (defun x-event-handler (root-window ignore-keys)
   (let ((display (the-display root-window)))
@@ -1261,6 +1275,8 @@ pixmap format in the list of valid formats."
 	 (let* ((building-composit-event nil)
 		(valid-event nil)
 		(composite-event nil))
+	   (declare (ignore building-composit-event))
+	   (declare (ignore valid-event))
 	   (do* ((event (fetch-next-event root-window ignore-keys)
 			(fetch-next-event root-window ignore-keys))
 		 (composite-event (if event
@@ -2098,27 +2114,26 @@ pixmap format in the list of valid formats."
 ;; (defun get-full-display-name ()
 ;;   (sb-posix:getenv "DISPLAY"))
 
+
+
+;; (defun get-display-name (display)
+;;   ;; The display name is everything up to the first colon.
+;;   (unless (find #\: display)
+;;     (error "The display specification  \"~A\" is ill-formed: missing colon" display))
+;;   (subseq display 0 (position #\: display)))
+
+
 ;; FMG Rewrote the following three functions just to make
 ;; them lispier.
 (defun get-display-name (display)
   "This function takes a full display name and, somewhat misleadingly,
    returns the HOST name, stripping off the display number."
+  ;; The display name is everything up to the first colon.
+  (unless (find #\: display)
+    (error "The display specification  \"~A\" is ill-formed: missing colon" display))
   (subseq display 0 (position #\: display :test #'char=)))
 
-(defun get-display-number (display)
-  ;; The display number is everything from the colon to the period (if
-  ;; it is present).
-  (let* ((colon-pos (position #\: display :from-end t))
-         (period-pos (and colon-pos (position #\. display :start colon-pos))))
-    (unless colon-pos
-      (error "The display specification  \"~A\" is ill-formed: missing colon" display))
-    (let ((display-number
-           (ignore-errors
-             (parse-integer
-              (subseq display (1+ colon-pos) period-pos)))))
-      (unless (numberp display-number)
-        (error "The display specification  \"~A\" is invalid: bad display number" display))
-      display-number)))
+
 
 (defun get-screen-number (display-name)
   (let*  ((colon-pos (position #\: display-name :from-end t))
@@ -2562,8 +2577,6 @@ the X drawable."
 ;;; Make the initializer function available to the outside world.
 ;; (setf (get :garnet-modules :gem) t)
 
-(defmacro event-handler-debug (message &rest args)
-  `(format t "event-handler ~S   ~S~%" ,message ',args))
 
 (defun x-draw-rectangle (window left top width height function
                          line-style fill-style)

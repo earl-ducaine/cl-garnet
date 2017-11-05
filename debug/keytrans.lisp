@@ -73,7 +73,7 @@
     (maphash #'(lambda (key value) (push (cons key value) all)) *keysym->character-map*)
     (setq all (sort all #'< :key #'car))
     (format t "~%~d keysyms:" (length all))
-    
+
     (dolist (keysym all)
       (format t "~%~3d ~3d~{ ~s~}"
 	      (ldb (byte 8 8) (car keysym))
@@ -156,8 +156,8 @@
 	       :background black
 	       :foreground white)))
     (initialize-extensions display)
-    
-    (map-window win)				; Map the window
+    ;; Map the window
+    (map-window win)
     ;; Handle events
     (unwind-protect
 	(dotimes (state 64)
@@ -200,7 +200,7 @@
 	       :background black
 	       :foreground white)))
     (initialize-extensions display)
-    
+
     (map-window win)				; Map the window
     ;; Handle events
     (unwind-protect
@@ -263,4 +263,3 @@
 (define-keysym-test :modifiers (make-state-mask :shift :lock))
 (define-keysym-test :modifiers (list :shift (keysym :left-meta) :control))
 (define-keysym-test :modifiers (make-state-mask :shift :lock) :mask nil)
-
