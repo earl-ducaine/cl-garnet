@@ -7,8 +7,6 @@
 ;;; domain.  If you are using this code or any part of Garnet,      ;;;
 ;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; $Id::                                                             $
 
 ;;; CHANGE LOG:
 ;;;  8-Jan-92 Mickish Added :in-progress quarantine slot
@@ -26,13 +24,12 @@
 ;;; 15-Aug-90 ECP Total rewrite of change-garnet-display.
 ;;; 21-Aug-90 ECP In clean-up, make sure each window hasn't
 ;;;               already been destroyed.
-;;;
-;;;
-(in-package "OPAL")
 
-;;; Returns all non-destroyed windows.
-;;; Windows which are already destroyed but are accidentally still
-;;; in the hash table are removed.
+(in-package :opal)
+
+;;; Returns all non-destroyed windows.  Windows which are already
+;;; destroyed but are accidentally still in the hash table are
+;;; removed.
 (defun get-table-contents ()
   (error "The function opal::GET-TABLE-CONTENTS has been rendered obsolete.
 You can get a list of all Garnet windows by referencing the variable
@@ -55,7 +52,7 @@ opal::*garnet-windows*."))
 	 (root (g-value gem:device-info :current-root))
 	 ;; Store all drawables that were created by Garnet in clx-window-list
 	 (clx-window-list (unless (eq how-to :help)
-			    (gem:all-garnet-windows))))
+			    (gem:all-garnet-windows root))))
     (case how-to
       ;; destroy all Garnet windows by calling xlib:destroy-window on orphaned
       ;; clx-windows and opal:destroy on non-orphaned windows.

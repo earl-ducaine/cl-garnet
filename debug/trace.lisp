@@ -34,7 +34,7 @@
 
 (in-package :xlib)
 
-(eval-when (load eval)
+(eval-when (:load-toplevel :execute :compile-toplevel)
   (export '(trace-display
 	    suspend-display-tracing
 	    resume-display-tracing
@@ -50,7 +50,7 @@
 (defun trace-display (display)
   "Start a trace on DISPLAY.
  If display is already being traced, this discards previous history.
- See show-trace and describe-trace."  
+ See show-trace and describe-trace."
   (declare (type display display))
   (unless (getf (display-plist display) 'write-function)
     (bind-io-hooks display))
@@ -72,7 +72,7 @@
 	(bind-io-hooks display)
 	(remf (display-plist display) 'suspend-display-tracing))
     (warn "Tracing was not suspended for ~s" display)))
-  
+
 (defun untrace-display (display)
   "Stop tracing DISPLAY."
   (declare (type display display))
@@ -110,7 +110,7 @@
       (setf (display-input-function display) input-function))
     (remf (display-plist display) 'write-function)
     (remf (display-plist display) 'input-function)))
-  
+
 
 (defun byte-ref16 (vector index)
   #+clx-little-endian
@@ -211,7 +211,7 @@
 			 (subseq vector start (+ start append-length))))
 	  (index-incf start append-length)
 	  (index-decf length append-length))))
-    
+
     ;; Copy new requests into the history
     (when (plusp length)
       (let ((reply-type (case (aref vector start) (0 :error) (1 :reply)
@@ -223,6 +223,7 @@
 	    (display-trace-history display))))))
 
 (defun trace-more-info (display request-id vector start end)
+  (declare (ignore display request-id vector start end))
   ;; Currently only returns current process.
   #+allegro
   (list mp::*current-process*))
@@ -294,6 +295,7 @@
 
 (defun trace-error-print (display more-info vector
 			  &optional (stream *standard-output*))
+  (declare (ignore more-info))
   (let ((event (allocate-event)))
     ;; Copy into event from reply buffer
     (buffer-replace (reply-ibuf8 event)
@@ -317,7 +319,7 @@
 		 ((colormap-error cursor-error drawable-error font-error gcontext-error
 				  id-choice-error pixmap-error window-error)
 		  (list :resource-id resource-id))
-		 (atom-error 
+		 (atom-error
 		  (list :atom-id resource-id))
 		 (value-error
 		  (list :value resource-id))
@@ -326,7 +328,7 @@
 		  (setq error-code 0)
 		  (list :error-code error-code)))))
 	type
-	(let ((condition 
+	(let ((condition
 		(apply #+lispm #'si:make-condition
 		       #+allegro #'make-condition
 		       #-(or lispm allegro) #'make-condition
@@ -390,7 +392,7 @@ If there is more than one event, return NUMBER in the sequence."
 		  (nil)
 		(if (setq vector (find-trace display event sequence i))
 		    (setq last-vector vector)
-		  (progn 
+		  (progn
 		    (format t "~%Event number ~d not found, last event was ~d"
 			    number (1- i))
 		    (return (trace-event-print display last-vector)))))
@@ -398,24 +400,24 @@ If there is more than one event, return NUMBER in the sequence."
 		    (aref *event-key-vector* event)))
 	(trace-event-print display vector)))))
 
-(defun trace-event-print (display vector)
-  (let* ((event (allocate-event))
-	 (event-code (ldb (byte 7 0) (aref vector 0)))
-	 (event-decoder (aref *event-handler-vector* event-code)))
-    ;; Copy into event from reply buffer
-    (setf (event-code event) event-code)
-    (buffer-replace (reply-ibuf8 event)
-		    vector
-		    0
-		    *replysize*)
-    (prog1 (funcall event-decoder display event
-		    #'(lambda (&rest args &key send-event-p &allow-other-keys)
-			(setq args (copy-list args))
-			(remf args :display)
-			(remf args :event-code)
-			(unless send-event-p (remf args :send-event-p))
-			args))
-	   (deallocate-event event))))
+;; (defun trace-event-print (display vector)
+;;   (let* ((event (allocate-event))
+;; 	 (event-code (ldb (byte 7 0) (aref vector 0)))
+;; 	 (event-decoder (aref *event-handler-vector* event-code)))
+;;     ;; Copy into event from reply buffer
+;;     (setf (event-code event) event-code)
+;;     (buffer-replace (reply-ibuf8 event)
+;; 		    vector
+;; 		    0
+;; 		    *replysize*)
+;;     (prog1 (funcall event-decoder display event
+;; 		    #'(lambda (&rest args &key send-event-p &allow-other-keys)
+;; 			(setq args (copy-list args))
+;; 			(remf args :display)
+;; 			(remf args :event-code)
+;; 			(unless send-event-p (remf args :send-event-p))
+;; 			args))
+;; 	   (deallocate-event event))))
 
 (defun describe-trace (display &optional length)
   "Display the trace history for DISPLAY.
@@ -452,5 +454,3 @@ If there is more than one event, return NUMBER in the sequence."
 		 (hist (make-reply-buffer len)))
 	    (buffer-replace (reply-ibuf8 hist) vector 0 len)
 	    (print-history-description hist)))))))
-
-;; End of file

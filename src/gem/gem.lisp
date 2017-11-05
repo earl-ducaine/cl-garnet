@@ -12,6 +12,21 @@
 
 (in-package :gem)
 
+;; Moved here from opal:defs.lisp for the sake of modularity. This is
+;; sort of the X footprint in opal. So we import the symbols into
+;; opal.
+;;
+;; This defstruct generates the functions make-display-info,
+;; copy-display-info, display-info-display, display-info-screen,
+;; display-info-root-window, display-info-line-style-gc, and
+;; display-info-filling-style-gc.
+(defstruct (display-info (:print-function display-info-printer))
+  display
+  screen
+  root-window
+  line-style-gc
+  filling-style-gc)
+
 (defvar *method-names* nil
   "Holds the method names.  This is used to create the Gem interface macros.")
 

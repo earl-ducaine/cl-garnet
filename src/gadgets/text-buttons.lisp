@@ -32,7 +32,7 @@
 ;;;            Fixed-height-p -- same, but with heights
 ;;;            Fixed-width-size -- width of all components (default is the
 ;;;                                width of the widest button)
-;;;            Fixed-height-size -- same, but with heights 
+;;;            Fixed-height-size -- same, but with heights
 ;;;            H-align -- how to align text within buttons horizontally
 ;;;                       :left, :center, or :right (default is :center)
 ;;;            V-align -- how to align text within buttons, vertically
@@ -48,7 +48,7 @@
 ;;;                        the frame of the button
 ;;;     5)  Gray-width -- the width of the gray border on the buttons
 ;;;     6)  Font -- the font in which the text will appear
-;;;     7)  Items -- This can be: 
+;;;     7)  Items -- This can be:
 ;;;                  A list of strings, as in '("Large" ...), or
 ;;;                  a list of atoms, as in '(:center ...), or
 ;;;                  a list of string/function pairs, '(("Cut" Cut-FN) ...), or
@@ -83,7 +83,7 @@
 	    Text-Button-Obj1)))
 
 ;;;  IN-BUTTON-TEXT:  This text object is laid on top of the white rectangle
-;;; 
+;;;
 (create-instance 'IN-BUTTON-TEXT opal:text
    (:constant '(:actual-heightp))
    (:left (o-formula (opal:gv-center-x-is-center-of
@@ -205,7 +205,7 @@
 			     :shadow-offset :text-offset :gray-width
 			     :final-feedback-p :toggle-p :font :items
 			     :visible))
-   
+
    ;; Customizable slots
    ;;
    (:left 0) (:top 0)
@@ -334,7 +334,7 @@
 	  (:filling-style ,opal:black-fill))))
 
    (:interactors
-    `((:TEXT-BUTTON-PRESS ,inter:menu-interactor 
+    `((:TEXT-BUTTON-PRESS ,inter:menu-interactor
 	(:start-where ,(o-formula (list :element-of
 					(gvl :operates-on :text-button-list))))
 	(:window ,(o-formula (gv-local :self :operates-on :window)))
@@ -346,7 +346,7 @@
 		     (selected (g-value final-obj-over :selected))
 		     (string (when selected
 			       (g-value final-obj-over :string))))
-	   
+
 		;; Propagate new selection toward :value slot
 		(s-value gadget :value-obj (when selected final-obj-over))
 
@@ -360,14 +360,16 @@
 
 (define-method :add-local-item TEXT-BUTTON-PANEL (gadget item &rest args)
   (opal::Gadget-Add-Local-Item gadget item :text-button-list args))
+
 (define-method :add-item TEXT-BUTTON-PANEL (gadget item &rest args)
   (opal::Gadget-Add-Item gadget item :text-button-list args))
-   
+
 (define-method :remove-local-item TEXT-BUTTON-PANEL
-               (gadget &optional item &key (key #'opal:no-func))
-  (opal::Gadget-Remove-Local-Item gadget item :text-button-list key))
+               (gadget &rest item &key (key #'opal:no-func))
+	       (opal::Gadget-Remove-Local-Item gadget item :text-button-list key))
+
 (define-method :remove-item TEXT-BUTTON-PANEL
-               (gadget &optional item &key (key #'opal:no-func))
+               (gadget &rest item &key (key #'opal:no-func))
   (opal::Gadget-Remove-Item gadget item :text-button-list key))
 
 (s-value TEXT-BUTTON-PANEL :change-item
@@ -414,7 +416,7 @@
 		  (:line-style (create-instance NIL opal:line-style
 				 (:line-thickness 8)
 				 (:stipple opal::gray-fill-bitmap)))))))
-		  
+
   (create-instance 'text-button-obj Text-Button
      (:left 150) (:top 20)
      (:selection-function #'(lambda (gadget value)
@@ -443,6 +445,6 @@
   (format t "function specified in :selection-function (if there is one).~%")
   (opal:update Text-Buttons-win))
 
-#+garnet-test 
+#+garnet-test
 (defun Text-Buttons-Stop ()
   (opal:destroy Text-Buttons-win))

@@ -43,7 +43,7 @@
       (when (>= request (length *request-parameters*))
 	(setq request 0))
       (do ((parms (aref *request-parameters* request) (cdddr parms))
-	   (j start))	  
+	   (j start))
 	  ((or (endp parms) (>= j length)))
 	(let ((len (first parms))
 	      (type (second parms))
@@ -58,7 +58,7 @@
 	      (progn
 		(print-value j value type doc)
 		     (incf j len))
-	    (progn 
+	    (progn
 	      (format t "~2d ~10a ~a"
 		      j type doc)
 	      (case type
@@ -606,13 +606,13 @@
   4n	LISTofVALUE		value-list
 )
 
-(defconstant *gc-bitmask*
+;; Todo: *gc-bitmask-alt* modify
+#+xlib-advanced-debug(defconstant *gc-bitmask*
 	     #(function plane-mask foreground
 	       background line-width line-style cap-style join-style
 	       fill-style fill-rule tile stipple tile-stipple-x-origin
 	       tile-stipple-y-origin font subwindow-mode graphics-exposures clip-x-origin
 	       clip-y-origin clip-mask dash-offset dashes arc-mode))
-
 
 (x-request ChangeGC
    1	56			opcode

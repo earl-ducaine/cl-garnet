@@ -20,7 +20,7 @@
 (in-package "LAPIDARY")
 
 (defun editor-menu-do-go ()
-  
+
   (editor-menu-do-stop)
 
   (create-instance 'EDITOR-MENU garnet-gadgets:menubar
@@ -68,7 +68,7 @@
 		   (:title "editor menu")
 		   (:left (first *editor-window-dimensions*))
 		   (:top (second *editor-window-dimensions*))
-		   (:width (g-value editor-menu :width)) 
+		   (:width (g-value editor-menu :width))
 ;		   (:width 340)
 		   (:height 130))
 
@@ -111,13 +111,14 @@
 				      (string= value "leaves"))))
     (:items '("leaves" "top-level objects"))
     (:left 15)
-    (:top (+ 10 (opal:bottom selection-mode-label))))
+    (:top (+ 10 (or (opal:bottom selection-mode-label)
+		    0))))
 
   (opal:add-component editor-menu-agg editor-menu)
   (opal:notice-items-changed editor-menu)
-  (opal:add-components editor-menu-agg test-build-mode-label test-build-obj 
+  (opal:add-components editor-menu-agg test-build-mode-label test-build-obj
 		                      editor-menu-divider-line
-                                      selection-mode-label 
+                                      selection-mode-label
 				      selection-mode-gadget)
 
   ;; initialize radio buttons
@@ -140,14 +141,14 @@
 	 (:selection-function 'editor-menu-handler)
 	 (:items '(
 		"filling style" "line style" "draw function" "name object"
-		"list properties" "text properties" 
+		"list properties" "text properties"
 		"make instance" "make copy"
 		"parameters" "make aggregadget" "ungroup"
 		"save gadget" "load gadget" "add gadget" "line constraints"
 		"bring to front" "send to back" "interactors" "c32"
-		"test" "clear workspace" "delete object" "delete window" 
+		"test" "clear workspace" "delete object" "delete window"
 		"quit")))
-  
+
   (opal:add-component EDITOR-MENU-AGG EDITOR-MENU)
 |#
 

@@ -1,14 +1,17 @@
 
 
+Mostly functional (currently only SBCL) complete (c. 1990) gui toolkit
 
 
 * Garnet is a Graphical User Interface Toolkit
 
-  It has a long storied history and has been dormant for many years.
-  An overview of it's history can be found on [[http://www.cliki.net/garnet][Cliki]]
+  It has a long storied history and has been dormant (exept for minor
+  bug fixes to track the latest releases of various Lisps) for many
+  years.  An overview of it's history can be found on [[http://www.cliki.net/garnet][Cliki]]
 
-  Yet it is mostly functional and suprisingly complete, and it remains
-  one of the only pure CL GUI Toolkits fully open source.
+  Yet it is a mostly functional and suprisingly complete graphical
+  user interface toolkit, and it remains one of only a few pure CL GUI
+  Toolkits fully open source.
 
 ** Dependancies/requirements
 
