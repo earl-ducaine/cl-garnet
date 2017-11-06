@@ -1,21 +1,18 @@
 ;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: GARNET-DEBUG; Base: 10 -*-
-;;*******************************************************************;;
-;;          The Garnet User Interface Development Environment.       ;;
-;;*******************************************************************;;
-;;  This code was written as part of the Garnet project at           ;;
-;;  Carnegie Mellon University, and has been placed in the public    ;;
-;;  domain.                                                          ;;
-;;*******************************************************************;;
+;;;
+;;;  The Garnet User Interface Development Environment.
+;;;  This code was written as part of the Garnet project at
+;;;  Carnegie Mellon University, and has been placed in the public
+;;;  domain.
 
-;;; $Id$
-
-
 ;;; Pop up a window displaying the slots of the object under the mouse
-;;  when the HELP key is hit.  Allow editing of slots of the object.
-;; 
-;;  Designed and implemented by Brad Myers
+;;; when the HELP key is hit.  Allow editing of slots of the object.
+;;;
+;;; Designed and implemented by Brad Myers
 
-
+
+(defparameter *process-with-main-event-loop* nil)
+
 (in-package "GARNET-DEBUG")
 (eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(inspector inspect-next-inter Find-Slot-Starting-With
@@ -103,8 +100,8 @@
 		       'ccl::*break-level*
 		       ccl:*current-process*)))
 	  #+allegro
-	  (not (zerop (mp:symeval-in-process 
-		       'tpl::*break-level* 
+	  (not (zerop (mp:symeval-in-process
+		       'tpl::*break-level*
 		       mp:*current-process*)))
 	      ;; if not in m-e-l, then need to run it
 	  T)))
@@ -128,7 +125,7 @@
 
 (defun inspect-next-inter ()
   (setq inter:*debug-next-inter* #'inspect-inter))
-		   
+
 (defun int-inspect-next-inter (ev)
   (declare (ignore ev))
   (if (eq inter:*debug-next-inter* #'inspect-inter)
@@ -138,7 +135,7 @@
       (progn
 	(beep-print "Will pop up inspect window on next interactor")
 	(inspect-next-inter))))
-	   
+
 ;; This is set as a global accelerator to view objects
 (defun Pop-Up-ps-for-event (ev)
   (let ((win (inter:event-window ev))
@@ -147,7 +144,7 @@
 	(if (setq agg (g-value win :aggregate))
 	    (if (setq obj (opal:point-to-leaf agg (inter:event-x ev)
 					      (inter:event-y ev)))
-		(progn 
+		(progn
 		  (beep-print (format NIL
 			 "Debug: INSPECTOR on ~s from window ~s" obj win))
 		  (INSPECTOR obj)
@@ -160,7 +157,7 @@
 		 (format NIL "INSPECTOR: No aggregate in window ~s" win)))
 	(beep-print
 		 (format NIL "INSPECTOR: No window in event ~s" ev)))))
-	    
+
 ;; This is set as a global accelerator to just print out the object's name
 (defun Show-Object-On-event (ev)
   (let ((win (inter:event-window ev))
@@ -179,7 +176,7 @@
 		    (inter:event-x ev) (inter:event-y ev) win))
 	;; else no window
 	(format T "--> No window in event ~s~%" ev))))
-	    
+
 
 ;;;	(defvar *INSPECTOR-KEY* :help)
 ;;;	(defvar *INSPECTOR-NEXT-INTER-KEY* :control-help)
@@ -201,7 +198,7 @@
 (format T "==> Garnet-Debug: hit ~A to list obj under mouse~%~%"
         *show-object-key*)
 
-
+
 ;;*******************************************************************
 
 (defun Db-Show-Error (window string &optional (error? T))
@@ -260,8 +257,8 @@
 ;; searches left until finds = on the current line.  Then
 ;; searches right until finds newline or end-of line.  Returns
 ;; string in between or NIL if no = on this line.  Leaves cursor at
-;; current position 
-(defun Search-For-Value (gob) 
+;; current position
+(defun Search-For-Value (gob)
   (multiple-value-bind (orig-line orig-char)
       (opal:get-cursor-line-char-position gob)
     (let (len str)
@@ -286,7 +283,7 @@
       (opal:set-cursor-to-line-char-position gob orig-line orig-char)
       str)))				; may be NIL
 
-(defparameter spacers " 
+(defparameter spacers "
  ") ;; space and newline
 
 ;; must be used in a "Dependencies" line.  Returns (values obj slot) or NIL
@@ -337,7 +334,7 @@
 	  (unless error? (setq slot val))))
       (opal:set-cursor-to-line-char-position gob orig-line orig-char)
       slot)))
-	
+
 ;;*** TEMP, until #K<...> is a reader macro
 ;; if the str is an object definition, returns the object itself.  If
 ;; error, returns NIL and sets error string
@@ -395,7 +392,7 @@
 	  (gg:careful-eval val)
 	(unless new-error?
 	  (setq val new-val))))
-		 
+
     (cond (error?			; then return string
 	   (Db-Show-Error error-win (princ-to-string error?)))
 	  ;; else read was ok, check types
@@ -424,7 +421,7 @@
       (multiple-value-bind (start-line start-char)
 	  (opal:get-cursor-line-char-position gob)
 	(opal:set-selection-to-line-char-position gob start-line start-char)
- 
+
 	(opal:set-cursor-to-line-char-position gob orig-line orig-char)
 	(do ((char (opal:FETCH-NEXT-CHAR gob) (opal:FETCH-NEXT-CHAR gob)))
 	    ((or (null char) (member char our-delim-chars)))
@@ -432,7 +429,7 @@
 
 
 
-
+
 ;;;******************************************************************
 
 (defun Find-Common-Prefix (slot-list)
@@ -459,7 +456,7 @@
   (let* ((match-str (string-upcase (string-left-trim ": " str)))
 	 (len (length match-str))
 	 slot-list)
-    (call-on-ps-slots 
+    (call-on-ps-slots
      object
      #'(lambda (schema slot form inherited valid real-value
 		types bits indent limit)
@@ -476,7 +473,7 @@
 	  ((null (cdr slot-list)) (car slot-list))
 	  (T				; multiple slots match
 	   (values NIL slot-list (Find-Common-Prefix slot-list))))))
-	
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -489,14 +486,14 @@
   )
 
 
-
+
 ;;; remove all the font change commands
 
-(inter:unbind-key :control-\u debug-edit) 
-(inter:unbind-key :control-B debug-edit) 
-(inter:unbind-key :control-I debug-edit) 
-(inter:unbind-key :control-> debug-edit) 
-(inter:unbind-key :control-< debug-edit) 
+(inter:unbind-key :control-\u debug-edit)
+(inter:unbind-key :control-B debug-edit)
+(inter:unbind-key :control-I debug-edit)
+(inter:unbind-key :control-> debug-edit)
+(inter:unbind-key :control-< debug-edit)
 (inter:unbind-key :control-1 debug-edit)
 (inter:unbind-key :control-2 debug-edit)
 (inter:unbind-key :control-3 debug-edit)
@@ -509,7 +506,7 @@
 (inter:unbind-key :control-T debug-edit)
 (inter:unbind-key :control-H debug-edit)
 
-;; double-click 
+;; double-click
 (inter:bind-key :double-leftdown 'Handle-Double-Click debug-edit)
 ;; middledown like in xterm
 (inter:bind-key :middledown :copy-from-X-cut-buffer debug-edit)
@@ -519,7 +516,7 @@
 (inter:bind-key :NUM-PAD-ENTER #'Edit-Field debug-edit)
 
 
-
+
 ;;; Commands
 ;;
 
@@ -560,7 +557,7 @@
 	(Create-Multi-Font-String-For-PS obj NIL new-win)))))
 
 
-
+
 ;;;******************************************************************
 
 (defparameter search-prompt "Find slot named: ")
@@ -572,7 +569,7 @@
 	 (search-str (g-value ps-pop :search-string)))
     (inter:stop-interactor (g-value ps-pop :debug-edit))
     (db-show-error (g-value widget :window)
-		   (format NIL "~%~a" search-prompt) NIL)  
+		   (format NIL "~%~a" search-prompt) NIL)
     (s-value search-str :visible T)
     (s-value search-str :string "")
     (setf (inter:event-x inter:*current-event*) (g-value search-str :left))
@@ -588,7 +585,7 @@
 	(Find-Slot-Starting-With obj final-str)
       (if slot
 	  (progn
-	    (s-value ps-pop :extra-slots-to-show 
+	    (s-value ps-pop :extra-slots-to-show
 		     (nconc (g-value ps-pop :extra-slots-to-show)
 			     (list slot)))
 	    (s-value search-str-obj :visible NIL)
@@ -617,10 +614,10 @@
 		  (g-value search-str-obj :top))
 	    (setf (inter:event-char inter:*current-event*) NIL)
 	    (inter:start-interactor inter))))))
-		  
 
-	   
-
+
+
+
 ;;;******************************************************************
 
 (create-instance 'ps-pop-agg opal:aggregadget
@@ -662,7 +659,7 @@
       (:string "<no object>")
       (:left 2)(:top ,(o-formula (+ 2 (opal:gv-bottom
 				       (gvl :parent :button-list))))))
-     (:search-string ,opal:cursor-text  
+     (:search-string ,opal:cursor-text
       (:visible NIL)
       (:string "")
       (:left ,(+ 2 (opal:string-width opal:default-font search-prompt)))
@@ -733,7 +730,7 @@
 	   (db-show-error pop-win "Can't flash formulas"))
 	  (T (let ((win (g-value obj :window))
 		   str)
-	       (when win 
+	       (when win
 		 (s-value win :visible T)
 		 (opal:raise-window win))
 	       (Db-Show-Error pop-win (format NIL "--Flashing ~s" obj) NIL)
@@ -761,7 +758,7 @@
 	   (cond ((schema-p main-obj)
 		  (flash-it main-obj ps-pop))
 		 (T			; whoops, obj was destroyed
-		  (Db-Show-Error 
+		  (Db-Show-Error
 		   pop-win
 		   (format NIL
 			   "Object ~s seems to be invalid.  Might be destroyed."
@@ -781,7 +778,7 @@
 			       :reset-extra-slots NIL)))
 
 
-
+
 ;;; Formula dependencies view
 ;;
 
@@ -803,7 +800,7 @@
 	      subdeps this subs)
 	  (setq this (list (cons (format NIL "~a~s of ~s = ~s"
 				(make-string indent :initial-element #\space)
-				subslot subobj 
+				subslot subobj
 				(when (schema-p subobj)
 				  (g-value subobj subslot)))
 			    regular-font)))
@@ -839,7 +836,7 @@
 	   (setq form other-obj)
 	   (setq slot (g-formula-value form :slot))
 	   (setq obj (g-formula-value form :schema)))
-	  ((schema-p other-obj) 
+	  ((schema-p other-obj)
 	   ;; see if can find a slot on this line to the left
 	   (multiple-value-setq (obj slot)
 	     (search-line-for-slot-and-obj string-obj))
@@ -883,7 +880,7 @@
 				 slot obj))
 		   (return-from Show-Dependencies)))
     (setq title
-	  (list 
+	  (list
 	   (list (cons (format NIL
 			 "Slot ~s of ~s (formula = ~s) = ~s:"
 			 slot obj form (g-cached-value obj slot))
@@ -897,7 +894,7 @@
     (setq string-list (append title (Generate-Dependencies slot obj)))
 
     ;; now set string-list
-    
+
     (opal:set-text string-obj string-list)
     (s-value string-obj :visible T)
     (Db-Done-Error window)
@@ -907,7 +904,7 @@
     (opal:update window)))
 
 
-
+
 ;;; Break and Notify
 ;;
 
@@ -962,9 +959,9 @@
 				      "Break" "Print Message")
 				  obj slot) NIL)
     (call-func-on-slot-set obj slot :*any* fnc window))) ; in debug-fns
-      
 
-
+
+
 ;;; Object Window
 ;;
 
@@ -1031,7 +1028,7 @@
 	   (return))))			; must be a destroyed object
 
     ;; now set string-list
-    
+
     (setq string-list (Gen-Object-Columns history is-a-list agg-list))
     (push title string-list)
     (push (list "") string-list)	; blank line
@@ -1043,7 +1040,7 @@
 			       5))
     (opal:update window)))
 
-     
+
 (defun Gen-Object-Columns (history is-a-list agg-list)
   (let (strings)
     (if history
@@ -1069,10 +1066,6 @@
     (push (list "") strings)		; blank line
 
     strings))
-
-    
-	
-;;;******************************************************************
 
 (defun Get-Window-For-pop-up-debug (left top)
   (let ((win (pop used-window-list)))
@@ -1116,7 +1109,7 @@
     (when temp-w
       (opal:set-x-cut-buffer temp-w
 			     (g-value ps-pop :object-name)))))
-	
+
 
 (defparameter *extra-slot-list* NIL)
 ;; temp variable used to hold strings list while it is being generated
@@ -1201,7 +1194,7 @@
       ;; inspector windows even if there is a modal window visible.  It
       ;; is probably OK not to re-enable the modal-ness after finished
       ;; inspecting.
-      (setq inter::*Visible-Modal-Windows* NIL) 
+      (setq inter::*Visible-Modal-Windows* NIL)
       )
     ;; else not a schema
     (Db-Show-Error window

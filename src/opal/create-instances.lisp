@@ -7,10 +7,10 @@
 ;;  domain.                                                          ;;
 ;;*******************************************************************;;
 
+
 ;;; $Id$
 ;;
 
-
 ;;; Opal:Create-Instances.Lisp
 ;;
 ;;  This file contains all the calls to KR:Create-Instance which are in Opal.
@@ -18,7 +18,6 @@
 ;;  hierarchy, which is listed first.  Please keep it that way!
 ;;  NOTE:  the first entry of ":update-slots" MUST be :visible (unless the
 ;;    value is NIL), elsewise the update algorithm will break!
-
 
 ;;; The Opal Hierarchy
 ;;
@@ -107,9 +106,11 @@
 ;; 		opal:VIRTUAL-AGGREGATE
 ;; 	opal:WINDOW
 
-
+
 (in-package :opal)
 
+(declaim (notinline bottom))
+(declaim (notinline right))
 
 ;;; Some premature optimization.
 (declaim (inline q-min))
@@ -124,9 +125,6 @@
 (declaim (inline q-max))
 (defun q-max (x y)
   "Two-argument fixnum version of max."
-  #+cmu
-  (declare (values fixnum))
-  (declare (fixnum x y))
   (if (< x y) y x))
 
 
@@ -284,12 +282,12 @@ avoiding wasted objects.
 
 (setf (aref *Font-Table* 0 0 1) default-font)
 
-
 (let ((first-time T)
-      (*first-allocatable-colormap-index* 1))
+      (first-allocatable-colormap-index 1))
 
   (defun first-allocatable-colormap-index (root-window)
     "Noop.  Get rid of all calls to this."
+    (declare (ignore root-window))
     (when first-time
       (setf first-time NIL))
     1)
@@ -300,7 +298,7 @@ avoiding wasted objects.
 
   (defun set-first-allocatable-colormap-index (root-window value)
     (declare (ignore root-window))
-    (setf *first-allocatable-colormap-index* value)))
+    (setf first-allocatable-colormap-index value)))
 
 ;;; :xcolor and :colormap-index map to CLX' color and pixel concepts.
 ;;; color is a device independant RGB triplet whereas pixel is a

@@ -92,19 +92,6 @@
 (defvar *debug-gem-mode*)
 (defvar *default-x-display-name*)
 
-;; Moved here from opal:defs.lisp for the sake of modularity. This is
-;; sort of the X footprint in opal. So we import the symbols into
-;; opal.  This defstruct generates the functions Make-Display-Info,
-;; Copy-Display-Info, Display-Info-Display, Display-Info-Screen,
-;; Display-Info-Root-Window, Display-Info-Line-Style-GC, and
-;; Display-Info-Filling-Style-GC.
-(defstruct (display-info (:print-function display-info-printer))
-  display
-  screen
-  root-window
-  line-style-gc
-  filling-style-gc)
-
 (defun display-info-printer (s stream ignore)
   (declare (ignore ignore))
   (format stream "#G<GEM-DISPLAY-INFO ~A>" (display-info-display s)))

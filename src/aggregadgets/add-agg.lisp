@@ -9,7 +9,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Add a component to an aggregadget and its instances.
-;;; 
+;;;
 ;;; Roger B. Dannenberg, 1990
 ;;;
 ;;; $Id::                                                             $
@@ -40,7 +40,7 @@ The insert point will be determined as follows:
 ADD-ITEM
 Works just like add-component, but acts on :items slots.  If an
 instance inherits its :item slot, then no local changes are made.
-After the changes are made, notice-items-changed is called on each 
+After the changes are made, notice-items-changed is called on each
 affected aggrelist.
 
 |#
@@ -69,7 +69,7 @@ affected aggrelist.
 ; elements - the old components of the aggregate
 ;
 (define-method :add-local-component aggrelist (my-agg-list element &rest args)
- (let ((elements (g-local-value my-agg-list :components)) 
+ (let ((elements (g-local-value my-agg-list :components))
        where locator
        (name (g-local-value element :known-as)))
    (when (member element elements)
@@ -99,7 +99,7 @@ affected aggrelist.
 	      (s-value element :next nil)
 	      (s-value element :prev old-tail)
 	      (s-value my-agg-list :tail element)
-	      (kr-send aggregate :add-component 
+	      (kr-send aggregate :add-component
 		       my-agg-list element :where :front)))
 	   ((or (eq where :back)
 		(eq where :head))
@@ -108,7 +108,7 @@ affected aggrelist.
 	      (s-value element :prev nil)
 	      (s-value element :next old-head)
 	      (s-value my-agg-list :head element)
-	      (kr-send aggregate :add-component 
+	      (kr-send aggregate :add-component
 		       my-agg-list element :where :back)))
 	   ((or (eq where :behind)		;;; Goes after 'behind-element'
 		(eq where :before))
@@ -122,7 +122,7 @@ affected aggrelist.
 		    (if behind-element
 			(s-value behind-element :next element)
 			(s-value my-agg-list :head element))
-		    (kr-send aggregate :add-component 
+		    (kr-send aggregate :add-component
 			     my-agg-list element :where :behind locator))
 		  (progn
 		    (warn "New element being placed at back of aggrelist.")
@@ -191,7 +191,7 @@ affected aggrelist.
 
 ;;; New Improved Aggrelist Methods
 ;;; Andrew Mickish  6/16/92
-;;; 
+;;;
 ;;; There are several differences between the implementation of these
 ;;; methods and the old aggrelist methods.
 ;;; 1)  Unlike the old methods, these make changes to instances in a
@@ -295,6 +295,74 @@ affected aggrelist.
   (dolist (inst (g-value alist :is-a-inv))
     (unless (has-slot-p inst :items)
       (Recursive-Remove-Component inst rank))))
+
+
+
+
+
+
+defun frob (&rest args)
+  (flet ((frob-driver (i size)
+           (list i size)))
+    (if (or (endp args) (numberp (first args)))
+        ;; no args, or the first argument is a number (and thus
+        ;; not a keyword argument)...
+        (destructuring-bind (&optional (i 'default-i) &key (size 'default-size)) args
+          (frob-driver i size))
+        ;; otherwise, there are some non-numeric arguments at
+        ;; beginning, so it must be the keyword list, and that the
+        ;; "optional" wasn't provided.
+        (destructuring-bind (&key (size 'default-size) &aux (i 'default-i)) args
+          (frob-driver i size)))))
+
+
+(defun frob (&rest args)
+  (flet ((frob-driver (i size)
+           (list i size)))
+    (if (or (endp args) (numberp (first args)))
+        ;; no args, or the first argument is a number (and thus
+        ;; not a keyword argument)...
+        (destructuring-bind (&optional (i 'default-i) &key (size 'default-size)) args
+          (frob-driver i size))
+        ;; otherwise, there are some non-numeric arguments at
+        ;; beginning, so it must be the keyword list, and that the
+        ;; "optional" wasn't provided.
+        (destructuring-bind (&key (size 'default-size) &aux (i 'default-i)) args
+          (frob-driver i size)))))
+
+
+
+(defun function-with-complex-arguments-nice (&rest args)
+  (unless (and args (listp args))
+    (error "args must be a list with at least one member"))
+  (let (alist item key)
+    (cond
+      ((< (length alist) 2)
+       (destructuring-bind (local-alist &optional local-item)
+	   args
+	 (setf alist local-alist)
+	 (setf item local-item)))
+      (t
+       (destructuring-bind (local-alist local-item &key (local-key #'opal:no-func))
+	   args
+	 (setf alist local-alist)
+	 (setf item local-item)
+	 (setf key local-key))))
+    (list alist item key)))
+
+(defun function-with-complex-arguments-nice
+    (alist &optional item &key (key #'opal:no-func))
+  (list alist item key))
+
+(defun test-function-with-complex-arguments ()
+  ;; some case that we might be interested in:
+  ;;
+
+  )
+
+
+					)
+
 
 
 (define-method :remove-local-item opal:aggrelist
@@ -499,5 +567,3 @@ affected aggrelist.
   (let ((target (nth n (g-local-value agg :components))))
     (cond (target
 	   (remove-local-component agg target)))))
-
-

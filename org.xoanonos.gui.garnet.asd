@@ -16,15 +16,24 @@
 (setf (get :garnet-modules :multifont) t)
 
 (asdf:defsystem :org.xoanonos.gui.garnet
-  :depends-on (:clx :zpb-ttf :cl-vectors :cl-paths-ttf :cl-aa :cl-fad
+  :depends-on (:clx ;; :zpb-ttf
+		    :cl-vectors ;; :cl-paths-ttf
+		    :cl-aa :cl-fad
 		    :cl-store :trivial-features :cl-aa-misc :alexandria :cl-ppcre)
+  ;; Prints any user directions to get things going.
+  ;; :around-compile (lambda (compile-function)
+  ;; 		    (when (fboundp 'cl-user::print-demo-instructions)
+  ;; 		      (funcall (symbol-function 'cl-user::print-demo-instructions) compile-function))
+  ;; 		    t)
   :components
   ((:file "package")
    (:module utils
 	    :pathname ""
 	    :depends-on (:package)
+
 	    :components
-	    ((:file "garnet-loader")
+	    ((:file "garnet-loader"
+		    )
 	     (:file "src/utils/general")
 	     (:file "src/utils/global")))
    (:module kr
@@ -41,7 +50,7 @@
    	    :components
 	    ((:file "gem")
 	     (:file "define-methods")
-	     (:file "x")))
+	     (:file "x" :depends-on (:define-methods))))
    (:module opal
    	    :pathname "src/opal"
    	    :depends-on (:utils :gem :kr)
@@ -269,7 +278,7 @@
 	     (:file "demos-controller")
 	     (:file "tour")
 	     (:file "tour-transcript")))
-   (:module :garnet-desktop-lab
+   (:module garnet-desktop-lab
 	    :pathname "src/contrib/garnet-desktop-lab"
 	    :depends-on (:demos)
 	    :components
@@ -435,53 +444,13 @@
 	     (:file "event-test")
 	     (:file "keytrans")
 	     (:file "trace")
-	     (:file "util")))))
-
-(in-package :common-lisp-user)
-
-(format t "To run various app eval one of the following:")
-(defparameter demo-apps
-  '("(demo-3d::do-go)"
-    "(demo-angle::do-go)"
-    "(demo-animator::do-go)"
-    "(demo-arith::do-go)"
-    "(demo-array::do-go)"
-    "(demo-clock::do-go)"
-    "(demo-editor::do-go)"
-    "(demo-file-browser::do-go)"
-    "(demo-gadgets::do-go)"
-    "(demo-3d::do-go)"
-    "(demo-gesture::do-go)"
-    "(demo-graph::do-go)"
-    "(demo-grow::do-go)"
-    "(demo-logo::do-go)"
-    "(demo-manyobjs::do-go)"
-    "(demo-menu::do-go)"
-    "(demo-mode::do-go)"
-    "(demo-motif::do-go)"
-    "(demo-moveline::do-go)"
-    "(demo-multifont::do-go)"
-    "(demo-multiwin::do-go)"
-    "(demo-othello::do-go)"
-    "(demo-pixmap::do-go)"
-    "(demo-schema-browser::do-go)"
-    "(demos-compiler::do-go)"
-    "(demos-controller::do-go)"
-    "(demo-scrollbar::do-go)"
-    "(demo-sequence::do-go)"
-    "(demo-text::do-go)"
-    "(demo-truck::do-go)"
-    "(demo-twop::do-go)"
-    "(demo-unistrokes::do-go)"
-    "(demo-virtual-agg::do-go)"
-    "(demo-xasperate::do-go)"
-    "(garnet-calculator::do-go)"
-    "(garnetdraw::do-go)"
-    "(mge::do-go)"
-    "(quicklisp::do-go)"
-    "(tourcommands::do-go)"
-    "(tour::do-go)"
-    "(tour-transcript::do-go)"))
-
-(dolist (demo-app demo-apps)
-  (format t "~a~%" demo-app))
+	     (:file "util")))
+   (:module last
+	    :pathname ""
+	    :depends-on (:utils :kr :gem :opal :inter :ps :aggregadgets
+				:gadgets :debug :protected-eval :gesture :demos
+				:garnet-desktop-lab :lapidary2 :build :c32
+				:gilt :multi-garnet :lapidary :cl-processing
+				:debug-clx)
+	    :components
+	    ((:file "post-processing")))))

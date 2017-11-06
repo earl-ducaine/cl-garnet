@@ -331,30 +331,3 @@ Otherwise just load the filename as given."
 	 (let ((*compile-verbose* Garnet-Garnet-Debug)
 	       (*compile-print* Garnet-Garnet-Debug))
 	   (compile-file src-pathname))))
-
-;; RGA added two auxiliary functions for doing file manipulations.
-;; Right now they are used to copy the xxx-loader files into the
-;; target directories.
-;;
-;; FMG Rewrote file copy function to use lisp facilities instead of
-;; calling out to the shell. Got rid of shell exec function (there is
-;; still one in the utils directory).
-;; (defun garnet-copy-files (src-dir bin-dir file-list)
-;;   "Copies a list of files (usually loader files) from source directory
-;;   to binary directory."
-;;   (dolist (file file-list)
-;;     (let ((src (merge-pathnames file src-dir))
-;; 	  (dest (merge-pathnames file bin-dir)))
-;;       ;; Yes this conses up the wazoo. But it's only used during builds.
-;;       (with-open-file (s src :element-type '(unsigned-byte 8))
-;; 	(let ((buffer (make-array (file-length s) :element-type '(unsigned-byte 8))))
-;; 	  (read-sequence buffer s)
-;; 	  (with-open-file (d dest
-;; 			     :direction :output
-;; 			     :if-does-not-exist :create
-;; 			     :if-exists :overwrite
-;; 			     :element-type '(unsigned-byte 8))
-;; 	    (write-sequence buffer d)))))))
-
-;; (eval-when (:compile-toplevel :load-toplevel :execute)
-;;   (setf sb-ext:*muffled-warnings* 'sb-kernel::uninteresting-redefinition))
