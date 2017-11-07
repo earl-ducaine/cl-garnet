@@ -296,26 +296,6 @@ affected aggrelist.
     (unless (has-slot-p inst :items)
       (Recursive-Remove-Component inst rank))))
 
-
-
-
-
-
-defun frob (&rest args)
-  (flet ((frob-driver (i size)
-           (list i size)))
-    (if (or (endp args) (numberp (first args)))
-        ;; no args, or the first argument is a number (and thus
-        ;; not a keyword argument)...
-        (destructuring-bind (&optional (i 'default-i) &key (size 'default-size)) args
-          (frob-driver i size))
-        ;; otherwise, there are some non-numeric arguments at
-        ;; beginning, so it must be the keyword list, and that the
-        ;; "optional" wasn't provided.
-        (destructuring-bind (&key (size 'default-size) &aux (i 'default-i)) args
-          (frob-driver i size)))))
-
-
 (defun frob (&rest args)
   (flet ((frob-driver (i size)
            (list i size)))
@@ -329,8 +309,6 @@ defun frob (&rest args)
         ;; "optional" wasn't provided.
         (destructuring-bind (&key (size 'default-size) &aux (i 'default-i)) args
           (frob-driver i size)))))
-
-
 
 (defun function-with-complex-arguments-nice (&rest args)
   (unless (and args (listp args))
@@ -354,16 +332,92 @@ defun frob (&rest args)
     (alist &optional item &key (key #'opal:no-func))
   (list alist item key))
 
+(defun test-combination (args)
+  (let (nice naughty
+	     (err1
+	     (err2)
+    (unwind-protect ()
+      (apply #'function-with-complex-arguments-nice args)
+      (apply #'function-with-complex-arguments-naughty args))
+
+
 (defun test-function-with-complex-arguments ()
   ;; some case that we might be interested in:
+  ;; test combinations:
   ;;
-
-  )
-
-
-					)
-
-
+  ;; alist item key
+  ;;     p    p   p
+  ;;     p    p   n
+  ;;     p    p   a
+  ;;     p    n   p
+  ;;     p    n   n
+  ;;     p    n   a
+  ;;     p    a   p
+  ;;     p    a   n
+  ;;     p    a   a
+  ;;     n    p   p
+  ;;     n    p   n
+  ;;     n    p   a
+  ;;     n    n   p
+  ;;     n    n   n
+  ;;     n    n   a
+  ;;     n    a   p
+  ;;     n    a   n
+  ;;     n    a   a
+  ;;     a    p   p
+  ;;     a    p   n
+  ;;     a    p   a
+  ;;     a    n   p
+  ;;     a    n   n
+  ;;     a    n   a
+  ;;     a    a   p
+  ;;     a    a   n
+  ;;     a    a   a
+  (let ((alist '((a b) (c d)))
+	(item 'item)
+	 (key :key)
+	(combinations '((p    p   p)
+			 (p    p   n)
+			 (p    p   a)
+			 (p    n   p)
+			 (p    n   n)
+			 (p    n   a)
+			 (p    a   p)
+			 (p    a   n)
+			 (p    a   a)
+			 (n    p   p)
+			 (n    p   n)
+			 (n    p   a)
+			 (n    n   p)
+			 (n    n   n)
+			 (n    n   a)
+			 (n    a   p)
+			 (n    a   n)
+			 (n    a   a)
+			 (a    p   p)
+			 (a    p   n)
+			 (a    p   a)
+			 (a    n   p)
+			 (a    n   n)
+			 (a    n   a)
+			 (a    a   p)
+			 (a    a   n)
+			 (a    a   a))))
+	  (dolist (combination combinations)
+	    (let (args)
+	      (unless (eq (first combination) 'a)
+		(if (eq (first combination) 'n)
+		    (push nil args)
+		    (push alist args)))
+	      (unless (eq (second combination) 'a)
+		(if (eq (second combination) 'n)
+		    (push nil args)
+		    (push item args)))
+	      (unless (eq (third combination) 'a)
+		(if (eq (third combination) 'n)
+		    (push nil args)
+		    (push key args)))
+	      (format t "args ~s~%" args)))))
 
 (define-method :remove-local-item opal:aggrelist
                (alist &optional item &key (key #'opal:no-func))
