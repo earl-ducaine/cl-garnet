@@ -340,7 +340,6 @@ affected aggrelist.
       (apply #'function-with-complex-arguments-nice args)
       (apply #'function-with-complex-arguments-naughty args))
 
-
 (defun test-function-with-complex-arguments ()
   ;; some case that we might be interested in:
   ;; test combinations:
