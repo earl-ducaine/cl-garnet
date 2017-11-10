@@ -328,17 +328,78 @@ affected aggrelist.
 	 (setf key local-key))))
     (list alist item key)))
 
-(defun function-with-complex-arguments-nice
+(defun function-with-complex-arguments-naughty
     (alist &optional item &key (key #'opal:no-func))
   (list alist item key))
 
 (defun test-combination (args)
   (let (nice naughty
 	     (err1
-	     (err2)
-    (unwind-protect ()
-      (apply #'function-with-complex-arguments-nice args)
-      (apply #'function-with-complex-arguments-naughty args))
+	      (err2)
+	       (unwind-protect ()
+		 (apply #'function-with-complex-arguments-nice args)
+		 (apply #'function-with-complex-arguments-naughty args))))))
+
+;; (defun maybe-generate-error ()
+;;   (this-is-an-error))
+;;  (run-naughty-nice-test-item '(a b :key c))
+;;  item))))
+
+;; (run-naughty-nice-test-item
+;;  '(:function #'function-with-complex-arguments-naughty :args '(a b :key 3)))
+
+(defparameter *tests*
+  '((:function function-with-complex-arguments-naughty
+     :args (a b :key 3)
+     :expected-return-values ((A B 3))
+     :expected-err nil)))
+
+(defun print-test-results (results)
+  (format t "~:{~&   ~16@A    ~6@A  ~}"
+	  (cons
+	   (list "Args"    "Passed?")
+	   (mapcar (lambda (result)
+		     (destructuring-bind (&key args passed &allow-other-keys)
+			 result
+		       (list args passed)))
+		     results))))
+
+(defparameter table
+  '((:args (a b :key 3) :passed"t")))
+
+(defun run-test-naughty-nice-items ()
+  (let (test-results)
+    (dolist (test-item *tests*)
+      (multiple-value-bind (err return-values)
+	  (test-naughty-nice-item test-item)
+	(destructuring-bind (&key expected-err expected-return-values args
+				  &allow-other-keys)
+	    test-item
+	  (let ((passed-err (or (and expected-err err)
+				(not (or expected-err err))))
+		(passed-return-values (equal expected-return-values return-values)))
+	    (push (list :passed (and passed-err passed-return-values)
+			:args args)
+		  test-results)
+		  (print-test-results test-results)))))))
+;;;	  (format t "err: ~s return-values: ~s~% ~s~% ~s ~%" err return-values))))))
+
+(defun test-naughty-nice-item (item)
+  (execute-closure-under-test-error-handling
+   (lambda ()
+     (destructuring-bind (&key function args &allow-other-keys) item
+       (format t "item: ~s~%" args)
+       (apply function args)))))
+
+;; first value indicates whether an error occured.  Second returned
+;; value is the values returned by the closure.
+(defun execute-closure-under-test-error-handling (closure)
+  (handler-case
+      (apply closure '())
+    (t (error-condition)
+      (values error-condition nil))
+    (:no-error (&rest expression-results)
+      (values nil expression-results))))
 
 (defun test-function-with-complex-arguments ()
   ;; some case that we might be interested in:
@@ -418,8 +479,18 @@ affected aggrelist.
 		    (push key args)))
 	      (format t "args ~s~%" args)))))
 
+;; Note the argument list would like the following:
+;; like the following:
+;;
+;; (alist &optional item &key (key #'opal:no-func)
+;;
+;; rewritting it avoid sbcl style warnings
 (define-method :remove-local-item opal:aggrelist
-               (alist &optional item &key (key #'opal:no-func))
+  ;;  (alist &optional item &key (key #'opal:no-func))
+  (&rest args)
+  ;; one of two lambda lists depending on the number of arguments
+  (let ((lambda-list (cond
+		       ((= (length args)
   (let* ((items (or (g-local-value alist :items)
 		    (copy-list (g-value alist :items))))
 	 (rank (if item
@@ -451,7 +522,7 @@ affected aggrelist.
 			(s-value alist :items (nbutlast items))))
 	   (let ((comp-to-destroy (nth rank (g-value alist :components))))
 	     (remove-local-component alist comp-to-destroy)
-	     (opal:destroy comp-to-destroy))))))
+	     (opal:destroy comp-to-destroy))))))))))))
 
 (define-method :remove-item opal:aggrelist
                (alist &optional item &key (key #'opal:no-func))
