@@ -19,23 +19,21 @@ Change log:
 ==================================================================
 |#
 
-(in-package "COMMON-LISP-USER")
+;; (in-package "COMMON-LISP-USER")
 
 ;; check first to see if place is set
-(unless (boundp 'Garnet-Gadgets-PathName)
-  (error "Load 'Garnet-Loader' first to set Garnet-Gadgets-PathName before loading Gadgets."))
+;; (unless (boundp 'Garnet-Gadgets-PathName)
+;;   (error "Load 'Garnet-Loader' first to set Garnet-Gadgets-PathName before loading Gadgets."))
 
 ;;; Now load the text-buttons module
 ;;;
-(unless (get :garnet-modules :text-buttons)
-  (format t "Loading Text-Buttons...~%")
-  (dolist (pair '((:GAD-button-parts "GAD-button-parts")
-		  (:text-buttons "text-buttons")))
-    (unless (get :garnet-modules (car pair))
-      (load (merge-pathnames (cadr pair) Garnet-Gadgets-PathName)
-	    :verbose T)))
-  (format t "...Done Text-Buttons.~%"))
+;; (unless (get :garnet-modules :text-buttons)
+;;   (format t "Loading Text-Buttons...~%")
+;;   (dolist (pair '((:GAD-button-parts "GAD-button-parts")
+;; 		  (:text-buttons "text-buttons")))
+;;     (unless (get :garnet-modules (car pair))
+;;       (load (merge-pathnames (cadr pair) Garnet-Gadgets-PathName)
+;; 	    :verbose T)))
+;;   (format t "...Done Text-Buttons.~%"))
 
-(setf (get :garnet-modules :text-buttons) t)
-
-
+;; (setf (get :garnet-modules :text-buttons) t)

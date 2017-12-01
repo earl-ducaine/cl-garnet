@@ -7,12 +7,11 @@
 ;;; domain.  If you are using this code or any part of Garnet,      ;;;
 ;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-
-(in-package "OPAL")
+
+(in-package :opal)
 
 ;;; Aggregate objects
-
+;;;
 ;;; Aggregates allow for a group of graphical-objects to be associated
 ;;; together to form a new, more complex object.
 ;;;
@@ -21,7 +20,6 @@
 ;;; most, since we want to redraw fastest and redraws occur from bottom to
 ;;; top.
 
-
 ;;; Methods on aggregates:
 
 ;;; Initialize
@@ -448,7 +446,7 @@
 (defun set-aggregate-hit-threshold (agg)
   (when (is-a-p agg opal:aggregate)
     (let ((max-hit 0))
-      (declaim (fixnum max-hit))
+      (declare (fixnum max-hit))
       (dovalues (c agg :components :local t)
 	(set-aggregate-hit-threshold c)
 	(setq max-hit (q-max max-hit (g-value-fixnum c :hit-threshold))))

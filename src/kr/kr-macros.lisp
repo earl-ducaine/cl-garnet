@@ -218,8 +218,12 @@
 (defvar *formula-pool* nil)
 #+ccl
 (defvar *formula-lock* (ccl:make-lock))
+
 #+sbcl
 (defvar *formula-lock* (sb-thread:make-mutex))
+
+#+ecl
+(defvar *formula-lock* (:bordeaux-threads:make-lock))
 
 #+(and cmu mp)
 (defun formula-push (f)
@@ -235,26 +239,43 @@
 (defun formula-pop ()
   (system:without-interrupts
     (pop *formula-pool*)))
+
 #+sb-thread
 (defun formula-push (f)
   (sb-thread:with-mutex (*formula-lock*)
     (push f *formula-pool*)))
+
+#+ecl
+(defun formula-push (f)
+  (:bordeaux-threads:with-lock-held (*formula-lock*)
+    (push f *formula-pool*)))
+
+
 #+sb-thread
 (defun formula-pop ()
   (sb-thread:with-mutex (*formula-lock*)
     (and *formula-pool* (pop *formula-pool*))))
+
+#+ecl
+(defun formula-pop ()
+  (:bordeaux-threads:with-lock-held (*formula-lock*)
+    (and *formula-pool* (pop *formula-pool*))))
+
 #+ccl
 (defun formula-push (f)
   (ccl:with-lock-grabbed (*formula-lock*)
     (push f *formula-pool*)))
+
 #+ccl
 (defun formula-pop ()
   (ccl:with-lock-grabbed (*formula-lock*)
     (pop *formula-pool*)))
+
 #+allegro
 (defun formula-push (f)
   (excl:critical-section (:non-smp :without-scheduling)
    (push f *formula-pool*)))
+
 #+allegro
 (defun formula-pop ()
   (excl:critical-section (:non-smp :without-scheduling)

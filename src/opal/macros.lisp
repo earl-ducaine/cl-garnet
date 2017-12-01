@@ -17,8 +17,11 @@
 ;;  FMG I've tried to change macros to inline functions wherever
 ;;  possible.
 
-
+
 (in-package :kr)
+
+(declaim (notinline bottom))
+(declaim (notinline right))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(gv-fixnum gvl-fixnum g-value-fixnum)))
@@ -34,7 +37,7 @@
   `(the fixnum (g-value ,object ,@slots)))
 
 
-
+
 (in-package "OPAL")
 
 ;;; General Use
@@ -134,7 +137,7 @@
         ,@body
         (go ,tagname))))))
 
-
+
 ;;; For "objects.lisp"
 ;;
 
@@ -159,7 +162,7 @@
   (and (<= left x right)
        (<= top y bottom)))
 
-
+
 ;;  TEXT MACROS
 
 (declaim (inline the-width))
@@ -190,7 +193,7 @@
 (defun the-font-descent (text-extents)
   (seventh text-extents))
 
-
+
 ;;   IMAGE MACROS
 (declaim (inline read-image))
 (defun read-image (pathname &optional root-window)
@@ -204,7 +207,7 @@
 			  (g-value gem:device-info :current-root))
 		      pathname image))
 
-
+
 ;; For "basics.lisp"
 
 ;;; The accessors for the sides of the gob adjust both the dimensions,
@@ -226,7 +229,7 @@
 (defun bottom-side (gob)
   (bottom gob))
 
-
+
 ;;; For "text-fonts.lisp"
 
 ;; Font-From-File
@@ -241,7 +244,7 @@
 	   (1+ (position #\/ font-name :from-end t))
 	   (position #\. font-name :from-end t)))
 
-
+
 ;; For "windows.lisp"
 
 (declaim (inline get-parent-win))
@@ -266,7 +269,7 @@
      (restore-cursors)))
 
 
-
+
 ;; For "clean-up.lisp"
 
 (defmacro opal-window (window-pair)
@@ -278,7 +281,7 @@
 (defmacro already-been-destroyed (a-window)
   `(not (kr:schema-p ,a-window)))
 
-
+
 ;; For aggregadgets, aggrelists, etc.
 
 (defmacro add-item (schema &rest args)
@@ -298,7 +301,7 @@ the item that was previously in the specified position.
  `(let ((the-schema ,schema))
    (kr-send the-schema :remove-item the-schema ,@args)))
 
-
+
 ;; Virtual aggregates.
 
 (defmacro point-to-rank (schema &rest args)
@@ -335,7 +338,7 @@ the item that was previously in the specified position.
 	       (declare (fixnum ,n))
 	       ,@body)))))))
 
-
+
 ;; Utility
 
 (defmacro swap(a b) `(rotatef ,a ,b))

@@ -21,25 +21,25 @@
 ;;; 4-Jan-90 Mickish - Load Demo-Gadgets-Loader instead of Demo-Gadgets
 ;;;
 
-(in-package "COMMON-LISP-USER")
+(in-package :garnet-user)
 
-(defparameter Demos-Version-Number "1.0")
+;; (defparameter Demos-Version-Number "1.0")
 
-(format t "Loading Demos...~%")
+;; (format t "Loading Demos...~%")
 
 ;;; check to see if place is set
-(unless (boundp 'Garnet-Demos-PathName)
-  (error "Load 'Garnet-Loader' first to set Garnet-Demos-PathName before loading demos."))
+;; (unless (boundp 'Garnet-Demos-PathName)
+;;   (error "Load 'Garnet-Loader' first to set Garnet-Demos-PathName before loading demos."))
 
 
 
 ;;;  Load Demos Controller ...
 
-(load (merge-pathnames "demos-controller" Garnet-Demos-PathName)
-	:verbose T)
+;; (load (merge-pathnames "demos-controller" Garnet-Demos-PathName)
+;; 	:verbose T)
 
-(setf (get :garnet-modules :demos) t)
-(format t "...Done Loading Demos.~%")
+; ;; (setf (get :garnet-modules :demos) t)
+;; (format t "...Done Loading Demos.~%")
 
 (defun go-demos ()
   (demos-controller:do-go))
@@ -47,6 +47,5 @@
 (defun stop-demos()
   (demos-controller:do-stop))
 
-(format t "~%**Use (go-demos) to start all demos 
+(format t "~%**Use (progn (in-package :garnet-user) (go-demos) to start all demos
 **   and (stop-demos) to stop all the demos~%")
-

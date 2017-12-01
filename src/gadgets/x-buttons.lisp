@@ -34,7 +34,7 @@
 ;;;            Fixed-height-p -- same, but with heights
 ;;;            Fixed-width-size -- width of all components (default is the
 ;;;                                width of the widest button)
-;;;            Fixed-height-size -- same, but with heights 
+;;;            Fixed-height-size -- same, but with heights
 ;;;            H-align -- how to align buttons, if vertical orientation
 ;;;                       :left, :center, or :right
 ;;;            Rank-margin -- after this many components, a new row (or column)
@@ -49,7 +49,7 @@
 ;;;     6)  Font -- the font in which the button labels will appear
 ;;;     7)  Text-on-left-p -- whether text will appear on left side of buttons
 ;;;                           (NIL implies text will appear to the right)
-;;;     8)  Items -- This can be: 
+;;;     8)  Items -- This can be:
 ;;;                  A list of strings, as in '("Large" ...), or
 ;;;                  a list of atoms, as in '(:center ...), or
 ;;;                  a list of string/function pairs, '(("Cut" Cut-FN) ...), or
@@ -232,7 +232,7 @@
 			     :button-width :button-height :shadow-offset
 			     :text-offset :gray-width :text-on-left-p
 			     :font :items :visible))
-   
+
    ;; Customizable slots
    ;;
    (:left 0) (:top 0)
@@ -349,7 +349,7 @@
 				      :fixed-height-size)
 				  (MAX (gvl :text :height)
 				       (gvl :button-unit-height)))))
-      
+
 	 ;; Conditional formulas are required to allow either a list of
 	 ;; strings or a list of string/function pairs in the :items slot.
 	 (:string ,(o-formula (if (gv (kr-path 1 :parent :parent) :actions-p)
@@ -360,7 +360,7 @@
 	 (:action ,(o-formula (when (gv (kr-path 0 :parent :parent) :actions-p)
 				(second (nth (gvl :rank)
 					     (gv (kr-path 0 :parent) :items))))))
-      
+
 	 (:font ,(o-formula (gv (kr-path 0 :parent :parent) :font)))
 	 (:parts
 	  (:shadow :gray-outline :white-field
@@ -374,7 +374,7 @@
        ((:x-button-press :omit))))))))
 
    (:interactors
-    `((:X-BUTTON-PRESS ,inter:button-interactor 
+    `((:X-BUTTON-PRESS ,inter:button-interactor
 	(:start-where ,(o-formula (list :element-of
 					(gvl :operates-on :x-button-list))))
 	(:window ,(o-formula (gv-local :self :operates-on :window)))
@@ -404,12 +404,12 @@
   (opal::Gadget-Add-Local-Item gadget item :x-button-list args))
 (define-method :add-item X-BUTTON-PANEL (gadget item &rest args)
   (opal::Gadget-Add-Item gadget item :x-button-list args))
-   
+
 (define-method :remove-local-item X-BUTTON-PANEL
-               (gadget &optional item &key (key #'opal:no-func))
+               (gadget &rest item &key (key #'opal:no-func))
   (opal::Gadget-Remove-Local-Item gadget item :x-button-list key))
 (define-method :remove-item X-BUTTON-PANEL
-               (gadget &optional item &key (key #'opal:no-func))
+               (gadget &rest item &key (key #'opal:no-func))
   (opal::Gadget-Remove-Item gadget item :x-button-list key))
 
 (s-value X-BUTTON-PANEL :change-item (g-value opal:aggrelist :change-item))
@@ -428,7 +428,7 @@
 ;;;
 
 
-  
+
 #+garnet-test (defparameter X-Buttons-win NIL)
 #+garnet-test (defparameter X-Buttons-top-agg NIL)
 #+garnet-test (defparameter X-Buttons-Obj NIL)

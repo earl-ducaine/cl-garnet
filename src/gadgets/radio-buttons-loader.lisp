@@ -22,17 +22,16 @@ Change log:
 (in-package "COMMON-LISP-USER")
 
 ;; check first to see if place is set
-(unless (boundp 'Garnet-Gadgets-PathName)
-  (error "Load 'Garnet-Loader' first to set Garnet-Gadgets-PathName before loading Gadgets."))
+;; (unless (boundp 'Garnet-Gadgets-PathName)
+;;   (error "Load 'Garnet-Loader' first to set Garnet-Gadgets-PathName before loading Gadgets."))
 
-(unless (get :garnet-modules :radio-buttons)
-  (format t "Loading Radio-Buttons...~%")
-  (dolist (pair '((:GAD-button-parts "GAD-button-parts")
-		  (:radio-buttons "radio-buttons")))
-    (unless (get :garnet-modules (car pair))
-      (load (merge-pathnames (cadr pair) Garnet-Gadgets-PathName)
-	    :verbose T)))
-  (format t "...Done Radio-Buttons.~%"))
+;; (unless (get :garnet-modules :radio-buttons)
+;;   (format t "Loading Radio-Buttons...~%")
+;;   (dolist (pair '((:GAD-button-parts "GAD-button-parts")
+;; 		  (:radio-buttons "radio-buttons")))
+;;     (unless (get :garnet-modules (car pair))
+;;       (load (merge-pathnames (cadr pair) Garnet-Gadgets-PathName)
+;; 	    :verbose T)))
+;;   (format t "...Done Radio-Buttons.~%"))
 
-(setf (get :garnet-modules :radio-buttons) t)
-
+;; (setf (get :garnet-modules :radio-buttons) t)

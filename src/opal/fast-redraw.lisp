@@ -9,14 +9,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 
-
+
 (in-package "OPAL")
 
 ;;; NOTES ON FAST-REDRAW
 ;;;    There are three allowed values for :fast-redraw-p -- T, :rectangle,
 ;;; and :redraw.  The T case assumes that the object has an :xor draw
 ;;; function, so the object is just redrawn -- an object XOR'ed on top
-;;; of itself will disappear. 
+;;; of itself will disappear.
 ;;;    The other two cases require that the user specify a filling-style
 ;;; and a line style in :fast-redraw-filling-style and :fast-redraw-
 ;;; line-style.  These styles should be the same color as the background
@@ -28,7 +28,7 @@
 ;;; setting and resetting of the object's filling and line styles during
 ;;; this procedure.
 
-
+
 ;;;    SET-STYLES is a method which is called by the fast-redraw
 ;;; algorithm while erasing an object.  We need a method for this procedure
 ;;; because the update-slots-values array is different for every object.
@@ -84,7 +84,7 @@
     (setf (aref update-vals +circle-lstyle+) line-style)))
 
 
-
+
 ;;; This is the FAST-REDRAW-RECTANGLE's update-slots-values, and is
 ;;; used by the set-frr-bbox methods
 (defvar frr-update-vals

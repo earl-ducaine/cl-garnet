@@ -31,7 +31,7 @@
 (eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(indent turn-off-match lispify add-lisp-char delete-lisp-region)))
 
-
+
 ;;;; TABS
 
 ;;;; function WORD-TAB
@@ -85,7 +85,7 @@
 ;;;         TRIM: if specified T, will not include the first character of the
 ;;;               word... useful for "(defun" -> "defun"
 ;;;  returns: the word that the cursor is currently on or before on same line
-;;;    ->         (in :strings format) 
+;;;    ->         (in :strings format)
 
 (defun get-word (line char-pos &key (trim nil))
   (multiple-value-bind (frag frag-pos)
@@ -122,7 +122,7 @@
 	     (position #\space string)))
 	   ((or last-frag-pos (null last-frag))
 	    (when last-frag
-	      (setq word (concatenate 
+	      (setq word (concatenate
 			  'string word (if (eq last-frag frag)
 					   (subseq string frag-pos last-frag-pos)
 					   (subseq string 0 last-frag-pos))))))
@@ -131,9 +131,7 @@
 						 string))))
       (remove #\space word))))
 
-;;;; function CHAR-CODE-P
-;;;   returns 't' if the current word is a character-code, 'nil' if not.
-
+;;; returns 't' if the current word is a character-code, 'nil' if not.
 (defun char-code-p (frag frag-pos)
   (if (and (null (opal::frag-prev frag)) (< frag-pos 2))
       nil
@@ -151,8 +149,7 @@
 	(let ((prev-char
 	       (do* ((my-frag frag (opal::frag-prev frag))
 		     (pos frag-pos (opal::frag-length frag)))
-		    ((> pos 0) (schar (opal::frag-string frag) (1- pos)))
-		 (declare (ignore my-frag))))
+		    ((> pos 0) (schar (opal::frag-string frag) (1- pos)))))
 	      char)
 	  (if (member prev-char '(#\\ #\-))
 	      (progn
@@ -318,7 +315,7 @@
     )
   )
 
-
+
 ;;;
 ;;;   The indentation table: how far to indent for each lisp function
 ;;;
@@ -392,7 +389,7 @@
 (indent "with-accessors" 1 4)
 (indent "define-method" 3 4)
 
-
+
 ;;;; function TAB
 ;;;  input: TEXT-OBJ, the text-object
 ;;;  output: will put the correct (LISP-wise) number of spaces between
@@ -413,7 +410,7 @@
                          (word-tab text-obj (third info)
 				   (fourth info) (second info))
                          (+ (fourth info) special-tab))))
-    
+
     (opal:set-cursor-to-line-char-position text-obj start-line 0)
     (when (opal::delim-char-p (opal:fetch-next-char text-obj))
       (opal:go-to-next-word text-obj))
@@ -440,7 +437,7 @@
 				  0)
 			      tab-amount)))))
 
-
+
 ;;;; MATCHING PARENTHESIS
 
 ;;;; function LINE-STRING
@@ -555,7 +552,7 @@
 	(s-value text-obj :current-font
 		 (opal:get-standard-font :fixed :roman :medium)))))
 
-
+
 ;;;; COMMENTS
 
 ;;;; function ITALICIZE
@@ -634,7 +631,7 @@
 	       (opal:insert-mark text-obj t :name :close)))))
       (opal:go-to-next-char text-obj))))
 
-
+
 ;;;; SKIPS through LISP EXPRESSIONS (Control-Meta-F etc.)
 
 ;;;; function FIND-CLOSE-PAREN
@@ -802,7 +799,7 @@
            ((not (equal (g-value text-obj :current-font)
 			(opal:get-standard-font :fixed :italic :medium))))
          (opal:go-to-prev-word text-obj))))))
-    
+
 ;;;;  LISPIFY
 ;;;  Changes a string into LISP format
 ;;;  Input: a string
@@ -931,7 +928,7 @@
 	      lispified-text)))))
 
 
-
+
 ;;;; EDITING FUNCTIONS
 
 (defun ADD-LISP-CHAR (text-obj char &optional new-font new-fcolor new-bcolor)
@@ -955,9 +952,9 @@
 	 (opal::remove-mark text-obj (opal::search-for-mark-from
 				      line frag :name :open-comment))
 	 (opal::calculate-size-of-line text-obj line))))
-    
+
     (opal:add-char text-obj char new-font new-fcolor new-bcolor)
-    
+
     (when added-lisp-arg
       (when (and (not (lisp-delim-char-p next-char))
 		 (not (eq next-char #\;)))
@@ -967,7 +964,7 @@
 	  (opal::remove-mark text-obj mark)
 	  (opal::calculate-size-of-line text-obj line)))
       (opal:insert-mark text-obj t :name :arg))))
-    
+
 
 (defun DELETE-LISP-REGION (text-obj)
   (let* ((line1 (g-value text-obj :cursor-line))
@@ -1034,7 +1031,7 @@
 	(opal::calculate-size-of-line text-obj line)))))
     region))
 
-
+
 ;;;;  KEY-BINDING-FUNCTIONS
 
 (defun semi-func (interact text-obj event)
@@ -1068,7 +1065,7 @@
 	     (opal:get-standard-font :fixed :roman :medium))
     (when need-mark
       (opal:insert-mark text-obj nil :name :arg))))
-  
+
 (defun bslash-func (interact text-obj event)
   (declare (ignore interact))
   (add-lisp-char text-obj (event-char event))
@@ -1403,7 +1400,7 @@
     (opal:set-selection-to-line-char-position text-obj line char)
     (opal:toggle-selection text-obj t)
     (DELETE-LISP-REGION text-obj)))
-     
+
 (defun hash-func (interact text-obj event)
   (declare (ignore interact event))
   (let ((prev-char (opal:fetch-prev-char text-obj))
@@ -1434,7 +1431,7 @@
       (opal:insert-mark text-obj t :name :quote))))
 
 (defun space-func (interact text-obj event)
-  (declare (ignore interact event))  
+  (declare (ignore interact event))
   (let ((next-char (opal:fetch-next-char text-obj))
 	(prev-char (opal:fetch-prev-char text-obj)))
     (add-lisp-char text-obj #\space)
@@ -1469,6 +1466,3 @@
 		 (not (eq next-char #\;))
 		 (not (lisp-delim-char-p prev-char)))
 	(opal:insert-mark text-obj nil :name :arg)))))
-
-
-

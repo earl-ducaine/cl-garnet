@@ -19,8 +19,8 @@
 		 (:font (create-instance NIL opal:font
 			  (:face :bold-italic)
 			  (:size :large))))
-			 
-			  
+
+
 (add-component a s1)
 
 #|
@@ -46,7 +46,7 @@
 	     (:filling-style opal:black-fill))))
      ((null point-list) T)
   (opal:add-component a obj))
-     
+
 
 
 (create-instance 'ml polyline
@@ -87,5 +87,3 @@ strings!")(:left 350)(:top 80)(:justification :center))
 	 (:image (read-image "/afs/cs/project/garnet/test/lib/gilt/giltbitmap.bitmap")))
 (add-component a bm)
 (update w)
-
-

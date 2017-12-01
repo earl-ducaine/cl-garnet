@@ -18,7 +18,7 @@
 ;;;     3)  The top level :value slot points to the string of the currently
 ;;;         selected button.
 ;;;     4)  The top level :value-obj slot points to the currently selected
-;;;         button, and can be set directly with S-VALUE to select a button.  
+;;;         button, and can be set directly with S-VALUE to select a button.
 ;;;     5)  The :items slot may contain functions to be executed as each
 ;;;         button becomes selected, and :selection-function may contain a
 ;;;         function to be executed when any button becomes selected.
@@ -33,7 +33,7 @@
 ;;;            Fixed-height-p -- same, but with heights
 ;;;            Fixed-width-size -- width of all components (default is the
 ;;;                                width of the widest button)
-;;;            Fixed-height-size -- same, but with heights 
+;;;            Fixed-height-size -- same, but with heights
 ;;;            H-align -- how to align buttons, if vertical orientation
 ;;;                       :left, :center, or :right
 ;;;            Rank-margin -- after this many components, a new row (or column)
@@ -48,7 +48,7 @@
 ;;;     6)  Text-on-left-p -- whether text will appear on left side of buttons
 ;;;                           (NIL implies text will appear to the right)
 ;;;     7)  Font  --  The font in which the button labels will appear
-;;;     8)  Items -- This can be: 
+;;;     8)  Items -- This can be:
 ;;;                  A list of strings, as in '("Large" ...), or
 ;;;                  a list of atoms, as in '(:center ...), or
 ;;;                  a list of string/function pairs, '(("Cut" Cut-FN) ...), or
@@ -246,7 +246,7 @@
 	    (:maybe-constant :left :top :direction :v-spacing :h-spacing
 			     :h-align :fixed-width-p :fixed-width-size
 			     :fixed-height-p :fixed-height-size :indent
-			     :rank-margin :pixel-margin 
+			     :rank-margin :pixel-margin
 			     :button-diameter :shadow-offset :text-offset
 			     :gray-width :text-on-left-p :toggle-p :font
 			     :items :visible))
@@ -377,7 +377,7 @@
 	  (:filling-style ,opal:black-fill))))
 
    (:interactors
-    `((:RADIO-BUTTON-PRESS ,inter:button-interactor 
+    `((:RADIO-BUTTON-PRESS ,inter:button-interactor
 	(:start-where ,(o-formula (list :element-of
 					(gvl :operates-on :radio-button-list))))
 	(:window ,(o-formula (gv-local :self :operates-on :window)))
@@ -405,12 +405,13 @@
   (opal::Gadget-Add-Local-Item gadget item :radio-button-list args))
 (define-method :add-item RADIO-BUTTON-PANEL (gadget item &rest args)
   (opal::Gadget-Add-Item gadget item :radio-button-list args))
-   
+
 (define-method :remove-local-item RADIO-BUTTON-PANEL
-               (gadget &optional item &key (key #'opal:no-func))
-  (opal::Gadget-Remove-Local-Item gadget item :radio-button-list key))
+               (gadget &rest item &key (key #'opal:no-func))
+	       (opal::Gadget-Remove-Local-Item gadget item :radio-button-list key))
+
 (define-method :remove-item RADIO-BUTTON-PANEL
-               (gadget &optional item &key (key #'opal:no-func))
+               (gadget &rest item &key (key #'opal:no-func))
   (opal::Gadget-Remove-Item gadget item :radio-button-list key))
 
 (s-value RADIO-BUTTON-PANEL
@@ -486,6 +487,6 @@
   (format t "function specified in :selection-function (if there is one).~%")
   (opal:update Radio-Buttons-Win))
 
-#+garnet-test 
+#+garnet-test
 (defun Radio-Buttons-Stop ()
   (opal:destroy Radio-Buttons-Win))
