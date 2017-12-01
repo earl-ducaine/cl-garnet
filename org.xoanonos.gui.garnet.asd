@@ -20,12 +20,19 @@
 
 (asdf:defsystem :org.xoanonos.gui.garnet
   :depends-on (:clx ;; :zpb-ttf
+<<<<<<< HEAD
 	       :cl-vectors ;; :cl-paths-ttf
 	       :cl-aa :cl-fad :bordeaux-threads
 	       :cl-store :trivial-features :cl-aa-misc :alexandria :cl-ppcre)
   :license "MIT-ish (also public domain, see LICENSE)"
   :author "CMU Garnet Team (plus various others, see LICENSE)"
   :description " GUI toolkit (c. 1990 look/feel)"
+=======
+		    :cl-vectors ;; :cl-paths-ttf
+		    :cl-aa :cl-fad
+		    :cl-store :trivial-features :cl-aa-misc :alexandria :cl-ppcre)
+  ;; Prints any user directions to get things going.
+>>>>>>> 7710dc6bad69a55df09fc4566ae1eb7c0525f9b8
   ;; :around-compile (lambda (compile-function)
   ;; 		    (when (fboundp 'cl-user::print-demo-instructions)
   ;; 		      (funcall (symbol-function 'cl-user::print-demo-instructions) compile-function))

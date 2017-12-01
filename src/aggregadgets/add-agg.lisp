@@ -296,7 +296,195 @@ affected aggrelist.
     (unless (has-slot-p inst :items)
       (Recursive-Remove-Component inst rank))))
 
+(defun frob (&rest args)
+  (flet ((frob-driver (i size)
+           (list i size)))
+    (if (or (endp args) (numberp (first args)))
+        ;; no args, or the first argument is a number (and thus
+        ;; not a keyword argument)...
+        (destructuring-bind (&optional (i 'default-i) &key (size 'default-size)) args
+          (frob-driver i size))
+        ;; otherwise, there are some non-numeric arguments at
+        ;; beginning, so it must be the keyword list, and that the
+        ;; "optional" wasn't provided.
+        (destructuring-bind (&key (size 'default-size) &aux (i 'default-i)) args
+          (frob-driver i size)))))
 
+(defun function-with-complex-arguments-nice (&rest args)
+  (unless (and args (listp args))
+    (error "args must be a list with at least one member"))
+  (let (alist item key)
+    (cond
+      ((< (length alist) 2)
+       (destructuring-bind (local-alist &optional local-item)
+	   args
+	 (setf alist local-alist)
+	 (setf item local-item)))
+      (t
+       (destructuring-bind (local-alist local-item &key (local-key #'opal:no-func))
+	   args
+	 (setf alist local-alist)
+	 (setf item local-item)
+	 (setf key local-key))))
+    (list alist item key)))
+
+(defun function-with-complex-arguments-naughty
+    (alist &optional item &key (key #'opal:no-func))
+  (list alist item key))
+
+(defun test-combination (args)
+  (let (nice naughty
+	     (err1
+	      (err2)
+	       (unwind-protect ()
+		 (apply #'function-with-complex-arguments-nice args)
+		 (apply #'function-with-complex-arguments-naughty args))))))
+
+;; (defun maybe-generate-error ()
+;;   (this-is-an-error))
+;;  (run-naughty-nice-test-item '(a b :key c))
+;;  item))))
+
+;; (run-naughty-nice-test-item
+;;  '(:function #'function-with-complex-arguments-naughty :args '(a b :key 3)))
+
+(defparameter *tests*
+  '((:function function-with-complex-arguments-naughty
+     :args (a b :key 3)
+     :expected-return-values ((A B 3))
+     :expected-err nil)))
+
+(defun print-test-results (results)
+  (format t "~:{~&   ~16@A    ~6@A  ~}"
+	  (cons
+	   (list "Args"    "Passed?")
+	   (mapcar (lambda (result)
+		     (destructuring-bind (&key args passed &allow-other-keys)
+			 result
+		       (list args passed)))
+		     results))))
+
+(defparameter table
+  '((:args (a b :key 3) :passed"t")))
+
+(defun run-test-naughty-nice-items ()
+  (let (test-results)
+    (dolist (test-item *tests*)
+      (multiple-value-bind (err return-values)
+	  (test-naughty-nice-item test-item)
+	(destructuring-bind (&key expected-err expected-return-values args
+				  &allow-other-keys)
+	    test-item
+	  (let ((passed-err (or (and expected-err err)
+				(not (or expected-err err))))
+		(passed-return-values (equal expected-return-values return-values)))
+	    (push (list :passed (and passed-err passed-return-values)
+			:args args)
+		  test-results)
+		  (print-test-results test-results)))))))
+;;;	  (format t "err: ~s return-values: ~s~% ~s~% ~s ~%" err return-values))))))
+
+(defun test-naughty-nice-item (item)
+  (execute-closure-under-test-error-handling
+   (lambda ()
+     (destructuring-bind (&key function args &allow-other-keys) item
+       (format t "item: ~s~%" args)
+       (apply function args)))))
+
+;; first value indicates whether an error occured.  Second returned
+;; value is the values returned by the closure.
+(defun execute-closure-under-test-error-handling (closure)
+  (handler-case
+      (apply closure '())
+    (t (error-condition)
+      (values error-condition nil))
+    (:no-error (&rest expression-results)
+      (values nil expression-results))))
+
+(defun test-function-with-complex-arguments ()
+  ;; some case that we might be interested in:
+  ;; test combinations:
+  ;;
+  ;; alist item key
+  ;;     p    p   p
+  ;;     p    p   n
+  ;;     p    p   a
+  ;;     p    n   p
+  ;;     p    n   n
+  ;;     p    n   a
+  ;;     p    a   p
+  ;;     p    a   n
+  ;;     p    a   a
+  ;;     n    p   p
+  ;;     n    p   n
+  ;;     n    p   a
+  ;;     n    n   p
+  ;;     n    n   n
+  ;;     n    n   a
+  ;;     n    a   p
+  ;;     n    a   n
+  ;;     n    a   a
+  ;;     a    p   p
+  ;;     a    p   n
+  ;;     a    p   a
+  ;;     a    n   p
+  ;;     a    n   n
+  ;;     a    n   a
+  ;;     a    a   p
+  ;;     a    a   n
+  ;;     a    a   a
+  (let ((alist '((a b) (c d)))
+	(item 'item)
+	 (key :key)
+	(combinations '((p    p   p)
+			 (p    p   n)
+			 (p    p   a)
+			 (p    n   p)
+			 (p    n   n)
+			 (p    n   a)
+			 (p    a   p)
+			 (p    a   n)
+			 (p    a   a)
+			 (n    p   p)
+			 (n    p   n)
+			 (n    p   a)
+			 (n    n   p)
+			 (n    n   n)
+			 (n    n   a)
+			 (n    a   p)
+			 (n    a   n)
+			 (n    a   a)
+			 (a    p   p)
+			 (a    p   n)
+			 (a    p   a)
+			 (a    n   p)
+			 (a    n   n)
+			 (a    n   a)
+			 (a    a   p)
+			 (a    a   n)
+			 (a    a   a))))
+	  (dolist (combination combinations)
+	    (let (args)
+	      (unless (eq (first combination) 'a)
+		(if (eq (first combination) 'n)
+		    (push nil args)
+		    (push alist args)))
+	      (unless (eq (second combination) 'a)
+		(if (eq (second combination) 'n)
+		    (push nil args)
+		    (push item args)))
+	      (unless (eq (third combination) 'a)
+		(if (eq (third combination) 'n)
+		    (push nil args)
+		    (push key args)))
+	      (format t "args ~s~%" args)))))
+
+;; Note the argument list would like the following:
+;; like the following:
+;;
+;; (alist &optional item &key (key #'opal:no-func)
+;;
+;; rewritting it avoid sbcl style warnings
 (define-method :remove-local-item opal:aggrelist
                (alist &rest item &key (key #'opal:no-func))
   (let* ((items (or (g-local-value alist :items)
@@ -330,7 +518,7 @@ affected aggrelist.
 			(s-value alist :items (nbutlast items))))
 	   (let ((comp-to-destroy (nth rank (g-value alist :components))))
 	     (remove-local-component alist comp-to-destroy)
-	     (opal:destroy comp-to-destroy))))))
+	     (opal:destroy comp-to-destroy))))))))))))
 
 (define-method :remove-item opal:aggrelist
                (alist &rest item &key (key #'opal:no-func))
