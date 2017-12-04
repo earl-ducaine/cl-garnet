@@ -573,7 +573,6 @@
         ;; redrawn as they are mapped.  If you are interested in this line of
         ;; code, you will probably also be interested in the ccl:validate-view
         ;; instruction at the end of the update method.
-        #-cmu
 	(s-value a-window :very-first-exposure t)
 	;; set the cursor to hemlock's cursor or specified cursor/mask combo
 	;; (cursor-file . mask-file)

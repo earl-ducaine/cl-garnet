@@ -1,16 +1,13 @@
 ;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: GEM; Base: 10 -*-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;         The Garnet User Interface Development Environment.      ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; This code was written as part of the Garnet project at          ;;;
-;;; Carnegie Mellon University, and has been placed in the public   ;;;
-;;; domain.  If you are using this code or any part of Garnet,      ;;;
-;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; The Garnet User Interface Development Environment.
+;;;
+;;; This code was written as part of the Garnet project at Carnegie
+;;; Mellon University, and has been placed in the public domain.  If
+;;; you are using this code or any part of Garnet, please contact
+;;; garnet@cs.cmu.edu to be put on the mailing list.
 
-
-(in-package "GEM")
+(in-package :gem)
 
 (defparameter *last-state* NIL)
 (defparameter *last-code* NIL)
@@ -34,8 +31,6 @@
 	newcode)
       ;; else not interested in double click
       code))
-;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun x-set-interest-in-moved (window interestedp)
   ;; Macroexpansion of (inter::if-debug :mouse
@@ -48,7 +43,6 @@
       (LET ((*PRINT-PRETTY* NIL))
 	(FORMAT T "interested in mouse moved now ~s~%" INTERESTEDP)))
   ;; END
-
   (let ((drawable (get-value window :drawable)))
     (if drawable
 	(if interestedp
@@ -68,11 +62,9 @@
 			      :K))))
 	      (gem:set-window-property window :EVENT-MASK em)
 	      (s-value window :event-mask em)))
-      ;; here no drawable yet, set the field in the window so it will
-      ;; use the right one when the drawable is created
-      (s-value window :want-running-em interestedp))))
-
-
+	;; here no drawable yet, set the field in the window so it will
+	;; use the right one when the drawable is created
+	(s-value window :want-running-em interestedp))))
 
 (defun x-translate-mouse-character (root-window button-code modifier-bits
                                     event-key)
@@ -83,16 +75,15 @@
            (inter::modifier-index modifier-bits)))
     (:button-press
      (aref inter::*mouse-down-translations*  button-code
-           (inter::modifier-index modifier-bits)))
-    ))
-
+           (inter::modifier-index modifier-bits)))))
 
 (defun x-translate-character (window x y bits scan-code time)
-  "Translates scan-code and modifier bits to a Lisp character.  The scan code
-   is first mapped to a keysym with index 0 for unshifted and index 1 for
-   shifted or lock.  If this keysym does not map to a character, and it is not a
-   modifier key (shift, ctrl, etc.), then an error is signaled.  If the keysym
-   is a modifier key, then nil is returned."
+  "Translates scan-code and modifier bits to a Lisp character.  The
+   scan code is first mapped to a keysym with index 0 for unshifted
+   and index 1 for shifted or lock.  If this keysym does not map to a
+   character, and it is not a modifier key (shift, ctrl, etc.), then
+   an error is signaled.  If the keysym is a modifier key, then nil is
+   returned."
   (declare (ignore x y time))
   (let (shiftp)
     (dolist (ele inter::*modifier-translations*)
@@ -109,4 +100,3 @@
 		(error "Undefined keysym ~S, describe Inter:DEFINE-KEYSYM."
 		       keysym)))
 	  (inter::base-char-to-character temp-char bits)))))
-

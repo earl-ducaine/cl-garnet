@@ -183,6 +183,12 @@
 	       (:current-root NIL)
 	       (:active-devices NIL))
 
+(defvar *gem-initialization-hooks* '())
+
+(defun run-post-init-hooks ()
+  (dolist (function *gem-initialization-hooks*)
+    (funcall function)))
+
 (defun init-device ()
   ;; This schema stands for the top-level root window for the X
   ;; device.  We use create-schema to prevent any :initialize method
@@ -202,7 +208,9 @@
 	     (display-info-root-window display-info))
     (s-value *root-window* :display-info display-info))
   (set-draw-functions *root-window*)
-  *root-window*)
+  *root-window*
+  (when *gem-initialization-hooks*
+    (run-post-init-hooks)))
 
 ;;; This is a utility function, used only for interactive debugging.
 (defmacro adjust (name)

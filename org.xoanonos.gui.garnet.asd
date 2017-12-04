@@ -55,7 +55,13 @@
    	    :components
 	    ((:file "gem")
 	     (:file "define-methods")
+<<<<<<< HEAD:org.xoanonos.gui.garnet.asd
 	     (:file "x" :depends-on (:define-methods))))
+=======
+	     (:file "x")
+	     (:file "x-inter")
+	     (:file "run-trace-gem" :depends-on (:gem))))
+>>>>>>> 3edb87e... Improvement on basic functionality:xoanon.gui.garnet.asd
    (:module opal
    	    :pathname "src/opal"
    	    :depends-on (:utils :gem :kr)
@@ -95,7 +101,6 @@
 	    ((:file "garnet-keytrans")
 	     (:file "define-mouse-keys")
 	     (:file "x-define-keys")
-	     (:file "x-inter")
 	     (:file "interactors")
 	     (:file "accelerators")
 	     (:file "animation-process")
