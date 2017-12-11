@@ -1,38 +1,37 @@
 ;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: DEMO-TEXT; Base: 10 -*-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;         The Garnet User Interface Development Environment.      ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; This code was written as part of the Garnet project at          ;;;
-;;; Carnegie Mellon University, and has been placed in the public   ;;;
-;;; domain.  If you are using this code or any part of Garnet,      ;;;
-;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; The Garnet User Interface Development Environment.
+;;
+;;; This code was written as part of the Garnet project at
+;;; Carnegie Mellon University, and has been placed in the public
+;;; domain.  If you are using this code or any part of Garnet,
+;;; please contact garnet@cs.cmu.edu to be put on the mailing
+;;; list.
+;;;
 ;;;
 ;;; $Id$
 
-
 ;;; This file contains demo code for testing the text interactor
 ;;;
 ;;; This is intended as a test and demonstration of the text interactor
 ;;; as part of the Garnet project.
-;;; 
+;;;
 ;;; ** Call (Do-Go) to start and (Do-Stop) to stop **
 ;;;
 ;;; Designed and implemented by Brad A. Myers
 
-
-(in-package :DEMO-TEXT)
+(in-package :demo-text)
 
-(declaim (special VP TOP-AGG AGG VARIABLE-FONT TEXT-OBJ SPECIAL-OBJ
-		  THE-FEEDBACK-OBJ))
+(declaim (special vp top-agg agg variable-font text-obj special-obj
+		  the-feedback-obj))
 
-(defvar *test-debug* NIL)
+(defvar *test-debug* nil)
 
 ;; Load multifont stuff.
 (unless (get :garnet-modules :multifont)
    (common-lisp-user::garnet-load (concatenate 'string "opal:" "multifont-loader")))
 
-  
+
 ;;; ================================================================
 
 (defun Create-string (copy-string-obj agg)
@@ -98,7 +97,7 @@
     (:left (o-formula (first (gvl :box))))
     (:top (o-formula (second (gvl :box)))))
   (opal:add-component top-agg the-feedback-obj)
- 
+
   (opal:update vp)
 
   (create-instance 'edit-text-inter inter:multifont-text-interactor
@@ -202,4 +201,3 @@ Font changing:
 
 (defun do-stop ()
   (opal:destroy vp))
-
