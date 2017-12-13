@@ -575,7 +575,7 @@ the lisp predicate to test this ('NULL, 'KEYWORDP, etc....)"
 
 (defun type-to-fn (type)
   "Given the Lisp type, construct the lambda expr, or return the
-built-in function"
+   built-in function"
   (let (code)
     (cond ((consp type)			; complex type
 	   (if (eq (car type) 'SATISFIES)
@@ -653,23 +653,22 @@ Always returns the CODE of the resulting type (whether new or not)"
     code))
 
 (defun kr-type-error (type)
- (error "Type ~S not defined; use~%     (def-kr-type ... () '~S)~%" type type))
+  (error "Type ~S not defined; use~% (def-kr-type ... () '~S)~%" type type))
 
-
-(defun encode-type (type)
-  "Given a LISP type, returns its encoding."
-  (cond ((gethash type types-table))	; if there, just return it!
-	((and (listp type) (eq (car type) 'SATISFIES))
-	 ;; add new satisfies type
-	 (add-new-type NIL type (type-to-fn type)))
-	((symbolp type)
-	 (or (gethash (symbol-name type) types-table)
-	     (let ((predicate (find-lisp-predicate type)))
-	       (when predicate
-		 (add-new-type NIL type predicate)))
-	     (kr-type-error type)))
-	(T (kr-type-error type))))
-
+(eval-when (:execute :compile-toplevel :load-toplevel)
+  (defun encode-type (type)
+    "Given a LISP type, returns its encoding."
+    (cond ((gethash type types-table))	; if there, just return it!
+	  ((and (listp type) (eq (car type) 'SATISFIES))
+	   ;; add new satisfies type
+	   (add-new-type NIL type (type-to-fn type)))
+	  ((symbolp type)
+	   (or (gethash (symbol-name type) types-table)
+	       (let ((predicate (find-lisp-predicate type)))
+		 (when predicate
+		   (add-new-type NIL type predicate)))
+	       (kr-type-error type)))
+	  (T (kr-type-error type)))))
 
 (defun set-type-documentation (type string)
   "Add a human-readable description to a Lisp type."
@@ -2774,10 +2773,7 @@ notation to be read back in."
 	   next-char)))))
 
 
-;; Install this reader macro in the standard readtable.  Push the keyword
-;; :NO-K-READER onto the *features* list to disable this feature.
-;;
-#-NO-K-READER
+;; Install this reader macro in the standard readtable.
 (eval-when (:execute :compile-toplevel :load-toplevel)
   (set-dispatch-macro-character #\# #\k (function k-reader)))
 

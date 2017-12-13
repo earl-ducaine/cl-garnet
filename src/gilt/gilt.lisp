@@ -1,43 +1,21 @@
 ;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: GILT; Base: 10 -*-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;         The Garnet User Interface Development Environment.      ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; This code was written as part of the Garnet project at          ;;;
-;;; Carnegie Mellon University, and has been placed in the public   ;;;
-;;; domain.  If you are using this code or any part of Garnet,      ;;;
-;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; $Id$
-;;;
 
-
-;;; Gilt is a simple interface builder for Garnet.  It lets a user
-;;; construct a user interface by selecting gadgets in the gadget window
-;;; and then drawing them in the work window.  The work window can be
-;;; exercised and written out.
-;;;
-;;; Designed and implemented by Brad Myers
+;; The Garnet User Interface Development Environment.
+;;
+;; This code was written as part of the Garnet project at Carnegie
+;; Mellon University, and has been placed in the public domain.  If
+;; you are using this code or any part of Garnet, please contact
+;; garnet@cs.cmu.edu to be put on the mailing list.
+;;
+;;
+;; Gilt is a simple interface builder for Garnet.  It lets a user
+;; construct a user interface by selecting gadgets in the gadget
+;; window and then drawing them in the work window.  The work window
+;; can be exercised and written out.
+;;
+;; Designed and implemented by Brad Myers
 
-;;  **** BUGS:
-;;  Opal: windows should appear in new place
-;;  Gilt: Unset old name slot in aggregate when :known-as of a gadget changes
-;;  Gilt: Align menu can't center both row and column
-;;  Gilt: Should be easier to add the user's own gadgets
-;;  Gilt: The dialog boxes that were created with Gilt (like line-props) should
-;;    be split up into multiple code segments instead of one big c-i call.
-;;    This will make them easier to compile.
-;;  Gilt: Need to write out "in-package" info line as first executable instr.
-
-;;**** In Read, save other parts of main aggregate, such as interactors
-
-
-(in-package "GILT")
-
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(Do-Go Do-Stop)))
-
-(defparameter Gilt-Version "V3.0")
+(in-package :gilt)
 
 (defparameter *Run-Build-obj* NIL) ; the gadget that determines whether in
                                    ; build or run mode
@@ -75,7 +53,7 @@
 	(s-value obj temp-slot (formula old-val)) ; create an instance
         (s-value obj temp-slot old-val)))) ; otherwise, just use old value
 
-(defun Save-Temp-Value (orig-obj orig-slot temp-obj temp-slot 
+(defun Save-Temp-Value (orig-obj orig-slot temp-obj temp-slot
 				  new-value-for-orig)
   (if (has-slot-p orig-obj orig-slot)
       (kr::move-formula orig-obj orig-slot temp-obj temp-slot)
@@ -92,12 +70,7 @@
     (when destroy-temp-p
       (destroy-slot temp-obj temp-slot))))
 
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Main Menu Functions
-
-
-(defun Make-Main-Menu ()
+(defun make-main-menu ()
   (let* ((win (create-instance NIL inter:interactor-window
 		 (:top 45)(:left 500)(:width 346)(:height 131)
 		 (:title "Gilt Commands")
@@ -117,7 +90,7 @@
 		 (:interactors
 		  `(:press
 		    (:key :omit)))))
-	 
+
 
 	 (left-number (create-instance NIL number-enter-proto
 	     (:constant '(T :EXCEPT :active-p :LABEL-STRING :FIELD-FONT))
@@ -234,7 +207,7 @@
 		   ("Delete" "Select All" "To Top" "Properties...")
 		   NIL))
 		)))
-  
+
     (opal:update win)  ;;** bug in menubar need update first before add **
     (Init-value obj :build) ; start in Build mode
     (setq *main-win* win)
@@ -292,7 +265,7 @@
   (format T ";;; -*- Mode: LISP; Syntax: Common-Lisp; Package: ~a; Base: 10 -*-~%"
 	  package)
   (format T ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;~%")
-  (format T ";;; This file created by GILT ~a: The Garnet Interface Builder~%" 
+  (format T ";;; This file created by GILT ~a: The Garnet Interface Builder~%"
 	  Gilt-Version)
   (format T ";;; on ~a~%" (inter::time-to-string))
   (format T ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;~%~%")
@@ -345,7 +318,7 @@
   (let (sel-func)
     (dovalues (each-gadget *objs-agg* :components)
 	      (when (setq sel-func (g-value each-gadget :select-function))
-		
+
 		(cond ((stringp sel-func) ; then package probably not defined
 		       (setq sel-func (Check-Atom-In-Package sel-func package))
 		       (s-value each-gadget :select-function sel-func))
@@ -376,7 +349,7 @@
 		       (with-constants-disabled
 			   (s-value each-gadget :known-as knownas)))
 		      ((symbolp knownas) ;; then move to the keyword package
-		       (unless (eq keywordpackage (symbol-package knownas)) 
+		       (unless (eq keywordpackage (symbol-package knownas))
 			 (setq knownas (intern (symbol-name knownas) keywordpackage))
 			 (with-constants-disabled
 			     (s-value each-gadget :known-as knownas))))
@@ -385,21 +358,21 @@
 ;;;Sets the do-not-dump slot of all objects correctly for before saving
 (defun Set-Do-Not-Dump-Slot-For-Save ()
   (dolist (each-gadget (g-value *objs-agg* :components))
-    (s-value each-gadget :do-not-dump-slots 
+    (s-value each-gadget :do-not-dump-slots
 	     (append save-time-extra-do-not-dump-slots
 		     (g-value each-gadget :do-not-dump-slots)))))
 
 ;;;Removes the extra values from do-not-dump-slots
 (defun Set-Do-Not-Dump-Slot-After-Save ()
   (dolist (each-gadget (g-value *objs-agg* :components))
-    (s-value each-gadget :do-not-dump-slots 
+    (s-value each-gadget :do-not-dump-slots
 	     (set-difference (g-value each-gadget :do-not-dump-slots)
 			     save-time-extra-do-not-dump-slots))))
 
 ;;;Searches through all objects and if there is a :selection-function
 ;;; slot, then removes the value from the :selection function slot and puts
 ;;; it into the :select-function slot.   Do this after the
-;;; gadgets are read back in. 
+;;; gadgets are read back in.
 (defun Remove-Selection-Functions ()
   (let (sel-func)
     (dovalues (each-gadget *objs-agg* :components)
@@ -422,7 +395,7 @@
   (cond ((string= "" filename) (Gilt-Error "Filename must be supplied"))
 	((string= "" gadget-name) (Gilt-Error "Gadget name must be supplied"))
 	((string= "" package) (Gilt-Error "Package name must be supplied"))
-	((gu:probe-directory (directory-namestring filename))
+	((gu:directory-p (directory-namestring filename))
 	   (format T "Saving current work window to file ~s...~%" filename)
 	   (setq *Last-Filename* filename)
 	   (with-open-file (*standard-output* filename :direction :output
@@ -497,10 +470,10 @@
 		 (or (name-for-schema common-lisp-user::*Garnet-Object-Just-Created*)
 		     *Top-Gadget-Name*))
 	   ;; saved as one big aggregadget
-	   (unless addp 
+	   (unless addp
 	     ;; delete all old objects
 	     (gg:standard-Delete-All *main-menu* NIL)
-	   
+
 	     ;; if not add, then replace, so use new file's values
 	     (s-value *objs-agg* :function-for-ok
 		      (g-value common-lisp-user::*Garnet-Object-Just-Created*
@@ -532,7 +505,7 @@
 	     ;; :components slot is constant.
 	     (with-constants-disabled
 	       (opal:remove-component common-lisp-user::*Garnet-Object-Just-Created* obj))
-	     (s-value obj :do-not-dump-slots 
+	     (s-value obj :do-not-dump-slots
 		      (append create-time-do-not-dump-slots
 			      (g-value obj :do-not-dump-slots)))
 	     (with-constants-disabled ; since adding to an aggregadget
@@ -555,14 +528,14 @@
 	 ;; (aggrel-slot (g-value gilt-type :aggrelist-slots)) *BAM*not needed
 	 known-as)
 
-    
-    
+
+
     ;; If the :items slot of an aggrelist changed, update the work window
     ;; immediately so that the components and :items are rendered consistent
- ;;*BAM* Not Needed? (when (and aggrel-slot 
+ ;;*BAM* Not Needed? (when (and aggrel-slot
  ;;	       (assoc (setq slot (car aggrel-slot)) changed-values))
  ;;   (opal:update *work-win*))
-    
+
     ;; If the :known-as slot of an object changed, set the corresponding
     ;; name slot in the top-level gadget
     ;; ** BUG **  Should unset old name slot!
@@ -578,7 +551,7 @@
       "<Multiple>"
       (let ((obj (if (listp obj-or-objs)(car obj-or-objs) obj-or-objs)))
 	;; KR won't generate the object name unless it is printed first.
-	(format NIL "~s" obj) 
+	(format NIL "~s" obj)
 	;; loop to get to a nice package
 	(let (pack)
 	  (loop
@@ -602,7 +575,7 @@
 			 (g-value obj :left)
 			 (opal:bottom obj) NIL))
     (setq top (+ 40 top))
-    (Garnet-gadgets:pop-up-win-change-obj *prop-sheet* obj-or-objs NIL 
+    (Garnet-gadgets:pop-up-win-change-obj *prop-sheet* obj-or-objs NIL
 					  left top
 					  (get-nice-name obj-or-objs))))
 
@@ -704,7 +677,7 @@
 	; else just use a copy of the parameter
 	(setq points (copy-list point-list)))
     (s-value newobj slot points)
-    (s-value newobj :do-not-dump-slots 
+    (s-value newobj :do-not-dump-slots
 	     (append create-time-do-not-dump-slots
 		     (g-value newobj :do-not-dump-slots)))
     (opal:add-component *objs-agg* newobj
@@ -754,7 +727,7 @@
 	 #'(lambda (an-interactor point-list)
 	     (when point-list
 	       (let ((gadget (g-value an-interactor :window :current-gadget)))
-		 (if gadget 
+		 (if gadget
 		     (Create-New-Gadget gadget point-list)
 		     ; else no gadget
 		     (inter:beep)))))))
@@ -776,7 +749,7 @@
 				  (eq :build (gv *Run-Build-Obj* :value)))))
 	 (:obj-list (o-formula (let ((extra-win (gvl :extra-window))
 				     (sel-list (gv *Selection-Obj* :value)))
-				 (if extra-win 
+				 (if extra-win
 				     (append sel-list
 					     (g-value extra-win :aggregate
 						      :components))
@@ -787,7 +760,7 @@
 	 (:final-function
 	  #'(lambda (inter obj final-event final-string x y)
 	      (declare (ignore x y))
-	      (Set-Item-Slot-Appropriately obj inter final-event 
+	      (Set-Item-Slot-Appropriately obj inter final-event
 					   final-string))))
   (create-instance 'mf-text-edit inter:multifont-text-interactor
 	 (:window (o-formula (gv text-edit :window)))
@@ -851,7 +824,7 @@
   (let* ((top-obj (Find-Top-Obj obj))
 	 (string-set-func (when top-obj
 			    (g-value top-obj :String-Set-Func))))
-    (unless 
+    (unless
 	(and string-set-func
 	     (funcall
 	      string-set-func top-obj obj final-event final-string))
@@ -860,7 +833,7 @@
 "You cannot edit that string directly.
 Please use the dialog box that pops up when
 you give the 'Properties' command or go into Run mode."))))
-  
+
 (defun Create-Selection-Obj ()
   (setq *Selection-Obj*
 	(create-instance NIL garnet-gadgets:multi-graphics-selection
@@ -904,7 +877,7 @@ you give the 'Properties' command or go into Run mode."))))
   (unless (or (eq gadget-set :motif)
 	      (eq gadget-set :garnet))
     (error "Gilt:Do-go must be passed the gadget set to use: :motif or :garnet"))
-  
+
   (setq *work-win* (create-instance NIL inter:interactor-window
 		      (:title "Gilt Work Window")
 		      (:left 0)(:top 45)(:width 450)(:height 300)
@@ -954,7 +927,7 @@ you give the 'Properties' command or go into Run mode."))))
   ;;if not CMU CommonLisp, then start the main event loop to look for events
   #-cmu (inter:main-event-loop)
   )
-  
+
 (defmacro careful-delete (obj)
   `(when (and (boundp ',obj) (schema-p ,obj))
     (opal:destroy ,obj)))
@@ -972,4 +945,3 @@ you give the 'Properties' command or go into Run mode."))))
   (Destroy-Filter-Wins)
   (Destroy-Encon-Wins)
   (Destroy-Error-Check-Wins))
-

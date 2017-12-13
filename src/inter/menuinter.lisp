@@ -727,34 +727,34 @@ not selected, this does nothing."
 	(menu-do-abort an-interactor NIL NIL))))
 
 ;;; Menu schema
-(Create-Schema 'inter:menu-interactor
+(create-schema 'inter:menu-interactor
 	       (:is-a inter:interactor)
-	       (:name :First-Menu-interactor)
-	       (:start-action 'Menu-Int-Start-Action)
-	       (:running-action 'Menu-Int-Running-Action)
-	       (:stop-action 'Menu-Int-Stop-Action)
-	       (:abort-action 'Menu-Int-Abort-Action)
-	       (:outside-action 'Menu-Int-Outside-Action)
-	       (:back-inside-action 'Menu-Int-Back-Inside-Action)
+	       (:name :first-menu-interactor)
+	       (:start-action 'menu-int-start-action)
+	       (:running-action 'menu-int-running-action)
+	       (:stop-action 'menu-int-stop-action)
+	       (:abort-action 'menu-int-abort-action)
+	       (:outside-action 'menu-int-outside-action)
+	       (:back-inside-action 'menu-int-back-inside-action)
 	       (:how-set :set)
 	       (:slots-to-set '(:interim-selected :selected :selected))
 					; slots: interim, in object, in aggregate
-	       (:remembered-last-object NIL)
-	       (:main-aggregate NIL)
-	       (:Go 'General-Go)
-	       ;; Proc executed when events happen. These are called
-	       ;; by GO to do for stop-interactor the real work.  They
+	       (:remembered-last-object nil)
+	       (:main-aggregate nil)
+	       (:go 'general-go)
+	       ;; proc executed when events happen. these are called
+	       ;; by go to do for stop-interactor the real work.  they
 	       ;; call the appropriate action procedures
-	       (:Do-Start 'Menu-Do-Start)
-	       (:Do-Running 'Menu-Do-Running)
-	       (:Do-Stop 'Menu-Do-Stop)
-	       (:Do-Explicit-Stop 'Menu-Explicit-Stop)
-	       (:Do-Abort 'Menu-Do-Abort)
-	       (:Do-Outside 'Menu-Do-Outside)
-	       (:Do-Back-Inside 'Menu-Do-Back-Inside)
-	       (:Do-Outside-Stop 'Menu-Do-Outside-Stop)
+	       (:do-start 'menu-do-start)
+	       (:do-running 'menu-do-running)
+	       (:do-stop 'menu-do-stop)
+	       (:do-explicit-stop 'menu-explicit-stop)
+	       (:do-abort 'menu-do-abort)
+	       (:do-outside 'menu-do-outside)
+	       (:do-back-inside 'menu-do-back-inside)
+	       (:do-outside-stop 'menu-do-outside-stop)
 	       ;; proc to call when created
-	       (:initialize 'Menu-Interactor-Initialize))
+	       (:initialize 'menu-interactor-initialize))
 
 ;;; Need special destroy to remove the extra final feedback objects
 ;;; that may have been allocated.

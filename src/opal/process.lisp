@@ -26,8 +26,6 @@
 (defun m-e-l ()
   ;; first, throw away any pending events
   (discard-all-pending-events)
-  ;;  I don't know if this should be there.... [2006/01/10:rpg]
-  #-NO-K-READER
   (set-dispatch-macro-character #\# #\k (function kr::k-reader))
   (let ((root-window (gv gem:device-info :current-root)))
     (unwind-protect

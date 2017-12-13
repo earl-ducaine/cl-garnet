@@ -7,35 +7,30 @@
 ;;; domain.  If you are using this code or any part of Garnet,      ;;;
 ;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; $Id$
 
-
+
 ;;; This file contains demo code for testing the text interactor
 ;;;
 ;;; This is intended as a test and demonstration of the text interactor
 ;;; as part of the Garnet project.
-;;; 
+;;;
 ;;; ** Call (Do-Go) to start and (Do-Stop) to stop **
 ;;;
 ;;; Designed and implemented by Brad A. Myers
 
-
-(in-package :DEMO-TEXT)
+(in-package :demo-text)
 
-(declaim (special VP TOP-AGG AGG VARIABLE-FONT TEXT-OBJ SPECIAL-OBJ
-		  THE-FEEDBACK-OBJ))
+(declaim (special vp top-agg agg variable-font text-obj special-obj
+		  the-feedback-obj))
 
-(defvar *test-debug* NIL)
+(defvar *test-debug* nil)
 
 ;; Load multifont stuff.
 (unless (get :garnet-modules :multifont)
-   (common-lisp-user::garnet-load (concatenate 'string "opal:" "multifont-loader")))
+  (common-lisp-user::garnet-load
+   (concatenate 'string "opal:" "multifont-loader")))
 
-  
-;;; ================================================================
-
-(defun Create-string (copy-string-obj agg)
+(defun create-string (copy-string-obj agg)
   (let (obj)
     (setq obj (create-instance NIL opal:multifont-text
 		   (:left (g-value copy-string-obj :left))
@@ -43,9 +38,7 @@
 		   (:initial-text (opal:get-text copy-string-obj))))
     (opal:add-component agg obj)))
 
-;;; ================================================================
-
-(defun Do-Go (&key dont-enter-main-event-loop double-buffered-p)
+(defun do-go (&key dont-enter-main-event-loop double-buffered-p)
   ;;; create a viewport
   (create-instance 'vp inter:interactor-window (:left 10) (:top 50)
 			 (:width 650) (:height 400)
@@ -98,7 +91,7 @@
     (:left (o-formula (first (gvl :box))))
     (:top (o-formula (second (gvl :box)))))
   (opal:add-component top-agg the-feedback-obj)
- 
+
   (opal:update vp)
 
   (create-instance 'edit-text-inter inter:multifont-text-interactor
@@ -202,4 +195,3 @@ Font changing:
 
 (defun do-stop ()
   (opal:destroy vp))
-

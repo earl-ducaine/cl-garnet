@@ -626,10 +626,7 @@ pixmap format in the list of valid formats."
 (defun x-build-pixmap (a-window image width height bitmap-p)
   (x-create-pixmap a-window width height 1 image bitmap-p))
 
-
-;;; RETURNS:
-;;; the newly-created drawable.
-;;;
+;;; Create and return drawable.
 (defun x-create-window (parent-window x y width height
                         title icon-name
                         background border-width
@@ -668,8 +665,8 @@ pixmap format in the list of valid formats."
            :user-specified-size-p user-specified-size-p))
 
     (xlib:set-wm-properties drawable
-			    ;;                          :client-machine
-			    ;;                          (machine-instance)
+			    ;; :client-machine
+			    ;; (machine-instance)
                             :resource-name "Opal"
                             :resource-class :opal
                             :name title
@@ -1534,8 +1531,13 @@ pixmap format in the list of valid formats."
        t))))
 
 (defun x-flush-output (window)
-  ;;(xlib:display-force-output (the-display window)))
-  (xlib:display-finish-output (the-display window)))
+  (xlib:display-force-output (the-display window)))
+
+;; There shouldn't be any need for xlib:display-finish-output, which
+;; blocks and can potentially block forever.  At least that's what
+;; appears to be happening.
+;;
+;;(xlib:display-finish-output (the-display window)))
 
 
 ;;; RETURNS: the maximum character width for the font; if <min-too> is non-nil,
@@ -1925,9 +1927,8 @@ pixmap format in the list of valid formats."
 
 
 
-;;; Set the border widths of the <window>.  This is quite complex, because of
-;;; the differences among various window systems.
-;;;
+;;; Set the border widths of the <window>.  This is quite complex,
+;;; because of the differences among various window systems.
 (defun x-initialize-window-borders (window drawable)
   ;; find out what borders really are
   (if (g-value window :parent);; window is really subwindow
@@ -1983,7 +1984,6 @@ pixmap format in the list of valid formats."
 				      (xlib:drawable-height parent)
 				      top-border-width)))))))))
 
-
 (defun x-inject-event (window index)
   (let ((drawable (g-value window :drawable)))
     (xlib:send-event drawable
@@ -1992,9 +1992,6 @@ pixmap format in the list of valid formats."
                      :type :TIMER_EVENT
                      :format 32
                      :data (list index))))
-
-
-
 
 (defparameter *update-lock*
   (bordeaux-threads:make-recursive-lock "UPDATE-LOCK"))
@@ -2011,7 +2008,7 @@ pixmap format in the list of valid formats."
         (xlib:display-force-output display))
       (loop
          (if (eq (xlib:window-map-state drawable) :unmapped)
-             (sleep .1)
+             (sleep 0.01)
              (return t))))))
 
 (defun x-max-character-ascent (root-window opal-font)
@@ -2242,15 +2239,9 @@ integer.  We want to specify nice keywords instead of those silly
                 (error
                  "Illegal keyword ~S in gem:set-window-property (:EVENT-MASK)"
                  value))))
-       (if skip-force-output
-	   ;; CMUCL does not call display-force-output automatically after the
-	   ;; event-mask is changed (which is consistent with the CLX docs).
-	   ;; But since this operation is expensive, only do it for CMUCL.
-;;;      #+CMU (xlib:display-force-output *default-x-display*)
-	   #-CMU NIL
-
+       (unless skip-force-output
 	   ;; Need to force-output when using the background m-e-l
-	   ;; process,  otherwise this doesn't get noticed.
+	   ;; process, otherwise this doesn't get noticed.
 	   (xlib:display-force-output *default-x-display*))))
     (:EVENT-POSITION
      ;; This is used after a :configure-notify event has given us what it

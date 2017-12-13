@@ -526,11 +526,9 @@ This is done to avoid unnecessary total updates."
 	   (window-agg (g-local-value a-window :aggregate))
 	   (invalid-slots (win-update-info-invalid-slots win-info))
 	   invalid-vobs)
-
       (unless drawable
 	(setq drawable (install-drawable window-agg a-window win-info))
 	(setq total-p T))
-
       (when invalid-slots
 	(setq invalid-slots (fix-invalid-slots invalid-slots win-info a-window))
 	(if (process-invalid-slots invalid-slots win-info a-window drawable)

@@ -66,12 +66,11 @@ Change log:
     (s-value window :visible T)
     ;; beep if desired
     (when (g-value gadget :beep-p) (inter:beep))
-    ;; wait if desired, updating window
+    ;; wait if desired, updating window will raise the window
     (if wait
-	(inter:wait-interaction-complete window) ;; will raise the window
-	;; else raise window here
-	(opal:raise-window window))))   ;; calls update
-
+	(inter:wait-interaction-complete window)
+	;; else raise window here, which calls update
+	(opal:raise-window window))))
 
 (defun DISPLAY-ERROR (error-gadget &optional
 		      (string (g-value error-gadget :string)))
@@ -125,7 +124,7 @@ Change log:
 
 ;; This function takes an expression to evaluate.  If there is an error
 ;; detetected during the eval, then the error gadget is raised with the
-;; error message.  The function returns two values: the result of the eval 
+;; error message.  The function returns two values: the result of the eval
 ;; and a flag indicating whether there was an error.
 ;;
 ;;  Example:  (gg:Careful-Eval `(read-from-string ,string))
@@ -180,7 +179,7 @@ Change log:
 	;; we are in the unfortunate situation of errorp being non-NIL even
 	;; though there was no error.  Compensate with the following operation:
 	(if (numberp errorp) (setq errorp NIL))
-	
+
 	(if errorp
 	    ;; If couldn't even read the string, just return it with error.
 	    (values string errorp)
@@ -217,4 +216,3 @@ Change log:
 ;;  Tell the world that error-gadget-utils has been loaded
 ;;
 (setf (get :garnet-modules :error-gadget-utils) T)
-

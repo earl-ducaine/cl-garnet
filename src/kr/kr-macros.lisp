@@ -713,10 +713,7 @@ You can also provide a documentation string as the last parameter, as in:
   (setq body (eval body))
   `(add-new-type ,typename-or-type ',body ,(type-to-fn body) ,type-doc))
 
-
-
 ;;; List-or-value code
-
 (defmacro memberq (item list)
   "Member, but with a test of EQ.  Interestingly, if 'item' is a keyword,
 then it is faster to use the normal member fn!"

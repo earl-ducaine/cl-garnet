@@ -90,164 +90,124 @@
 	   (1 'many-one)
 	   (t 'many-many))))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Outputs BEEPS to the
-;; lapidary display
-;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+;; Outputs BEEPS to the lapidary display
 (defun lapidary-beeps (count)
   (dotimes (dummy-var count)
     (inter:beep)))
 
-;;; ==================================
-;;; constraint that centers the x
-;;; position of an object with respect
+;;; constraint that centers the x position of an object with respect
 ;;; to another object
-;;; ==================================
-
 (defun center-x (item1 item2)
   (o-formula (round (- (+ (gv item1 :left)
 			     (/ (gv item1 :width) 2))
 			  (/ (gv item2 :width) 2)))))
 
-;;; ==================================
-;;; constraint that centers the y
-;;; position of an object with respect
+;;; constraint that centers the y position of an object with respect
 ;;; to another object
-;;; ==================================
-
 (defun center-y (item1 item2)
   (o-formula (round (- (+ (gv item1 :top)
 			     (/ (gv item1 :height) 2))
 			  (/ (gv item2 :height) 2)))))
 
-;;; ================================
 ;;; remember interactor in :my-interactors slot
-;;; ================================
-
 (defun remember-interactor (window inter)
   (s-value window :my-interactors
 	      (cons inter (g-value window :my-interactors))))
 
-;;; ==================================
-;;; this creates an interactor window, but it
-;;; also does some lapidary bookkeeping,
-;;; so it should be used. 
-;;; ==================================
-
-(defun create-lapidary-window (&key (left 0) (top 658)
-				(width 450) (height 380) title)
+;;; Creates an interactor window, but it also does some lapidary
+;;; bookkeeping, so it should be used.
+(defun create-lapidary-window (&key (left 0) (top 658) (width 450)
+				 (height 380) title)
   (let ((temp-window (kr:create-instance nil inter:interactor-window
-				(:left left)
-				(:top top)
-				(:width width)
-				(:height height)
-				(:title title)
-				(:visible t))))
+		       (:left left)
+		       (:top top)
+		       (:width width)
+		       (:height height)
+		       (:title title)
+		       (:visible t))))
     (s-value temp-window :known-as
 	     (keyword-from-string title))
-    temp-window)
-)
+    temp-window))
 
-;;; =====================================================
-;;; create feedback objects that support the various
-;;; operations in Lapidary
-;;; =====================================================
-
+;;; Create feedback objects that support the various operations in
+;;; Lapidary
 (defun install-new-editor-window (window)
   (let (editor-win-agg editor-agg feedback-agg feedback
-        (kr::*constants-disabled* t))
-  
-    ;;; create the top level aggregate in the editor window
+		       (kr::*constants-disabled* t))
+    ;; create the top level aggregate in the editor window
     (setf editor-win-agg (kr:create-instance nil opal:aggregate))
     (s-value window :aggregate editor-win-agg)
-  
-    ;;; create the feedback aggregate
+    ;; create the feedback aggregate
     (setf feedback-agg (kr:create-instance nil opal:aggregate
-	   (:left 0)
-	   (:top 0)
-	   (:width (o-formula (gvl :window :width)))
-	   (:height (o-formula (gvl :window :height)))
-			))
+			 (:left 0)
+			 (:top 0)
+			 (:width (o-formula (gvl :window :width)))
+			 (:height (o-formula (gvl :window :height)))
+			 ))
     (opal:add-component editor-win-agg feedback-agg)
     (s-value window :feedback-agg feedback-agg)
-
-    ;;; create the aggregate that contains the editable, selectable objects
+    ;; create the aggregate that contains the editable, selectable objects
     (setq editor-agg
-	  (kr:create-instance nil opal:aggregadget 
-	   (:left 0)
-	   (:top 0)
-	   (:width (o-formula (gvl :window :width)))
-	   (:height (o-formula (gvl :window :height)))
-	   (:selection-type (o-formula (classify-selections)))))
-    
+	  (kr:create-instance nil opal:aggregadget
+	    (:left 0)
+	    (:top 0)
+	    (:width (o-formula (gvl :window :width)))
+	    (:height (o-formula (gvl :window :height)))
+	    (:selection-type (o-formula (classify-selections)))))
     (opal:add-component editor-win-agg editor-agg :where :back)
     (s-value window :editor-agg editor-agg)
-
     ;; add this window to the list of lapidary drawing windows
     (push window (g-value *selection-info* :window))
-
-    (setf feedback 
+    (setf feedback
 	  (opal:add-component feedback-agg
 			      (create-instance nil rectangle-feedback)))
     (s-value window :create-rect-feedback feedback)
-
-    (setf feedback 
+    (setf feedback
 	  (opal:add-component feedback-agg
 			      (create-instance nil line-feedback)))
     (s-value window :create-line-feedback feedback)
-
-    (setf feedback 
+    (setf feedback
 	  (opal:add-component feedback-agg
-				       (create-instance nil roundtangle-feedback)))
+			      (create-instance nil roundtangle-feedback)))
     (s-value window :create-roundtangle-feedback feedback)
-	  
-    (setf feedback 
+    (setf feedback
 	  (opal:add-component feedback-agg
 			      (create-instance nil circle-feedback)))
     (s-value window :create-circle-feedback feedback)
-
-    (setf feedback 
+    (setf feedback
 	  (opal:add-component feedback-agg
 			      (create-instance nil text-feedback)))
     (s-value window :create-text-feedback feedback)
-
     (setf feedback
 	  (opal:add-component feedback-agg
-	      (create-instance nil aggrelist-feedback
-		  (:item-prototype (create-instance nil dashed-rectangle))
-		  (:items 1))))
-
+			      (create-instance nil aggrelist-feedback
+				(:item-prototype (create-instance nil dashed-rectangle))
+				(:items 1))))
     (s-value window :aggrelist-feedback feedback)
-
     ;;; create the feedback object for selecting a group of objects
-
-    (setf feedback 
+    (setf feedback
 	  (opal:add-component feedback-agg
 			      (create-instance nil rectangle-feedback)))
     (s-value window :selection-feedback feedback)
-
-    
     ;;; create the feedback objects for moving or growing an object
     (s-value window :move-box-feedback (create-instance nil move-box-feedback))
     (s-value window :grow-box-feedback (create-instance nil grow-box-feedback))
-    (s-value window :move-grow-line-feedback 
+    (s-value window :move-grow-line-feedback
 	     (create-instance nil move-grow-line-feedback))
     (opal:add-components feedback-agg
 			 (g-value window :move-box-feedback)
 			 (g-value window :grow-box-feedback)
 			 (g-value window :move-grow-line-feedback))
-
-    ;;; create the feedback object for creating an instance or copy of an object
-
-    (setf feedback 
+    ;; create the feedback object for creating an instance or copy of
+    ;; an object
+    (setf feedback
 	  (opal:add-component feedback-agg
 			      (create-instance nil move-box-feedback)))
     (s-value window :copy-instance-rect-feedback feedback)
     (setf feedback
 	  (opal:add-component feedback-agg
 			      (create-instance nil line-feedback
-				 (:visible (o-formula (gvl :obj-over))))))
+				(:visible (o-formula (gvl :obj-over))))))
     (s-value window :copy-instance-line-feedback feedback)))
 
 (defun lapidary-error (msg &optional (wait-p t))
@@ -272,7 +232,7 @@
 ;;; ============================================================
 ;;; determine if the two objects have a common ancestor in the
 ;;; aggregate hierarchy. A simple way of doing this is to go
-;;; to the tops of each of their aggregate hierarchies and 
+;;; to the tops of each of their aggregate hierarchies and
 ;;; comparing the respective roots. Although a marking strategy
 ;;; could save us from going all the way to the top of the
 ;;; hierarchies, we would have to retract all the marks at
@@ -297,4 +257,3 @@
 (defun common-ancestor-p (obj1 obj2)
   (and obj1 obj2
        (eq (get-root obj1) (get-root obj2))))
-
