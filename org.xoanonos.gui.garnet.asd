@@ -19,10 +19,17 @@
 (setf (get :garnet-modules :multifont) t)
 
 (asdf:defsystem :org.xoanonos.gui.garnet
-  :depends-on (:clx ;; :zpb-ttf
-	       :cl-vectors ;; :cl-paths-ttf
-	       :cl-aa :cl-fad :bordeaux-threads
-	       :cl-store :trivial-features :cl-aa-misc :alexandria :cl-ppcre)
+  :depends-on (:alexandria
+	       :uiop
+	       :bordeaux-threads
+	       :cl-aa
+	       :cl-aa-misc
+	       :cl-fad
+	       :cl-ppcre
+	       :cl-store
+	       :cl-vectors
+	       :trivial-features
+	       :clx)
   :license "MIT-ish (also public domain, see LICENSE)"
   :author "CMU Garnet Team (plus various others, see LICENSE)"
   :description " GUI toolkit (c. 1990 look/feel)"
@@ -48,14 +55,14 @@
 	    ((:file "kr-macros")
 	     (:file "kr-doc")
 	     (:file "kr")
-	     (:file "constraints")))
+	     (:file "constraints" :depends-on (kr))))
    (:module gem
    	    :pathname "src/gem"
    	    :depends-on (:kr)
    	    :components
 	    ((:file "gem")
 	     (:file "define-methods")
-	     (:file "x" :depends-on (:define-methods))))
+	     (:file "x")))
    (:module opal
    	    :pathname "src/opal"
    	    :depends-on (:utils :gem :kr)
@@ -212,8 +219,7 @@
    	    :pathname "src/debug"
    	    :depends-on (:utils :gem :kr :opal :ps :gadgets)
    	    :components
-	    (;;;(:file "debug-compiler")
-	     (:file "debug-fns")
+	    ((:file "debug-fns")
 	     (:file "objsize")
 	     (:file "inspector")
 	     (:file "suggest-constants")))
@@ -245,7 +251,7 @@
    	    :depends-on (:utils :gem :kr :opal :ps :gadgets :protected-eval
 				:gesture)
    	    :components
-	    ((:file "demos-compiler")
+	    ((:file "demos")
 	     (:file "demo-3d")
 	     (:file "demo-angle")
 	     (:file "demo-animator")
@@ -293,24 +299,14 @@
 	     (:file "app-launcher")))
    (:module lapidary2
    	    :pathname "src/lapidary"
-   	    :depends-on (:utils :build)
+   	    :depends-on (:utils
+;;			 :build
+			 )
    	    :components
    	    ((:file "lapidary-compiler")
 	     (:file "lapidary-functions-loader")
    	     (:file "lapidary-functions")
    	     (:file "mouse-bindings")))
-   (:module build
-	    :pathname ""
-   	    :depends-on (:utils :gem :kr :opal :inter :aggregadgets :gadgets
-				:debug :protected-eval :gesture :demos :gilt :c32)
-	    :components
-	    (
-	     ;;	    (:file "src/protected-eval/protected-eval-compiler")
-	     ;;	     (:file "src/gesture/gesture-compiler")
-	     ;;	     (:file "src/demos/demos-compiler")
-	     ;;	     (:file "src/gilt/gilt-compiler")
-	     ;;	     (:file "src/c32/c32-compiler")
-	     ))
    (:module c32
    	    :pathname "src/c32"
    	    :depends-on (:gilt)
@@ -354,7 +350,9 @@
 	     (:file "error-check")))
    (:module multi-garnet
 	    :pathname "multi-garnet"
-	    :depends-on (:build :lapidary)
+	    :depends-on (
+;;			 :build
+			 :lapidary)
 	    :serial t
 	    :components
 	    ((:file "package")
@@ -364,7 +362,9 @@
 	     (:file "examples")))
    (:module lapidary
 	    :pathname "src/lapidary"
-	    :depends-on (:build :lapidary2 :gadgets :gilt :c32)
+	    :depends-on (
+;;			 :build
+			 :lapidary2 :gadgets :gilt :c32)
 	    :components
 	    ((:file "mouse-bindings")
 	     (:file "parameters")
@@ -454,7 +454,9 @@
 	    :pathname ""
 	    :depends-on (:utils :kr :gem :opal :inter :ps :aggregadgets
 				:gadgets :debug :protected-eval :gesture :demos
-				:garnet-desktop-lab :lapidary2 :build :c32
+				:garnet-desktop-lab :lapidary2
+;;				:build
+				:c32
 				:gilt :multi-garnet :lapidary :cl-processing
 				:debug-clx)
 	    :components

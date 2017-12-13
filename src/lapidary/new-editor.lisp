@@ -1,75 +1,50 @@
 ;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: LAPIDARY; Base: 10 -*-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;         The Garnet User Interface Development Environment.      ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; This code was written as part of the Garnet project at          ;;;
-;;; Carnegie Mellon University, and has been placed in the public   ;;;
-;;; domain.  If you are using this code or any part of Garnet,      ;;;
-;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-; (load "new-editor.lisp")
-; (lapidary::editor-menu-do-go)
-
-;;; CHANGE LOG
+;;; The Garnet User Interface Development Environment.
 ;;;
-;;; 08/10/93 bvz - modified the editor menu so that it supported a selection
-;;;                  mode in which users could indicate whether Lapidary
-;;;                  should select leaves or top-level objects.
+;;; This code was written as part of the Garnet project at
+;;; Carnegie Mellon University, and has been placed in the public
+;;; domain.  If you are using this code or any part of Garnet,
+;;; please contact garnet@cs.cmu.edu to be put on the mailing list.
 
 (in-package "LAPIDARY")
 
 (defun editor-menu-do-go ()
-
   (editor-menu-do-stop)
-
   (create-instance 'EDITOR-MENU garnet-gadgets:menubar
 		 (:constant '(t))
 		 (:build-p t)
 		 (:selection-function 'lap-menu-handler)
-		 (:items '(
-			   ("File" nil  (
-					 ("load gadget")
+		 (:items '(("File" nil  (("load gadget")
 					 ("save gadget")
 					 ("add gadget")
-					 ("quit")
-					 ))
-			   ("Edit" nil  (
-					 ("make copy" )
+					 ("quit")))
+			   ("Edit" nil  (("make copy" )
 					 ("make instance" )
 					 ("delete object" )
 					 ("delete window")
 					 ))
-			   ("Properties" nil  (
-					       ("filling style" )
+			   ("Properties" nil  (("filling style" )
 					       ("line style")
 					       ("draw function" )
 					       ("list properties" )
 					       ("text properties" )
 					       ("name object" )
-					       ("parameters")
-					       ))
-			   ("Arrange" nil  (
-					    ("bring to front")
+					       ("parameters")))
+			   ("Arrange" nil  (("bring to front")
 					    ("send to back")
 					    ("make aggregadget" )
-					    ("ungroup" )
-					    ))
-			   ("Constraints"   nil  (
-						  ("line constraints")
+					    ("ungroup")))
+			   ("Constraints"   nil  (("line constraints")
 						  ("box constraints" )
-						  ("c32")
-						  ))
-			   ("Other"   nil  (
-					    ("clear workspace")	; new
-					    ("interactors")
-					    )) )))
+						  ("c32")))
+			   ("Other" nil (("clear workspace")
+					 ("interactors"))))))
   (create-instance 'EDITOR-WIN inter:interactor-window
 		   (:title "editor menu")
 		   (:left (first *editor-window-dimensions*))
 		   (:top (second *editor-window-dimensions*))
 		   (:width (g-value editor-menu :width))
-;		   (:width 340)
 		   (:height 130))
 
   (create-instance 'EDITOR-MENU-AGG opal:aggregate)

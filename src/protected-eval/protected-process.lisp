@@ -1,19 +1,13 @@
 ;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: OPAL; Base: 10 -*-
-;;-------------------------------------------------------------------;;
-;;          The Garnet User Interface Development Environment.       ;;
-;;-------------------------------------------------------------------;;
-;;  This code was written as part of the Garnet project at           ;;
-;;  Carnegie Mellon University, and has been placed in the public    ;;
-;;  domain.                                                          ;;
-;;-------------------------------------------------------------------;;
 
-;;; $Id$
+;; The Garnet User Interface Development Environment.
 ;;
-
-
-;;; RGA 11/30/94 --- This puts the protected eval in at a low level in
-;;; the garnet code so it should be able to catch any error resulting
-;;; from computations initiating in the UI.
+;; This code was written as part of the Garnet project at ;; Carnegie
+;; Mellon University, and has been placed in the public domain.
+;;
+;; RGA 11/30/94 --- This puts the protected eval in at a low level in
+;; the garnet code so it should be able to catch any error resulting
+;; from computations initiating in the UI.
 
 (in-package :opal)
 
@@ -22,11 +16,7 @@
 (defun m-e-l ()
   ;; first, throw away any pending events
   (discard-all-pending-events)
-
-  ;;  I don't know if this should be there.... [2006/01/10:rpg]
-  #-NO-K-READER
   (set-dispatch-macro-character #\# #\k (function kr::k-reader))
-
   (let ((root-window (gv gem:device-info :current-root)))
     (unwind-protect
 	 (catch 'exit-main-loop-exception

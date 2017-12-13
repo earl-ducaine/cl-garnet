@@ -14,24 +14,24 @@
 ;;;  are called by the gadgets.
 ;;;
 ;;; CHANGE LOG:
-;;; 09/17/03 Robert Goldman - Modified PUT-FILENAMES-IN-MENU to make a 
+;;; 09/17/03 Robert Goldman - Modified PUT-FILENAMES-IN-MENU to make a
 ;;;            happier fit for CMUCL (by turning off some of the extensions
 ;;;            to DIRECTORY).
 ;;; 08/20/98 Fred Gilham - Wrote CMUCL version of real-path that made better
 ;;;            substitutions for "." and "" pathnames.
 ;;; 10/26/95 RGA --- Added ignore errors on (truename Prev-Dir).  This
 ;;;          should eliminate errors when previous directory is not a
-;;;          valid pathname. 
-;;; 12/06/94 Bruno Haible - Commented out :directories keyword for CLISP 
+;;;          valid pathname.
+;;; 12/06/94 Bruno Haible - Commented out :directories keyword for CLISP
 ;;; 07/29/94 Marty Geier - Wrote real-path function to compute REAL-PATH
 ;;;            needed for allegro directory bug, implemented in
 ;;;            update-file-menu.
-;;; 07/27/94 Marty Geier - switched the order of checking for directories 
-;;;            placed opal:directory-p check before gu:probe-directory in 
+;;; 07/27/94 Marty Geier - switched the order of checking for directories
+;;;            placed opal:directory-p check before gu:probe-directory in
 ;;;            function check-load-filename since the later function crashes
 ;;;            in allegro on .. path and derivations there of.
 ;;; 06/16/94 Marty Geier - Re-did the pathname system so that it would support
-;;;            Macintosh file paths, by adding #+ functions for : cases.  
+;;;            Macintosh file paths, by adding #+ functions for : cases.
 ;;;            Also made small change in select file function to support mac
 ;;;            paths.  Lastly, took out positive case in update-file-menu that
 ;;;            deletes all subdirectory references on the end of a file
@@ -49,7 +49,7 @@
 ;;; 08/15/93 Rajan Parthasarathy - Created new directory-p function and
 ;;;            put it in opal.
 ;;; 08/11/93 Rajan Parthasarathy - Fixed small bug
-;;; 07/26/93 James Landay - changed Display-Save-Gadget to change 
+;;; 07/26/93 James Landay - changed Display-Save-Gadget to change
 ;;;            directories if the init-filename passed in contained one.
 ;;; 07/08/93 Rajan Parthasarathy - In Update-File-Menu, checked :prev-dir
 ;;;            for "" so that you can force it to update by setting
@@ -104,7 +104,7 @@
 	  (hide-save-gadget save-gad)                ;; Cancel button was hit
 	  (setf dummy :CANCEL)
 	  (when (g-value save-gad :waiting)
-	    (inter:interaction-complete dummy)))	
+	    (inter:interaction-complete dummy)))
 	;; The idea here is to check to see if the filename is blank
 	;; and simply calling the :save-function
 	(if (string/= (g-value save-gad :file-input :value) "")
@@ -223,7 +223,7 @@
 	 (save-win (g-value save-gad :window))
 	 (prev-dir (g-value save-gad :prev-dir))
 	 (val (real-path value)))
-    (if (gu:probe-directory (directory-namestring val))
+    (if (gu:directory-p (directory-namestring val))
      	(let ((dir-name NIL))
 	  (if (gu:directory-p val)
 	      (progn
@@ -255,7 +255,7 @@
 	    (if (not (g-value save-gad :window :visible))
 		(put-filenames-in-menu save-gad dir-name)
 		(opal:with-hourglass-cursor
-		  (put-filenames-in-menu save-gad dir-name)))))	
+		  (put-filenames-in-menu save-gad dir-name)))))
 	;; When the directory is invalid, it will beep and put the
 	;; previous directory there
 	(progn
@@ -284,7 +284,7 @@
 	    ;; it into a relative directory pathname. This will put a
 	    ;; slash at the end of the namestring.  I'm hoping this
 	    ;; will be portable.
-	    (push 
+	    (push
 	     (namestring
 	      (make-pathname
 	       :directory (cons :relative (last (pathname-directory pathname)))))
@@ -357,7 +357,7 @@
 	    (opal:update load-win)))))
     valid-p))
 
-;;; This puts the save-gadget & load-gadget in its own window slot. 
+;;; This puts the save-gadget & load-gadget in its own window slot.
 ;;; It also does some other basic initializing, like creating a query-gadget
 ;;; and it creates the return interactor, which comes on when you
 ;;; hit the return key
@@ -381,7 +381,7 @@
     (opal:update window)
     ;; (with-demon-enabled #'inter::inter-update-slot-invalidated
     (opal:add-component aggregate gad)
-    ;; )    
+    ;; )
     ;; The following s-values are set here in case the user has a
     ;; :window-left slot that depends on something in it's own window
     (if (or
