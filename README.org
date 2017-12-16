@@ -1,6 +1,6 @@
 
 
-Mostly functional (currently only SBCL) complete (c. 1990) gui toolkit
+Mostly functional, complete (c. 1990) gui toolkit
 
 
 * Garnet is a Graphical User Interface Toolkit
