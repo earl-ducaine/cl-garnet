@@ -18,18 +18,16 @@ Mostly functional, complete (c. 1990) gui toolkit
    Currently the project is going through a massive code cleanup.
    Practically all feature specifications are out of date by decades,
    so I'm targetting a minimal, modern, convenient platform: Ubuntu
-   16.04/SBCL 1.3.1.debian.  Other somewhat modern versions of Ubuntu
-   and SBCL are likely to work.  Other GNU/Linux distributions are
-   also likely to work.  Mac and Windows probably won't, neither (most
-   likely) will other CLs.  But once things are cleaned up, it
-   shouldn't be hard to support a wide variety of platforms as long as
-   they support ANSI Common Lisp and CLX.  You may also need
-   additional xfont libraries loaded, e.g.
-   you're using Ubuntu
+   16.04/SBCL 1.3.1.debian and Ubuntu 16.04/CCL1.11.5.  Other somewhat
+   modern versions of Ubuntu and SBCL CCL are likely to work.  Other
+   GNU/Linux distributions are also likely to work.  Mac and Windows
+   probably won't. If a lisp has a working modern CLX, there's a good
+   chance that it will run. Support for other OSs is definitely
+   envisioned.  You may also need additional xfont libraries loaded,
+   e.g.  you're using Ubuntu
    #+BEGIN_SRC bash
      apt-get install xfonts-100dpi
    #+END_SRC
-
 
 
 ** Installing/Running
@@ -72,6 +70,27 @@ Mostly functional, complete (c. 1990) gui toolkit
 
    Or one of the sub folders.  But I like rebuilding everything from
    time to time.
+
+** CCL and CLX
+
+   CCL is particular about which version of CLX it runs.  The easiest
+   way to ensure CLX compatibility is to download the complient
+   version from the CCL Website and install it someplace that ASDF
+   knows about, for example
+
+   #+BEGIN_SRC bash
+
+     mkdir ~/ccl-clx
+     cd  ~/ccl-clx
+     wget ftp://clozure.com/pub/CLX/clx-060601.tar.gz
+     tar xf clx-060601.tar.gz
+     echo '(push #p"/home/stallman/ccl-clx/clx_0.7.3-openmcl-060101/" ' \
+	  'asdf:*central-registry*)' >> ~/.ccl-init.lisp 
+   #+END_SRC
+
+   After that you should be able to set up the Garnet repo for
+   quicklisp in the same way as above.
+
 
 ** Documentation
 

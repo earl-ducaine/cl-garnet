@@ -227,7 +227,6 @@
 	(eval `(trace ,name))
 	(eval `(adjust ,key))))))
 
-
 (defun untrace-gem (device)
   (let ((prefix
 	 (case device
@@ -239,8 +238,6 @@
 		   (concatenate 'simple-string prefix (symbol-name key)))))
 	(eval `(untrace ,name))
 	(eval `(adjust ,key))))))
-
-
 
 ;;; Given an Opal window, return the display structure that is attached
 ;;; to it.

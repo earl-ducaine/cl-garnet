@@ -32,16 +32,16 @@ Change log:
 (unless (boundp 'Garnet-C32-PathName)
   (error "Load 'Garnet-Loader' first to set Garnet-C32-PathName before loading this file."))
 
-(dolist (gadget '("labeled-box-loader"
-		  "x-buttons-loader"
-		  "arrow-line-loader"
-		  "text-buttons-loader"
-		  "scrolling-window-loader"
-		  "scrolling-input-string-loader"
-		  "scrolling-menu-loader" 		; for pop-up-functions
-		  "error-gadget-loader"	  		; for C32error
-		  "scrolling-labeled-box-loader"	; for package name
-		  "motif-scrolling-window-loader"
+(dolist (gadget '(;; "labeled-box-loader"
+		  ;; "x-buttons-loader"
+		  ;; "arrow-line-loader"
+		  ;; "text-buttons-loader"
+		  ;; "scrolling-window-loader"
+		  ;; "scrolling-input-string-loader"
+		  ;; "scrolling-menu-loader" 		; for pop-up-functions
+		  ;; "error-gadget-loader"	  		; for C32error
+		  ;; "scrolling-labeled-box-loader"	; for package name
+		  ;; "motif-scrolling-window-loader"
 		  ))
   (garnet-load (concatenate 'string "gadgets:" gadget)))
 
@@ -49,15 +49,16 @@ Change log:
 (garnet-load "gilt:path-functions-loader")
 (garnet-load "opal:multifont-loader")
 
-(defvar C32-files '("c32"
-		    "c32formula"
-		    "c32ref"
-		    "pop-up-generalize"
-		    "pop-up-copy-formula"
-		    "pop-up-ask-object"
-		    "pop-up-functions"
-		    "c32dialog"
-		    "c32-lapidary"))
+(defvar C32-files '(;; "c32"
+		    ;; "c32formula"
+		    ;; "c32ref"
+		    ;; "pop-up-generalize"
+		    ;; "pop-up-copy-formula"
+		    ;; "pop-up-ask-object"
+		    ;; "pop-up-functions"
+		    ;; "c32dialog"
+		    ;; "c32-lapidary"
+		    ))
 
 (dolist (file C32-files)
   (garnet-load (concatenate 'string "c32:" file)))

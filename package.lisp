@@ -2,27 +2,26 @@
 (defpackage :garnet-utils
   (:use :common-lisp)
   (:nicknames :gu)
-  (:export while
-	   until
-	   till
+  (:export *garnet-break-key*
+	   2pi -2pi
+	   add-to-list
+	   black
+	   directory-p
 	   do2lists
 	   dolist2
 	   m
 	   m1
-	   string+
-	   add-to-list
-	   verify-binding
-	   safe-functionp
-	   shell-exec
-	   directory-p
-	   probe-directory
 	   pi/2
 	   pi3/2
-	   2pi -2pi
+	   safe-functionp
 	   short-pi
-	   black
+	   str
+	   string+
+	   till
+	   until
+	   verify-binding
 	   white
-	   *garnet-break-key*))
+	   while))
 
 (defpackage :kr-debug
   (:use :common-lisp))
@@ -223,7 +222,8 @@
   (:use :common-lisp :kr))
 
 (defpackage :garnet-user
-  (:use :common-lisp :kr))
+  (:use common-lisp kr garnet-utils)
+  (:export go-demos))
 
 (defpackage :garnet-truetype
   (:nicknames :garnet-xft)
@@ -289,23 +289,34 @@
 (defpackage :garnet-debug
   (:use :common-lisp :kr :opal) (:nicknames :gd))
 
-(defpackage :gilt (:use :common-lisp :kr))
+(defpackage :gilt
+  (:use :common-lisp :kr)
+  (:export do-go do-stop))
 
-(defpackage :c32 (:use :common-lisp :kr))
+(defpackage :c32
+  (:use common-lisp kr))
 
-(defpackage :lapidary (:use :common-lisp :kr))
+(defpackage :lapidary
+  (:use common-lisp kr)
+  (:export do-go do-stop fix-it clean-up))
 
-(defpackage :agate (:use :common-lisp :kr))
+(defpackage :agate
+  (:use :common-lisp :kr))
 
-(defpackage :demo-3d (:use :common-lisp :kr) (:export do-go do-stop))
+(defpackage :demo-3d
+  (:use :common-lisp :kr) (:export do-go do-stop))
 
 (defpackage :xomax
   (:use :common-lisp :kr)
   (:export do-go do-stop))
 
-(defpackage :demo-multiwin (:use :kr :common-lisp) (:export do-go do-stop))
+(defpackage :demo-multiwin
+  (:use kr common-lisp)
+  (:export do-go do-stop))
 
-(defpackage :demo-multifont (:use :common-lisp kr) (:export do-go do-stop))
+(defpackage :demo-multifont
+  (:use common-lisp kr)
+  (:export do-go do-stop))
 
 (defpackage :demo-animator (:use :common-lisp :kr) (:export do-go do-stop))
 

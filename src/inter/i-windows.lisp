@@ -605,7 +605,8 @@
 ;; default-event-handler into a loop statement.
 (defun default-event-handler (root-window)
   "Event handler for the interactor windows"
-  (setq *Process-With-Main-Event-Loop*	; defined in inter:animation-process.lisp
+  ;; defined in inter:animation-process.lisp
+  (setq *process-with-main-event-loop*
 	#+allegro mp:*current-process*
 	#+(and cmu mp) mp:*current-process*
 	#+sb-thread sb-thread:*current-thread*
@@ -688,7 +689,8 @@ by the protected-eval code."
     ;; m-e-l-p which would cause a race condition.
     (when window-to-raise (opal:raise-window window-to-raise))
     (unwind-protect
-	 (w-i-c-i-l) 			; Note: the result of this form gets returned.
+	 ;; Note: the result of this form gets returned.
+	 (w-i-c-i-l)
       ;; unwind-protect cleanups.
       (setf *waiting-for-exit-wait-interaction-complete* old-count)
       ;; discard current event which was the one that caused the exit

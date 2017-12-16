@@ -1,4 +1,4 @@
-#|
+
 garnet/src/utils/README
 
 This file describes the Lisp utilities available in the "GARNET-UTILS" package.
@@ -83,4 +83,4 @@ while (test &rest body)
 
           While <test> returns non-NIL, repeatedly execute <body>.
           Ex:  (let ((x 0)) (while (< x 10) (princ (incf x))))
-|#
+
