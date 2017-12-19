@@ -35,7 +35,7 @@
 
 (export '(TEMP-GADGET))
 
-(defparameter user::*Garnet-Object-Just-Created* 
+(defparameter user::*Garnet-Object-Just-Created*
 (create-instance 'TEMP-GADGET OPAL:AGGREGADGET
   (:FUNCTION-FOR-OK NIL)
   (:PACKAGE-NAME "USER")
@@ -130,4 +130,3 @@
       (:TOP ,(o-formula (SECOND (GVL :BOX)) 73))))))
 
 )
-

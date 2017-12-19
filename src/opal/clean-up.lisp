@@ -101,7 +101,6 @@ opal::*garnet-windows*."))
   (disconnect-garnet)
   (reconnect-garnet new-display))
 
-#+garnet-debug
 (defun update-all (&optional (total-p NIL))
   ; update all top-level windows
   (dolist (win *garnet-windows*)
@@ -115,19 +114,17 @@ opal::*garnet-windows*."))
 	(setf *garnet-windows* (remove win *garnet-windows*))))
   )
 
-;;; The same as update-all above, except without the (if (schema-p ...))
-;;;
-#-garnet-debug
-(defun update-all (&optional (total-p NIL))
-  ; update all top-level windows
-  (dolist (win *garnet-windows*)
-    (unless (or (g-value win :parent)
-		(g-value win :in-progress))
-      ;; The :in-progress quarantine slot will be reset at the end of the
-      ;; update method.
-      (s-value win :in-progress T)
-      (update win total-p)))
-  )
+;; Non-debug version: the same as update-all above, except without
+;; the (if (schema-p ...))
+;; (defun update-all (&optional (total-p NIL))
+;;   ; update all top-level windows
+;;   (dolist (win *garnet-windows*)
+;;     (unless (or (g-value win :parent)
+;; 		(g-value win :in-progress))
+;;       ;; The :in-progress quarantine slot will be reset at the end of the
+;;       ;; update method.
+;;       (s-value win :in-progress T)
+;;       (update win total-p))))
 
 (defun reset-cursor (a-window)
   (s-value a-window :cursor (cons arrow-cursor arrow-cursor-mask))

@@ -223,9 +223,14 @@
 
 (defpackage :garnet-user
   (:use common-lisp kr garnet-utils)
-  (:export go-demos))
+  (:export go-demos
+	   *debug-kr-mode*))
 
 (defpackage :garnet-truetype
+  (:documentation
+   "package contains api for truetype text rendering using clx,
+    xrender.  glyphs information is obtained by zpb-ttf. font
+    rasterization is made by cl-vectors.")
   (:nicknames :garnet-xft)
   (:use :cl :kr)
   (:export
@@ -265,18 +270,29 @@
    :font-antialias
    :font-lines-height
    :cache-fonts
-   :font-equal)
-  (:documentation "Package contains API for TrueType text rendering
-                   using CLX, XRender.  Glyphs information is obtained
-                   by ZPB-TTF. Font rasterization is made by
-                   CL-VECTORS."))
+   :font-equal))
 
 (defpackage :garnet-gadgets
-  (:use :common-lisp :kr)
-  (:nicknames :gg)
-  (:export
-   :mouseline-go
-   :mouseline-stop))
+  (:use common-lisp kr)
+  (:nicknames gg)
+  (:export insert-text-into-box
+	   insert-text-into-sis
+	   mouseline-stop
+	   scrolling-input-string
+	   scrolling-input-string-go
+	   scrolling-input-string-obj
+	   scrolling-input-string-stop
+	   scrolling-input-string-top-agg
+	   scrolling-input-string-win
+	   v-scroll-bar
+	   v-scroll-go
+	   v-scroll-obj
+	   v-scroll-stop
+	   v-scroll-top-agg
+	   v-scroll-win
+	   mouseline-go
+	   prompter-gadget-go
+	   prompter-gadget-stop))
 
 (defpackage :test
   (:use :common-lisp))
@@ -379,7 +395,7 @@
   (:export do-go do-stop))
 
 (defpackage :demo-logo
-  (:use :common-lisp :kr)
+  (:use :common-lisp :kr :garnet-utils)
   (:export do-go do-stop re-animate))
 
 (defpackage :demos-controller

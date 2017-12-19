@@ -1,95 +1,56 @@
 ;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: GARNET-GADGETS; Base: 10 -*-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;         The Garnet User Interface Development Environment.      ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; This code was written as part of the Garnet project at          ;;;
-;;; Carnegie Mellon University, and has been placed in the public   ;;;
-;;; domain.  If you are using this code or any part of Garnet,      ;;;
-;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;;  Scrolling-Input-String
-;;;
-;;;  Features and operation of the labeled box:
-;;;    1)  The Scrolling-Input-String allows left-right-scrollable text to be
-;;;        entered.
-;;;    2)  Click the left mouse button on the string to edit it, and press
-;;;        return to stop editing.
-;;;    3)  The top level :value slot is the string currently appearing inside
-;;;        the box.  This slot may be set directly and formulae may depend
-;;;        on it.
-;;;    4)  A function may be specified in the :selection-function slot to be
-;;;        executed after the field text has changed (i.e., after the carriage
-;;;        return).
-;;;    5)  If the string gets to be too large to fit into the specified
-;;;        Width, then the string inside is scrolled left and right so the
-;;;        cursor is always visible
-;;;    6)  Room is left on both sides of the string for a "..." symbol which
-;;;        shows whether the string has been scrolled or not.  Therefore, the
-;;;        string will not appear exactly at the :left or extend the full
-;;;        :width (since room is left for the ...'s)
-;;;
-;;;  Customizable slots:
-;;;    1)  Left, top
-;;;    2)  Width - The width of the string area in pixels.
-;;;    3)  Value -- The string that will originally appear in the box and that
-;;;                 will be changed
-;;;    4)  Selection-Function -- Function to be executed after editing text
-;;;    5)  Font -- The font of the string **MUST BE FIXED WIDTH ***
-;;;    6)  Line-style -- Setting the line style of the string can be used to
-;;; 		    change the color
-;;;
-;;;  Scrolling-Input-String demo:
-;;;    This module contains a function which creates a window and a
-;;;    Scrolling-Input-String in the window.  To run it, enter
-;;;    (GARNET-GADGETS:Scrolling-Input-String-go).
-;;;    To stop, enter (GARNET-GADGETS:Scrolling-Input-String-stop).
-;;;
-;;;  Designed and written by Brad Myers
 
-#|
-============================================================
-Change log:
-  01/26/94  Andrew Mickish - Added control-j to :stop-event
-  03/19/93  Brad Myers - added ^k
-  03/08/93  Andrew Mickish - Added Insert-Text-Into-SIS
-  03/01/93  Andrew Mickish - Fixed paren mismatch in type declaration
-  12/14/92  Andrew Mickish - Added type and parameter declarations
-  11/30/92  Andrew Mickish - Moved Insert-Text-Into-Box here from motif-slb
-  11/25/92  Andrew Mickish - Added :active-p
-  10/30/92  Andrew Mickish - Set :first-vis-char to 0 in :last-vis-char formula
-  03/30/92  Brad Myers - fixed so cutting to X gets whole string
-  02/11/92  Andrew Mickish - Added :maybe-constant list
-  01/28/92  Ed Pervin - Must have # before '(lambda for CMUCL.
-  10/07/91  Andrew Mickish - Added fast-redraw-p slots
-  08/02/91  Andrew Mickish - Moved S-I-S's :string part's :width formula
-              to its :max-width slot, and accordingly changed reference
-              in :vis-length formula.
-  07/28/91  Andrew Mickish - Added :height slot to S-I-S so that :height
-              now depends only on the font and not on the string.
-  05/13/91  Ed Pervin - removed extra right parenthesis
-  11/19/90  Brad Myers - Fixed bugs with ^E and s-valueing :value after
-              started (reported by Karen.York.Kietzke)
-  09/22/90  Brad Myers - Fixed so can be made invisible
-  09/05/90  Brad Myers - added line-style so you can change the font color
-  06/01/90  Brad Myers - created
-============================================================
-|#
+;; The Garnet User Interface Development Environment.
+;;
+;; This code was written as part of the Garnet project at
+;; Carnegie Mellon University, and has been placed in the public
+;; domain.  If you are using this code or any part of Garnet,
+;; please contact garnet@cs.cmu.edu to be put on the mailing list.
+;
+;;
+;;  Scrolling-Input-String
+;;
+;;  Features and operation of the labeled box:
+;;    1)  The Scrolling-Input-String allows left-right-scrollable text to be
+;;        entered.
+;;    2)  Click the left mouse button on the string to edit it, and press
+;;        return to stop editing.
+;;    3)  The top level :value slot is the string currently appearing inside
+;;        the box.  This slot may be set directly and formulae may depend
+;;        on it.
+;;    4)  A function may be specified in the :selection-function slot to be
+;;        executed after the field text has changed (i.e., after the carriage
+;;        return).
+;;    5)  If the string gets to be too large to fit into the specified
+;;        Width, then the string inside is scrolled left and right so the
+;;        cursor is always visible
+;;    6)  Room is left on both sides of the string for a "..." symbol which
+;;        shows whether the string has been scrolled or not.  Therefore, the
+;;        string will not appear exactly at the :left or extend the full
+;;        :width (since room is left for the ...'s)
+;;
+;;  Customizable slots:
+;;    1)  Left, top
+;;    2)  Width - The width of the string area in pixels.
+;;    3)  Value -- The string that will originally appear in the box and that
+;;                 will be changed
+;;    4)  Selection-Function -- Function to be executed after editing text
+;;    5)  Font -- The font of the string **MUST BE FIXED WIDTH ***
+;;    6)  Line-style -- Setting the line style of the string can be used to
+;; 		    change the color
+;;
+;;  Scrolling-Input-String demo:
+;;    This module contains a function which creates a window and a
+;;    Scrolling-Input-String in the window.  To run it, enter
+;;    (GARNET-GADGETS:Scrolling-Input-String-go).
+;;    To stop, enter (GARNET-GADGETS:Scrolling-Input-String-stop).
+;;
+;;  Designed and written by Brad Myers
 
-(in-package :GARNET-GADGETS)
+(in-package :interactors)
 
-(eval-when (:execute :load-toplevel :compile-toplevel)
-  (export '(Scrolling-Input-String Insert-Text-Into-Box Insert-Text-Into-SIS))
-  #+garnet-test
-  (export '(Scrolling-Input-String-Go Scrolling-Input-String-Stop
-	    Scrolling-Input-String-Top-Agg Scrolling-Input-String-Win
-	    Scrolling-Input-String-Obj)))
-
-;;;-------------------------------------------------------------------------
-(in-package :INTERACTORS)
-
-;;;new-cursor-index is based on the on-screen string, not the real-string
-;;; The last-vis-char and string fields are set by formulas in the object
+;; new-cursor-index is based on the on-screen string, not the real-string
+;; The last-vis-char and string fields are set by formulas in the object
 (defun Shift-Vis-String (str-obj new-first-vis new-cursor-index)
     (s-value str-obj :first-vis-char new-first-vis)
     (s-value str-obj :cursor-index new-cursor-index))
@@ -100,7 +61,7 @@ Change log:
     (if (> index len)
 	(shift-vis-string string-object (- real-index len) len)
 	(shift-vis-string string-object first-vis-char index))))
-  
+
 (defun Scrolling-Edit-String (an-interactor string-object event)
   (if (or (null event) (not (schema-p string-object)))
       NIL ; ignore this event and keep editing
@@ -171,14 +132,14 @@ Change log:
 		       (s-value string-object :real-string
 				(remove-char real-str (1+ real-index)))
 		       (shift-vis-string string-object first-vis-char index))))
-		  (:delete-string 
+		  (:delete-string
 		   (s-value string-object :real-string "")
 		   (shift-vis-string string-object 0 0))
 		  (:kill-line ;; can only be one line
 		   (let ((real-index (+ index first-vis-char)))
 		     ;; index and visible part will stay the same
 		     ;; since only one line, can't ever ADD to the kill buffer
-		     (s-value string-object :real-string 
+		     (s-value string-object :real-string
 			      (DoKillLine real-str real-index NIL
 					  (event-window event)))))
 		  ((:beginning-of-line :beginning-of-string)
@@ -189,7 +150,7 @@ Change log:
 		   (if (/= last-vis-char (1- real-len))
 		       (shift-vis-string string-object (- real-len len) len)
 		       ; else end of string is visible
-		       (s-value string-object :cursor-index 
+		       (s-value string-object :cursor-index
 				  (1+ (- last-vis-char first-vis-char)))))
 		  (:copy-to-X-cut-buffer ; don't modify string, but copy it to
 		   			 ; the X cut buffer
@@ -217,7 +178,7 @@ Change log:
 			 ;; check if a string
 			 ((stringp new-trans-char) ; then insert into string
 			  (let ((real-index (+ index first-vis-char)))
-			    (s-value string-object :real-string 
+			    (s-value string-object :real-string
 				     (concatenate 'string
 						  (subseq real-str 0 real-index)
 						  new-trans-char
@@ -234,20 +195,18 @@ Change log:
 			  (funcall new-trans-char an-interactor
 				   string-object event))
 			 (T ; otherwise, must be a bad character or an
-			    ; undefined edit operation 
+			    ; undefined edit operation
 			  (Beep)))))))))))
-;;;-------------------------------------------------------------------------
-(in-package :GARNET-GADGETS)
 
+(in-package :garnet-gadgets)
 
-;;; INSERT-TEXT-INTO-SIS is used to insert a string into a Scrolling-Input-
-;;; String gadget.
-;;;
+;;; insert-text-into-sis is used to insert a string into a
+;;; scrolling-input- string gadget.
 (defun Insert-Text-Into-SIS (sis str)
   (let* ((text-obj (g-value sis :string))
 	 (real-string (g-value text-obj :real-string))
 	 (split-index (+ (g-value text-obj :first-vis-char)
-			 (g-value text-obj :cursor-index))) 
+			 (g-value text-obj :cursor-index)))
 	 (new-string (concatenate 'string
 				   (subseq real-string 0 split-index)
 				   str
@@ -260,14 +219,13 @@ Change log:
     (inter::scroll-set text-obj new-string new-real-index
 		       new-first-vis-char len)))
 
-;;; INSERT-TEXT-INTO-BOX is used to insert a string into the field string
-;;; of a scrolling-labeled-box or motif-scrolling-labeled-box.
-;;;
+;;; insert-text-into-box is used to insert a string into the field
+;;; string of a scrolling-labeled-box or motif-scrolling-labeled-box.
 (defun Insert-Text-Into-Box (l-box str)
   (let* ((text-obj (g-value l-box :field-text :string))
 	 (real-string (g-value text-obj :real-string))
 	 (split-index (+ (g-value text-obj :first-vis-char)
-			 (g-value text-obj :cursor-index))) 
+			 (g-value text-obj :cursor-index)))
 	 (new-string (concatenate 'string
 				   (subseq real-string 0 split-index)
 				   str
@@ -279,9 +237,9 @@ Change log:
     ; Scroll-Set is defined in the Scrolling-Input-String gadget.
     (inter::scroll-set text-obj new-string new-real-index
 		       new-first-vis-char len)))
-		      
 
 (create-instance 'small-font opal:font (:size :small)(:family :serif))
+
 (create-instance 'dot-dot-dot opal:text
   (:constant '(:font :string))
   (:font small-font)
@@ -394,7 +352,7 @@ Change log:
 	     (:left ,(o-formula (gvl :parent :left)))
 	     (:top ,(o-formula  (gvl :parent :top))))
       (:dot2 ,dot-dot-dot
-	     (:visible ,(o-formula 
+	     (:visible ,(o-formula
 			 (and (gvl :parent :visible)
 			      (/= (gvl :parent :string :last-vis-char)
 				  (1- (length

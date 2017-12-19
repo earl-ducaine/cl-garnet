@@ -177,6 +177,11 @@
 (define-method :initialize font-from-file (fff)
   (s-value fff :font-from-file fff))
 
+
+;; Should not be a problem that the call to create-instance will
+;; destroy a previously existing font if it exists.  Since the hashing
+;; function ensure that adding the newly created font removes the
+;; existing one.
 (setf (gethash '(:fixed :roman :medium) *font-hash-table*)
       (create-instance 'default-font-from-file font-from-file
 	(:font-name (o-formula (gem:make-font-name
@@ -185,7 +190,6 @@
 
 (defun fff-to-xfont (fff root-window)
   (gem:font-to-internal root-window fff))
-
 
 (create-instance 'FONT graphic-quality
   :declare ((:type (font-family :family)
@@ -213,25 +217,34 @@
 			      (gvl-fixnum :max-char-descent))))
   (:font-from-file
    (o-formula
-    (let ((key (list (gvl :family) (gvl :face) (gvl :size))))
-      (or (gethash key *font-hash-table*)
-	  (let* ((root-window (gv gem:DEVICE-INFO :current-device))
-                 (font-name (gem:make-font-name root-window key)))
+    (let* ((key (list (gvl :family) (gvl :face) (gvl :size)))
+	   (hash-entry (gethash key *font-hash-table*)))
+      ;; Take care that the font we've just looked up wasn't recreated
+      ;; (and therefore the old one deleted). If that *is* the case we
+      ;; need to re-add it to the table elsewhere.
+      ;;
+      ;; Note this does show a need for a generalized mechanism for
+      ;; handling cached objects.
+      (if (and hash-entry
+	       (not (kr::deleted-p hash-entry)))
+	  hash-entry
+	  (let* ((root-window (gv gem:device-info :current-device))
+		 (font-name (gem:make-font-name root-window key)))
 	    (if (gem:font-name-p root-window font-name)
-                (setf (gethash key *font-hash-table*)
-		      (create-instance NIL font-from-file
-		        (:font-name font-name)))
-	        (progn
-		  (warn "~A not allowed for :~A slot of font; substituting default-font."
-			(car font-name)
-			(cdr font-name))
-		  default-font-from-file))))))))
+	      (setf (gethash key *font-hash-table*)
+		    (create-instance NIL font-from-file
+		      (:font-name font-name)))
+	      (progn
+		(warn "~A not allowed for :~A slot of font; substituting default-font."
+		      (car font-name)
+		      (cdr font-name))
+		default-font-from-file))))))))
 
-(create-instance 'DEFAULT-FONT FONT
-   (:constant T))
+(create-instance 'default-font font
+   (:constant t))
 
-(create-instance 'CURSOR-FONT FONT-FROM-FILE
-  (:constant T)
+(create-instance 'cursor-font font-from-file
+  (:constant t)
   (:font-name "cursor"))
 
 ;; Used in multifonts
@@ -243,42 +256,56 @@
                           ((nil nil nil nil) (nil nil nil nil)
                            (nil nil nil nil) (nil nil nil nil)))))
 
-;; Fetch a font from the font table corresponding to the attribute parameters.
-;;
-(defun GET-STANDARD-FONT (family face size)
-  "
-Get-Standard-Font returns a font object.  If this function is called multiple
-times with the same font specification, the same object will be returned, thus
-avoiding wasted objects.
+;; Fetch a font from the font table corresponding to the attribute
+;; parameters.  Maybe this function should be renamed 'ensure', a
+;; conventional name for functions that create something new if
+;; doesn't already exist, otherwise returns the existing one.
+;; Fetch a font from the font table corresponding to the attribute
+;; parameters.  Maybe this function should be renamed 'ensure', a
+;; conventional name for functions that create something new if
+;; doesn't already exist, otherwise returns the existing one.
+(defun get-standard-font (family face size)
+  "Get-Standard-Font returns a font object.  If this function is
+   called multiple times with the same font specification, the same
+   object will be returned, thus avoiding wasted objects.
     Allowed values:
     family -- :fixed, :serif, :sans-serif, or NIL (NIL == :fixed)
     face   -- :roman, :italic, :bold, :bold-italic, or NIL (NIL == :roman)
     size   -- :small, :medium, :large, :very-large, or NIL (NIL == :medium)"
-  (let ((family-num (case (or family (setf family :fixed))
-		      (:fixed 0)
-		      (:serif 1)
-		      (:sans-serif 2)
-		      (t (error "Invalid font family -- ~S" family))))
-	(face-num (case (or face (setf face :roman))
-		    (:roman 0)
-		    (:italic 1)
-		    (:bold 2)
-		    (:bold-italic 3)
-		    (t (error "Invalid font face -- ~S" face))))
-	(size-num (case (or size (setf size :medium))
-		    (:small 0)
-		    (:medium 1)
-		    (:large 2)
-		    (:very-large 3)
-		    (t (error "Invalid font size -- ~S" size)))))
-    (or (aref *Font-Table* family-num face-num size-num)
-	(setf (aref *Font-Table* family-num face-num size-num)
-	      (create-instance nil FONT
-		(:constant T)
-		(:standard-p T)
-		(:family family)
-		(:face face)
-		(:size size))))))
+  (let* ((family-num (case (or family (setf family :fixed))
+		       (:fixed 0)
+		       (:serif 1)
+		       (:sans-serif 2)
+		       (t (error "Invalid font family -- ~S" family))))
+	 (face-num (case (or face (setf face :roman))
+		     (:roman 0)
+		     (:italic 1)
+		     (:bold 2)
+		     (:bold-italic 3)
+		     (t (error "Invalid font face -- ~S" face))))
+	 (size-num (case (or size (setf size :medium))
+		     (:small 0)
+		     (:medium 1)
+		     (:large 2)
+		     (:very-large 3)
+		     (t (error "Invalid font size -- ~S" size))))
+	 (standard-font (aref *font-table* family-num face-num size-num)))
+    ;; Add an entry in *font-table* (our font cache) if the font
+    ;; doesn't exists, or if it was destroyed.  Ordinarily you
+    ;; shouldn't have to check whether something is deleted or not.
+    ;; Which raising thet question whether this type of caching should
+    ;; be within the kr module/package.
+    (when (or (not standard-font)
+	      (kr::deleted-p standard-font))
+      (format t "detected font deleted")
+      (setf (aref *font-table* family-num face-num size-num)
+	    (create-instance nil font
+	      (:constant t)
+	      (:standard-p t)
+	      (:family family)
+	      (:face face)
+	      (:size size))))
+    (aref *font-table* family-num face-num size-num)))
 
 (setf (aref *Font-Table* 0 0 1) default-font)
 

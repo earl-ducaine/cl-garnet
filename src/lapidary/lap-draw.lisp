@@ -19,7 +19,7 @@
 ;;;     RADIO-BUTTON-PANEL from package GARNET-GADGETS
 ;;;     RECTANGLE from package OPAL
 (dolist (gadget '("radio-buttons-loader"
-		  "text-buttons-loader"
+		  ;; "text-buttons-loader"
 		  ))
   (load (merge-pathnames gadget
 			 common-lisp-user::Garnet-Gadgets-PathName)))
@@ -33,7 +33,7 @@
 (defun draw-fct-sel-fct (gadget value)
   (s-value (g-value gadget :parent) :value value))
 
-(setf common-lisp-user::*Garnet-Object-Just-Created* 
+(setf common-lisp-user::*Garnet-Object-Just-Created*
 (create-instance 'draw-fct-gadget OPAL:AGGREGADGET
   (:value nil)
   (:WINDOW-LEFT 0)

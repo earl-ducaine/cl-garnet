@@ -29,7 +29,8 @@ Change log:
 
 (unless (get :garnet-modules :motif-error-gadget)
   (format t "Loading Motif-Error-Gadget...~%")
-  (dolist (pair '((:motif-text-buttons "motif-text-buttons-loader")
+  (dolist (pair '(
+		  ;; (:motif-text-buttons "motif-text-buttons-loader")
 		  (:error-gadget-utils "error-gadget-utils")
 		  (:motif-error-gadget "motif-error-gadget")))
     (unless (get :garnet-modules (car pair))
@@ -38,6 +39,3 @@ Change log:
   (format t "...Done Motif-Error-Gadget.~%"))
 
 (setf (get :garnet-modules :motif-error-gadget) t)
-
-
-

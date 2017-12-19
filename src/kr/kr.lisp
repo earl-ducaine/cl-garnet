@@ -1,33 +1,18 @@
 ;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: KR; Base: 10 -*-
 
-;;*******************************************************************;;
-;;          The Garnet User Interface Development Environment.       ;;
-;;*******************************************************************;;
-;;  This code was written as part of the Garnet project at           ;;
-;;  Carnegie Mellon University, and has been placed in the public    ;;
-;;  domain.                                                          ;;
-;;*******************************************************************;;
-
-;;; $Id::                                                            $
+;; The Garnet User Interface Development Environment.
 ;;
+;; This code was written as part of the Garnet project at Carnegie
+;; Mellon University, and has been placed in the public domain.
 
-
-;;; Slot bits assignment:
-;; 0-9 types encoding
-;;   - inherited
-;;   - is-parent
-;;   - constant-slot
-;;   - is-update-slot
-;;   - local-only-slot    ; not implemented
-;;   - parameter-slot     ; not implemented
-
-
 (in-package :kr)
+
+(defparameter kr-version-number "2.3.4")
 
 (declaim (inline clear-one-slot))
 (defun clear-one-slot (schema slot entry)
   "Completely clear a slot, including dependencies, inherited, etc...
-BUT... Leave around the declarations (constant, type, update,...)"
+   but... Leave around the declarations (constant, type, update,...)"
   (locally (declare #.*special-kr-optimization*)
     (let ((the-entry (or entry (slot-accessor schema slot))))
       (when the-entry
@@ -39,20 +24,15 @@ BUT... Leave around the declarations (constant, type, update,...)"
 (defun clear-schema-slots (schema)
   "Completely clear ALL the slots in the <schema>."
   (locally (declare #.*special-kr-optimization*)
-    (clrhash (schema-bins schema))
-    ))
-
+    (clrhash (schema-bins schema))))
 
 (defun value-fn (schema slot)
   "Does the actual work of G-VALUE."
   (g-value-body schema slot T T))
 
-
 (defun g-local-value-fn (schema slot)
   "Similar to g-value-fn, but no inheritance."
   (g-value-body schema slot NIL T))
-
-
 
 (let ((list-of-one (list nil)))
   (defun get-dependents (schema slot)
@@ -95,7 +75,8 @@ disabled, the variable *demons-disabled* is made of the form
 
 (defun disable-a-demon (demon)
   (if (eq *demons-disabled* T)
-      T					; everything is already turned off
+      T
+      ;; everything is already turned off
       (if (eq *demons-disabled* NIL)
 	  demon
 	  (if (listp *demons-disabled*)
@@ -263,8 +244,8 @@ to a schema."
 
 ;;
 (defun make-new-schema-name (schema name)
-  "Creates symbols for all automatic schema names that happen to
-be printed out."
+  "Creates symbols for all automatic schema names that happen to be
+   printed out."
   (let* ((debug-package (find-package "KR-DEBUG"))
 	 parent
 	 (symbol
@@ -307,8 +288,8 @@ be printed out."
   (declare (ignore level))
   (let ((name (schema-name schema))
 	(destroyed (not (not-deleted-p schema))))
-    ;; This version is for debugging.  Record the latest schemata in the
-    ;; array.
+    ;; This version is for debugging.  Record the latest schemata in
+    ;; the array.
     (cond ((or (integerp name) (stringp name))
 	   ;; This is a nameless schema.  Print it out, and record it in the
 	   ;; debugging array.
@@ -708,7 +689,6 @@ Always returns the CODE of the resulting type (whether new or not)"
 (defparameter *warning-level* 0)
 
 ;; Helper function
-;;
 (defun re-evaluate-formula (schema-self schema-slot current-formula entry #+EAGER eval-type)
   (let ((*schema-self* schema-self)
 	(*schema-slot* schema-slot)
@@ -732,7 +712,8 @@ Always returns the CODE of the resulting type (whether new or not)"
 						       *schema-self*
 						       *schema-slot*)))
 				  (is-constant (sl-bits entry))))))
-      (when declared-constant		; save work, since we know the answer
+      ;; save work, since we know the answer
+      (when declared-constant
 	(setf *check-constants* nil))
       (set-cache-mark *current-formula* *sweep-mark*)
       (let ((the-result
@@ -776,20 +757,20 @@ Always returns the CODE of the resulting type (whether new or not)"
 
 ;; We are working with a formula.  Note that broken links leave
 ;; the formula valid.
-;;
 (defun g-value-formula-value (schema-self slot formula entry)
   (let ((*schema-self* schema-self))
     (if (cache-is-valid formula)
 	(a-formula-cached-value formula)
 	(progn
 	  (unless *within-g-value*
-	    ;; Bump the sweep mark only at the beginning of a chain of formula
-	    ;; accesses.  Increment by 2 since lower bit is "valid" flag.
+	    ;; Bump the sweep mark only at the beginning of a chain of
+	    ;; formula accesses.  Increment by 2 since lower bit is
+	    ;; "valid" flag.
 	    (incf *sweep-mark* 2))
 	  (if (= (cache-mark formula) *sweep-mark*)
-	      ;; If the sweep mark is the same as the current one, WE ARE IN THE
-	      ;; MIDDLE OF A CIRCULARITY.  Just use the old value, and mark it
-	      ;; valid.
+	      ;; If the sweep mark is the same as the current one, we
+	      ;; are in the middle of a circularity.  just use the old
+	      ;; value, and mark it valid.
 	      (progn
 		(when *warning-on-circularity*
 		  (format t "Warning - circularity detected on ~S, slot ~S~%"

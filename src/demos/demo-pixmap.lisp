@@ -10,12 +10,12 @@
 
 (in-package :demo-pixmap)
 
-(unless (get :garnet-modules :text-buttons)
-  (common-lisp-user::garnet-load "gadgets:text-buttons-loader"))
-(unless (get :garnet-modules :scrolling-labeled-box)
-  (common-lisp-user::garnet-load "gadgets:scrolling-labeled-box-loader"))
-(unless (get :garnet-modules :ps)
-   (common-lisp-user::garnet-load "ps:ps-loader"))
+;; (unless (get :garnet-modules :text-buttons)
+;;   (common-lisp-user::garnet-load "gadgets:text-buttons-loader"))
+;; (unless (get :garnet-modules :scrolling-labeled-box)
+;;   (common-lisp-user::garnet-load "gadgets:scrolling-labeled-box-loader"))
+;; (unless (get :garnet-modules :ps)
+;;    (common-lisp-user::garnet-load "ps:ps-loader"))
 
 (declaim (special COLOR-PROP CHANGER W A FEED-RECT
 		  MY-SQUARE FEED-RECT W2 A2 COLOR-BOX

@@ -1,21 +1,16 @@
 ;;; -*- Mode: COMMON-LISP; Package: GARNET-GADGETS; Base: 10 -*-     ;;
-;;-------------------------------------------------------------------;;
-;;          The Garnet User Interface Development Environment.       ;;
-;;-------------------------------------------------------------------;;
-;;  This code was written by Russell Almond at Statistical Sciences  ;;
-;;  as an independent contribution to the Garnet project at          ;;
-;;  Carnegie Mellon University, and has been placed in the public    ;;
-;;  domain.                                                          ;;
-;;                                                                   ;;
-;;  The authors of the code make no warentee expressed or implied    ;;
-;;  about its utility, rather we hope that someone may find a use    ;;
-;;  for it.                                                          ;;
-;;-------------------------------------------------------------------;;
-
-;;; $Id$
 ;;
+;;          The Garnet User Interface Development Environment.
+;;
+;;  This code was written by Russell Almond at Statistical Sciences
+;;  as an independent contribution to the Garnet project at
+;;  Carnegie Mellon University, and has been placed in the public
+;;  domain.
+;;
+;;  The authors of the code make no warentee expressed or implied
+;;  about its utility, rather we hope that someone may find a use
+;;  for it.
 
-
 ;;;  Prompter Gadget
 ;;
 ;;   Features:
@@ -341,22 +336,14 @@ abnormally."
   (lambda (button value)
     (Prompter-Gadget-Sel-Func button value)))
 
-;;; testing/demo function for error-gadgets and query gadgets
-#+garnet-test
-(export '(prompter-gadget-go prompter-gadget-stop))
-
-#+garnet-test
 (defparameter prompt-text
-    "Enter a lisp expression in the box below.
-Use emacs-like commands to edit text.
-Press 'eval' to evaluate your expression.
-* is last returned value, + is last read value.
-Value returned is either last return value or
-latest value read from input.
-")
+  "Enter a lisp expression in the box below.
+   Use emacs-like commands to edit text.  Press 'eval' to evaluate
+   your expression.  * is last returned value, + is last read value.
+   Value returned is either last return value or latest value read
+   from input.")
 
 
-#+garnet-test
 (defun prompter-gadget-go ()
   (let (agg egadget pgadget feed)
     (create-instance 'prompter-gadget-test-win inter:interactor-window
@@ -397,9 +384,5 @@ latest value read from input.
     (opal:update prompter-gadget-test-win)
     (inter:main-event-loop)))
 
-#+garnet-test
-(proclaim '(special prompter-gadget-test-win))
-
-#+garnet-test
 (defun prompter-gadget-stop ()
   (opal:destroy prompter-gadget-test-win))

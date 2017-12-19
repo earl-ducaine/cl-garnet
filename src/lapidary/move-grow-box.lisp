@@ -18,7 +18,7 @@
 ;;;     TEXT-BUTTON-PANEL from package GARNET-GADGETS
 ;;;     X-BUTTON-PANEL from package GARNET-GADGETS
 (dolist (gadget '("x-buttons-loader"
-		  "text-buttons-loader"
+		  ;; "text-buttons-loader"
 		  ))
   (load (merge-pathnames gadget common-lisp-user::Garnet-Gadgets-PathName)))
 ;;;
@@ -32,7 +32,7 @@
 (eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(BOX-PARAMS)))
 
-(setf common-lisp-user::*Garnet-Object-Just-Created* 
+(setf common-lisp-user::*Garnet-Object-Just-Created*
 (create-instance 'BOX-PARAMS OPAL:AGGREGADGET
   (:WINDOW-LEFT 0)
   (:WINDOW-TOP 0)
@@ -88,4 +88,3 @@
       (:TOP ,(o-formula (SECOND (GVL :BOX)) 10))))))
 
 )
-

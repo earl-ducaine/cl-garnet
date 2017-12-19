@@ -18,7 +18,7 @@
 ;;; This is intended as a test and demonstration of several features of the
 ;;; Garnet project:  the menu interactor, aggregadgets, aggrelists,
 ;;; feedback objects, interim feedback objects, and polylines.
-;;; 
+;;;
 ;;; ** Call (demo-menu:do-go) to start
 ;;;     and (demo-menu:do-stop) to stop **
 ;;;
@@ -29,8 +29,8 @@
 
 (in-package :DEMO-MENU)
 
-(when (not (get :garnet-modules :text-buttons))
-  (common-lisp-user::garnet-load "gadgets:text-buttons-loader"))
+;; (when (not (get :garnet-modules :text-buttons))
+;;   (common-lisp-user::garnet-load "gadgets:text-buttons-loader"))
 
 (declaim (special FRAME FEEDBACK DEMO-MENU-INTERACTOR MENU1-ITEM-PROTOTYPE
 		  MENU1 MENU2 MENU3 MENU4 MENU5 MENU6 PLUS-FEEDBACK
@@ -191,7 +191,7 @@
 
 
 ;;; ********************************************************************
-;;; MENU2;  Large multi-selection menu with plus signs.  The 
+;;; MENU2;  Large multi-selection menu with plus signs.  The
 ;;;   The structure of this menu is similar to MENU1, except that there are
 ;;; multiple final feedback objects.  It is necessary to define the same number
 ;;; of final feedback objects as items, since more than one feedback object may
@@ -272,7 +272,7 @@
 	   (:line-style ,(create-instance NIL opal:line-style
 			   (:constant T)
 			   (:line-thickness 2)
-			   (:foreground-color 
+			   (:foreground-color
 			    (if *color-p* opal:red opal:black)))))
       (:final-feedback1 ,arrow-feedback)
       (:final-feedback2 ,plus-feedback)
@@ -440,7 +440,7 @@
 ;;; positions of the items so that later, when the menu is added to the
 ;;; demo window, the items will be in place and the frame will be properly
 ;;; sized.
-;;;   
+;;;
 ;;; ********************************************************************
 
 
@@ -802,4 +802,3 @@
 
 (defun Do-Stop ()
   (opal:destroy MENU-WIN))
-

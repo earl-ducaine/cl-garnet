@@ -2537,12 +2537,8 @@ the X drawable."
   (attach-method x-device :translate-mouse-character
 		 'x-translate-mouse-character)
   (attach-method x-device :translate-character 'x-translate-character)
-
   ;; now make all windows inherit Gem methods from the X device.
-  ;;
-  (set-window-methods opal::window x-device)
-  )
-
+  (set-window-methods opal::window x-device))
 
 ;;; This is also called in reconnect-garnet.
 (defun initialize-device-values (full-display-name root-window)
@@ -2551,10 +2547,6 @@ the X drawable."
   ;; process.lisp), which is called by launch-main-event-loop-process.
   (x-set-device-variables full-display-name)
   (x-set-screen-color-attribute-variables root-window))
-
-;;; Make the initializer function available to the outside world.
-;; (setf (get :garnet-modules :gem) t)
-
 
 (defun x-draw-rectangle (window left top width height function
                          line-style fill-style)

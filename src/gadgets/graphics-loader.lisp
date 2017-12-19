@@ -27,7 +27,6 @@ Change log:
   (error "Load 'Garnet-Loader' first to set Garnet-Gadgets-PathName before loading Gadgets."))
 
 ;;; Now load the graphics-selection module
-;;;
 (unless (get :garnet-modules :graphics-selection)
   (format t "Loading Graphics-Selection...~%")
   (load (merge-pathnames "graphics-selection" Garnet-Gadgets-PathName)
@@ -35,5 +34,3 @@ Change log:
   (format t "...Done Graphics-Selection.~%"))
 
 (setf (get :garnet-modules :graphics-selection) t)
-
-

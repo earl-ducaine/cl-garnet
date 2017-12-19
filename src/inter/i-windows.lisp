@@ -607,12 +607,8 @@
   "Event handler for the interactor windows"
   ;; defined in inter:animation-process.lisp
   (setq *process-with-main-event-loop*
-	#+allegro mp:*current-process*
-	#+(and cmu mp) mp:*current-process*
-	#+sb-thread sb-thread:*current-thread*
-	#-(or allegro sb-thread (and cmu mp)) NIL)
+	(bordeaux-threads:current-thread))
   (gem:event-handler root-window NIL))
-
 
 (opal:launch-main-event-loop-process)
 
@@ -628,12 +624,10 @@
 	    (if (eq exit-when-no-window-visible :on)
 		(setq opal::*inside-main-event-loop* t)
 		(setq opal::*inside-main-event-loop* :dont-care))
-;;	    (opal::m-e-l-new)		; Defined in opal/process.lisp
-	    (opal::m-e-l)		; Defined in opal/process.lisp
-
+	    ;; Defined in opal/process.lisp
+	    (opal::m-e-l)
 	    (setq opal::*inside-main-event-loop* NIL)
 	    (gem:discard-pending-events root-window 5))))))
-
 
 (defun exit-main-event-loop ()
   (when (and (null opal::*main-event-loop-process*)
@@ -670,10 +664,11 @@ by the protected-eval code."
 		 (g-value gem:DEVICE-INFO :current-root)))
 	  ))))
 
-(defun Wait-Interaction-Complete (&optional window-to-raise)
+(defun wait-interaction-complete (&optional window-to-raise)
   "Processes events, but this procedure does not exit unless the
-  Interaction-Complete procedure is called.  The value returned by
-  Wait-Interaction-Complete is the value passed to Interaction-Complete"
+   interaction-complete procedure is called.  The value returned by
+   wait-interaction-complete is the value passed to
+   Interaction-Complete"
   (let (;; the next boolean is T if the main-event-loop process is running BUT
 	;; Wait-Interaction-Complete was NOT called inside it.  If
 	;; w-i-c was called from inside the m-e-l process, then don't
@@ -696,8 +691,7 @@ by the protected-eval code."
       ;; discard current event which was the one that caused the exit
       (gem:discard-pending-events (g-value gem:device-info :current-root) 0)
       (when running-mel-process-elsewhere
-	(opal:launch-main-event-loop-process)))
-    ))
+	(opal:launch-main-event-loop-process)))))
 
 (defun Interaction-Complete (&optional val)
   "Call this to exit the Wait-Interaction-Complete procedure.  Typically,

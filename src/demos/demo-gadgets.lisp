@@ -8,7 +8,7 @@
 ;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; $Id$	
+;;; $Id$
 
 
 ;;;  DEMO-GADGETS
@@ -29,11 +29,11 @@
 (defvar DEMO-GADGETS-INIT
   (dolist (file '("h-scroll-loader" "v-slider-loader"
 		  "trill-device-loader" "gauge-loader"
-		  "menu-loader" "text-buttons-loader"
+		  "menu-loader" ;; "text-buttons-loader"
 		  "x-buttons-loader" "radio-buttons-loader"
 		  "labeled-box-loader" "scrolling-labeled-box-loader"))
           (common-lisp-user::garnet-load (concatenate 'string "gadgets:" file))))
-                                   
+
 
 (declaim (special DEMO-GADGETS-WIN DEMO-GADGETS-TOP-AGG
 		  DEMO-TEXT-BUTTONS-OBJ DEMO-H-SCROLL-OBJ DEMO-GAUGE-OBJ
@@ -45,7 +45,7 @@
 ;;  Global function executed when certain demo items are selected.
 (defun IDENTIFY-ITEM (top-level-obj string)
   (format t "Object ~S now has value ~S.~%" top-level-obj string))
-  
+
 
 ;;;  These functions are included to show that selection of one of the
 ;;;  menu items causes the associated local function to be called.
@@ -86,7 +86,7 @@
 	 (common-lisp-user::Garnet-Note-Quitted "DEMO-GADGETS"))
      (g-value demo-gadgets-win :destroy-hooks)))
 
-  
+
   (create-instance 'DEMO-TEXT-BUTTONS-OBJ garnet-gadgets:text-button-panel
      (:constant T)
      (:left 10) (:top 10)
@@ -105,7 +105,7 @@
 
 
   (create-instance 'DEMO-H-SCROLL-OBJ garnet-gadgets:h-scroll-bar
-     (:constant T :except :scr-trill-p :page-trill-p 
+     (:constant T :except :scr-trill-p :page-trill-p
 			  :indicator-text-p :int-feedback-p)
      (:left 10) (:top 350)
      (:scr-trill-p

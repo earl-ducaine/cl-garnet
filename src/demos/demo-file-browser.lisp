@@ -8,7 +8,7 @@
 ;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; $Id$	
+;;; $Id$
 
 
 ;;;  FILE BROWSER INTERFACE
@@ -23,7 +23,7 @@
 (declaim (special FILE-BROWSER-WIN FILE-BROWSER-TOP-AGG QUIT-BUTTON))
 
 (defvar DEMO-FILE-BROWSER-INIT
-  (dolist (file '("text-buttons-loader"
+  (dolist (file '(;;"text-buttons-loader"
 		  "labeled-box-loader"
 		  "browser-gadget-loader"))
     (common-lisp-user::garnet-load (concatenate 'string "gadgets:" file))))
@@ -52,7 +52,7 @@
 (defun DIRECTORY-FN (namestring)
   (let ((dir (directory #+(or cmu) namestring
 			#+(or sbcl) (concatenate 'string (namestring namestring) "*")
-                        #-(or cmu sbcl) 
+                        #-(or cmu sbcl)
                         (concatenate 'string (namestring namestring) "/")
                         #-(or clisp cmu sbcl) :directories #-(or clisp cmu sbcl) t)))
     (if (or (null dir) (equal (car dir) namestring)) NIL dir)))
@@ -80,7 +80,7 @@
 	 (common-lisp-user::Garnet-Note-Quitted "DEMO-FILE-BROWSER"))
      (g-value file-browser-win :destroy-hooks)))
 
-  
+
   ;; Create FILE-BROWSER schema and add to window
   (create-instance 'FILE-BROWSER garnet-gadgets:browser-gadget
      ;; Why isn't :num-menus constant?  Because that would make the :items

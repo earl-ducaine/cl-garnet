@@ -1,49 +1,43 @@
 ;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: DEMO-3D; Base: 10 -*-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;         The Garnet User Interface Development Environment.      ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; This code was written as part of the Garnet project at          ;;;
-;;; Carnegie Mellon University, and has been placed in the public   ;;;
-;;; domain.  If you are using this code or any part of Garnet,      ;;;
-;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;;; Written by Brad Myers
-;;; Upgraded to color by Ed Pervin (Mar 90)
+;; The Garnet User Interface Development Environment.
+;;
+;; This code was written as part of the Garnet project at
+;; Carnegie Mellon University, and has been placed in the public
+;; domain.  If you are using this code or any part of Garnet,
+;; please contact garnet@cs.cmu.edu to be put on the mailing list.
+;;
+;; Written by Brad Myers
+;; Upgraded to color by Ed Pervin (Mar 90)
 
-
-(in-package :DEMO-3D)
 
-;;-----------------------------------
+(in-package :demo-3d)
 
 (defparameter shad-off 15)
 (defparameter white-off 3)
 (defparameter white-off2 (* 2 white-off))
 (defparameter gray-size 6)
 (defparameter gray-size2 (* 2 gray-size))
-(defvar menu3 NIL)
+(defvar menu3 nil)
 
 (declaim (special MENU-NAME))
 
 (defun make-fixed-menu3 (top-agg pairs x y)
-  (let (shadow outline outline2
-	       this-item prev-item
-	       text-item inv-box
-	       fnt label color)
-
+  (let (shadow outline outline2 this-item prev-item text-item inv-box fnt label
+	       color)
     (create-instance 'menu-name opal:aggregate
-      (:left x)(:top y)(:width 500)
+      (:left x)
+      (:top y)
+      (:width 500)
       (:height 500))
     (opal:add-components top-agg menu-name)
-
-    ; create items
+    ;; create items
     (setq fnt (create-instance NIL opal:font
 		(:size :large)
 		(:family :serif)))
     (dolist (pair pairs)
       (setq label (car pair)
 	    color (cdr pair))
-
       (setq this-item
 	    (create-instance NIL opal:aggregate
 	      (:name (concatenate 'string label "-agg"))
@@ -63,11 +57,11 @@
 	    (create-instance NIL opal:rectangle
 	      (:name (concatenate 'string label "-outline"))
 	      (:left (o-formula (+ (gvl :parent :left)
-				      (if (gvl :parent :interim-selected)
-					  shad-off 0)) 0))
+				   (if (gvl :parent :interim-selected)
+				       shad-off 0)) 0))
 	      (:top (o-formula (+ (gvl :parent :top)
-				      (if (gvl :parent :interim-selected)
-					  shad-off 0)) 0))
+				  (if (gvl :parent :interim-selected)
+				      shad-off 0)) 0))
 	      (:width (o-formula (- (gvl :parent :width) shad-off) 0))
 	      (:height (o-formula (- (gvl :parent :height) shad-off) 0))
 	      (:filling-style (create-instance nil opal:gray-fill
@@ -81,7 +75,6 @@
 	      (:width (o-formula (- (gvl :outline :width) gray-size2) 0))
 	      (:height (o-formula (- (gvl :outline :height) gray-size2) 0))
 	      (:filling-style opal:white-fill)))
-
       (setq text-item
 	    (create-instance NIL opal:text
 	      (:string label)
@@ -96,7 +89,6 @@
 	      (:outline2 outline2)
 	      (:left (o-formula (+ (gvl :outline2 :left) white-off) 0))
 	      (:top (o-formula (+ (gvl :outline2 :top) white-off) 0))))
-
       (setq inv-box
 	    (create-instance NIL opal:rectangle
 	      (:text-item text-item)
@@ -108,9 +100,7 @@
 	      (:filling-style (create-instance nil opal:black-fill
 				(:foreground-color color)))
 	      (:line-style opal:no-line)))
-
       (s-value this-item :my-string text-item)
-
       (setq shadow
 	    (create-instance NIL opal:rectangle
 	      (:name (concatenate 'string label "-shadow"))
@@ -121,26 +111,16 @@
 	      (:height (o-formula (gvl :outline :height) 0))
 	      (:filling-style (g-value inv-box :filling-style))
 	      (:visible (o-formula (not (gvl :parent :interim-selected))))))
-      
-
       (opal:add-components this-item shadow outline outline2 inv-box text-item)
       (opal:add-components menu-name this-item)
-
       (setq prev-item this-item))
-
     (s-value menu-name :max-width
-	     (o-formula 
-	       (let ((maxw 0))
-		 (dolist (item (g-value menu-name :components))
-		   (setq maxw (MAX maxw (gv item :my-string :width))))
-		 maxw) 0))
-
+	     (o-formula
+	      (let ((maxw 0))
+		(dolist (item (g-value menu-name :components))
+		  (setq maxw (MAX maxw (gv item :my-string :width))))
+		maxw) 0))
     menu-name))
-
-
-;;-----------------------------------
-
-
 
 (defun center-y (other-obj)
   (+ (gv other-obj :top)
@@ -162,9 +142,9 @@
 ;;; width and height are of the area for the *label*, the whole button will
 ;;; be larger.  left and top are for the whole button.
 (defun make-gray-floating-object (name label-obj top &key (shape opal:rectangle))
-  
+
   (let (object-agg outline outline2 shadow)
-    
+
     (setq object-agg
 	  (kr:create-instance NIL opal:aggregate
 			      (:name name)
@@ -187,7 +167,7 @@
 					     (gvl :gray-size2)
 					     (gvl :white-off2)
 					     circle-size)))))
-    
+
     (setq outline
 	  (kr:create-instance NIL shape
 			      (:name (concatenate 'string name "-outline"))
@@ -220,17 +200,17 @@
 					 (- (gvl :parent :outline :height)
 					    (gvl :parent :gray-size2)) 0))
 			      (:filling-style opal:white-fill)))
-    
+
     (s-value object-agg :inner-left
 		   (o-formula (+ (gvl :outline2 :left) (gvl :white-off)) 0))
     (s-value object-agg :inner-top
 		   (o-formula (+ (gvl :outline2 :top) (gvl :white-off)) 0))
-    
+
     (setq shadow
 	  (kr:create-instance NIL shape
 			      (:name (concatenate 'string name "-shadow"))
 			      (:left (o-formula
-				       (+ (gvl :parent :left) 
+				       (+ (gvl :parent :left)
 					  (gvl :parent :shad-off)) 0))
 			      (:top (o-formula
 				      (+ (gvl :parent :top)
@@ -241,11 +221,11 @@
 			      (:visible
 			       (o-formula
 				 (not (gvl :parent :interim-selected))))))
-    
+
     (s-value object-agg :shadow shadow)
     (s-value object-agg :outline outline)
     (s-value object-agg :outline2 outline2)
-    
+
     (opal:add-components object-agg shadow outline outline2)
     object-agg))
 
@@ -394,13 +374,16 @@
   (opal:destroy vp))
 
 (defun do-go (&key dont-enter-main-event-loop double-buffered-p)
-  (setq vp (kr:create-instance NIL inter:interactor-window
-                               (:left 600)
-			       (:top 70)(:width 400)(:height 360)
-                               (:double-buffered-p double-buffered-p)
-			       (:title "GARNET 3D") (:icon-title "3D")))
+  (setq vp (kr:create-instance NIL
+	       inter:interactor-window
+	     (:left 600)
+	     (:top 70)
+	     (:width 400)
+	     (:height 360)
+	     (:double-buffered-p double-buffered-p)
+	     (:title "GARNET 3D")
+	     (:icon-title "3D")))
   (setq agg (s-value vp :aggregate (create-instance NIL opal:aggregate)))
-
   ;; If we get clobbered by the window manager, let the demos
   ;; controller know (if it's there).
   (when (fboundp 'common-lisp-user::Garnet-Note-Quitted)
@@ -409,39 +392,28 @@
 	 (declare (ignore win))
 	 (common-lisp-user::Garnet-Note-Quitted "DEMO-3D"))
      (g-value vp :destroy-hooks)))
-  
   (setq fnt (kr:create-instance NIL opal:font
 			(:family :serif) (:face :roman) (:size :small)))
   (setq fnti (kr:create-instance NIL opal:font
 			(:family :serif) (:face :italic) (:size :large)))
-
-
   (setq menu3 (make-fixed-menu3 agg
 			    (list (cons "Purple" opal:purple)
 				  (cons "Red" opal:red)
 				  (cons "Blue" opal:blue)
 				  (cons "Green" opal:green)
 				  (cons "Yellow" opal:yellow)) 10 10))
-
-  (setq inter3 (create-instance NIL
-				  inter:menu-interactor 
+  (setq inter3 (create-instance nil
+				  inter:menu-interactor
 				  (:start-where
 				   `(:element-of ,menu3))
 				  (:window vp)))
-
   (opal:update vp)
-
   (setq circles (make-radio-buttons "radio" '("Left" "Middle" "Right") fnt
 				    150 10))
-
   (setq boxes (car (make-X-buttons "radio3" '("Bold" "Italic" "Underline") fnt
 				 150 50 NIL)))
   (opal:add-components agg circles boxes)
-
   (opal:update vp)
-
-  (Format T "~%Demo-3D:
-  Left button operates the 3 different menus.~%")
-  (unless dont-enter-main-event-loop #-cmu (inter:main-event-loop))
-  )
-
+  (Format T "~%Demo-3D: Left button operates the 3 different menus.~%")
+  (unless dont-enter-main-event-loop
+    (inter:main-event-loop)))

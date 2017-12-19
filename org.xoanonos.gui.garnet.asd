@@ -232,6 +232,8 @@
 	     (:file "prompter")
 	     (:file "protected-eval")
 	     (:file "protected-process")
+	     (:file "wait-interaction-complete-inner-loop"
+		    :depends-on ("protected-process"))
 	     (:file "abstract-errors")
 	     (:file "garnet-errors")))
    (:module gesture

@@ -1,42 +1,37 @@
 ;;; -*- Mode: Lisp; Syntax: Common-Lisp; Package: :Kr -*-
-;;*******************************************************************;;
-;;          The Garnet User Interface Development Environment.       ;;
-;;*******************************************************************;;
-;;  This code was written by Russell Almond at Statistical Sciences  ;;
-;;  as an independent contribution to the Garnet project at          ;;
-;;  Carnegie Mellon University, and has been placed in the public    ;;
-;;  domain.                                                          ;;
-;;                                                                   ;;
-;;  The authors of the code make no warentee expressed or implied    ;;
-;;  about its utility, rather we hope that someone may find a use    ;;
-;;  for it.                                                          ;;
-;;*******************************************************************;;
 
-;;; $Id$
+;; The Garnet User Interface Development Environment.
 ;;
+;; This code was written by Russell Almond at Statistical Sciences as
+;; an independent contribution to the Garnet project at Carnegie
+;; Mellon University, and has been placed in the public domain.
+;;
+;; The authors of the code make no warentee expressed or implied about
+;; its utility, rather we hope that someone may find a use for it.
 
-
-;;; This package introduces a documentation convention for KR objects
-;;  and provides some simple functions to read that documentation.
+
+;; This package introduces a documentation convention for KR objects
+;; and provides some simple functions to read that documentation.
 ;;
 ;; The first half of the convention is easy.  Each schema can have a
 ;; slot called :documentation which contains information for the
 ;; programmer about the schema.
-
-;; The second half of the convention provides information about
-;; slots.  This is done through the :slot-doc slot of the schema.
-;; This is a paired list of the form slot-name, doc-string.
+;;
+;; The second half of the convention provides information about slots.
+;; This is done through the :slot-doc slot of the schema.  This is a
+;; paired list of the form slot-name, doc-string.
 
 ;; The function kr:get-slot-doc (<schema> <slot>) accesses the
 ;; doc-string for a schema. It will search first the local slot and
 ;; then back through the inheritence chain to find the documentation
-;; for a slot.  The function kr:set-slot-doc  (<schema> <slot>
-;; <value>) will set the documentation associated with the slot.
+;; for a slot.  The function kr:set-slot-doc (<schema> <slot> <value>)
+;; will set the documentation associated with the slot.
 
 ;; In order to prevent documentation strings from adding volume to
 ;; images where they are not wanted, I've added a feature switch
 ;; kr-doc.  This should be used to protect documentation when it is
 ;; not wanted (i.e., when this file has not been loaded first.)
+;;
 ;; Example:
 ;;  (kr:create-instance 'verbose-rectangle opal:rectangle
 ;;    #+kr-doc (:documentation "Opal:rectangle with documentation strings.")
@@ -50,11 +45,7 @@
 ;;                                        objects underneath."
 ;;		          :visible "Is the object to be drawn?"))
 
-
-;;; KR part of garnet must be loaded.
 (in-package :kr)
-
-
 
 (defun get-slot-doc (schema slot)
   "Returns the documentation string associated with <slot> in <schema>."
@@ -84,4 +75,4 @@
     (setf (getf doc-plist slot) doc-string)
     (s-value schema :slot-doc  doc-plist)))
 
-(pushnew :KR-DOC *Features*)
+(pushnew :kr-doc *features*)

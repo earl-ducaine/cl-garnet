@@ -23,7 +23,8 @@
 (defvar DEMO-GRAPH-INIT
   (progn
     (load common-lisp-user::Garnet-Aggregraphs-Loader)
-    (dolist (file '("text-buttons-loader" "scrolling-labeled-box-loader"
+    (dolist (file '(;; "text-buttons-loader"
+		    "scrolling-labeled-box-loader"
 		    "error-gadget-loader"))
    (common-lisp-user::garnet-load (concatenate 'string "gadgets:" file)))))
 
@@ -113,7 +114,7 @@
      (:add-back-pointer-to-nodes-function #'(lambda (source-node graph-node)
 					      (s-value source-node :graph-node
 						       graph-node)))
-     (:node-prototype 
+     (:node-prototype
       (create-instance NIL opal:aggregraph-node-prototype
 	 (:has-children-not-in-graph-p
 	  (o-formula
@@ -158,7 +159,7 @@
 	  ;;;   (the Garnet hierarchy) such as opal:graphical-object.
 	  ;;;     "Source Children" is a list of nodes in the original graph
 	  ;;;   that are children of "Source".
-	  ;;;     
+	  ;;;
 	  ,#'(lambda (inter node)
 	       (let* ((graph (g-value node :parent :parent))
 		      (source (g-value node :source-node))
@@ -180,14 +181,14 @@
 
 		   (:middledown
 		    (garnet-debug:inspector source))
-		   
+
 		   ;; Delete the current node and all its children
 		   (:rightdown
 		    ; Don't delete the root
 		    (unless (eq source (first (g-value graph :source-roots)))
 		      (RECURSIVE-NODE-DELETE graph node)))))))))))
 
-  
+
   ;;; An error-gadget to tell the user when a non-schema was typed into
   ;;; the labeled box as a new root
   ;;;
@@ -196,7 +197,7 @@
     (:window-top (o-formula (opal::gv-center-y-is-center-of DEMO-GRAPH-WIN)))
     )
 
-  
+
   ;;; Press this button to relayout the graph
   ;;;
   (create-instance 'RELAYOUT garnet-gadgets:text-button
@@ -213,7 +214,7 @@
 
 
   ;;; Used to set the root of the graph
-  ;;; 
+  ;;;
   (create-instance 'ROOT-BOX garnet-gadgets:scrolling-labeled-box
      (:left 100) (:top 10) (:width 250)
      (:label-string "Schema Root:")
@@ -252,11 +253,11 @@
 		(s-value gadget :value (g-value gadget :old-value)))
 	    ))))
 
-  
+
   (opal:add-components DEMO-GRAPH-TOP-AGG
 		       RELAYOUT ROOT-BOX SCHEMA-GRAPH)
   (opal:update DEMO-GRAPH-WIN)
-  
+
 
   (format t "~%Demo-Graph:
       This graph shows the Garnet schema hierarchy.
@@ -272,11 +273,10 @@
    put that garnet object at the root.~%")
 
   (unless dont-enter-main-event-loop #-cmu (inter:main-event-loop))
-  
+
   )
 
 
 (defun DO-STOP ()
   (opal:destroy DEMO-GRAPH-WIN)
   (opal:destroy DEMO-GRAPH-ERROR-GADGET))
-

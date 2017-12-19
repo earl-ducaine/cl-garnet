@@ -64,7 +64,7 @@
   ;;@i{string slot in the label.  If either is changed, the other is}
   ;;@i{automatically updated.  For circular constraints, it is}
   ;;@i{important to have an initial value, here it is the empty string.}
-  (:string (o-formula (gvl :label :string) "")) 
+  (:string (o-formula (gvl :label :string) ""))
 
   (:line-p NIL) ;@i{so that the selection object will know what kind this is}
   (:parts
@@ -109,7 +109,7 @@
 		      (:y1 ,(o-formula (opal:gv-center-y (gvl :parent :frame))))
 		      (:x2 ,(o-formula (+ (gvl :parent :frame :left) 76)))
 		      (:y2 ,(o-formula (gvl :y1))))))))
-				     
+
     ;;@i{The interactor (defined below) will set the :selected slot of the aggregate.}
     ;;@i{Use this to determine where the feedback should be.}
     ;;@i{We need to use formula rather than o-formula here so we can have a direct}
@@ -158,7 +158,7 @@
 		(:final-feedback-p NIL))))
     (opal:add-components agg menu)
     menu))
-				 
+
 ;;;********************************************************************
 ;;;@i{Procedures to do the work}
 ;;;********************************************************************
@@ -173,7 +173,7 @@
     (s-value to-obj :lines-at-this-box
 	     (delete line-obj (g-value to-obj :lines-at-this-box)))
     (opal:destroy line-obj)))
-  
+
 ;;;@i{Delete-object is called from the main menu routine}
 (defun Delete-Object (toolkit-obj menu-item)
   (declare (ignore menu-item))
@@ -229,11 +229,11 @@
 		;;@i{keep track in case boxes are deleted so can delete this line.}
 		(push new-line (g-value from-box :lines-at-this-box))
 		(push new-line (g-value to-box :lines-at-this-box))
-		
+
 		(opal:add-component agg new-line))))
 	;;@i{else, create a new box}
 	(let ((textinter (g-value inter :textinter))
-	      (new-box (create-instance NIL mylabeledbox 
+	      (new-box (create-instance NIL mylabeledbox
 			 (:box (copy-list point-list))))) ;@i{have to make a copy of list since}
 					                  ;@i{the interactor re-uses the same list}
 	  (opal:add-component agg new-box)
@@ -297,7 +297,7 @@
 		      ;;@i{move objects while cursor in the work window}
 		      (:running-where (list :in work-win))))
     (opal:add-component work-agg selection)
-				     
+
     ;;@i{store the selection object in a new slot of the menu so that the delete}
     ;;@i{function can find which object is selected.}
     (s-value menu :selection-obj selection)
@@ -350,7 +350,7 @@
     (opal:update top-win)  ;;@i{will also update work-win}
 
   ;;@i{** Do-Go **}
-  (Format T "~%Demo-Editor: 
+  (Format T "~%Demo-Editor:
   Press with left button on top menu to change modes (box or line).
   Press with left button on bottom menu to execute a command.
   Press with right button in work window to create a new object
@@ -374,4 +374,3 @@
 ;;@i{** This is mainly for debugging, since usually the quit button in the menu will be used.}
 (defun Do-Stop ()
   (opal:destroy current-window))
-

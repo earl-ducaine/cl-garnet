@@ -14,7 +14,7 @@
 
 (defvar *debug-gesture-mode* nil)
 
-(dolist (pair '((:motif-text-buttons "motif-text-buttons-loader")
+(dolist (pair '(;; (:motif-text-buttons "motif-text-buttons-loader")
 		(:motif-scrolling-labeled-box "motif-scrolling-labeled-box-loader")
 		(:motif-radio-buttons "motif-radio-buttons-loader")
 		(:motif-error-gadget "motif-error-gadget-loader")

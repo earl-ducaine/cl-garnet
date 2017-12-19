@@ -8,20 +8,20 @@
 ;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;;; agate.lisp 
+;;; agate.lisp
 ;;;
-;;; This is AGATE: The Garnet Gesture Trainer application. It is used 
-;;; for training gestures that are passed to the Garnet gesture 
+;;; This is AGATE: The Garnet Gesture Trainer application. It is used
+;;; for training gestures that are passed to the Garnet gesture
 ;;; interactor.
 ;;;
-;;; Designed and implemented by James A. Landay 
+;;; Designed and implemented by James A. Landay
 ;;;
-;;; Future work: 
+;;; Future work:
 ;;;     cut, copy, & paste; undo
 ;;;
 ;;; Known bugs:
 ;;;     - problems with the scrolling windows (bugs are in the gadgets)
-;;;     - when delete "prototype" example for a class, the arrow doesn't 
+;;;     - when delete "prototype" example for a class, the arrow doesn't
 ;;;       get updated after replacing it with new example.
 ;;;     - low-level file write (in fileio) doesn't handle failure (permission)
 ;;;     - not clear if resizing windows does the right thing
@@ -32,7 +32,7 @@
 ;; Load motif stuff, unless already loaded
 (defvar TRAIN-APP-INIT
     (progn
-        (dolist (gadget '("motif-text-buttons-loader"
+        (dolist (gadget '(;; "motif-text-buttons-loader"
                           "motif-scrolling-labeled-box-loader"
                           "motif-radio-buttons-loader"
                           "motif-scrolling-window-loader"
@@ -60,7 +60,7 @@
 		  RED-LINE-4 ORANGE-LINE-1 ORANGE-LINE-2 CLASSES-LABEL
 		  EXAMPLES-LABEL CANVAS-LABEL TOP-AGG))
 
-(defparameter *cur-classifier* NIL) ;; the current classifier being trained 
+(defparameter *cur-classifier* NIL) ;; the current classifier being trained
 (defparameter *trained* NIL)    ;; has *cur-classifier* been trained
                                 ;; since the last example?
 (defparameter *saved* T)        ;; has current classifier been saved
@@ -73,7 +73,7 @@
 
 (defparameter *final-function* NIL) ;; function to call on quit
 (defparameter *last-saved-filename* NIL) ;; last filename classifier saved to
-(defparameter *last-filename* NIL)    ;; last filename saved or loaded 
+(defparameter *last-filename* NIL)    ;; last filename saved or loaded
 
 (defvar *color-p* (g-value opal:color :color-p)) ;; is this a color screen?
 
@@ -101,7 +101,7 @@
       (init-classifier))))
 
 
-;; init-classifier sets sets the *cur-classifier* to a new classifier and 
+;; init-classifier sets sets the *cur-classifier* to a new classifier and
 ;; clears the items lists for the GESTURE-ICON-AGGL and CLASS-ICON-AGGL.
 ;;
 ;; Parameters:
@@ -112,7 +112,7 @@
   (setf *trained* T)
   (setf *saved* T)
   (s-value GCLASS-NAME :value "")
-  (s-value GESTURE-INTER :classifier NIL) 
+  (s-value GESTURE-INTER :classifier NIL)
   (s-value MODE-TOGGLE :value "Train")        ;; switch back to train
   (do-train NIL NIL)
   (s-value CLASS-ICON-AGGL :items NIL)
@@ -133,7 +133,7 @@
 ;; name and saves the previous value in the :old-value slot.
 ;;
 ;; Parameters:
-;;    
+;;
 (defun set-gesture-name (name)
   (s-value GESTURE-NAME-IN :old-value name)
   (s-value GESTURE-NAME-IN :value name))
@@ -146,17 +146,17 @@
 ;; Parameters:
 ;;    gadget   - gadget being edited
 ;;    new-name - new class name
-;;               
+;;
 (defun check-rename (gadget new-name)
   (let ((old (string-trim '(#\Space) (g-value gadget :old-value)))
     (new (string-trim '(#\Space) new-name)))
     (if (equal old "")
     (s-value gadget :old-value new)
         (unless (equal (string-upcase old) (string-upcase new))
-        
+
       ;; name has changed, see if they want to copy
-      (let ((answer   
-         (garnet-gadgets:display-query-and-wait RENAME-DIALOG 
+      (let ((answer
+         (garnet-gadgets:display-query-and-wait RENAME-DIALOG
                (format NIL
              "Select \"Rename\" to change the~a~%~a~s~a~s. ~a~%~a"
              " name of the gesture " "class from "
@@ -166,14 +166,14 @@
         (cond
          ((equal answer "Rename")
           (rename-class old new)
-          (s-value gadget :old-value new))  
-     
+          (s-value gadget :old-value new))
+
          ((equal answer "New Class")
           (s-value gadget :value old)
           (do-new-class nil nil)
           (s-value gadget :value new)
-          (s-value gadget :old-value new))  
-     
+          (s-value gadget :old-value new))
+
          (t
           ;; they hit cancel, so restore old name
           (s-value gadget :value old))))))))
@@ -199,7 +199,7 @@
       (setf *saved* NIL)))))
 
 
-;; do-load loads an existing classifier from a file. If the current 
+;; do-load loads an existing classifier from a file. If the current
 ;; classifier has not been saved, it will prompt the user to save
 ;; it.
 ;;
@@ -222,7 +222,7 @@
 ;;
 ;; Parameters:
 ;;    gadget - ignored
-;;    file   - file to load classifier from  
+;;    file   - file to load classifier from
 ;;
 (defun load-classifier (gadget file)
   (declare (ignore gadget))
@@ -230,16 +230,16 @@
     (class-examples nil))
     ;; read classifier and examples (if present)
     (opal:with-hourglass-cursor
-     (multiple-value-setq 
+     (multiple-value-setq
      (classifier class-examples)
      (inter:gest-classifier-read file)))
 
     ;; make sure this is a legal classifier
-    (cond 
+    (cond
      ((null classifier)
-      (do-error (format NIL "ERROR: NIL classifier!~%~a" 
+      (do-error (format NIL "ERROR: NIL classifier!~%~a"
             "Press OK to continue.")))
-      
+
      ((null class-examples)
       (do-error (format NIL "ERROR: File ~s ~%~a~%~a~%"
             (namestring file)
@@ -300,10 +300,10 @@
     fail))              ;; return failure code
 
 
-;; do-test-classify sets the gesture interactor classifier slot to the 
+;; do-test-classify sets the gesture interactor classifier slot to the
 ;; currently trained classifier. If the classifier hasn't been trained,
 ;; it will train it.
-;; 
+;;
 ;; Parameters:
 ;;     gadgets-object (ignored)
 ;;     item-string (ignored)
@@ -328,13 +328,13 @@
 
 ;; train-classifier trains the current examples and sets the *cur-classifier*
 ;; to the resulting classifier. Returns NIL on sucess and 'ERROR on error.
-;; 
+;;
 (defun train-classifier ()
   (opal:with-hourglass-cursor
    (add-displayed-class)      ;; move the examples up to class aggl
    (garnet-gadgets:display-query TRAINING-DIALOG)
 
-   ;; clear the classifier!!! 
+   ;; clear the classifier!!!
    (setf *cur-classifier* (inter:gest-new-classifier))
 
    ;; for each class, add the examples
@@ -346,7 +346,7 @@
       (inter:gest-add-example example
          (intern (string-upcase (string-trim '(#\Space) name)) 'keyword)
          *cur-classifier*))
-    
+
     ;; modify training dialog to show progress
     (s-value TRAINING-DIALOG :value
          (concatenate 'string (g-value TRAINING-DIALOG :value) "."))
@@ -356,12 +356,12 @@
    (s-value TRAINING-DIALOG :window :visible NIL)
    (s-value TRAINING-DIALOG :value "")
    (opal:update TOP-WIN))
-   
+
   ;; see if there is enough examples
   (let ((result (inter:gest-done-adding *cur-classifier*)))
     (if (null result)
-    (progn 
-      (do-error (format NIL 
+    (progn
+      (do-error (format NIL
                 "ERROR: Can not train classifier.~%~a~%~a"
                 "Try adding more examples."
                 "Press OK to continue."))
@@ -369,15 +369,15 @@
       (do-train NIL NIL)
       (return-from train-classifier 'ERROR))
         (progn
-      (setf *trained* T)      ;; we were able to train it 
-      
-      ;; warn if fix-classifier is called 
+      (setf *trained* T)      ;; we were able to train it
+
+      ;; warn if fix-classifier is called
       (if (equal result 'INTERACTORS::FIX)
           (do-error (format NIL
                 "WARNING: This classifier will work~%~a~%~a"
                                 "better by training more gesture classes."
                 "Press OK to continue.")))
-      
+
       (s-value GESTURE-INTER :classifier *cur-classifier*)
       (return-from train-classifier 'NIL)))))
 
@@ -386,14 +386,14 @@
 ;; handle-gesture will allow adding examples to the current classifier
 ;; without trying to classify them. In addition it activates the NEW,
 ;; DELETE, & SHOW buttons.
-;; 
+;;
 ;; Parameters:
-;;     gadgets-object 
+;;     gadgets-object
 ;;     item-string
 ;;
 (defun do-train (gadgets-object item-string)
   (declare (ignore gadgets-object item-string))
-  (s-value GESTURE-INTER :classifier NIL) 
+  (s-value GESTURE-INTER :classifier NIL)
 
   ;; clear out examples
   (s-value GESTURE-ICON-AGGL :items NIL)
@@ -416,7 +416,7 @@
 ;;
 (defun show-icon (scrolling-window icon)
   (gg:show-box scrolling-window
-           (g-value icon :left) 
+           (g-value icon :left)
            (g-value icon :top)
            (+ (g-value icon :left) (g-value icon :width))
            (+ (g-value icon :top) (g-value icon :height))))
@@ -426,7 +426,7 @@
 ;; gesture class and displays the given points as a small icon. It also
 ;; makes sure that the icon is displayed (by scrolling if necessary). The
 ;; first example is also added to the CLASS-ICON-AGGL.
-;; 
+;;
 ;; Parameters:
 ;;     points - the points making up the example to add
 ;;
@@ -441,7 +441,7 @@
     (when firstp
       (let* ((name (g-value GESTURE-NAME-IN :value))
          (new-item (make-gest-class :name name :examples (list points)))
-         (index 
+         (index
           (position-if (class-name-equal name)
                (g-value CLASS-ICON-AGGL :items))))
     (setf *cur-class-dirty* NIL)
@@ -450,7 +450,7 @@
     (if index
         (progn
           (opal:change-item CLASS-ICON-AGGL new-item index)
-          (show-icon CLASS-WORK-WIN 
+          (show-icon CLASS-WORK-WIN
              (nth index (g-value CLASS-ICON-AGGL :components))))
         (progn
           (opal:add-item CLASS-ICON-AGGL new-item)
@@ -471,23 +471,23 @@
 ;; Parameters:
 ;;    inter, first-obj-over, attribs - ignored
 ;;    class-name - name of recognized gesture (or NIL if unrecognized)
-;;    points     - points in gesture 
+;;    points     - points in gesture
 ;;    nap        - non-ambiguity of gesture
 ;;    dist       - distance from class-name
 ;;
 (defun handle-gesture (inter first-obj-over class-name attribs
                        points nap dist)
   (declare (ignore inter first-obj-over attribs))
-  (if (equal (g-value MODE-TOGGLE :value) "Train") 
+  (if (equal (g-value MODE-TOGGLE :value) "Train")
       ;; in training mode
-      (if (equal "" (string-trim '(#\Space) 
+      (if (equal "" (string-trim '(#\Space)
                    (g-value GESTURE-NAME-IN :value)))
     (do-error (format NIL "ERROR: Gesture Class Name is blank.~%~a"
               "Press OK to continue."))
         (add-example (copy-seq points)))
 
       ;; in test mode
-      (let ((selected (g-value CLASS-ICON-AGGL :selected))) 
+      (let ((selected (g-value CLASS-ICON-AGGL :selected)))
     (if (null class-name)
         (progn
           ;; de-sellect the selected icon in class agglist
@@ -503,16 +503,16 @@
           (let* ((name (write-to-string class-name :escape nil))
              (index (position-if (class-name-equal name)
                      (g-value CLASS-ICON-AGGL :items)))
-             (selected-icon 
+             (selected-icon
               (if index
               (nth index (g-value CLASS-ICON-AGGL :components))
               nil)))
 
         ;; check to see if the class was found (can't happen error)
         (if (null index)
-            (do-error 
-             (format NIL "ERROR: Class named ~s is ~a~%~a~%~a" 
-                 name 
+            (do-error
+             (format NIL "ERROR: Class named ~s is ~a~%~a~%~a"
+                 name
                  " not present in current classifier."
                  "This is a bug, please report to the developers."
                  "Press OK to continue."))
@@ -559,7 +559,7 @@
         (inter:beep))))
 
 
-;; do-delete-example deletes the selected example from the current 
+;; do-delete-example deletes the selected example from the current
 ;; gesture class. If it is the first example in the class, the next
 ;; one will replace it in the CLASS-ICON-AGGL.
 ;;
@@ -571,7 +571,7 @@
   (declare (ignore gadgets-object item-string))
   (let ((cur (g-value GESTURE-ICON-AGGL :selected)))
     (if (schema-p cur)
-    (let ((rank (g-value cur :rank))) 
+    (let ((rank (g-value cur :rank)))
       (s-value cur :selected NIL)
       (setf *cur-class-dirty* T)
       (setf *trained* NIL)
@@ -579,7 +579,7 @@
       (s-value GESTURE-EXAMPLE-POLY :poly :point-list NIL)
       (opal:remove-nth-item GESTURE-ICON-AGGL rank)
       (s-value GESTURE-ICON-AGGL :selected NIL)
-      
+
       ;; if this was the first example, replace it in CLASS-ICON-AGGL
       (when (eq rank 0)
         (let* ((name (g-value GESTURE-NAME-IN :value))
@@ -592,11 +592,11 @@
             (s-value CLASS-ICON-AGGL :selected NIL)
             (opal:remove-nth-item CLASS-ICON-AGGL index)
             (opal:update CLASS-WORK-WIN))
-            
+
               ;; else change existing one
-              (let ((item (nth index 
+              (let ((item (nth index
                        (g-value CLASS-ICON-AGGL :items))))
-            (setf (gest-class-examples item) 
+            (setf (gest-class-examples item)
                   (list (car (g-value GESTURE-ICON-AGGL :items))))
             (opal:change-item CLASS-ICON-AGGL item index)
 ;; *** WORK *** for some reason arrow doesn't get updated (not getting new pts)
@@ -606,7 +606,7 @@
     (inter:beep))))
 
 
-;; class-name-equal is used to test whether a class in the class-agg items 
+;; class-name-equal is used to test whether a class in the class-agg items
 ;; list is equal to the class we are now considering.
 ;;
 ;; Parameters:
@@ -615,8 +615,8 @@
 (defun class-name-equal (name)
   #'(lambda (&rest arguments)
       (equal (string-upcase (string-trim '(#\Space) name))
-         (string-upcase 
-          (string-trim '(#\Space) 
+         (string-upcase
+          (string-trim '(#\Space)
                (apply #'inter::gest-class-name arguments))))))
 
 
@@ -632,10 +632,10 @@
   (if (and *cur-class-dirty*
        (g-value GESTURE-ICON-AGGL :items))
       ;; is this class already in class agglist? (i.e. need to change)
-      (let ((index 
+      (let ((index
          (position-if (class-name-equal (g-value GESTURE-NAME-IN :value))
               (g-value CLASS-ICON-AGGL :items)))
-        (new-item 
+        (new-item
          (make-gest-class :name (g-value GESTURE-NAME-IN :value)
                   :examples (g-value GESTURE-ICON-AGGL :items))))
 
@@ -644,7 +644,7 @@
      (if index
          (progn
            (opal:change-item CLASS-ICON-AGGL new-item index)
-           (show-icon CLASS-WORK-WIN 
+           (show-icon CLASS-WORK-WIN
               (nth index (g-value CLASS-ICON-AGGL :components))))
           (progn
         (opal:add-item CLASS-ICON-AGGL new-item)
@@ -669,7 +669,7 @@
   (declare (ignore gadgets-object item-string))
 
   ;; deselect any selected classes
-  (let ((selected (g-value CLASS-ICON-AGGL :selected))) 
+  (let ((selected (g-value CLASS-ICON-AGGL :selected)))
     ;; de-sellect the selected icon in class agglist
     (when (schema-p selected)
       (s-value selected :selected NIL)
@@ -680,7 +680,7 @@
 
     ;; add previous class (if there was one) to classifier
     (add-displayed-class)))
-    
+
 
 ;; do-show-example draws the full-size image of the selected gesture
 ;; example icon.  The image will be erased when the user starts to
@@ -725,14 +725,14 @@
      ;; add the class currently being trained (if any) to the gesture
      ;; classes agglist and display the selected one instead
 
-     (add-displayed-class)   
-     
+     (add-displayed-class)
+
      (let ((gclass (nth (g-value selected :rank)
                 (g-value CLASS-ICON-AGGL :items))))
 
        ;; clear out shown example, if any
        (s-value GESTURE-EXAMPLE-POLY :poly :point-list NIL)
-         
+
        (s-value GESTURE-ICON-AGGL :items (gest-class-examples gclass))
        (set-gesture-name (gest-class-name gclass))
 
@@ -744,43 +744,43 @@
         (inter:beep))))
 
 
-;; scale copies the given points and then scales and translates them to 
+;; scale copies the given points and then scales and translates them to
 ;; the givin origin. The new points are then returned as a LIST!!!
 ;;
 ;; Parameters:
 ;;     x-factor - amount to scale x coordinate by (i.e. divide by)
 ;;     y-factor - amount to scale y coordinate by (i.e. divide by)
-;;     x-origin - new origin to translate to 
-;;     y-origin   
+;;     x-origin - new origin to translate to
+;;     y-origin
 ;;     points   - array of points of form [x1 y1 x2 y2 ...]
 ;;
 (defun scale (x-factor y-factor x-origin y-origin points)
   (do* ((pts (copy-seq points))
     (index 0 (+ index 2)))
       ((>= index (length pts)) (coerce pts 'list)) ;; exit clause
-        
+
     ; scale and translate x coord
-    (setf (aref pts index) 
+    (setf (aref pts index)
       (+ x-origin (ceiling (aref pts index) x-factor)))
     ; scale and translate y coord
-    (setf (aref pts (1+ index)) 
+    (setf (aref pts (1+ index))
       (+ y-origin (ceiling (aref pts (1+ index)) y-factor)))))
 
 
-;; do-quit calls do-stop when the user hits the quit button. 
+;; do-quit calls do-stop when the user hits the quit button.
 ;; If the classifier is dirty and hasn't been saved asks the
 ;; user if they would like to save it first.
 ;;
 ;; Parmeters:
 ;;     gadgets-object (ignored)
-;;     item-string (ignored)   
+;;     item-string (ignored)
 ;;
 (defun do-quit (gadgets-object item-string)
   (declare (ignore gadgets-object item-string))
   (if *saved*
       (do-stop)                   ;; quit, classifier is not dirty
       (let ((cancel nil))
-    
+
     ;; see if they want to save
     (setf cancel (gg:save-file-if-wanted SAVE-DIALOG
 					 *last-filename*
@@ -795,7 +795,7 @@
 ;;     none
 ;;
 (defun do-stop ()
-  (let ((cur-examples 
+  (let ((cur-examples
      (if (and (boundp 'CLASS-ICON-AGGL)
           (schema-p CLASS-ICON-AGGL))
          (g-value CLASS-ICON-AGGL :items)
@@ -814,7 +814,7 @@
      #-cmu (inter:exit-main-event-loop))))
 
 
-;; do-go creates the necessary windows and Garnet objects, and 
+;; do-go creates the necessary windows and Garnet objects, and
 ;; then starts the application.
 ;;
 ;; Parameters (all keyword):
@@ -824,7 +824,7 @@
 ;;    initial-examples           - initial examples to display
 ;;    initial-gesture-name       - name to fill in gesture class name field
 ;;    final-function             - function to call on quit
-;;  
+;;
 (defun do-go (&key dont-enter-main-event-loop double-buffered-p
                    initial-classifier initial-examples initial-gesture-name
            final-function)
@@ -875,26 +875,26 @@
     (:justification :center)
     (:background-color opal:cyan)
     (:window-width 300)
-    (:button-names NIL))             
+    (:button-names NIL))
 
     ;; create a save dialog
     (create-instance 'SAVE-DIALOG garnet-gadgets:motif-save-gadget
         (:parent-window TOP-WIN)
     (:query-message "replace existing file")
     (:modal-p t)
-    (:initial-directory 
+    (:initial-directory
      (namestring common-lisp-user::Garnet-Gesture-Data-PathName))
     (:selection-function #'save-classifier))
 
     ;; create a load dialog
     (create-instance 'LOAD-DIALOG garnet-gadgets:motif-load-gadget
       (:parent-window TOP-WIN)
-      (:modal-p t) 
-      (:initial-directory 
+      (:modal-p t)
+      (:initial-directory
        (namestring common-lisp-user::Garnet-Gesture-Data-PathName))
       (:selection-function #'load-classifier))
 
-    ;; create classifier menu 
+    ;; create classifier menu
     (create-instance 'CLASSIFIER-MENU garnet-gadgets:motif-text-button-panel
         ;; can't be constant since we want to center it!
         (:items '(
@@ -910,7 +910,7 @@
 
     ;; create the class name output field
     (create-instance 'GCLASS-NAME opal:text
-        (:left 2) 
+        (:left 2)
     (:top (o-formula (+ (g-value CLASSIFIER-MENU :top)
                 (g-value CLASSIFIER-MENU :height) 10)))
         (:width (o-formula (gvl :parent :window :width)))
@@ -922,13 +922,13 @@
     (create-instance 'CLASSES-LABEL opal:text
         (:string "Gesture Classes")
     (:font (opal:get-standard-font :serif :bold :medium))
-    (:left (o-formula (- (round (gvl :parent :window :width) 2) 
+    (:left (o-formula (- (round (gvl :parent :window :width) 2)
                  (round (opal:string-width (gvl :font)
                                (gvl :string)) 2))))
     (:top (o-formula (+ (g-value GCLASS-NAME :top)
                 (g-value GCLASS-NAME :height) 10))))
 
-    (opal:update TOP-WIN) 
+    (opal:update TOP-WIN)
 
     ;; use red-line to show gesture icon currently selected
     (create-instance 'red-line-4 opal:line-style
@@ -945,11 +945,11 @@
         (:line-thickness 2))
 
     (setf *max-name-chars*
-      (truncate *example-icon-size* 
+      (truncate *example-icon-size*
             (opal:string-width opal:default-font "W")))
     (setf *max-name-height*
       (opal:string-height opal:default-font "T"))
-    
+
     ;; create the prototype for a gesture class icon
     (create-instance 'CLASS-ICON-PROTO opal:aggregadget
     (:left 0)      ;; set left and top to 0 to avoid inheriting formula
@@ -958,29 +958,29 @@
                    (gvl :gesture-name :height))))
         (:width *example-icon-size*)
         (:parts `((:frame ,opal:rectangle   ;; frame to box gesture
-                      (:width ,*example-icon-size*) 
+                      (:width ,*example-icon-size*)
                       (:height ,*example-icon-size*)
-                      (:left ,(o-formula (gvl :parent :left))) 
+                      (:left ,(o-formula (gvl :parent :left)))
                       (:top  ,(o-formula (gvl :parent :top)))
                       (:filling-style ,opal:white-fill))
 
                   ;; name of the gesture class this icon represents
                   (:gesture-name ,opal:text
-              (:left 
-                  ,(o-formula 
+              (:left
+                  ,(o-formula
                 (+ (gvl :parent :left)
                    (round (- *example-icon-size*
-                     (opal:string-width opal:default-font 
-                                (gvl :string))) 
+                     (opal:string-width opal:default-font
+                                (gvl :string)))
                       2))))
               (:top  ,(o-formula (+ (gvl :parent :top)
                         (gvl :parent :frame :height))))
-                      (:string 
+                      (:string
                   ,(o-formula
                 (let ((base-string
                    (coerce
                     (gest-class-name
-                     (nth (gvl :parent :rank) 
+                     (nth (gvl :parent :rank)
                       (gvl :parent :parent :items)))
                     'string)))
                 (if (<= (length base-string) *max-name-chars*)
@@ -988,9 +988,9 @@
                 (string-upcase
                  (subseq base-string 0 *max-name-chars*)))))))
 
-                  ;; for selected gesture icon  
-                  (:feedback ,opal:rectangle  
-                      (:obj-over NIL)  ;; set by the interactor 
+                  ;; for selected gesture icon
+                  (:feedback ,opal:rectangle
+                      (:obj-over NIL)  ;; set by the interactor
                       (:left ,(o-formula (gvl :parent :left)))
                       (:top ,(o-formula (gvl :parent :top)))
                       (:width ,(o-formula (gvl :parent :width)))
@@ -1001,27 +1001,27 @@
                       (:draw-function :xor)
                       (:fast-redraw-p T))
 
-                  ;; a polyline of scaled version of the gesture 
-                  (:gesture ,opal:polyline 
-                      (:x-scale ,(o-formula 
+                  ;; a polyline of scaled version of the gesture
+                  (:gesture ,opal:polyline
+                      (:x-scale ,(o-formula
                           (ceiling (g-value GESTURE-WORK-WIN :width)
                                    (gvl :parent :frame :width))))
-                      (:y-scale ,(o-formula 
-                          (ceiling (g-value GESTURE-WORK-WIN :height) 
+                      (:y-scale ,(o-formula
+                          (ceiling (g-value GESTURE-WORK-WIN :height)
                                    (gvl :parent :frame :height))))
-                      (:point-list ,(o-formula  
+                      (:point-list ,(o-formula
                          (scale (gvl :x-scale) (gvl :y-scale)
                                 (gvl :parent :left) (gvl :parent :top)
                                 (first
                  (gest-class-examples
-                  (nth (gvl :parent :rank) 
+                  (nth (gvl :parent :rank)
                        (gvl :parent :parent :items))))))))
 
           (:arrow ,opal:arrowhead
               (:line-style ,orange-line-1)
               (:length 6)
               (:diameter 6)
-              (:points ,(o-formula 
+              (:points ,(o-formula
                  (gvl :parent :gesture :point-list)))
               (:visible ,(o-formula ;; make sure points exist
                   (and (gvl :head-x) (gvl :head-y))))
@@ -1030,7 +1030,7 @@
               (:head-x ,(o-formula (first (gvl :calc-head))))
               (:head-y ,(o-formula (second (gvl :calc-head))))
               ;; need to do this since don't filter repeated points
-              (:calc-head ,(o-formula 
+              (:calc-head ,(o-formula
              (do* ((x1 (first (gvl :points)))
                    (y1 (second (gvl :points)))
                    (i 2 (+ 2 i))
@@ -1038,14 +1038,14 @@
                   (nth i (gvl :points)))
                    (y (nth (1+ i) (gvl :points))
                   (nth (1+ i) (gvl :points))))
-                 ((not (and (eq x1 x) (eq y1 y))) 
+                 ((not (and (eq x1 x) (eq y1 y)))
                   (list x y)))))))))
 
-    
-    ;; create the aggrelist for the gesture class icons 
+
+    ;; create the aggrelist for the gesture class icons
     (create-instance 'CLASS-ICON-AGGL opal:aggrelist
-        (:top  0) 
-        (:left 0) 
+        (:top  0)
+        (:left 0)
         (:width (o-formula (gvl :parent :window :width)))
         (:direction :horizontal)
         (:h-spacing 0)
@@ -1058,21 +1058,21 @@
                     *example-icon-size*)))
     (:items nil)                ;; add lists of examples as we go...
     (:item-prototype CLASS-ICON-PROTO)
-        (:interactors 
+        (:interactors
           ;; for selecting a class icon
-            `((:press ,inter:button-interactor   
+            `((:press ,inter:button-interactor
                 (:window ,(o-formula (gv-local :self :operates-on :window)))
         (:how-set :toggle)
-        (:active 
+        (:active
          ,(o-formula (equal (gv MODE-TOGGLE :value) "Train") T))
-                (:start-where 
+                (:start-where
                     ,(o-formula (list :element-of (gvl :operates-on))))
         (:stop-action
          ,#'(lambda (an-interactor final-obj-over)
               (call-prototype-method an-interactor final-obj-over)
               (do-show-class nil nil)))))))
 
-    ;; create scrolling window for the gesture class icons 
+    ;; create scrolling window for the gesture class icons
     (create-instance 'CLASS-WORK-WIN
                      garnet-gadgets:Motif-Scrolling-Window-With-Bars
         (:left 0)
@@ -1080,11 +1080,11 @@
                 (g-value CLASSES-LABEL :height) 5)))
         (:h-scroll-bar-p NIL)
         (:width (o-formula (gvl :parent-window :width) 150))
-        (:height 
-            (o-formula (* 2 (+ (g-value CLASS-ICON-PROTO :frame :width) 
+        (:height
+            (o-formula (* 2 (+ (g-value CLASS-ICON-PROTO :frame :width)
                    *max-name-height*))))
-    (:total-height (o-formula (gvl :inner-aggregate :height) 
-                  (* 2 (+ *example-icon-size* 
+    (:total-height (o-formula (gvl :inner-aggregate :height)
+                  (* 2 (+ *example-icon-size*
                       *max-name-height*))))
     (:v-scr-incr (+ *example-icon-size* *max-name-height*))
         (:double-buffered-p double-buffered-p)
@@ -1102,8 +1102,8 @@
     (:top (o-formula (+ (g-value CLASS-WORK-WIN :top)
                 (g-value CLASS-WORK-WIN :height) 10)))
     (:active-p (o-formula (gv GESTURE-NAME-IN :visible)))
-    (:inactive-items 
-     (o-formula 
+    (:inactive-items
+     (o-formula
       (if (not (and (gv CLASS-ICON-AGGL :selected)
             (schema-p (gv CLASS-ICON-AGGL :selected))))
           (list "Delete Class" "Show Class"))))
@@ -1122,8 +1122,8 @@
         (:value "")
     (:old-value "")
     ;; *** WORK *** what is key-value for????
-        (:key-value 
-            (o-formula (intern (string-upcase 
+        (:key-value
+            (o-formula (intern (string-upcase
                                     (string-trim '(#\Space) (gvl :value)))
                                'keyword)))
     (:selection-function #'check-rename))
@@ -1164,12 +1164,12 @@
     (create-instance 'EXAMPLES-LABEL opal:text
         (:string "Examples")
     (:font (opal:get-standard-font :serif :bold :medium))
-    (:left (o-formula (- (round (gvl :parent :window :width) 2) 
+    (:left (o-formula (- (round (gvl :parent :window :width) 2)
                  (round (opal:string-width (gvl :font)
                                (gvl :string)) 2))))
     (:top (o-formula (+ (g-value GESTURE-NAME-IN :top)
                 (g-value GESTURE-NAME-IN :height) 10))))
-    
+
 
     ;; create the prototype for a gesture icon
     (create-instance 'EXAMPLE-ICON-PROTO opal:aggregadget
@@ -1178,14 +1178,14 @@
     (:height (o-formula (gvl :frame :height)))
     (:width *example-icon-size*)
         (:parts `((:frame ,opal:rectangle   ;; frame to box gesture
-                      (:width ,*example-icon-size*) 
+                      (:width ,*example-icon-size*)
                       (:height ,*example-icon-size*)
-                      (:left ,(o-formula (gvl :parent :left))) 
+                      (:left ,(o-formula (gvl :parent :left)))
                       (:top  ,(o-formula (gvl :parent :top)))
                       (:filling-style ,opal:white-fill))
 
-                  (:feedback ,opal:rectangle  ;; for selected gesture icon 
-                      (:obj-over NIL)  ;; set by the interactor 
+                  (:feedback ,opal:rectangle  ;; for selected gesture icon
+                      (:obj-over NIL)  ;; set by the interactor
                       (:left ,(o-formula (gvl :parent :left)))
                       (:top ,(o-formula (gvl :parent :top)))
                       (:width ,(o-formula (gvl :parent :width)))
@@ -1195,25 +1195,25 @@
                       (:draw-function :xor)
                       (:fast-redraw-p T))
 
-                  ;; a polyline of scaled version of the gesture 
-                  (:gesture ,opal:polyline 
-                      (:x-scale ,(o-formula 
+                  ;; a polyline of scaled version of the gesture
+                  (:gesture ,opal:polyline
+                      (:x-scale ,(o-formula
                           (ceiling (g-value GESTURE-WORK-WIN :width)
                                    (gvl :parent :frame :width))))
-                      (:y-scale ,(o-formula 
-                          (ceiling (g-value GESTURE-WORK-WIN :height) 
+                      (:y-scale ,(o-formula
+                          (ceiling (g-value GESTURE-WORK-WIN :height)
                                    (gvl :parent :frame :height))))
-                      (:point-list ,(o-formula 
+                      (:point-list ,(o-formula
                   (scale (gvl :x-scale) (gvl :y-scale)
                  (gvl :parent :left) (gvl :parent :top)
-                 (nth (gvl :parent :rank) 
+                 (nth (gvl :parent :rank)
                       (gvl :parent :parent :items))))))
 
           (:arrow ,opal:arrowhead
               (:line-style ,orange-line-1)
               (:length 6)
               (:diameter 6)
-              (:points ,(o-formula 
+              (:points ,(o-formula
                  (gvl :parent :gesture :point-list)))
               (:visible ,(o-formula ;; make sure points exist
                   (and (gvl :head-x) (gvl :head-y))))
@@ -1230,14 +1230,14 @@
                   (nth i (gvl :points)))
                    (y (nth (1+ i) (gvl :points))
                   (nth (1+ i) (gvl :points))))
-                 ((not (and (eq x1 x) (eq y1 y))) 
+                 ((not (and (eq x1 x) (eq y1 y)))
                   (list x y)))))))))
 
 
-    ;; create the aggrelist for the example icons 
+    ;; create the aggrelist for the example icons
     (create-instance 'GESTURE-ICON-AGGL opal:aggrelist
-        (:top  0) 
-        (:left 0) 
+        (:top  0)
+        (:left 0)
         (:width (o-formula (gvl :parent :window :width)))
         (:direction :horizontal)
         (:h-spacing 0)
@@ -1250,19 +1250,19 @@
                     *example-icon-size*)))
         (:items nil)                ;; add lists of examples as we go...
         (:item-prototype EXAMPLE-ICON-PROTO)
-        (:interactors 
+        (:interactors
               ;; for selecting an example icon
             `((:press ,inter:button-interactor
                 (:window ,(o-formula (gv-local :self :operates-on :window)))
         (:how-set :toggle)
-                (:start-where 
+                (:start-where
                     ,(o-formula (list :element-of (gvl :operates-on))))
         (:stop-action
          ,#'(lambda (an-interactor final-obj-over)
               (call-prototype-method an-interactor final-obj-over)
               (do-show-example nil nil)))))))
 
-    ;; create scrolling window for the gesture examples icons 
+    ;; create scrolling window for the gesture examples icons
     (create-instance 'EXAMPLES-WORK-WIN
                      garnet-gadgets:Motif-Scrolling-Window-With-Bars
         (:left 0)
@@ -1270,9 +1270,9 @@
                 (g-value EXAMPLES-LABEL :height) 5)))
         (:h-scroll-bar-p NIL)
         (:width (o-formula (gvl :parent-window :width) 150))
-        (:height 
+        (:height
             (o-formula (* 2 (g-value EXAMPLE-ICON-PROTO :frame :width))))
-    (:total-height (o-formula (gvl :inner-aggregate :height) 
+    (:total-height (o-formula (gvl :inner-aggregate :height)
                   (* 2 *example-icon-size*)))
     (:v-scr-incr *example-icon-size*)
         (:double-buffered-p double-buffered-p)
@@ -1289,7 +1289,7 @@
                  (round (gvl :width) 2))))
     (:top (o-formula (+ (g-value EXAMPLES-WORK-WIN :top)
                 (g-value EXAMPLES-WORK-WIN :height) 10)))
-    (:active-p (o-formula 
+    (:active-p (o-formula
             (and (gv GESTURE-NAME-IN :visible)
              (schema-p (gv GESTURE-ICON-AGGL :selected))))))
 
@@ -1309,20 +1309,20 @@
 
     ;; select Train mode to start...
     (g-value MODE-TOGGLE :value)
-    (s-value MODE-TOGGLE :value "Train") 
+    (s-value MODE-TOGGLE :value "Train")
 
     (create-instance 'CANVAS-LABEL opal:text
         (:string "Canvas")
     (:font (opal:get-standard-font :serif :bold :medium))
-    (:left (o-formula (- (round (gvl :parent :window :width) 2) 
+    (:left (o-formula (- (round (gvl :parent :window :width) 2)
                  (round (opal:string-width (gvl :font)
                                (gvl :string)) 2))))
     (:top (o-formula (+ (g-value MODE-TOGGLE :top)
                 (g-value MODE-TOGGLE :height) 10))))
 
-    ;; create window for entering and displaying full-sized gestures 
+    ;; create window for entering and displaying full-sized gestures
     (create-instance 'GESTURE-WORK-WIN inter:interactor-window
-        (:left 0) 
+        (:left 0)
         (:top (o-formula (+ (g-value CANVAS-LABEL :top)
                             (g-value CANVAS-LABEL :height) 5)))
         (:width (o-formula (gvl :parent :width) 150))
@@ -1349,17 +1349,17 @@
               (:line-style ,orange-line-2)
               (:length 18)
               (:diameter 14)
-              (:points ,(o-formula 
+              (:points ,(o-formula
                  (gvl :parent :poly :point-list)))
               (:visible ,(o-formula ;; make sure points exist
-                  (and (gvl :points) 
+                  (and (gvl :points)
                        (gvl :head-x) (gvl :head-y))))
               (:from-x ,(o-formula (first (gvl :points))))
               (:from-y ,(o-formula (second (gvl :points))))
               (:head-x ,(o-formula (first (gvl :calc-head))))
               (:head-y ,(o-formula (second (gvl :calc-head))))
               ;; need to do this since don't filter repeated points
-              (:calc-head ,(o-formula 
+              (:calc-head ,(o-formula
              (do* ((x1 (first (gvl :points)))
                    (y1 (second (gvl :points)))
                    (i 2 (+ 2 i))
@@ -1367,7 +1367,7 @@
                   (nth i (gvl :points)))
                    (y (nth (1+ i) (gvl :points))
                   (nth (1+ i) (gvl :points))))
-                 ((not (and (eq x1 x) (eq y1 y))) 
+                 ((not (and (eq x1 x) (eq y1 y)))
                   (list x y)))))))))
 
     ;; intial instructions as to what gesture window is for
@@ -1375,7 +1375,7 @@
     ;; note: can't be constant (changes)
         (:string "Draw Examples of Gestures Here")
     (:font (opal:get-standard-font :serif :bold :medium))
-    (:left (o-formula (- (round (gvl :parent :window :width) 2) 
+    (:left (o-formula (- (round (gvl :parent :window :width) 2)
                  (round (opal:string-width (gvl :font)
                                (gvl :string)) 2))))
     (:top (o-formula (round (gvl :parent :window :height) 3))))
@@ -1384,10 +1384,10 @@
     ;; back the mouse trace.
     (create-instance 'GESTURE-INTER inter:gesture-interactor
         (:window GESTURE-WORK-WIN)
-        (:start-where (list :in GESTURE-WORK-WIN)) 
+        (:start-where (list :in GESTURE-WORK-WIN))
         (:running-where (list :in GESTURE-WORK-WIN))
         (:start-event :any-mousedown)
-        (:classifier NIL) 
+        (:classifier NIL)
         (:final-function #'handle-gesture)
         (:min-non-ambig-prob 0)
         (:max-dist-to-mean 10000)
@@ -1400,13 +1400,13 @@
 
     (opal:add-components (g-value GESTURE-WORK-WIN :aggregate)
              GESTURE-EXAMPLE-POLY INSTRUCTIONS-TEXT)
-    (opal:add-component (g-value CLASS-WORK-WIN :inner-aggregate) 
+    (opal:add-component (g-value CLASS-WORK-WIN :inner-aggregate)
                         CLASS-ICON-AGGL)
-    (opal:add-component (g-value EXAMPLES-WORK-WIN :inner-aggregate) 
+    (opal:add-component (g-value EXAMPLES-WORK-WIN :inner-aggregate)
             GESTURE-ICON-AGGL)
     (opal:add-components TOP-AGG
              CLASSIFIER-MENU GCLASS-NAME CLASSES-LABEL
-             CLASS-MENU GESTURE-NAME-IN GESTURE-NAME-OUT 
+             CLASS-MENU GESTURE-NAME-IN GESTURE-NAME-OUT
              GESTURE-NAP GESTURE-DIST
              EXAMPLES-LABEL EXAMPLES-MENU MODE-TOGGLE CANVAS-LABEL)
 
@@ -1427,7 +1427,7 @@
     (when final-function
       (setf *final-function* final-function))
 
-    (opal:update TOP-WIN) 
+    (opal:update TOP-WIN)
 
     ;; print out instructions
     (format t "  To use AGATE, the Garnet gesture trainer, type the name of a gesture~%")
@@ -1441,4 +1441,3 @@
     (unless dont-enter-main-event-loop #-cmu (inter:main-event-loop)))
 
 (format t "Type (agate:do-go) to begin.~%")
-

@@ -306,7 +306,6 @@ and the same parent (if any)."
        *schema-self* slot *current-formula*))
     ;; 3. throw to the top level
     (throw 'no-link (a-formula-cached-value *current-formula*)))
-
   ;; We get here if a GV expression was used outside a formula
   (format
    t
@@ -315,7 +314,6 @@ and the same parent (if any)."
    slot))
 
 ;;; Slot code
-;;
 
 (declaim (inline slot-is-not-constant))
 (defun slot-is-not-constant (schema slot)
@@ -580,9 +578,9 @@ with a :SELF added as the first parameter."
 
 
 (defun destroy-constraint (schema slot)
-  "If the value in the <slot> of the <schema> is a formula, replace it with
-  the current value of the formula and eliminate the formula.  This
-  effectively eliminates the constraint on the value."
+  "If the value in the <slot> of the <schema> is a formula, replace it
+  with the current value of the formula and eliminate the formula.
+  This effectively eliminates the constraint on the value."
   (let* ((entry (slot-accessor schema slot))
 	 (formula (if entry
 		      (sl-value entry)
@@ -608,10 +606,7 @@ with a :SELF added as the first parameter."
 			   NIL)
 	NIL))))
 
-
-
 ;;; INITIALIZE THE WHOLE THING
-;;
 
 (defun initialize-kr ()
   "Called once at the 'beginning.'"

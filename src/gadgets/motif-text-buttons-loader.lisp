@@ -29,8 +29,9 @@ Change log:
 
 (unless (get :garnet-modules :motif-text-buttons)
   (format t "Loading Motif-Text-Buttons...~%")
-  (dolist (pair '((:motif-parts "motif-parts")
-		  (:motif-text-buttons "motif-text-buttons")))
+  (dolist (pair '(;; (:motif-parts "motif-parts")
+		  ;; (:motif-text-buttons "motif-text-buttons")
+		  ))
     (unless (get :garnet-modules (car pair))
       (load (merge-pathnames (cadr pair) Garnet-Gadgets-PathName)
 	    :verbose T)))

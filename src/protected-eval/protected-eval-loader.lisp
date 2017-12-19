@@ -19,7 +19,7 @@
 ;;
 ;; (Described in prompter.doc)
 ;;
-;; Protected-Eval-Error-Gadget 
+;; Protected-Eval-Error-Gadget
 ;; Garnet-Error-Handler Garnet-User-Error-Handler
 ;; With-Garnet-Error-Handling With-Garnet-User-Error-Handling
 ;; With-Abort
@@ -41,14 +41,14 @@
 ;;
 ;; In abstract-errors.lisp / garnet-errors.lisp:
 ;;
-;; prompting-protected-eval 
-;; prompting-protected-read prompting-protected-read-from-string 
+;; prompting-protected-eval
+;; prompting-protected-read prompting-protected-read-from-string
 ;; prompter
-;; protect-errors with-protected-errors 
+;; protect-errors with-protected-errors
 ;; protected-eval
 ;; protected-read protected-read-from-string
 ;; call-prompter
-;; displayer call-displayer 
+;; displayer call-displayer
 ;; selector call-selector
 ;; *application-long-name* *application-short-name*
 ;; *user-type*
@@ -65,28 +65,26 @@
 before loading Protected-Eval."))
 
 (defvar protected-eval-load-files
-  '(;; Load these from the gadgets directory.
-    "gadgets:motif-error-gadget-loader"
-    "gadgets:motif-scrolling-labeled-box-loader"
-    ;; Load these from the protected-eval directory.
-    "protected-eval:error"
-    "protected-eval:prompter"
-    "protected-eval:protected-eval"
-    "protected-eval:protected-process"
-    "protected-eval:abstract-errors"
-    "protected-eval:garnet-errors"))
+  ())
+  ;; '(;; Load these from the gadgets directory.
+  ;;   "gadgets:motif-error-gadget-loader"
+  ;;   "gadgets:motif-scrolling-labeled-box-loader"
+  ;;   ;; Load these from the protected-eval directory.
+  ;;   "protected-eval:error"
+  ;;   "protected-eval:prompter"
+  ;;   "protected-eval:protected-eval"
+  ;;   "protected-eval:protected-process"
+  ;;   "protected-eval:abstract-errors"
+  ;;   "protected-eval:garnet-errors")
+
 
 
 (unless (get :garnet-modules :protected-eval)
   (format t "Loading Protected-eval~%")
-  
+
   (dolist (file protected-eval-load-files)
     (garnet-load file))
-  
+
   (format t "...Done Protected-Eval.~%")
 
   (setf (get :garnet-modules :protected-eval) t))
-
-
-
-

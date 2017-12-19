@@ -84,12 +84,12 @@ Change log:
 ;;; note:  In the case that the start eventis a mouse-down, the next event
 ;;;        to be preccessed is a leftup, which will get passed to the
 ;;;        translate-event routine, hence the (if (not (event-mousep event)))
-;;; also,  uparrow and downarrow aren't printable in some fonts, 
+;;; also,  uparrow and downarrow aren't printable in some fonts,
 ;;;        so have to disallow them
 
 
 
- 
+
 ;; edit either the feedback object or the main object
 (defun obj-or-feedback-edit (an-interactor obj-over feedback-obj event)
   ;; the function used as :edit-func is edit-string which is in the file
@@ -102,9 +102,8 @@ Change log:
 
 ;; turn the cursor visibility on or off
 (defun obj-or-feedback-cursor-on-off (obj-over feedback-obj turn-on-p inter)
-  #-garnet-debug (declare (ignore inter))
-  (when (or feedback-obj (schema-p obj-over)) ; otherwise, just exit because no
-                                              ; object to set
+  ;; otherwise, just exit because no object to set
+  (when (or feedback-obj (schema-p obj-over))
     (let ((obj (or feedback-obj obj-over))
 	  val)
       (if turn-on-p
@@ -112,13 +111,13 @@ Change log:
 	    (setq val (g-value obj :saved-cursor-index))
 	    (dbprint-either :cursor-index obj val inter feedback-obj)
 	    (s-value obj :cursor-index val))
-	  ; else save current index and turn off cursor
-	  (progn 
+	  ;; else save current index and turn off cursor
+	  (progn
 	    (s-value obj :saved-cursor-index (g-value obj :cursor-index))
 	    (dbprint-either :cursor-index obj NIL inter feedback-obj)
 	    (s-value obj :cursor-index NIL))))))
 
-;; Copies the 2 values into an existing list if there, otherwise creates one 
+;; Copies the 2 values into an existing list if there, otherwise creates one
 (defun set-obj-list2-slot (obj slot val1 val2)
   (let ((oldval (get-local-value obj slot)))
     (if (and oldval (listp oldval) (>= (length oldval) 2))
@@ -130,24 +129,24 @@ Change log:
 	; else create a new one
 	(s-value obj slot (list val1 val2)))))
 
-(defun Get-Cursor-Position (an-interactor obj event)
+(defun get-cursor-position (an-interactor obj event)
   (or (and (g-value an-interactor :cursor-where-press)
 	   (opal:get-cursor-index obj (event-x event)
 				  (event-y event)))
       (length (g-value obj :string))))
 
-;;;============================================================
+
 ;;; Default Procedures to go into the slots
-;;;============================================================
 
-(declaim (special Text-Interactor))
+(declaim (special text-interactor))
 
-(defun Text-Interactor-Initialize (new-Text-schema)
-  (if-debug new-Text-schema (format T "Text initialize ~s~%" new-Text-schema))
-  (Check-Interactor-Type new-Text-schema inter:text-interactor)
-  (Check-Required-Slots new-Text-schema)
-  (Set-Up-Defaults new-Text-schema)
-  ) ;end initialize procedure
+;; end initialize procedure
+(defun text-interactor-initialize (new-text-schema)
+  (if-debug new-text-schema
+	    (format t "text initialize ~s~%" new-text-schema))
+  (check-interactor-type new-text-schema inter:text-interactor)
+  (check-required-slots new-text-schema)
+  (set-up-defaults new-text-schema))
 
 ;;; make a copy of the orignal string in case :abort happens
 (defun Text-Int-Start-Action (an-interactor new-obj-over start-event)
@@ -228,7 +227,8 @@ Change log:
 ;      (s-value feedback :visible NIL)
 ;      )
     (when (g-value an-interactor :final-function)
-      (let ((str ; try to come up with a final string for final-function
+      ;; try to come up with a final string for final-function
+      (let ((str
 	     (if (schema-p obj-over)
 		 (g-value obj-over :string)
 		 (if feedback (g-value feedback :string) NIL)))
@@ -315,7 +315,7 @@ Change log:
 ;;; Remove from running level, add to start level
 ;;; unless :self-deactivate, change state to start, call stop procedure
 (defun Text-do-stop (an-interactor obj-over event)
-  #-garnet-debug (declare (ignore obj-over))
+  (declare (ignore obj-over))
   (if-debug an-interactor (format T "Text stop over ~s~%" obj-over))
   (GoToStartState an-interactor T)
   (kr-send an-interactor :Stop-Action an-interactor
@@ -373,7 +373,7 @@ Change log:
   (:obj-to-change NIL)			;supply if don't want to affect
 					; result of :start-where
   (:running-where T)
-  (:button-outside-stop? T) 
+  (:button-outside-stop? T)
   (:cursor-where-press T)
   (:key-translation-table NIL)		;table of translations; set below
   (:edit-func 'Edit-String)

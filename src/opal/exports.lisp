@@ -1,26 +1,18 @@
 ;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: OPAL; Base: 10 -*-
-;;-------------------------------------------------------------------;;
-;;          The Garnet User Interface Development Environment.       ;;
-;;-------------------------------------------------------------------;;
-;;  This code was written as part of the Garnet project at           ;;
-;;  Carnegie Mellon University, and has been placed in the public    ;;
-;;  domain.                                                          ;;
-;;-------------------------------------------------------------------;;
-
-;;; $Id$
+;;
+;; The Garnet User Interface Development Environment.
+;;
+;; This code was written as part of the Garnet project at Carnegie
+;; Mellon University, and has been placed in the public domain.
 
 
-
 ;;  This file contains the export list for Opal.
 
-(in-package "OPAL")
+(in-package :opal)
 
 (defvar *debug-opal-mode* nil)
-(setf (get :garnet-modules :opal) T)
 
-
-;;; This is the export list for as much of OPAL as I could find (FMG).
-
+;;; This is the export list for as much of OPAL as I could find
 ;;; Import some stuff from GEM that used to be in OPAL.
 (eval-when (:execute :load-toplevel :compile-toplevel)
   (import '(gem:Display-Info

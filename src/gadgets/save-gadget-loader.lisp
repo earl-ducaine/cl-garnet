@@ -31,9 +31,10 @@ Change log:
 
 (unless (get :garnet-modules :save-gadget)
   (format T "Loading Save-Gadget...~%")
-  (dolist (pair '((:text-buttons "text-buttons-loader")
-		  (:scrolling-menu "scrolling-menu-loader")
-		  (:scrolling-labeled-box "scrolling-labeled-box-loader")
+  (dolist (pair '(
+		  ;; (:text-buttons "text-buttons-loader")
+		  ;; (:scrolling-menu "scrolling-menu-loader")
+		  ;; (:scrolling-labeled-box "scrolling-labeled-box-loader")
 		  (:error-gadget "error-gadget-loader")
 		  (:save-load-functions "save-load-functions")
 	          (:save-gadget "save-gadget")
@@ -47,4 +48,3 @@ Change log:
 (setf (get :garnet-modules :save-load-functions) T)
 (setf (get :garnet-modules :save-gadget) T)
 (setf (get :garnet-modules :load-gadget) T)
-

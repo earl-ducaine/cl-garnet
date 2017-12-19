@@ -43,7 +43,7 @@
 (in-package :DEMO-SCHEMA-BROWSER)
 
 (defvar DEMO-SCHEMA-BROWSER-INIT
-  (dolist (file '("radio-buttons-loader" "text-buttons-loader"
+  (dolist (file '("radio-buttons-loader" ;; "text-buttons-loader"
 		  "labeled-box-loader" "trill-device-loader"
 		  "error-gadget-loader" "browser-gadget-loader"))
     (common-lisp-user::garnet-load (concatenate 'string "gadgets:" file))))
@@ -312,4 +312,3 @@
   (unless (and (fboundp 'common-lisp-user::Garnet-Note-Quitted)
 	       (common-lisp-user::Garnet-Note-Quitted "DEMO-SCHEMA-BROWSER")))
 )
-

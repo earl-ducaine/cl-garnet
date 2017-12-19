@@ -30,7 +30,8 @@ Change log:
 
 (unless (get :garnet-modules :motif-save-gadget)
   (format T "Loading Motif-Save-Gadget...~%")
-  (dolist (pair '((:motif-text-buttons "motif-text-buttons-loader")
+  (dolist (pair '(
+		  ;; (:motif-text-buttons "motif-text-buttons-loader")
 		  (:motif-scrolling-labeled-box "motif-scrolling-labeled-box-loader")
 		  (:motif-error-gadget "motif-error-gadget-loader")
 		  (:motif-scrolling-menu "motif-scrolling-menu-loader")

@@ -14,11 +14,10 @@
 
 (defvar *inside-main-event-loop* nil)
 
-;;; Define opal:launch-main-event-loop-process
 (defun discard-all-pending-events ()
   (gem:discard-pending-events (g-value gem:device-info :current-root)))
 
-;; Main event process loop. Define here so we don't have multiple
+;; "Main Event Loop" process. Define here so we don't have multiple
 ;; pieces of code doing the same thing.  XXX Actually this gets
 ;; smashed when the code in protected-process.lisp gets loaded.  This
 ;; function is duplicated there except that the event handler is
@@ -40,7 +39,8 @@
 
 (defun launch-main-event-loop-process ()
   "Spawn a process which is doing Garnet interaction all of the time.
-   RETURN the process."
+   return the process."
+  (break)
   (when (and (bordeaux-threads:threadp  *main-event-loop-process*)
 	     (bordeaux-threads:thread-alive-p *main-event-loop-process*))
     (bordeaux-threads::destroy-thread *main-event-loop-process*))
@@ -66,16 +66,16 @@
   (and *main-event-loop-process*
        (not (eq *main-event-loop-process*
 		(bordeaux-threads:current-thread)))))
-;; because
+
+
+
+
 ;; (defmacro with-update-lock-held (&body body)
 ;;   `(unwind-protect
 ;; 	(progn
 ;; 	  (update-start-fn nil)
 ;; 	  ,@body)
 ;;      (update-stop-fn nil)))
-
-
-;;; Only supports SBCL.
 
 ;;; Note, the only safe way to use without-interrupts is in conjuction
 ;;; with sb-sys:interupt-thread, i.e. it doesn't block ordinary os

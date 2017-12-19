@@ -12,89 +12,95 @@
 ;;;
 ;;; Garnet logo designed by MaryJo Dowling at CMU
 
-(in-package :DEMO-LOGO)
+(in-package :demo-logo)
 
-(declaim (special PANTONE192 PANTONE193 PANTONE194 PANTONE196
-		  MYCOLOR1 MYCOLOR2 MYCOLOR3 MYCOLOR4 MYCOLOR5
-		  PANTONE192-FILL PANTONE193-FILL PANTONE194-FILL
-		  PANTONE196-FILL MYCOLOR1-FILL MYCOLOR2-FILL
-		  MYCOLOR3-FILL MYCOLOR4-FILL MYCOLOR5-FILL FADER))
+(declaim (special pantone192 pantone193 pantone194 pantone196
+		  mycolor1 mycolor2 mycolor3 mycolor4 mycolor5
+		  pantone192-fill pantone193-fill pantone194-fill
+		  pantone196-fill mycolor1-fill mycolor2-fill
+		  mycolor3-fill mycolor4-fill mycolor5-fill fader))
 
 (create-instance 'pantone192 opal:color
-  (:BLUE  0.35000002)
-  (:GREEN  0.060000002)
-  (:RED  1))
+  (:blue  0.35000002)
+  (:green  0.060000002)
+  (:red  1))
 
 (create-instance 'pantone193 opal:color
-  (:BLUE  0.23500001)
-  (:GREEN  0)
-  (:RED  0.885))
+  (:blue  0.23500001)
+  (:green  0)
+  (:red  0.885))
 
 (create-instance 'pantone194 opal:color
-  (:BLUE  0.10)
-  (:GREEN  0)
-  (:RED  0.66))
+  (:blue  0.10)
+  (:green  0)
+  (:red  0.66))
 
 (create-instance 'pantone196 opal:color
-  (:BLUE  0.94)
-  (:GREEN  0)
-  (:RED  1))
+  (:blue  0.94)
+  (:green  0)
+  (:red  1))
 
 (create-instance 'mycolor1 opal:color
-  (:BLUE  0.27500004)
-  (:GREEN  0.014999986)
-  (:RED  0.925))
+  (:blue  0.27500004)
+  (:green  0.014999986)
+  (:red  0.925))
 
 (create-instance 'mycolor2 opal:color
-  (:BLUE  0.7)
-  (:GREEN  0.7)
-  (:RED  1.0))
+  (:blue  0.7)
+  (:green  0.7)
+  (:red  1.0))
 
 (create-instance 'mycolor3 opal:color
-  (:BLUE  0.22)
-  (:GREEN  0)
-  (:RED  0.82))
+  (:blue  0.22)
+  (:green  0)
+  (:red  0.82))
 
 (create-instance 'mycolor4 opal:color
-  (:BLUE  0.84)
-  (:GREEN  0.84)
-  (:RED  1.0))
+  (:blue  0.84)
+  (:green  0.84)
+  (:red  1.0))
 (create-instance 'mycolor5 opal:color
-  (:BLUE  0.5)
-  (:GREEN  0.5)
-  (:RED  1.0))
-
+  (:blue  0.5)
+  (:green  0.5)
+  (:red  1.0))
 
 (create-instance 'pantone192-fill opal:filling-style
 		 (:foreground-color pantone192))
+
 (create-instance 'pantone193-fill opal:filling-style
 		 (:foreground-color pantone193))
+
 (create-instance 'pantone194-fill opal:filling-style
 		 (:foreground-color pantone194))
+
 (create-instance 'pantone196-fill opal:filling-style
 		 (:foreground-color pantone196))
+
 (create-instance 'mycolor1-fill opal:filling-style
 		 (:foreground-color mycolor1))
+
 (create-instance 'mycolor2-fill opal:filling-style
 		 (:foreground-color mycolor2))
+
 (create-instance 'mycolor3-fill opal:filling-style
 		 (:foreground-color mycolor3))
+
 (create-instance 'mycolor4-fill opal:filling-style
 		 (:foreground-color mycolor4))
+
 (create-instance 'mycolor5-fill opal:filling-style
 		 (:foreground-color mycolor5))
 
 (defparameter new-point-list
- `(
-   (,pantone192-fill
-    (83 41 104 55 139 194 126 217 56 234 34 220 0 81 13 59 83 41) ;; L1
-    )
-   (,pantone194-fill
-    (104 55 93 68 85 70 83 62 83 41 104 55) ;; L2
-    )
-   (,opal:no-fill
-    (0 81 17 88 24 86 22 77 13 59 0 81) ;; L3
-    )
+  `((,pantone192-fill
+     ;; L1
+     (83 41 104 55 139 194 126 217 56 234 34 220 0 81 13 59 83 41))
+    (,pantone194-fill
+     ;; L2
+     (104 55 93 68 85 70 83 62 83 41 104 55))
+    (,opal:no-fill
+     ;; L3
+    (0 81 17 88 24 86 22 77 13 59 0 81))
    (,pantone194-fill
     (34 220 46 207 53 205 56 213 56 234 34 220) ;; L4
     )
@@ -141,11 +147,9 @@
    (,mycolor1-fill
     (46 207 53 205 24 86 17 88 46 207) ;; L18
     )
-   (,mycolor1-fill
-    (24 86 22 77 83 62 85 70 24 86) ;; L19
-    )
-   ))
-
+    (,mycolor1-fill
+     ;; L19
+    (24 86 22 77 83 62 85 70 24 86))))
 
 
 (defparameter polylinelist NIL)
@@ -195,12 +199,11 @@
 
 (defparameter top-agg NIL)
 (defparameter font (opal:get-standard-font NIL :bold :very-large))
-
 (defparameter white-to-black NIL)
 (defparameter black-to-white NIL)
-
 (defparameter violet-to-red NIL)
 (defparameter red-to-violet NIL)
+
 (defparameter rgbvalues
   '((1.00 0.00 0.52) (1.00 0.01 0.85) (0.82 0.03 1.00) (0.49 0.01 1.00)
     (0.14 0.01 1.00) (0.00 0.19 1.00) (0.01 0.52 1.00) (0.03 0.86 1.00)
@@ -208,8 +211,9 @@
     (0.52 1.00 0.02) (0.83 1.00 0.00) (1.00 0.81 0.00) (1.00 0.48 0.00)
     (1.00 0.07 0.00)))
 
-(defparameter GarnetStringList
-  '("Generating an" "Amalgam of" "Real-time," "Novel" "Editors and" "Toolkits"))
+(defparameter garnet-string-list
+  '("Generating an" "Amalgam of" "Real-time," "Novel" "Editors and"
+    "Toolkits"))
 
 (defparameter FirstLetterList NIL)
 (defparameter StringList NIL)
@@ -217,7 +221,6 @@
 (defparameter FirstLetterOffset 0)
 (defparameter maxwh 0)
 (defparameter objs-list NIL)
-
 (defparameter char-origin-x 35)
 (defparameter char-origin-y 60)
 
@@ -227,7 +230,6 @@
   (dolist (s (reverse strings))
     (push (subseq s 0 1) FirstLetterList)
     (push (subseq s 1) StringList)))
-
 
 (defun Create-Color-List (numcolors)
   (let ((inc (floor 100 (1- numcolors)))
@@ -240,9 +242,9 @@
 		    (green (second triplet))
 		    (blue (third triplet)))
 	       (push (create-instance NIL opal:line-style
-			(:foreground-color
-			 (create-instance NIL opal:color
-			    (:red red) (:green green) (:blue blue))))
+		       (:foreground-color
+			(create-instance NIL opal:color
+			  (:red red) (:green green) (:blue blue))))
 		     l)
 	       (incf val 1)))
            (push opal:default-line-style l))
@@ -282,7 +284,6 @@
 			     (:top init-y)
 			     (:font font)
 			     (:visible T)))
-
       (when (> (setq h (g-value obj :height)) maxwh)
 	(setq maxwh h))
       (when (> (setq w (g-value obj :width)) maxwh)
@@ -292,7 +293,7 @@
       (opal:add-component agg obj)
       (push obj objs-list))
     (setq objs-list (reverse objs-list))
-    ; now set the lefts
+					; now set the lefts
     (dolist (obj objs-list)
       (s-value obj :left cur-x)
       (s-value obj :initial-x cur-x)
@@ -302,14 +303,13 @@
     (setq FirstLetterOffset (+ 2 maxw))))
 
 
-
-(defparameter Fader NIL)
-(defparameter win NIL)
+(defparameter fader nil)
+(defparameter *win* NIL)
 ;;; status cycles between :beginning, :little and :letters-are-down
 (defparameter status :beginning)
 
 ;;; Restore to :beginning
-(defun Reset ()
+(defun reset ()
   (dolist (obj FirstLetterObjs)
     (s-value obj :left (g-value obj :initial-x))
     (s-value obj :top (g-value obj :initial-y))
@@ -317,10 +317,10 @@
   (dolist (obj objs-list)
     (s-value obj :visible NIL))
   (reset-logo-size)
-  (opal:update win)
+  (opal:update *win*)
   (setq status :beginning))
 
-(defun Circle-Down (numtimes)
+(defun circle-down (numtimes)
   (let ((inc (/ PI 2 (1- numtimes)))
 	(angle 0)
 	offset)
@@ -332,13 +332,13 @@
 	(s-value obj :left
 		 (+ char-origin-x (Round (* offset (Cos angle)))))
 	(incf offset maxwh))
-      (opal:update win)
+      (opal:update *win*)
       (if (= i (- numtimes 2))
 	  ; then next time will be last
 	  (setq angle (/ PI 2))
 	  (incf angle inc)))))
 
-(defun DoFade ()
+(defun do-fade ()
   (s-value fader :visible T)
   (dolist (lin objs-list)
     (s-value fader :left (g-value lin :left))
@@ -348,91 +348,107 @@
     (s-value lin :visible T)
     (dolist (color white-to-black)
       (s-value fader :filling-style color)
-      (opal:update win)))
+      (opal:update *win*)))
   (s-value fader :visible NIL)
-  (opal:update win))
+  (opal:update *win*))
 
-(defun DoColors (obj)
+(defun docolors (obj)
   (s-value obj :visible T)
   (dolist (color white-to-black)
     ;; Trick update into just drawing the object again (during the erase phase)
     (s-value obj :fast-redraw-line-style (g-value obj :line-style))
     (s-value obj :line-style color)
-    (opal:update win)
+    (opal:update *win*)
     (sleep #+hpux .08 #-hpux 0.01))
   (s-value obj :fast-redraw-line-style opal:white-line)
   ;(s-value obj :line-style opal:default-line-style)
-  (opal:update win))
+  (opal:update *win*))
 
-(defun Go-To-Next-Status ()
+(defun go-to-next-status ()
   (case status
-    (:beginning (shrink-logo 2 5 win)
-		(dolist (obj FirstLetterObjs)
-		  (s-value obj :visible T))
-		(opal:update win)
+    (:beginning (shrink-logo 2 5 *win*)
+		(dolist (obj firstletterobjs)
+		  (s-value obj :visible t))
+		(opal:update *win*)
 		(setf status :little))
     (:little
-     (Circle-Down 30)
+     (circle-down 30)
      (if (g-value opal:color :color-p)
 	 (dolist (obj objs-list)
-	   (DoColors obj))
-	 (DoFade))
+	   (docolors obj))
+	 (do-fade))
      (setf status :letters-are-down))
     (:letters-are-down (reset))
-    (T (error "status bad ~s" status))))
+    (t (error "status bad ~s" status))))
 
-(defun Re-Animate ()
+(defun re-animate ()
   (loop
    (go-to-next-status)
    (if (eq status :letters-are-down)
      (return-from re-animate)
      (sleep 1))))
 
-(defun Do-Go (&key (strings GarnetStringList)
-		   (numFades 17)
-		   dont-enter-main-event-loop
-		   (double-buffered-p T))
-  (Create-Lists strings) ; convert string list into appropriate form
-  (setq win (create-instance NIL inter:interactor-window
+(defun do-go (&key (strings garnet-string-list) (numfades 17)
+		(double-buffered-p t) dont-enter-main-event-loop)
+  ;; Convert string list into appropriate form
+  (create-lists strings)
+  (setq *win* (create-instance nil inter:interactor-window
 		      (:title "Garnet Logo")
-		      (:left 0)(:top 0)
-		      (:width 270)(:height 235)
+		      (:left 0)
+		      (:top 0)
+		      (:width (o-formula
+			       (progn
+				 (let ((aggregate-width
+					(truncate (* 1.1
+						     (gvl :aggregate :width))))
+				       (current-width (or (gvl :width)
+							  0)))
+				   (format t (str "aggregate-width: ~a, "
+						  "current-width: ~a~%")
+					   aggregate-width
+					   current-width)
+				   (max aggregate-width current-width)))))
+		      (:height 235)
 		      (:double-buffered-p double-buffered-p)
-		      (:aggregate (setq top-agg
-					(create-instance NIL opal:aggregate)))))
-  (Create-Logo top-agg)
-  (opal:update win)
-  (Create-Color-List numFades)
+		      (:aggregate
+		       (setq top-agg
+			     (create-instance NIL opal:aggregate)))))
+  (create-logo top-agg)
+  (opal:update *win*)
+  (create-color-list numfades)
   (sleep 3)
-  (setq objs-list nil)       ;; needed if you stop
-  (setq FirstLetterObjs nil) ;; and restart demo-logo.
-  (Go-To-Next-Status) ;; will shrink
-  (Create-First-Letter-Objs char-origin-x char-origin-y font top-agg)
+  ;; Needed if you stop
+  (setq objs-list nil)
+  ;; and restart demo-logo.
+  (setq firstletterobjs nil)
+  ;; will shrink
+  (go-to-next-status)
+  (create-first-letter-objs char-origin-x char-origin-y font top-agg)
   (setq objs-list (create-string-objs char-origin-x char-origin-y
 				      font top-agg))
   (unless (g-value opal:color :color-p)
-    (create-instance 'Fader Opal:Rectangle
-		     (:visible NIL)
-		     (:filling-style NIL)(:Line-style NIL)
-		     (:draw-function :AND))
+    (create-instance 'fader opal:rectangle
+		     (:visible nil)
+		     (:filling-style nil)(:line-style nil)
+		     (:draw-function :and))
     (opal:add-component top-agg fader))
-  (opal:update win)
+  (opal:update *win*)
   (sleep 2)
-  (Go-To-Next-Status) ;; will circle-down and blink
+   ;; will circle-down and blink
+  (go-to-next-status)
   (create-instance 'starter inter:button-interactor
-		   (:start-where `(:in ,win))
+		   (:start-where `(:in ,*win*))
 		   (:start-event '(:double-leftdown))
-;;		    '(:any-keyboard :any-mousedown))
-		   (:window win)
-		   (:continuous NIL)
+		   (:window *win*)
+		   (:continuous nil)
 		   (:final-function
 		    #'(lambda (&rest args)
 			(declare (ignore args))
-			(Go-To-Next-Status))))
+			(go-to-next-status))))
   "Press in window to start, press again to reset"
   (unless dont-enter-main-event-loop
       (inter:main-event-loop)))
 
-(defun Do-Stop ()
+(defun do-stop ()
   (setf status :beginning)
-  (opal:destroy win))
+  (opal:destroy *win*))

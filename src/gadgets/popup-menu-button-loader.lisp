@@ -26,7 +26,7 @@ Change log:
 ;;;
 (unless (get :garnet-modules :popup-menu-button)
   (format t "Loading Popup-Menu-Button...~%")
-  (dolist (pair '((:text-buttons "text-buttons-loader")
+  (dolist (pair '(;; (:text-buttons "text-buttons-loader")
 		  (:menu "menu-loader")
 		  (:popup-menu-button "popup-menu-button")))
     (unless (get :garnet-modules (car pair))

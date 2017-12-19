@@ -26,7 +26,8 @@ Change log:
 ;;;
 (unless (get :garnet-modules :prop-sheet-win)
   (format t "Loading Prop-Sheet-Win...~%")
-  (dolist (pair '((:text-buttons "text-buttons-loader")
+  (dolist (pair '(
+		  ;; (:text-buttons "text-buttons-loader")
 		  (:error-gadget-utils "error-gadget-utils")
 		  (:prop-value "prop-value-loader")
 		  (:prop-sheet "prop-sheet-loader")
@@ -37,4 +38,3 @@ Change log:
   (format t "...Done Prop-Sheet-Win.~%"))
 
 (setf (get :garnet-modules :prop-sheet-win) t)
-

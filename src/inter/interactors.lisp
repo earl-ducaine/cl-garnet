@@ -1,59 +1,50 @@
 ;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: INTERACTORS; Base: 10 -*-
-;;*******************************************************************;;
-;;         The Garnet User Interface Development Environment.        ;;
-;;*******************************************************************;;
-;;  This code was written as part of the Garnet project at           ;;
-;;  Carnegie Mellon University, and has been placed in the public    ;;
-;;  domain.                                                          ;;
-;;*******************************************************************;;
 
-;;; $Id$
-;;
+;; The Garnet User Interface Development Environment.
+
+;; This code was written as part of the Garnet project at Carnegie
+;; Mellon University, and has been placed in the public domain.
+
+
+
 ;; This file includes the design for mouse and keyboard interactors
-;;
 ;; Designed and implemented by Brad A. Myers
 
-
 (in-package :interactors)
 
 ;;; Variables used for noticing changed slots
-;;
-
 (defparameter *Changed-Interactors* NIL
   "A list of the interactors that have a changed slot.  Clean-up
-with (Check-and-handle-changed-inters)")
+   with (Check-and-handle-changed-inters)")
 
 (defparameter *Inters-With-T-Window* NIL
   "A list of all the interactors that have a (:window T).
-This is needed because when new windows are  created,
-they need to be added to these interactor's lists.")
+   This is needed because when new windows are created, they need to
+   be added to these interactor's lists.")
 
 (defparameter *Visible-Modal-Windows* NIL
-  "A list of the windows that are modal (stealing all input)
-that are visible.  When this list is non-nil, only interactors
-in these windows will operate.  Note that sub-windows of these
-windows must have their :modal-p bit set.  This list is maintained
-automatically by update on interactor windows looking at the
-:modal-p and :visible slots of the windows.")
+  "A list of the windows that are modal (stealing all input) that are
+   visible.  When this list is non-nil, only interactors in these
+   windows will operate.  Note that sub-windows of these windows must
+   have their :modal-p bit set.  This list is maintained automatically
+   by update on interactor windows looking at the
+   :modal-p and :visible slots of the windows.")
 
 (defparameter *Special-Grab-Up-Inter* NIL
   "Holds a single interactor. When an interactor is supposed to work
-over multiple windows, it won't get events when the mouse is over
-other garnet windows.  This variable is used as a hack to make
-those events go to this interactor, when the interactor is running.
-The variable is set by turn-on{off}-mouse-moved.")
-
-
-;;;============================================================
+   over multiple windows, it won't get events when the mouse is over
+   other garnet windows.  This variable is used as a hack to make
+   those events go to this interactor, when the interactor is running.
+   The variable is set by turn-on{off}-mouse-moved.")
 
 (declaim (inline Check-and-handle-changed-inters))
+
 (defun Check-and-handle-changed-inters ()
   "This should be called at update and when new events come in"
   (when *Changed-Interactors*
     (Handle-All-Changed-Interactors)))
 
 ;;; Handy functions
-;;
 (defun Beep ()
   "Causes a beep or bell to sound"
   (gem:beep (g-value gem:DEVICE-INFO :current-root)))
@@ -62,30 +53,23 @@ The variable is set by turn-on{off}-mouse-moved.")
   "Move the cursor to the specified x y position in the window."
   (gem:set-window-property window :POINTER-POSITION (cons x y)))
 
-
-
 ;;; debugging aids:
 ;;   if-debug is a macro for use around debugging code
 ;;   trace-test is a (possibly expensive) test to enable selective tracing
 ;;   trace-inter is a function to start tracing an interactor (T for all of them)
 ;;   untrace-inter is a function to stop tracing an interactor or all of them
 
-;; ** The debugging information is only generated if the
-;; #+garnet-debug feature is present.  Otherwise nothing is generated.
-;;
+(defparameter *int-debug* NIL "True if any debugging is enabled")
+(defparameter *int-trace* NIL "List of interactors to be traced")
 
-(defparameter *int-debug* NIL
-  "True if any debugging is enabled")
-(defparameter *int-trace* NIL
-  "List of interactors to be traced")
 (defparameter *debug-next-inter* NIL
   "A function to be called on the next interactor to run")
-(defparameter *Special-Trace-Values* '(:window :priority-level :mouse :event
-				       :next :short))
+
+(defparameter *Special-Trace-Values*
+  '(:window :priority-level :mouse :event :next :short))
 
 
 ;; Test for selective tracing. Put this around any print-out statements
-;; ** Only generates code if #+garnet-debug feature is present at compile time
 ;;
 ;; NOTE: inter is an interactor or may be one of:
 ;;       :window -- trace things about interactor windows (create, destroy, etc.)
@@ -94,13 +78,9 @@ The variable is set by turn-on{off}-mouse-moved.")
 ;;       :event -- show all events that come in
 ;;       :next -- trace the next interactor to run"
 (defmacro if-debug (inter &rest body)
-  #+garnet-debug
   `(when (and *int-debug* (trace-test ,inter))
      (let ((*print-pretty* NIL))
-       ,@body))
-  #-garnet-debug
-  (declare (ignore inter body))
-  )
+       ,@body)))
 
 (defmacro debug-p (inter)
   "Returns T or NIL based on whether should trace or not.  Should be same

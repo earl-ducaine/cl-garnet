@@ -8,7 +8,7 @@
 ;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; $Id::                                                             $	
+;;; $Id::                                                             $
 
 #|
 ==================================================================
@@ -27,7 +27,8 @@ Change log:
 ;;;
 (unless (get :garnet-modules :motif-prop-sheet-win)
   (format t "Loading Motif-Prop-Sheet-Win...~%")
-  (dolist (pair '((:motif-text-buttons "motif-text-buttons-loader")
+  (dolist (pair '(
+		  ;; (:motif-text-buttons "motif-text-buttons-loader")
 		  (:error-gadget-utils "error-gadget-utils")
 		  (:prop-value "prop-value-loader")
 		  (:prop-sheet "prop-sheet-loader")
@@ -38,5 +39,3 @@ Change log:
   (format t "...Done Motif-Prop-Sheet-Win.~%"))
 
 (setf (get :garnet-modules :motif-prop-sheet-win) t)
-
-

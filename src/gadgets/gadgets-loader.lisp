@@ -67,7 +67,7 @@ Change log:
                                ;; this variable before loading if only want
 			       ;; to compile some of these files
   '(
-    "GAD-scroll-parts"    ;;  Helper modules containing definitions for 
+    "GAD-scroll-parts"    ;;  Helper modules containing definitions for
     "GAD-slider-parts"    ;;    scroll bar and slider objects
     "GAD-v-arrows"
     "GAD-v-boxes"
@@ -98,7 +98,7 @@ Change log:
     "menubar-functions" "menubar"
     "labeled-box"        ;;  A box with editable text and a label
     "arrow-line"         ;;  A line/arrowhead combination
-    "graphics-selection" ;;  Selection squares for move-grow interaction
+    ;; "graphics-selection" ;;  Selection squares for move-grow interaction
     "option-button"
     "popup-menu-button"
     "save-load-functions"
@@ -115,7 +115,7 @@ Change log:
 
     "standard-edit"
     "mouseline"
-    
+
     "prop-value-gadgets"
     "prop-sheet"
     "prop-sheet-win"
@@ -214,4 +214,3 @@ Change log:
 (setf (get :garnet-modules :multifont-gadget) t)
 
 (format t "...Done Gadgets.~%")
-

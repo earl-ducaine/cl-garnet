@@ -99,7 +99,7 @@
   (setf *colormap-index-table* (clrhash *colormap-index-table*))
   (setq *garnet-has-been-disconnected* T))
 
-(defun Reconnect-Garnet ()
+(defun reconnect-garnet ()
   (unless *garnet-has-been-disconnected*
     (return-from reconnect-garnet))
   (let ((current-device (g-value gem:DEVICE-INFO :current-device))

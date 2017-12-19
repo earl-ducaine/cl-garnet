@@ -23,28 +23,24 @@
 ;;;     SCROLLING-MENU from package GARNET-GADGETS
 (dolist (gadget '("scrolling-menu-loader"
 		  "scrolling-labeled-box-loader"
-		  "labeled-box-loader"
-		  "text-buttons-loader"
+		  ;; "labeled-box-loader"
+		  ;; "text-buttons-loader"
 		  ))
   (common-lisp-user::garnet-load (concatenate 'string "gadgets:" gadget)))
 
-;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
-(defvar start-where-options 
-  '(T Nil :In :In-Box :In-But-Not-On 
-      :Element-of :Leaf-Element-Of :List-Leaf-Element-Of 
-      :List-Element-Of-Or-None :List-Leaf-Element-Of-Or-None 
-      :Check-Leaf-But-Return-Element :List-Check-Leaf-But-Return-Element 
-      :Check-Leaf-But-Return-Element-Or-None 
+(defvar start-where-options
+  '(T Nil :In :In-Box :In-But-Not-On
+      :Element-of :Leaf-Element-Of :List-Leaf-Element-Of
+      :List-Element-Of-Or-None :List-Leaf-Element-Of-Or-None
+      :Check-Leaf-But-Return-Element :List-Check-Leaf-But-Return-Element
+      :Check-Leaf-But-Return-Element-Or-None
       :List-Check-Leaf-But-Return-Element-Or-None))
 
-(defvar start-where-list-options 
-  '(:List-Leaf-Element-Of 
-    :List-Element-Of-Or-None 
-    :List-Leaf-Element-Of-Or-None 
-    :List-Check-Leaf-But-Return-Element 
+(defvar start-where-list-options
+  '(:List-Leaf-Element-Of
+    :List-Element-Of-Or-None
+    :List-Leaf-Element-Of-Or-None
+    :List-Check-Leaf-But-Return-Element
     :List-Check-Leaf-But-Return-Element-Or-None))
 
 (defvar start-where-non-type-options
@@ -56,7 +52,7 @@
   (declare (special start-where-gadget))
   (let* ((control (if (listp start-where) (car start-where) start-where))
 	 (obj (if (listp start-where) (second start-where)))
-	 (slot (if (and (listp start-where) 
+	 (slot (if (and (listp start-where)
 			(member control start-where-list-options))
 		   (third start-where))))
 
@@ -72,16 +68,16 @@
       (set-initial-value start-where-gadget :start-where (list control))
       (s-value (g-value start-where-gadget :start-where) :selected-ranks
 	       (list (position control start-where-options)))
-      (if obj 
+      (if obj
 	(progn
-	  (set-initial-value start-where-gadget :obj 
+	  (set-initial-value start-where-gadget :obj
 			     (let ((kr::*print-as-structure* nil))
 			       (prin1-to-string obj)))
 	  (set-gray-out-rect-visible start-where-gadget :obj-disable nil))
         (progn
 	  (set-gray-out-rect-visible start-where-gadget :obj-disable t)
 	  (set-initial-value start-where-gadget :obj "")))
-      (if slot 
+      (if slot
 	(progn
 	  (set-initial-value start-where-gadget :slot
 			     (symbol-name slot))
@@ -106,7 +102,7 @@
 			 (opal:convert-coordinates (g-value gadget :window)
 						   (g-value gadget :left)
 						   (opal:bottom gadget) NIL)
-    (setf *start-where-win* (gilt:show-in-window start-where-gadget 
+    (setf *start-where-win* (gilt:show-in-window start-where-gadget
 					    left (+ 10 top) t)))))
 
 ;;; ensure that the value is a valid garnet object
@@ -147,7 +143,7 @@
 	(progn
 	  (set-gray-out-rect-visible start-where-gadget :obj-disable nil)
 	  (when obj
-		(set-initial-value start-where-gadget :obj 
+		(set-initial-value start-where-gadget :obj
 				   (let ((kr::*print-as-structure* nil))
 				     (prin1-to-string obj))))
 	  (set-gray-out-rect-visible start-where-gadget :slot-disable
@@ -166,7 +162,7 @@
 	(start-where-parent (g-value gadget :start-where-parent))
 	(type (g-value start-where-parent :type-restriction))
 	start-where)
-    
+
     ;; ensure that all required parameters are present
     (when (and (not (eq control t))
 	       (not (null control))
@@ -174,19 +170,19 @@
 	  (lapidary-error "An object must be supplied for the start-where expression")
 	  (s-value *start-where-win* :visible t)
 	  (return-from start-where-ok-fn))
-    (when (and (listp start-where) 
+    (when (and (listp start-where)
 	       (member control start-where-list-options)
 	       (string= "" slot))
 	  (lapidary-error "A slot name must be supplied for the start-where expression")
 	  (s-value *start-where-win* :visible t)
 	  (return-from start-where-ok-fn))
-  
+
     ;; construct the start-where expression
     (setf start-where
 	  (cond ((or (eq control t) (null control))
 		 control)
 		((member control start-where-list-options)
-		 (list control 
+		 (list control
 		       (gg:careful-string-eval start-where-obj)
 		       (read-from-string slot)))
 		(t
@@ -199,7 +195,7 @@
         (when (g-value start-where-parent :type)
 	      (setf start-where (append start-where (list :type type)))))
 
-    (dialog-enqueue :start-where start-where 
+    (dialog-enqueue :start-where start-where
 		    (symbol-value (g-value gadget :queue)))
 
     ;; store the chosen start-where option in the field string slot
@@ -230,14 +226,14 @@
 			    (car start-where-value)
 			    start-where-value)))
 	  (when (or (eq control t) (null control)
-		    (eq control :in) (eq control :in-box) 
+		    (eq control :in) (eq control :in-box)
 		    (eq control :in-but-not-on))
 	    (lapidary-error
 	     (format nil "cannot specify a type restrictor for a start-where that begins with ~S" control))
 	    (s-value start-where :type nil)
 	    (s-value gadget :value nil)
 	    (return-from prompt-for-type-restrict))
-	  
+
 	  ;; set the type restriction back to nil; until a type restriction
 	  ;; is actually entered, the type field should stay nil
 	  (s-value gadget :value nil)
@@ -249,11 +245,11 @@
 				  (prin1-to-string type-restriction)
 				  "")))
 	    ;; lisp won't convert a list to the appropriate string notation
-	    ;; so we must do it 
+	    ;; so we must do it
 	    (when (and type-restriction (listp type-restriction))
 		  (setf type-string (concatenate 'string "(list " (string-left-trim "(" type-string))))
 	    (set-initial-value prompt-gadget :result type-string))
-			       
+
 	  (s-value prompt-gadget :string
 		   "Please enter a type restriction. A type restriction can
 either be a single object (e.g., opal:circle) or
@@ -267,14 +263,14 @@ expression, such as (list ...) or `(...)")
 						   (opal:bottom gadget) NIL)
 			 (setf prompt-window (gilt:show-in-window prompt-gadget
 					      left top t))))
-	  
+
 	; else the type restriction should be removed--get the start where
 	; and chop off the type information using subseq
 	(let ((start-where-value (get-start-where (symbol-value queue)
 				     (g-value gadget :inter))))
 	  (when (listp start-where-value)
-		(dialog-enqueue :start-where 
-				(subseq start-where-value 0 
+		(dialog-enqueue :start-where
+				(subseq start-where-value 0
 					(position :type start-where-value))
 				(symbol-value queue)))
 	  (s-value start-where :type value)))))
@@ -287,23 +283,23 @@ expression, such as (list ...) or `(...)")
 	 (inter (g-value calling-gadget :inter))
 	 (start-where-value (get-start-where (symbol-value queue) inter))
 	 (start-where-gadget (g-value calling-gadget :parent :select-box-panel)))
-    
+
     (when (string= type-restriction "")
-	  (lapidary-error 
-	   "Type restriction cannot be an empty string. 
+	  (lapidary-error
+	   "Type restriction cannot be an empty string.
 Press cancel if you do not want a type restriction")
 	  (s-value prompt-window :visible t)
 	  (return-from type-restrict-fn))
 
     (setf type-restriction (eval (read-from-string type-restriction)))
-    
+
     ;; add the type restriction to the start-where
-    (dialog-enqueue :start-where 
-		    (append (subseq start-where-value 
+    (dialog-enqueue :start-where
+		    (append (subseq start-where-value
 				    0 (position :type start-where-value))
 			    (list :type type-restriction))
 		    (symbol-value queue))
-	
+
     ;; add the type restriction information to the start-where aggregate
     (s-value start-where-gadget :type t)
     (s-value start-where-gadget :type-restriction type-restriction)))
@@ -460,11 +456,11 @@ Press cancel if you do not want a type restriction")
     (0 ,OPAL:multi-TEXT
       (:BOX (100 19 3 3 ))
       (:CONSTANT T)
-      (:string ,(o-formula 
+      (:string ,(o-formula
 	   (format nil "It appears that this interactor should be inserted into
 the aggregate named ~S.
 
--If you would like to see this aggregate highlighted, 
+-If you would like to see this aggregate highlighted,
    press the 'highlight aggregate' button.
 -If you would like the interactor inserted into the
    aggregate, press the 'insert into aggregate' button.
@@ -481,8 +477,3 @@ the aggregate named ~S.
       (:selection-function insert-inter-into-agg-query-fn)
       (:DIRECTION :HORIZONTAL)
       (:TOP ,(o-formula (SECOND (GVL :BOX)) 171))))))
-
-
-
-	 
-	 

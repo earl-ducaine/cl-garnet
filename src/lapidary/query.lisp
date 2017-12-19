@@ -7,7 +7,8 @@
 ;;; This file uses the following objects:
 ;;;     TEXT-BUTTON-PANEL from package GARNET-GADGETS
 ;;;     MULTIFONT-TEXT from package OPAL
-(dolist (gadget '("text-buttons-loader"
+(dolist (gadget '(
+		  ;; "text-buttons-loader"
 		  ))
   (load (merge-pathnames gadget common-lisp-user::Garnet-Gadgets-PathName)))
 ;;;
@@ -25,7 +26,7 @@
 (eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(INTER-AGG-QUERY)))
 
-(defparameter common-lisp-user::*Garnet-Object-Just-Created* 
+(defparameter common-lisp-user::*Garnet-Object-Just-Created*
 (create-instance 'INTER-AGG-QUERY OPAL:AGGREGADGET
   (:FUNCTION-FOR-OK NIL)
   (:PACKAGE-NAME "LAPIDARY")
@@ -43,11 +44,11 @@
     (0 ,OPAL:multi-TEXT
       (:BOX (100 19 3 3 ))
       (:CONSTANT T)
-      (:string ,(o-formula 
+      (:string ,(o-formula
 	   (format nil "It appears that this interactor should be inserted into
 the aggregate named ~S.
 
--If you would like to see this aggregate highlighted, 
+-If you would like to see this aggregate highlighted,
    press the 'highlight aggregate' button.
 -If you would like the interactor inserted into the
    aggregate, press the 'insert into aggregate' button.
@@ -74,5 +75,3 @@ the aggregate named ~S.
 	 (s-value (g-value gadget :window) :visible nil)
 	 (opal:update-all)
 	 (inter:interaction-complete (string= value "ok")))))
-	 
-	 

@@ -26,7 +26,8 @@ Change log:
 ;;;
 (unless (get :garnet-modules :option-button)
   (format t "Loading Option-Button...~%")
-  (dolist (pair '((:text-buttons "text-buttons-loader")
+  (dolist (pair '(
+		  ;; (:text-buttons "text-buttons-loader")
 		  (:menu "menu-loader")
 		  (:option-button "option-button")))
     (unless (get :garnet-modules (car pair))
@@ -35,5 +36,3 @@ Change log:
   (format t "...Done Option-Button.~%"))
 
 (setf (get :garnet-modules :option-button) t)
-
-

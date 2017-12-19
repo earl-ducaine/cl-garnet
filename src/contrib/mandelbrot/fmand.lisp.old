@@ -10,7 +10,8 @@
 (declaim (optimize (speed 3) (safety 0) (debug 1)))
 
 (defvar DEMO-MOTIF-INIT
-  (dolist (file '("motif-text-buttons-loader" "motif-save-gadget-loader"
+  (dolist (file '(;; "motif-text-buttons-loader"
+  "motif-save-gadget-loader"
 		  "motif-h-scroll-loader" "prop-sheet-win-loader"
 		  "mouseline-loader"))
     (user::garnet-load (concatenate 'string "gadgets:" file))))

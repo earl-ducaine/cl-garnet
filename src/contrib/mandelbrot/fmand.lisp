@@ -19,7 +19,7 @@
 (in-package "FMAND")
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (dolist (pair '((:motif-text-buttons "gg:motif-text-buttons-loader")
+  (dolist (pair '(;; (:motif-text-buttons "gg:motif-text-buttons-loader")
 		  (:motif-save-gadget "gg:motif-save-gadget-loader")
 		  (:motif-h-scroll "gg:motif-h-scroll-loader")
 		  (:prop-sheet-win "gg:prop-sheet-win-loader")

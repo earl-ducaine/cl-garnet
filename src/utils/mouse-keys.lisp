@@ -3,7 +3,7 @@
 (eval-when (:execute :load-toplevel :compile-toplevel)
   (defvar REFRESH-INIT
     (progn
-      (garnet-load "gadgets:text-buttons-loader")
+      ;; (garnet-load "gadgets:text-buttons-loader")
       (garnet-load "gadgets:radio-buttons-loader"))))
 
 (defvar SMALL-FONT (opal:get-standard-font NIL NIL :small))

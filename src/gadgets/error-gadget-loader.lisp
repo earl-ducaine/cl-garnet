@@ -30,7 +30,7 @@ Change log:
 
 (unless (get :garnet-modules :error-gadget)
   (format t "Loading Error-Gadget...~%")
-  (dolist (pair '((:text-buttons "text-buttons-loader")
+  (dolist (pair '(;; (:text-buttons "text-buttons-loader")
 		  (:error-gadget-utils "error-gadget-utils")
 		  (:error-gadget "error-gadget")))
     (unless (get :garnet-modules (car pair))
@@ -39,6 +39,3 @@ Change log:
   (format t "...Done Error-Gadget.~%"))
 
 (setf (get :garnet-modules :error-gadget) t)
-
-
-
