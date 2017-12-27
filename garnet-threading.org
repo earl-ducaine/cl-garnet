@@ -1,0 +1,145 @@
+
+
+Contention of multiple threads can cause deadlocking in the garnet system.
+
+
+Some approaches
+
+* Fully multi-threaded
+
+** Alow some objects to have their own threads
+   
+   
+** thread pool/ worker thread client against a server model
+
+* (mostly) single threaded
+
+  application finishes initialization before the single threaded event
+  processor is allowed to engage.
+
+
+
+
+* Misc Notes
+
+  The general event processing loop entrypoint: launch-main-event-loop-process
+
+* Thread profile
+
+  Running,
+
+  #+BEGIN_SRC lisp :tangle no
+    (bordeaux-threads:all-threads)
+  #+END_SRC
+
+** When Swank starts
+
+   #+BEGIN_SRC lisp :tangle no
+     (#<SB-THREAD:THREAD "repl-thread" RUNNING {100BA78033}>
+      #<SB-THREAD:THREAD "auto-flush-thread" RUNNING {100BA77DD3}>
+      #<SB-THREAD:THREAD "swank-indentation-cache-thread" RUNNING {100AE38183}>
+      #<SB-THREAD:THREAD "reader-thread" RUNNING {100AE38033}>
+      #<SB-THREAD:THREAD "control-thread" RUNNING {100AE30213}>
+      #<SB-THREAD:THREAD "Swank Sentinel" RUNNING {100AB673E3}>
+      #<SB-THREAD:THREAD "main thread" RUNNING {1003985083}>)
+   #+END_SRC
+
+** After Garnet is loaded
+
+   #+BEGIN_SRC lisp :tangle no
+     (#<SB-THREAD:THREAD "Garnet event loop" RUNNING {100AB06553}>
+      #<SB-THREAD:THREAD "repl-thread" RUNNING {100BA78033}>
+      #<SB-THREAD:THREAD "auto-flush-thread" RUNNING {100BA77DD3}>
+      #<SB-THREAD:THREAD "swank-indentation-cache-thread" RUNNING {100AE38183}>
+      #<SB-THREAD:THREAD "reader-thread" RUNNING {100AE38033}>
+      #<SB-THREAD:THREAD "control-thread" RUNNING {100AE30213}>
+      #<SB-THREAD:THREAD "Swank Sentinel" RUNNING {100AB673E3}>
+      #<SB-THREAD:THREAD "main thread" RUNNING {10039C69F3}>)
+   #+END_SRC
+
+
+** Only Garnet event loop is added
+
+   Loaded from:
+
+   protected-eval/protected-process.lisp
+
+
+
+* Garnet multi-processing/synchronization framework
+
+** Occurances in the code of synchonization
+
+   
+*** Symbols from bordeaux-threads
+
+
+    Interactive synchronization
+    - launch-timer-process (inter/animation-process.lisp)
+    - default-event-handler (inter/i-windows.lisp)
+
+    Graphics library (CLX) synchronization
+    - *update-lock* (gem/x.lisp)
+    - x-map-and-wait (gem/x.lisp)
+
+    opal synchronization
+    - :update opal::window (opal/update-window.lisp)
+    - launch-main-event-loop-process (opal/process.lisp)
+    - kill-main-event-loop-process (opal/process.lisp)
+    - running-main-event-loop-process-elsewhere-p (opal/process.lisp)
+
+    kr object synchronizaiton
+    - *formula-lock* (kr/kr-macros.lisp)
+    - formula-pop (kr/kr-macros.lisp)
+    - formula-push (kr/kr-macros.lisp)
+
+    Misc synchronization
+    - disable-event-loop-process (contrib/lucid-loop.lisp)
+
+
+
+
+
+
+
+
+
+    
+
+
+  
+
+
+*** we might need to 'pump' the event loop from time to time
+
+    #+BEGIN_SRC lisp :tangle no
+      (default-event-handler
+	  (g-value gem:device-info :current-root))
+    #+END_SRC
+
+
+
+    event pump: default-event-handler
+    
+
+
+    
+(opal:launch-main-event-loop-process)
+    src/inter/i-windowes.lisp
+    (inter::default-event-handler
+    (g-value gem:device-info :current-root))
+
+    and again
+
+    ;; Needs to be activated
+    src/protected-eval/protected-eval-gadgets.lisp
+    (when opal::*main-event-loop-process*
+    (opal:kill-main-event-loop-process)
+    (opal:launch-main-event-loop-process))
+
+
+
+
+    maybe this could be done with a non-blocking parameter or a
+    parameter indicating to loop until an expected response is
+    recieved.

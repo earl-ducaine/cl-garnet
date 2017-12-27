@@ -47,7 +47,15 @@
 	  (setf (aref array i) (aref methods i)))
 	(setf methods array)
 	(s-value device :methods array)))
-    (setf (aref methods number) method)))
+    (setf (aref methods number)
+	  (lambda (&rest args)
+		 ;; all 'x' methods should initial the display if it
+		 ;; hasn't been.  By adding this as a wrapper to all
+		 ;; 'attach-method' api entry points, we avoid having
+		 ;; to call this at compile or change the way the gem
+		 ;; api.
+		 (init-device)
+		 (apply method args)))))
 
 (defun set-window-methods (window device)
   (s-value window :device device)
@@ -183,6 +191,8 @@
 	       (:current-root NIL)
 	       (:active-devices NIL))
 
+(defvar  *gem-device-initialized* nil)
+
 (defun init-device ()
   ;; This schema stands for the top-level root window for the X
   ;; device.  We use create-schema to prevent any :initialize method
@@ -193,16 +203,19 @@
   ;; into the root nodes of the windows and fonts hierarchies.
   (create-schema 'x-device (:root-window *root-window*) (:device-type :x))
   (attach-x-methods x-device)
-  (initialize-device-values (get-full-display-name) *root-window*)
-  (s-value device-info :current-root *root-window*)
-  (s-value device-info :current-device x-device)
-  (pushnew x-device (g-value device-info :active-devices))
-  (let ((display-info (initialize-device *root-window*)))
-    (s-value *root-window* :drawable
-	     (display-info-root-window display-info))
-    (s-value *root-window* :display-info display-info))
-  (set-draw-functions *root-window*)
-  *root-window*)
+  (let ((full-display-name (get-full-display-name)))
+    (when (and full-display-name (not *gem-device-initialized*))
+      (initialize-device-values (get-full-display-name) *root-window*)
+      (s-value device-info :current-root *root-window*)
+      (s-value device-info :current-device x-device)
+      (pushnew x-device (g-value device-info :active-devices))
+      (let ((display-info (x-initialize-device *root-window*)))
+	(s-value *root-window* :drawable
+		 (display-info-root-window display-info))
+	(s-value *root-window* :display-info display-info))
+      (x-set-draw-functions *root-window*)
+      (setf *gem-device-initialized* t)
+      *root-window*)))
 
 ;;; This is a utility function, used only for interactive debugging.
 (defmacro adjust (name)

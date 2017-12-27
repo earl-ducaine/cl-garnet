@@ -535,7 +535,6 @@ pixmap format in the list of valid formats."
       (when (= (xlib:pixmap-format-bits-per-pixel format) depth)
         (return-from depth-to-bits-per-pixel depth)))))
 
-
 (defun pixarray-element-type (depth)
   (case depth
     (1  'xlib::pixarray-1-element-type)
@@ -551,10 +550,8 @@ pixmap format in the list of valid formats."
       depth)
      'xlib::pixarray-8-element-type)))
 
-
 ;; <color-or-data> is used as a color (if <from-data-p> is nil) or as
 ;; actual data
-;;
 (defun x-create-image (root-window width height depth from-data-p
                        &optional color-or-data properties
                          bits-per-pixel left-pad data-array)
@@ -709,7 +706,6 @@ pixmap format in the list of valid formats."
 
 
 ;;; Destroys the <x-window>, a raw window (NOT an Opal window!)
-;;;
 (defun x-delete-window (root-window x-window)
   (declare (ignore root-window))
   (setf (getf (xlib:drawable-plist x-window) :garnet) NIL)
@@ -717,8 +713,6 @@ pixmap format in the list of valid formats."
     (xlib:destroy-window x-window)
     (if display
 	(xlib:display-force-output display))))
-
-
 
 ;;; RETURNS: multiple values:
 ;;; - x of the last mouse event that was discarded;
@@ -1048,10 +1042,12 @@ pixmap format in the list of valid formats."
 
 ;; Synchronously process any message on the event queue and return
 (defun pump-event-loop ()
-  (let ((current-root (g-value gem:device-info :current-root)))
-    (when (and current-root
-	       (xlib:event-listen (the-display current-root) 0.001))
-      (x-event-handler current-root nil :timeout 0.001))))
+  ;; only pump if we've initialized CLX, otherwise do nothing.
+  (when *gem-device-initialized*
+    (let ((current-root (g-value gem:device-info :current-root)))
+      (when (and current-root
+		 (xlib:event-listen (the-display current-root) 0.001))
+	(x-event-handler current-root nil :timeout 0.001)))))
 
 (defun x-event-handler (root-window ignore-keys &key (timeout 0) (discard-p t))
   (let ((display (the-display root-window)))
@@ -1825,7 +1821,7 @@ pixmap format in the list of valid formats."
   "Create Alist since CLX likes to get the draw function in the form of an
 integer.  We want to specify nice keywords instead of those silly
  numbers."
-  (gem:set-draw-function-alist root-window)
+  (x-set-draw-function-alist root-window)
   (dolist (fn-pair *function-alist*)
     (setf (get (car fn-pair) :x-draw-function) (cdr fn-pair))))
 
