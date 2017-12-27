@@ -52,18 +52,13 @@
 ;;     ^-shift-> = bigger font
 ;;     ^1 ^2 ^3 ^4  = small, medium, large, and very-large fonts
 
-
- (in-package "INTERACTORS")
+(in-package :interactors)
 
-(eval-when (:execute :load-toplevel :compile-toplevel)
-  (export '(MULTIFONT-TEXT-INTERACTOR))
-  (proclaim '(special MULTIFONT-TEXT-INTERACTOR)))
 
-
-;;; Initializes the hash table of an-interactor with the standard
-;;  translations.  If there is no table in an-interactor, creates one.
-;;  Otherwise, removes any translations that are there before adding
-;;  the new ones.
+;; Initializes the hash table of an-interactor with the standard
+;; translations.  If there is no table in an-interactor, creates one.
+;; Otherwise, removes any translations that are there before adding
+;; the new ones.
 (defun Set-MultiFont-Default-Key-Translations (an-interactor)
   (let ((ht (get-local-value an-interactor :standard-translation-table)))
     (if (not (hash-table-p ht))
@@ -82,7 +77,7 @@
     (bind-key-internal :control-meta-\b         :lisp-prev-expr ht)
     (bind-key-internal :control-meta-B          :lisp-prev-expr ht)
     (bind-key-internal :control-meta-LEFTARROW  :lisp-prev-expr ht)
-    
+
     (bind-key-internal :control-LEFTARROW   :prev-char-select ht)
     (bind-key-internal :meta-LEFTARROW      :prev-word-select ht)
 
@@ -90,7 +85,7 @@
 
     (bind-key-internal :RIGHTARROW  :next-char ht)
     (bind-key-internal :control-\f  :next-char ht)
-    
+
     (bind-key-internal :meta-F      :next-word ht)
     (bind-key-internal :meta-\f     :next-word ht)
 
@@ -100,15 +95,15 @@
 
     (bind-key-internal :control-RIGHTARROW   :next-char-select ht)
     (bind-key-internal :meta-RIGHTARROW      :next-word-select ht)
-    
+
     ;; PREVIOUS LINE
-    
+
     (bind-key-internal :UPARROW     :up-line ht)
     (bind-key-internal :control-P   :up-line ht)
     (bind-key-internal :control-\p  :up-line ht)
 
     (bind-key-internal :control-UPARROW   :up-line-select ht)
-    
+
     ;; NEXT LINE
 
     (bind-key-internal :DOWNARROW   :down-line ht)
@@ -116,11 +111,11 @@
     (bind-key-internal :control-\n  :down-line ht)
 
     (bind-key-internal :control-DOWNARROW   :down-line-select ht)
-    
+
     ;; BEGINNING/END  LINE/STRING
 
     (bind-key-internal :control-\a  :beginning-of-line ht)
-    
+
     (bind-key-internal :control-\e  :end-of-line ht)
 
     (bind-key-internal :HOME      :beginning-of-string ht)
@@ -129,22 +124,22 @@
 
     (bind-key-internal :control-HOME :beginning-of-string-select ht)
     (bind-key-internal :control-R7   :beginning-of-string-select ht) ;HOME key
-    
-    (bind-key-internal :END         :end-of-string ht) 
+
+    (bind-key-internal :END         :end-of-string ht)
     (bind-key-internal :R13         :end-of-string ht) ; END key on Sun
     (bind-key-internal :control-\.  :end-of-string ht)
 
     (bind-key-internal :control-END :end-of-string-select ht)
     (bind-key-internal :control-R13 :end-of-string-select ht) ;END key
-    
+
     (bind-key-internal :control-\*  :select-all ht)
-    
+
     ;; delete previous
 
     (bind-key-internal #\delete     :delete-prev-char ht)
     (bind-key-internal #\backspace        :delete-prev-char ht)
     (bind-key-internal :control-\h        :delete-prev-char ht)
-    
+
     (bind-key-internal :meta-H         :delete-prev-word ht)
     (bind-key-internal :meta-\h        :delete-prev-word ht)
     (bind-key-internal :meta-BACKSPACE :delete-prev-word ht)
@@ -170,23 +165,23 @@
     ;; other deletes and copies
 
     (bind-key-internal :control-\u  :delete-string ht)
-    
+
     (bind-key-internal :control-\k  :kill-line ht)
 
     (bind-key-internal :control-W  :delete-selection ht)
     (bind-key-internal :control-\w :delete-selection ht)
     (bind-key-internal :CUT        :delete-selection ht)
     (bind-key-internal :L10        :delete-selection ht) ;; cut key on Sun
-    
+
     (bind-key-internal :meta-W     :copy-selection ht)
     (bind-key-internal :meta-\w    :copy-selection ht)
     (bind-key-internal :COPY       :copy-selection ht)
     (bind-key-internal :L6         :copy-selection ht) ;; copy key on Sun
 
     (bind-key-internal :control-c  :copy-to-X-cut-buffer ht)
-    
+
     ;; PASTES
-    
+
     (bind-key-internal :control-\y  :yank-buffer-or-X-cut-buffer ht)
     (bind-key-internal :insert  :yank-buffer-or-X-cut-buffer ht)
     (bind-key-internal :L8      :yank-buffer-or-X-cut-buffer ht) ;paste on Sun
@@ -208,9 +203,9 @@
 
     (bind-key-internal :control-\o :Insert-LF-after ht)
     (bind-key-internal :control-O  :Insert-LF-after ht)
-    
+
     ;; FONT STUFF
-    
+
     (bind-key-internal :control-B  :toggle-bold ht)
     (bind-key-internal :control-I  :toggle-italic ht)
     (bind-key-internal :control->  :bigger ht)
@@ -228,7 +223,7 @@
     (bind-key-internal :control-F  :fixed ht)
     (bind-key-internal :control-T  :serif ht)
     (bind-key-internal :control-H  :sans-serif ht)
-      
+
     ;; translate the number pad into regular characters (if CMU)
     #+cmu (bind-key-internal :num-pad-1 #\1 ht)
     #+cmu (bind-key-internal :num-pad-2 #\2 ht)
@@ -264,8 +259,8 @@
      (bind-key-internal #\rubout #'rubout-func ht)
      (bind-key-internal :control-\d #'cd-func ht)
      (bind-key-internal :meta-\d #'md-func ht)
-     (bind-key-internal :control-\k #'ck-func ht) 
-     (bind-key-internal :control-\y #'cy-func ht) 
+     (bind-key-internal :control-\k #'ck-func ht)
+     (bind-key-internal :control-\y #'cy-func ht)
      (bind-key-internal :control-meta-\f #'cmf-func ht)
      (bind-key-internal :control-meta-f #'cmf-func ht)
      (bind-key-internal :control-meta-rightarrow #'cmf-func ht)
@@ -276,7 +271,7 @@
      (bind-key-internal :control-meta-d #'cmd-func ht)
      (bind-key-internal :control-meta-\h #'cmh-func ht)
      (bind-key-internal :control-meta-h #'cmh-func ht)
-     (bind-key-internal :control-meta-rubout #'cmh-func ht)     
+     (bind-key-internal :control-meta-rubout #'cmh-func ht)
      (bind-key-internal #\# #'hash-func ht)
      (bind-key-internal #\( #'open-paren-func ht)
      (bind-key-internal #\) #'close-paren-func ht)
@@ -466,7 +461,7 @@
 (defun Set-Font-Changing (string-object family face size)
   (if (g-value string-object :selection-p)
       (progn
-	(when family 
+	(when family
 	  (opal:change-font-of-selection string-object NIL :family family))
 	(when size
 	  (opal:change-font-of-selection string-object NIL :size size))
@@ -518,7 +513,7 @@
 
 
 (defun curs-move (inter string-object)
-  (kr-send inter :after-cursor-moves-func inter string-object)) 
+  (kr-send inter :after-cursor-moves-func inter string-object))
 
 (defparameter Shift-Bit
   (gem:create-state-mask (g-value gem:device-info :current-root) :shift))
@@ -547,7 +542,7 @@
 	       ))
 	  ((and (event-code event)(null (event-downp event)))
 	   (s-value an-interactor :dragging-now NIL)))))
-    
+
 (defun Handle-Drag-Through (string-object event)
   (opal:toggle-selection string-object T)
   (opal:set-selection-to-x-y-position string-object
@@ -658,7 +653,7 @@
 		  (:end-of-line-select (opal:toggle-selection string-object t)
 				       (opal:go-to-end-of-line string-object)
 				       (curs-move an-interactor string-object))
-		  (:select-all 
+		  (:select-all
 		   (opal:toggle-selection string-object NIL)
 		   (opal:go-to-beginning-of-text string-object)
 		   (opal:toggle-selection string-object T)
@@ -757,7 +752,7 @@
 		      (funcall new-trans-char an-interactor string-object
 			       event)
 		      (curs-move an-interactor string-object))
-		     ((event-mousep event)  
+		     ((event-mousep event)
 		      (if (is-a-p an-interactor MULTIFONT-TEXT-INTERACTOR)
 			 (Handle-Move-Cursor an-interactor string-object event)
 			  ;; else is a focus-multifont so don't do anything
@@ -806,7 +801,7 @@
       (:after-cursor-moves-func (o-formula (when (gvl :match-parens-p)
 						 #'check-parens)))
       (:running-where T)
-      (:drag-through-selection? T) 
+      (:drag-through-selection? T)
       (:start-action 'Multifont-Text-Int-Start-Action)
       (:Do-Start 'MultiFont-Text-do-start) ; special start for drag-through
       (:edit-func 'Multifont-Edit-String)

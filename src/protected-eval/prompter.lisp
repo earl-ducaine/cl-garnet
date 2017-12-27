@@ -11,7 +11,7 @@
 ;;  about its utility, rather we hope that someone may find a use
 ;;  for it.
 
-;;;  Prompter Gadget
+;;  Prompter Gadget
 ;;
 ;;   Features:
 ;;    This gadget is like the error or query gadget except that it
@@ -90,16 +90,10 @@
 
 (export '(PROMPTER-GADGET DISPLAY-PROMPT DISPLAY-PROMPT-AND-WAIT))
 
-;;;      (proclaim '(special ERROR-INPUT-PRIORITY-LEVEL))
-;;;      (user::garnet-load "gadgets:error-gadget-loader")
-;;;      (user::garnet-load "contrib:scrolling-unlabeled-box-loader")
-;;;      (user::garnet-load "contrib:protected-eval-loader")
-
 (defun prompter-accept-input (string-gadget value)
   (let ((prompter (g-value string-gadget :parent)))
     (s-value prompter :value value)
     (s-value prompter :modified? t)))
-
 
 (defun prompter-gadget-eval-func (button but-value)
   (declare (ignore but-value))
@@ -153,10 +147,10 @@
 (or (kr:def-kr-type Package () 'Package)
     t)
 
-;; NOTE:  If :parent-window is specified, then the parent window must already
-;; have been opal:update'd when the instance of ERROR-GADGET is created.
-;;
-(kr:create-instance 'PROMPTER-GADGET GG:Motif-Query-Gadget #-(and)GG:Query-Gadget
+;; If :parent-window is specified, then the parent window must already
+;; have been opal:update'd when the instance of ERROR-GADGET is
+;; created.
+(kr:create-instance 'prompter-gadget gg:motif-query-gadget #-(and)gg:query-gadget
   :declare
   ((:parameters :string :field-width :input-font :value
 		:default-value :eval? :read-bindings

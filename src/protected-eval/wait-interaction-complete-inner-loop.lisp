@@ -10,9 +10,10 @@
 ;; the UI.
 
 ;; split from protected-process.lisp
-
 (in-package :inter)
 
+
+;; wait interaction complete interactive loop
 (defun w-i-c-i-l ()
   "wait-interaction-complete-inner-loop; protected version."
   (catch 'exit-wait-interaction-complete

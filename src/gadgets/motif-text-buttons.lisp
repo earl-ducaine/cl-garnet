@@ -32,7 +32,7 @@
 ;;;            Fixed-height-p -- same, but with heights
 ;;;            Fixed-width-size -- width of all components (default is the
 ;;;                                width of the widest button)
-;;;            Fixed-height-size -- same, but with heights 
+;;;            Fixed-height-size -- same, but with heights
 ;;;            H-align -- how to align text within buttons horizontally
 ;;;                       :left, :center, or :right (default is :center)
 ;;;            V-align -- how to align text within buttons, vertically
@@ -51,7 +51,7 @@
 ;;;     6)  String (in single buttons)
 ;;;     7)  Active-p (in single buttons) -- Whether the single button can be
 ;;;                                         selected.
-;;;     8)  Items (in button panels) -- This can be: 
+;;;     8)  Items (in button panels) -- This can be:
 ;;;                  A list of strings, as in '("Large" ...), or
 ;;;                  a list of atoms, as in '(:center ...), or
 ;;;                  a list of string/function pairs, '(("Cut" Cut-FN) ...), or
@@ -79,15 +79,8 @@
 ;;;
 ;;;  Written by Andrew Mickish
 
-
-(in-package "GARNET-GADGETS")
 
-(eval-when (:execute :load-toplevel :compile-toplevel)
-  (export '(Motif-Text-Button Motif-Text-Button-Panel))
-  #+garnet-test
-  (export '(Motif-Text-Buttons-Go Motif-Text-Buttons-Stop
-	    Demo-Motif-Text-Button Demo-Motif-Text-Button-Panel
-	    Motif-Text-Buttons-Top-Agg Motif-Text-Buttons-Win)))
+(in-package :garnet-gadgets)
 
 (create-instance 'MOTIF-TEXT-BUTTON-TEXT-LABEL-PROTOTYPE opal:text
   (:constant '(:actual-heightp))
@@ -221,7 +214,7 @@
    (:font opal:default-font)
    (:foreground-color opal:MOTIF-GRAY)
    (:selection-function NIL)
-   
+
    (:direction :vertical)
    (:v-spacing 5) (:h-spacing 5)
    (:v-align :top) (:h-align :left)
@@ -353,7 +346,7 @@
 			   (gv (kr-path 1 :parent :parent) :strings)))))
 	 (:action ,(o-formula (nth (gvl :rank)
 				   (gv (kr-path 0 :parent :parent ) :actions))))
-      
+
 	 (:font ,(o-formula (gv (kr-path 0 :parent :parent) :font)))
 	 (:parts
 	  (:button
@@ -365,7 +358,7 @@
 
    (:interactors
     `((:PRESS ,inter:button-interactor
-        (:start-where ,(o-formula (list :custom 
+        (:start-where ,(o-formula (list :custom
 				   (gv-local :self :operates-on :button-list)
 				   #'Motif-Element-Of-Not-Illegal)))
 	(:window ,(o-formula (gv-local :self :operates-on :window)))
@@ -421,11 +414,11 @@
 
 		    ;; Propagate new selection toward :value slot
 		    (s-value gadget :value-obj (when selected selection))
-		    
+
 		    ;; Global function for all items
 		    (kr-send gadget :selection-function
 			     gadget (when selected item-obj))
-		    
+
 		    ;; Local function assigned to item
 		    (when action
 		      (funcall action gadget (when selected item-obj)))))
@@ -490,7 +483,7 @@
 ;;;  DEMO FUNCTION
 ;;;
 
-#+garnet-test 
+#+garnet-test
 (defun MOTIF-TEXT-BUTTONS-GO (&key dont-enter-main-event-loop
 				   not-double-buffered-p)
   (create-instance 'MOTIF-TEXT-BUTTONS-WIN inter:interactor-window
@@ -522,6 +515,6 @@
   (unless dont-enter-main-event-loop #-cmu (inter:main-event-loop))
   )
 
-#+garnet-test 
+#+garnet-test
 (defun MOTIF-TEXT-BUTTONS-STOP ()
   (opal:destroy MOTIF-TEXT-BUTTONS-WIN))

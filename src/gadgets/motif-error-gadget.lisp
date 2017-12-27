@@ -1,25 +1,25 @@
 ;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: GARNET-GADGETS; Base: 10 -*-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;         The Garnet User Interface Development Environment.      ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; This code was written as part of the Garnet project at          ;;;
-;;; Carnegie Mellon University, and has been placed in the public   ;;;
-;;; domain.  If you are using this code or any part of Garnet,      ;;;
-;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; The Garnet User Interface Development Environment.
+;;;
+;;; This code was written as part of the Garnet project at Carnegie
+;;; Mellon University, and has been placed in the public domain.  If
+;;; you are using this code or any part of Garnet, please contact
+;;; garnet@cs.cmu.edu to be put on the mailing list.
 ;;;
 ;;;  Motif Error Gadget and Motif Query Gadget
 ;;;
 ;;;  Features:
-;;;   The motif-error-gadget and motif-query-gadget can be used in applications
-;;;   where the designer wants to tell the user that some error
-;;;   (possibly caused by the user) has been encountered, or to ask a
-;;;   question.  When the display-** functions (described below) are
-;;;   called, the error or query window becomes visible and displays
-;;;   a message.
 ;;;
-;;;   The motif-error-gadget supplies a single button "OK", and the motif query
-;;;   gadget supplies an arbitrary list of buttons.
+;;;  The motif-error-gadget and motif-query-gadget can be used in
+;;;  applications where the designer wants to tell the user that some
+;;;  error (possibly caused by the user) has been encountered, or to
+;;;  ask a question.  When the display-** functions (described below)
+;;;  are called, the error or query window becomes visible and
+;;;  displays a message.
+;;;
+;;;  The motif-error-gadget supplies a single button "OK", and the
+;;;  motif query gadget supplies an arbitrary list of buttons.
 ;;;
 ;;;  Motif Error Gadget
 ;;;  Customizable slots:
@@ -42,7 +42,7 @@
 ;;;   of the error-gadget should be created with the :parent-window slot
 ;;;   set to the window of the application.  To activate the error
 ;;;   window, call the function DISPLAY-ERROR or
-;;;   DISPLAY-ERROR-AND-WAIT, which takes the instance of 
+;;;   DISPLAY-ERROR-AND-WAIT, which takes the instance of
 ;;;   the error-gadget and the desired message as parameters.
 ;;;
 ;;;  Query Gadget Programmer's interface:
@@ -56,29 +56,12 @@
 ;;;      should not be added to an aggregate. Bookkeeping for the parent window
 ;;;      is automatically taken care of during the create-instance call.
 
-#|
-============================================================
-Change log:
- 05/16/94  Andrew Mickish - Added :window-title to demo
- 10/06/93  Andrew Mickish - :background-color ---> :foreground-color
-  4/05/93  Andrew Mickish - Removed with-demon-enabled call from :initialize
-             method.
- 12/15/92  Andrew Mickish - Added type and parameter declarations
- 06/05/92  Brad Myers - used :modal-p windows instead of error-priority-level
-                      - allow change of string for error-gadget
- 04/08/92  Brad Myers - created based on error-gadget
-============================================================
-|#
-
 
 (in-package "GARNET-GADGETS")
 
-(eval-when (:execute :load-toplevel :compile-toplevel)
-  (export '(MOTIF-ERROR-GADGET MOTIF-QUERY-GADGET)))
-
-;; NOTE:  If :parent-window is specified, then the parent window must already
-;; have been opal:update'd when the instance of ERROR-GADGET is created.
-;;
+;; If :parent-window is specified, then the parent window must already
+;; have been opal:update'd when the instance of ERROR-GADGET is
+;; created.
 (create-instance 'MOTIF-ERROR-GADGET opal:aggregadget
   :declare ((:parameters :string :parent-window :font :justification
 			 :modal-p :beep-p :window-left :window-top
@@ -192,7 +175,7 @@ Change log:
 
 
 (define-method :initialize MOTIF-ERROR-GADGET (e-gadget)
-  (call-prototype-method e-gadget) 
+  (call-prototype-method e-gadget)
   (let ((window
 	 (create-instance NIL inter:interactor-window
 	    (:parent (g-value e-gadget :parent-window))

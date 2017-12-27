@@ -1,36 +1,17 @@
-;;; -*- Mode: COMMON-LISP; Package: GARNET-GADGETS -*-               ;;
-;;-------------------------------------------------------------------;;
-;;            Copyright 1993 Russell G. Almond                       ;;
-;;-------------------------------------------------------------------;;
-;; This code is in the Public Domain.  Anyone who can get some use   ;;
-;; from it is welcome.                                               ;;
-;; This code comes with no warranty.                                 ;;
-;;-------------------------------------------------------------------;;
-
-;;; $Id$
-
-
-;;; Abstract error handler functions
+;;; -*- Mode: COMMON-LISP; Package: GARNET-GADGETS -*-
 ;;
+;; Copyright 1993 Russell G. Almond
+;;
+;; This code is in the Public Domain.  Anyone who can get some use
+;; from it is welcome.  This code comes with no warranty.
+
+
+;;; Abstract error handler functions
 ;;
 ;;  These functions provide an abstraction of the error handling
 ;;  facilities which can be bound as appropriate.
 
-(in-package "GARNET-GADGETS")
-
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(prompting-protected-eval
-	    prompting-protected-read prompting-protected-read-from-string 
-	    prompter
-	    protect-errors with-protected-errors 
-	    protected-eval
-	    protected-read protected-read-from-string
-	    call-prompter
-	    displayer call-displayer 
-	    selector call-selector
-	    *application-long-name* *application-short-name*
-	    )))
-
+(in-package :garnet-gadgets)
 
 (defun prompting-protected-eval (form &key (default-value nil dv?)
 					   (context (format nil
@@ -56,8 +37,7 @@ If <allow-debug> is nil (defaul (eq *user-type* :programmer)) then the
 debug switch is suppressed.
 
 <context> is a string defining the context of the error.  Default
-value is `Evaluating <form>'.
-"
+value is `Evaluating <form>'."
 
   (let* ((handler-function
 	  (lambda (condition)
@@ -238,21 +218,21 @@ If <default-value> is supplied, a CONTINUE restart is set up which
 allows the user to select the default value.
 
 If <eval-input?> is true, then the expression is evaluated before it
-is returned; if not, the unevaluated expression is returned.  
+is returned; if not, the unevaluated expression is returned.
 
 The value supplied by the user is passed to <satisfy-test>.  If that
 test fails, the user is prompted again."
 
-  (loop 
+  (loop
     (format stream "~A~%==>" prompt)
     (multiple-value-setq (form flag)
-      (apply #'prompting-protected-read stream 
+      (apply #'prompting-protected-read stream
 	     :local-abort local-abort :abort-val abort-val
 	     (if dv? (list :default-value default-value) '())))
     (unless (eq flag :ABORT)
       (if eval-input?
 	  (multiple-value-setq (val flag)
-	    (apply #'prompting-protected-eval form 
+	    (apply #'prompting-protected-eval form
 		   :local-abort local-abort :abort-val abort-val
 		   (if dv? (list :default-value default-value) '())))
 	(setq val form)))
@@ -277,7 +257,7 @@ test fails, the user is prompted again."
 ;;
 
 
-(defun protect-errors (context condition 
+(defun protect-errors (context condition
 		       &key (allow-debugger (eql *user-type* :programmer)))
   "Error handler which prompts user for a choice of
    :ABORT, :DEBUG, :CONTINE, :USE-VALUE and :STORE-VALUE
@@ -288,7 +268,7 @@ test fails, the user is prompted again."
 enter the LISP debugger.
 
 Should be invoked with an expression such as:
-  (handler-bind 
+  (handler-bind
     ((error \#'(lambda (condition)
 		 (protect-errors context-string condition))))
   ...)
@@ -305,7 +285,7 @@ strategies.  If *user-type* is :programmer, then allows debugging.
 <context> should be a string describing user meaningful context in
 which error occured."
   `(handler-bind
-       ((error 
+       ((error
 	 (lambda (condition)
 	   (protect-errors ,context condition))))
      ,.forms))
@@ -433,12 +413,12 @@ where <abort-val> is another parameter. (Same as
 protected-eval).
 
 "
-  (declare (ignore start context end read-package read-bindings 
+  (declare (ignore start context end read-package read-bindings
 		   default-value allow-debug local-abort abort-val))
   (apply #'prompting-protected-read-from-string string args))
 
 
-(defun call-prompter (prompt 
+(defun call-prompter (prompt
 		      &rest args
 		      &key (stream *query-io*)
 			   (local-abort nil)
@@ -454,7 +434,7 @@ If <default-value> is supplied, a CONTINUE restart is set up which
 allows the user to select the default value.
 
 If <eval-input?> is true, then the expression is evaluated before it
-is returned; if not, the unevaluated expression is returned.  
+is returned; if not, the unevaluated expression is returned.
 
 The value supplied by the user is passed to <satisfy-test>.  If that
 test fails, the user is prompted again.
@@ -553,4 +533,3 @@ first on the stream as a prompt."
 
 (defvar *application-short-name* "LISP"
   "Name of application for Icon titles.")
-

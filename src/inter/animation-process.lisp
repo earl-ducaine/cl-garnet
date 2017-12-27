@@ -112,7 +112,6 @@ debugger, otherwise NIL"
 
 (defun launch-timer-process (inter time once)
   "Spawn a process which is waiting for timer events"
-
   (let ((timer-process (g-value inter :timer-event-process)))
     (when timer-process (internal-kill-timer-process timer-process))
     ;;; DZG (xlib:intern-atom opal::*default-x-display* ':TIMER_EVENT)

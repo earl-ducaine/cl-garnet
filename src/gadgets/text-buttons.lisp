@@ -1,12 +1,12 @@
 ;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: GARNET-GADGETS; Base: 10 -*-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;         The Garnet User Interface Development Environment.      ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; This code was written as part of the Garnet project at          ;;;
-;;; Carnegie Mellon University, and has been placed in the public   ;;;
-;;; domain.  If you are using this code or any part of Garnet,      ;;;
-;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; The Garnet User Interface Development Environment
+;;;
+;;; This code was written as part of the Garnet project at Carnegie
+;;; Mellon University, and has been placed in the public domain. If
+;;; you are using this code or any part of Garnet, please contact
+;;; garnet@cs.cmu.edu to be put on the mailing list.
+;;;
 ;;;
 ;;;  Text-buttons
 ;;;
@@ -73,18 +73,10 @@
 ;;;  Designed by Brad Myers
 ;;;  Written by Andrew Mickish
 
-(in-package "GARNET-GADGETS")
+(in-package :garnet-gadgets)
 
-(eval-when (:execute :load-toplevel :compile-toplevel)
-  (export '(Text-Button Text-Button-Panel))
-  #+garnet-test
-  (export '(Text-Buttons-Go Text-Buttons-Stop Text-Button-Obj
-	    Text-Buttons-Obj Text-Buttons-Top-Agg Text-Buttons-Win
-	    Text-Button-Obj1)))
-
-;;;  IN-BUTTON-TEXT:  This text object is laid on top of the white rectangle
-;;;
-(create-instance 'IN-BUTTON-TEXT opal:text
+;;  Text object laid on top of white rectangle
+(create-instance 'in-button-text opal:text
    (:constant '(:actual-heightp))
    (:left (o-formula (opal:gv-center-x-is-center-of
 		      (gvl :parent :white-field))))

@@ -15,7 +15,7 @@
 
 
 
-(in-package :DEMOS-CONTROLLER)
+(in-package :demos-controller)
 
 (declaim (special WIN1 AGG1 BT QBT DEMOS-MOUSELINE WIN2 TEXT))
 
@@ -115,7 +115,7 @@ the hierarchy for garnet objects.")
 devised by David Goldberg at Xerox PARC.")
     ("virtual-agg" "Demonstrates virtual aggregates.")))
 
-(defun do-go ()
+(defun do-go-bak ()
   (setq *running* NIL)
   (demo-logo:do-go :dont-enter-main-event-loop t)
   (create-instance 'win1 inter:interactor-window
@@ -181,6 +181,75 @@ devised by David Goldberg at Xerox PARC.")
   (opal:update win2)
   (inter:main-event-loop))
 
+
+
+(defun do-go ()
+  (opal:kill-main-event-loop-process)
+  (setq *running* NIL)
+  ;;; (demo-logo:do-go :dont-enter-main-event-loop t)
+  (create-instance 'win1 inter:interactor-window
+    (:left 0)
+    (:top 240)
+    (:width 10)
+    (:height 10)
+    (:title "Demos Controller")
+    (:aggregate (create-instance 'agg1 opal:aggregate)))
+  (create-instance 'bt garnet-gadgets:x-button-panel
+    (:constant T)
+    (:left 2)(:top 40)
+    (:selection-function 'dispatcher)
+    (:rank-margin (o-formula (ceiling (length (gvl :items)) 2)))
+    (:items
+     '("3d" "angle" "animator" "arith" "calculator" "editor"
+       "file-browser" "gadgets" "garnetdraw" "gesture" "graph" "grow"
+       "logo" "manyobjs" "menu" "motif" "multifont" "multiwin" "othello"
+       "pixmap" "schema-browser" "scrollbar" "text" "xasperate"
+       "unistrokes" "virtual-agg")))
+  ;; set up help strings for the mouseline gadget.
+  (dolist (button (g-value bt :X-BUTTON-LIST :components))
+    (s-value button :help-string (cadr (assoc (g-value button :string)
+  					      DOCUMENTATION-STRINGS
+  					      :test #'string=))))
+  (create-instance 'qbt garnet-gadgets:text-button
+    (:constant T)
+    (:left 2)(:top 2)(:shadow-offset 3)
+    (:font (create-instance NIL opal:font (:size :medium)(:face :bold)))
+    (:string "Quit")
+    (:help-string "Quits the demos-controller and all demos.")
+    (:selection-function #'quit*))
+  (create-instance 'demos-mouseline gg:mouselinepopup
+    (:windows win1)
+    (:wait-amount 2))
+  (opal:add-components agg1 bt qbt demos-mouseline)
+  (create-instance 'win2 garnet-gadgets:scrolling-window-with-bars
+    (:constant T :except :top :left :width :height :title :total-height)
+    (:left 0) (:top 720)
+    (:width 700)(:height 180)
+    (:title "Instructions for Demos")
+    (:h-scroll-bar-p NIL)
+    (:total-width 700)
+    (:total-height (o-formula (+ 5 (gvl :inner-aggregate :height)) 200)))
+  (s-value win1 :height (o-formula (floor (* 1.1 (gv agg1 :height)))))
+  (s-value win1 :width (o-formula (floor (* 1.1 (gv agg1 :width)))))
+  (opal:update win1)
+  (opal:update win2)
+  (create-instance 'text opal:multifont-text
+    (:left 5)(:top 5)
+    (:initial-text
+     "Hold mouse over a button for 2 seconds to see a description of
+      the demo.  This demonstrates the mouseline gadget.
+      Click the button to start the demo."))
+  (opal:add-components (g-value win2 :inner-aggregate) text)
+  (opal:update win2)
+  ;; We want the scroll wheel to operate anywhere in the text.
+  (s-value win2 :v-scroll :wheel-up :start-where
+  	   (list :element-of-or-none (g-value text :parent)))
+  (s-value win2 :v-scroll :wheel-down :start-where
+  	   (list :element-of-or-none (g-value win2 :parent)))
+  (opal:update win2)
+  (inter:main-event-loop)
+  )
+
 (defun do-stop ()
     (dolist (item *running*)
       (unless (string= item "logo")
@@ -217,7 +286,6 @@ devised by David Goldberg at Xerox PARC.")
     (let ((kr::*warning-on-create-schema* nil)
 	  (package-name (cadar (member (car objlist) *package-list* :key #'car
 				       :test #'string=))))
-
       (when (member (car objlist) *unloaded* :test #'string=)
             (load
               (merge-pathnames

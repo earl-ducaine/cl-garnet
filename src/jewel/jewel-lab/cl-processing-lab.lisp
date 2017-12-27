@@ -370,27 +370,6 @@
 	      original-time-each-frame)))))
 
 
-
-
-;; (setf *top-win* (xlib-lab::create-window 400 410))
-;; (let ((frames (list *triagle-coordinates* *triagle-coordinates2*)))
-;;   (redraw-triangle-on-window *top-win* frames 0)
-;;   (sleep 3)
-;;   (redraw-triangle-on-window *top-win* frames 1)))
-
-;; (defun run-draw ()
-;;   ;; draw object twice with pause
-;;   ;; *triagle-coordinates2*
-;;   (dotimes (i 2)
-;;     redraw-triangle-on-window (*top-win* frame-index)
-;;     ))
-
-
-
-
-
-
-
 ;; the draw routine is a loop that runs on a separate thread
 
 
@@ -405,21 +384,17 @@
       (sb-thread:condition-wait wait-queue wait-mutex :timeout seconds))))
 
 
-(defparameter *recursive-lock* (bt:make-recursive-lock "time-lock"))
+(defparameter *recursive-lock* (bordeaux-threads:make-recursive-lock "time-lock"))
 
-;; (defun wait (seconds lock)
-;;   (let ((wait-mutex ))
-;;     (bt::condition-wait *wait-queue* wait-mutex :timeout seconds)))
-
-(defparameter *timeout-condition-variable* (bt:make-condition-variable))
-(defparameter *timeout-condition-lock* (bt:make-lock))
+(defparameter *timeout-condition-variable* (bordeaux-threads:make-condition-variable))
+(defparameter *timeout-condition-lock* (bordeaux-threads:make-lock))
 (defparameter *stop-p* nil)
 (defparameter *timeout-thread* nil)
 
 (defun run-make-thread ()
   (setf *stop-p* nil)
   (setf *timeout-thread*
-	(bt:make-thread (lambda ()
+	(bordeaux-threads::make-thread (lambda ()
 			  (condition-wait
 			   *timeout-condition-variable*
 			   *timeout-condition-lock*))
@@ -428,8 +403,8 @@
 (defun condition-wait (timeout-condition-variable timeout-condition-lock)
   (iter:iter
     (iter:until *stop-p*)
-    (bt:with-lock-held (timeout-condition-lock)
-      (bt:condition-wait timeout-condition-variable timeout-condition-lock :timeout 5))
+    (bordeaux-threads::with-lock-held (timeout-condition-lock)
+      (bordeaux-threads::condition-wait timeout-condition-variable timeout-condition-lock :timeout 5))
     (setf *stop-p* t)))
 
 

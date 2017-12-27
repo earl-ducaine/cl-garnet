@@ -12,12 +12,12 @@
 
 
 ;;; This file contains the mouse and keyboard ACCELERATORS code
-;; 
+;;
 ;; Designed and implemented by David S. Kosbie
-;; 
+;;
 ;; The punchline for those who hate to read is that if you type the
 ;; following keys into a Garnet window, you get the associated action:
-;; 
+;;
 ;;     :SHIFT-F1 -  raise window
 ;;     :SHIFT-F2 -  lower window
 ;;     :SHIFT-F3 -  iconify window
@@ -25,10 +25,10 @@
 ;;     :SHIFT-F5 -  fullzoom window
 ;;     :SHIFT-F6 -  refresh window
 ;;     :SHIFT-F7 -  destroy window
-;; 
+;;
 ;;     :HELP - INSPECT object
 ;;     :SHIFT-HELP - print out object under the mouse (also in inspector.lisp)
-;; 
+;;
 ;; In interactors.lisp, the function "process-event" first checks the "first"
 ;; accelerators, as follows
 ;; 	1) Try to match event (using assoc) against one in window's
@@ -37,25 +37,25 @@
 ;; 		[Note: these functions take 1 arg, the low-level event struct]
 ;; 	2) If that succeeds, invoke the found function, else repeat the
 ;; 	   same process using the global variable *global-first-accelerators*
-;; Then each low-level event to see if any interactors (or priority-levels 
+;; Then each low-level event to see if any interactors (or priority-levels
 ;; with :stop-when of :always) claim the event.  If not, then it does the following:
 ;; 	1) Try to match event (using assoc) against one in window's
 ;; 		:Accelerators slot, which should contain an alist of the form
 ;; 		( (char1 . fun1) (char2 . fun2) ... )
 ;; 		[Note: these functions take 1 arg, the low-level event struct]
-;; 
+;;
 ;; 	2) If that succeeds, invoke the found function, else repeat the
 ;; 		same process using the global variable *global-accelerators*
-;; 
+;;
 ;; The variables *global-accelerators* and *global-first-accelerators* are defvar'd
 ;; in interactors.lisp, so they can be properly referenced.
-;; 
+;;
 ;; This file first defines the *default-global-accelerators* and all the
 ;; functions it references.  At the end, it invokes this function.
-;; 
+;;
 ;; This file also defines a programmatic interface to accelerators
-;; 
-;; 
+;;
+;;
 
 
 ;;; Change log:
@@ -70,15 +70,6 @@
 ;;; the exported functions and variables
 (eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(
-	    *global-accelerators*	; defined in interactors.lisp
-	    *global-first-accelerators*	; defined in interactors.lisp
-	    *default-global-accelerators*
-
-	    add-global-accelerator      add-window-accelerator
-	    remove-global-accelerator   remove-window-accelerator
-	    clear-global-accelerators   clear-window-accelerators
-	    default-global-accelerators
-
 	    )))
 
 

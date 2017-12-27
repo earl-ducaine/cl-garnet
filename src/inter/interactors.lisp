@@ -451,7 +451,7 @@ Event can be T to use the previous event."
   (declare (ignore self))
   (error "** Cannot create an instance of a top-level interactor"))
 
-
+
 ;;; Utility procedures handling the priority levels for interactors
 
 ;; Design: There is a global list of priority levels.  Each window has
@@ -490,7 +490,7 @@ but already there~%" inter level win)
 	(vector-push-extend inter inter-array 10))))
 
 
-(defun Add-Interactor-To-Level (inter level just-moving)
+(defun add-interactor-to-level (inter level just-moving)
   (if-debug :priority-level
 	    (format T "adding ~s to priority level ~s~%" inter level))
   #+garnet-debug			; only do this when debugging

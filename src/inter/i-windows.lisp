@@ -597,7 +597,6 @@
 	    (aref (the (simple-array (unsigned-byte 32) (5)) data) 0)))))
   NIL)
 
-
 ;; We want this to run once and then exit.  (We used to want this to
 ;; run forever until exit-main-event-loop is called, but now we are
 ;; introducing a parellel process to run the event handler.
@@ -610,8 +609,9 @@
 	(bordeaux-threads:current-thread))
   (gem:event-handler root-window NIL))
 
-(opal:launch-main-event-loop-process)
+(gem::pump-event-loop)
 
+;; 'highlevel' main event loop.
 (defun main-event-loop (&key (exit-when-no-window-visible :on))
   "Event handler for the interactor windows"
   (unless opal::*main-event-loop-process*
@@ -637,21 +637,23 @@
 
 (defvar opal::*exit-main-event-loop-function* #'exit-main-event-loop
   "This variable tells opal what function to call when you delete the
-last window, so that main-loop will be exited automatically.")
+   last window, so that main-loop will be exited automatically.")
 
 
 ;;; Wait-Interaction-Complete
-;;
-
 (defparameter *waiting-for-exit-wait-interaction-complete* 0)
 
 ;; FMG Need to properly interface this with the protected-eval stuff
 ;; so we pull out the inner loop so that we can have a version wrapped
 ;; in WITH-GARNET-ERROR-HANDLING.
-
-(defun W-I-C-I-L ()
-  "Wait-Interaction-Complete-Inner-Loop; pulled out so it can be smashed
-by the protected-eval code."
+;;
+;; Note, a second version can be found here.  The should ultimately be
+;; only one.
+;;
+;; protected-eval/wait-interaction-complete-inner-loop.lisp
+(defun w-i-c-i-l ()
+  "Wait-Interaction-Complete-Inner-Loop; pulled out so it can be
+   smashed by the protected-eval code."
   (catch 'exit-wait-interaction-complete
     (incf *waiting-for-exit-wait-interaction-complete*)
     (if *trans-from-file*
@@ -661,8 +663,7 @@ by the protected-eval code."
 	(catch 'exit-main-loop-exception
 	  (loop
 	     (default-event-handler
-		 (g-value gem:DEVICE-INFO :current-root)))
-	  ))))
+		 (g-value gem:DEVICE-INFO :current-root)))))))
 
 (defun wait-interaction-complete (&optional window-to-raise)
   "Processes events, but this procedure does not exit unless the
@@ -742,15 +743,12 @@ by the protected-eval code."
       (progn
 	(s-value window :old-modal-and-visible T)
 	(pushnew window *Visible-Modal-Windows*))
-      (s-value window :old-modal-and-visible NIL))
-  )
-
+      (s-value window :old-modal-and-visible NIL)))
 
 ;; The following functions are most useful for making a pop-up menu that
 ;; is in its own window.
-;;
 (defun pop-up-win-and-start-interactor (a-window an-interactor
-						 &optional left top)
+					&optional left top)
   (when a-window
     (when left (s-value a-window :left left))
     (when top (s-value a-window :top top))
@@ -760,3 +758,9 @@ by the protected-eval code."
     (grab-mouse a-window))
   (when an-interactor
     (start-interactor an-interactor)))
+
+;; Once more for good measure.  Once we get rid of mentions to this
+;; when loading/compiling Garnet, we should be able to load the
+;; library without any interactive with X11.  That at least is the
+;; goal.
+(gem::pump-event-loop)

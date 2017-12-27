@@ -281,29 +281,22 @@ or evaluated literal expression that it is passed as a second argument."
       (clear-X-events))))
 
 (defun update-all-windows ()
-  #-release-garnet
- "Update items on the display until done."
- (do ((display  (let ((win1
-		       (car (reverse opal::*garnet-windows*))
-		       ;; (caar (opal::get-table-contents))
-			))
-		       (if win1
-			   (xlib:window-display win1)
-                           *default-x-display*))))
+  "Update items on the display until done."
+  (do ((display  (let ((win1
+			(car (reverse opal::*garnet-windows*))))
+		   (if win1
+		       (xlib:window-display win1)
+		       *default-x-display*))))
       ((not (xlib:event-listen display)))
-   (default-event-handler display :timeout 0)))
+    (default-event-handler display :timeout 0)))
 
-
-
+;;; I. Garnet read-eval-print loop (grepl)
 ;;;
-;;;	I. 	Garnet read-eval-print loop (grepl)
-;;;
-;;;    This is an event loop that read lisp if it appears, and runs an
-;;; event handler when x events appear.  Call this at the top level for
-;;; programming-fanuegen (programming pleasure).
+;;; This is an event loop that read lisp if it appears, and runs an
+;;; event handler when x events appear.  Call this at the top level
+;;; for programming-fanuegen (programming pleasure).
 
 (defun grepl ()
-  #-release-garnet
  "The top level function, mostly just catches errors."
   (prog ()
     (format t "~%~a ~%" welcome-to-grepl)
@@ -317,7 +310,6 @@ or evaluated literal expression that it is passed as a second argument."
                (go start))))  ;user made a boo-boo
     (format t "~a~%" goodbye-to-grepl)))
 
-
 ;;;
 ;;;	II. 	Garnet-event-and-lisp-loop
 ;;;
@@ -395,7 +387,6 @@ when they happen."
             (funcall grepl-prompt-function :stream *standard-output*)))))
 
 
- 
 ;;;
 ;;;	IV.	Change to default-event-handler
 ;;; Gives it standard keywords.

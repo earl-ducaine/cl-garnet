@@ -1,19 +1,19 @@
 ;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: GARNET-DEBUG; Base: 10 -*-
 ;;;
 ;;;  The Garnet User Interface Development Environment.
-;;;  This code was written as part of the Garnet project at
-;;;  Carnegie Mellon University, and has been placed in the public
-;;;  domain.
-
+;;;
+;;; This code was written as part of the Garnet project at Carnegie
+;;; Mellon University, and has been placed in the public domain.
+;;;
 ;;; Pop up a window displaying the slots of the object under the mouse
 ;;; when the HELP key is hit.  Allow editing of slots of the object.
 ;;;
 ;;; Designed and implemented by Brad Myers
 
+(in-package :garnet-debug)
 
 (defparameter *process-with-main-event-loop* nil)
 
-(in-package "GARNET-DEBUG")
 (eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(inspector inspect-next-inter Find-Slot-Starting-With
 	    *INSPECTOR-KEY* *SHOW-OBJECT-KEY* *INSPECTOR-NEXT-INTER-KEY*)))
@@ -31,7 +31,7 @@
 (defparameter valid-marker (cons " (V)" bold-italic-font))
 (defparameter constant-marker (cons " (C)" bold-italic-font))
 
-;; for debugging, when reload this module
+;; For debugging, when reload this module
 (declaim (special used-window-list))
 (when (boundp 'used-window-list)
   (dolist (w used-window-list)
@@ -40,15 +40,11 @@
 
 (defparameter used-window-list NIL)  ; list of all inspector windows
 
-
 (defun beep-print (str)
   (fresh-line)
   (inter:beep)
   (princ str)
   (terpri))
-
-
-;;;*******************************************************************
 
 (defparameter debug-started-main-event-loop NIL)
 
@@ -199,9 +195,7 @@
         *show-object-key*)
 
 
-;;*******************************************************************
-
-(defun Db-Show-Error (window string &optional (error? T))
+(defun db-show-error (window string &optional (error? t))
   (let ((err-obj (g-value window :aggregate :error-string))
 	(err-str (if error?
 		 (format NIL "** ERROR: ~a" string)

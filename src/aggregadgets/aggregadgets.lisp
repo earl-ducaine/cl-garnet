@@ -1,39 +1,32 @@
 ;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: OPAL; Base: 10 -*-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;         The Garnet User Interface Development Environment.      ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; This code was written as part of the Garnet project at          ;;;
-;;; Carnegie Mellon University, and has been placed in the public   ;;;
-;;; domain.  If you are using this code or any part of Garnet,      ;;;
-;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; The Garnet User Interface Development Environment.
+;;;
+;;; This code was written as part of the Garnet project at Carnegie
+;;; Mellon University, and has been placed in the public domain.  If
+;;; you are using this code or any part of Garnet, please contact
+;;; garnet@cs.cmu.edu to be put on the mailing list.
+;;;
 ;;;
 ;;; The Aggregadgets. A straightforward way to define hierarchical
 ;;; graphical objects.
 ;;;
 ;;; Philippe Marchal Feb. 1989
-;;;
-;;; $Id::                                                             $
 
-
-(in-package "OPAL")
-(eval-when (:execute :load-toplevel :compile-toplevel)
-  (export '(GVL-SIBLING AGGREGADGET)))
 
-;;;---------------------------------------------------------
+(in-package :opal)
+
 ;;; Macros to make the pathes to other objects more readable
-;;;---------------------------------------------------------
-
+;;;
 ;;; To access slots in a sibling object.
+;;;
 ;;; (gvl-sibling :brother :top) will expand into:
 ;;; (gvl :parent :brother :top)
 (defmacro gvl-sibling (name &rest slots)
   `(gvl :parent ,name ,@slots))
 
-;;;
 ;;; Macros to access to the elements of a part or interactor
 ;;; definition of an aggregadget.
-;;;
 
 ;;; Gives the name of the part or inter,
 (defmacro get-name (def)
@@ -47,26 +40,17 @@
 (defmacro get-body (def)
   `(cddr ,def))
 
-;;;
-;;; An Aggregadget is an aggregate that builds itself, using a slot
-;;; called "parts" where the components of the aggregadget are described;
-;;; and a slot called "interactors" where the interactors that operates
-;;; on the aggregadget are described.
-;;;
 
+;;; An Aggregadget is an aggregate that builds itself, using a slot
+;;; called "parts" where the components of the aggregadget are
+;;; described; and a slot called "interactors" where the interactors
+;;; that operates on the aggregadget are described.
 (create-instance 'opal:aggregadget opal:aggregate
   (:local-only-slots '((:behaviors nil) (:window nil) (:parent nil))))
 
-
-;;;--------------------------------------------------------------------------
-;;;
 ;;; Utility functions
 ;;;
-;;;--------------------------------------------------------------------------
-
-;;;
-;;;  Function for generating an instance from a list of slot/value pairs
-;;;
+;;; Generate instance from a list of slot/value pairs
 (defun call-create-instance (class slots agget &key name add-as)
   (unless (schema-p class)
     (error "~A ~A ~A ~A~%?"
@@ -92,18 +76,19 @@
     obj
     ))
 
-;;;  
-;;;       Inherit-Values is used to copy down formulas from the parts of a
-;;;  prototype aggregadget.  SLOTS is a list of slots to go in a part of AGG.
-;;;  For example, I might want to specify that a part named :box is an
-;;;  opal:circle rather than an instance of the :box part in the prototype.
-;;;  Nevertheless, I might want to still inherit :left, :top, :width, and
-;;;  :height from the prototype part.  
-;;;       If the prototype component has a formula in the inherited slot,
-;;;  then the component instance gets an instance of that formula.  Otherwise,
-;;;  the component instance gets a new formula that looks at its prototype
-;;;  component's slot.  This is the special *inherit-formula*, which is checked
-;;;  in copy-agg and save-agg.
+;;;
+;;;  Inherit-Values is used to copy down formulas from the parts of a
+;;;  prototype aggregadget.  SLOTS is a list of slots to go in a part
+;;;  of AGG.  For example, I might want to specify that a part named
+;;;  :box is an opal:circle rather than an instance of the :box part
+;;;  in the prototype.  Nevertheless, I might want to still inherit
+;;;  :left, :top, :width, and :height from the prototype part.
+;;;
+;;;  If the prototype component has a formula in the inherited slot,
+;;;  then the component instance gets an instance of that formula.
+;;;  Otherwise, the component instance gets a new formula that looks
+;;;  at its prototype component's slot.  This is the special
+;;;  *inherit-formula*, which is checked in copy-agg and save-agg.
 
 (defvar *inherit-formula* (o-formula (gv (car (gvl :parent :is-a))
 					 (gvl :known-as) kr::*schema-slot*)))
@@ -137,7 +122,7 @@
 (defun is-first-comp-in-parts-list (components parts-list)
   (if components
       (let ((first-comp (g-value (first components) :known-as)))
-	(member first-comp parts-list 
+	(member first-comp parts-list
 		:test #'(lambda (fc part)
 			  (let ((name (if (listp part)
 					  (get-name part)
@@ -210,7 +195,7 @@
     (unless (numberp part-name) (declare-constant agget part-name))
     (declare-constant part :parent)
     (declare-constant part :known-as)))
-    
+
 
 ;;;
 ;;;  Generate parts by calling the function supplied in the :parts slot
@@ -331,7 +316,7 @@ Could not find component of rank ~S in prototype.~%" agget rank)))))
 	    ((or (null inters-list) (null names-list)))
 	  (let ((this-inter (car inters-list))
 		(this-inter-name (car names-list)))
-	    (s-value agget :behaviors 
+	    (s-value agget :behaviors
                      (nconc (g-local-value agget :behaviors)
                             (list this-inter)))
 	    (s-value this-inter :operates-on agget)
@@ -340,10 +325,10 @@ Could not find component of rank ~S in prototype.~%" agget rank)))))
 	      (s-value this-inter :known-as this-inter-name))))
 	;; the function did not return names for the inters
 	(dolist (new-inter inters)
-	  (s-value agget :behaviors 
+	  (s-value agget :behaviors
                    (nconc (g-local-value agget :behaviors) (list new-inter)))
 	  (s-value new-inter :operates-on agget)))))
-	
+
 ;;;
 ;;; make-interactors -- make interactors for aggregadgets and aggrelists
 ;;;
@@ -363,7 +348,7 @@ Could not find component of rank ~S in prototype.~%" agget rank)))))
 	    ((eq protointer :modify)
 	     (setf protointer (g-value prototype name))
 	     (cond ((null protointer)
-		    (format t 
+		    (format t
 		     "Warning in AGGREGADGET-INITIALIZE-METHOD: ~S not found ~
 		     in prototype, ignoring this inter: ~A~%" name inter-list))
 		   (t (create-inter name protointer slots agget))))
@@ -377,7 +362,7 @@ Could not find component of rank ~S in prototype.~%" agget rank)))))
 ;;; :interactors slots.
 ;;; If it is an instance of a prototype, the :parts slot is a guide to
 ;;; making instances of the prototype's components and interactors.
-;;; The algorithm is the following: 
+;;; The algorithm is the following:
 ;;;    if there is no parts list, just make instances of prototype's components
 ;;;    if the first item of the prototype is not in the parts list, make
 ;;;        instances of all the prototype components and then add from the
@@ -394,13 +379,13 @@ Could not find component of rank ~S in prototype.~%" agget rank)))))
   (let ((prototype (car (g-local-value agget :is-a)))
 	(parts-list (g-local-value agget :parts))
 	(inter-list (g-local-value agget :interactors)))
-    (if (or (null parts-list) 
-	    (not (is-first-comp-in-parts-list 
+    (if (or (null parts-list)
+	    (not (is-first-comp-in-parts-list
 		  (g-local-value prototype :components) parts-list)))
 	;; create instances of components of a prototype aggregadget
 	(make-instances-from agget prototype))
     (make-parts agget parts-list prototype)
-    (if (or (null inter-list) 
+    (if (or (null inter-list)
 	    (not (is-first-comp-in-parts-list  ; use same fn for inters
 		  (g-local-value prototype :behaviors) inter-list)))
 	(make-inters-from agget prototype))
@@ -459,12 +444,12 @@ Could not find component of rank ~S in prototype.~%" agget rank)))))
 	(s-value agg name gob))
       (if (g-value agg :parts)
 	  (declare-constant agg name)))
-    ;; this would be just a call-prototype-method, but we have to 
+    ;; this would be just a call-prototype-method, but we have to
     ;;  invoke :add-component, not :add-local-component
     (kr-send opal:aggregate :add-component agg gob key where loc)))
 
 
-;;; remove-component -- remove a component from an aggregate and 
+;;; remove-component -- remove a component from an aggregate and
 ;;;   remove instances of the component from instances of the aggregate
 ;;;
 ;;; NOTE: we could do a quick-and-dirty job by just removing all instances
@@ -542,7 +527,7 @@ Could not find component of rank ~S in prototype.~%" agget rank)))))
       (if (g-value agg :interactors)
 	  (declare-constant agg name)))
     (s-value inter :operates-on agg)
-    (s-value agg :behaviors 
+    (s-value agg :behaviors
 	     (nconc (g-local-value agg :behaviors) (list inter)))))
 
 
@@ -611,7 +596,7 @@ Could not find component of rank ~S in prototype.~%" agget rank)))))
 ;;; take-default-component -- remove a component and inherit default from
 ;;; prototype NOTICE that the argument is the NAME of the component to remove.
 ;;; An instance of the default prototype (if there is one) is placed :in-front
-;;; of the appropriate component using add-component so that this change 
+;;; of the appropriate component using add-component so that this change
 ;;; propagates down to instances of agg.  If this component is not :in-front
 ;;; of anything, then :back is used.
 ;;;
@@ -639,10 +624,10 @@ Could not find component of rank ~S in prototype.~%" agget rank)))))
     ;; :front.
     (cond (locator
 	   (setf locator (find-locator-instance locator agg))
-	   
+
 	   (when (null locator)
 	     (setf where :front))) ; mapping failed, move to :front
-	  (t 
+	  (t
 	   (setf where :back))) ; null locator -> :back of aggregate
 
     ;; install a new prototype

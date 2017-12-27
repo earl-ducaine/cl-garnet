@@ -99,7 +99,8 @@
 ;;; A graphic context structure
 (defstruct (gem-gc (:print-function gem-gc-print-function))
   gcontext
-  opal-style                            ; This is either a line or filling style
+  ;; This is either a line or filling style
+  opal-style
   function
   foreground
   background
@@ -107,8 +108,10 @@
   line-style
   cap-style
   join-style
-  dashes                                ; do not set to NIL
-  font                                  ; do not set to NIL
+  ;; do not set to NIL
+  dashes
+  ;; do not set to NIL
+  font
   fill-style
   fill-rule
   stipple
@@ -742,44 +745,26 @@ pixmap format in the list of valid formats."
                                         ; event-case to terminate), which causes
                                         ; loop to terminate
 	 (return)))
-    #+ALLEGRO
-    (block throw-away
-      (xlib:event-case (*default-x-display*
-                        :discard-p t :timeout 0)
-	(:motion-notify ((:x x-prime) (:y y-prime)
-			 (:event-window win-prime))
-			(setf current-x x-prime)
-			(setf current-y y-prime)
-			(setf current-win win-prime)
-			(if *mouse-debug*
-			    (incf *mouse-throw-aways*))
-			nil)
-	(t () (return-from throw-away))))
     (values current-x current-y
             (if current-win
 		(getf (xlib:drawable-plist current-win) :garnet)))))
 
-#-(and cmu mp)
 (defun x-discard-pending-events (root-window &optional (timeout 1))
   (declare (ignore root-window))
   (xlib:event-case (*default-x-display* :discard-p t :timeout timeout)
     (:destroy-notify () NIL) ; get rid of warnings
     (otherwise () t)))
 
-#+(and cmu mp)
-(defun x-discard-pending-events (root-window &optional (timeout 1))
-  (declare (ignore root-window timeout))
-  (ext:flush-display-events *default-x-display*))
-
-
-
 ;; These two 2x2x2 arrays are used as a correction to a flaw in xlib:draw-arc
 (defparameter *left-adjustment*
   (make-array '(2 2 2) :initial-contents '(((0 1) (0 1)) ((0 1) (0 1)))))
+
 (defparameter *top-adjustment*
   (make-array '(2 2 2) :initial-contents '(((0 1) (0 0)) ((0 0) (0 1)))))
+
 (defparameter *width-adjustment*
   (make-array '(2 2 2) :initial-contents '(((0 1) (0 1)) ((0 1) (0 1)))))
+
 (defparameter *height-adjustment*
   (make-array '(2 2 2) :initial-contents '(((0 1) (1 1)) ((1 1) (0 1)))))
 
@@ -826,8 +811,6 @@ pixmap format in the list of valid formats."
 		     (aref *height-adjustment* d-mod-2 d-mod-2 t-mod-2)))
 	   angle1 angle2 NIL)))))
 
-
-
 (defun x-draw-image (window left top width height image function fill-style)
   (let* ((display-info (g-value window :display-info))
          (root-window (display-info-root-window display-info))
@@ -856,7 +839,6 @@ pixmap format in the list of valid formats."
 			      :width width
 			      :height height
 			      :bitmap-p bitmap-p))))))
-
 
 (defun x-draw-line (window x1 y1 x2 y2 function line-style &optional drawable)
   (let* ((display-info (g-value window :display-info))
@@ -996,8 +978,6 @@ pixmap format in the list of valid formats."
 	      (xlib:draw-arc drawable xlib-gc-line
 			     right bottom c-w c-h gu:pi3/2 gu:pi/2)))))))
 
-
-
 (defun x-draw-text (window x y string font function
                     line-style &optional fill-background invert-p)
   (declare (fixnum x y))
@@ -1034,33 +1014,17 @@ pixmap format in the list of valid formats."
 			  :background background)))
 	      (xlib:draw-glyphs drawable xlib-gc-line x y string))))))
 
-
 ;;; Given a drawable or pixmap, returns the associated Opal window.
-;;;
 (defun x-drawable-to-window (root-window drawable)
   (declare (ignore root-window))
   (getf (xlib:drawable-plist drawable) :garnet))
 
-
 ;;; From windows.lisp (eliminate the obsolete deleting-window-drop-events)
-;;;
 (defun destroy-notify-window (event-window)
   (let ((display (xlib:window-display event-window)))
     (xlib:display-finish-output display)
-    #+cmu
-    (let ((result nil))
-      (xlib:process-event
-       display :timeout 0
-       :handler #'(lambda (&key cmu-event-window a-window &allow-other-keys)
-                    (if (or (eq cmu-event-window event-window)
-                            (eq a-window event-window))
-			(setf result t)
-			nil)))
-      result)
-    #-cmu
     (xlib:discard-current-event display)
     t))
-
 
 (defun connected-window-p (event-window)
   (let ((a-window (getf (xlib:drawable-plist event-window) :garnet)))
@@ -1069,16 +1033,8 @@ pixmap format in the list of valid formats."
 	  (and drawable (= (xlib:window-id drawable)
 			   (xlib:window-id event-window)))))))
 
-
-;;; Taken from windows.lisp
-;;;
-
-
-
-
-
-;;; Returns list of drawable, parent, grandparent, ... , root.
-;;;
+;; Returns list of drawable, parent, grandparent, ... , root. (from
+;; xlib's windows.lisp)
 (defun lineage-of-drawable (drawable)
   (multiple-value-bind (children parent root)
       (xlib:query-tree drawable)
@@ -1087,21 +1043,20 @@ pixmap format in the list of valid formats."
 	(list drawable root)
 	(cons drawable (lineage-of-drawable parent)))))
 
-
-#-debug-event-handler
-(defmacro event-handler-debug (message &rest args)
-  (declare (ignore message args))
-  )
-
-#+debug-event-handler
 (defmacro event-handler-debug (message &rest args)
   `(format t "event-handler ~S   ~S~%" ,message ',args))
 
+;; Synchronously process any message on the event queue and return
+(defun pump-event-loop ()
+  (let ((current-root (g-value gem:device-info :current-root)))
+    (when (and current-root
+	       (xlib:event-listen (the-display current-root) 0.001))
+      (x-event-handler current-root nil :timeout 0.001))))
 
-(defun x-event-handler (root-window ignore-keys)
+(defun x-event-handler (root-window ignore-keys &key (timeout 0) (discard-p t))
   (let ((display (the-display root-window)))
     (xlib:event-case
-	(display :discard-p t :timeout (if ignore-keys 0 NIL))
+	(display :discard-p discard-p :timeout timeout)
       ;; this first one is for when a window is deleted by the wm
       (:CLIENT-MESSAGE
        (event-window type data format)
@@ -1251,285 +1206,6 @@ pixmap format in the list of valid formats."
   (or (= 1 (length composite-event))
       (lookup-composite-event composite-event)))
 
-
-(defun x-event-handler-new (root-window ignore-keys)
-  (setf *my-root-window* root-window)
-  (setf  *my-ignore-keys* ignore-keys)
-  (apply 'process-x-event
-	 (let* ((building-composit-event nil)
-		(valid-event nil)
-		(composite-event nil))
-	   (declare (ignore building-composit-event))
-	   (declare (ignore valid-event))
-	   (do* ((event (fetch-next-event root-window ignore-keys)
-			(fetch-next-event root-window ignore-keys))
-		 (composite-event (if event
-				      (push (get-event-type event) composite-event)
-				      composite-event)
-				  (if event
-				      (push (get-event-type event) composite-event)
-				      composite-event)))
-		((or (timeout-p composit-event)
-		     (not (any-more-p composite-event)))
-		 (if (valid-event-p composite-event)
-		     (create-garnet-event composite-event)
-		     nil))
-	     (format t "event: ~s!%" event)
-	     (push event composite-event)))))
-
-(defun fetch-next-event (root-window ignore-keys)
-  (let* ((display (the-display root-window))
-	 new-above-sibling
-	 new-code
-	 new-count
-	 new-data
-	 new-event-key
-	 new-event-window
-	 new-format
-	 new-height
-	 new-state
-	 new-time
-	 new-type
-	 new-width
-	 new-x
-	 new-y
-	 new-event-type)
-    (xlib:event-case
-	(display :discard-p t :timeout (if ignore-keys 0 NIL))
-      ;; this first  one is for when a window is deleted by the wm
-      (:CLIENT-MESSAGE
-       (event-window type data format)
-       (setf new-event-type :CLIENT-MESSAGE
-	     new-event-window event-window
-	     new-type type
-	     new-data data
-	     new-format format))
-      (:MAP-NOTIFY
-       (event-window)
-       (setf new-event-type :CLIENT-MESSAGE
-	     new-event-window event-window))
-      (:UNMAP-NOTIFY
-       (event-window)
-       (setf new-event-type :UNMAP-NOTIFY
-	     new-event-window event-window))
-      (:REPARENT-NOTIFY
-       (event-window)
-       (setf new-event-type :REPARENT-NOTIFY
-	     new-event-window event-window))
-      (:CIRCULATE-NOTIFY
-       ()
-       (setf new-event-type :CIRCULATE-NOTIFY))
-      (:GRAVITY-NOTIFY
-       ()
-       (setf new-event-type :GRAVITY-NOTIFY))
-      (:DESTROY-NOTIFY
-       (event-window)
-       (setf new-event-type :DESTROY-NOTIFY
-	     new-event-window event-window))
-      (:CONFIGURE-NOTIFY
-       (event-window x y width height above-sibling)
-       (setf new-event-type :CONFIGURE-NOTIFY
-	     new-event-window event-window
-	     new-x x
-	     new-y y
-	     new-width width
-	     new-height height
-	     new-above-sibling above-sibling))
-      (:EXPOSURE
-       (event-window x y width height count)
-       (setf new-event-type :EXPOSURE
-	     new-event-window event-window
-	     new-x x
-	     new-y y
-	     new-width width
-	     new-height height
-	     new-count count))
-      (:KEY-PRESS
-       (event-window x y state code time)
-       (setf new-event-type :KEY-PRESS
-	     new-event-window event-window
-	     new-x x
-	     new-y y
-	     new-state state
-	     new-code code
-	     new-time time))
-      (:BUTTON-PRESS
-       (event-window x y state code time event-key)
-       (setf new-event-type :BUTTON-PRESS
-	     new-event-window event-window
-	     new-x x
-	     new-y y
-	     new-state state
-	     new-code code
-	     new-time time
-	     new-event-key event-key))
-      (:BUTTON-RELEASE
-       (event-window x y state code time event-key)
-       (setf new-event-type :BUTTON-RELEASE
-	     new-event-window event-window
-	     new-x x
-	     new-y y
-	     new-state state
-	     new-code code
-	     new-time time
-	     new-event-key event-key))
-      (:MOTION-NOTIFY
-       (event-window x y)
-       (setf new-event-type :MOTION-NOTIFY
-	     new-event-window event-window
-	     new-x x
-	     new-y y))
-      (:ENTER-NOTIFY
-       (event-window x y time)
-       (setf new-event-type :ENTER-NOTIFY
-	     new-event-window event-window
-	     new-x x
-	     new-y y
-	     new-time time))
-      (:LEAVE-NOTIFY
-       (event-window x y time)
-       (setf new-event-type :LEAVE-NOTIFY
-	     new-event-window event-window
-	     new-x x
-	     new-y y
-	     new-time time))
-      (:NO-EXPOSURE
-       ()
-       (setf new-event-type :NO-EXPOSURE))
-      (OTHERWISE
-       ()
-       (setf new-event-type :OTHERWISE)))
-    (list root-window
-	  ignore-keys
-	  new-above-sibling
-	  new-code
-	  new-count
-	  new-data
-	  new-event-key
-	  new-event-window
-	  new-format
-	  new-height
-	  new-state
-	  new-time
-	  new-type
-	  new-width
-	  new-x
-	  new-y
-	  new-event-type)))
-
-
-
-(defun process-x-event (root-window
-			ignore-keys
-			above-sibling
-			code
-			count
-			data
-			event-key
-			event-window
-			format
-			height
-			state
-			time
-			my-type
-			width
-			x
-			y
-			event-type)
-  (let ((display (the-display root-window)))
-    ;; if the event is a release, wait 100 milliseconds to see if the
-    ;; next character
-    (case event-type
-      (:CLIENT-MESSAGE
-       (event-handler-debug :CLIENT-MESSAGE event-window my-type data format)
-       (interactors::do-client-message event-window my-type data format display))
-      (:MAP-NOTIFY
-       (event-handler-debug :MAP-NOTIFY)
-       (interactors::do-map-notify (x-window-from-drawable root-window
-							   event-window)))
-      (:UNMAP-NOTIFY
-       (event-handler-debug :UNMAP-NOTIFY)
-       (interactors::do-unmap-notify (x-window-from-drawable root-window
-							     event-window)))
-      (:REPARENT-NOTIFY
-       (event-handler-debug :REPARENT-NOTIFY)
-       (if (connected-window-p event-window)
-	   (let ((window (x-window-from-drawable root-window event-window)))
-	     (s-value window :already-initialized-border-widths nil)
-	     (s-value window :lineage (lineage-of-drawable event-window)))))
-      (:CIRCULATE-NOTIFY
-       (event-handler-debug :CIRCULATE-NOTIFY)
-       (interactors::do-circulate-notify))
-      (:GRAVITY-NOTIFY
-       (event-handler-debug :GRAVITY-NOTIFY)
-       (interactors::do-gravity-notify))
-      (:DESTROY-NOTIFY
-       (event-handler-debug :DESTROY-NOTIFY)
-       (destroy-notify-window event-window))
-      (:CONFIGURE-NOTIFY
-       (event-handler-debug :CONFIGURE-NOTIFY)
-       (if (connected-window-p event-window)
-	   (interactors::do-configure-notify (x-window-from-drawable root-window
-								     event-window)
-	     x y width height above-sibling)))
-      (:EXPOSURE
-       (event-handler-debug :EXPOSURE x y width height count)
-       (when (connected-window-p event-window)
-	 (interactors::do-exposure (x-window-from-drawable root-window event-window)
-	   x y width height count display)))
-      (:KEY-PRESS
-       (event-handler-debug :KEY-PRESS event-window x y state code time)
-       (if ignore-keys
-	   ;; We don't want keys, but check if this is the abort key
-	   (let ((c (x-translate-character *root-window* 0 0 state code 0)))
-	     (when (eq c interactors::*garnet-break-key*)
-	       (format T "~%**Aborting transcript due to user command**~%")
-	       (return-from process-x-event :abort)))
-	   ;; Normal case: we do want keys
-	   (interactors::do-key-press
-	       (x-window-from-drawable root-window event-window)
-	     x y state code time)))
-      (:BUTTON-PRESS
-       (setf *last-button-press* time)
-       (event-handler-debug :BUTTON-PRESS event-window x y state code time
-			    event-key)
-       (unless ignore-keys
-	 (interactors::do-button-press (x-window-from-drawable root-window
-							       event-window)
-	   x y state code time event-key)))
-      (:BUTTON-RELEASE
-       (event-handler-debug :BUTTON-RELEASE event-window x y state code time
-			    event-key)
-       (unless ignore-keys
-	 (interactors::do-button-release (x-window-from-drawable root-window
-								 event-window)
-	   x y state code time event-key))
-       (setf *last-button-press* nil))
-      (:MOTION-NOTIFY
-       (event-handler-debug :MOTION-NOTIFY event-window x y)
-       (unless ignore-keys
-	 (interactors::do-motion-notify (x-window-from-drawable root-window event-window)
-	   x y display)))
-      (:ENTER-NOTIFY
-       (event-handler-debug :ENTER-NOTIFY event-window x y time)
-       (unless ignore-keys
-	 (interactors::do-enter-notify (x-window-from-drawable root-window
-							       event-window)
-	   x y time)))
-      (:LEAVE-NOTIFY
-       (event-handler-debug :LEAVE-NOTIFY event-window x y time)
-       (unless ignore-keys
-	 (interactors::do-leave-notify (x-window-from-drawable root-window
-							       event-window)
-	   x y time)))
-      (:NO-EXPOSURE
-       (event-handler-debug :NO-EXPOSURE)
-       (unless ignore-keys
-	 t))
-      (:OTHERWISE
-       (event-handler-debug :UNKNOWN)
-       t))))
-
 (defun x-flush-output (window)
   (xlib:display-force-output (the-display window)))
 
@@ -1540,7 +1216,7 @@ pixmap format in the list of valid formats."
 ;;(xlib:display-finish-output (the-display window)))
 
 
-;;; RETURNS: the maximum character width for the font; if <min-too> is non-nil,
+;;; returns: the maximum character width for the font; if <min-too> is non-nil,
 ;;; returns both maximum and minimum width, as multiple values.  This function
 ;;; used to be called by opal::get-index, but was replaced by a simple g-value
 ;;; of the font's :char-width.
@@ -1698,19 +1374,22 @@ pixmap format in the list of valid formats."
 
 
 
-;;; -------------------------------------------------- Event masks
-
-;;; pem = pointer-event-mask, used to change an active pointer grab
-;;;   (having :key-press in here makes it crash)
-;;; em = eventmask , used to change an event mask
-
-;;; In the Gem interface, the following are referred to by keywords, whose
-;;; names are encoded as follows:
-;;; E if enter/leave events are to be reported;
-;;; G if the mouse is to be grabbed;
-;;; K if keyboard events are to be reported;
-;;; M if mouse motions are to be reported.
-;;; For example, :E-G-K refers to enter-leave-ignore-motion-grab-em
+;; Event masks
+;;
+;; pem = pointer-event-mask, used to change an active pointer grab
+;;       (having :key-press in here makes it crash)
+;;
+;; em = eventmask , used to change an event mask
+;;
+;; In the Gem interface, the following are referred to by keywords,
+;; whose names are encoded as follows:
+;;
+;;    E  Enter/leave events to be reported
+;;    G  Mouse is to be grabbed
+;;    K  Keyboard events to be reported
+;;    M  Mouse motions to be reported
+;;
+;; For example, :E-G-K refers to enter-leave-ignore-motion-grab-em
 
 
 (defparameter *report-motion-pem*
@@ -1722,7 +1401,6 @@ pixmap format in the list of valid formats."
                         :pointer-motion
                         :enter-window
                         :leave-window))
-
 
 (defparameter *ignore-motion-grab-em*
   (xlib:make-event-mask :button-press :button-release
@@ -1754,7 +1432,6 @@ pixmap format in the list of valid formats."
                         :enter-window
                         :leave-window))
 
-
 ;;; em = eventmask , used to change an event mask
 (defparameter *report-motion-em*
   (xlib:make-event-mask :button-press :button-release
@@ -1762,7 +1439,6 @@ pixmap format in the list of valid formats."
                         :exposure
                         :pointer-motion
                         :structure-notify))
-
 
 (defparameter *enter-leave-report-motion-em*
   (xlib:make-event-mask :button-press :button-release
@@ -1773,10 +1449,7 @@ pixmap format in the list of valid formats."
                         :enter-window
                         :leave-window))
 
-
-
-;;; RETURNS: a single pixel of an image.
-;;;
+;;; returns: a single pixel of an image.
 (defun x-image-bit (root-window image x y)
   (declare (ignore root-window))
   (let* ((bytes-per-line (xlib::image-x-bytes-per-line image))
@@ -1787,14 +1460,11 @@ pixmap format in the list of valid formats."
 
 
 ;;; Create an X bitmap from a series of patterns (specified as integers)
-;;;
 (defun x-image-from-bits (root-window patterns)
   (declare (ignore root-window))
   (apply #'xlib:bitmap-image patterns))
 
 ;;; Create an X bitmap from a series of patterns (specified as bit-vectors)
-;;;
-
 (defun get-descriptor (index)
   (case index
     (0 '(#*0000 #*0000 #*0000 #*0000))
@@ -1815,42 +1485,32 @@ pixmap format in the list of valid formats."
     (15 '(#*1110 #*1111 #*1111 #*1111))
     (16 '(#*1111 #*1111 #*1111 #*1111))))
 
-
 (defun x-device-image (root-window index)
   (declare (ignore root-window))
   (let ((descriptor (get-descriptor index)))
     (apply #'xlib:bitmap-image descriptor)))
 
 
-;;; RETURNS: the <image>'s hot spot, as multiple values.
-;;;
+;;; Returns: image's hot spot, as multiple values.
 (defun x-image-hot-spot (root-window image)
   (declare (ignore root-window))
   (values (xlib:image-x-hot image)
           (xlib:image-y-hot image)))
 
-
-;;; Given an X image, returns its size as multiple values (width, height,
-;;; depth).
-;;;
+;;; Given an X image, returns its size as multiple values (width,
+;;; height, depth).
 (defun x-image-size (root-window image)
   (declare (ignore root-window))
   (values (xlib:image-width image)
           (xlib:image-height image)
           (xlib:image-depth image)))
 
-
-
 ;;; Given an image, returns its internal array.
-;;;
 (defun x-image-to-array (root-window image)
   (declare (ignore root-window))
   (xlib:image-z-pixarray image))
 
-
-
 ;;; Helper function for x-initialize-window-borders
-;;;
 (defun set-four-borders (window left &optional top right bottom)
   (unless top
     ;; Only left specified - use for all three.
@@ -1859,8 +1519,6 @@ pixmap format in the list of valid formats."
   (s-value window :top-border-width top)
   (s-value window :right-border-width right)
   (s-value window :bottom-border-width bottom))
-
-
 
 (defun x-initialize-device (root-window)
   (declare (ignore root-window))
@@ -1918,7 +1576,6 @@ pixmap format in the list of valid formats."
                         :stipple   NIL
                         :clip-mask :none
                         :stored-clip-mask (make-list 8))))
-
     (make-display-info :display *default-x-display*
                        :screen  *default-x-screen*
                        :root-window *default-x-root*

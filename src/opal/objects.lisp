@@ -78,7 +78,7 @@
 ;;  13-Feb-90 ecp  Finally merged objects.lisp with the
 ;; 		   "temporary" file eds-objects.lisp
 ;;   5-Dec-89 ecp  Removed a declare from draw-method for rectangle.
-;; 
+;;
 
 
 (in-package "OPAL")
@@ -156,7 +156,7 @@
 ;;; Calculate approximate distance to the line by using similar triangles
 ;;; to calculate the point on the horizontal (or vertical) that the query
 ;;; point shares for mostly vertical (or horizontal) lines.
-;;; 
+;;;
 (define-method :point-in-gob opal:line (gob x y)
  (and (g-value gob :visible)
   (let ((x1 (g-value gob :x1))
@@ -265,12 +265,12 @@
 	   (bottom (+ top (g-value gob :height))))
       ; convert into polyline and build point list.
       (s-value gob :is-a (list opal:polyline))
-      (s-value gob :point-list 
+      (s-value gob :point-list
 	       (list left bottom right bottom right top left top left bottom))
       ; rebuild :top, :left, :width, :height slots
       (dolist (slot '(:top :left :width :height))
 	(kr:destroy-slot gob slot))
-;;    (kr::copy-down-formulas gob)	
+;;    (kr::copy-down-formulas gob)
       ; rebuild :update-slots and :update-slots-values slots
       (s-value gob :update-slots (g-value opal:polyline :update-slots))
       (s-value gob :update-slots-values nil)
@@ -288,11 +288,11 @@
 	 (< (+ (* rx rx dy dy) (* ry ry dx dx)) (* rx rx ry ry)))))
 
 ;;; Multipoint objects
-;;; 
+;;;
 
 ;;; For a raw multipoint, just draw the points, all unimplemented
 ;;; multipoints inherit this method.
-;;; 
+;;;
 (define-method :draw opal:multipoint (gob a-window)
   (let* ((update-vals  (g-local-value gob :update-slots-values))
 	 (point-list (aref update-vals +multi-point-list+)))
@@ -320,7 +320,7 @@
 
 
 ;;; Polyline objects
-;;; 
+;;;
 
 (define-method :draw opal:polyline (gob a-window)
   (let* ((update-vals (g-local-value gob :update-slots-values))
@@ -380,7 +380,7 @@
 	(if full-interior
             (not (zerop crossings))
 	    (oddp crossings)))))
-  
+
 
 (define-method :point-in-gob opal:polyline (gob x y)
   (and (g-value gob :visible)
@@ -463,7 +463,7 @@
 	(decf angle (* (truncate (/ angle +twopi+)) +twopi+))))
   angle)
 
-	
+
 ;; point-in-arc returns T if the given point is inside the given arc.
 ;; Otherwise returns NIL.
 ;;
@@ -492,7 +492,6 @@
 		  (and (>= angle end-angle)            ;; angle in Quandrant IV
 		       (>= angle angle1)))))))))
 
-
 (define-method :point-in-gob opal:arc (gob x y)
  (and (g-value gob :visible)
   (let* ((rx (/ (g-value gob :width) 2))
@@ -512,10 +511,7 @@
 		     (point-in-arc x y cx cy inner-rx inner-ry
 				   angle1 angle2))))))))
 
-
-
-;;;   Ovals
-;;;
+;; Ovals
 (define-method :draw opal:oval (gob a-window)
   (let* ((update-vals (g-local-value gob :update-slots-values))
 	 (left   (aref update-vals +arc-left+))
@@ -534,7 +530,6 @@
       (gem:draw-arc a-window left top width height 0.0 +twopi+
 		    (aref update-vals +arc-draw-function+) lstyle fstyle))))
 
-
 (define-method :point-in-gob opal:oval (gob x y)
  (and (g-value gob :visible)
   (let* ((rx (/ (g-value gob :width) 2))
@@ -550,11 +545,8 @@
 		   (let ((inner-rx (- rx thickness threshold))
 			 (inner-ry (- ry thickness threshold)))
 		     (point-in-ellipse x y cx cy inner-rx inner-ry))))))))
-	   
 
-
-;;; Circles
-
+;; Circles
 (define-method :draw opal:circle (gob a-window)
   (let* ((update-vals (g-local-value gob :update-slots-values))
 	 (width  (aref update-vals opal::+circle-width+))

@@ -39,13 +39,15 @@
   ;; 		    t)
   :components
   ((:file "package")
+   (:file "src/debug/inspector" :depends-on(opal inter aggregadgets gadgets))
+   (:file "src/protected-eval/prompter" :depends-on(gadgets))
+   (:file "src/protected-eval/protected-eval-gadgets" :depends-on(gadgets opal "src/protected-eval/prompter"))
+   (:file "src/protected-eval/garnet-errors" :depends-on(gadgets))
    (:module utils
 	    :pathname ""
-	    :depends-on (:package)
-
+	    :depends-on (package)
 	    :components
-	    ((:file "garnet-loader"
-		    )
+	    ((:file "garnet-loader")
 	     (:file "src/utils/general")
 	     (:file "src/utils/global")))
    (:module kr
@@ -65,7 +67,7 @@
 	     (:file "x")))
    (:module opal
    	    :pathname "src/opal"
-   	    :depends-on (:utils :gem :kr)
+   	    :depends-on (utils gem kr protected-eval)
    	    :components
    	    ((:file "exports")
 	     (:file "types")
@@ -217,25 +219,21 @@
 	     (:file "mouseline")))
    (:module debug
    	    :pathname "src/debug"
-   	    :depends-on (:utils :gem :kr :opal :ps :gadgets)
+   	    :depends-on (:utils :gem :kr)
    	    :components
 	    ((:file "debug-fns")
 	     (:file "objsize")
-	     (:file "inspector")
 	     (:file "suggest-constants")))
    (:module protected-eval
    	    :pathname "src/protected-eval"
-   	    :depends-on (:utils :gem :kr :opal :ps :gadgets :debug)
+   	    :depends-on (:utils :gem :kr :debug)
    	    :components
-	    ((:file "protected-eval-compiler")
-	     (:file "error")
-	     (:file "prompter")
+	    ((:file "error")
 	     (:file "protected-eval")
 	     (:file "protected-process")
 	     (:file "wait-interaction-complete-inner-loop"
 		    :depends-on ("protected-process"))
-	     (:file "abstract-errors")
-	     (:file "garnet-errors")))
+	     (:file "abstract-errors")))
    (:module gesture
    	    :pathname "src/gesture"
    	    :depends-on (:utils :gem :kr :opal :ps :gadgets :protected-eval)

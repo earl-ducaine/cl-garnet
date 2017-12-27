@@ -1,23 +1,17 @@
-;;; -*- Mode: COMMON-LISP; Package: GARNET-GADGETS -*-               ;;
-;;-------------------------------------------------------------------;;
-;;            Copyright 1993 Russell G. Almond                       ;;
-;;-------------------------------------------------------------------;;
-;; This code is in the Public Domain.  Anyone who can get some use   ;;
-;; from it is welcome.                                               ;;
-;; This code comes with no warranty.                                 ;;
-;;-------------------------------------------------------------------;;
-
-;;; $Id$
-
-(in-package "GARNET-GADGETS")
-
-
-;;; Garnet error handler functions
+;; -*- Mode: COMMON-LISP; Package: GARNET-GADGETS -*-
 ;;
+;; Copyright 1993 Russell G. Almond
 ;;
-;;  These functions provide a concrete instantiation of some of 
-;;  the abstract error handling facilities in abstract-errors.lisp. 
-;;  This file must be loaded after abstract-errors.lisp.
+;; This code is in the Public Domain.  Anyone who can get some use
+;; from it is welcome.  This code comes with no warranty.
+
+(in-package :garnet-gadgets)
+
+;; Garnet error handler functions
+;;
+;; These functions provide a concrete instantiation of some of the
+;; abstract error handling facilities in abstract-errors.lisp.  This
+;; file must be loaded after abstract-errors.lisp.
 
 (defun protect-errors (context condition &key
 					 (allow-debugger
@@ -31,7 +25,7 @@
 enter the LISP debugger.
 
 Should be invoked with an expression such as:
-  (handler-bind 
+  (handler-bind
     ((error \#'(lambda (condition)
 		 (protect-errors context-string condition))))
   ...)
@@ -49,7 +43,7 @@ strategies.  If rga:*user-type* is :programmer, then allows debugging.
 <context> should be a string describing user meaningful context in
 which error occured."
   `(handler-bind
-       ((error 
+       ((error
 	 (lambda (condition)
 	   (protect-errors ,context condition))))
      ,.forms))
@@ -177,13 +171,13 @@ established for abort which returns (values <abort-val> :abort)
 where <abort-val> is another parameter. (Same as
 protected-eval)."
 
-  (declare (ignore start context end read-package read-bindings 
+  (declare (ignore start context end read-package read-bindings
 		   default-value local-abort abort-val))
 
   (apply #'gg:garnet-protected-read-from-string string :allow-debug allow-debug args))
 
 
-(defun call-prompter (prompt 
+(defun call-prompter (prompt
 		      &rest args
 		      &key (stream *query-io*)
 			   (local-abort nil)
@@ -199,7 +193,7 @@ If <default-value> is supplied, a CONTINUE restart is set up which
 allows the user to select the default value.
 
 If <eval-input?> is true, then the expression is evaluated before it
-is returned; if not, the unevaluated expression is returned.  
+is returned; if not, the unevaluated expression is returned.
 
 The value supplied by the user is passed to <satisfy-test>.  If that
 test fails, the user is prompted again.
@@ -213,13 +207,13 @@ implementation mechanism."
 
 (kr:s-value (kr:g-value gg:Error-prompter-gadget :window)
     :title (format nil "~A:Prompter" *application-long-name*))
-    
+
 (kr:s-value (kr:g-value gg:Error-prompter-gadget :window)
     :icon-title (format nil "~A:Prompter" *application-short-name*))
 
 (kr:s-value (kr:g-value gg:protected-eval-error-gadget :window)
     :title (format nil "~A:Error-Handler" *application-long-name*))
-    
+
 (kr:s-value (kr:g-value gg:protected-eval-error-gadget :window)
     :icon-title (format nil "~A:Error" *application-short-name*))
 
@@ -231,7 +225,7 @@ implementation mechanism."
 
 (kr:s-value (kr:g-value message-display :window)
     :title (format nil "~A:Message" *application-long-name*))
-    
+
 (kr:s-value (kr:g-value message-display :window)
     :icon-title (format nil "~A:Message" *application-short-name*))
 
@@ -260,7 +254,7 @@ is meant to be called through call-displayer."
 
 (kr:s-value (kr:g-value selector-display :window)
     :title (format nil "~A:Selection" *application-long-name*))
-    
+
 (kr:s-value (kr:g-value selector-display :window)
     :icon-title (format nil "~A:Selection" *application-short-name*))
 
@@ -284,5 +278,3 @@ first on the stream as a prompt."
   (declare (ignore keys in-stream out-stream))
   (kr:s-value selector-display :beep-p beep)
   (gg:display-query-and-wait selector-display message option-list))
-
-
