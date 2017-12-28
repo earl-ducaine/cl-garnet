@@ -63,10 +63,10 @@
     ;; see if the from-obj and to-obj are the same and avoid the messy
     ;; generating of links if they are
     (cond ((eq to-obj from-obj)
-	   (setf ref (if (or (null to-slot) (eq to-slot T)) 
+	   (setf ref (if (or (null to-slot) (eq to-slot T))
 		       ;; if a reference to the object itself, return SELF
-		       "(gv :SELF)" 
-		       ;; else use to-slot of object	     
+		       "(gv :SELF)"
+		       ;; else use to-slot of object
 		       (prin1-to-string `(gvl ,to-slot)))))
 	  (t
 	   ;; see if a link for this object already exists
@@ -81,9 +81,9 @@
 	     (setf link (member to-obj (g-value win :links) :key #'cdr))
 	     (if link (setf link (caar link))))
 
-	   ;; if a link couldn't be found, generate a new link. Start 
-	   ;; generating link names and see if they're already in use. 
-	   ;; Start with :link-0 and work up. Since there are unlikely 
+	   ;; if a link couldn't be found, generate a new link. Start
+	   ;; generating link names and see if they're already in use.
+	   ;; Start with :link-0 and work up. Since there are unlikely
 	   ;; to be too many link names, this is not that wasteful.
 	   (unless link
 	     (setf link (generate-link-name from-obj))
@@ -131,8 +131,8 @@
 
 
 ;;; install links that will be used in a formula. if the object referenced
-;;; by the link and the link belong to a common aggregadget, create a formula 
-;;; that traverses the aggregate hierarchy to get the to-obj; otherwise use 
+;;; by the link and the link belong to a common aggregadget, create a formula
+;;; that traverses the aggregate hierarchy to get the to-obj; otherwise use
 ;;; a direct reference
 ;;;
 (defun install-links (win from-obj)
@@ -141,7 +141,7 @@
       (setf link (car link-obj))
       (setf to-obj (cdr link-obj))
       (if (common-ancestor-p from-obj to-obj)
-	(s-value from-obj link 
+	(s-value from-obj link
 		 (eval `(o-formula
 			 (gvl ,@(gilt::make-path from-obj to-obj)))))
 	(s-value from-obj link to-obj))
@@ -162,10 +162,10 @@
 
 
 
-
-(create-instance 'direct-ref-query-gadget garnet-gadgets:query-gadget
-  (:modal-p t)
-  (:button-names '("YES" "NO")))
+(when gem::*x11-server-available*
+  (create-instance 'direct-ref-query-gadget garnet-gadgets:query-gadget
+    (:modal-p t)
+    (:button-names '("YES" "NO"))))
 
 
 (defun check-for-direct-ref (expr)
@@ -191,7 +191,7 @@ Do you want to edit the formula?" expr))
 	     ;; else the expr is not a view-object, so return nil
 	     nil))))
 
-    
+
 
 (defun lapidary-Do-Form-Cancel (gadget item)
   (declare (Ignore item))
@@ -202,7 +202,7 @@ Do you want to edit the formula?" expr))
     (remove-temporary-links (g-value win :c32-obj) win)
     (s-value win :visible NIL)
     (push win Formula-Wins-Available)
-    ;; if this formula was requested by some property sheet, make c32 
+    ;; if this formula was requested by some property sheet, make c32
     ;; invisible
     (when (g-value win :disappear-p)
 	  ;; restore these slots to default settings
@@ -233,7 +233,7 @@ Do you want to edit the formula?" expr))
 	     (progn
 	       (setf result (g-value win :links))
 	       (push val result)
-	       (funcall (g-value win :install-fct) slot result 
+	       (funcall (g-value win :install-fct) slot result
 			(g-value win :queue))
 	       ;; get rid of the links that were temporarily installed so that
 	       ;; the formula could be safely evaluated
@@ -255,7 +255,7 @@ Do you want to edit the formula?" expr))
       (s-value win :visible NIL)
       (push win Formula-Wins-Available)
 
-    ;; if this formula was requested by some property sheet, make c32 
+    ;; if this formula was requested by some property sheet, make c32
     ;; invisible
     (when (g-value win :disappear-p)
 	  ;; restore these slots to default settings
@@ -264,6 +264,3 @@ Do you want to edit the formula?" expr))
 
 	  (c32-ok-function))
 )))
-
-
-

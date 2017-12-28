@@ -39,20 +39,15 @@ BUT... Leave around the declarations (constant, type, update,...)"
 (defun clear-schema-slots (schema)
   "Completely clear ALL the slots in the <schema>."
   (locally (declare #.*special-kr-optimization*)
-    (clrhash (schema-bins schema))
-    ))
-
+    (clrhash (schema-bins schema))))
 
 (defun value-fn (schema slot)
   "Does the actual work of G-VALUE."
   (g-value-body schema slot T T))
 
-
 (defun g-local-value-fn (schema slot)
   "Similar to g-value-fn, but no inheritance."
   (g-value-body schema slot NIL T))
-
-
 
 (let ((list-of-one (list nil)))
   (defun get-dependents (schema slot)

@@ -122,8 +122,8 @@
   (append-directory Garnet-Binary-Pathname "aggregadgets"))
 (defvar Garnet-PS-Src
   (append-directory Garnet-Src-Pathname "ps"))
-(defvar Garnet-PS-Pathname
-  (append-directory Garnet-Binary-Pathname "ps"))
+;; (defvar Garnet-PS-Pathname
+;;   (append-directory Garnet-Binary-Pathname "ps"))
 (defvar Garnet-Gadgets-Src
   (append-directory Garnet-Src-Pathname "gadgets"))
 (defvar Garnet-Gadgets-Pathname
@@ -177,7 +177,9 @@
 
 ;;;(defparameter Garnet-Multifont-Loader (merge-pathnames "multifont-loader" Garnet-Opal-PathName))
 (defparameter Garnet-Gesture-Loader (merge-pathnames "gesture-loader" Garnet-Gesture-PathName))
-(defparameter Garnet-PS-Loader (merge-pathnames "ps-loader" Garnet-PS-PathName))
+
+;; (defparameter Garnet-PS-Loader (merge-pathnames "ps-loader" Garnet-PS-PathName))
+
 (defparameter Garnet-Aggregadgets-Loader (merge-pathnames "aggregadgets-loader" Garnet-Aggregadgets-PathName))
 (defparameter Garnet-Aggregraphs-Loader (merge-pathnames "aggregraphs-loader" Garnet-Aggregadgets-PathName))
 (defparameter Garnet-Gadgets-Loader (merge-pathnames "gadgets-loader" Garnet-Gadgets-PathName))
@@ -199,7 +201,7 @@
     ("inter"              . ,Garnet-Inter-PathName)
     ("gesture"            . ,Garnet-Gesture-PathName)
     ("gestures"           . ,Garnet-Gesture-PathName)
-    ("ps"                 . ,Garnet-PS-PathName)
+;;    ("ps"                 . ,Garnet-PS-PathName)
     ("aggregadgets"       . ,Garnet-Aggregadgets-PathName)
     ("debug"              . ,Garnet-Debug-PathName)
     ("demos"              . ,Garnet-Demos-PathName)

@@ -58,14 +58,14 @@
 	     (:file "constraints" :depends-on (kr))))
    (:module gem
    	    :pathname "src/gem"
-   	    :depends-on (:kr)
+   	    :depends-on (kr opal-boot)
    	    :components
 	    ((:file "gem")
 	     (:file "define-methods")
 	     (:file "x")))
-   (:module opal
+   (:module opal-boot
    	    :pathname "src/opal"
-   	    :depends-on (:utils :gem :kr)
+   	    :depends-on (utils kr)
    	    :components
    	    ((:file "exports")
 	     (:file "types")
@@ -75,8 +75,12 @@
 	     (:file "new-defs")
 	     (:file "utils")
 	     (:file "text-fonts")
-	     (:file "create-instances")
-	     (:file "text-functions")
+	     (:file "create-instances")))
+   (:module opal
+   	    :pathname "src/opal"
+   	    :depends-on (utils gem kr opal-boot)
+   	    :components
+	     ((:file "text-functions")
 	     (:file "text")
 	     (:file "update-basics")
 	     (:file "halftones")

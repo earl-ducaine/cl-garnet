@@ -21,17 +21,15 @@ Change log:
 (in-package "COMMON-LISP-USER")
 
 ;; check first to see if pathname variable is set
-(unless (boundp 'Garnet-Gilt-PathName)
-  (error "Load 'Garnet-Loader' first to set Garnet-Gilt-PathName before loading this file."))
+;; (unless (boundp 'Garnet-Gilt-PathName)
+;;   (error "Load 'Garnet-Loader' first to set Garnet-Gilt-PathName before loading this file."))
 
 ;;; Now load the Gilt-Functions module
 ;;;
-(unless (get :garnet-modules :Gilt-Functions)
-  (format t "Loading Gilt functions...~%")
-  (load (merge-pathnames "gilt-functions" Garnet-Gilt-PathName)
-	:verbose T)
-  (format t "...Done Gilt-Functions.~%"))
+;; (unless (get :garnet-modules :Gilt-Functions)
+;;   (format t "Loading Gilt functions...~%")
+;;   (load (merge-pathnames "gilt-functions" Garnet-Gilt-PathName)
+;; 	:verbose T)
+;;   (format t "...Done Gilt-Functions.~%"))
 
-(setf (get :garnet-modules :Gilt-Functions) t)
-
-
+;; (setf (get :garnet-modules :Gilt-Functions) t)

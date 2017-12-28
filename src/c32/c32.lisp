@@ -58,42 +58,43 @@
 (defparameter *dangerous-slots*
   '(:is-a :is-a-inv :components :parent))
 
-;; loading gadgets is in c32loader
+(when gem::*x11-server-available*
 
-(create-instance 'ital-font opal:font (:face :italic))
-(create-instance 'bold-font opal:font (:face :bold))
-(create-instance 'reg-font opal:font)
+  ;; loading gadgets is in c32loader
+  (create-instance 'ital-font opal:font (:face :italic))
+  (create-instance 'bold-font opal:font (:face :bold))
+  (create-instance 'reg-font opal:font)
 
-(create-instance 'form-icon opal:bitmap
-  (:image (opal:read-image (merge-pathnames
-			    "formula-icon.bm"
-			    common-lisp-user::Garnet-C32-Bitmap-PathName))))
+  (create-instance 'form-icon opal:bitmap
+    (:image (opal:read-image (merge-pathnames
+			      "formula-icon.bm"
+			      common-lisp-user::Garnet-C32-Bitmap-PathName))))
 
-(create-instance 'inherited-icon opal:bitmap
-  (:image (opal:read-image (merge-pathnames
-			    "inherited-icon.bm"
-			    common-lisp-user::Garnet-C32-Bitmap-Pathname))))
+  (create-instance 'inherited-icon opal:bitmap
+    (:image (opal:read-image (merge-pathnames
+			      "inherited-icon.bm"
+			      common-lisp-user::Garnet-C32-Bitmap-Pathname))))
 
-(defparameter Font-Height (max (opal:string-height ital-font "/")
-			       (opal:string-height reg-font "/")))
-(defparameter Font-Char-Width (max (opal:string-width ital-font "/")  ; fixed width
-				   (opal:string-width reg-font "/"))) ; fonts
+  (defparameter Font-Height (max (opal:string-height ital-font "/")
+				 (opal:string-height reg-font "/")))
+  (defparameter Font-Char-Width (max (opal:string-width ital-font "/")  ; fixed width
+				     (opal:string-width reg-font "/"))) ; fonts
 
-(defparameter form-icon-width (g-value form-icon :width))
-(defparameter inherited-icon-width (g-value inherited-icon :width))
+  (defparameter form-icon-width (g-value form-icon :width))
+  (defparameter inherited-icon-width (g-value inherited-icon :width))
 
-(defparameter Label-Width 100)
-(defparameter Max-Value-Width 120)
+  (defparameter Label-Width 100)
+  (defparameter Max-Value-Width 120)
 
-(defparameter Label-Num-Chars (floor Label-Width Font-Char-Width))
-(defparameter Label-Side-Width (+ Label-Width form-icon-width inherited-icon-width
-				  -4)) ; fudge factor
-(defparameter Icon-At-Right-Offset (+ Label-Side-Width 2 Max-Value-Width))
-(defparameter Full-Item-Width (+ Icon-At-Right-Offset inherited-icon-width 2))
+  (defparameter Label-Num-Chars (floor Label-Width Font-Char-Width))
+  (defparameter Label-Side-Width (+ Label-Width form-icon-width inherited-icon-width
+				    -4)) ; fudge factor
+  (defparameter Icon-At-Right-Offset (+ Label-Side-Width 2 Max-Value-Width))
+  (defparameter Full-Item-Width (+ Icon-At-Right-Offset inherited-icon-width 2))
 
-(defparameter Scroll-Panel-Width (+ 20 Full-Item-Width))
-(defparameter Scroll-Panel-Num-Items 12)
-(defparameter Scroll-Panel-Height (* Scroll-Panel-Num-Items (+ 1 Font-Height)))
+  (defparameter Scroll-Panel-Width (+ 20 Full-Item-Width))
+  (defparameter Scroll-Panel-Num-Items 12)
+  (defparameter Scroll-Panel-Height (* Scroll-Panel-Num-Items (+ 1 Font-Height))))
 
 
 (defun Mk-String (val)
@@ -109,7 +110,7 @@
 (defun Mk-Colon-Str-And-Clip (val len)
   (if (null val)
     ""					; empty
-    ;; else generate a string 
+    ;; else generate a string
     (let ((str (String-Capitalize val)))
       (if (keywordp val)
 	(setq str (concatenate 'simple-string ":" str)))
@@ -123,178 +124,181 @@
   (s-value *Current-Sec-Selection-Feedback* :obj-over nil))
 
 
-;; Have an extra type so can look for it from the interactor
-(create-instance 'Value-Scrolling-String garnet-gadgets:scrolling-input-string)
 
-(create-instance 'c32-label opal:text
-  (:string (o-formula
-	    (mk-colon-str-and-clip
-	     (gvl :parent :slot) label-num-chars)))
-  (:left  (o-formula (+ 2 (gvl :parent :left))))
-  (:top  (o-formula (gvl :parent :top)))
-  (:font (o-formula (if (gvl :parent :inherited-p)
-		      ital-font
-		      reg-font))))
+(when gem::*x11-server-available*
+
+  ;; Have an extra type so can look for it from the interactor
+  (create-instance 'Value-Scrolling-String garnet-gadgets:scrolling-input-string)
+
+  (create-instance 'c32-label opal:text
+    (:string (o-formula
+	      (mk-colon-str-and-clip
+	       (gvl :parent :slot) label-num-chars)))
+    (:left  (o-formula (+ 2 (gvl :parent :left))))
+    (:top  (o-formula (gvl :parent :top)))
+    (:font (o-formula (if (gvl :parent :inherited-p)
+			  ital-font
+			  reg-font))))
 
 
-(create-instance 'c32-item opal:aggregadget
-  (:obj NIL)
-  (:slot NIL)
-  (:left 0)
-  (:top 0)
-  (:width Full-Item-Width)
-  (:height Font-Height)
-  (:visible
-   (o-formula (let* ((min-val (gvl :parent :parent :scroll-bar :value))
-		     (max-val (+ -1 min-val Scroll-Panel-Num-Items))
-		     (index (position (gv :self) (gvl :parent :components))))
-		(and (>= index min-val)
-		     (<= index max-val))))
-   #+DZG (o-formula (let* ((min-val (gvl :parent :parent
-					 :scroll-bar :value))
-			   (max-val (+ -1 min-val Scroll-Panel-Num-Items))
-			   (index (gvl :rank)))
-		      (and (>= index min-val)
-			   (<= index max-val)))))
-  (:value (o-formula (let ((obj (gvl :obj))
-			   (slot (gvl :slot)))
-		       (when slot (gv obj slot)))))
-  (:formula-p (o-formula (let ((obj (gvl :obj))
-			       (slot (gvl :slot)))
-			   (when slot
-			     ;; just to make a dependency
-			     (gv obj slot) 
-			     (formula-p (get-value obj slot))))))
-  (:inherited-p (o-formula (let ((obj (gvl :obj))
+  (create-instance 'c32-item opal:aggregadget
+    (:obj NIL)
+    (:slot NIL)
+    (:left 0)
+    (:top 0)
+    (:width Full-Item-Width)
+    (:height Font-Height)
+    (:visible
+     (o-formula (let* ((min-val (gvl :parent :parent :scroll-bar :value))
+		       (max-val (+ -1 min-val Scroll-Panel-Num-Items))
+		       (index (position (gv :self) (gvl :parent :components))))
+		  (and (>= index min-val)
+		       (<= index max-val))))
+     #+DZG (o-formula (let* ((min-val (gvl :parent :parent
+					   :scroll-bar :value))
+			     (max-val (+ -1 min-val Scroll-Panel-Num-Items))
+			     (index (gvl :rank)))
+			(and (>= index min-val)
+			     (<= index max-val)))))
+    (:value (o-formula (let ((obj (gvl :obj))
+			     (slot (gvl :slot)))
+			 (when slot (gv obj slot)))))
+    (:formula-p (o-formula (let ((obj (gvl :obj))
 				 (slot (gvl :slot)))
 			     (when slot
-			       (gv obj slot) ; just to make a dependency
-			       (kr::inherited-p obj slot)))))
-  (:parts 
-   `((:label ,c32-label)
-     (:form-icon ,form-icon
-      ; (:constant T)
-      (:left ,(o-formula (+ (gvl :parent :left)
-			    Label-Width)))
-      (:top ,(o-formula (gvl :parent :top)))
-      ;; draw it invisible if not a formula, but still have it there
-      ;; so that it can be selected to create a formula.
-      (:draw-function ,(o-formula (if (gvl :parent :formula-p)
-				    :copy
-				    :no-op))))
-     (:inherited-icon ,inherited-icon
-      ; (:constant T)
-      (:left ,(o-formula
-	       (if (gvl :parent :formula-p)
-		 ;; then value is inherited so put next to form
-		 (+ (gvl :parent :left) Label-Width form-icon-width 1)
-		 ;; else no formula, put icon at right
-		 (+ (gvl :parent :left) icon-at-right-offset))))
-      (:top ,(o-formula (gvl :parent :top)))
-      (:visible ,(o-formula (gvl :parent :inherited-p))))
-     (:value-str ,Value-Scrolling-String
-      ; (:constant T)
-      (:pretend-to-be-leaf T)
-      (:value ,(o-formula (if (gvl :parent :slot)
-			    (Mk-String (gvl :parent :value))
-			    "")))
-      ;; italic if value itself is inherited, so if no formula
-      (:font ,(o-formula (if (and (gvl :parent :inherited-p)
-				  (not (gvl :parent :formula-p)))
-			   ital-font
-			   reg-font)))
-      (:width ,Max-Value-Width)
-      (:selection-function Value-Edited-Func)
-      (:interactors ((:text-edit :omit)))
-      (:left ,(o-formula (if (gvl :parent :slot)
-			   ;; Normal slot; value is on the right.
-			   (+ (gvl :parent :left) Label-Side-Width)
-			   ;; Last (empty) slot: string on the left, for Add
-			   ;; Slot command
-			   (gvl :parent :left))))
-      (:top ,(o-formula (gvl :parent :top))))
-     (:underline ,opal:line
-      ; (:constant t)
-      (:x1 ,(o-formula (gvl :parent :left)))
-      (:y1 ,(o-formula (1- (opal:gv-bottom (gvl :parent :value-str)))))
-      (:x2 ,(o-formula (opal:gv-right (gvl :parent))))
-      (:y2 ,(o-formula (gvl :y1)))))))
+			       ;; just to make a dependency
+			       (gv obj slot)
+			       (formula-p (get-value obj slot))))))
+    (:inherited-p (o-formula (let ((obj (gvl :obj))
+				   (slot (gvl :slot)))
+			       (when slot
+				 (gv obj slot) ; just to make a dependency
+				 (kr::inherited-p obj slot)))))
+    (:parts
+     `((:label ,c32-label)
+       (:form-icon ,form-icon
+					; (:constant T)
+		   (:left ,(o-formula (+ (gvl :parent :left)
+					 Label-Width)))
+		   (:top ,(o-formula (gvl :parent :top)))
+		   ;; draw it invisible if not a formula, but still have it there
+		   ;; so that it can be selected to create a formula.
+		   (:draw-function ,(o-formula (if (gvl :parent :formula-p)
+						   :copy
+						   :no-op))))
+       (:inherited-icon ,inherited-icon
+					; (:constant T)
+			(:left ,(o-formula
+				 (if (gvl :parent :formula-p)
+				     ;; then value is inherited so put next to form
+				     (+ (gvl :parent :left) Label-Width form-icon-width 1)
+				     ;; else no formula, put icon at right
+				     (+ (gvl :parent :left) icon-at-right-offset))))
+			(:top ,(o-formula (gvl :parent :top)))
+			(:visible ,(o-formula (gvl :parent :inherited-p))))
+       (:value-str ,Value-Scrolling-String
+					; (:constant T)
+		   (:pretend-to-be-leaf T)
+		   (:value ,(o-formula (if (gvl :parent :slot)
+					   (Mk-String (gvl :parent :value))
+					   "")))
+		   ;; italic if value itself is inherited, so if no formula
+		   (:font ,(o-formula (if (and (gvl :parent :inherited-p)
+					       (not (gvl :parent :formula-p)))
+					  ital-font
+					  reg-font)))
+		   (:width ,Max-Value-Width)
+		   (:selection-function Value-Edited-Func)
+		   (:interactors ((:text-edit :omit)))
+		   (:left ,(o-formula (if (gvl :parent :slot)
+					  ;; Normal slot; value is on the right.
+					  (+ (gvl :parent :left) Label-Side-Width)
+					  ;; Last (empty) slot: string on the left, for Add
+					  ;; Slot command
+					  (gvl :parent :left))))
+		   (:top ,(o-formula (gvl :parent :top))))
+       (:underline ,opal:line
+					; (:constant t)
+		   (:x1 ,(o-formula (gvl :parent :left)))
+		   (:y1 ,(o-formula (1- (opal:gv-bottom (gvl :parent :value-str)))))
+		   (:x2 ,(o-formula (opal:gv-right (gvl :parent))))
+		   (:y2 ,(o-formula (gvl :y1)))))))
+  (defparameter Header-Left-Offset 20)
+  (defparameter Header-Height (+ 2 font-height))
+  (defparameter Header-Width (+ Full-Item-Width 3))
+
+  (Create-instance 'c32-panel opal:aggregadget
+    (:left 0)
+    (:top 0)
+    (:c32-items NIL)
+    (:obj NIL)
+    (:max-index (o-formula (- (length (gvl :c32-items)) 1)
+			   4))		; initial value
+    (:width (+ Header-Width 20))		; header + scrollbar(=20)
+    (:height (+ Scroll-Panel-Height Header-height))
+    (:parts
+     `((:header ,garnet-gadgets:scrolling-input-string
+					; (:constant T)
+		(:value ,(o-formula (if (gvl :parent :obj)
+					(Mk-String (gvl :parent :obj))
+					"")))
+		(:font ,(o-formula (if (gvl :parent :obj)
+				       bold-font
+				       reg-font)))
+		(:width ,(- Header-Width 2))
+		(:selection-function Header-Edited-Func)
+		(:left ,(o-formula (+ (gvl :parent :left) Header-Left-Offset
+				      (if (gvl :parent :obj) 0 60))))
+		(:top ,(o-formula (+ 1 (gvl :parent :top)))))
+       (:header-rect ,opal:rectangle
+					; (:constant T)
+		     (:left ,(o-formula (+ Header-Left-Offset (gvl :parent :left))))
+		     (:top ,(o-formula (gvl :parent :top)))
+		     (:width ,Header-Width)
+		     (:height ,Header-Height))
+       (:border ,opal:rectangle
+					; (:constant T)
+		(:left ,(o-formula (+ Header-Left-Offset (gvl :parent :left))))
+		(:top ,(o-formula (+ header-height (gvl :parent :top))))
+		(:width ,Header-width)
+		(:height ,Scroll-Panel-Height))
+       (:scroll-bar ,garnet-gadgets:v-scroll-bar
+					; (:constant T)
+		    (:left ,(o-formula (gvl :parent :left)))
+		    (:top ,(o-formula (gvl :parent :top)))
+		    (:height ,(o-formula (+ Scroll-Panel-Height Header-height)))
+		    (:val-1 0)
+		    (:val-2 ,(o-formula (gvl :parent :max-index)))
+		    (:scroll-p ,(o-formula (>= (gvl :val-2) Scroll-Panel-Num-Items)))
+		    (:page-incr ,(1- Scroll-Panel-Num-Items))
+		    (:indicator-text-p NIL))
+       (:aggrel ,opal:aggrelist
+		;; items are added explicitly
+					; (:constant T)
+		(:left ,(o-formula (+ 2 Header-Left-Offset (gvl :parent :left))))
+		(:top ,(o-formula (+ 2 header-height (gvl :parent :top))))
+		(:v-spacing 1))
+       (:vert-line ,opal:line
+					; (:constant T)
+		   (:x1 ,(o-formula (+ (gvl :parent :left)
+				       Header-Left-Offset 8 Label-Side-Width)))
+		   (:x2 ,(o-formula (gvl :x1)))
+		   (:y1 ,(o-formula (+ header-height
+				       (gvl :parent :top))))
+		   (:y2 ,(o-formula (opal:gv-bottom (gvl :parent :border)))))
+       ;; This is only used by the empty panel
+       (:empty-title ,opal:text
+					; (:constant T)
+		     (:left ,(o-formula (+ (gvl :parent :left) 25)))
+		     (:top ,(o-formula (+ (gvl :parent :top) 1)))
+		     (:string "Object:")
+		     (:font ,bold-font)
+		     (:visible ,(o-formula (null (gvl :parent :obj))))))))
+
+  )
 
 
-(defparameter Header-Left-Offset 20)
-(defparameter Header-Height (+ 2 font-height))
-(defparameter Header-Width (+ Full-Item-Width 3))
 
-(Create-instance 'c32-panel opal:aggregadget
-  (:left 0)
-  (:top 0)
-  (:c32-items NIL)
-  (:obj NIL)
-  (:max-index (o-formula (- (length (gvl :c32-items)) 1)
-			 4))		; initial value
-  (:width (+ Header-Width 20))		; header + scrollbar(=20)
-  (:height (+ Scroll-Panel-Height Header-height))
-  (:parts
-   `((:header ,garnet-gadgets:scrolling-input-string
-      ; (:constant T)
-      (:value ,(o-formula (if (gvl :parent :obj)
-			    (Mk-String (gvl :parent :obj))
-			    "")))
-      (:font ,(o-formula (if (gvl :parent :obj)
-			   bold-font
-			   reg-font)))
-      (:width ,(- Header-Width 2))
-      (:selection-function Header-Edited-Func)
-      (:left ,(o-formula (+ (gvl :parent :left) Header-Left-Offset
-			    (if (gvl :parent :obj) 0 60))))
-      (:top ,(o-formula (+ 1 (gvl :parent :top)))))
-     (:header-rect ,opal:rectangle
-      ; (:constant T)
-      (:left ,(o-formula (+ Header-Left-Offset (gvl :parent :left))))
-      (:top ,(o-formula (gvl :parent :top)))
-      (:width ,Header-Width)
-      (:height ,Header-Height))
-     (:border ,opal:rectangle
-      ; (:constant T)
-      (:left ,(o-formula (+ Header-Left-Offset (gvl :parent :left))))
-      (:top ,(o-formula (+ header-height (gvl :parent :top))))
-      (:width ,Header-width)
-      (:height ,Scroll-Panel-Height))
-     (:scroll-bar ,garnet-gadgets:v-scroll-bar
-      ; (:constant T)
-      (:left ,(o-formula (gvl :parent :left)))
-      (:top ,(o-formula (gvl :parent :top)))
-      (:height ,(o-formula (+ Scroll-Panel-Height Header-height)))
-      (:val-1 0)
-      (:val-2 ,(o-formula (gvl :parent :max-index)))
-      (:scroll-p ,(o-formula (>= (gvl :val-2) Scroll-Panel-Num-Items)))
-      (:page-incr ,(1- Scroll-Panel-Num-Items))
-      (:indicator-text-p NIL))
-     (:aggrel ,opal:aggrelist
-      ;; items are added explicitly
-      ; (:constant T)
-      (:left ,(o-formula (+ 2 Header-Left-Offset (gvl :parent :left))))
-      (:top ,(o-formula (+ 2 header-height (gvl :parent :top))))
-      (:v-spacing 1))
-     (:vert-line ,opal:line
-      ; (:constant T)
-      (:x1 ,(o-formula (+ (gvl :parent :left)
-			  Header-Left-Offset 8 Label-Side-Width)))
-      (:x2 ,(o-formula (gvl :x1)))
-      (:y1 ,(o-formula (+ header-height
-			  (gvl :parent :top))))
-      (:y2 ,(o-formula (opal:gv-bottom (gvl :parent :border)))))
-     ;; This is only used by the empty panel
-     (:empty-title ,opal:text
-      ; (:constant T)
-      (:left ,(o-formula (+ (gvl :parent :left) 25)))
-      (:top ,(o-formula (+ (gvl :parent :top) 1)))
-      (:string "Object:")
-      (:font ,bold-font)
-      (:visible ,(o-formula (null (gvl :parent :obj))))))))
-
-
-			       
 (defparameter Extra-C32-Panels NIL)
 
 ;; creates a scrolling window panel for the object
@@ -357,7 +361,7 @@
 	  (:obj obj)
 	  (:slot slot)))))
 
-  
+
 ;; This method encapsulates objects' original :destroy-me method.  First, it
 ;; eliminates the panel(s) that display an object being destroyed.  Then, it
 ;; calls the original :destroy-me method.
@@ -388,7 +392,7 @@
     (dolist (slot slots)
       ;; use up the old items, then use any extra items, then create a new one.
       (setq item (pop old-items))
-      (if item 
+      (if item
 	  (progn
 	    (s-value item :obj obj)
 	    (s-value item :slot slot))
@@ -416,7 +420,7 @@
 	  (s-value obj :DESTROY-ME 'c32-destroy-method))))))
 
 
-    
+
 (Defun Add-New-Row (panel slot)
   (let* ((aggrel (g-value panel :aggrel))
 	 (item (Get-C32-item (g-value panel :obj) NIL))
@@ -500,12 +504,14 @@
 		(inter:beep)))))))
 
 
+(when gem::*x11-server-available*
+
 (defparameter Panel-Set-Height (+ 2 Scroll-Panel-Height Header-height))
 (defparameter Panel-Set-Total-Height (+ Panel-Set-Height 22))
 (defparameter Scroll-Panel-left-Offset 15) ; distance between panels
-(defparameter Scroll-Panel-Width-Offset (+ Scroll-Panel-Width 
+(defparameter Scroll-Panel-Width-Offset (+ Scroll-Panel-Width
 					   Scroll-Panel-left-Offset))
-
+)
 
 ;; The scroll-gadget is the panel-set
 ;;
@@ -561,33 +567,34 @@
     (opal:update panel-set)
     panel))
 
+(when gem::*x11-server-available*
 
-(create-instance 'form-sel-feedback opal:rectangle
-  (:fast-redraw-p T)
-  (:draw-function :xor)
-  (:filling-style opal:black-fill)
-  (:line-style NIL)
-  (:obj-over NIL)
-  (:visible (o-formula (gvl :obj-over)))
-  (:left (o-formula (- (gvl :obj-over :left) 1)))
-  (:top (o-formula (- (gvl :obj-over :top) 1)))
-  (:width (o-formula (+ (gvl :obj-over :width) 2)))
-  (:height (o-formula (+ (gvl :obj-over :height) 2))))
+  (create-instance 'form-sel-feedback opal:rectangle
+    (:fast-redraw-p T)
+    (:draw-function :xor)
+    (:filling-style opal:black-fill)
+    (:line-style NIL)
+    (:obj-over NIL)
+    (:visible (o-formula (gvl :obj-over)))
+    (:left (o-formula (- (gvl :obj-over :left) 1)))
+    (:top (o-formula (- (gvl :obj-over :top) 1)))
+    (:width (o-formula (+ (gvl :obj-over :width) 2)))
+    (:height (o-formula (+ (gvl :obj-over :height) 2))))
 
-(create-instance 'line-3 opal:line-style
-		 (:line-thickness 3))
-(create-instance 'gray-line-3 line-3
-		 (:stipple (g-value opal:gray-fill :stipple)))
+  (create-instance 'line-3 opal:line-style
+    (:line-thickness 3))
+  (create-instance 'gray-line-3 line-3
+    (:stipple (g-value opal:gray-fill :stipple)))
 
-(create-instance 'outline-feedback form-sel-feedback
-		 ;; left is fine, others need adjusting
-		 (:top (o-formula (- (gvl :obj-over :top) 2)))
-		 (:width (o-formula (+ (gvl :obj-over :width) 1)))
-		 (:height (o-formula (gvl :obj-over :height)))
-		 (:filling-style NIL)
-		 (:line-style line-3))
-(create-instance 'gray-outline-feedback outline-feedback
-		 (:line-style gray-line-3))
+  (create-instance 'outline-feedback form-sel-feedback
+    ;; left is fine, others need adjusting
+    (:top (o-formula (- (gvl :obj-over :top) 2)))
+    (:width (o-formula (+ (gvl :obj-over :width) 1)))
+    (:height (o-formula (gvl :obj-over :height)))
+    (:filling-style NIL)
+    (:line-style line-3))
+  (create-instance 'gray-outline-feedback outline-feedback
+    (:line-style gray-line-3)))
 
 
 ;; procedure called from the interactor that selects a formula icon
@@ -652,7 +659,7 @@
 			  (:how-set :toggle) ; allow it to be deselected also
 			  (:final-feedback-obj slot-f-feedback)
 			  (:final-function NIL))))
-    
+
     (opal:add-components agg mainfeedback
 			 feedback slot-i-feedback slot-f-feedback)
     (s-value panel-set :value-inter textinter)
@@ -701,11 +708,11 @@
 			:line-style :fill-background-p :actual-heightp
 			:draw-function :window :parent  :is-a))
 (s-value opal:cursor-text :slots-to-show '(:string :cursor-index :font :left :top :width
-			:height :visible 
+			:height :visible
 			:line-style :fill-background-p :actual-heightp
 			:draw-function  :window :parent :is-a))
 (s-value opal:cursor-multi-text :slots-to-show '(:string :cursor-index
-			:font :left :top :width :height :justification :visible 
+			:font :left :top :width :height :justification :visible
 			:line-style :fill-background-p :actual-heightp
 			:draw-function  :window :parent :is-a))
 (s-value opal:aggregate :slots-to-show '(:components :left :top :width
@@ -729,7 +736,7 @@
 (s-value inter:Move-grow-interactor :slots-to-show '(:start-where
 			:running-where :start-event
 			:stop-event :abort-event :continuous :feedback-obj
-			:line-p :grow-p :obj-to-change :attach-point 
+			:line-p :grow-p :obj-to-change :attach-point
 			:min-width :min-height :min-length
 			:running-where :final-function :active :is-a))
 (s-value inter:two-point-interactor :slots-to-show '(:start-where
@@ -753,7 +760,7 @@
 ;;;  USER INTERFACE
 ;;
 
-(defvar error-gadget-object nil) 
+(defvar error-gadget-object nil)
 
 ;; Display an error message, let the user click on OK to remove it.
 ;;
@@ -774,14 +781,14 @@
 	   (gg:display-query-and-wait query-gadget-object string)))
 
 
-    
+
 ;; Returns the c32-item that is selected, or NIL if none.
 ;;
 (defun Get-Selected-Item ()
   (let ((label (g-value *Current-Selection-Feedback* :obj-over)))
     (when label (g-value label :parent))))
 
-	  
+
 ;; Returns the c32-item that is secondary (middle button) selected,
 ;; or NIL if none.
 (defun Get-Sec-Selected-Item ()
@@ -806,7 +813,7 @@
 	;; Turn off selections.
 	(turn-selections-off))
       ;; else create a new one
-      (progn 
+      (progn
 	(setq *Current-Panel-Set* (Create-Panel-Set (list obj) 700 2 2))
 	(pushnew (g-value *Current-Panel-Set* :outer-window) *All-windows*))))
 
@@ -971,7 +978,7 @@
 ;;;	(New-Obj-For-Panel obj panel)
 	(opal:update (g-value panel :window)))
       (C32Error "Please type a symbol or keyword to create a new slot."))))
-    
+
 
 
 (defun do-stop ()

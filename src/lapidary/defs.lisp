@@ -10,8 +10,8 @@
 ;;;
 ;;; Lapidary:Defs.Lisp
 ;;;
-;;; This file contains many of the schemas, defconstants, defvars, and 
-;;;  defstructs which are used by Lapidary.  This does not contain any 
+;;; This file contains many of the schemas, defconstants, defvars, and
+;;;  defstructs which are used by Lapidary.  This does not contain any
 ;;;  defmacros, however.
 ;;;
 
@@ -20,10 +20,10 @@
 
 ;;;=========================================================
 ;;;
-;;; set up a global selection schema that keeps track of the 
-;;; selected objects in all windows and the selection-type 
-;;; of objects in all windows (e.g., one-one--one primary 
-;;; and one secondary selection, zero-one--no primary and 
+;;; set up a global selection schema that keeps track of the
+;;; selected objects in all windows and the selection-type
+;;; of objects in all windows (e.g., one-one--one primary
+;;; and one secondary selection, zero-one--no primary and
 ;;; one secondary selections)
 ;;;
 ;;;=========================================================
@@ -81,7 +81,7 @@
 
 ;;;=========================================================
 ;;;
-;;; map names of menu selections to positions in a menu 
+;;; map names of menu selections to positions in a menu
 ;;; array
 ;;;
 ;;;=========================================================
@@ -94,7 +94,7 @@
 (defvar *slot-font* (create-instance NIL opal:font
 		       (:size :large) (:family :serif) (:face :bold-italic)))
 
-;;; used so that objects will appear with a white border if they are 
+;;; used so that objects will appear with a white border if they are
 ;;; inverted
 
 (defvar *white-line-style* (create-instance NIL opal:line-style
@@ -114,14 +114,15 @@
 (defconstant *min-agg-size* (+ (* 2 *agg-sel-circle-size*) 4))
 (defconstant *min-leaf-size* (+ (* 2 sel-box-size) 4))
 
-;; error gadget to display error messages
-(create-instance '*lapidary-error-window* garnet-gadgets:error-gadget)
+(when gem::*x11-server-available*
+  ;; error gadget to display error messages
+  (create-instance '*lapidary-error-window* garnet-gadgets:error-gadget)
 
-;; create a general purpose query gadget
-(create-instance 'lapidary-query-gadget GARNET-GADGETS:query-gadget
-      (:SELECTION-FUNCTION 'by-demo-OKCANCEL-FUNCTION)
-      (:modal-p nil)
-      (:function-for-ok 'by-demo-ok-function))
+  ;; create a general purpose query gadget
+  (create-instance 'lapidary-query-gadget GARNET-GADGETS:query-gadget
+    (:SELECTION-FUNCTION 'by-demo-OKCANCEL-FUNCTION)
+    (:modal-p nil)
+    (:function-for-ok 'by-demo-ok-function)))
 
 ;; definitions for lists that contain free feedback objects
 (defvar *undersized-feedback-list* nil)
@@ -172,8 +173,8 @@
 				      (list :indent 'num-only)))
 
 ;;; used for creating feedback when resizing an aggrelist
-(defvar *aggrelist-feedback-slots* 
-  '(:left :top :direction :v-spacing :h-spacing 
+(defvar *aggrelist-feedback-slots*
+  '(:left :top :direction :v-spacing :h-spacing
 		:fixed-width-size :fixed-height-size
 		:fixed-width-p :fixed-height-p
 		:h-align :v-align
@@ -196,13 +197,13 @@
 
 ;; add slots to list of slots that c32 should show for lapidary interactors
 (s-value lapidary:directional-move-grow-interactor :slots-to-show
-	 (append (g-value lapidary:directional-move-grow-interactor 
+	 (append (g-value lapidary:directional-move-grow-interactor
 			  :slots-to-show)
 		 '(:grow-box-parms :move-box-parms)))
 
 ;;;=========================================================
 ;;;
-;;; queue that a custom formula should be placed on 
+;;; queue that a custom formula should be placed on
 ;;;
 ;;;=========================================================
 

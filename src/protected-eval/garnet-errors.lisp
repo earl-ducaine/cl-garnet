@@ -15,8 +15,8 @@
 ;;; Garnet error handler functions
 ;;
 ;;
-;;  These functions provide a concrete instantiation of some of 
-;;  the abstract error handling facilities in abstract-errors.lisp. 
+;;  These functions provide a concrete instantiation of some of
+;;  the abstract error handling facilities in abstract-errors.lisp.
 ;;  This file must be loaded after abstract-errors.lisp.
 
 (defun protect-errors (context condition &key
@@ -31,7 +31,7 @@
 enter the LISP debugger.
 
 Should be invoked with an expression such as:
-  (handler-bind 
+  (handler-bind
     ((error \#'(lambda (condition)
 		 (protect-errors context-string condition))))
   ...)
@@ -49,7 +49,7 @@ strategies.  If rga:*user-type* is :programmer, then allows debugging.
 <context> should be a string describing user meaningful context in
 which error occured."
   `(handler-bind
-       ((error 
+       ((error
 	 (lambda (condition)
 	   (protect-errors ,context condition))))
      ,.forms))
@@ -177,13 +177,13 @@ established for abort which returns (values <abort-val> :abort)
 where <abort-val> is another parameter. (Same as
 protected-eval)."
 
-  (declare (ignore start context end read-package read-bindings 
+  (declare (ignore start context end read-package read-bindings
 		   default-value local-abort abort-val))
 
   (apply #'gg:garnet-protected-read-from-string string :allow-debug allow-debug args))
 
 
-(defun call-prompter (prompt 
+(defun call-prompter (prompt
 		      &rest args
 		      &key (stream *query-io*)
 			   (local-abort nil)
@@ -199,7 +199,7 @@ If <default-value> is supplied, a CONTINUE restart is set up which
 allows the user to select the default value.
 
 If <eval-input?> is true, then the expression is evaluated before it
-is returned; if not, the unevaluated expression is returned.  
+is returned; if not, the unevaluated expression is returned.
 
 The value supplied by the user is passed to <satisfy-test>.  If that
 test fails, the user is prompted again.
@@ -211,29 +211,37 @@ implementation mechanism."
 		   eval-input? satisfy-test))
   (apply #'gg:do-prompt prompt :allow-other-keys t args))
 
-(kr:s-value (kr:g-value gg:Error-prompter-gadget :window)
-    :title (format nil "~A:Prompter" *application-long-name*))
-    
-(kr:s-value (kr:g-value gg:Error-prompter-gadget :window)
-    :icon-title (format nil "~A:Prompter" *application-short-name*))
 
-(kr:s-value (kr:g-value gg:protected-eval-error-gadget :window)
-    :title (format nil "~A:Error-Handler" *application-long-name*))
-    
-(kr:s-value (kr:g-value gg:protected-eval-error-gadget :window)
-    :icon-title (format nil "~A:Error" *application-short-name*))
+(when gem::*x11-server-available*
 
-(kr:create-instance 'message-display gg:Motif-Error-Gadget
-  (:modal-p nil)
-  (:window-top (floor gem:*screen-height* 2))
-  (:window-left (floor gem:*screen-width* 2)))
+  (kr:s-value (kr:g-value gg:error-prompter-gadget :window)
+	      :title (format nil "~A:Prompter" *application-long-name*))
+
+  (kr:s-value (kr:g-value gg:error-prompter-gadget :window)
+	      :icon-title (format nil "~A:Prompter" *application-short-name*))
+
+  (kr:s-value (kr:g-value gg:protected-eval-error-gadget :window)
+	      :title (format nil "~A:Error-Handler" *application-long-name*))
+
+  (kr:s-value (kr:g-value gg:protected-eval-error-gadget :window)
+	      :icon-title (format nil "~A:Error" *application-short-name*))
 
 
-(kr:s-value (kr:g-value message-display :window)
-    :title (format nil "~A:Message" *application-long-name*))
-    
-(kr:s-value (kr:g-value message-display :window)
-    :icon-title (format nil "~A:Message" *application-short-name*))
+  (kr:create-instance 'message-display gg:Motif-Error-Gadget
+    (:modal-p nil)
+    (:window-top (floor gem:*screen-height* 2))
+    (:window-left (floor gem:*screen-width* 2)))
+
+  (kr:create-instance 'selector-display gg:motif-query-gadget  #-(and)gg:query-gadget
+		      (:modal-p nil)
+		      (:window-top (floor gem:*screen-height* 2))
+		      (:window-left (floor gem:*screen-width* 2)))
+
+  (kr:s-value (kr:g-value message-display :window)
+	      :title (format nil "~A:Message" *application-long-name*))
+
+  (kr:s-value (kr:g-value message-display :window)
+	      :icon-title (format nil "~A:Message" *application-short-name*)))
 
 
 (defun call-displayer (message &rest keys
@@ -252,17 +260,13 @@ is meant to be called through call-displayer."
 	(gg:display-error-and-wait message-display message)
       (gg:display-error message-display message)))
 
+(when gem::*x11-server-available*
 
-(kr:create-instance 'selector-display gg:motif-query-gadget  #-(and)gg:query-gadget
-  (:modal-p nil)
-  (:window-top (floor gem:*screen-height* 2))
-  (:window-left (floor gem:*screen-width* 2)))
+  (kr:s-value (kr:g-value selector-display :window)
+	      :title (format nil "~A:Selection" *application-long-name*))
 
-(kr:s-value (kr:g-value selector-display :window)
-    :title (format nil "~A:Selection" *application-long-name*))
-    
-(kr:s-value (kr:g-value selector-display :window)
-    :icon-title (format nil "~A:Selection" *application-short-name*))
+  (kr:s-value (kr:g-value selector-display :window)
+	      :icon-title (format nil "~A:Selection" *application-short-name*)))
 
 
 
@@ -284,5 +288,3 @@ first on the stream as a prompt."
   (declare (ignore keys in-stream out-stream))
   (kr:s-value selector-display :beep-p beep)
   (gg:display-query-and-wait selector-display message option-list))
-
-

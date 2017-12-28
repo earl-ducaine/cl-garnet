@@ -26,7 +26,7 @@
 (defvar GARNETDRAW-INIT
   (progn
     ;;;  Load ps-loader.
-    (common-lisp-user::garnet-load "ps:ps-loader")
+    ;; (common-lisp-user::garnet-load "ps:ps-loader")
 
     ;;;  Load gadgets.
     ;; (dolist (file '("multi-selection-loader" "polyline-creator-loader"

@@ -58,24 +58,9 @@
 ;;;    To stop, enter (GARNET-GADGETS:Scrolling-unLabeled-Box-stop).
 ;;;
 ;;;  Designed and written by Brad Myers
-#|
-============================================================
-Change log:
-;;; 10/2/03 RGA --- Moved to Garnet Gadgets.
-         6/19/92 --RGA hacked from scrolling-labeled-box to remove
-           label. 
-        04/30/92 - Andrew Micksih - Called get-standard-font for fonts
-         2/17/92  Andrew Mickish - Added :maybe-constant list
-	 1/28/92  Ed Pervin - Must wrap ,# around lambda for CMUCL.
-         7/29/91  Andrew Mickish - Changed some formulas to center the
-                  label, field, and frame with each other
-	 6/01/90  Brad Myers - created
-============================================================
-|#
 
-;;(common-lisp-user::garnet-load "gadgets:scrolling-labeled-box-loader")
 
-(in-package "GARNET-GADGETS")
+(in-package :garnet-gadgets)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(Scrolling-Unlabeled-Box))
@@ -184,4 +169,3 @@ with no label.")
 #+:garnet-test
 (defun Scrolling-Unlabeled-Box-Stop ()
   (opal:destroy Scrolling-Unlabeled-Box-win))
-

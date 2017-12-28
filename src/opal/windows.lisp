@@ -325,12 +325,11 @@
 			      :root-window root-window)))
   (unless *halftone-table*
     ;;; This used to be done by a DefVar, but now the DefVars all occur at
-    ;; the start of loading Opal, before the function is defined, so we must
-    ;; Setf it here...
+    ;; the start of loading Opal, before the function is defined, so
+    ;; we must Setf it here...
     (setf *halftone-table* (build-halftone-table root-window))
     (install-bitmap-images))
-  (gem:initialize-device root-window))
-
+  (g-value (g-value gem:device-info :current-root) :display-info))
 
 ;; The PAIR argument can either be
 ;; 1) A dotted pair of two bitmaps: an image and a mask

@@ -93,7 +93,8 @@
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(create-instance '*constraint-gadget-error-window* garnet-gadgets:error-gadget)
+(when gem::*x11-server-available*
+  (create-instance '*constraint-gadget-error-window* garnet-gadgets:error-gadget))
 
 (defun constraint-gadget-error (msg &optional (wait-p t))
   (if wait-p
@@ -106,7 +107,8 @@
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(create-instance '*constraint-gadget-query-window* garnet-gadgets:query-gadget)
+(when gem::*x11-server-available*
+  (create-instance '*constraint-gadget-query-window* garnet-gadgets:query-gadget))
 
 (defun constraint-gadget-query (msg labels &optional (wait-p t))
   (if wait-p
