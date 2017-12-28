@@ -26,4 +26,4 @@
 	(gg:with-garnet-error-handling "Wait Interaction Complete"
 	  (loop
 	     (inter::default-event-handler
-		 (g-value gem:DEVICE-INFO :current-root)))))))
+		 (g-value gem:*device-info* :current-root)))))))

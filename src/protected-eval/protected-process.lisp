@@ -30,7 +30,7 @@
   ;; first, throw away any pending events
   (discard-all-pending-events)
   (set-dispatch-macro-character #\# #\k (function kr::k-reader))
-  (let ((root-window (gv gem:device-info :current-root)))
+  (let ((root-window (gv gem:*device-info* :current-root)))
     (unwind-protect
 	 (catch 'exit-main-loop-exception
 	   (loop
