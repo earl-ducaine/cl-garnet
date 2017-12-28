@@ -170,8 +170,11 @@
 	   MAX-CHARACTER-ASCENT
 	   MAX-CHARACTER-DEscent
 	   MAKE-FONT-NAME
-
+	   TEXT-WIDTH
 	   FONT-TO-INTERNAL
+	   FONT-NAME-P
+	   COLORMAP-PROPERTY
+	   IMAGE-SIZE
 
 	   CLEAR-AREA)
   (:import-from :garnet-utils :black)
