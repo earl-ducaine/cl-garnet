@@ -149,21 +149,23 @@
 
 (defun x-set-screen-color-attribute-variables (root-window)
   (declare (ignore root-window))
-  (let ((color-screen-types '(:pseudo-color
-                              :direct-color
-                              :static-color
-                              :true-color
-                              :quickdraw))
-        (screen-type (xlib::visual-info-class
-                      (xlib::screen-root-visual-info
-                       *default-x-screen*))))
-      (declare (ignore color-screen-types))
-    (unless (eq screen-type :true-color)
-      (error  (concatenate 'string
-	      "Garnett only supports true-color display.  All other "
-	      "displays, i.e. :direct-color or :quickdraw, have been "
-	      "depreciated")))
-    (setq *color-screen-p* :true-color)))
+  (when *x11-server-available*
+    (let
+	(;; (color-screen-types '(:pseudo-color
+	 ;;                        :direct-color
+	 ;;                        :static-color
+	 ;;                        :true-color
+	 ;;                        :quickdraw))
+	 (screen-type (xlib::visual-info-class
+		       (xlib::screen-root-visual-info
+			*default-x-screen*))))
+      ;; (declare (ignore color-screen-types))
+      (unless (eq screen-type :true-color)
+	(error  (concatenate 'string
+			     "Garnett only supports true-color display.  All other "
+			     "displays, i.e. :direct-color or :quickdraw, have been "
+			     "depreciated")))
+      (setq *color-screen-p* :true-color))))
 
 (defun x-color-to-index (root-window a-color)
   (declare (ignore root-window))
@@ -194,7 +196,6 @@
        (format t "~%~A ~{ ~S~}" (car ,arguments) (cdr ,arguments))))
 
 (defvar *x-font-faces* '(:roman :bold :italic :bold-italic))
-(defparameter *root-window* nil)
 
 (defun get-stipple-schema-pixmap (stipple-schema root-window bitmap-p)
   (let ((root-plist (g-value stipple-schema :root-pixmap-plist)))
@@ -421,9 +422,11 @@ These are raw windows, NOT Opal windows!"
 (defun x-black-white-pixel (window)
   "Returns: the black and white pixel for the screen of the <window>, as
 multiple values."
-  (let ((screen (display-info-screen (g-value window :display-info))))
-    (values (xlib:screen-black-pixel screen)
-            (xlib:screen-white-pixel screen))))
+  (if *x11-server-available*
+      (let ((screen (display-info-screen (g-value window :display-info))))
+	(values (xlib:screen-black-pixel screen)
+		(xlib:screen-white-pixel screen)))
+      (values 0 0)))
 
 (defun x-character-width (root-window opal-font the-char-code)
   (declare (ignore root-window))
@@ -457,25 +460,26 @@ operate on the window's buffer instead."
 ;;; we assume the use of true color.  So colormap-property is a noop.
 (defun x-colormap-property (root-window property &optional a b c)
   "Returns various things, depending on which <property> is requested:
-:COLOR-LOOKUP -- looks up <a> (a color name) and returns three values,
+   :COLOR-LOOKUP -- looks up <a> (a color name) and returns three values,
                  the R-G-B values in the color lookup table.
-:MAKE-COLOR   -- creates and returns a color whose three RGB components
+   :MAKE-COLOR   -- creates and returns a color whose three RGB components
                  are given by <a, b, c>"
   (declare (ignore root-window))
-  (case property
-    (:ALLOC-COLOR
-     (xlib:alloc-color *default-x-colormap* a))
-    (:MAKE-COLOR
-     (xlib:make-color :red a :green b :blue c))
-    (:QUERY-COLORS
-     ;; Returns three values: red, green, blue components
-     (let ((color (car (xlib:query-colors *default-x-colormap* (list a)))))
-       (values (floor (* 65535 (xlib:color-red color)))
-               (floor (* 65535 (xlib:color-green color)))
-               (floor (* 65535 (xlib:color-blue color))))))
-    (t
-     (error "Unknown property ~S in gem::x-colormap-property~%"
-            property))))
+  (when gem::*x11-server-available*
+    (case property
+      (:ALLOC-COLOR
+       (xlib:alloc-color *default-x-colormap* a))
+      (:MAKE-COLOR
+       (xlib:make-color :red a :green b :blue c))
+      (:QUERY-COLORS
+       ;; Returns three values: red, green, blue components
+       (let ((color (car (xlib:query-colors *default-x-colormap* (list a)))))
+	 (values (floor (* 65535 (xlib:color-red color)))
+		 (floor (* 65535 (xlib:color-green color)))
+		 (floor (* 65535 (xlib:color-blue color))))))
+      (t
+       (error "Unknown property ~S in gem::x-colormap-property~%"
+	      property)))))
 
 (defun x-copy-to-pixmap (root-window to from width height)
   "Copy the cursor or bitmap in <from> to the pixmap <to>.  The operation
@@ -508,12 +512,12 @@ for the two fonts."
                           :foreground (g-value opal::black :xcolor)
                           :background (g-value opal::white :xcolor))))
 
-
 ;; The following deals with cases where the display provides pixmaps
 ;; with depths different from bits-per-pixel.
 (defun get-pixmap-formats ()
   "Return valid pixmap formats for this display."
-  (xlib:display-pixmap-formats *default-x-display*))
+  (when gem::*x11-server-available*
+    (xlib:display-pixmap-formats *default-x-display*)))
 
 (defun depth-pixmap-format (depth)
   "Return a list of all pixmap formats with a given depth supported by
@@ -525,28 +529,30 @@ this display."
 
 (defun depth-to-bits-per-pixel (depth)
   "Return a bits-per-pixel value valid for a given depth.  Prefer
-depth = bits-per-pixel if possible.  Otherwise just use the first
-pixmap format in the list of valid formats."
-  (let ((valid-formats (depth-pixmap-format depth)))
-    (dolist (format valid-formats (xlib:pixmap-format-bits-per-pixel (car valid-formats)))
-      (when (= (xlib:pixmap-format-bits-per-pixel format) depth)
-        (return-from depth-to-bits-per-pixel depth)))))
+   depth = bits-per-pixel if possible.  Otherwise just use the first
+   pixmap format in the list of valid formats."
+  (when gem::*x11-server-available*
+    (let ((valid-formats (depth-pixmap-format depth)))
+      (dolist (format valid-formats (xlib:pixmap-format-bits-per-pixel (car valid-formats)))
+	(when (= (xlib:pixmap-format-bits-per-pixel format) depth)
+	  (return-from depth-to-bits-per-pixel depth))))))
 
 
 (defun pixarray-element-type (depth)
-  (case depth
-    (1  'xlib::pixarray-1-element-type)
-    (4  'xlib::pixarray-4-element-type)
-    (8  'xlib::pixarray-8-element-type)
-    (16 'xlib::pixarray-16-element-type)
-    (24 'xlib::pixarray-24-element-type)
-    (32 'xlib::pixarray-32-element-type)
-    (t
-     (cerror
-      "Ignore"
-      "gem::x-create-image-array: bits-per-pixel ~S is not valid (1, 4, 8, 16, 24 or 32)"
-      depth)
-     'xlib::pixarray-8-element-type)))
+  (when gem::*x11-server-available*
+    (case depth
+      (1  'xlib::pixarray-1-element-type)
+      (4  'xlib::pixarray-4-element-type)
+      (8  'xlib::pixarray-8-element-type)
+      (16 'xlib::pixarray-16-element-type)
+      (24 'xlib::pixarray-24-element-type)
+      (32 'xlib::pixarray-32-element-type)
+      (t
+       (cerror
+	"Ignore"
+	"gem::x-create-image-array: bits-per-pixel ~S is not valid (1, 4, 8, 16, 24 or 32)"
+	depth)
+       'xlib::pixarray-8-element-type))))
 
 
 ;; <color-or-data> is used as a color (if <from-data-p> is nil) or as
@@ -634,44 +640,43 @@ pixmap format in the list of valid formats."
                         min-width min-height max-width max-height
                         user-specified-position-p user-specified-size-p
                         override-redirect)
-  (let* ((display-info (g-value parent-window :display-info))
-         (drawable (xlib:create-window
-                    :parent (g-value parent-window :drawable)
-                    :x x
-                    :y y
-                    :width width
-                    :height height
-                    :background background
-                    :border-width border-width
-                    :border (xlib:screen-black-pixel (display-info-screen
-                                                      display-info))
-                    :override-redirect override-redirect
-                    :event-mask *exposure-event-mask*
-                    :save-under save-under
-                    :class :input-output)))
-    (setf (xlib:wm-hints drawable)
-          (xlib:make-wm-hints :input :on :initial-state visible))
-    (setf (xlib:wm-normal-hints drawable)
-          (xlib:make-wm-size-hints
-           :width-inc 1
-           :height-inc 1
-           :x x
-           :y y
-           :min-width min-width
-           :min-height min-height
-           :max-width max-width
-           :max-height max-height
-           :user-specified-position-p user-specified-position-p
-           :user-specified-size-p user-specified-size-p))
-
-    (xlib:set-wm-properties drawable
-			    ;; :client-machine
-			    ;; (machine-instance)
-                            :resource-name "Opal"
-                            :resource-class :opal
-                            :name title
-                            :icon-name icon-name)
-
+  (when *x11-server-available*
+    (let* ((display-info (g-value parent-window :display-info))
+	   (drawable (xlib:create-window
+		      :parent (g-value parent-window :drawable)
+		      :x x
+		      :y y
+		      :width width
+		      :height height
+		      :background background
+		      :border-width border-width
+		      :border (xlib:screen-black-pixel (display-info-screen
+							display-info))
+		      :override-redirect override-redirect
+		      :event-mask *exposure-event-mask*
+		      :save-under save-under
+		      :class :input-output)))
+      (setf (xlib:wm-hints drawable)
+	    (xlib:make-wm-hints :input :on :initial-state visible))
+      (setf (xlib:wm-normal-hints drawable)
+	    (xlib:make-wm-size-hints
+	     :width-inc 1
+	     :height-inc 1
+	     :x x
+	     :y y
+	     :min-width min-width
+	     :min-height min-height
+	     :max-width max-width
+	     :max-height max-height
+	     :user-specified-position-p user-specified-position-p
+	     :user-specified-size-p user-specified-size-p))
+      (xlib:set-wm-properties drawable
+			      ;; :client-machine
+			      ;; (machine-instance)
+			      :resource-name "Opal"
+			      :resource-class :opal
+			      :name title
+			      :icon-name icon-name)
     ;;; The following allows you to destroy windows by hand using the
     ;;; window manager.  Unfortunately, this does not work in lispworks, but
     ;;; causes an error with mysterious message "#\U is not of type integer".
@@ -680,19 +685,15 @@ pixmap format in the list of valid formats."
     ;;; :TRANSFORM #'xlib:char->card8. I guess it is related to missing error
     ;;; error checking in other implementations than clisp and lispworks.
     ;;; B. Haible 20.9.1993
-    (xlib:change-property drawable
-                          :WM_CLIENT_MACHINE (short-site-name)
-                          :STRING 8)
-
-    (xlib:change-property drawable :WM_PROTOCOLS
-                          (list (xlib:intern-atom
-                                 (display-info-display display-info)
-                                 "WM_DELETE_WINDOW"))
-                          :ATOM 32)
-    drawable))
-
-
-
+      (xlib:change-property drawable
+			    :WM_CLIENT_MACHINE (short-site-name)
+			    :STRING 8)
+      (xlib:change-property drawable :WM_PROTOCOLS
+			    (list (xlib:intern-atom
+				   (display-info-display display-info)
+				   "WM_DELETE_WINDOW"))
+			    :ATOM 32)
+      drawable)))
 
 (defun x-delete-font (root-window font)
   (declare (ignore root-window))
@@ -1658,33 +1659,34 @@ pixmap format in the list of valid formats."
 (defun x-font-to-internal (root-window font-from-file)
   (let ((dx-plist (g-value font-from-file :display-xfont-plist))
         (display (the-display root-window)))
-    (or (getf dx-plist display)
-        (let ((font-path (fix-font-path
-                          (g-value font-from-file :font-path)))
-              (font-name (g-value font-from-file :font-name)))
-          (when font-path
-            (let ((xfont-path (mapcar #'remove-null-char
-                                      (xlib:font-path display))))
+    (when *x11-server-available*
+      (or (getf dx-plist display)
+	  (let ((font-path (fix-font-path
+			    (g-value font-from-file :font-path)))
+		(font-name (g-value font-from-file :font-name)))
+	    (when font-path
+	      (let ((xfont-path (mapcar #'remove-null-char
+					(xlib:font-path display))))
               ;;; Add the font-path to the font-path, if necessary
-              (unless (member font-path xfont-path :test #'string=)
-                (setf (xlib:font-path display)
-                      (cons font-path xfont-path))
+		(unless (member font-path xfont-path :test #'string=)
+		  (setf (xlib:font-path display)
+			(cons font-path xfont-path))
                 ;;; Now make sure it's there!
-                (unless (member font-path (xlib:font-path display)
-                                :test #'string=)
-                  (format t "WARNING: X did not add ~A to font-path!!~%"
-                          font-path)))))
+		  (unless (member font-path (xlib:font-path display)
+				  :test #'string=)
+		    (format t "WARNING: X did not add ~A to font-path!!~%"
+			    font-path)))))
           ;;; Open the font only if it's on the font-path
-          (if (xlib:list-font-names display font-name)
-	      (let ((xfont (xlib:open-font display font-name)))
-                (s-value font-from-file :display-xfont-plist
-                         (cons display (cons xfont dx-plist)))
-                xfont)
-              (progn
-                (format t "WARNING: Font '~A' not on font path!~%"
-                        font-name)
-                (format t "  ****   Resorting to Default Font!~%")
-                (x-font-to-internal root-window default-font-from-file)))))))
+	    (if (xlib:list-font-names display font-name)
+		(let ((xfont (xlib:open-font display font-name)))
+		  (s-value font-from-file :display-xfont-plist
+			   (cons display (cons xfont dx-plist)))
+		  xfont)
+		(progn
+		  (format t "WARNING: Font '~A' not on font path!~%"
+			  font-name)
+		  (format t "  ****   Resorting to Default Font!~%")
+		  (x-font-to-internal root-window default-font-from-file))))))))
 
 
 
@@ -1847,8 +1849,6 @@ pixmap format in the list of valid formats."
   (declare (ignore root-window))
   (xlib:image-z-pixarray image))
 
-
-
 ;;; Helper function for x-initialize-window-borders
 ;;;
 (defun set-four-borders (window left &optional top right bottom)
@@ -1861,71 +1861,75 @@ pixmap format in the list of valid formats."
   (s-value window :bottom-border-width bottom))
 
 
+(defparameter *display-info* (make-display-info))
 
-(defun x-initialize-device (root-window)
-  (declare (ignore root-window))
-  (let* ((x-line-style-gc
-          (xlib:create-gcontext :drawable *default-x-root*
-                                :cache-p t
-                                :function 2
-                                :foreground *black*
-                                :background *white*
-                                :line-width 0
-                                :line-style :solid
-                                :cap-style :butt
-                                :join-style :miter
-                                :fill-style :solid
-                                :fill-rule :even-odd))
-         (x-filling-style-gc
-          (xlib:create-gcontext :drawable *default-x-root*
-                                :cache-p t
-                                :function 2
-                                :foreground *black*
-                                :background *white*
-                                :line-width 0
-                                :line-style :solid
-                                :cap-style :butt
-                                :join-style :miter
-                                :fill-style :solid
-                                :fill-rule :even-odd))
-         (gem-line-style-gc
-          (make-gem-gc  :gcontext x-line-style-gc
-                        :opal-style NIL
-                        :function 2
-                        :line-width 0
-                        :line-style :solid
-                        :cap-style  :butt
-                        :join-style :miter
-                        :dashes NIL
-                        :font   NIL
-                        :fill-style :solid
-                        :fill-rule  :even-odd
-                        :stipple   NIL
-                        :clip-mask :none
-                        :stored-clip-mask (make-list 8)))
-         (gem-filling-style-gc
-          (make-gem-gc  :gcontext x-filling-style-gc
-                        :opal-style NIL
-                        :function 2
-                        :line-width 0
-                        :line-style :solid
-                        :cap-style  :butt
-                        :join-style :miter
-                        :dashes NIL
-                        :font   NIL
-                        :fill-style :solid
-                        :fill-rule  :even-odd
-                        :stipple   NIL
-                        :clip-mask :none
-                        :stored-clip-mask (make-list 8))))
+;; (defun x-initialize-device (root-window)
+;;   (declare (ignore root-window))
+;;     (x-initialize-device-post)
+;;     *display-info*)
 
-    (make-display-info :display *default-x-display*
-                       :screen  *default-x-screen*
-                       :root-window *default-x-root*
-                       :line-style-gc gem-line-style-gc
-                       :filling-style-gc gem-filling-style-gc)))
-
-
+(defun x-initialize-device-post ()
+  (when *x11-server-available*
+    (let* ((x-line-style-gc
+	    (xlib:create-gcontext :drawable *default-x-root*
+				  :cache-p t
+				  :function 2
+				  :foreground *black*
+				  :background *white*
+				  :line-width 0
+				  :line-style :solid
+				  :cap-style :butt
+				  :join-style :miter
+				  :fill-style :solid
+				  :fill-rule :even-odd))
+	   (x-filling-style-gc
+	    (xlib:create-gcontext :drawable *default-x-root*
+				  :cache-p t
+				  :function 2
+				  :foreground *black*
+				  :background *white*
+				  :line-width 0
+				  :line-style :solid
+				  :cap-style :butt
+				  :join-style :miter
+				  :fill-style :solid
+				  :fill-rule :even-odd))
+	   (gem-line-style-gc
+	    (make-gem-gc  :gcontext x-line-style-gc
+			  :opal-style NIL
+			  :function 2
+			  :line-width 0
+			  :line-style :solid
+			  :cap-style  :butt
+			  :join-style :miter
+			  :dashes NIL
+			  :font   NIL
+			  :fill-style :solid
+			  :fill-rule  :even-odd
+			  :stipple   NIL
+			  :clip-mask :none
+			  :stored-clip-mask (make-list 8)))
+	   (gem-filling-style-gc
+	    (make-gem-gc  :gcontext x-filling-style-gc
+			  :opal-style NIL
+			  :function 2
+			  :line-width 0
+			  :line-style :solid
+			  :cap-style  :butt
+			  :join-style :miter
+			  :dashes NIL
+			  :font   NIL
+			  :fill-style :solid
+			  :fill-rule  :even-odd
+			  :stipple   NIL
+			  :clip-mask :none
+			  :stored-clip-mask (make-list 8))))
+      (setf (display-info-line-style-gc *display-info*) gem-line-style-gc)
+      (setf (display-info-filling-style-gc *display-info*) gem-filling-style-gc))
+    ;; Even without a valid X11 server available, these are still 'valid'
+    (setf (display-info-display *display-info*) *default-x-display*)
+    (setf (display-info-screen *display-info*) *default-x-screen*)
+    (setf (display-info-root-window *display-info*) *default-x-root*)))
 
 ;;; Set the border widths of the <window>.  This is quite complex,
 ;;; because of the differences among various window systems.
@@ -2013,19 +2017,20 @@ pixmap format in the list of valid formats."
 
 (defun x-max-character-ascent (root-window opal-font)
   (declare (ignore root-window))
-  (xlib:max-char-ascent (g-value opal-font :xfont)))
-
+  (if *x11-server-available*
+      (xlib:max-char-ascent (g-value opal-font :xfont))
+      0))
 
 (defun x-max-character-descent (root-window opal-font)
   (declare (ignore root-window))
-  (xlib:max-char-descent (g-value opal-font :xfont)))
-
+  (if *x11-server-available*
+      (xlib:max-char-descent (g-value opal-font :xfont))
+      0))
 
 ;;; If <grab-p>, this is a mouse grab or a change-active-pointer grab;
-;;; otherwise, it is a mouse ungrab.
-;;; If <owner-p> is a keyword, then do a change-active-pointer-grab; otherwise,
-;;; do a regular grab-pointer.
-;;;
+;;; otherwise, it is a mouse ungrab.  If <owner-p> is a keyword, then
+;;; do a change-active-pointer-grab; otherwise, do a regular
+;;; grab-pointer.
 (defun x-mouse-grab (window grab-p want-enter-leave &optional owner-p)
   (declare (ignore window))
   (if grab-p
@@ -2042,9 +2047,6 @@ pixmap format in the list of valid formats."
 			     :owner-p owner-p))
       ;; Mouse ungrab.
       (xlib:ungrab-pointer *default-x-display*)))
-
-
-
 
 ;;; Move the <window> to the top (if <raise-p>) or to the bottom.
 ;;;
@@ -2135,34 +2137,38 @@ pixmap format in the list of valid formats."
   (setq *default-x-display-name*
         (if full-display-name (get-display-name full-display-name) ""))
   (setq *default-x-screen-number* (get-screen-number full-display-name))
-  (setq *default-x-display*
-        (xlib:open-default-display))
-  (setq *default-x-screen*
-        (nth *default-x-screen-number*
-             (xlib:display-roots *default-x-display*)))
-  (setq *screen-width* (xlib:screen-width *default-x-screen*))
-  (setq *screen-height* (xlib:screen-height *default-x-screen*))
-  (setq *default-x-root* (xlib:screen-root *default-x-screen*))
-  (setq *default-x-colormap*
-        (xlib:screen-default-colormap
-         (nth *default-x-screen-number*
-              (xlib:display-roots
-               (xlib:open-default-display)))))
-  (setq *white* (xlib:screen-white-pixel *default-x-screen*))
-  (setq *black* (xlib:screen-black-pixel *default-x-screen*))
-  ;; Added :button-press and :key-press so garnet-debug:ident will work.
-  (setf *exposure-event-mask*
-        (xlib:make-event-mask :exposure :structure-notify
-                              :button-press :key-press)))
+  (cond
+    (*x11-server-available*
+     (setq *default-x-display* (xlib:open-default-display))
+     (setq *default-x-screen*
+	   (nth *default-x-screen-number*
+		(xlib:display-roots *default-x-display*)))
+     (setq *screen-width* (xlib:screen-width *default-x-screen*))
+     (setq *screen-height* (xlib:screen-height *default-x-screen*))
+     (setq *default-x-root* (xlib:screen-root *default-x-screen*))
+     (setq *default-x-colormap*
+	   (xlib:screen-default-colormap
+	    (nth *default-x-screen-number*
+		 (xlib:display-roots
+		  (xlib:open-default-display)))))
+     (setq *white* (xlib:screen-white-pixel *default-x-screen*))
+     (setq *black* (xlib:screen-black-pixel *default-x-screen*))
+     ;; Added :button-press and :key-press so garnet-debug:ident will work.
+     (setf *exposure-event-mask*
+	   (xlib:make-event-mask :exposure :structure-notify
+				 :button-press :key-press)))
+    ;; provide some bogus values to alow compilation.
+    (t
+     (setq *white* 16777215)
+     (setq *black* 0))))
 
 ;;; Sets the pointer from a raw X <drawable> (a drawable or pixmap) to
 ;;; the Opal <window>.
 (defun x-set-drawable-to-window (window drawable)
-  (if (xlib:pixmap-p drawable)
-      (setf (xlib:pixmap-plist drawable) (list :garnet window))
-      (setf (xlib:window-plist drawable) (list :garnet window))))
-
-
+  (when *x11-server-available*
+    (if (xlib:pixmap-p drawable)
+	(setf (xlib:pixmap-plist drawable) (list :garnet window))
+	(setf (xlib:window-plist drawable) (list :garnet window)))))
 
 (defun x-set-draw-functions (root-window)
   "Create Alist since CLX likes to get the draw function in the form of an
@@ -2354,10 +2360,7 @@ integer.  We want to specify nice keywords instead of those silly
      (format t "Unknown property ~S in gem:set-window-property.~%"
              property))))
 
-
-
-;;; RETURNS: T if the filling style of the given display is stippled
-;;;
+;;; returns: T if the filling style of the given display is stippled
 (defun x-stippled-p (root-window)
   (eq (xlib:gcontext-fill-style
        (gem-gc-gcontext
@@ -2365,24 +2368,33 @@ integer.  We want to specify nice keywords instead of those silly
          (g-value root-window :display-info))))
       :stippled))
 
-
-
 (defun x-text-extents (root-window font string)
   "RETURNS: multiple values:
-    width
-    ascent
-    descent
-    left-bearing
-    right-bearing
-plus other information we do not use."
+     width
+     ascent
+     descent
+     left-bearing
+     right-bearing
+   plus other information we do not use."
   (declare (ignore root-window))
-  (xlib:text-extents (g-value font :xfont) string))
-
+  (if *x11-server-available*
+      (xlib:text-extents (g-value font :xfont) string)
+      (values 0
+	      0
+	      0
+	      0
+	      0
+	      0
+	      0
+	      0
+	      0)))
 
 (defun x-text-width (root-window font string)
   "Returns the width of the <string> in the given font."
   (declare (ignore root-window))
-  (xlib:text-width (g-value font :xfont) string))
+  (if *x11-server-available*
+      (xlib:text-width (g-value font :xfont) string)
+      (values 0 0)))
 
 
 ;;; Creates a state mask for keyboard events.
@@ -2423,9 +2435,10 @@ drawable associated with the <window>."
 
 
 (defun x-window-depth (window)
-  "RETURNS: the depth in bits of the drawable
-associated with the window."
-  (xlib:drawable-depth (g-value window :drawable)))
+  "returns: the depth in bits of the drawable
+   associated with the window."
+  (when gem::*x11-server-available*
+    (xlib:drawable-depth (g-value window :drawable))))
 
 (defun x-window-from-drawable (root-window x-window)
   "Given an X drawable, returns the associated Opal window.
@@ -2501,7 +2514,7 @@ the X drawable."
   (attach-method x-device :image-hot-spot #'x-image-hot-spot)
   (attach-method x-device :image-size #'x-image-size)
   (attach-method x-device :image-to-array #'x-image-to-array)
-  (attach-method x-device :initialize-device #'x-initialize-device)
+;;  (attach-method x-device :initialize-device #'x-initialize-device)
   (attach-method x-device :initialize-window-borders
                  #'x-initialize-window-borders)
   (attach-method x-device :inject-event #'x-inject-event)

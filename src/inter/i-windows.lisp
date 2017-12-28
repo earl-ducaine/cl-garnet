@@ -630,7 +630,6 @@
 		(setq opal::*inside-main-event-loop* :dont-care))
 ;;	    (opal::m-e-l-new)		; Defined in opal/process.lisp
 	    (opal::m-e-l)		; Defined in opal/process.lisp
-
 	    (setq opal::*inside-main-event-loop* NIL)
 	    (gem:discard-pending-events root-window 5))))))
 

@@ -158,142 +158,142 @@
 (or (kr:def-kr-type Package () 'Package)
     t)
 
-;; NOTE:  If :parent-window is specified, then the parent window must already
-;; have been opal:update'd when the instance of ERROR-GADGET is created.
-;;
-(kr:create-instance 'PROMPTER-GADGET GG:Motif-Query-Gadget #-(and)GG:Query-Gadget
-  :declare
-  ((:parameters :string :field-width :input-font :value
-		:default-value :eval? :read-bindings
-		:read-package)
-   (:output :value :+ :*)
-   (:type (String :string :value)
-	  ((Integer 1) :field-width)
-	  (Font :input-font)
-	  (kr-boolean :waiting :eval?)
-	  (List :read-bindings)
-	  (Package :read-package)
-	  )
-   (:maybe-constant T :string :field-width :input-font :value
-		    :read-bindings :read-package))
-  #+kr-doc
-  (:documentation
-   "This gagdet solicits a lisp expression to be read from the user.
+;; note: if :parent-window is specified, then the parent window must
+;; already have been opal:update'd when the instance of ERROR-GADGET
+;; is created.
+(when gem::*x11-server-available*
+  (kr:create-instance 'prompter-gadget GG:Motif-Query-Gadget
+    :declare
+    ((:parameters :string :field-width :input-font :value
+		  :default-value :eval? :read-bindings
+		  :read-package)
+     (:output :value :+ :*)
+     (:type (String :string :value)
+	    ((Integer 1) :field-width)
+	    (Font :input-font)
+	    (kr-boolean :waiting :eval?)
+	    (List :read-bindings)
+	    (Package :read-package)
+	    )
+     (:maybe-constant T :string :field-width :input-font :value
+		      :read-bindings :read-package))
+    (:documentation
+     "This gagdet solicits a lisp expression to be read from the user.
     Setting the value of the :eval? to T offers the user the chance to
     evaluate the expression and return the value.")
-  #+kr-doc
-  (:slot-doc :string "Prompting expression."
-	     :field-width "Width of input field."
-	     :input-font "Font for input field, should be fixed width."
-	     :value "The string value of the prompted field, also the
+    (:slot-doc :string "Prompting expression."
+	       :field-width "Width of input field."
+	       :input-font "Font for input field, should be fixed width."
+	       :value "The string value of the prompted field, also the
                       initial value of that field."
-	     :default-value "The value to be returned in the case of
+	       :default-value "The value to be returned in the case of
                   an error or abort."
-	     :waiting "If T, then :OK should call
+	       :waiting "If T, then :OK should call
                       inter:wait-interaction-complete."
-	     :eval?  "If T, user is presented with an eval button
+	       :eval?  "If T, user is presented with an eval button
                      allowing the input field to be evaluated."
-	     :read-bindings "List of bindings in effect when read
+	       :read-bindings "List of bindings in effect when read
                          takes place."
-	     :read-package "Package in which read should take place."
-	     :* "Value of last evaluated expression.  (Usable inside
+	       :read-package "Package in which read should take place."
+	       :* "Value of last evaluated expression.  (Usable inside
                   prompted evaluations as *)"
-	     :+ "Value of last read expression.  (Usable inside
+	       :+ "Value of last read expression.  (Usable inside
                   prompted evaluations as +; - is bound to currently
 		  read expression but not exported."
-	     )
-
-   (:width (o-formula (MAX (gvl :text :width)
-			   (gvl :prompt :width)
-			   (gvl :button :width))))
-   (:height (o-formula (+ 40 (gvl :text :height)
-			  (gvl :prompt :height)
-			  (gvl :eval-but :height)
-			  (gvl :button :height))))
-
-   ;; If there is no parent window, then the error window is created at
-   ;; position (200, 200).
-
-
-   (:parent-window NIL)			; The parent of the error-window
-   (:string "Enter Expression:")
-   (:font opal:default-font)
-   (:field-width 130)
-   (:input-font opal:default-font)
-   (:justification :center)
-   (:modal-p T)
-   (:selection-function NIL)
-   (:value "Nil")
-   (:default-value nil)
-
-   (:destroy #'Error-Gadget-Destroy)
-
-   (:waiting NIL)			; if T, then OK should call interaction-complete.
-					; set by display-error
-   (:button-names (o-formula (if (gvl :modal-p)
-				 '(:Ok :Cancel)
-			       '(:OK :APPLY :CANCEL))))
-   (:eval? t)					    ; if T, then "EVAL" button is included.
-   (:read-bindings nil)				    ; List of variables with
-   (:read-package (find-package :common-lisp-user)) ; bindings (like a let
-					            ; statement).  These bindings
-					            ; are put in force when the
-					            ; input string is read.
-   (:+ nil) (:* nil)
-   (:parts
-    `(:text
-      (:prompt ,motif-scrolling-unlabeled-box
-	       (:left ,(o-formula (gvl :parent :text :left)))
-	       (:top ,(o-formula (+ 10 (opal:gv-bottom
-					(gvl :parent :text)))))
-	       (:width ,(o-formula (max 130
-					(gvl :parent :text :width)
-					(gvl :parent :field-width))))
-	       (:value ,(o-formula (gvl :parent :value)))
-	       (:selection-function ,#'prompter-accept-input)
 	       )
-      (:eval-but ,MOTIF-TEXT-BUTTON
-	       (:left ,(o-formula
-			(+ 10 (- (floor (MAX (gvl :width)
-					     (gvl :parent :text :width)) 2)
-				 (floor (gvl :width) 2)))))
-	       (:top ,(o-formula (+ 10 (opal:gv-bottom
-					(gvl :parent :prompt)))))
-               (:Constant (T :Except :left :top :visible))
-	       (:visible ,(o-formula (gvl :parent :eval?)))
-	       (:string "Eval")
-	       (:shadow-offset 5) (:text-offset 5) (:gray-width 3)
-	       (:final-feedback-p NIL)
-               (:selection-function
-		(lambda (button value)
-		  (declare (ignore value))
-		  (Prompter-Gadget-Eval-Func button T))) ; always use the value T
-	       (:parts
-		(;; :shadow :gray-outline :white-field
-		 :text
-		 (:feedback-obj :omit)))
+    (:width (o-formula (MAX (gvl :text :width)
+			    (gvl :prompt :width)
+			    (gvl :button :width))))
+    (:height (o-formula (+ 40 (gvl :text :height)
+			   (gvl :prompt :height)
+			   (gvl :eval-but :height)
+			   (gvl :button :height))))
+    ;; If there is no parent window, then the error window is created at
+    ;; position (200, 200).
+    (:parent-window NIL)			; The parent of the error-window
+    (:string "Enter Expression:")
+    (:font opal:default-font)
+    (:field-width 130)
+    (:input-font opal:default-font)
+    (:justification :center)
+    (:modal-p T)
+    (:selection-function NIL)
+    (:value "Nil")
+    (:default-value nil)
+    (:destroy #'Error-Gadget-Destroy)
+    (:waiting NIL)			; if T, then OK should call interaction-complete.
+					; set by display-error
+    (:button-names (o-formula (if (gvl :modal-p)
+				  '(:Ok :Cancel)
+				  '(:OK :APPLY :CANCEL))))
+    (:eval? t)					    ; if T, then "EVAL" button is included.
+    (:read-bindings nil)				    ; List of variables with
+    (:read-package (find-package :common-lisp-user)) ; bindings (like a let
+					; statement).  These bindings
+					; are put in force when the
+					; input string is read.
+    (:+ nil) (:* nil)
+    (:parts
+     `(:text
+       (:prompt ,motif-scrolling-unlabeled-box
+		(:left ,(o-formula (gvl :parent :text :left)))
+		(:top ,(o-formula (+ 10 (opal:gv-bottom
+					 (gvl :parent :text)))))
+		(:width ,(o-formula (max 130
+					 (gvl :parent :text :width)
+					 (gvl :parent :field-width))))
+		(:value ,(o-formula (gvl :parent :value)))
+		(:selection-function ,#'prompter-accept-input)
+		)
+       (:eval-but ,MOTIF-TEXT-BUTTON
+		  (:left ,(o-formula
+			   (+ 10 (- (floor (MAX (gvl :width)
+						(gvl :parent :text :width)) 2)
+				    (floor (gvl :width) 2)))))
+		  (:top ,(o-formula (+ 10 (opal:gv-bottom
+					   (gvl :parent :prompt)))))
+		  (:Constant (T :Except :left :top :visible))
+		  (:visible ,(o-formula (gvl :parent :eval?)))
+		  (:string "Eval")
+		  (:shadow-offset 5) (:text-offset 5) (:gray-width 3)
+		  (:final-feedback-p NIL)
+		  (:selection-function
+		   (lambda (button value)
+		     (declare (ignore value))
+		     (Prompter-Gadget-Eval-Func button T))) ; always use the value T
+		  (:parts
+		   (;; :shadow :gray-outline :white-field
+		    :text
+		    (:feedback-obj :omit)))
 ;;;	       (:interactors
 ;;;		((:TEXT-BUTTON-PRESS :modify
 ;;;		     (:waiting-priority ,ERROR-PRIORITY-LEVEL)
 ;;;		     (:active ,(o-formula (gvl :operates-on :visible)))
 ;;;		     (:running-priority ,ERROR-PRIORITY-LEVEL))))
-       )
-      (:button ,MOTIF-TEXT-BUTTON-PANEL
-	       (:left ,(o-formula
-			(+ 10 (- (floor (MAX (gvl :width)
-					     (gvl :parent :text :width)) 2)
-				 (floor (gvl :width) 2)))))
-	       (:top ,(o-formula (+ 10 (opal:gv-bottom
-					(gvl :parent :eval-but)))))
-               (:Constant (T :Except :left :top :width :height :items))
-	       (:shadow-offset 5) (:text-offset 5)(:direction :horizontal)
-               (:gray-width 3)
-	       (:final-feedback-p NIL)
-	       (:selection-function ,#'prompter-gadget-sel-func)
-               (:items ,(o-formula (gvl :parent :button-names)))))))
+		  )
+       (:button ,MOTIF-TEXT-BUTTON-PANEL
+		(:left ,(o-formula
+			 (+ 10 (- (floor (MAX (gvl :width)
+					      (gvl :parent :text :width)) 2)
+				  (floor (gvl :width) 2)))))
+		(:top ,(o-formula (+ 10 (opal:gv-bottom
+					 (gvl :parent :eval-but)))))
+		(:Constant (T :Except :left :top :width :height :items))
+		(:shadow-offset 5) (:text-offset 5)(:direction :horizontal)
+		(:gray-width 3)
+		(:final-feedback-p NIL)
+		(:selection-function ,#'prompter-gadget-sel-func)
+		(:items ,(o-formula (gvl :parent :button-names)))))))
+  (kr:s-value (kr:g-value Prompter-Gadget :eval-but) :selection-function
+	      (lambda (button value)
+		(Prompter-Gadget-Eval-Func button value)))
+
+  (kr:s-value (kr:g-value Prompter-Gadget :button) :selection-function
+	      (lambda (button value)
+		(Prompter-Gadget-Sel-Func button value))))
 
 
-(defun DISPLAY-Prompt (prompter string
+(defun display-prompt (prompter string
 		      &key (label-list '(:ok :cancel))
 			   (eval? t)
 			   (default-value nil)
@@ -312,7 +312,7 @@ the items with this one, as it won't apply read to the value."
   (s-value prompter :modal-p nil)
   (internal-display-q-or-e prompter string NIL label-list))
 
-(defun DISPLAY-prompt-AND-WAIT (prompter string
+(defun display-prompt-and-wait (prompter string
 				&key (label-list '(:ok :cancel))
 				     (eval? t)
 				     (default-value nil)
@@ -333,30 +333,19 @@ abnormally."
   (values-list (internal-display-q-or-e prompter string T label-list)))
 
 
-(kr:s-value (kr:g-value Prompter-Gadget :eval-but) :selection-function
-  (lambda (button value)
-    (Prompter-Gadget-Eval-Func button value)))
-
-(kr:s-value (kr:g-value Prompter-Gadget :button) :selection-function
-  (lambda (button value)
-    (Prompter-Gadget-Sel-Func button value)))
 
 ;;; testing/demo function for error-gadgets and query gadgets
-#+garnet-test
 (export '(prompter-gadget-go prompter-gadget-stop))
 
-#+garnet-test
+
 (defparameter prompt-text
     "Enter a lisp expression in the box below.
 Use emacs-like commands to edit text.
 Press 'eval' to evaluate your expression.
 * is last returned value, + is last read value.
 Value returned is either last return value or
-latest value read from input.
-")
+latest value read from input.")
 
-
-#+garnet-test
 (defun prompter-gadget-go ()
   (let (agg egadget pgadget feed)
     (create-instance 'prompter-gadget-test-win inter:interactor-window
@@ -397,9 +386,5 @@ latest value read from input.
     (opal:update prompter-gadget-test-win)
     (inter:main-event-loop)))
 
-#+garnet-test
-(proclaim '(special prompter-gadget-test-win))
-
-#+garnet-test
 (defun prompter-gadget-stop ()
   (opal:destroy prompter-gadget-test-win))

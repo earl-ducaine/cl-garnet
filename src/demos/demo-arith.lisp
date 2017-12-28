@@ -21,7 +21,7 @@
 (defvar DEMO-ARITH-INIT
   (progn
     ;;;  Load ps-loader.
-    (common-lisp-user::garnet-load "ps:ps-loader")
+    ;; (common-lisp-user::garnet-load "ps:ps-loader")
     (dolist (gadget '("text-buttons-loader" "arrow-line-loader"
 		      "scrolling-window-loader"))
       (common-lisp-user::garnet-load (concatenate 'string "gadgets:" gadget)))
@@ -43,7 +43,7 @@
 
 (defun Init-Slot (obj slot new-val)
   ;; need to do this to set up the dependencies
-  (g-value obj slot) 
+  (g-value obj slot)
   (s-value obj slot new-val))
 
 ; convert s to an integer or return NIL
@@ -73,7 +73,7 @@
   ;; set this with the object this arrow is from
   (:from-obj NIL)
   ;; set this with the object this arrow is from
-  (:to-obj NIL)   
+  (:to-obj NIL)
   ;;  (:x1 (o-formula (opal:gv-right (gvl :from-obj))))
   ;;  (:y1 (o-formula (opal:gv-center-y (gvl :from-obj))))
   ;;  (:x2 (o-formula (gvl :to-obj :left)))
@@ -87,10 +87,10 @@
   (:x2 (o-formula (first (gvl :xy2))))
   (:y2 (o-formula (second (gvl :xy2))))
   (:value (o-formula (gvl :from-obj :value)))
-  (:open-p NIL) 
+  (:open-p NIL)
   (:visible (o-formula (and (gvl :from-obj)(gvl :to-obj))))
   ;; so that the selection object will know what kind this is
-  (:line-p T)) 
+  (:line-p T))
 
 ;;; Potentially, we want to be able to use this in macros.
 (eval-when (:compile-toplevel :load-toplevel :execute)
@@ -120,7 +120,7 @@
   ;; so that the selection object will know what kind this is
   (:line-p NIL)
   ;; the function to execute or numerical value
-  (:func T) 
+  (:func T)
   (:func-to-execute (o-formula (gvl :func)))
   (:string (o-formula (symbol-name (gvl :func))))
   (:value (o-formula (let ((func (gvl :func-to-execute))
@@ -202,7 +202,7 @@
     (inter:beep)
     (s-value obj :string (g-value inter :original-string))
     (inter:abort-interactor inter)))))
-    
+
 
 ;;;------------------------------------------------------------------------
 ;;;Create main menu object
@@ -210,7 +210,7 @@
 
 ;; Create an arrow, a number-box and one of each kind of operator, and put
 ;; them in a menu, with an
-;; interactor and feedback object to show which is selected.  
+;; interactor and feedback object to show which is selected.
 ;; Agg is the top level aggregate to put the menu in, and window is the window.
 (defun create-mode-menu (agg window)
     (setq *Mode-Menu*
@@ -260,10 +260,10 @@
 	      ,(o-formula (gvl :operates-on :feedback))))))))
     (opal:add-component agg *Mode-Menu*)
     (let ((init-val (g-value *Mode-Menu* :items :number)))
-      (Init-Slot *Mode-Menu* :selected init-val) 
+      (Init-Slot *Mode-Menu* :selected init-val)
       (Init-Slot (g-value *Mode-Menu* :feedback) :obj-over init-val)))
 
-;;This creates the menu of commands.  
+;;This creates the menu of commands.
 ;;The menu is stored into the aggregate agg.  Returns the menu created.
 (defun create-menu (agg)
   (let ((menu (create-instance NIL Garnet-gadgets:Text-Button-Panel
@@ -279,7 +279,7 @@
 		(:final-feedback-p NIL))))
     (opal:add-components agg menu)
     menu))
-                 
+
 ;;;********************************************************************
 ;;;Create a selection object and the interactors to manipulate it.
 ;;; Also, allow objects to be moved
@@ -317,7 +317,7 @@
            (:visible ,(o-formula (gvl :obj-over)))
            (:draw-function :xor))))))
   (opal:add-component agg-to-put-it-in *Selection-Obj*)
-              
+
   (create-instance 'SELECTOR inter:move-grow-interactor
      (:window window)
      (:start-where `(:element-of ,*objs-agg* :type ,arith-box))
@@ -344,9 +344,9 @@
 ;;;Procedures to do the work
 ;;;********************************************************************
 
-; xy-obj-edge returns a list that contains the x and y coordinate of the 
-; point that lies on the edge of obj1 and on the line that goes from the 
-; center of obj1 to obj2.  
+; xy-obj-edge returns a list that contains the x and y coordinate of the
+; point that lies on the edge of obj1 and on the line that goes from the
+; center of obj1 to obj2.
 ;
 ; Parameters:
 ;     obj1 - object we are drawing from
@@ -360,22 +360,22 @@
 	 (dist (isqrt (+ (* deltax deltax) (* deltay deltay))))
 	 (x-change 0)
 	 (y-change 0))
-    
-    (if (zerop dist)            
-	(progn 
+
+    (if (zerop dist)
+	(progn
 	  (setf x-change 0)       ; if centers on top of each other
 	  (setf y-change 0))
 				  ; else normal case
 	(if (not (is-a-p obj1 number-box))
             ; for circular objects:
   	    ;   theta = asin (abs (deltay) / dist)
-            ;   x-change = xradius * cos (theta) 
+            ;   x-change = xradius * cos (theta)
             ;   y-change = yradius * sin (theta)
 	    ;   Use similar triangles instead!!!
-	    (progn 
+	    (progn
 	      (setf x-change (round (* deltax xradius) dist))
 	      (setf y-change (round (* deltay yradius) dist)))
-	    
+
 	    ; else for a rectangle:
   	    ;   the triangle we need sides of is similar triangle to triangle
 	    ;   with sides: line between centers, deltax, and deltay. assume
@@ -387,17 +387,17 @@
 	      (cond ((zerop deltay)       ; aligned horizontally
 		     (setf x-change xradius)
 		     (setf y-change 0))
-		  
+
 		    ((zerop deltax)       ; aligned vertically
 		     (setf x-change 0)
 		     (setf y-change yradius))
-		  
+
 		    ((<= (setf y-change
 			       (abs (round (* deltay xradius) deltax)))
 			 yradius)         ; goes through left or right
 		     (setf x-change xradius))
-		    
-		    (t                    ; goes through top or bottom 
+
+		    (t                    ; goes through top or bottom
 		     (setf x-change (abs (round (* deltax yradius) deltay)))
 		     (setf y-change yradius)))
 
@@ -406,7 +406,7 @@
 
     (setf (first xy) (+ (opal:gv-center-x obj1) x-change))
     (setf (second xy) (+ (opal:gv-center-y obj1) y-change))
-    xy))                  ; return the point 
+    xy))                  ; return the point
 
 
 ;;;Delete-Line is called from delete object to delete lines
@@ -419,7 +419,7 @@
     (s-value to-obj :lines-to-me
          (remove line-obj (g-value to-obj :lines-to-me)))
     (opal:destroy line-obj)))
-  
+
 ;;;Delete-object is called from the main menu routine
 (defun Delete-Object (g v)
   (declare (ignore g v))
@@ -502,7 +502,7 @@
         ;;keep track in case boxes are deleted so can delete this line.
         (push new-line (g-value from-box :lines-from-me))
         (push new-line (g-value to-box :lines-to-me))
-        
+
         (opal:add-component *objs-agg* new-line))))
     ;;else, create a new box
     (let* ((typ (car (g-value *Mode-Menu* :selected :is-a)))
@@ -525,25 +525,25 @@
     (s-value (g-value *Mode-Menu* :items)
              :selected (g-value *Mode-Menu* :items item))
 
-    ;; turn on the feedback for the new item    
+    ;; turn on the feedback for the new item
     (s-value (g-value *Mode-Menu* :feedback)
              :obj-over (g-value *Mode-Menu* :items item))
 )
 
 
-;;; Interprets the gesture and either creates a new object or 
+;;; Interprets the gesture and either creates a new object or
 ;;; performs a command (i.e. delete.)
 ;;;
 (defun handle-gesture (inter first-obj-over class-name attribs
                        points nap dist)
     (declare (ignore inter first-obj-over points dist nap))
-;;    (format T "~s with probability of ~s and distance of ~s~%~%" 
+;;    (format T "~s with probability of ~s and distance of ~s~%~%"
 ;;            class-name nap dist)
 
     (let ((new-obj nil))
         (case class-name
             (:NUMBER-BOX
-                (setf new-obj 
+                (setf new-obj
                       (create-instance NIL number-box (:func 0)
                           (:box (list (inter:gest-attributes-minx attribs)
                                       (inter:gest-attributes-miny attribs)
@@ -555,7 +555,7 @@
                 (Mode-Menu-Select :number)
             )
             (:PLUS
-                (setf new-obj 
+                (setf new-obj
                       (create-instance NIL plus-box (:func '+)
                           (:box (list (inter:gest-attributes-minx attribs)
                                       (inter:gest-attributes-miny attribs)
@@ -569,7 +569,7 @@
             (:TIMES
                 ; check if the bounding box of this gesture entirely
                 ; covers the bounding box of a box or arrow. If not,
-                ; this is a create times box gesture, 
+                ; this is a create times box gesture,
                 ; otherwise this is a delete operation.
                 (let ((to_delete (opal:components-in-rectangle
                                     *objs-agg*
@@ -580,21 +580,21 @@
                                     :intersect T)))
                     (if (null to_delete)
                         (progn      ; create multiply
-                            (setf new-obj 
+                            (setf new-obj
                                   (create-instance NIL times-box (:func '*)
-                                      (:box (list 
+                                      (:box (list
                                         (inter:gest-attributes-minx attribs)
                                         (inter:gest-attributes-miny attribs)
                                         NIL NIL))))
                             (opal:add-component *objs-agg* new-obj)
 
-                            ;; make the new times-box and the 
+                            ;; make the new times-box and the
                             ;; menu item selected
                             (s-value *Selection-Obj* :obj-over new-obj)
                             (Mode-Menu-Select :times)
                         )
                                     ; else delete gesture
-                        (dolist (cur to_delete)     
+                        (dolist (cur to_delete)
                             ; only delete object that haven't been deleted
                             (when (kr:schema-p cur)
                                 (s-value *Selection-Obj* :obj-over cur)
@@ -606,7 +606,7 @@
             )
             ((:MINUS :ARROW :DIVIDE)
                 ; first have to find the objects where the line is drawn
-                (let ((from-box (opal:point-to-component *objs-agg* 
+                (let ((from-box (opal:point-to-component *objs-agg*
                                     (inter:gest-attributes-startx attribs)
                                     (inter:gest-attributes-starty attribs)
                                     :type arith-box))
@@ -616,34 +616,34 @@
                                   :type arith-box))
                       new-line)
 
-                    ; if neither end is inside a box, then either NOT an 
+                    ; if neither end is inside a box, then either NOT an
                     ; arrow or a BAD arrow, otherwise treat as an arrow.
                     (if (and (null from-box) (null to-box))
                         (case class-name
                             (:MINUS
-                                (setf new-obj 
-                                      (create-instance NIL minus-box (:box 
-                                       (list 
+                                (setf new-obj
+                                      (create-instance NIL minus-box (:box
+                                       (list
                                         (inter:gest-attributes-minx attribs)
                                         (inter:gest-attributes-miny attribs)
                                         NIL NIL))))
                                 (opal:add-component *objs-agg* new-obj)
 
-                                ;; make the new minus-box and the menu 
+                                ;; make the new minus-box and the menu
                                 ;; item selected
                                 (s-value *Selection-Obj* :obj-over new-obj)
                                 (Mode-Menu-Select :minus)
                             )
                             (:DIVIDE
-                                (setf new-obj 
-                                      (create-instance NIL divide-box (:box 
-                                       (list 
+                                (setf new-obj
+                                      (create-instance NIL divide-box (:box
+                                       (list
                                         (inter:gest-attributes-minx attribs)
                                         (inter:gest-attributes-miny attribs)
                                         NIL NIL))))
                                 (opal:add-component *objs-agg* new-obj)
 
-                                ;; make the new divide-box and the menu 
+                                ;; make the new divide-box and the menu
                                 ;; item selected
                                 (s-value *Selection-Obj* :obj-over new-obj)
                                 (Mode-Menu-Select :divide)
@@ -654,8 +654,8 @@
                         )
 
                         ; else, if one end of the arrow isn't in a box,
-                        ; or if one end of the arrow is from and to the 
-                        ; same box, or if more than one to a number box, 
+                        ; or if one end of the arrow is from and to the
+                        ; same box, or if more than one to a number box,
                         ; then beep
                         (if (or (null from-box) (null to-box)
                                 (eq from-box to-box)
@@ -665,15 +665,15 @@
                             (inter:beep)
                             ; else draw the arrow
                             (progn
-                                (setf new-line 
+                                (setf new-line
                                       (create-instance NIL myarrowline
                                                        (:from-obj from-box)
                                                        (:to-obj to-box)))
-                                ; keep track in case boxes are deleted so 
+                                ; keep track in case boxes are deleted so
                                 ; can delete this line
-                                (push new-line 
+                                (push new-line
                                       (g-value from-box :lines-from-me))
-                                (push new-line 
+                                (push new-line
                                       (g-value to-box :lines-to-me))
                                 (opal:add-component *objs-agg* new-line)
                             )
@@ -733,7 +733,7 @@
        (:border-width 2)
        (:parent-window TOP-WIN))
     (opal:update SCROLL-WIN)
-    
+
     (setq work-agg (g-value SCROLL-WIN :inner-aggregate))
     (setq work-win (g-value SCROLL-WIN :inner-window))
 
@@ -750,7 +750,7 @@
 
     ;;;create a graphics selection object
     (Create-Selection-Obj work-agg work-win)
-                     
+
     ;;;Create an interactor to edit the text of the labels
     (create-instance 'TEXT-EDIT inter:text-interactor
        (:active (o-formula (and (gv *selection-obj* :obj-over)
@@ -769,7 +769,7 @@
        (:final-function 'Set-String-Value))
 
     (create-instance 'MYLINEFEEDBACK opal:line
-       (:points (list 0 0 10 10)) 
+       (:points (list 0 0 10 10))
        (:obj-over NIL)
        (:visible (o-formula (gvl :obj-over)))
        (:x1 (o-formula (first (gvl :points))))
@@ -795,9 +795,9 @@
     ;;; to make new objects
     (create-instance 'GESTURE-CREATOR inter:gesture-interactor
        (:start-event :middledown)
-       (:start-where T) 
+       (:start-where T)
        (:window work-win)
-       (:classifier (inter:gest-classifier-read 
+       (:classifier (inter:gest-classifier-read
                         (merge-pathnames "demo-arith.classifier" common-lisp-user::Garnet-Gesture-Data-Pathname)))
        (:final-function #'handle-gesture)
        (:max-dist-to-mean 20)
@@ -809,7 +809,7 @@
     (opal:update TOP-WIN)  ;;will also update work-win
 
   ;;** Do-Go **
-    (Format T "~%Demo-Arith: 
+    (Format T "~%Demo-Arith:
   Press with left button on top menu to change modes (box or line).
   Press with left button on bottom menu to execute a command.
   Press with right button in work window to create a new object
@@ -823,10 +823,10 @@
   Pressing the print buttons will generate postscript files named
         arith-window.ps and arith-contents.ps in the current working directory.
 
-  By pressing the middle button, some simple single-pathed gestures can 
+  By pressing the middle button, some simple single-pathed gestures can
   also be used to create and delete objects. In addition to those shown
   below, an arrow can be indicated by drawing a line between two objects.
-    
+
      NUMBER           PLUS          MINUS       TIMES          DIVIDE
                                                (DELETE)
 
@@ -850,4 +850,3 @@
 
 (defun Do-Stop ()
   (opal:destroy TOP-WIN))
-

@@ -15,24 +15,28 @@
 (defparameter pixmapfilename "eye")
 (defparameter numpixmapfiles 12)
 
-(defvar pixmaps (let (i filename pics)
-		  (format T "Loading pictures...")
-		  (force-output)
-		  (setq i 0)
-		  (dotimes (num numpixmapfiles)
-		    (format T "~a..." (1+ i))
-		    (force-output)
-		    (setq filename
-			  (merge-pathnames
-			   (format NIL "~a~a.xpm" pixmapfilename
-				   (1+ i))
-			   common-lisp-user::Garnet-Pixmap-Pathname))
-		    (push (opal:read-xpm-file filename) pics)
-		    (if (= i 5)
-			(setq i 12)
-			(incf i)))
-		  (format T "~%")
-		  (reverse pics)))
+(defvar pixmaps '())
+
+(when gem::*x11-server-available*
+  (setf pixmaps
+	(let (i filename pics)
+	  (format T "Loading pictures...")
+	  (force-output)
+	  (setq i 0)
+	  (dotimes (num numpixmapfiles)
+	    (format T "~a..." (1+ i))
+	    (force-output)
+	    (setq filename
+		  (merge-pathnames
+		   (format NIL "~a~a.xpm" pixmapfilename
+			   (1+ i))
+		   common-lisp-user::Garnet-Pixmap-Pathname))
+	    (push (opal:read-xpm-file filename) pics)
+	    (if (= i 5)
+		(setq i 12)
+		(incf i)))
+	  (format T "~%")
+	  (reverse pics))))
 
 (defparameter moving-circle NIL)
 (defparameter moving-button NIL)

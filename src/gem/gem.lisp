@@ -183,28 +183,39 @@
 	       (:current-root NIL)
 	       (:active-devices NIL))
 
+;; This schema stands for the top-level root window for the X device.
+;; We use create-schema to prevent any :initialize method from firing.
+(defvar *root-window* (create-schema nil (:is-a opal::window)))
+
+;; This schema points to the root window, and contains the slot
+;; :methods which names all existing Gem method.  The slot is copied
+;; into the root nodes of the windows and fonts hierarchies.
+(create-schema 'x-device (:root-window *root-window*) (:device-type :x))
+
 (defun init-device ()
-  ;; This schema stands for the top-level root window for the X
-  ;; device.  We use create-schema to prevent any :initialize method
-  ;; from firing.
-  (create-schema '*root-window* (:is-a opal::window))
-  ;; This schema points to the root window, and contains the slot
-  ;; :methods which names all existing Gem method.  The slot is copied
-  ;; into the root nodes of the windows and fonts hierarchies.
-  (create-schema 'x-device (:root-window *root-window*) (:device-type :x))
   (attach-x-methods x-device)
-  (initialize-device-values (get-full-display-name) *root-window*)
   (s-value device-info :current-root *root-window*)
   (s-value device-info :current-device x-device)
   (pushnew x-device (g-value device-info :active-devices))
-  (let ((display-info (initialize-device *root-window*)))
-    (s-value *root-window* :drawable
-	     (display-info-root-window display-info))
-    (s-value *root-window* :display-info display-info))
   (set-draw-functions *root-window*)
   *root-window*)
 
-;;; This is a utility function, used only for interactive debugging.
+(defparameter *post-compile-inits* '())
+(defparameter *system-compilation-complete* nil)
+
+;; getenv is internal to CLX, so the's some risk of it changing in the
+;; future.  But in the CL world it's still probably the most portable
+;; way of extracting DISPLAY host.
+(defparameter *x11-server-available* (xlib::getenv "DISPLAY"))
+
+(defun init-device-post ()
+  (initialize-device-values (get-full-display-name) *root-window*)
+  (x-initialize-device-post)
+  (s-value *root-window* :drawable
+	   (display-info-root-window *display-info*))
+  (s-value *root-window* :display-info *display-info*))
+
+;; This is a utility function, used only for interactive debugging.
 (defmacro adjust (name)
   `(progn
      (attach-method
