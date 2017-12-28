@@ -295,8 +295,7 @@ devised by David Goldberg at Xerox PARC.")
 				     :test #'string=)))
       (opal:set-text text (string-trim (list #\newline #\space)
        (with-output-to-string (*standard-output*)
-        (do-go :dont-enter-main-event-loop t
-	       :double-buffered-p t)))))
+        (do-go)))))
     (garnet-gadgets:scroll-win-to win2 0 0)
     (opal:update win2))
 

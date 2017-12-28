@@ -161,7 +161,19 @@
 	   display-info-root-window
 	   display-info-screen
 	   init-device
-	   make-display-info)
+	   make-display-info
+	   READ-AN-IMAGE
+	   WRITE-AN-IMAGE
+
+
+	   WINDOW-FROM-DRAWABLE
+	   MAX-CHARACTER-ASCENT
+	   MAX-CHARACTER-DEscent
+	   MAKE-FONT-NAME
+
+	   FONT-TO-INTERNAL
+
+	   CLEAR-AREA)
   (:import-from :garnet-utils :black)
   (:import-from :garnet-utils :white))
 

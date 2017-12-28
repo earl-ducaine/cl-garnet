@@ -60,14 +60,15 @@
 	     (:file "constraints" :depends-on (kr))))
    (:module gem
    	    :pathname "src/gem"
-   	    :depends-on (:kr)
+   	    :depends-on (kr opal-boot)
    	    :components
 	    ((:file "gem")
 	     (:file "define-methods")
 	     (:file "x")))
-   (:module opal
+   ;; needed by both opal and gem
+   (:module opal-boot
    	    :pathname "src/opal"
-   	    :depends-on (utils gem kr protected-eval)
+   	    :depends-on (utils kr)
    	    :components
    	    ((:file "exports")
 	     (:file "types")
@@ -77,7 +78,13 @@
 	     (:file "new-defs")
 	     (:file "utils")
 	     (:file "text-fonts")
-	     (:file "create-instances")
+	     (:file "create-instances")))
+   ;; Depends on gem
+   (:module opal
+   	    :pathname "src/opal"
+   	    :depends-on (utils gem kr protected-eval opal-boot)
+   	    :components
+   	    ((:file "exports")
 	     (:file "text-functions")
 	     (:file "text")
 	     (:file "update-basics")
@@ -300,7 +307,7 @@
    (:module lapidary2
    	    :pathname "src/lapidary"
    	    :depends-on (:utils
-;;			 :build
+			 ;;			 :build
 			 )
    	    :components
    	    ((:file "lapidary-compiler")
@@ -351,7 +358,7 @@
    (:module multi-garnet
 	    :pathname "multi-garnet"
 	    :depends-on (
-;;			 :build
+			 ;;			 :build
 			 :lapidary)
 	    :serial t
 	    :components
@@ -363,7 +370,7 @@
    (:module lapidary
 	    :pathname "src/lapidary"
 	    :depends-on (
-;;			 :build
+			 ;;			 :build
 			 :lapidary2 :gadgets :gilt :c32)
 	    :components
 	    ((:file "mouse-bindings")
@@ -455,7 +462,7 @@
 	    :depends-on (:utils :kr :gem :opal :inter :ps :aggregadgets
 				:gadgets :debug :protected-eval :gesture :demos
 				:garnet-desktop-lab :lapidary2
-;;				:build
+				;;				:build
 				:c32
 				:gilt :multi-garnet :lapidary :cl-processing
 				:debug-clx)
