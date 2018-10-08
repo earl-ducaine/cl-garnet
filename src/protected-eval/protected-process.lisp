@@ -11,8 +11,7 @@
 
 (in-package :opal)
 
-;; Instead of rewriting the entire process code, just rewrite M-E-L
-;; (see opal/process.lisp).
+;; i.e. low level main event loop
 (defun m-e-l ()
   ;; first, throw away any pending events
   (discard-all-pending-events)
@@ -29,7 +28,6 @@
 		(abort () :report "Discard pending X events, restart loop"
 		       (discard-all-pending-events)))))
       (setf *inside-main-event-loop* nil))))
-
 
 (defun m-e-l-new ()
   ;; first, throw away any pending events

@@ -147,13 +147,10 @@
 (def-kr-type BOOLEAN ()
   '(member t nil))
 
-(def-kr-type FIXNUM ()
-  '(satisfies
-    #+allegro excl:fixnump
-    #+ccl ccl:fixnump
-    #+cmu ext:fixnump
-    #+sbcl sb-int:fixnump
-    #-(or allegro ccl cmu sbcl) integerp)
+(defun fixnump (object) (typep object 'fixnum))
+
+(def-kr-type fixnum ()
+  '(satisfies sb-int:fixnump)
   "Potential efficiency hack.")
 
 ;;;; Unnamed types used in Opal, Interactors, etc.

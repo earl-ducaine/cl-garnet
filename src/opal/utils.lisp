@@ -98,124 +98,51 @@
 
 
 (defun make-image (filename &rest args)
-  #-(or allegro ccl cmu sbcl)
-    (error "Don't know how to automatically save an image for this lisp.
-Please consult your lisp's user manual for instructions.~%")
+    (error "Don't know how to automatically save an image for this
+            lisp.  Please consult your lisp's user manual for
+            instructions.~%")
 
-  (multiple-value-bind (quit gc verbose libfile flush-source-info? extra-args)
-      (Extract-Image-Args args)
-    (declare (ignore libfile #+sbcl quit))
-    #-allegro (declare (ignore flush-source-info?))
-
-  ;; When the image is restarted, we want *readtable* to be restored to its
-  ;; current value, instead of being reinitialized to the default.  This will
-  ;; keep the #k<> and #f() reader macros active in the saved image.
-  #+allegro
-  (progn
-    (when verbose (format t "~%Copying readtable..."))
-    (copy-readtable *readtable* common-lisp-user::Garnet-Readtable)
-    (setf (cdr (assoc '*readtable* excl:*cl-default-special-bindings*))
-          'common-lisp-user::Garnet-Readtable)
-    (when verbose (format t "copied.~%")))
-
-  (progn
+    (multiple-value-bind (quit gc verbose libfile flush-source-info? extra-args)
+	(extract-image-args args)
+  ;; When the image is restarted, we want *readtable* to be restored
+  ;; to its current value, instead of being reinitialized to the
+  ;; default.  This will keep the #k<> and #f() reader macros active
+  ;; in the saved image.
     (when verbose (format t "Disconnecting Garnet..."))
     (opal:disconnect-garnet)
-    (when verbose (format t "disconnected.~%")))
-
+    (when verbose (format t "disconnected.~%"))
   (setf garnet-image-date (time-to-string))
-
-  ;; RGA --- kills extra source file info, which is not useful when
-  ;; making a portable image.
-  #+allegro
-  (when flush-source-info?
-    (format t "Flushing source file info . . .")
-    (excl:discard-all-source-file-info)
-    (format t "Fssssh-gurgle-hisss!~%"))
-
-  #+(or allegro cmu ccl sbcl)
   (when gc
     (when verbose (format t "Garbage collecting..."))
-    #+allegro (excl:gc T)
-    #+(and cmu (not gencgc)) (ext:gc T)
-    #+(and cmu gencgc) (ext:gc :full t)
-    #+sbcl (sb-ext:gc :full t)
-    #+ccl
-    (progn
-      (ccl::impurify)
-      (ccl:gc)
-      (ccl::purify))
-
+    (sb-ext:gc :full t)
     (when verbose (format t "collected.~%")))
 
-  (defparameter common-lisp-user::*herald-items* nil)
-  (setf (getf common-lisp-user::*herald-items* :garnet)
-	`("    Garnet Version " ,common-lisp-user::Garnet-Version-Number))
-
+  (setf garnet-user::*herald-items* nil)
+  (setf (getf garnet-user::*herald-items* :garnet)
+	`("    Garnet Version " ,common-lisp-user::garnet-version-number))
 
   (when verbose (format t "Saving image..."))
-  #+allegro (setq excl:*read-init-files* t)
-  #+allegro (setq excl:*restart-init-function* #'garnet-restart-function)
-  #+allegro
-  (apply #'excl:dumplisp :name filename :checkpoint NIL extra-args)
-  #+cmu
-  (progn
-    (setf (getf ext:*herald-items* :garnet)
-	  `("    Garnet Version " ,common-lisp-user::Garnet-Version-Number))
-    ;; Note: for x86/mp CMUCL, garnet-restart-function must get
-    ;; called after the multiprocessing stuff gets initialized.
-    ;; So we append garnet-restart-function to the end of the
-    ;; initializations rather than pushing it onto the front.
-    (setf ext:*after-save-initializations*
- 	  (append  ext:*after-save-initializations* (list #'garnet-restart-function)))
-    (apply #'ext:save-lisp filename extra-args))
-
-  #+ccl
-  (progn
-    (pushnew #'garnet-restart-function ccl:*lisp-startup-functions*)
-    (apply #'ccl:save-application filename extra-args))
-
-
-  #+sbcl
-  (progn
-;;    (pushnew #'garnet-restart-function sb-ext:*init-hooks*)
-    (setf sb-ext:*init-hooks*
-	  (append sb-ext:*init-hooks* (list #'garnet-restart-function)))
-    (apply #'sb-ext:save-lisp-and-die filename extra-args))
-
-  (when verbose (format t "saved.~%"))
-
-  #-sbcl ;; SBCL quits automatically.
-  (cond
-    (quit
-     (when verbose (format t "Quitting lisp...~%"))
-     #+allegro (excl:exit)
-     #+cmu (ext:quit)
-     )
-    (t
-     (when verbose (format t "Reconnecting Garnet..."))
-     (opal:reconnect-garnet)
-     (when verbose (format t "reconnected.~%"))
-     ))
-  ))
+  (setf sb-ext:*init-hooks*
+	(append sb-ext:*init-hooks* (list #'garnet-restart-function)))
+  (trivial-dump-core:dump-image filename)
+  (when verbose
+    (format t "saved.~%"))))
 
 (defun Get-Garnet-Bitmap (bitmapname)
   (opal:read-image (merge-pathnames bitmapname cl-user::Garnet-Bitmap-PathName)))
 
 
-;;;============================================================
-;;; Clip-and-Map
-;;;============================================================
-
-;;; The Clip-and-Map procedure works as follows:
-;;;    (Clip-and-Map (val val-1 val-2 target-val-1 target-val-2) takes val,
-;;;    clips it to be in the range val-1 .. val-2, and if target-val-1 and
-;;;    target-val-2 are provided, then scales and
-;;;    translates the value (using linear-interpolation) to be between
-;;;    target-val-1 and target-val-2.  Unless target-val-1 and target-val-2
-;;;    are both integers, the mapping will be to a float.
-;;; Val-1 is allowed to be less than or greater than Val-2.
-;;;
+;; Clip-and-Map
+;;
+;; The Clip-and-Map procedure works as follows:
+;;    (Clip-and-Map (val val-1 val-2 target-val-1 target-val-2) takes val,
+;;    clips it to be in the range val-1 .. val-2, and if target-val-1 and
+;;    target-val-2 are provided, then scales and
+;;    translates the value (using linear-interpolation) to be between
+;;    target-val-1 and target-val-2.  Unless target-val-1 and target-val-2
+;;    are both integers, the mapping will be to a float.
+;; Val-1 is allowed to be less than or greater than Val-2.
+;;
 (defun Clip-and-Map (val val-1 val-2 &optional target-val-1 target-val-2)
   (if (and target-val-1 target-val-2)
       ;; then do clip and map

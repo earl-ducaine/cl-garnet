@@ -44,6 +44,6 @@
 	   "(tourcommands::do-go)"
 	   "(tour::do-go)"
 	   "(tour-transcript::do-go)")))
-    (format t "To run various app eval one of the following:")
+  (format t "~%To run various app eval one of the following:~%")
     (dolist (demo-app demo-apps)
-      (format t "~a~%" demo-app))))
+    (format t "~a~%" demo-app))))

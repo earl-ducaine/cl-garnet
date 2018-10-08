@@ -216,71 +216,16 @@
 ;;
 
 (defvar *formula-pool* nil)
-#+ccl
-(defvar *formula-lock* (ccl:make-lock))
 
-#+sbcl
-(defvar *formula-lock* (sb-thread:make-mutex))
+(defvar *formula-lock* (bordeaux-threads:make-lock))
 
-#+ecl
-(defvar *formula-lock* (:bordeaux-threads:make-lock))
-
-#+(and cmu mp)
 (defun formula-push (f)
-  (mp:atomic-push f *formula-pool*))
-#+(and cmu mp)
-(defun formula-pop ()
-  (and *formula-pool* (mp:atomic-pop *formula-pool*)))
-#+(and cmu (not mp))
-(defun formula-push (f)
-  (system:without-interrupts
-    (push f *formula-pool*)))
-#+(and cmu (not mp))
-(defun formula-pop ()
-  (system:without-interrupts
-    (pop *formula-pool*)))
-
-#+sb-thread
-(defun formula-push (f)
-  (sb-thread:with-mutex (*formula-lock*)
+  (bordeaux-threads:with-lock-held  (*formula-lock*)
     (push f *formula-pool*)))
 
-#+ecl
-(defun formula-push (f)
-  (:bordeaux-threads:with-lock-held (*formula-lock*)
-    (push f *formula-pool*)))
-
-
-#+sb-thread
 (defun formula-pop ()
-  (sb-thread:with-mutex (*formula-lock*)
+  (bordeaux-threads:with-lock-held (*formula-lock*)
     (and *formula-pool* (pop *formula-pool*))))
-
-#+ecl
-(defun formula-pop ()
-  (:bordeaux-threads:with-lock-held (*formula-lock*)
-    (and *formula-pool* (pop *formula-pool*))))
-
-#+ccl
-(defun formula-push (f)
-  (ccl:with-lock-grabbed (*formula-lock*)
-    (push f *formula-pool*)))
-
-#+ccl
-(defun formula-pop ()
-  (ccl:with-lock-grabbed (*formula-lock*)
-    (pop *formula-pool*)))
-
-#+allegro
-(defun formula-push (f)
-  (excl:critical-section (:non-smp :without-scheduling)
-   (push f *formula-pool*)))
-
-#+allegro
-(defun formula-pop ()
-  (excl:critical-section (:non-smp :without-scheduling)
-   (pop *formula-pool*)))
-
 
 (defvar *schema-is-new* nil
   "If non-nil, we are inside the creation of a new schema.  This guarantees

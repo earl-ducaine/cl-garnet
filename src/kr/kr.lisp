@@ -1,17 +1,10 @@
 ;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: KR; Base: 10 -*-
 
-;;*******************************************************************;;
-;;          The Garnet User Interface Development Environment.       ;;
-;;*******************************************************************;;
-;;  This code was written as part of the Garnet project at           ;;
-;;  Carnegie Mellon University, and has been placed in the public    ;;
-;;  domain.                                                          ;;
-;;*******************************************************************;;
-
-;;; $Id::                                                            $
+;; The Garnet User Interface Development Environment
 ;;
+;; This code was written as part of the Garnet project at Carnegie
+;; Mellon University, and has been placed in the public domain.
 
-
 ;;; Slot bits assignment:
 ;; 0-9 types encoding
 ;;   - inherited
@@ -21,13 +14,13 @@
 ;;   - local-only-slot    ; not implemented
 ;;   - parameter-slot     ; not implemented
 
-
 (in-package :kr)
 
 (declaim (inline clear-one-slot))
+
 (defun clear-one-slot (schema slot entry)
   "Completely clear a slot, including dependencies, inherited, etc...
-BUT... Leave around the declarations (constant, type, update,...)"
+   BUT... Leave around the declarations (constant, type, update,...)"
   (locally (declare #.*special-kr-optimization*)
     (let ((the-entry (or entry (slot-accessor schema slot))))
       (when the-entry
@@ -481,11 +474,21 @@ an inherited formula."
 	  (and (formula-p (sl-value entry))
 	       (formula-p (a-formula-is-a (sl-value entry))))))))
 
-
-;;; ENCODE TYPES
+(defun formula-push (f)
+  (bordeaux-threads:with-lock-held  (*formula-lock*)
+    (push f *formula-pool*)))
 
-(defparameter types-table (make-hash-table :test #'equal #+sbcl :synchronized #+sbcl t)
+;;; encode types
+(defparameter *types-table* (make-hash-table :test #'equal)
   "Hash table used to look up a Lisp type and returns its code")
+
+(defparameter *types-table-lock* (bordeaux-threads:make-recursive-lock)
+  "Lock to synchonize access to *types-table*")
+
+(defmacro with-types-table-lock-held ((table) &body body)
+  `(let ((,table *types-table*))
+     (bordeaux-threads:with-recursive-lock-held (*types-table-lock*)
+     ,@body)))
 
 (declaim (fixnum *types-array-inc*))
 (defparameter *types-array-inc* 255) ;; allocate in blocks of this size
@@ -532,58 +535,59 @@ the lisp predicate to test this ('NULL, 'KEYWORDP, etc....)"
 			simple-type))))))
 
 (defun make-lambda-body (complex-type)
-  (let (code)
-    (cond ((consp complex-type)	;; complex type (a list)
-	   (let ((fn   (first complex-type))
-		 (args (rest  complex-type)))
-	     (case fn
-	       ((OR AND NOT)
-		(cons fn (mapcar #'make-lambda-body args)))
-	       (MEMBER
-		`(memberq value ',args))
-	       ((IS-A-P IS-A)
-		`(is-a-p value ,(second complex-type)))
-	       (SATISFIES
-		`(,(second complex-type) value))
-	       ((INTEGER REAL)
-		(let* ((pred (find-lisp-predicate fn))
-		       (lo (first args))
-		       (lo-expr (when (and lo (not (eq lo '*)))
-				  (if (listp lo)
-				      `((< ,(car lo) value))
-				      `((<= ,lo value)))))
-		       (hi (second args))
-		       (hi-expr (when (and hi (not (eq hi '*)))
-				  (if (listp hi)
-				      `((> ,(car hi) value))
-				      `((>= ,hi value))))))
-		  (if (or lo-expr hi-expr)
-		      `(and (,pred value) ,@lo-expr ,@hi-expr)
-		      `(,pred value))))
-	       (T  (error "Unknown complex-type specifier: ~S~%" fn)))))
-	  ((setq code (gethash (symbol-name complex-type) types-table))
-	   ;; is this a def-kr-type?
-	   (make-lambda-body (code-to-type code)))
-	  (T ;; simple-type
-	   (list (find-lisp-predicate complex-type) 'value)))))
-
+  (with-types-table-lock-held (types-table)
+    (let (code)
+      (cond ((consp complex-type)	;; complex type (a list)
+	     (let ((fn   (first complex-type))
+		   (args (rest  complex-type)))
+	       (case fn
+		 ((OR AND NOT)
+		  (cons fn (mapcar #'make-lambda-body args)))
+		 (MEMBER
+		  `(memberq value ',args))
+		 ((IS-A-P IS-A)
+		  `(is-a-p value ,(second complex-type)))
+		 (SATISFIES
+		  `(,(second complex-type) value))
+		 ((INTEGER REAL)
+		  (let* ((pred (find-lisp-predicate fn))
+			 (lo (first args))
+			 (lo-expr (when (and lo (not (eq lo '*)))
+				    (if (listp lo)
+					`((< ,(car lo) value))
+					`((<= ,lo value)))))
+			 (hi (second args))
+			 (hi-expr (when (and hi (not (eq hi '*)))
+				    (if (listp hi)
+					`((> ,(car hi) value))
+					`((>= ,hi value))))))
+		    (if (or lo-expr hi-expr)
+			`(and (,pred value) ,@lo-expr ,@hi-expr)
+			`(,pred value))))
+		 (T  (error "Unknown complex-type specifier: ~S~%" fn)))))
+	    ((setq code (gethash (symbol-name complex-type) types-table))
+	     ;; is this a def-kr-type?
+	     (make-lambda-body (code-to-type code)))
+	    (T ;; simple-type
+	     (list (find-lisp-predicate complex-type) 'value))))))
 
 (defun type-to-fn (type)
   "Given the Lisp type, construct the lambda expr, or return the
    built-in function"
-  (let (code)
-    (cond ((consp type)			; complex type
-	   (if (eq (car type) 'SATISFIES)
-	       (let ((fn-name (second type)))
-		 `',fn-name) ;; koz
-	       `(function (lambda (value)
-		  (declare #.*special-kr-optimization*)
-		  ,(make-lambda-body type)))))
-	  ((setq code (gethash (symbol-name type) types-table))
-	   ;; is this a def-kr-type?
-	   (code-to-type-fn code))
-	  (T
-	   `',(find-lisp-predicate type)))))
+  (with-types-table-lock-held (types-table)
+    (let (code)
+      (cond ((consp type)			; complex type
+	     (if (eq (car type) 'SATISFIES)
+		 (let ((fn-name (second type)))
+		   `',fn-name) ;; koz
+		 `(function (lambda (value)
+		    (declare #.*special-kr-optimization*)
+		    ,(make-lambda-body type)))))
+	    ((setq code (gethash (symbol-name type) types-table))
+	     ;; is this a def-kr-type?
+	     (code-to-type-fn code))
+	    (T
+	     `',(find-lisp-predicate type))))))
 
 (declaim (inline copy-extend-array))
 (defun copy-extend-array (oldarray oldlen newlen)
@@ -612,40 +616,39 @@ if necessary."
 (defun add-new-type (typename type-body type-fn &optional type-doc)
   "This adds a new type, if necessary
 Always returns the CODE of the resulting type (whether new or not)"
-  (let ((code (gethash (or typename type-body) types-table)))
-    (if code
-	;; redefining same name
-	(if (equal (code-to-type code) type-body)
-	    ;; redefining same name, same type
-	    (progn
-	      (format t "Ignoring redundant def-kr-type of ~S to ~S~%"
-		      typename type-body)
-	      (return-from add-new-type code))
-	    ;; redefining same name, new type --> replace it!
-	    (format t "def-kr-type redefining ~S from ~S to ~S~%"
-		    typename (code-to-type code) type-body))
-
-	;; defining a new name, establish new code
-	(progn
-	  (setq code (or (gethash type-body types-table)
-			 (get-next-type-code)))
-	  (setf (gethash typename types-table) code)))
-
-    (unless (gethash type-body types-table)
-      (setf (gethash type-body types-table) code))
-    (setf (svref types-array code)
-	  (if typename
-	      (if (stringp typename)
-		  (intern typename (find-package "KR"))
-		  typename)
-	      type-body))
-    (setf (svref type-docs-array code) (or type-doc NIL))
-    (setf (svref type-fns-array  code)
-	  (if (and (symbolp type-fn) ;; koz
-		   (fboundp type-fn))
-	      (symbol-function type-fn)
- 	      type-fn))
-    code))
+  (with-types-table-lock-held (types-table)
+    (let ((code (gethash (or typename type-body) types-table)))
+      (if code
+	  ;; redefining same name
+	  (if (equal (code-to-type code) type-body)
+	      ;; redefining same name, same type
+	      (progn
+		(format t "Ignoring redundant def-kr-type of ~S to ~S~%"
+			typename type-body)
+		(return-from add-new-type code))
+	      ;; redefining same name, new type --> replace it!
+	      (format t "def-kr-type redefining ~S from ~S to ~S~%"
+		      typename (code-to-type code) type-body))
+	  ;; defining a new name, establish new code
+	  (progn
+	    (setq code (or (gethash type-body types-table)
+			   (get-next-type-code)))
+	    (setf (gethash typename types-table) code)))
+      (unless (gethash type-body types-table)
+	(setf (gethash type-body types-table) code))
+      (setf (svref types-array code)
+	    (if typename
+		(if (stringp typename)
+		    (intern typename (find-package "KR"))
+		    typename)
+		type-body))
+      (setf (svref type-docs-array code) (or type-doc NIL))
+      (setf (svref type-fns-array  code)
+	    (if (and (symbolp type-fn) ;; koz
+		     (fboundp type-fn))
+		(symbol-function type-fn)
+		type-fn))
+      code)))
 
 (defun kr-type-error (type)
   (error "Type ~S not defined; use~% (def-kr-type ... () '~S)~%" type type))
@@ -653,17 +656,19 @@ Always returns the CODE of the resulting type (whether new or not)"
 (eval-when (:execute :compile-toplevel :load-toplevel)
   (defun encode-type (type)
     "Given a LISP type, returns its encoding."
-    (cond ((gethash type types-table))	; if there, just return it!
-	  ((and (listp type) (eq (car type) 'SATISFIES))
-	   ;; add new satisfies type
-	   (add-new-type NIL type (type-to-fn type)))
-	  ((symbolp type)
-	   (or (gethash (symbol-name type) types-table)
-	       (let ((predicate (find-lisp-predicate type)))
-		 (when predicate
-		   (add-new-type NIL type predicate)))
-	       (kr-type-error type)))
-	  (T (kr-type-error type)))))
+    (with-types-table-lock-held (types-table)
+      ;; if there, just return it!
+      (cond ((gethash type types-table))
+	    ((and (listp type) (eq (car type) 'SATISFIES))
+	     ;; add new satisfies type
+	     (add-new-type NIL type (type-to-fn type)))
+	    ((symbolp type)
+	     (or (gethash (symbol-name type) types-table)
+		 (let ((predicate (find-lisp-predicate type)))
+		   (when predicate
+		     (add-new-type NIL type predicate)))
+		 (kr-type-error type)))
+	    (T (kr-type-error type))))))
 
 (defun set-type-documentation (type string)
   "Add a human-readable description to a Lisp type."

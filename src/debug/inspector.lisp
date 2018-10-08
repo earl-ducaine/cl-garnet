@@ -1,10 +1,10 @@
 ;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: GARNET-DEBUG; Base: 10 -*-
 ;;;
-;;;  The Garnet User Interface Development Environment.
-;;;  This code was written as part of the Garnet project at
-;;;  Carnegie Mellon University, and has been placed in the public
-;;;  domain.
-
+;;; The Garnet User Interface Development Environment.
+;;;
+;;; This code was written as part of the Garnet project at Carnegie
+;;; Mellon University, and has been placed in the public domain.
+;;;
 ;;; Pop up a window displaying the slots of the object under the mouse
 ;;; when the HELP key is hit.  Allow editing of slots of the object.
 ;;;
@@ -13,7 +13,8 @@
 
 (defparameter *process-with-main-event-loop* nil)
 
-(in-package "GARNET-DEBUG")
+(in-package :garnet-debug)
+
 (eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(inspector inspect-next-inter Find-Slot-Starting-With
 	    *INSPECTOR-KEY* *SHOW-OBJECT-KEY* *INSPECTOR-NEXT-INTER-KEY*)))
@@ -40,17 +41,13 @@
 
 (defparameter used-window-list NIL)  ; list of all inspector windows
 
-
 (defun beep-print (str)
   (fresh-line)
   (inter:beep)
   (princ str)
   (terpri))
 
-
-;;;*******************************************************************
-
-(defparameter debug-started-main-event-loop NIL)
+(defparameter debug-started-main-event-loop nil)
 
 ;; This function returns T if we are in the debugger from inside the
 ;; main-event-loop-process or if we are not using the m-e-l-p then
@@ -59,59 +56,41 @@
   (if opal::*main-event-loop-process*
       ;; if the current process is the same as the m-e-l process
       (when (eq opal::*main-event-loop-process*
-		#+allegro mp:*current-process*
-                #+cmu mp:*current-process*
-		#+ccl ccl:*current-process*
-		#+sb-thread sb-thread:*current-thread*
-		#-(or allegro cmu ccl sb-thread) T)
+		(bordeaux-threads:current-thread))
 	;; and if it is in the debugger...
 	;; the allegro code supplied by georgej@Franz.COM (George Jacob)
-	#+allegro
-	(not (zerop (multiprocessing:symeval-in-process
-		     'tpl::*break-level*
-		     opal::*main-event-loop-process*)))
-	#+ccl
-	;; Modeled after allegro code above (fmg)
-	(not (zerop (ccl::symbol-value-in-process
-		     'ccl::*break-level*
-		     opal::*main-event-loop-process*)))
-	#+sbcl
+
 	;; A thread that is broken will bind the variable
-	;; sb-debug:*debug-condition* whereas in a running
-	;; thread it will be unbound.
-	(ignore-errors
-	  (sb-thread:symbol-value-in-thread
-	   'sb-debug:*debug-condition*
-	   *process-with-main-event-loop*))
-	#-(or allegro ccl sbcl) NIL
-	)
+	;; sb-debug:*debug-condition* whereas in a running thread it
+	;; will be unbound.
+	;;
+	;; maybe bordeaux-threads:*default-special-bindings* could be
+	;; used to handle this some day.
+	;;
+	;; (ignore-errors
+	;;   (sb-thread:symbol-value-in-thread
+	;;    'sb-debug:*debug-condition*
+	;;    *process-with-main-event-loop*))
+	NIL)
       ;; if not running the m-e-l process, then check if in debugger.
-      ;; If so, then assume main-event-loop was in the process that crashed.
-      ;; (This might be wrong if there are multiple processes in the
-      ;; application, but the one that crashed is NOT the one running m-e-l).
+      ;; If so, then assume main-event-loop was in the process that
+      ;; crashed.  (This might be wrong if there are multiple
+      ;; processes in the application, but the one that crashed is NOT
+      ;; the one running m-e-l).
       (if opal::*inside-main-event-loop*
-	  #+sb-thread
-	  (ignore-errors
-	    (sb-thread:symbol-value-in-thread
-	     'sb-debug:*debug-condition*
-	     sb-thread:*current-thread*))
-	  #+ccl
-	  (not (zerop (ccl::symbol-value-in-process
-		       'ccl::*break-level*
-		       ccl:*current-process*)))
-	  #+allegro
-	  (not (zerop (mp:symeval-in-process
-		       'tpl::*break-level*
-		       mp:*current-process*)))
-	      ;; if not in m-e-l, then need to run it
-	  T)))
+	  ;; (ignore-errors
+	  ;;   (sb-thread:symbol-value-in-thread
+	  ;;    'sb-debug:*debug-condition*
+	  ;;    sb-thread:*current-thread*))
+	  ;; if not in m-e-l, then need to run it
+	  t)))
 
 (defun INSPECTOR (obj)
   (let ((new-win (Get-Window-For-pop-up-debug 30 30)))
     (Create-Multi-Font-String-For-PS obj NIL new-win))
   (when (broken-inside-main-event-loop)
     (beep-print (format NIL
-       "** Entering main-event-loop. Type the ~a key in an inspector window or
+			"** Entering main-event-loop. Type the ~a key in an inspector window or
 ** hit the `Done All' button to exit" inter:*garnet-break-key*))
     (setq debug-started-main-event-loop T)
     ;; pretend that m-e-l-p is not running, in case breaking inside of it

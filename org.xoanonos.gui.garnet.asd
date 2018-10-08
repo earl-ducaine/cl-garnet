@@ -19,38 +19,39 @@
 (setf (get :garnet-modules :multifont) t)
 
 (asdf:defsystem :org.xoanonos.gui.garnet
-  :depends-on (:alexandria
-	       :uiop
-	       :bordeaux-threads
-	       :cl-aa
-	       :cl-aa-misc
-	       :cl-fad
-	       :cl-ppcre
-	       :cl-store
-	       :cl-vectors
-	       :trivial-features
-	       :clx)
+  :depends-on (alexandria
+	       uiop
+	       bordeaux-threads
+	       cl-aa
+	       cl-aa-misc
+	       cl-fad
+	       cl-ppcre
+	       cl-store
+	       cl-vectors
+	       trivial-features
+	       clx
+	       trivial-dump-core)
   :license "MIT-ish (also public domain, see LICENSE)"
   :author "CMU Garnet Team (plus various others, see LICENSE)"
   :description " GUI toolkit (c. 1990 look/feel)"
-  ;; :around-compile (lambda (compile-function)
-  ;; 		    (when (fboundp 'cl-user::print-demo-instructions)
-  ;; 		      (funcall (symbol-function 'cl-user::print-demo-instructions) compile-function))
-  ;; 		    t)
   :components
-  ((:file "package")
+  ((:file "post-processing"
+	  :depends-on
+	  (opal inter ps aggregadgets gadgets debug protected-eval
+		gesture demos garnet-desktop-lab lapidary c32 gilt
+		multi-garnet lapidary cl-processing debug-clx))
+   (:file "package")
+   (:file "clx-compatability" :depends-on (package))
    (:module utils
 	    :pathname ""
-	    :depends-on (:package)
-
+	    :depends-on (package clx-compatability)
 	    :components
-	    ((:file "garnet-loader"
-		    )
+	    ((:file "garnet-loader")
 	     (:file "src/utils/general")
 	     (:file "src/utils/global")))
    (:module kr
    	    :pathname "src/kr"
-   	    :depends-on (:utils)
+   	    :depends-on (utils)
    	    :components
 	    ((:file "kr-macros")
 	     (:file "kr-doc")
@@ -101,7 +102,7 @@
 	     (:file "opal-init")))
    (:module inter
    	    :pathname "src/inter"
-   	    :depends-on (:utils :gem :kr :opal)
+   	    :depends-on (utils gem kr opal)
    	    :components
 	    ((:file "garnet-keytrans")
 	     (:file "define-mouse-keys")
@@ -125,14 +126,14 @@
 	     (:file "animatorinter")))
    (:module ps
    	    :pathname "src/ps"
-   	    :depends-on (:utils :gem :kr :opal :inter)
+   	    :depends-on (utils gem kr opal inter)
    	    :components
 	    ((:file "ps-compiler")
 	     (:file "ps")
 	     (:file "ps-multifont")))
    (:module aggregadgets
    	    :pathname "src/aggregadgets"
-   	    :depends-on (:utils :gem :kr :opal :inter :ps)
+   	    :depends-on (utils gem kr opal inter ps)
    	    :components
 	    ((:file "aggregadgets-compiler")
 	     (:file "agg-macros")
@@ -151,7 +152,7 @@
 	     (:file "scalable-aggregraph-image")))
    (:module gadgets
    	    :pathname "src/gadgets"
-   	    :depends-on (:utils :gem :kr :opal :inter :ps :aggregadgets)
+   	    :depends-on (utils gem kr opal inter ps aggregadgets)
    	    :components
 	    ((:file "gadgets-compiler")
 	     (:file "GAD-scroll-parts")	; Helper modules containing definitions for
@@ -221,7 +222,7 @@
 	     (:file "mouseline")))
    (:module debug
    	    :pathname "src/debug"
-   	    :depends-on (:utils :gem :kr :opal :ps :gadgets)
+   	    :depends-on (utils gem kr opal ps gadgets)
    	    :components
 	    ((:file "debug-fns")
 	     (:file "objsize")
@@ -229,7 +230,7 @@
 	     (:file "suggest-constants")))
    (:module protected-eval
    	    :pathname "src/protected-eval"
-   	    :depends-on (:utils :gem :kr :opal :ps :gadgets :debug)
+   	    :depends-on (utils gem kr opal ps gadgets debug)
    	    :components
 	    ((:file "protected-eval-compiler")
 	     (:file "error")
@@ -240,7 +241,7 @@
 	     (:file "garnet-errors")))
    (:module gesture
    	    :pathname "src/gesture"
-   	    :depends-on (:utils :gem :kr :opal :ps :gadgets :protected-eval)
+   	    :depends-on (utils gem kr opal ps gadgets protected-eval)
    	    :components
 	    ((:file "gesture-compiler")
 	     (:file "features")
@@ -295,7 +296,7 @@
 	     (:file "tour-transcript")))
    (:module garnet-desktop-lab
 	    :pathname "src/contrib/garnet-desktop-lab"
-	    :depends-on (:demos)
+	    :depends-on (demos)
 	    :components
 	    ((:file "package")
 	     (:file "garnet-desktop-lab")
@@ -303,9 +304,7 @@
 	     (:file "app-launcher")))
    (:module lapidary2
    	    :pathname "src/lapidary"
-   	    :depends-on (:utils
-;;			 :build
-			 )
+   	    :depends-on (utils)
    	    :components
    	    ((:file "lapidary-compiler")
 	     (:file "lapidary-functions-loader")
@@ -354,9 +353,7 @@
 	     (:file "error-check")))
    (:module multi-garnet
 	    :pathname "multi-garnet"
-	    :depends-on (
-;;			 :build
-			 :lapidary)
+	    :depends-on (lapidary)
 	    :serial t
 	    :components
 	    ((:file "package")
@@ -366,9 +363,7 @@
 	     (:file "examples")))
    (:module lapidary
 	    :pathname "src/lapidary"
-	    :depends-on (
-;;			 :build
-			 :lapidary2 :gadgets :gilt :c32)
+	    :depends-on (lapidary2 gadgets gilt c32)
 	    :components
 	    ((:file "mouse-bindings")
 	     (:file "parameters")
@@ -386,7 +381,7 @@
 	     (:file "line-constraint-objs")
 	     (:file "line-constraint")
 	     (:file "set-feedback")
-	     (:file "lapidary" :depends-on (:box))
+	     (:file "lapidary" :depends-on (box))
 	     (:file "dialog-parts2")
 	     (:file "event-card")
 	     (:file "card")

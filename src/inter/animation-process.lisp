@@ -31,7 +31,7 @@ from this array.  An index into this array is sent with the timer
 event so that we will know which interactor to wake up.")
 
 ;; set by default-event-handler.
-(defparameter *Process-With-Main-Event-Loop* NIL)
+(defparameter *process-with-main-event-loop* nil)
 
 (defparameter *All-Timer-Processes* NIL)
 
@@ -41,27 +41,20 @@ event so that we will know which interactor to wake up.")
 
 (defun Listener-Process-Broken-P ()
   "Returns T if the process *Process-With-Main-Event-Loop* is in the
-debugger, otherwise NIL"
-  (when *Process-With-Main-Event-Loop*
-    #+allegro
-    (not (zerop (multiprocessing:symeval-in-process
-		 'tpl::*break-level*
-		 *Process-With-Main-Event-Loop*)))
-    #+ccl
-    ;; Modeled after allegro code above (fmg)
-    (not (zerop (ccl::symbol-value-in-process
-		 'ccl::*break-level*
-		 opal::*main-event-loop-process*)))
-    #+sb-thread
+   debugger, otherwise NIL"
+  ;; (when *Process-With-Main-Event-Loop*
     ;; A thread that is broken will bind the variable
-    ;; sb-debug:*debug-condition* whereas in a running
-    ;; thread it will be unbound.
-    (ignore-errors
-      (sb-thread:symbol-value-in-thread
-       'sb-debug:*debug-condition*
-       *process-with-main-event-loop*))
-    #-(or allegro ccl sb-thread) NIL
-    ))
+    ;; sb-debug:*debug-condition* whereas in a running thread it will
+    ;; be unbound.
+    ;;
+    ;; Maybe bordeaux-threads:*default-special-bindings* could be used
+    ;; for this?
+    ;;
+    ;; (ignore-errors
+    ;;   (sb-thread:symbol-value-in-thread
+    ;;    'sb-debug:*debug-condition*
+    ;;    *process-with-main-event-loop*))
+    NIL)
 
 (defun send-timer-event (inter)
   (let* ((wins (Get-Interactor-Windows inter))

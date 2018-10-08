@@ -657,7 +657,9 @@ this display."
 		      :save-under save-under
 		      :class :input-output)))
       (setf (xlib:wm-hints drawable)
-	    (xlib:make-wm-hints :input :on :initial-state visible))
+	    (xlib:make-wm-hints))
+      (setf (xlib:wm-hints-input (xlib:wm-hints drawable)) :on)
+      (setf (xlib:wm-hints-initial-state (xlib:wm-hints drawable)) :on)
       (setf (xlib:wm-normal-hints drawable)
 	    (xlib:make-wm-size-hints
 	     :width-inc 1
@@ -669,7 +671,10 @@ this display."
 	     :max-width max-width
 	     :max-height max-height
 	     :user-specified-position-p user-specified-position-p
-	     :user-specified-size-p user-specified-size-p))
+	     ;; :user-specified-size-p user-specified-size-p
+	     ))
+      (setf (xlib:wm-size-hints-user-specified-size-p (xlib:wm-normal-hints drawable))
+	    user-specified-size-p)
       (xlib:set-wm-properties drawable
 			      ;; :client-machine
 			      ;; (machine-instance)

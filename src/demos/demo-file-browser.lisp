@@ -1,24 +1,18 @@
 ;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: DEMO-FILE-BROWSER; Base: 10 -*-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;         The Garnet User Interface Development Environment.      ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; This code was written as part of the Garnet project at          ;;;
-;;; Carnegie Mellon University, and has been placed in the public   ;;;
-;;; domain.  If you are using this code or any part of Garnet,      ;;;
-;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; $Id$	
 
-
-;;;  FILE BROWSER INTERFACE
+;; The Garnet User Interface Development Environment.
+;;
+;; This code was written as part of the Garnet project at Carnegie
+;; Mellon University, and has been placed in the public domain.  If
+;; you are using this code or any part of Garnet, please contact
+;; garnet@cs.cmu.edu to be put on the mailing list.
+
+;;;  file browser interface
 ;;;
 ;;;  Designed by Brad Myers
 ;;;  Written by Andrew Mickish
-;;;
 
-
-(in-package :DEMO-FILE-BROWSER)
+(in-package :demo-file-browser)
 
 (declaim (special FILE-BROWSER-WIN FILE-BROWSER-TOP-AGG QUIT-BUTTON))
 
@@ -48,19 +42,13 @@
             file))                ; else we already got the file name.
       ""))
 
-
 (defun DIRECTORY-FN (namestring)
-  (let ((dir (directory #+(or cmu) namestring
-			#+(or sbcl) (concatenate 'string (namestring namestring) "*")
-                        #-(or cmu sbcl) 
-                        (concatenate 'string (namestring namestring) "/")
-                        #-(or clisp cmu sbcl) :directories #-(or clisp cmu sbcl) t)))
-    (if (or (null dir) (equal (car dir) namestring)) NIL dir)))
+  ;; doesn't include hidden files
+  (let ((dir (uiop:directory-files
+	      (concatenate 'string (namestring namestring) "/"))))
+    dir))
 
-;;;
-;;;  DO-GO:  Function to run FILE-BROWSER interface
-;;;
-
+;;;  do-go:  Function to run FILE-BROWSER interface
 (defun do-go (&key dont-enter-main-event-loop double-buffered-p)
 
   (create-instance 'FILE-BROWSER-WIN inter:interactor-window
@@ -80,7 +68,7 @@
 	 (common-lisp-user::Garnet-Note-Quitted "DEMO-FILE-BROWSER"))
      (g-value file-browser-win :destroy-hooks)))
 
-  
+
   ;; Create FILE-BROWSER schema and add to window
   (create-instance 'FILE-BROWSER garnet-gadgets:browser-gadget
      ;; Why isn't :num-menus constant?  Because that would make the :items

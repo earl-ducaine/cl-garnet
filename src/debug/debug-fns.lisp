@@ -15,8 +15,8 @@
 
 (eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(explain-short explain-slot explain-nil
-	    fix-up-window flash ident invert 
-	    is-a-tree kids look look-inter 
+	    fix-up-window flash ident invert
+	    is-a-tree kids look look-inter
 	    uninvert what where #-apple windows break-on-slot-set
 	    notify-on-slot-set clear-slot-set call-func-on-slot-set)))
 
@@ -33,11 +33,11 @@
     (cond ((null window)
 	   (format t "No :drawable for ~A~%" win)
 	   (return-from blink-rectangle)))
-#| 
+#|
     ;;; this is the opal-based blinking code
     ;; if flash-object does not exist yet, then create it
     (create-flash-object)
-    
+
     (s-value flash-object :left left)
     (s-value flash-object :top top)
     (s-value flash-object :width width)
@@ -94,7 +94,7 @@
 
 ;;; EXPLAIN-SLOT -- tell why a slot has a value
 ;;;
-(defun explain-slot (object slot &optional (indent 0) (use-inverse-method nil) 
+(defun explain-slot (object slot &optional (indent 0) (use-inverse-method nil)
 			    (n-levels 0))
   (setf explain-visited nil)  ;start with an empty list
   (explain-2 object slot indent use-inverse-method n-levels)
@@ -123,7 +123,7 @@
 	     (format t ",~%")
 	     (cond ((not (kr::cache-is-valid value))
 		    (indent-by indent)
-		    (format t 
+		    (format t
  "(warning: this formula is invalid, so dependencies may be incorrect)~%"))))
 	   (setf indent (+ indent 1))
 	   (cond ((/= indent n-levels)   ;; stop recursion when ident = n-levels
@@ -235,14 +235,14 @@
 		    (setf there-is-a-problem t))))))))
 
 
-		       
+
 ;;; FIX-UP-WINDOW -- help user fix a window that won't update
 ;;;
 (defun fix-up-window (win)
   (let ((agg (g-value win :aggregate))
 	(invalid-objects
 	 (opal::win-update-info-invalid-objects
-	  (g-value win :win-update-info))) 
+	  (g-value win :win-update-info)))
 	bad-objects)
     (setf there-is-a-problem nil)
 
@@ -256,8 +256,8 @@
     (cond (bad-objects
 	   (dolist (object bad-objects)
 	     (setf invalid-objects (delete object invalid-objects)))
-	   (setf (opal::win-update-info-invalid-objects 
-		  (g-value win :win-update-info)) 
+	   (setf (opal::win-update-info-invalid-objects
+		  (g-value win :win-update-info))
 		 invalid-objects)))
 
     ;; check aggregate tree
@@ -286,7 +286,7 @@
 	agg  winwidth winheight
 	aggleft aggtop aggwidth aggheight
 	invisible-agg)
-    
+
     (cond (win
 	   (setf agg (g-value win :aggregate))
 	   (setf winwidth (g-value win :width))
@@ -335,10 +335,10 @@
 	  (t
 	   (cond ((eq obj win)
 		  (setf left 0)
-		  (setf top 0))) 
+		  (setf top 0)))
 	   (cond ((or (< width minsize) (< height minsize))
-		  (format 
-		   t "Enlarging feedback to ~D by ~D because ~S is small:~%" 
+		  (format
+		   t "Enlarging feedback to ~D by ~D because ~S is small:~%"
 		   (max width minsize) (max height minsize)
 		   obj)
 		  (where obj)))
@@ -406,7 +406,7 @@
 ;;;
 (defun create-identify-interactor ()
   (format t "making identify-interactor~%")
-  (create-instance 
+  (create-instance
       'identify-interactor
       inter:button-interactor
     (:window t)
@@ -469,7 +469,7 @@
              (view (ccl:find-view-containing-point NIL where))
              (wptr (ccl:wptr view))
              (top-window (ccl:window-object wptr))
-             
+
              #|
              (opal-window (gem:window-from-drawable
                            gem::*root-window* gem::*active-drawable*))
@@ -485,7 +485,7 @@
           (setf ident-info (list view what time x y)))))))
 
 (defun ident (&optional (verbose t))
-  "Wait for user to point to a garnet object and returns (obj window x y code). 
+  "Wait for user to point to a garnet object and returns (obj window x y code).
   Use (ident nil) to suppress normal printout"
   (let ((a-window (get-an-opal-window))
         suspend-process
@@ -690,8 +690,7 @@
 	     (or (is-a-p value opal:font)
 		 (is-a-p value opal:font-from-file))))
     (:xfont
-     #-apple (xlib:font-p value)
-     #+apple (listp value))
+     (typep value 'xlib:font))
     (:text-extents
 	(listp value))
     (:cursor-index
@@ -864,7 +863,7 @@
     (setf ev (g-value inter :start-event))
     (setf where (g-value inter :start-where))
     (format t "   starts when ~S ~S~%" ev where)))
-  
+
 
 ;;; print-a-slot -- prints value (and cache if value is formula)
 ;;;
@@ -877,9 +876,9 @@
 	   (cond ((member slot '(:XFONT :TEXT-EXTENTS))
 		  (setf cached-value-to-print "...")))
 	   (setf validity (kr::cache-is-valid value))
-	   (format t "~S (~S . ~A #~A)" value cached-value-to-print 
+	   (format t "~S (~S . ~A #~A)" value cached-value-to-print
 		   validity (kr::cache-mark value))
-	   
+
 	   )
 	  (t
 	   (format t "~S" value)))))
@@ -911,7 +910,7 @@
 				inter where agg obj))))
 		       ((:list-element-of :list-element-of-or-none)
 			(setf slot (third where))
-			(cond 
+			(cond
 			  ((and agg (schema-p agg))
 			   (setf lst (g-value agg slot))
 			   (cond
@@ -968,7 +967,7 @@
 	    ;; check :obj-to-change as well...
 	    (cond ((eq obj (g-local-value inter :obj-to-change))
 		   (format t "~S's :obj-to-change is ~S~%" inter obj))))))))
-	
+
 ;;; search-invisible-agg -- look up parent tree for :visible nil
 ;;;
 (defun search-invisible-agg (agg)
@@ -988,7 +987,7 @@
     (cons opal:black-fill             'opal:black-fill)
     (cons opal:white-fill             'opal:white-fill)
     (cons opal:gray-fill              'opal:gray-fill)
-    (cons opal:light-gray-fill        'opal:light-gray-fill) 
+    (cons opal:light-gray-fill        'opal:light-gray-fill)
     (cons opal:dark-gray-fill         'opal:dark-gray-fill)
     (cons opal:thin-line              'opal:thin-line)
     (cons opal:dotted-line            'opal:dotted-line)
@@ -1058,7 +1057,7 @@
 
 ;;; UNIVERT -- remove inverted region
 ;;;
-(defun uninvert () 
+(defun uninvert ()
   ;; create-flash-object will remove flash-object and redisplay
   (create-flash-object))
 
@@ -1150,7 +1149,7 @@
 		(first ctrl) (second ctrl)(third ctrl)))
       (format T "No breaks or notifies are active~%"))
   (values))
-      
+
 (defun call-func-on-slot-set (object slot value fnc extra-val)
  "Call the function when the slot of object is assigned value.  If
  value is :*any*, then call function when slot is set with any value.
@@ -1173,7 +1172,7 @@
 
 (defun break-on-slot-set (&key (object :*any*) (slot :*any*) (value :*any*))
   "Break when the slot of object is assigned value.  If value is missing, then
- break when slot is set with any value.  If slot and value are missing, then 
+ break when slot is set with any value.  If slot and value are missing, then
  break whenever any slot of object is set.  If object is missing, then
  break when any object is set.
  If object is NIL, then clears all breaks and notifies.

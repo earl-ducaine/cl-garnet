@@ -127,26 +127,15 @@
 ;;  work.
 ;;
 
-
-(in-package "GARNET-GADGETS")
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(protected-eval-error-gadget error-prompter-gadget
-	    garnet-error-handler garnet-user-error-hander
-	    with-garnet-error-handling with-garnet-user-error-handling
-	    garnet-protected-eval garnet-protected-read-from-string
-	    garnet-protected-read do-prompt
-	    with-normal-cursor *normal-cursor-pair*
-	    prompting-error-handler
-	    *user-type*))
-  )
+(in-package :garnet-gadgets)
+
 
 (when gem::*x11-server-available*
-
   (kr:create-instance 'protected-eval-error-gadget gg:motif-query-gadget
     (:documentation
      "Error Gadget Used by Garnet-Error-Handler to Display error
-    messages." )
+      messages." )
     (:parent-window nil)
     (:modal-p t)
     (:beep-p t)
@@ -297,26 +286,20 @@ continue."
   (garnet-error-handler context condition :allow-debugger nil))
 
 
+
+
 (defmacro with-garnet-error-handling (context &body forms)
   "Executes forms in a protected environment where errors are handled
-by garnet-error-handler, which creates a widget with options to abort,
-debug and (if applicable) continue.
+   by garnet-error-handler, which creates a widget with options to
+   abort, debug and (if applicable) continue.
 
-<context> should be a string describing user meaningful context in
-which error occured. "
-  #-(or cmu sbcl)
-  `(handler-bind
-       ((error
-	 ,#'(lambda (condition)
-	      (garnet-error-handler context condition))))
-     ,.forms)
-  #+(or sbcl cmu)
+    <context> should be a string describing user meaningful context in
+    which error occured. "
   `(handler-bind
        ((error
 	 (lambda (condition)
 	   (garnet-error-handler ,context condition))))
-     ,.forms)
-  )
+     ,.forms))
 
 (defmacro with-garnet-user-error-handling (context &body forms)
   "Executes forms in a protected environment where errors are handled
@@ -325,13 +308,6 @@ abort and (if applicable) continue (no debug option).
 
 <context> should be a string describing user meaningful context in
 which error occured."
-  #-(or cmu sbcl)
-  `(handler-bind
-       ((error
-	 ,#'(lambda (condition)
-	      (garnet-error-handler context condition :allow-debugger nil))))
-     ,.forms)
-  #+(or cmu sbcl)
   `(handler-bind
        ((error
 	 (lambda (condition)

@@ -286,18 +286,33 @@
 (defpackage :garnet-gadgets
   (:use :common-lisp :kr)
   (:nicknames :gg)
-  (:export mouseline-go
+  (:export *normal-cursor-pair*
+	   *user-type*
+	   do-prompt
+	   error-prompter-gadget
+	   garnet-error-handler
+	   garnet-protected-eval
+	   garnet-protected-read
+	   garnet-protected-read-from-string
+	   garnet-user-error-hander
+	   mouseline-go
 	   mouseline-stop
 	   prompter-gadget-go
-	   prompter-gadget-stop))
+	   prompter-gadget-stop
+	   prompting-error-handler
+	   protected-eval-error-gadget
+	   with-garnet-error-handling
+	   with-garnet-user-error-handling
+	   with-normal-cursor))
 
 (defpackage :test
   (:use :common-lisp))
 
 (defpackage :opal
   (:use :common-lisp :kr)
-  (:import-from :garnet-utils :black)
-  (:import-from :garnet-utils :white))
+  (:import-from :garnet-utils str)
+  (:import-from :garnet-utils black)
+  (:import-from :garnet-utils white))
 
 (defpackage :garnet-debug
   (:use :common-lisp :kr :opal) (:nicknames :gd))
@@ -311,7 +326,17 @@
 
 (defpackage :lapidary
   (:use common-lisp kr)
-  (:export do-go do-stop fix-it clean-up))
+  (:export clean-up
+	   directional-move-grow-interactor
+	   do-go
+	   do-stop
+	   fix-it
+	   lapidary-angle-interactor
+	   lapidary-button-interactor
+	   lapidary-menu-interactor
+	   lapidary-text-interactor
+	   lapidary-two-point-interactor))
+
 
 (defpackage :agate
   (:use :common-lisp :kr))

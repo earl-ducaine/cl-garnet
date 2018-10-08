@@ -597,20 +597,16 @@
 	    (aref (the (simple-array (unsigned-byte 32) (5)) data) 0)))))
   NIL)
 
-
 ;; We want this to run once and then exit.  (We used to want this to
 ;; run forever until exit-main-event-loop is called, but now we are
 ;; introducing a parellel process to run the event handler.
-;; Therefore, main-event-loop etc. must put the call to
+;; Therefore, m-e-l etc. must put the call to
 ;; default-event-handler into a loop statement.
 (defun default-event-handler (root-window)
   "Event handler for the interactor windows"
   ;; defined in inter:animation-process.lisp
   (setq *process-with-main-event-loop*
-	#+allegro mp:*current-process*
-	#+(and cmu mp) mp:*current-process*
-	#+sb-thread sb-thread:*current-thread*
-	#-(or allegro sb-thread (and cmu mp)) NIL)
+	(bordeaux-threads:current-thread))
   (gem:event-handler root-window NIL))
 
 

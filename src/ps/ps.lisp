@@ -1631,12 +1631,12 @@ TITLE, CREATOR, FOR, COMMENT - Strings for header comments.
 	    (write-char #\ ))))
     (format t ">~%DefImage~%~%")))
 
-
 (defun print-image-info (image image-name)
   ;; Need to have z-type images to get information from
   (let* ((flip-p (unless (xlib:image-z-p image)
-		   (setf image (xlib:copy-image image
-						:result-type 'xlib:image-z))))
+		   (setf image (xlib:copy-image
+				image
+				:result-type 'xlib:image-z))))
 	 (width (xlib:image-width image))
 	 (height (xlib:image-height image))
 	 (a (xlib:image-z-pixarray image)))

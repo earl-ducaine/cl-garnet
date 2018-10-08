@@ -13,7 +13,7 @@
 
 
 ;;;  Vertical scroll bar
-;; 
+;;
 ;;   Features and operation of the vertical scroll bar:
 ;;      1)  Drag the indicator with the left mouse button
 ;;      2)  Click the left mouse button in the scroll bar background to cause
@@ -26,7 +26,7 @@
 ;;          This slot may be set directly and formulae may depend on it.
 ;;      6)  The function specified in :selection-function will be executed
 ;;          when the :values slot changes.
-;; 
+;;
 ;;   Customizable slots:
 ;;      1)  Left, top, height
 ;;      2)  Min-width --  Will be overridden by the value calculated in
@@ -49,15 +49,15 @@
 ;;     12)  Selection-function -- Function executed whenever :value changes
 ;;     13)  Indicator-font -- Font to report indicator position with
 ;;     14)  Format-string -- formatting string of indicator value
-;; 
+;;
 ;;   NOTE:  This module requires schemata defined in GAD-scroll-parts,
 ;;          GAD-v-arrows, and GAD-v-boxes.
-;; 
+;;
 ;;   Vertical scroll bar demo:
 ;;      This module contains a function which creates a window and a scroll bar
 ;;      in the window.  To run it, enter (GARNET-GADGETS:v-scroll-go).
 ;;      To stop, enter (GARNET-GADGETS:v-scroll-stop).
-;; 
+;;
 ;;   Designed by Brad Myers
 ;;   Written by Andrew Mickish
 
@@ -110,8 +110,7 @@
 			       (/= (gv p :val-1) (gv p :val-2)))))))
 
 
-;; TOP LEVEL AGGREGADGET
-;;
+;; Top level aggregadget
 (create-instance 'V-SCROLL-BAR opal:aggregadget
    :declare ((:parameters :left :top :height :min-width :val-1 :val-2
 			  :scr-incr :page-incr :scr-trill-p :page-trill-p
@@ -130,12 +129,11 @@
 			      :scr-trill-p :page-trill-p :indicator-text-p
 			      :page-incr :scr-incr :int-feedback-p :scroll-p
 			      :format-string :indicator-font :visible))
-  
    ;; Customizable slots
    ;;
    (:left 0)(:top 0)(:height 250)
    (:min-width 20)   ; Overridden by :indicator-width if indicator-text
-                     ; doesn't fit.  
+                     ; doesn't fit.
    (:val-1 0)
    (:val-2 100)
    (:scr-trill-p T)
@@ -148,7 +146,6 @@
    (:selection-function NIL)
    (:format-string "~a")
    (:indicator-font (opal:get-standard-font NIL NIL :small))
-
    ;; Generally non-customizable slots
    ;;
    (:value (o-formula (inter:Clip-and-Map (second (gvl :indicator :box))
@@ -176,7 +173,7 @@
    (:top-page-top (o-formula (if (gvl :scr-trill-p)
 				(+ (gvl :top) (gvl :trill-height))
 				(gvl :top))))
-   (:bot-page-top (o-formula (if (gvl :scr-trill-p)      ;; The top of the 
+   (:bot-page-top (o-formula (if (gvl :scr-trill-p)      ;; The top of the
 				(- (gvl :bottom)         ;; bottom page box
 				   (* 2 (gvl :trill-height)))
 				(- (gvl :bottom) (gvl :trill-height)))))
@@ -219,20 +216,15 @@
 	      (:attach-point :where-hit))
       (:JUMP ,jump-inter)
       (:WHEEL-UP ,wheel-up-inter)
-      
       (:WHEEL-DOWN ,wheel-down-inter
 		   (:extra-function ,#'val-2-WHEEL-fn)))))
 
-
-
 ;;;  DEMO FUNCTION
-;;
-
 #+garnet-test (defparameter v-scroll-win NIL)
 #+garnet-test (defparameter v-scroll-top-agg NIL)
 #+garnet-test (defparameter v-scroll-obj NIL)
 
-#+garnet-test 
+#+garnet-test
 (defun V-Scroll-Go ()
 
   (create-instance 'v-scroll-win inter:interactor-window
@@ -256,6 +248,6 @@
 
   (opal:update v-scroll-win))
 
-#+garnet-test 
+#+garnet-test
 (defun V-Scroll-Stop ()
   (opal:destroy v-scroll-win))

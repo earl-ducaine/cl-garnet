@@ -1,33 +1,16 @@
 ;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: LAPIDARY; Base: 10 -*-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;         The Garnet User Interface Development Environment.      ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; This code was written as part of the Garnet project at          ;;;
-;;; Carnegie Mellon University, and has been placed in the public   ;;;
-;;; domain.  If you are using this code or any part of Garnet,      ;;;
-;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; -*- Mode: Lisp; Package: LAPIDARY -*-
-;;;
-;;;  This file contains code that is exported from lapidary which an
-;;;  application constructed using lapidary might use
 
-;;; CHANGE LOG
-;;;
-;;; 08/25/92 amickish - Added proclaim
+;; The Garnet User Interface Development Environment
+;;
+;; This code was written as part of the Garnet project at Carnegie
+;; Mellon University, and has been placed in the public domain.  If
+;; you are using this code or any part of Garnet, please contact
+;; garnet@cs.cmu.edu to be put on the mailing list.
 
-(in-package "LAPIDARY")
+;;  This file contains code that is exported from lapidary which an
+;;  application constructed using lapidary might use
 
-;; These variables appear in many files
-(declaim (special common-lisp-user::*garnet-objects-just-created*
-		  common-lisp-user::*garnet-object-just-created*
-		  common-lisp-user::*used-gilt-version*
-		  common-lisp-user::*used-garnet-version*))
-
-(eval-when (:execute :load-toplevel :compile-toplevel)
-  (export '(lapidary-two-point-interactor directional-move-grow-interactor
-	    lapidary-angle-interactor lapidary-menu-interactor
-	    lapidary-button-interactor lapidary-text-interactor)))
+(in-package :lapidary)
 
 ;; rewrite the set of opal:gv-... functions so that they are forgiving
 ;; of broken links
@@ -114,11 +97,11 @@
   (kr::call-prototype-method inter obj-being-changed final-points)
   (set-selected-axes inter obj-being-changed (g-value inter :saved-original-points)))
 
-(defun dir-move-grow-back-inside-action (inter outside-control 
+(defun dir-move-grow-back-inside-action (inter outside-control
 					       obj-being-changed new-points)
-  (kr::call-prototype-method inter outside-control 
+  (kr::call-prototype-method inter outside-control
 			     obj-being-changed new-points)
-  (set-selected-axes inter obj-being-changed 
+  (set-selected-axes inter obj-being-changed
 		     (g-value inter :saved-original-points)))
 
 
@@ -139,14 +122,14 @@
    (:move-box-parms '(t t t t))
    (:grow-box-parms '(t t t t))
    (:grow-line-parms '(t t t t))
-   (:move-parms (o-formula (if (gvl :line-p) 
-			       (gvl :move-line-parms) 
+   (:move-parms (o-formula (if (gvl :line-p)
+			       (gvl :move-line-parms)
 			       (gvl :move-box-parms))))
-   (:grow-parms (o-formula (if (gvl :line-p) 
-			       (gvl :grow-line-parms) 
+   (:grow-parms (o-formula (if (gvl :line-p)
+			       (gvl :grow-line-parms)
 			       (gvl :grow-box-parms))))
    (:slots-to-set (o-formula (if (gvl :grow-p)
-				 (gvl :grow-parms) 
+				 (gvl :grow-parms)
 			         (gvl :move-parms)))))
 
 (s-value directional-move-grow-interactor :start-where :not-supplied)
@@ -188,10 +171,10 @@
   ;; Also, make sure the feedback object is connected to the proper
   ;; aggregate
   (let (feedback-obj parent)
-    (when (g-value inter :std-feedback-p) 
+    (when (g-value inter :std-feedback-p)
 	  (cond ((and (null (g-local-value inter :std-box-feedback))
 		      (not (g-value inter :line-p)))
-		 (s-value inter :std-box-feedback 
+		 (s-value inter :std-box-feedback
 			  (create-instance nil two-pt-box-feedback)))
 		((and (null (g-local-value inter :std-line-feedback))
 		      (g-value inter :line-p))
@@ -205,7 +188,7 @@
 	(progn
 	  (opal:remove-component parent feedback-obj)
 	  (opal:add-component parent feedback-obj))
-        (opal:add-component (g-value inter :current-window :aggregate) 
+        (opal:add-component (g-value inter :current-window :aggregate)
 			    feedback-obj))
     (kr::call-prototype-method inter points)))
 
@@ -248,7 +231,7 @@
 
 ;;; temporary fix so that some interactor slots are not dumped
 
-(s-value inter:interactor :do-not-dump-slots 
+(s-value inter:interactor :do-not-dump-slots
    (append '(:current-priority-level :copy-old-window :x-off :y-off
 	     :final-feed-avail :prev-x :prev-y)
 	   (g-value inter:interactor :do-not-dump-slots)))

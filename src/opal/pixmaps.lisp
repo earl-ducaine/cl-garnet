@@ -19,8 +19,7 @@
 ;;			 :element-type '(unsigned-byte 8))))
 ;;    (values seq (read-sequence seq stream))))
 
-
-(in-package "OPAL")
+(in-package :opal)
 
 ;;; Moved exports to exports.lisp.
 
@@ -56,11 +55,8 @@
 ;; because spaces that are garbage and spaces that are data tend to look
 ;; similar.
 
-
 (defun generate-default-pixmap (height width)
   (gem:create-image-array nil width height depth))
-
-
 
 (defun run-read-xpm-file ()
   (let ((pathname "/home/rett/dev/garnet/garnet-bitbucket/lib/pixmaps/eye1.xpm")
@@ -465,18 +461,15 @@
 		       (digit-to-hex (mod (floor n 16) 16))
 		       (digit-to-hex (mod n 16))))
 
-
-;;;
 ;; The following info is obtained from scan.c in XPM-3.4k library.
-;;
-#+sbcl
 (defmacro define-constant (name value &optional doc)
        `(defconstant ,name (if (boundp ',name) (symbol-value ',name) ,value)
                            ,@(when doc (list doc))))
-(#+sbcl define-constant
- #-sbcl defconstant
- +printable+
-  ".XoO+@#$%&*=-;:>,<1234567890qwertyuipasdfghjklzxcvbnmMNBVCZASDFGHJKLPIUYTREWQ!~^/()_`'][{}|"
+
+(defparameter *printable*
+  (str ".XoO+@#$%&*=-;:>,<"
+       "1234567890qwertyuipasdfghjklzxcvbnmMNBVCZASDFGHJKLPIUYTREWQ"
+       "!~^/()_`'][{}|")
   "Sequence of printable characters; taken from scan.c in XPM-3.4k library.")
 
 
@@ -489,7 +482,7 @@
 	(gem:image-size root-window image)
       (let ((pixarray (gem:image-to-array root-window image))
 	    (pixhash (make-hash-table))
-	    (max-printable (length +printable+))
+	    (max-printable (length *printable*))
 	    (ncolors 0))
 
 	;; Scan pixmap array to figure out how many distinct colors are in it.
@@ -508,12 +501,12 @@
 	    (do* ((string (make-array chars-per-color
 				      :element-type 'character
 				      :initial-element #\Space))
-		  (color i (truncate (- color index) (length +printable+)))
-		  (index (mod color (length +printable+))
-			 (mod color (length +printable+)))
+		  (color i (truncate (- color index) (length *printable*)))
+		  (index (mod color (length *printable*))
+			 (mod color (length *printable*)))
 		  (j 0 (1+ j)))
 		((= j chars-per-color) (setf (aref strings i) string) nil)
-	      (setf (aref string j) (aref +printable+ index))))
+	      (setf (aref string j) (aref *printable* index))))
 
 	  ;; Write out header.
 	  (case xpm-format
