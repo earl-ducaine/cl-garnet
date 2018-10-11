@@ -7,11 +7,9 @@
 ;;; domain.  If you are using this code or any part of Garnet,      ;;;
 ;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; $Id$
 
-
-;;;  SCHEMA BROWSER INTERFACE
+
+;;;  schema browser interface
 ;;;
 ;;;     This interface can be used to examine the hierarchy of Garnet objects
 ;;;  by tracing through the IS-A/INSTANCES and PARENT/COMPONENTS links among
@@ -39,8 +37,8 @@
 ;;;  Written by Andrew Mickish
 ;;;
 
-
-(in-package :DEMO-SCHEMA-BROWSER)
+
+(in-package :demo-schema-browser)
 
 (defvar DEMO-SCHEMA-BROWSER-INIT
   (dolist (file '("radio-buttons-loader" "text-buttons-loader"
@@ -50,13 +48,8 @@
 
 
 
-;;   Schemata defined in the DO-GO procedure which are referenced by other
+;; Schemata defined in the DO-GO procedure which are referenced by other
 ;; functions
-;;
-(declaim (special SCHEMA-BROWSER CONTROL-PANEL SCHEMA-BROWSER-ERROR-GADGET
-		  SCHEMA-BROWSER-CONTROL-BUTTON SCHEMA-BROWSER-WIN
-		  SCHEMA-BROWSER-TOP-AGG L-BOX-GRAY-INTER))
-
 
 (create-instance 'SCHEMA-BROWSER-CONTROL-BUTTON garnet-gadgets:text-button-panel
    (:shadow-offset 5)
@@ -66,19 +59,16 @@
    (:direction :horizontal))
 
 
-;;;
-;;;  DO-GO:  Function to run SCHEMA-BROWSER interface
-;;;
 
+;; Run schema-browser interface
 (defun do-go (&key dont-enter-main-event-loop double-buffered-p)
-
-  (create-instance 'SCHEMA-BROWSER-WIN inter:interactor-window
+  (create-instance 'schema-browser-win inter:interactor-window
      (:left 10)(:top 50)(:width 600)(:height 270)
      (:double-buffered-p double-buffered-p)
-     (:title "SCHEMA BROWSER") (:icon-title "Schema-Browser"))
-  (s-value SCHEMA-BROWSER-WIN
+     (:title "schema browser") (:icon-title "schema-browser"))
+  (s-value schema-browser-win
 	   :aggregate
-	   (create-instance 'SCHEMA-BROWSER-TOP-AGG opal:aggregate))
+	   (create-instance 'schema-browser-top-agg opal:aggregate))
 
   ;; If we get clobbered by the window manager, let the demos
   ;; controller know (if it's there).
@@ -299,17 +289,14 @@
    to the shell by pressing 'PS', or promoted to the top level of the browser
    by pressing 'Top'.~%")
 
-  (unless dont-enter-main-event-loop #-cmu (inter:main-event-loop))
-  )
+  (unless dont-enter-main-event-loop #-cmu (inter:main-event-loop)))
 
 (defun do-stop ()
-  (opal:destroy SCHEMA-BROWSER-WIN))
+  (opal:destroy schema-browser-win))
 
 (defun do-quit (gadget value)
   (declare (ignore gadget value))
   (do-stop)
   ;; for demo-controller
   (unless (and (fboundp 'common-lisp-user::Garnet-Note-Quitted)
-	       (common-lisp-user::Garnet-Note-Quitted "DEMO-SCHEMA-BROWSER")))
-)
-
+	       (common-lisp-user::Garnet-Note-Quitted "DEMO-SCHEMA-BROWSER"))))

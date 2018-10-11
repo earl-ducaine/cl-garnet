@@ -1,14 +1,13 @@
-;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: OPAL; Base: 10 -*-
+;;; -*- mode: lisp; syntax: common-lisp; package: opal; base: 10 -*-
 
-(in-package "OPAL")
+(in-package :opal)
 
-(declaim (fixnum *cursor-width* *cursor-half-width* *cursor+++half+++width*))
-(defvar *cursor-width*          2)
-(defvar *cursor-half-width*     (floor *cursor-width* 2))
+(defvar *cursor-width* 2)
+(defvar *cursor-half-width* (floor *cursor-width* 2))
 (defvar *cursor+++half+++width* (ceiling *cursor-width* 2))
-(defvar *cursor-draw-fn*        (get :xor :x-draw-function))
+(defvar *cursor-draw-fn* (get :xor :x-draw-function))
 
-(create-instance 'TEXT graphical-object
+(create-instance 'text graphical-object
   :declare ((:parameters :left :top :string :font :actual-heightp
 			 :justification :fill-background-p :line-style
 			 :cursor-index :draw-function :visible)
@@ -20,7 +19,7 @@
 	    (:maybe-constant :left :top :string :font :actual-heightp
                              :line-style :visible)
 	    (:local-only-slots (:cursor-index nil) (:window nil)
-                               (:parent nil) (:cut-string-structs NIL))
+                               (:parent nil) (:cut-string-structs nil))
             (:ignored-slots :depended-slots :update-slots :update-slots-values
                             :xfont :cut-string-structs
 			    :cut-strings)
@@ -28,18 +27,18 @@
 			   :string :xfont :actual-heightp :fill-background-p
 			   :line-style :draw-function :cursor-offset
 			   :justification :cut-strings :line-number))
-  (:string            "")
-  (:font              default-font)
-  (:actual-heightp    nil)
+  (:string "")
+  (:font default-font)
+  (:actual-heightp nil)
   (:fill-background-p nil)
-  (:cursor-index NIL)
+  (:cursor-index nil)
   (:justification :left)
   (:xfont (o-formula (gvl :font :xfont)))
   (:cut-strings
    (o-formula
     (let ((string (the simple-string (gvl :string)))
-;;	  (font (gvl :xfont))
-	  ;; Structs will be NIL if formula has never been evaluated
+	  ;; (font (gvl :xfont))
+	  ;; Structs will be nil if formula has never been evaluated
 	  (structs (g-value (gv :self) :cut-string-structs)))
       (declare (simple-string string))
       (do* ((old-structs structs (cdr old-structs))
@@ -54,9 +53,9 @@
 						    (length old-structs)
 						    1)
 						 structs)))
-			   (setf (cdr last-cdr) NIL)))
+			   (setf (cdr last-cdr) nil)))
 		       structs))
-	(setf j (position #\Newline string :start (1+ i))
+	(setf j (position #\newline string :start (1+ i))
 	      substring (if (or j substring)
 			    (subseq string (1+ i) j)
 			    string))
@@ -84,9 +83,8 @@
   (:height (o-formula (* (gvl-fixnum :font :font-height)
 			 (length (gvl :cut-strings)))))
   (:width (o-formula (let ((width *cursor-width*))
-		       (declare (fixnum width))
 		       (dolist (cstring (gvl :cut-strings))
-			 (setq width (max width (the fixnum (cut-string-width cstring)))))
+			 (setq width (max width (cut-string-width cstring))))
 		       width)))
   (:line-number (o-formula (cursor-index-to-line-number
 			    (gvl :cut-strings) (gvl :cursor-index))))
@@ -102,7 +100,8 @@
 	       (line-number (gvl :line-number))
 	       (n 0)   (prev-len 0))
 	  (declare (fixnum n prev-len))
-	  ;; Count up all the characters in the lines before the cursor's line
+	  ;; count up all the characters in the lines before the
+	  ;; cursor's line
 	  (dolist (a-cut-string cut-strings)
 	    (if (eq n line-number)
 		(return prev-len)
@@ -126,11 +125,11 @@
 	       (font              (gvl :font))
 	       (char-width        (gv-fixnum font :char-width))
 	       (prev-len          (gvl-fixnum :prev-len))
-	       ;; Adj-index gives us the cursor-index on the particular line
+	       ;; adj-index gives us the cursor-index on the particular line
 	       (adj-index   (- ci prev-len))
 	       (fixed-index (cond ((<= ci 0)                 0)
 				  ((>= adj-index line-width)  line-width)
-				  (T                           adj-index)))
+				  (t                           adj-index)))
 	       (base-width  (if char-width
 				(* char-width fixed-index)
 				(the fixnum
@@ -150,53 +149,55 @@
 			 (:center (floor (- max-line-width line-width) 2))
 			 (t 0)))))))))))
 
+(create-instance 'cursor-text text)
+(create-instance 'multi-text text)
+(create-instance 'cursor-multi-text multi-text)
 
-(create-instance 'CURSOR-TEXT text)
-(create-instance 'MULTI-TEXT text)
-(create-instance 'CURSOR-MULTI-TEXT multi-text)
+(defparameter *break-on-line-draw* nil)
 
-
 (define-method :draw text (gob a-window)
-  (let* ((update-vals   (g-local-value gob :update-slots-values))
-	 (font (g-value gob :font))
-         (lstyle (aref update-vals +text-lstyle+)))
-    (if (and lstyle font)
-      (let* ((left           (aref update-vals +text-left+))
-	     (top            (aref update-vals +text-top+))
-	     (cursor-offset  (aref update-vals +text-cursor-offset+))
-	     (cut-strings    (aref update-vals +text-cut-strings+))
-	     (max-line-width (aref update-vals +text-width+))
-	     (justification  (aref update-vals +text-justification+))
-	     (line-number    (aref update-vals +text-line-number+))
-	     (ascent 	     (gem:max-character-ascent a-window font))
-	     (line-height    (+ ascent (gem:max-character-descent
-                                        a-window font))))
-	(do ((count 0 (1+ count))
-	     (remaining cut-strings (cdr remaining)))
-	    ((null remaining))
-	  (let* ((cut-string (car remaining))
-		 (width (cut-string-width cut-string))
-		 (string (cut-string-string cut-string)))
-	    (gem:draw-text
-	     a-window
-	     (+ left (case justification
-		       (:right (- max-line-width width))
-		       (:center (floor (- max-line-width width) 2))
-		       (t 0)))
-	     (+ top ascent (* count line-height))
-	     string font (aref update-vals +text-draw-function+)
-	     lstyle (aref update-vals +text-fill-background-p+))))
-	(when cursor-offset
-	  (let ((cursor-left (+ left cursor-offset))
-		(cursor-top (+ top (* line-number line-height))))
-	    (gem:draw-line a-window
-                           cursor-left
-			   cursor-top
-		           cursor-left
-			   (+ cursor-top line-height)
-		           :XOR
-		           line-2)))))))
-
+	       (let* ((update-vals (g-local-value gob :update-slots-values))
+		      (font (g-value gob :font))
+		      (lstyle (aref update-vals +text-lstyle+)))
+		 (if (and lstyle font)
+		     (let* ((left (aref update-vals +text-left+))
+			    (top (aref update-vals +text-top+))
+			    (cursor-offset (aref update-vals +text-cursor-offset+))
+			    (cut-strings (aref update-vals +text-cut-strings+))
+			    (max-line-width (aref update-vals +text-width+))
+			    (justification (aref update-vals +text-justification+))
+			    (line-number (aref update-vals +text-line-number+))
+			    (ascent (gem:max-character-ascent a-window font))
+			    (line-height (+ ascent (gem:max-character-descent
+						    a-window font))))
+		       (do ((count 0 (1+ count))
+			    (remaining cut-strings (cdr remaining)))
+			   ((null remaining))
+			 (let* ((cut-string (car remaining))
+				(width (cut-string-width cut-string))
+				(string (cut-string-string cut-string)))
+			   (gem:draw-text
+			    a-window
+			    (+ left (case justification
+				      (:right (- max-line-width width))
+				      (:center (floor (- max-line-width width) 2))
+				      (t 0)))
+			    (+ top ascent (* count line-height))
+			    string font (aref update-vals +text-draw-function+)
+			    lstyle (aref update-vals +text-fill-background-p+))))
+		       (when cursor-offset
+			 (let ((cursor-left (+ left cursor-offset))
+			       (cursor-top (+ top (* line-number line-height))))
+			   (gem:draw-line a-window
+					  cursor-left
+					  cursor-top
+					  cursor-left
+					  (+ cursor-top line-height)
+					  ;; :xor
+					  (aref update-vals +text-draw-function+)
+					  ;;line-2
+					  lstyle
+					  )))))))
 
 (defun cursor-index-to-line-number (cut-strings index)
   (when index
@@ -253,11 +254,11 @@
       (s-value gob :cursor-index (length (g-value gob :string)))))
 
 
-(define-method :string-set-func TEXT
+(define-method :string-set-func text
     (gadget-obj str-obj final-event final-string)
   (declare (ignore final-event))
   (if (eq str-obj gadget-obj)
       ;; then is me (otherwise, is probably an error)
       (s-value str-obj :string final-string)
-      ;; else return NIL
-      NIL))
+      ;; else return nil
+      nil))

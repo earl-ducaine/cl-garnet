@@ -10,7 +10,7 @@
 ;;;
 ;;; $Id$
 
-
+
 ;;;  DEMO-MOTIF
 ;;;
 ;;;  The function in this module creates a window displaying the motif
@@ -25,48 +25,47 @@
 ;;;
 ;;;  Written by Andrew Mickish
 
-
-(in-package :DEMO-MOTIF)
 
-(defvar DEMO-MOTIF-INIT
-  (dolist (file '("motif-v-scroll-loader"
-		  "motif-slider-loader"
-		  "motif-text-buttons-loader"
-		  "motif-check-buttons-loader"
-		  "motif-radio-buttons-loader"
-;;		  "motif-menu-loader"
-		  "motif-scrolling-labeled-box-loader"
-		  "motif-gauge-loader"
-                  "motif-scrolling-window-loader"))
-    (common-lisp-user::garnet-load (concatenate 'string "gadgets:" file))))
+(in-package :demo-motif)
 
-(declaim (special COMBO-BOX RED-BOX GREEN-BOX BLUE-BOX RED-BAR GREEN-BAR
-		  BLUE-BAR GROUND-BUTTONS SHADE-SLIDER SHADE-BUTTONS
-		  DEMO-MOTIF-WIN COLOR-BUTTONS COLOR-MENU GAUGE-1
-		  SHADE-BOX SHADE-BOX-BORDER DEMO-MOTIF-TOP-AGG
-		  BLUE-BOX-BORDER GREEN-BOX-BORDER RED-BOX-BORDER
-		  COMBO-BOX-BORDER TEXT-BOX-1 SCROLL-AGG))
+;; (defvar demo-motif-init
+;;   (dolist (file '("motif-v-scroll-loader"
+;; 		  "motif-slider-loader"
+;; 		  "motif-text-buttons-loader"
+;; 		  "motif-check-buttons-loader"
+;; 		  "motif-radio-buttons-loader"
+;; 		  "motif-scrolling-labeled-box-loader"
+;; 		  "motif-gauge-loader"
+;;                   "motif-scrolling-window-loader"))
+;;     (common-lisp-user::garnet-load (concatenate 'string "gadgets:" file))))
+
+;; (declaim (special combo-box red-box green-box blue-box red-bar green-bar
+;; 		  blue-bar ground-buttons shade-slider shade-buttons
+;; 		  demo-motif-win color-buttons color-menu gauge-1
+;; 		  shade-box shade-box-border demo-motif-top-agg
+;; 		  blue-box-border green-box-border red-box-border
+;; 		  combo-box-border text-box-1 scroll-agg))
 
 
-(defparameter *FILL-TO-SWAP* (create-instance NIL opal:default-filling-style
+(defparameter *fill-to-swap* (create-instance nil opal:default-filling-style
 				(:foreground-color
-				 (create-instance NIL opal:black))))
+				 (create-instance nil opal:black))))
 
 
-(defun MEMBER-STRING (string list)
+(defun member-string (string list)
   (member string list :test 'string=))
 
-(defun CHANGE-COLOR (obj red green blue)
+(defun change-color (obj red green blue)
   (let* ((old-fill (g-value obj :filling-style))
-	 (new-fill *FILL-TO-SWAP*)
+	 (new-fill *fill-to-swap*)
 	 (color (g-value new-fill :foreground-color)))
-    (setf *FILL-TO-SWAP* old-fill)
+    (setf *fill-to-swap* old-fill)
     (s-value color :red red)
     (s-value color :green green)
     (s-value color :blue blue)
     (s-value obj :filling-style new-fill)))
 
-(defun NEW-COLOR (red-255 green-255 blue-255)
+(defun new-color (red-255 green-255 blue-255)
   (let* ((red-100 (round red-255 2.55))
 	 (green-100 (round green-255 2.55))
 	 (blue-100 (round blue-255 2.55)))
@@ -75,292 +74,292 @@
        (let ((red-1 (float (/ red-255 255)))
 	     (green-1 (float (/ green-255 255)))
 	     (blue-1 (float (/ blue-255 255))))
-	 (change-color COMBO-BOX red-1 green-1 blue-1)
-	 (change-color RED-BOX red-1 0 0)
-	 (change-color GREEN-BOX 0 green-1 0)
-	 (change-color BLUE-BOX 0 0 blue-1)))
+	 (change-color combo-box red-1 green-1 blue-1)
+	 (change-color red-box red-1 0 0)
+	 (change-color green-box 0 green-1 0)
+	 (change-color blue-box 0 0 blue-1)))
 
-      (t (s-value COMBO-BOX
+      (t (s-value combo-box
 		  :filling-style
 		  (opal:halftone (round (+ red-255 green-255 blue-255) 7.65)))
-	 (s-value RED-BOX
+	 (s-value red-box
 		  :filling-style
 		  (opal:halftone red-100))
-	 (s-value GREEN-BOX
+	 (s-value green-box
 		  :filling-style
 		  (opal:halftone green-100))
-	 (s-value BLUE-BOX
+	 (s-value blue-box
 		  :filling-style
 		  (opal:halftone blue-100))))
 
-    (s-value RED-BAR :value red-100)
-    (s-value GREEN-BAR :value green-100)
-    (s-value BLUE-BAR :value blue-100)))
+    (s-value red-bar :value red-100)
+    (s-value green-bar :value green-100)
+    (s-value blue-bar :value blue-100)))
 
 
-(defun INITIAL-COLOR-FILL (color)
+(defun initial-color-fill (color)
   (if (g-value opal:color :color-p)
-      (create-instance NIL opal:default-filling-style
-	 (:foreground-color (create-instance NIL color)))
+      (create-instance nil opal:default-filling-style
+	 (:foreground-color (create-instance nil color)))
       (opal:halftone 100)))
 
-(defun CREATE-COLOR-FILL (color-list)
-  (create-instance NIL opal:default-filling-style
-     (:foreground-color (create-instance NIL opal:color
+(defun create-color-fill (color-list)
+  (create-instance nil opal:default-filling-style
+     (:foreground-color (create-instance nil opal:color
 			   (:red (first color-list))
 			   (:green (second color-list))
 			   (:blue (third color-list))))))
 
-(defun S-VALUE-RED-FILLING-STYLE ()
-  (let ((red-value (g-value RED-BAR :value)))
+(defun s-value-red-filling-style ()
+  (let ((red-value (g-value red-bar :value)))
     (if (g-value opal:color :color-p)
-        (change-color RED-BOX (float (/ red-value 100)) 0 0)
-        (s-value RED-BOX
+        (change-color red-box (float (/ red-value 100)) 0 0)
+        (s-value red-box
 		  :filling-style
 		  (opal:halftone red-value)))))
 
-(defun S-VALUE-GREEN-FILLING-STYLE ()
-  (let ((green-value (g-value GREEN-BAR :value)))
+(defun s-value-green-filling-style ()
+  (let ((green-value (g-value green-bar :value)))
     (if (g-value opal:color :color-p)
-        (change-color GREEN-BOX 0 (float (/ green-value 100)) 0)
-        (s-value GREEN-BOX
+        (change-color green-box 0 (float (/ green-value 100)) 0)
+        (s-value green-box
 		  :filling-style
 		  (opal:halftone green-value)))))
 
-(defun S-VALUE-BLUE-FILLING-STYLE ()
-  (let ((blue-value (g-value BLUE-BAR :value)))
+(defun s-value-blue-filling-style ()
+  (let ((blue-value (g-value blue-bar :value)))
     (if (g-value opal:color :color-p)
-        (change-color BLUE-BOX 0 0 (float (/ blue-value 100)))
-        (s-value BLUE-BOX
+        (change-color blue-box 0 0 (float (/ blue-value 100)))
+        (s-value blue-box
 		  :filling-style
 		  (opal:halftone blue-value)))))
 
-(defun S-VALUE-COMBO-FILLING-STYLE ()
-  (let ((red-value (g-value RED-BAR :value))
-	(green-value (g-value GREEN-BAR :value))
-	(blue-value (g-value BLUE-BAR :value)))
+(defun s-value-combo-filling-style ()
+  (let ((red-value (g-value red-bar :value))
+	(green-value (g-value green-bar :value))
+	(blue-value (g-value blue-bar :value)))
     (if (g-value opal:color :color-p)
-        (change-color COMBO-BOX
-		     (if (g-value RED-BAR :visible)
+        (change-color combo-box
+		     (if (g-value red-bar :visible)
 			 (float (/ red-value 100)) 0)
-		     (if (g-value GREEN-BAR :visible)
+		     (if (g-value green-bar :visible)
 			 (float (/ green-value 100)) 0)
-		     (if (g-value BLUE-BAR :visible)
+		     (if (g-value blue-bar :visible)
 			 (float (/ blue-value 100)) 0))
-        (s-value COMBO-BOX
+        (s-value combo-box
 		 :filling-style
 		 (opal:halftone (round (+ red-value green-value blue-value) 3))))))
 
 
 
-(defun DO-GO (&key dont-enter-main-event-loop (double-buffered-p T))
+(defun do-go (&key dont-enter-main-event-loop (double-buffered-p t))
 
-  (let ((thin-gray-line-style (create-instance NIL opal:line-style
-				(:constant T)
-				(:foreground-color opal:MOTIF-GRAY)))
-	(thin-orange-line-style (create-instance NIL opal:line-style
-				  (:constant T)
-				  (:foreground-color opal:MOTIF-ORANGE)))
-	(thin-green-line-style (create-instance NIL opal:line-style
-				 (:constant T)
-				 (:foreground-color opal:MOTIF-GREEN)))
-	(thin-blue-line-style (create-instance NIL opal:line-style
-				(:constant T)
-				(:foreground-color opal:MOTIF-BLUE))))
-  
-    (create-instance 'DEMO-MOTIF-WIN inter:interactor-window
+  (let ((thin-gray-line-style (create-instance nil opal:line-style
+				(:constant t)
+				(:foreground-color opal:motif-gray)))
+	(thin-orange-line-style (create-instance nil opal:line-style
+				  (:constant t)
+				  (:foreground-color opal:motif-orange)))
+	(thin-green-line-style (create-instance nil opal:line-style
+				 (:constant t)
+				 (:foreground-color opal:motif-green)))
+	(thin-blue-line-style (create-instance nil opal:line-style
+				(:constant t)
+				(:foreground-color opal:motif-blue))))
+
+    (create-instance 'demo-motif-win inter:interactor-window
      (:double-buffered-p double-buffered-p)
-     ;; Filling-style is accessed by the :foreground-color of all the gadgets
+     ;; filling-style is accessed by the :foreground-color of all the gadgets
      ;; in the window so that they change simultaneously
      (:filling-style
       (o-formula
        (if (gv opal:color :color-p)
-	   (let ((value (gv GROUND-BUTTONS :value)))
+	   (let ((value (gv ground-buttons :value)))
 	     (cond
-	       ((string= value "Gray") opal:MOTIF-GRAY-FILL)
-	       ((string= value "Orange") opal:MOTIF-ORANGE-FILL)
-	       ((string= value "Green") opal:MOTIF-GREEN-FILL)
-	       ((string= value "Blue") opal:MOTIF-BLUE-FILL))))))
-     ;; Foreground-line-style is accessed by the color box borders
+	       ((string= value "gray") opal:motif-gray-fill)
+	       ((string= value "orange") opal:motif-orange-fill)
+	       ((string= value "green") opal:motif-green-fill)
+	       ((string= value "blue") opal:motif-blue-fill))))))
+     ;; foreground-line-style is accessed by the color box borders
      (:foreground-line-style
       (o-formula
        (if (gv opal:color :color-p)
-	   (let ((value (gv GROUND-BUTTONS :value)))
+	   (let ((value (gv ground-buttons :value)))
 	     (cond
-	       ((string= value "Gray") thin-gray-line-style)
-	       ((string= value "Orange") thin-orange-line-style)
-	       ((string= value "Green") thin-green-line-style)
-	       ((string= value "Blue") thin-blue-line-style))))))
-     ;; The background color of the window
+	       ((string= value "gray") thin-gray-line-style)
+	       ((string= value "orange") thin-orange-line-style)
+	       ((string= value "green") thin-green-line-style)
+	       ((string= value "blue") thin-blue-line-style))))))
+     ;; the background color of the window
      (:background-color (o-formula (if (gvl :filling-style)
 				       (gvl :filling-style :foreground-color)
-				       opal:WHITE)))
-     (:title "Demo-Motif")
+				       opal:white)))
+     (:title "demo-motif")
      (:left 650)(:top 45)(:width 480)(:height 450)))
-  (s-value DEMO-MOTIF-WIN
+  (s-value demo-motif-win
 	   :aggregate
-	   (create-instance 'DEMO-MOTIF-TOP-AGG opal:aggregate))
+	   (create-instance 'demo-motif-top-agg opal:aggregate))
 
-  ;; If we get clobbered by the window manager, let the demos
+  ;; if we get clobbered by the window manager, let the demos
   ;; controller know (if it's there).
-  (when (fboundp 'common-lisp-user::Garnet-Note-Quitted)
+  (when (fboundp 'common-lisp-user::garnet-note-quitted)
     (pushnew
      #'(lambda (win)
 	 (declare (ignore win))
-	 (common-lisp-user::Garnet-Note-Quitted "DEMO-MOTIF"))
+	 (common-lisp-user::garnet-note-quitted "demo-motif"))
      (g-value demo-motif-win :destroy-hooks)))
-  
-  (create-instance 'COLOR-BUTTONS garnet-gadgets:MOTIF-CHECK-BUTTON-PANEL
-     (:constant T :except :foreground-color)
+
+  (create-instance 'color-buttons garnet-gadgets:motif-check-button-panel
+     (:constant t :except :foreground-color)
      (:left 130) (:top 150)
-     (:items '("Red" "Green" "Blue"))
-     (:foreground-color (o-formula (gv DEMO-MOTIF-WIN :background-color)))
+     (:items '("red" "green" "blue"))
+     (:foreground-color (o-formula (gv demo-motif-win :background-color)))
      (:selection-function
       #'(lambda (gadget value)
 	  (declare (ignore gadget value))
-	  (S-VALUE-COMBO-FILLING-STYLE)))
-     (:active-p T))
+	  (s-value-combo-filling-style)))
+     (:active-p t))
 
 
-  ;; We bind COLOR-BOX-PROTO as a variable instead of making a named schema
+  ;; we bind color-box-proto as a variable instead of making a named schema
   ;; so that if we call do-go multiple times, we will not get destroy messages.
-  (let ((COLOR-BOX-PROTO
-	 (create-instance NIL opal:rectangle
+  (let ((color-box-proto
+	 (create-instance nil opal:rectangle
 	   (:width 25) (:height 25)
-	   (:fast-redraw-p (if (g-value opal:color :color-p) :rectangle T))
+	   (:fast-redraw-p (if (g-value opal:color :color-p) :rectangle t))
 	   (:draw-function (if (g-value opal:color :color-p) :copy :xor))
-	   (:fast-redraw-line-style (o-formula (gv DEMO-MOTIF-WIN
+	   (:fast-redraw-line-style (o-formula (gv demo-motif-win
 						   :foreground-line-style)))
 	   (:fast-redraw-filling-style (o-formula
-					(gv DEMO-MOTIF-WIN :filling-style))))))
+					(gv demo-motif-win :filling-style))))))
 
-  (create-instance 'RED-BOX-BORDER COLOR-BOX-PROTO
+  (create-instance 'red-box-border color-box-proto
      (:left 10) (:top 10)
-     (:visible (o-formula (MEMBER-STRING "Red" (gv COLOR-BUTTONS :value)))))
-  (create-instance 'RED-BOX COLOR-BOX-PROTO
+     (:visible (o-formula (member-string "red" (gv color-buttons :value)))))
+  (create-instance 'red-box color-box-proto
      (:left 11) (:top 11) (:height 23) (:width 23)
-     (:visible (o-formula (MEMBER-STRING "Red" (gv COLOR-BUTTONS :value))))
-     (:line-style NIL)
+     (:visible (o-formula (member-string "red" (gv color-buttons :value))))
+     (:line-style nil)
      (:filling-style (initial-color-fill opal:red)))
 
-  (create-instance 'GREEN-BOX-BORDER COLOR-BOX-PROTO
+  (create-instance 'green-box-border color-box-proto
      (:left 45) (:top 10)
-     (:visible (o-formula (MEMBER-STRING "Green" (gv COLOR-BUTTONS :value)))))
-  (create-instance 'GREEN-BOX COLOR-BOX-PROTO
+     (:visible (o-formula (member-string "green" (gv color-buttons :value)))))
+  (create-instance 'green-box color-box-proto
      (:left 46) (:top 11) (:height 23) (:width 23)
-     (:visible (o-formula (MEMBER-STRING "Green" (gv COLOR-BUTTONS :value))))
-     (:line-style NIL)
+     (:visible (o-formula (member-string "green" (gv color-buttons :value))))
+     (:line-style nil)
      (:filling-style (initial-color-fill opal:green)))
 
-  (create-instance 'BLUE-BOX-BORDER COLOR-BOX-PROTO
+  (create-instance 'blue-box-border color-box-proto
      (:left 80) (:top 10)
-     (:visible (o-formula (MEMBER-STRING "Blue" (gv COLOR-BUTTONS :value)))))
-  (create-instance 'BLUE-BOX COLOR-BOX-PROTO
+     (:visible (o-formula (member-string "blue" (gv color-buttons :value)))))
+  (create-instance 'blue-box color-box-proto
      (:left 81) (:top 11) (:height 23) (:width 23)
-     (:visible (o-formula (MEMBER-STRING "Blue" (gv COLOR-BUTTONS :value))))
-     (:line-style NIL)
+     (:visible (o-formula (member-string "blue" (gv color-buttons :value))))
+     (:line-style nil)
      (:filling-style (initial-color-fill opal:blue)))
 
-  (create-instance 'COMBO-BOX-BORDER COLOR-BOX-PROTO
+  (create-instance 'combo-box-border color-box-proto
      (:left 10) (:top 245) (:width 95) (:height 25)
-     (:visible (o-formula (gv COLOR-BUTTONS :value))))
-  (create-instance 'COMBO-BOX COLOR-BOX-PROTO
+     (:visible (o-formula (gv color-buttons :value))))
+  (create-instance 'combo-box color-box-proto
      (:left 11) (:top 246) (:width 93) (:height 23)
-     (:visible (o-formula (gv COLOR-BUTTONS :value)))
-     (:line-style NIL)
+     (:visible (o-formula (gv color-buttons :value)))
+     (:line-style nil)
      (:filling-style (initial-color-fill opal:white)))
-  
-  (create-instance 'SHADE-BOX-BORDER COLOR-BOX-PROTO
+
+  (create-instance 'shade-box-border color-box-proto
      (:left 243) (:top 10)
      (:filling-style (initial-color-fill opal:white)))
-  (create-instance 'SHADE-BOX COLOR-BOX-PROTO
+  (create-instance 'shade-box color-box-proto
      (:left 244) (:top 11) (:width 23) (:height 23)
-     (:line-style NIL)
+     (:line-style nil)
      (:filling-style (initial-color-fill opal:white)))
-  ) ;; Close binding of COLOR-BOX-PROTO
+  ) ;; close binding of color-box-proto
 
-  (create-instance 'GROUND-BUTTONS garnet-gadgets:MOTIF-RADIO-BUTTON-PANEL
-     (:constant T :except :foreground-color)
+  (create-instance 'ground-buttons garnet-gadgets:motif-radio-button-panel
+     (:constant t :except :foreground-color)
      (:left 130) (:top 45)
      (:v-spacing 4)
-     (:foreground-color (o-formula (gv DEMO-MOTIF-WIN
+     (:foreground-color (o-formula (gv demo-motif-win
 				       :background-color)))
-     (:items `("Gray" "Orange" "Green" "Blue"))
-     (:active-p T)
+     (:items `("gray" "orange" "green" "blue"))
+     (:active-p t)
      (:selection-function
       #'(lambda (g v)
 	  (declare (ignore g v))
-	  (kr-send SHADE-SLIDER :selection-function
-		   SHADE-SLIDER (g-value SHADE-SLIDER :value)))))
+	  (kr-send shade-slider :selection-function
+		   shade-slider (g-value shade-slider :value)))))
 
-  
-  (create-instance 'COLOR-MENU garnet-gadgets:MOTIF-MENU
-     (:constant T :except :foreground-color)
+
+  (create-instance 'color-menu garnet-gadgets:motif-menu
+     (:constant t :except :foreground-color)
      (:left 300) (:top 20)
-     (:foreground-color (o-formula (gv DEMO-MOTIF-WIN
+     (:foreground-color (o-formula (gv demo-motif-win
 				       :background-color)))
-     (:final-feedback-p NIL)
+     (:final-feedback-p nil)
      (:items `(
-	    ;; Needs Blue
-	       ("Navy Blue" ,#'(lambda (g v)
+	    ;; needs blue
+	       ("navy blue" ,#'(lambda (g v)
 				 (declare (ignore g v))
-				 (NEW-COLOR 0 0 128)))
-	    ;; Needs Red and Green
-	       ("Gold" ,#'(lambda (g v)
+				 (new-color 0 0 128)))
+	    ;; needs red and green
+	       ("gold" ,#'(lambda (g v)
 			    (declare (ignore g v))
-			    (NEW-COLOR 255 215 0)))
-	    ;; Needs Red and Blue
-	       ("Violet" ,#'(lambda (g v)
+			    (new-color 255 215 0)))
+	    ;; needs red and blue
+	       ("violet" ,#'(lambda (g v)
 			      (declare (ignore g v))
-			      (NEW-COLOR 148 0 211)))
-	    ;; Needs Green and Blue
-	       ("Turquoise" ,#'(lambda (g v)
+			      (new-color 148 0 211)))
+	    ;; needs green and blue
+	       ("turquoise" ,#'(lambda (g v)
 				 (declare (ignore g v))
-				 (NEW-COLOR 0 206 209)))
-	    ;; Needs Everything
-	       ("Plum" ,#'(lambda (g v)
+				 (new-color 0 206 209)))
+	    ;; needs everything
+	       ("plum" ,#'(lambda (g v)
 			    (declare (ignore g v))
-			    (NEW-COLOR 221 160 221)))
-	       ("Sienna" ,#'(lambda (g v)
+			    (new-color 221 160 221)))
+	       ("sienna" ,#'(lambda (g v)
 			      (declare (ignore g v))
-			      (NEW-COLOR 160 82 45)))
-	       ("Motif-Gray" ,#'(lambda (g v)
+			      (new-color 160 82 45)))
+	       ("motif-gray" ,#'(lambda (g v)
 				  (declare (ignore g v))
-				  (NEW-COLOR 211 211 211)))
-	       ("Motif-Green" ,#'(lambda (g v)
+				  (new-color 211 211 211)))
+	       ("motif-green" ,#'(lambda (g v)
 				   (declare (ignore g v))
-				   (NEW-COLOR 95 158 160)))
-	       ("Motif-Blue" ,#'(lambda (g v)
+				   (new-color 95 158 160)))
+	       ("motif-blue" ,#'(lambda (g v)
 				  (declare (ignore g v))
-				  (NEW-COLOR 114 159 255)))))
-     (:accelerators '((#\N "F2" :F2) (#\o "F3" :F3) (#\V "F4" :F4)
-		      (#\T "F5" :F5) (#\P "F6" :F6) (#\S "F7" :F7)
-		      (#\G "F8" :F8) (#\r "F9" :F9) (#\B "F10" :F10)))
+				  (new-color 114 159 255)))))
+     (:accelerators '((#\n "f2" :f2) (#\o "f3" :f3) (#\v "f4" :f4)
+		      (#\t "f5" :f5) (#\p "f6" :f6) (#\s "f7" :f7)
+		      (#\g "f8" :f8) (#\r "f9" :f9) (#\b "f10" :f10)))
      (:inactive-items
       (o-formula
-       (let* ((value (gv COLOR-BUTTONS :value))
-	      (red-p (member-string "Red" value))
-	      (green-p (member-string "Green" value))
-	      (blue-p (member-string "Blue" value)))
+       (let* ((value (gv color-buttons :value))
+	      (red-p (member-string "red" value))
+	      (green-p (member-string "green" value))
+	      (blue-p (member-string "blue" value)))
 	 (append
-	  (unless blue-p (list "Navy Blue"))
-	  (unless (and red-p green-p) (list "Gold"))
-	  (unless (and red-p blue-p) (list "Violet"))
-	  (unless (and green-p blue-p) (list "Turquoise"))
+	  (unless blue-p (list "navy blue"))
+	  (unless (and red-p green-p) (list "gold"))
+	  (unless (and red-p blue-p) (list "violet"))
+	  (unless (and green-p blue-p) (list "turquoise"))
 	  (unless (and red-p green-p blue-p)
-	    (list "Plum" "Sienna" "Motif-Gray" "Motif-Green" "Motif-Blue"))))))
+	    (list "plum" "sienna" "motif-gray" "motif-green" "motif-blue"))))))
 
-     (:bar-above-these-items '("Motif-Gray")))
+     (:bar-above-these-items '("motif-gray")))
 
-	       
-  (create-instance 'SHADE-SLIDER garnet-gadgets:MOTIF-SLIDER
-     (:constant T :except :foreground-color)
+
+  (create-instance 'shade-slider garnet-gadgets:motif-slider
+     (:constant t :except :foreground-color)
      (:left 220) (:top 40)
      (:val-1 (o-formula (if (gv opal:color :color-p) 150 100)))
      (:val-2 0)
      (:scr-incr 5)
-     (:foreground-color (o-formula (gv DEMO-MOTIF-WIN :background-color)))
-     (:active-p T)
+     (:foreground-color (o-formula (gv demo-motif-win :background-color)))
+     (:active-p t)
      (:selection-function
       #'(lambda (gadget value)
 	  (if (g-value opal:color :color-p)
@@ -368,97 +367,97 @@
 				   (garnet-gadgets::convert-aux
 		                      (g-value gadget :foreground-color)
 		                      (float (/ value 100)))
-		 (change-color SHADE-BOX r g b))
-	      (s-value SHADE-BOX
+		 (change-color shade-box r g b))
+	      (s-value shade-box
 			 :filling-style
 			 (opal:halftone value))))))
 
-  (create-instance 'SHADE-BUTTONS garnet-gadgets::MOTIF-TEXT-BUTTON-PANEL
-     (:constant T :except :foreground-color)
+  (create-instance 'shade-buttons garnet-gadgets::motif-text-button-panel
+     (:constant t :except :foreground-color)
      (:left 130) (:top 245)
-     (:foreground-color (o-formula (gv DEMO-MOTIF-WIN
+     (:foreground-color (o-formula (gv demo-motif-win
 				       :background-color)))
-     (:final-feedback-p NIL)
+     (:final-feedback-p nil)
      (:direction :horizontal)
-     (:fixed-width-p NIL)
-     (:items `(("Highlight"
+     (:fixed-width-p nil)
+     (:items `(("highlight"
 		,#'(lambda (g v)
 		     (declare (ignore g v))
 		     (if (g-value opal:color :color-p)
-			 (let ((hc (g-value SHADE-SLIDER :highlight-fill
+			 (let ((hc (g-value shade-slider :highlight-fill
 					    :foreground-color)))
-			   (s-value SHADE-SLIDER
+			   (s-value shade-slider
 				    :value
 				    (round (* 100 gg::*highlight-value*)))
-			   (change-color SHADE-BOX (g-value hc :red)
+			   (change-color shade-box (g-value hc :red)
 			     (g-value hc :green) (g-value hc :blue)))
 			 (progn
-			   (s-value SHADE-SLIDER :value 50)
-			   (s-value SHADE-BOX
+			   (s-value shade-slider :value 50)
+			   (s-value shade-box
 				    :filling-style
 				    (opal:halftone 50))))))
-	       ("Foreground"
+	       ("foreground"
 		,#'(lambda (g v)
 		     (declare (ignore g v))
 		     (if (g-value opal:color :color-p)
-			 (let ((fc (g-value SHADE-SLIDER :foreground-color)))
-			   (s-value SHADE-SLIDER :value 100)
-			   (change-color SHADE-BOX (g-value fc :red)
+			 (let ((fc (g-value shade-slider :foreground-color)))
+			   (s-value shade-slider :value 100)
+			   (change-color shade-box (g-value fc :red)
 			     (g-value fc :green) (g-value fc :blue)))
 			 (progn
-			   (s-value SHADE-SLIDER :value 0)
-			   (s-value SHADE-BOX
+			   (s-value shade-slider :value 0)
+			   (s-value shade-box
 				    :filling-style
 				    (opal:halftone 0))))))
-	       ("Background"
+	       ("background"
 		,#'(lambda (g v)
 		     (declare (ignore g v))
 		     (if (g-value opal:color :color-p)
-			 (let ((bc (g-value SHADE-SLIDER :background-fill
+			 (let ((bc (g-value shade-slider :background-fill
 					    :foreground-color)))
-			   (s-value SHADE-SLIDER
+			   (s-value shade-slider
 				    :value
 				    (round (* 100 gg::*background-value*)))
-			   (change-color SHADE-BOX (g-value bc :red)
+			   (change-color shade-box (g-value bc :red)
 			     (g-value bc :green) (g-value bc :blue)))
 			 (progn
-			   (s-value SHADE-SLIDER :value 0)
-			   (s-value SHADE-BOX
+			   (s-value shade-slider :value 0)
+			   (s-value shade-box
 				    :filling-style
 				    (opal:halftone 0))))))
 
-	       ("Shadow"
+	       ("shadow"
 		,#'(lambda (g v)
 		     (declare (ignore g v))
 		     (if (g-value opal:color :color-p)
-			 (let ((sc (g-value SHADE-SLIDER :shadow-fill
+			 (let ((sc (g-value shade-slider :shadow-fill
 					    :foreground-color)))
-			   (s-value SHADE-SLIDER
+			   (s-value shade-slider
 				    :value
 				    (round (* 100 gg::*shadow-value*)))
-			   (change-color SHADE-BOX (g-value sc :red)
+			   (change-color shade-box (g-value sc :red)
 			     (g-value sc :green) (g-value sc :blue)))
 			 (progn
-			   (s-value SHADE-SLIDER :value 100)
-			   (s-value SHADE-BOX
+			   (s-value shade-slider :value 100)
+			   (s-value shade-box
 				    :filling-style
 				    (opal:halftone 100)))))))))
 
-  (create-instance 'TEXT-BOX-1 garnet-gadgets::motif-scrolling-labeled-box
-     (:constant T :except :foreground-color)
+  (create-instance 'text-box-1 garnet-gadgets::motif-scrolling-labeled-box
+     (:constant t :except :foreground-color)
      (:left 280) (:top 300)
      (:width 170)
-     (:label-string "Title:")
-     (:value "Motif Gauge")
-     (:foreground-color (o-formula (gv DEMO-MOTIF-WIN
+     (:label-string "title:")
+     (:value "motif gauge")
+     (:foreground-color (o-formula (gv demo-motif-win
 				       :background-color)))
      (:field-offset 5))
 
-  (create-instance 'GAUGE-1 garnet-gadgets:MOTIF-GAUGE
-     (:constant T :except :foreground-color :title)
+  (create-instance 'gauge-1 garnet-gadgets:motif-gauge
+     (:constant t :except :foreground-color :title)
      (:left 20) (:top 280)
-     (:title (o-formula (gv TEXT-BOX-1 :value)))
-     (:foreground-color (o-formula (gv DEMO-MOTIF-WIN
+     (:title (o-formula (gv text-box-1 :value)))
+     (:foreground-color (o-formula (gv demo-motif-win
 				       :background-color)))
      (:parts
       `(:base-line :semi-circ :tic-marks :needle1 :needle2
@@ -466,117 +465,117 @@
                       (:fast-redraw-p :rectangle)
                       (:fast-redraw-filling-style
                        ,(o-formula
-                         (gv demo-motif::DEMO-MOTIF-WIN :filling-style))))
+                         (gv demo-motif::demo-motif-win :filling-style))))
         (:value-feedback :modify
                          (:fast-redraw-p :rectangle)
                          (:fast-redraw-filling-style
                           ,(o-formula
-                            (gv demo-motif::DEMO-MOTIF-WIN :filling-style))))
+                            (gv demo-motif::demo-motif-win :filling-style))))
         :sel-box)))
 
-  (create-instance 'RED-BAR garnet-gadgets:MOTIF-V-SCROLL-BAR
-     (:constant T :except :visible :foreground-color)
+  (create-instance 'red-bar garnet-gadgets:motif-v-scroll-bar
+     (:constant t :except :visible :foreground-color)
      (:left 14) (:top 40)
      (:val-1 100) (:val-2 0)
      (:page-incr 20)
-     (:visible (o-formula (MEMBER-STRING "Red" (gv COLOR-BUTTONS :value))))
-     (:foreground-color (o-formula (gv DEMO-MOTIF-WIN
+     (:visible (o-formula (member-string "red" (gv color-buttons :value))))
+     (:foreground-color (o-formula (gv demo-motif-win
 				       :background-color)))
-     (:active-p T)
+     (:active-p t)
      (:selection-function
       #'(lambda (gadget value)
 	  (declare (ignore gadget value))
-	  (S-VALUE-RED-FILLING-STYLE)
-	  (S-VALUE-COMBO-FILLING-STYLE))))
+	  (s-value-red-filling-style)
+	  (s-value-combo-filling-style))))
 
-  (create-instance 'GREEN-BAR garnet-gadgets:MOTIF-V-SCROLL-BAR
-     (:constant T :except :visible :foreground-color)
+  (create-instance 'green-bar garnet-gadgets:motif-v-scroll-bar
+     (:constant t :except :visible :foreground-color)
      (:left 49) (:top 40)
      (:val-1 100) (:val-2 0)
      (:page-incr 20)
-     (:visible (o-formula (MEMBER-STRING "Green" (gv COLOR-BUTTONS :value))))
-     (:foreground-color (o-formula (gv DEMO-MOTIF-WIN
+     (:visible (o-formula (member-string "green" (gv color-buttons :value))))
+     (:foreground-color (o-formula (gv demo-motif-win
 				       :background-color)))
-     (:active-p T)
+     (:active-p t)
      (:selection-function
       #'(lambda (gadget value)
 	  (declare (ignore gadget value))
-	  (S-VALUE-GREEN-FILLING-STYLE)
-	  (S-VALUE-COMBO-FILLING-STYLE))))
+	  (s-value-green-filling-style)
+	  (s-value-combo-filling-style))))
 
-  (create-instance 'BLUE-BAR garnet-gadgets:MOTIF-V-SCROLL-BAR
-     (:constant T :except :visible :foreground-color)
+  (create-instance 'blue-bar garnet-gadgets:motif-v-scroll-bar
+     (:constant t :except :visible :foreground-color)
      (:left 84) (:top 40)
      (:val-1 100) (:val-2 0)
      (:page-incr 20)
-     (:visible (o-formula (MEMBER-STRING "Blue" (gv COLOR-BUTTONS :value))))
-     (:foreground-color (o-formula (gv DEMO-MOTIF-WIN
+     (:visible (o-formula (member-string "blue" (gv color-buttons :value))))
+     (:foreground-color (o-formula (gv demo-motif-win
 				       :background-color)))
-     (:active-p T)
+     (:active-p t)
      (:selection-function
       #'(lambda (gadget value)
 	  (declare (ignore gadget value))
-	  (S-VALUE-BLUE-FILLING-STYLE)
-	  (S-VALUE-COMBO-FILLING-STYLE))))
-  
-  (create-instance 'SCROLL-AGG opal:aggregate)
-  (opal:add-components SCROLL-AGG RED-BAR GREEN-BAR BLUE-BAR
-		       RED-BOX-BORDER RED-BOX GREEN-BOX-BORDER GREEN-BOX
-		       BLUE-BOX-BORDER BLUE-BOX COMBO-BOX-BORDER COMBO-BOX)
+	  (s-value-blue-filling-style)
+	  (s-value-combo-filling-style))))
 
-  (opal:add-components DEMO-MOTIF-TOP-AGG
-		       SCROLL-AGG COLOR-BUTTONS GROUND-BUTTONS
-		       SHADE-BOX-BORDER SHADE-BOX SHADE-SLIDER SHADE-BUTTONS
-		       COLOR-MENU TEXT-BOX-1 GAUGE-1)
+  (create-instance 'scroll-agg opal:aggregate)
+  (opal:add-components scroll-agg red-bar green-bar blue-bar
+		       red-box-border red-box green-box-border green-box
+		       blue-box-border blue-box combo-box-border combo-box)
 
-  (opal:update DEMO-MOTIF-WIN)
+  (opal:add-components demo-motif-top-agg
+		       scroll-agg color-buttons ground-buttons
+		       shade-box-border shade-box shade-slider shade-buttons
+		       color-menu text-box-1 gauge-1)
 
-
-  ;;; Make sure :value formulas are initialized
-  (g-value RED-BAR :value)
-  (g-value GREEN-BAR :value)
-  (g-value BLUE-BAR :value)
-  (g-value GROUND-BUTTONS :value)
+  (opal:update demo-motif-win)
 
 
-  ;;; Initialize values in gadgets
-  (s-value GROUND-BUTTONS :value "Gray")
+  ;;; make sure :value formulas are initialized
+  (g-value red-bar :value)
+  (g-value green-bar :value)
+  (g-value blue-bar :value)
+  (g-value ground-buttons :value)
 
 
-  ;;; Set up global TAB interactor
+  ;;; initialize values in gadgets
+  (s-value ground-buttons :value "gray")
+
+
+  ;;; set up global tab interactor
   ;;;
-  (s-value COLOR-BUTTONS :keyboard-selection-p T)
+  (s-value color-buttons :keyboard-selection-p t)
 
-  (create-instance 'DEMO-MOTIF-TAB-INTER garnet-gadgets:MOTIF-TAB-INTER
-     (:window DEMO-MOTIF-WIN)
-     (:objects (list COLOR-BUTTONS GROUND-BUTTONS
-		     RED-BAR GREEN-BAR BLUE-BAR
-		     SHADE-SLIDER COLOR-MENU SHADE-BUTTONS TEXT-BOX-1 GAUGE-1)))
+  (create-instance 'demo-motif-tab-inter garnet-gadgets:motif-tab-inter
+     (:window demo-motif-win)
+     (:objects (list color-buttons ground-buttons
+		     red-bar green-bar blue-bar
+		     shade-slider color-menu shade-buttons text-box-1 gauge-1)))
 
-  ;;; Set up global accelerator interactor for the menu
+  ;;; set up global accelerator interactor for the menu
   ;;;
-  (create-instance 'COLOR-MENU-INTER garnet-gadgets:MOTIF-MENU-ACCELERATOR-INTER
-     (:window DEMO-MOTIF-WIN)
-     (:menus (list COLOR-MENU)))
+  (create-instance 'color-menu-inter garnet-gadgets:motif-menu-accelerator-inter
+     (:window demo-motif-win)
+     (:menus (list color-menu)))
 
 
-  (opal:update DEMO-MOTIF-WIN)
+  (opal:update demo-motif-win)
 
   (unless dont-enter-main-event-loop #-cmu (inter:main-event-loop))
 
-  (format t "~%Demo-Motif:
-      This demo shows how Garnet is able to simulate the look and feel of the
-   Motif widgets.  In addition to operating the gadgets by mouse movements,
+  (format t "~%demo-motif:
+      this demo shows how garnet is able to simulate the look and feel of the
+   motif widgets.  in addition to operating the gadgets by mouse movements,
    you can select buttons and manipulate the scroll bars through keyboard
-   interaction.  Press the tab key (or control-tab) to move the keyboard
-   selection around the window.  Use the spacebar to select buttons, and the
-   return key to select menu items.  The arrow keys will move the selection
+   interaction.  press the tab key (or control-tab) to move the keyboard
+   selection around the window.  use the spacebar to select buttons, and the
+   return key to select menu items.  the arrow keys will move the selection
    within a gadget (i.e., select another button in the same panel), and will
    also move the scroll bars and sliders.~%")
-  
+
   )
 
 
 
-(defun DO-STOP ()
-  (opal:destroy DEMO-MOTIF-WIN))
+(defun do-stop ()
+  (opal:destroy demo-motif-win))

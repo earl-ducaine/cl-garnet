@@ -255,7 +255,7 @@
      (:aggregate a-submenu)
      (:omit-title-bar-p T)
      (:save-under T)
-     (:double-buffered-p T)  
+     (:double-buffered-p T)
      (:visible NIL)
      (:modal-p (o-formula (gv-local :self :bar-item :window :modal-p)))
      (:height (o-formula (max 1 (gvl :aggregate :height))))
@@ -301,7 +301,7 @@
    (:height (o-formula (gvl :text :height)))
    ; The mnemonic ":desc" is a description of a submenu.  The top-level :items
    ; slot is a list of desc's.
-  
+
    (:desc (o-formula (nth (gvl :rank) (gvl :parent :items))))
    (:menu-obj (o-formula (first (gvl :desc))))
    (:action (o-formula (second (gvl :desc))))
@@ -341,7 +341,6 @@
 				    opal:default-line-style
 				    opal:white-line)))))))
 
-
 (create-instance 'MENUBAR opal:aggrelist
    :declare ((:parameters :left :top :items :title-font :item-font
 			  :selection-function)
@@ -453,7 +452,6 @@
 		   (opal:update win))))))
        (:final-function
 	,#'(lambda (inter obj)
-	     (break)
 	     (let* ((is-bar (is-a-p obj BAR-ITEM))
 		    (baritem (if is-bar obj
 				 ;; else is a sub-item, get its bar-item
@@ -659,7 +657,7 @@
 			 (declare (ignore inter obj))
 			 (kr-send DEMO-MENUBAR :special-popup-func
 				  DEMO-MENUBAR))))
-  
+
   (opal:add-component MENUBAR-TOP-AGG DEMO-MENUBAR)
 
   (create-instance 'family-text opal:text
@@ -685,7 +683,7 @@
 
   (opal:add-components MENUBAR-TOP-AGG
 		       family-text face-text size-text combo-text)
-  
+
   (opal:update MENUBAR-WIN)
  (unless dont-enter-main-event-loop #-cmu (inter:main-event-loop))
  )
@@ -729,7 +727,7 @@
 
 
 ;
-; The parameter item may be either 
+; The parameter item may be either
 ; 1) An instance of BAR-ITEM, or
 ; 2) A sublist of an :items list
 ;
@@ -757,16 +755,16 @@
 
     (when parent
       (error "~S is already installed in ~S.~%" a-bar-item parent))
-    
+
     (multiple-value-setq (where locator key) (opal::get-wheres args))
-    
+
     ; Add the bar-item as a component of the menubar
     (let* ((locator-comp (if (is-a-p locator BAR-ITEM)
 			     locator
 			     (get-bar-component a-menubar locator)))
 	   (items (copy-list (g-value a-menubar :items)))
 	   (desc (g-value a-bar-item :desc)))
-      
+
       (opal:add-local-component a-menubar a-bar-item where locator-comp)
       (s-value a-bar-item :rank
 	       (position a-bar-item (g-value a-menubar :components)))
@@ -781,7 +779,7 @@
 	   (top-inter (g-value a-menubar :menubar-select))
 	   (cur-wins (g-value top-inter :window)))
       ; Make sure win is destroyed along with a-menubar
-      (unless (member win (g-local-value a-menubar :submenu-window-list))      
+      (unless (member win (g-local-value a-menubar :submenu-window-list))
 	(s-value a-menubar :submenu-window-list
 		 (append (list win) (g-local-value a-menubar :submenu-window-list))))
       ; Add win to the top-level interactor's :window slot
@@ -806,16 +804,16 @@
 		 (eq a-menubar (g-value a-bar-item :parent)))
       (error "~S does not have ~S as its menubar.~%"
 	     a-bar-item a-menubar))
-      
+
     ; Remove the bar-item from the menubar
     (s-value a-menubar :submenu-window-list
 	     (remove (g-local-value a-bar-item :submenu-window)
 		     (g-local-value a-menubar :submenu-window-list)))
-    
+
     (opal:remove-local-component a-menubar a-bar-item)
     (unless (eq a-bar-item item)
       (push a-bar-item (g-value a-menubar :storage)))
-      
+
     ; Change the top-level :items list
     (let ((old-desc (if (is-a-p a-bar-item BAR-ITEM)
 			(g-value a-bar-item :desc)
@@ -922,7 +920,7 @@
       (setf a-submenu-item (nth rank submenu-components)))
     ; Remove the submenu-item from the bar-item
     (opal:remove-local-component submenu a-submenu-item)
-    
+
     ; Update the :items or :desc list
     (let* ((a-menubar (g-value a-bar-item :parent))
 	   (old-desc (g-value a-bar-item :desc))
@@ -992,7 +990,7 @@
 			(g-value a-menubar :items) :test #'equal)
 		  string)
 	  (mark-as-changed a-menubar :items))
-	 
+
 	 (t
 	  ; not installed, so just set local :desc list
 	  (rplaca (g-value a-bar-item :desc) string)
@@ -1038,11 +1036,11 @@
 	 (t
 	  (g-value a-submenu-item :desc)
 	  (s-value a-submenu-item :desc (list string))))))
-	  
+
     ; Else, print error message
     (t (error "~S is not an instance of ~S or ~S.~%" menubar-component
 	   BAR-ITEM SUBMENU-ITEM)))
-  
+
   string)
 
 (s-value BAR-ITEM :set-title-fn #'menubar-set-title-fn)

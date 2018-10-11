@@ -1,25 +1,22 @@
 ;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: C32; Base: 10 -*-
 ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;         The Garnet User Interface Development Environment.      ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; This code was written as part of the Garnet project at          ;;;
-;;; Carnegie Mellon University, and has been placed in the public   ;;;
-;;; domain.  If you are using this code or any part of Garnet,      ;;;
-;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; $Id::                                                             $
+;;;         The Garnet User Interface Development Environment.
+;;;
+;;; This code was written as part of the Garnet project at
+;;; Carnegie Mellon University, and has been placed in the public
+;;; domain.  If you are using this code or any part of Garnet,
+;;; please contact garnet@cs.cmu.edu to be put on the mailing list.
 
-
+
 ;;; C32 is a spreadsheet interface for Garnet constraints
 ;;;
 ;;; This file contains the code to deal with formula windows.
 
 ;;; Designed and implemented by Brad Myers
 
-
-(in-package "C32")
+
+(in-package :c32)
 
 (defparameter Formula-Win-Width 440)
 (defparameter Formula-Win-Height 300)
@@ -80,7 +77,7 @@
     (:height (- Formula-Win-Height Form-Header-Height 2))
     (:parent-window win1)
     (:total-width (o-formula (+ 6 (gvl :inner-aggregate :width))))
-    (:total-height (o-formula (+ 6 (gvl :inner-aggregate :height))))))  
+    (:total-height (o-formula (+ 6 (gvl :inner-aggregate :height))))))
 
 
 #|
@@ -126,7 +123,7 @@
 		  ;; window set below
 		  (:stop-event :zip)	;never stop
 		  (:abort-event NIL)
-		  (:running-action 
+		  (:running-action
 		   #'(lambda(inter obj ev)
 		       (setq *Current-Formula-Win*
 			     (g-value inter :main-window))
@@ -273,12 +270,12 @@
 			,error-message))
       #-(or allegro-v4.0 allegro-v4.1)
       (C32error ,error-message))
-      
+
     ;; Now process the body.
     ,@body))
 |#
 
-    
+
 ;;; Returns a pair of values: new-val OK-P.  If OK, then new-val is
 ;;; valid, otherwise it failed to be read.
 ;;; If <check-formula-p>, make sure the expression can be evaluated (as part
@@ -358,7 +355,7 @@
       (if had-value
 	  (values final-value no-error second-value)
 	  (values final-value no-error)))))
-	       
+
 
 #|
 (defun Careful-Read-From-String (new-str check-formula-p read-value-too)
@@ -429,7 +426,7 @@
      (if had-value
        (values final-value no-error second-value)
        (values final-value no-error)))))
-|#       
+|#
 
 
 
@@ -667,7 +664,7 @@ doesn't call it that" cur-agg known-as p))
 	    (setq p cur-agg))
 	  ;; else no known-as, so exit
 	  (return-from generate-down-path NIL)))
-    
+
     outs))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -709,7 +706,7 @@ doesn't call it that" cur-agg known-as p))
 	   ((:start-where :running-where :feedback-obj :obj-to-change)
 	    T) ; for these slots, want object itself
 	   (T NIL)))) ; otherwise, don't know which slot to use!
-    (if (numberp candidate-list) 
+    (if (numberp candidate-list)
 	;; have to pick one from the list (lefttop widthheight x1y1 x2y2)
 	(Pick-Complicated-Slot from-obj from-slot to-obj x y candidate-list)
 	;; else just use the candidate-list
@@ -732,7 +729,7 @@ doesn't call it that" cur-agg known-as p))
       (setq indx (- pos i 1))
       (setq c (elt str indx))
       (case c
-	(#\( 
+	(#\(
 	     (if (zerop paren-cnt)
 		 (progn
 		   (when in-item (incf atom-cnt))
@@ -749,7 +746,7 @@ doesn't call it that" cur-agg known-as p))
 				 (setq in-item NIL))))
 	(T (setq in-item t))))
     NIL))
-	
+
 ;;; x-p is 0 if x and 1 if y
 (defun Pick-Complicated-Slot (from-obj from-slot to-obj x y x-p)
   (declare (ignore from-obj from-slot)) ;maybe be smarter and use them someday
@@ -783,7 +780,7 @@ doesn't call it that" cur-agg known-as p))
 	      ((> val v2) s2)
 	      (T NIL))))))
 
-	       
+
 ;;; Point to an object not in the spreadsheet and put it into the formula
 (defun InsertRefFromMouse (gadget item)
   (declare (Ignore item))
@@ -833,13 +830,13 @@ doesn't call it that" cur-agg known-as p))
 	    (setf slot (cdr obj-slot))
 	    (when (and (eq (car obj-slot) from-obj)
 		       (not (has-slot-p to-obj slot)))
-			
+
 	      ;; copy the value of slot into to-obj
 	      (if (formula-p (get-value from-obj slot))
 		(s-value to-obj slot
 			 (copy-formula (get-value from-obj slot)))
 		(s-value to-obj slot (g-value from-obj slot)))
-			    
+
 	      ;; if this slot is a link slot, push the link onto
 	      ;; to-obj's link list
 	      (when (or (member slot links)
@@ -913,8 +910,8 @@ doesn't call it that" cur-agg known-as p))
 	(values from-slots to-slots))
       ;; else return NILs
       (values NIL NIL)))
-      
-	  
+
+
 
 ;; call this to actually copy the formula and insert it into the
 ;; object when the user hits OK in the dialog box
@@ -946,7 +943,7 @@ doesn't call it that" cur-agg known-as p))
       (s-value obj slot newform)
       (kr:recompute-formula c32-item :formula-p))))
 
-  
+
 (defun recursive-list-find-refs (expr obj-list slot-list)
   (if (or (eq (car expr) 'gv)(eq (car expr) 'gvl))
       (let ((objref (cdr (butlast expr))))
@@ -954,7 +951,7 @@ doesn't call it that" cur-agg known-as p))
 	  (pushnew objref obj-list :test #'equal)
 	  (pushnew (car (last expr)) slot-list))
 	(values obj-list slot-list))
-      ;; else look for lists in expr    
+      ;; else look for lists in expr
       (progn
 	(dolist (e expr)
 	  (when (listp e)
@@ -998,14 +995,14 @@ doesn't call it that" cur-agg known-as p))
 	    (when indx
 	      (setq new-slot (nth indx new-slot-list))
 	      (rplaca (last expr) new-slot)))))
-      ;; otherwise, not a gv statement; look for lists in expr    
+      ;; otherwise, not a gv statement; look for lists in expr
       (progn
 	(dolist (e expr)
 	  (when (listp e)
 	    (recursive-subst-obj-slot e old-obj-list new-obj-list
 				      old-slot-list new-slot-list
 				      obj-ref-list-so-far))))))
-	
+
 
 ;; returns a good reference for the object in the expression
 (defun gen-good-obj-ref (expr)
@@ -1028,4 +1025,3 @@ doesn't call it that" cur-agg known-as p))
 	(opal:go-to-prev-char text-object))
       ;; else no window
       (inter:beep)))
-

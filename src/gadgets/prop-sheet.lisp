@@ -1,15 +1,13 @@
 ;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: GARNET-GADGETS; Base: 10 -*-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;         The Garnet User Interface Development Environment.      ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; This code was written as part of the Garnet project at          ;;;
-;;; Carnegie Mellon University, and has been placed in the public   ;;;
-;;; domain.  If you are using this code or any part of Garnet,      ;;;
-;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-
+;;; The Garnet User Interface Development Environment.
 ;;;
+;;; This code was written as part of the Garnet project at
+;;; Carnegie Mellon University, and has been placed in the public
+;;; domain.  If you are using this code or any part of Garnet,
+;;; please contact garnet@cs.cmu.edu to be put on the mailing list.
+;;;
+
 ;;;  This file supplies a prop-sheet, which takes a list of values to
 ;;;  display, and prop-sheet-for-obj which takes a KR object to
 ;;;  display.  The file propsheetwin supplies prop-sheet-with-OK and
@@ -28,10 +26,10 @@
 ;;;    selected by pressing with any mouse button.  If value selection
 ;;;    is enabled, then values must be selected with the right button
 ;;;    while they are not being edited.  Selected labels or values are
-;;;    displayed in bold. 
-;;; 
+;;;    displayed in bold.
+;;;
 ;;;  PROGRAMMING INTERFACE
-;;; 
+;;;
 ;;;  Prop-Sheet
 ;;;    -- displays a list of labels and values, and allows the values
 ;;;    to be edited.  The labels can optionally be selectable.
@@ -43,7 +41,7 @@
 ;;;		( (label1 stringval1 [filter1 [realval1 [comment]]])
 ;;;               (label2 ...) )
 ;;;               * The labels can be atoms or strings, and are shown
-;;;                 at the left 
+;;;                 at the left
 ;;;		  * The stringval is the initial (default) value displayed.
 ;;;		    It can be:
 ;;; 		      - a string
@@ -60,7 +58,7 @@
 ;;;                     do).  NOTE: If a gadget, no filter functions
 ;;;                     are not called (use the :selection-function of
 ;;;                     the gadget), the realval is ignored, and the
-;;;                     :changed-values slot is not valid. 
+;;;                     :changed-values slot is not valid.
 ;;; 		  * If the filter is non-nil, it is a function called
 ;;;                 after the user types a the value (see below)
 ;;;		  * The realval, if supplied, is the actual value the stringval
@@ -70,13 +68,13 @@
 ;;;		  * If supplied, the comment is displayed after the label.
 ;;;			It can be any string, and will be displayed
 ;;; 			after the slot label.  Typical uses would be to
-;;; 			give legal values (e.g.: "(0..20)").  
+;;; 			give legal values (e.g.: "(0..20)").
 ;;;	   :default-filter - if there is no filter on an individual
 ;;;             item, then the global default-filter function is
 ;;;             called when the user finishes editing.  See below.
 ;;;             The default for default-filter does nothing.
 ;;;	   :v-spacing - vertical space between the items.  Default = 1
-;;;        :multi-line-p - whether the user can enter multi-line strings, 
+;;;        :multi-line-p - whether the user can enter multi-line strings,
 ;;;		which means that RETURN does not exit a field, but
 ;;;             makes a new line. Default: NIL.
 ;;;        :select-label-p - whether pressing on the label (with any mouse
@@ -88,14 +86,14 @@
 ;;;        :select-value-p - whether pressing on the value (with the
 ;;;             right button) causes the value to be selected.  NOTE:
 ;;;             Values which are specified as gadgets
-;;;             cannot be selected.  Default: NIL. 
+;;;             cannot be selected.  Default: NIL.
 ;;; 	   :value-selected-func - called when a value is selected with
 ;;; 		(gadget value-obj value label) where label is
 ;;;             the label of that field.
 ;;;	   :single-select-p - whether a single label or value can be
 ;;;             selected (T) or multiple fields can be selected (NIL).
 ;;;             Default: NIL.
-;;; 
+;;;
 ;;;     Read-only (output) slots
 ;;; 	   :label-selected - will be set with a list of the selected label
 ;;;             objects.  Call Get-Val-For-PropSheet-Obj to get label name.
@@ -103,7 +101,7 @@
 ;;;             value objects. 	Call Get-Val-For-PropSheet-Obj on an
 ;;;             obj to get the value and label.
 ;;;        :value - list of all the slots and their (filtered) values,
-;;;             as follows: 
+;;;             as follows:
 ;;;		( (label1 value1) (label2 value2) ...)
 ;;;        :changed-values - list of the slots that have changed, as:
 ;;;		( (label1 value1) (label2 value2) )
@@ -143,7 +141,7 @@
 ;;; 		    '(:left :top :width :height).  Any item (slot name)
 ;;; 		    in the list can be a sublist: (:slot "comment" display).
 ;;;		    - If the comment is non-NIL, it is displayed after
-;;;                   the label. 
+;;;                   the label.
 ;;; 		    - If the display parameter is supplied, it can be
 ;;;                     - a list of legal values for the slot,
 ;;;                     - a gadget, in which case the :value slot of
@@ -177,9 +175,9 @@
 ;;;          ((OR (LIST (MEMBER :THERE :HERE)))   (MEMBER :THERE :HERE)))
 ;;;       :error-gadget - if supplied, is a gadget to use to report errors
 ;;;       :union? - if :slots not supplied, then if T then shows the
-;;;                 union of all the slots for the 
+;;;                 union of all the slots for the
 ;;;                 objects.  If NIL, then shows the intersection.
-;;; 
+;;;
 ;;;       (the rest of the slots are the same as for prop-sheet:)
 ;;;	  :v-spacing
 ;;;       :multi-line-p
@@ -195,7 +193,7 @@
 ;;; 	   :value-selected
 ;;;        :value
 ;;;        :changed-values
-;;; 
+;;;
 ;;;  USEFUL FUNCTIONS:
 ;;;	ReUsePropSheet (prop-sheet-gadget new-items)
 ;;;        This allows you to re-use an old property sheet with a new set
@@ -211,9 +209,9 @@
 ;;;     Get-Val-For-PropSheet-Value (label-or-value-obj) returns the label when
 ;;; 	   a label is passed in, or for a value-obj, returns multiple values:
 ;;;  	   value label, where label is the label (name, not
-;;;        object) of that field. 
-;;; 
-;;; 
+;;;        object) of that field.
+;;;
+;;;
 ;;;  Designed by A. Bryan Loyall
 ;;;  Extensively modified by Pavan Reddy and Brad A. Myers
 
@@ -323,7 +321,7 @@
   (s-value prop-gadget-with-ok :slots slots)
   (when slots
     (mark-as-changed prop-gadget-with-ok :slots)) ; needed in case
-				  ; setting with same 
+				  ; setting with same
 				  ; list as before, but values of slots have
 				  ; changed, so need to re-evaluate the
 				  ; formula in :items that depends on :slots
@@ -363,7 +361,7 @@
    (:comment NIL) ; if supplied, then is a used as a comment after the label
    (:string (o-formula (let ((comment (gvl :comment))
 			     (str (string (gvl :value))))
-			 (if comment 
+			 (if comment
 			     (concatenate 'string str " " comment ":")
 			     (concatenate 'string str ":")))))
    (:font (formula choose-propsheet-font-formula)))
@@ -433,7 +431,7 @@
   (let ((value-agg (or (pop UnUsedValueAggs)
 		       (create-instance nil value-proto))))
     (s-value value-agg :invalid nil) ; make sure isn't on in case re-used one
-    (s-value value-agg :selected nil) 
+    (s-value value-agg :selected nil)
     value-agg))
 (defun GetLabelAgg ()
   (or (pop UnUsedLabelAggs)
@@ -514,7 +512,7 @@
 			  new-string old-string)
       (s-value value-obj :value result)
       (if filteredstring ; if filter returns a string, then use and remember it
-	  (progn 
+	  (progn
 	    (s-value value-obj :old-string filteredstring)
 	    (s-value value-obj :string filteredstring))
 	  ; else remember the original string
@@ -542,7 +540,7 @@
   (declare (ignore event))
   (let* ((parent (g-value value-obj :parent))
 	 (label-value-obj parent)
-	 (gadget (g-value label-value-obj :parent)) 
+	 (gadget (g-value label-value-obj :parent))
 	 next-label-value-proto next)
     (loop ; loop until find a non-gadget field
      (setq next-label-value-proto (g-value label-value-obj :next))
@@ -620,7 +618,7 @@
 		    (progn
 		      (s-value gadget :label-selected obj)
 		      ; make sure no values are selected
-		      (s-value gadget :value-selected NIL)) 
+		      (s-value gadget :value-selected NIL))
 		    (toggle-in-obj-list gadget :label-selected obj))
 		(kr-send gadget :label-selected-func gadget obj
 			 (g-value obj :value)))))
@@ -680,12 +678,12 @@
   (s-value value-obj :string init-value)
   (let ((val (g-value value-obj :string))) ; in case init-value is a formula
     (s-value value-obj :old-string val)
-    (s-value value-obj :value 
+    (s-value value-obj :value
 	     (if (eq real-val :*Not-supplied*) val real-val))))
 
 
 (defparameter topformgadget (o-formula (gvl :parent :top)))
-(defparameter leftformgadget 
+(defparameter leftformgadget
   (o-formula (+ 10 (opal:gv-right (gvl :parent :label-obj)))))
 
 ;;; The main procedure that adds the labels and values to the gadget.  This
@@ -709,7 +707,7 @@
 	(label-agg (GetLabelAgg))
 	is-gadget value-agg)
     (s-value label-agg :invalid nil) ; make sure isn't on in case re-used one
-    (s-value label-agg :selected nil) 
+    (s-value label-agg :selected nil)
     (s-value label-agg :value label)
     (s-value label-agg :comment comment)
     (cond ((is-a-p init-value opal:view-object)  ; then is a gadget,
@@ -804,7 +802,7 @@
       ; otherwise, just use as a string
       (if (stringp val) val ; just use the string
 	  (format NIL "~a" val))))
-      
+
 ;;; This function is a formula in the :items slot of a prop-sheet-for-obj
 ;;; Format for slot list is :slot or (:slot list-or-gadget-or-func "comment")
 (defun Prop-Sheet-Obj-Create-Items (gadget)
@@ -827,14 +825,14 @@
 	      (setq invalid NIL)
 	      (setq slot-filter NIL)
 
-	      
+
 	      (if (listp slot) ; then slot is actually a descriptor
 		  (setq slotname (first slot))
 		  (setq slotname slot)) ; else slot is just a name
-	      
+
 	      ;; get the value for the slot
 	      (if (listp obj-or-objs)
-		  (progn 
+		  (progn
 		    ;; ** Only do the ones for which it is a parameter??
 		    (setq val (g-value (car obj-or-objs) slotname))
 		    (dolist (obj (cdr obj-or-objs))
@@ -865,10 +863,10 @@
 		    (setq comment NIL)
 		    (setq list-or-gadget NIL)))
 
-		  (if list-or-gadget 
+		  (if list-or-gadget
 		      ;; use the gadget
 		      (push (list slotname list-or-gadget NIL :*Not-supplied*
-				  comment) 
+				  comment)
 			    item-list)
 		      (progn ;; else use value
 			(setq stringval (Mk-String val eval-p))
@@ -881,7 +879,7 @@
 	  (progn ;; else no slots supplied, generate from :parameters
 	    (setq slots (Generate-Slots-From-Params obj-or-objs gadget eval-p))
 	    slots)))))
-      
+
 
 ;;; Generates a list of the slots of the objects which are parameters.
 ;;; For each, returns a list of the appropriate form:
@@ -960,11 +958,11 @@
 						 (second sd)
 						 (third sd)
 						 type-gadgets
-						 eval-p 
+						 eval-p
 						 prop-sheet))
 		  (when desc (push desc slot-descs)))
 		(setq slot-descs (nreverse slot-descs)))))
-	
+
 	;; else is a single object
 	(progn
 	  (dolist (slot (g-value obj-or-objs :parameters))
@@ -1036,7 +1034,7 @@
 ;;; The main function that gets the slots out of the objects.  gadget
 ;;; is the prop-sheet.
 (defun Obj-Read-Filter (gadget label value-obj new-str old-str)
-  (declare (ignore old-str)) 
+  (declare (ignore old-str))
   (let ((extra-filter (g-value value-obj :other-prop-filter))
 	(eval-p (g-value gadget :eval-p))
 	(set-immediately-p (g-value gadget :set-immediately-p))
@@ -1077,7 +1075,7 @@
 		    (progn ; type error in setting slot
 		      (inter:beep)
 		      (values new-str T new-str))))))
-	
+
 	(progn ; here is not eval-p so just use the value as specified
 	  (if (Prop-Set-Objs-Slots (g-value gadget :obj) label new-str
 				   error-gadget set-immediately-p)
@@ -1114,7 +1112,7 @@ but is ok for ~s
 so set there"      val slot fail-objs
                   (set-difference obj-or-objs fail-objs))))
 		  ;; when at least one-success, return T
-		  T) 
+		  T)
 		(progn ;; no successes, use the last type-error string
 		  (when error-gadget
 		    (display-error error-gadget type-error))
@@ -1187,7 +1185,7 @@ so set there"      val slot fail-objs
 				       ; slots have changed, so need to
 				       ; re-evaluate the formula in :items
 				       ; that depends on :slots
-    (s-value gadget :changed-values NIL) 
+    (s-value gadget :changed-values NIL)
     (s-value gadget :label-selected NIL)
     (s-value gadget :value-selected NIL)
     (s-value gadget :selected NIL)
@@ -1274,4 +1272,3 @@ so set there"      val slot fail-objs
   (opal:destroy prop-sheet-for-obj-win)
   (opal:destroy prop-test-error-gad)
   (opal:destroy prop-sheet-for-obj-pop-up))
-

@@ -315,7 +315,7 @@
    	    :depends-on (:gilt)
    	    :components
    	    (
-	     (:file "c32-compiler")
+;;	     (:file "c32-compiler")
 	     (:file "c32")
 	     (:file "c32formula")
 	     (:file "c32ref")

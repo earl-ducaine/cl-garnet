@@ -322,7 +322,9 @@
   (:export do-go do-stop))
 
 (defpackage :c32
-  (:use common-lisp kr))
+  (:use common-lisp kr garnet-utils)
+  (:export do-go
+	   do-stop))
 
 (defpackage :lapidary
   (:use common-lisp kr)

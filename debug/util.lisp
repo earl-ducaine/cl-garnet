@@ -34,6 +34,8 @@
 	  root-tree
 	  window-tree))
 
+
+
 (defun display-root (display) (screen-root (display-default-screen display)))
 (defun display-black (display) (screen-black-pixel (display-default-screen display)))
 (defun display-white (display) (screen-white-pixel (display-default-screen display)))

@@ -7,7 +7,7 @@
 ;;; you are using this code or any part of Garnet, please contact
 ;;; garnet@cs.cmu.edu to be put on the mailing list.
 
-(in-package "OPAL")
+(in-package :opal)
 
 (defparameter *main-event-loop-process* nil
   "The variable which is a handle to the main-event-loop process.")
@@ -23,7 +23,7 @@
 ;; smashed when the code in protected-process.lisp gets loaded.  This
 ;; function is duplicated there except that the event handler is
 ;; wrapped with the with-garnet-error-handling macro.
-(defun m-e-l ()
+(defun process-m-e-l ()
   ;; first, throw away any pending events
   (discard-all-pending-events)
   (set-dispatch-macro-character #\# #\k (function kr::k-reader))
@@ -45,7 +45,7 @@
 	     (bordeaux-threads:thread-alive-p *main-event-loop-process*))
     (bordeaux-threads::destroy-thread *main-event-loop-process*))
   (setf *main-event-loop-process*
-	(bordeaux-threads:make-thread #'m-e-l :name "Garnet event loop"))
+	(bordeaux-threads:make-thread #'process-m-e-l :name "Garnet event loop"))
   *main-event-loop-process*)
 
 ;;;  Define opal:kill-main-event-loop-process

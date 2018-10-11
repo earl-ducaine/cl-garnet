@@ -1,6 +1,5 @@
 ;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: COMMON-LISP-USER; Base: 10 -*-
 ;;;
-;;;___________________________________________________________________
 ;;; The Garnet User Interface Development Environment
 ;;; Copyright (c) 1991 Carnegie Mellon University
 ;;; All rights reserved.  The CMU software License Agreement specifies
@@ -8,23 +7,8 @@
 ;;;
 ;;; If you want to use this code or anything developed as part of the
 ;;; Garnet project, please contact Brad Myers (Brad.Myers@CS.CMU.EDU).
-;;;___________________________________________________________________
-;;;
-;;; $Id::                                                             $
 
-
-#|
-==================================================================
-Change log:
-;;; 10/2/03 RGA --- New compile/load protocol
-    5/25/93 Dave Kosbie - Removed references to "kr-extra" (placed
-                          #'kr::i-depend-on inside actual KR code)
-    2/24/93 Andrew Mickish - Removed references to compile-opal/inter-p
-    4/14/91 Brad Myers - created
-==================================================================
-|#
-
-(in-package "COMMON-LISP-USER")
+(in-package :cl-user)
 
 (defvar *debug-c32-mode* nil)
 

@@ -1,12 +1,12 @@
 ;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: GARNET-GADGETS; Base: 10 -*-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;         The Garnet User Interface Development Environment.      ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; This code was written as part of the Garnet project at          ;;;
-;;; Carnegie Mellon University, and has been placed in the public   ;;;
-;;; domain.  If you are using this code or any part of Garnet,      ;;;
-;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; The Garnet User Interface Development Environment.
+;;;
+;;; This code was written as part of the Garnet project at
+;;; Carnegie Mellon University, and has been placed in the public
+;;; domain.  If you are using this code or any part of Garnet,
+;;; please contact garnet@cs.cmu.edu to be put on the mailing list.
+;;;
 ;;;
 ;;;
 ;;;  Motif-Scrolling-Labeled-Box   (scrollable string field in a box)
@@ -77,16 +77,16 @@
 ;;;
 
 
-(in-package :GARNET-GADGETS)
+(in-package :garnet-gadgets)
 
 (eval-when (:execute :load-toplevel :compile-toplevel)
-  (export '(Insert-Text-Into-Box Motif-Scrolling-Labeled-Box Motif-Scrolling-Unlabeled-Box))
+  (export '(insert-text-into-box motif-scrolling-labeled-box motif-scrolling-unlabeled-box))
   #+garnet-test
-  (export '(Motif-Scrolling-Labeled-Box-Go Motif-Scrolling-Labeled-Box-Stop
-	    Motif-Scrolling-Labeled-Box-Win Motif-Scrolling-Labeled-Box-Top-Agg
-	    Demo-Motif-Scrolling-Labeled-Box)))
+  (export '(motif-scrolling-labeled-box-go motif-scrolling-labeled-box-stop
+	    motif-scrolling-labeled-box-win motif-scrolling-labeled-box-top-agg
+	    demo-motif-scrolling-labeled-box)))
 
-(create-instance 'MOTIF-SCROLLING-LABELED-BOX MOTIF-GADGET-PROTOTYPE
+(create-instance 'motif-scrolling-labeled-box motif-gadget-prototype
   :declare ((:parameters :left :top :width :field-offset :label-offset
 			 :label-string :value :field-font :label-font
 			 :foreground-color :keyboard-selection-p :active-p
@@ -101,28 +101,26 @@
 	    (:maybe-constant :left :top :width :field-offset :label-offset
 			     :label-string :field-font :label-font
 			     :foreground-color :active-p :visible))
-   ; Customizable slots
+   ; customizable slots
    (:left 0) (:top 0)
    (:width 135)
    (:field-offset 4)
    (:label-offset 5)
-   (:label-string "Label:")
-   (:value "Field")
-   (:field-font opal:default-font) ;;**Must be fixed width**
-   (:label-font (opal:get-standard-font NIL :bold NIL))
-   (:foreground-color opal:MOTIF-GRAY)
-   (:keyboard-selection-p NIL)
+   (:label-string "label:")
+   (:value "field")
+   (:field-font opal:default-font) ;;**must be fixed width**
+   (:label-font (opal:get-standard-font nil :bold nil))
+   (:foreground-color opal:motif-gray)
+   (:keyboard-selection-p nil)
    (:keyboard-selection-obj (o-formula (gv :self)))
-   (:selection-function NIL)
-   (:active-p T)
-
-   ; Generally non-customizable slots
-
-   ;; For text-height assume field-font is fixed-height, so any string
+   (:selection-function nil)
+   (:active-p t)
+   ; generally non-customizable slots
+   ;; for text-height assume field-font is fixed-height, so any string
    ;; will do (don't use (gvl value) since it will change a lot and this
    ;; slot will be recomputed unnecessarily)
-   (:field-height (o-formula (opal:string-height (gvl :field-font) "X")))
-   (:label-height (o-formula (opal:string-height (gvl :label-font) "X")))
+   (:field-height (o-formula (opal:string-height (gvl :field-font) "x")))
+   (:label-height (o-formula (opal:string-height (gvl :label-font) "x")))
    (:frame-left (o-formula (+ 2 (gvl :left)
 			      (if (gvl :label-string)
 				  (+ (gvl :label-text :width)
@@ -136,12 +134,12 @@
    (:frame-height (o-formula (+ 4 (gvl :field-height))))
    (:field-left (o-formula (+ (gvl :frame-left) (gvl :field-offset))))
    (:field-width (o-formula (- (gvl :frame-width) (* 2 (gvl :field-offset)))))
-   (:height (o-formula (+ (MAX (gvl :frame-height) (gvl :label-height)) 4)))
+   (:height (o-formula (+ (max (gvl :frame-height) (gvl :label-height)) 4)))
    (:center-y (o-formula (+ 2 (gvl :top)
-			    (floor (MAX (gvl :frame-height)
+			    (floor (max (gvl :frame-height)
 					(gvl :label-height)) 2))))
    (:parts
-    `((:LABEL-TEXT ,opal:text
+    `((:label-text ,opal:text
                    (:constant (:actual-heightp))
                    (:left ,(o-formula (+ 2 (gvl :parent :left))))
                    (:top ,(o-formula (- (gvl :parent :center-y)
@@ -153,14 +151,14 @@
 				    (if (gv p :active-p)
 					opal:default-line-style
 					(gv p :stippled-line-style))))))
-      (:FRAME ,MOTIF-BOX
+      (:frame ,motif-box
              (:constant (:depressed-p))
 	     (:left ,(o-formula (gvl :parent :frame-left)))
 	     (:top ,(o-formula (gvl :parent :frame-top)))
 	     (:width ,(o-formula (gvl :parent :frame-width)))
 	     (:height ,(o-formula (gvl :parent :frame-height)))
-             (:depressed-p T))
-      (:FIELD-TEXT ,garnet-gadgets:SCROLLING-INPUT-STRING
+             (:depressed-p t))
+      (:field-text ,garnet-gadgets:scrolling-input-string
 		    (:left ,(o-formula (gvl :parent :field-left)))
 		    (:top ,(o-formula (+ 2 (gvl :parent :frame-top))))
 		    (:width ,(o-formula (gvl :parent :field-width)))
@@ -172,7 +170,7 @@
 				     (if (gv p :active-p)
 					 opal:default-line-style
 					 (gv p :field-stippled-line-style)))))
-                    ;; Take out the dots
+                    ;; take out the dots
                     (:parts
 		     ((:string :modify
 			       (:left ,(o-formula (gvl :parent :left)))
@@ -180,82 +178,76 @@
 			       (:fast-redraw-p :rectangle)
 			       (:fast-redraw-filling-style
 				,(o-formula (gvl :parent :parent :background-fill))))))
-
                     (:selection-function
 		     ,#'(lambda (obj final-value)
 			  (let ((top-obj (g-value obj :parent)))
 			    (s-value top-obj :value final-value)
 			    (kr-send top-obj :selection-function top-obj
 				     final-value)))))
-      (:SEL-BOX ,MOTIF-SELECTION-BOX))))
+      (:sel-box ,motif-selection-box))))
 
 
-;;;  Change the key translation table of the interactor to make tab do nothing
+;;;  change the key translation table of the interactor to make tab do nothing
 ;;;  instead of beep.
 (inter:bind-key #\tab
-		#'(lambda (inter obj ev) (declare (ignore inter obj ev)) NIL)
-		(g-value MOTIF-SCROLLING-LABELED-BOX :field-text :text-edit))
+		#'(lambda (inter obj ev) (declare (ignore inter obj ev)) nil)
+		(g-value motif-scrolling-labeled-box :field-text :text-edit))
 
-(inter:bind-key :CONTROL-tab
-		#'(lambda (inter obj ev) (declare (ignore inter obj ev)) NIL)
-		(g-value MOTIF-SCROLLING-LABELED-BOX :field-text :text-edit))
+(inter:bind-key :control-tab
+		#'(lambda (inter obj ev) (declare (ignore inter obj ev)) nil)
+		(g-value motif-scrolling-labeled-box :field-text :text-edit))
 
 
-(define-method :string-set-func MOTIF-SCROLLING-LABELED-BOX
+(define-method :string-set-func motif-scrolling-labeled-box
     (gadget-obj str-obj final-event final-string)
   (declare (ignore final-event))
   (if (eq str-obj (g-value gadget-obj :label-text))
       ; then is label (title)
       (opal::set-one-value gadget-obj :label-string final-string)
-      ; else return NIL
-      NIL))
+      ; else return nil
+      nil))
 
 ;;;
-;;;  DEMO FUNCTION
+;;;  demo function
 ;;;
 
 
 #+garnet-test
-(defun Motif-Scrolling-Labeled-Box-Go (&key dont-enter-main-event-loop
+(defun motif-scrolling-labeled-box-go (&key dont-enter-main-event-loop
 					    not-double-buffered-p)
-  (create-instance 'Motif-Scrolling-Labeled-Box-Win inter:interactor-window
+  (create-instance 'motif-scrolling-labeled-box-win inter:interactor-window
      (:double-buffered-p (not not-double-buffered-p))
-     (:title "Motif Scrolling Labeled Box")
+     (:title "motif scrolling labeled box")
      (:left 650) (:top 10)
      (:width 235) (:height 100))
-  (s-value Motif-Scrolling-Labeled-Box-Win
+  (s-value motif-scrolling-labeled-box-win
 	   :aggregate
-	   (create-instance 'Motif-Scrolling-Labeled-Box-Top-Agg opal:aggregate))
-  (create-instance 'Demo-Motif-Scrolling-Labeled-Box Motif-Scrolling-Labeled-Box
+	   (create-instance 'motif-scrolling-labeled-box-top-agg opal:aggregate))
+  (create-instance 'demo-motif-scrolling-labeled-box motif-scrolling-labeled-box
      (:left 50) (:top 40)
      (:selection-function #'(lambda (obj value)
-			      (format T "Final string for ~s is ~s~%"
+			      (format t "final string for ~s is ~s~%"
 				      obj value))))
-  (opal:add-components Motif-Scrolling-Labeled-Box-Top-Agg
-		       (create-instance NIL MOTIF-BACKGROUND)
-		       Demo-Motif-Scrolling-Labeled-Box)
-  (opal:update Motif-Scrolling-Labeled-Box-Win)
-  (create-instance 'DEMO-MOTIF-SCROLLING-LABELED-BOX-INTER MOTIF-TAB-INTER
-     (:window MOTIF-SCROLLING-LABELED-BOX-WIN)
-     (:objects (list DEMO-MOTIF-SCROLLING-LABELED-BOX)))
+  (opal:add-components motif-scrolling-labeled-box-top-agg
+		       (create-instance nil motif-background)
+		       demo-motif-scrolling-labeled-box)
+  (opal:update motif-scrolling-labeled-box-win)
+  (create-instance 'demo-motif-scrolling-labeled-box-inter motif-tab-inter
+     (:window motif-scrolling-labeled-box-win)
+     (:objects (list demo-motif-scrolling-labeled-box)))
   (unless dont-enter-main-event-loop #-cmu (inter:main-event-loop))
   )
 
 #+garnet-test
-(defun Motif-Scrolling-Labeled-Box-Stop ()
-  (opal:destroy Motif-Scrolling-Labeled-Box-win))
+(defun motif-scrolling-labeled-box-stop ()
+  (opal:destroy motif-scrolling-labeled-box-win))
 
-
-
-;;; Motif-Scrolling-Unlabeled-Box
-;;
-
-(create-instance 'MOTIF-SCROLLING-UNLABELED-BOX MOTIF-GADGET-PROTOTYPE
+(create-instance 'motif-scrolling-unlabeled-box motif-gadget-prototype
   :declare ((:parameters :left :top :width :field-offset
 			 :value :field-font :foreground-color
 			 :keyboard-selection-p :active-p
 			 :selection-function :visible)
-	    (:type (Fixnum :left :top :width :field-offset
+	    (:type (fixnum :left :top :width :field-offset
 			   :field-width :field-height :field-left
 			   :frame-top :frame-width :frame-height :height :center-y)
 		   (string :value)
@@ -266,66 +258,64 @@
 		   ((or null function symbol) :selection-function))
 	    (:maybe-constant :left :top :width :field-offset
 			     :field-font :foreground-color :active-p :visible))
-   ; Customizable slots
-   (:left 0) (:top 0)
-   (:width 135)
-   (:field-offset 4)
-   (:value "Field")
-   (:field-font opal:default-font) ;;**Must be fixed width**
-   (:foreground-color opal:MOTIF-GRAY)
-   (:keyboard-selection-p NIL)
-   (:keyboard-selection-obj (o-formula (gv :self)))
-   (:selection-function NIL)
-   (:active-p T)
-
-   ; Generally non-customizable slots
-
-   ;; For text-height assume field-font is fixed-height, so any string
-   ;; will do (don't use (gvl value) since it will change a lot and this
-   ;; slot will be recomputed unnecessarily)
-   (:field-height (o-formula (opal:string-height (gvl :field-font) "X")))
-   (:frame-left (o-formula (+ 2 (gvl-fixnum :left))))
-   (:frame-top (o-formula (- (gvl-fixnum :center-y)
-			     (floor (gvl-fixnum :frame-height) 2))))
-   (:frame-width (o-formula (- (gvl-fixnum :width) 4)))
-   (:frame-height (o-formula (+ 4 (gvl-fixnum :field-height))))
-   (:field-left (o-formula (+ (gvl-fixnum :frame-left) (gvl-fixnum :field-offset))))
-   (:field-width (o-formula (- (gvl-fixnum :frame-width) (* 2 (gvl-fixnum :field-offset)))))
-   (:height (o-formula (+ (gvl-fixnum :frame-height) 4)))
-   (:center-y (o-formula (+ 2 (gvl-fixnum :top) (floor (gvl-fixnum :frame-height) 2))))
-   (:parts
-    `((:FRAME ,MOTIF-BOX
+  ;; customizable slots
+  (:left 0) (:top 0)
+  (:width 135)
+  (:field-offset 4)
+  (:value "field")
+   ;;**must be fixed width**
+  (:field-font opal:default-font)
+  (:foreground-color opal:motif-gray)
+  (:keyboard-selection-p nil)
+  (:keyboard-selection-obj (o-formula (gv :self)))
+  (:selection-function nil)
+  (:active-p t)
+  ;; generally non-customizable slots: for text-height assume
+  ;; field-font is fixed-height, so any string will do (don't use
+  ;; (gvl value) since it will change a lot and this slot will be
+  ;; recomputed unnecessarily)
+  (:field-height (o-formula (opal:string-height (gvl :field-font) "x")))
+  (:frame-left (o-formula (+ 2 (gvl-fixnum :left))))
+  (:frame-top (o-formula (- (gvl-fixnum :center-y)
+			    (floor (gvl-fixnum :frame-height) 2))))
+  (:frame-width (o-formula (- (gvl-fixnum :width) 4)))
+  (:frame-height (o-formula (+ 4 (gvl-fixnum :field-height))))
+  (:field-left (o-formula (+ (gvl-fixnum :frame-left) (gvl-fixnum :field-offset))))
+  (:field-width (o-formula (- (gvl-fixnum :frame-width) (* 2 (gvl-fixnum :field-offset)))))
+  (:height (o-formula (+ (gvl-fixnum :frame-height) 4)))
+  (:center-y (o-formula (+ 2 (gvl-fixnum :top) (floor (gvl-fixnum :frame-height) 2))))
+  (:parts
+   `((:frame ,motif-box
              (:constant (:depressed-p))
 	     (:left ,(o-formula (gvl :parent :frame-left)))
 	     (:top ,(o-formula (gvl :parent :frame-top)))
 	     (:width ,(o-formula (gvl :parent :frame-width)))
 	     (:height ,(o-formula (gvl :parent :frame-height)))
-             (:depressed-p T))
-      (:FIELD-TEXT ,garnet-gadgets:SCROLLING-INPUT-STRING
-		    (:left ,(o-formula (gvl :parent :field-left)))
-		    (:top ,(o-formula (+ 2 (gvl-fixnum :parent :frame-top))))
-		    (:width ,(o-formula (gvl :parent :field-width)))
-		    (:value ,(o-formula (gvl :parent :value)))
-		    (:font ,(o-formula (gvl :parent :field-font)))
-                    (:active-p ,(o-formula (gvl :parent :active-p)))
-                    (:line-style ,(o-formula
-				   (let ((p (kr-path 0 :parent)))
-				     (if (gv p :active-p)
-					 opal:default-line-style
-					 (gv p :field-stippled-line-style)))))
-                    ;; Take out the dots
-                    (:parts
-		     ((:string :modify
-			       (:left ,(o-formula (gvl :parent :left)))
-			       (:max-width ,(o-formula (gvl :parent :width)))
-			       (:fast-redraw-p :rectangle)
-			       (:fast-redraw-filling-style
-				,(o-formula (gvl :parent :parent :background-fill))))))
-
-                    (:selection-function
-		     ,#'(lambda (obj final-value)
-			  (let ((top-obj (g-value obj :parent)))
-			    (s-value top-obj :value final-value)
-			    (kr-send top-obj :selection-function top-obj
-				     final-value)))))
-      (:SEL-BOX ,MOTIF-SELECTION-BOX))))
+             (:depressed-p t))
+     (:field-text ,garnet-gadgets:scrolling-input-string
+		  (:left ,(o-formula (gvl :parent :field-left)))
+		  (:top ,(o-formula (+ 2 (gvl-fixnum :parent :frame-top))))
+		  (:width ,(o-formula (gvl :parent :field-width)))
+		  (:value ,(o-formula (gvl :parent :value)))
+		  (:font ,(o-formula (gvl :parent :field-font)))
+		  (:active-p ,(o-formula (gvl :parent :active-p)))
+		  (:line-style ,(o-formula
+				 (let ((p (kr-path 0 :parent)))
+				   (if (gv p :active-p)
+				       opal:default-line-style
+				       (gv p :field-stippled-line-style)))))
+		  ;; take out the dots
+		  (:parts
+		   ((:string :modify
+			     (:left ,(o-formula (gvl :parent :left)))
+			     (:max-width ,(o-formula (gvl :parent :width)))
+			     (:fast-redraw-p :rectangle)
+			     (:fast-redraw-filling-style
+			      ,(o-formula (gvl :parent :parent :background-fill))))))
+		  (:selection-function
+		   ,#'(lambda (obj final-value)
+			(let ((top-obj (g-value obj :parent)))
+			  (s-value top-obj :value final-value)
+			  (kr-send top-obj :selection-function top-obj
+				   final-value)))))
+     (:sel-box ,motif-selection-box))))

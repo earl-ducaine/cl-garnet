@@ -324,14 +324,18 @@
 		  (setq s (cdr s))
 		  (setq v (cdr v))))))))))
 
+;; (set-line-style line-style line-style-gc xlib-gc-line root-window function)
+;; line-style: line-2
+;; line-style-gc: (display-info-line-style-gc *display-info*)
+;; x-draw-fn :xor (8)
+
+;; various synchronizations of gem-gc with xlib-gc
 (defun set-line-style (line-style gem-gc xlib-gc root-window x-draw-fn)
-  (declare (optimize (speed 3) (safety 1)))
   (when line-style
     (let ((draw-fn-changed? (set-gc gem-gc xlib-gc :function x-draw-fn)))
       (unless (eq x-draw-fn boole-2)
-        (let ((x-stipple (get-x-stipple line-style root-window))
-              x-dash-pattern)
-
+	(let ((x-stipple (get-x-stipple line-style root-window))
+	      x-dash-pattern)
           ;; If the draw-function is :xor and *black* = 0 (for instance
           ;; on HP machines), then we must draw black as white and white
           ;; as black.  But we must check the draw-function first.
@@ -339,30 +343,28 @@
           (when (or draw-fn-changed?
                     (not (eq line-style (gem-gc-opal-style gem-gc))))
             (set-gc gem-gc xlib-gc :foreground
-                     (g-value line-style :foreground-color :colormap-index))
+		    (g-value line-style :foreground-color :colormap-index))
             (set-gc gem-gc xlib-gc :background
-                     (g-value line-style :background-color :colormap-index)))
-
-          (unless (eq line-style (gem-gc-opal-style gem-gc))
-            (setf (gem-gc-opal-style gem-gc) line-style)
-            (set-gc gem-gc xlib-gc :line-width
-                    (g-value line-style :line-thickness))
-            (set-gc gem-gc xlib-gc :line-style
-                    (g-value line-style :line-style))
-            (set-gc gem-gc xlib-gc :cap-style
-                    (g-value line-style :cap-style))
-            (set-gc gem-gc xlib-gc :join-style
-                    (g-value line-style :join-style))
-            (if (setq x-dash-pattern (g-value line-style :dash-pattern))
-                (set-gc gem-gc xlib-gc :dashes x-dash-pattern)))
-
-          ;; This can't be in the "unless" since the same
-          ;; line-style can have different x-stipples
-          (if x-stipple
-              (progn
-                (set-gc gem-gc xlib-gc :fill-style :opaque-stippled)
-                (set-gc gem-gc xlib-gc :stipple x-stipple))
-              (set-gc gem-gc xlib-gc :fill-style :solid)))))))
+		    (g-value line-style :background-color :colormap-index)))
+	  (unless (eq line-style (gem-gc-opal-style gem-gc))
+	    (setf (gem-gc-opal-style gem-gc) line-style)
+	    (set-gc gem-gc xlib-gc :line-width
+		    (g-value line-style :line-thickness))
+	    (set-gc gem-gc xlib-gc :line-style
+		    (g-value line-style :line-style))
+	    (set-gc gem-gc xlib-gc :cap-style
+		    (g-value line-style :cap-style))
+	    (set-gc gem-gc xlib-gc :join-style
+		    (g-value line-style :join-style))
+	    (if (setq x-dash-pattern (g-value line-style :dash-pattern))
+	      (set-gc gem-gc xlib-gc :dashes x-dash-pattern)))
+	  ;; This can't be in the "unless" since the same
+	  ;; line-style can have different x-stipples
+	  (if x-stipple
+	      (progn
+		(set-gc gem-gc xlib-gc :fill-style :opaque-stippled)
+		(set-gc gem-gc xlib-gc :stipple x-stipple))
+	      (set-gc gem-gc xlib-gc :fill-style :solid)))))))
 
 ;;; Set Styles Functions (from opal: new-defs.lisp)
 
@@ -863,7 +865,6 @@ this display."
 			      :height height
 			      :bitmap-p bitmap-p))))))
 
-
 (defun x-draw-line (window x1 y1 x2 y2 function line-style &optional drawable)
   (let* ((display-info (g-value window :display-info))
          (root-window (display-info-root-window display-info)))
@@ -877,7 +878,7 @@ this display."
 	(let* ((line-style-gc (display-info-line-style-gc display-info))
 	       (xlib-gc-line (gem-gc-gcontext line-style-gc)))
 	  (set-line-style line-style line-style-gc xlib-gc-line
-			  root-window function)
+	  		  root-window function)
 	  (xlib:draw-line drawable xlib-gc-line x1 y1 x2 y2)))))
 
 (defun x-draw-lines (window point-list function line-style fill-style)
@@ -1903,7 +1904,7 @@ this display."
 	    (make-gem-gc  :gcontext x-line-style-gc
 			  :opal-style NIL
 			  :function 2
-			  :line-width 0
+			  :line-width 1
 			  :line-style :solid
 			  :cap-style  :butt
 			  :join-style :miter

@@ -1,27 +1,15 @@
 ;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: COMMON-LISP-USER; Base: 10 -*-
 
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;         The Garnet User Interface Development Environment.      ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; This code was written as part of the Garnet project at          ;;;
-;;; Carnegie Mellon University, and has been placed in the public   ;;;
-;;; domain.  If you are using this code or any part of Garnet,      ;;;
-;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; The Garnet User Interface Development Environment.
+;;;
+;;; This code was written as part of the Garnet project at Carnegie
+;;; Mellon University, and has been placed in the public domain. If
+;;; you are using this code or any part of Garnet, please contact
+;;; garnet@cs.cmu.edu to be put on the mailing list.
 
 (in-package :common-lisp-user)
 
 (defvar *debug-lapidary-mode* nil)
-
-;; (eval-when (:compile-toplevel :load-toplevel :execute)
-;;   (proclaim
-;;    (if nil
-;;        (and (boundp 'Garnet-Compile-Debug-Settings)
-;; 	    Garnet-Compile-Debug-Settings)
-;;        ;; Global default settings.
-;;        (and (boundp 'Default-Garnet-Proclaim)
-;; 	    Default-Garnet-Proclaim))))
 
 
 ;; Only loads this file when not compiling all of Garnet.
@@ -38,8 +26,8 @@
 (unless (get :garnet-modules :path-functions)
   (garnet-load "gilt:path-functions-loader"))
 
-(unless (get :garnet-modules :c32)
-  (load garnet-c32-loader))
+;; (unless (get :garnet-modules :c32)
+;;   (load garnet-c32-loader))
 
 ;;; Create the Lapidary Directory
 (eval-when (:execute :load-toplevel :compile-toplevel)

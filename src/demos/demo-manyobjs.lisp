@@ -1,27 +1,24 @@
 ;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: DEMO-MANYOBJS; Base: 10 -*-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;;         The Garnet User Interface Development Environment.      ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; This code was written as part of the Garnet project at          ;;;
 ;;; Carnegie Mellon University, and has been placed in the public   ;;;
 ;;; domain.  If you are using this code or any part of Garnet,      ;;;
 ;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; $Id$
 
-
+
 ;;; This file contains demo code that creates a lot of objects, for
 ;;; testing if Opal and the Interactors can handle lots of objects.
 ;;;
 ;;; This is intended as a test and demonstration of the Garnet system
-;;; 
+;;;
 ;;; ** Call (Do-Go :number-of-rectangles n) to start and (Do-Stop) to stop **
 ;;;
 ;;; Designed and implemented by Brad A. Myers
 
-
-(in-package :DEMO-MANYOBJS)
+
+(in-package :demo-manyobjs)
 
 (declaim (special BOXANDARROW WIN AGG))
 
@@ -42,7 +39,7 @@
   (+ (gv obj :top)
      (floor (- (gv obj :height)(gvl :height)) 2)))
 
- 
+
 (create-instance 'BoxAndArrow opal:aggregadget
 	(:line-type Opal:thin-line)
 	(:fill-type Opal:no-fill)
@@ -55,7 +52,7 @@
 		    (progn
 		      (gv GloSwitch :selected) ;just set up a dependency
 		      (list
-		       (random 
+		       (random
 			(- (the integer (g-value Win :width)) 50)) ;left
 		       (random
 			(- (the integer (g-value Win :height)) 50)) ;top
@@ -125,7 +122,7 @@ Good values of number-of-rectangles are 3..50"
 		     (:top 0)(:width 20)(:height 20)
 		     (:filling-style opal:gray-fill))
     (opal:add-component agg GloSwitch)
-    
+
     (setq prev NIL)
     (dotimes (i number-of-rectangles)
       (setq obj
@@ -167,10 +164,10 @@ Good values of number-of-rectangles are 3..50"
 
 ;; dzg - for new version of KR
 (defun Move (n)
-  (let ((outline 
+  (let ((outline
 	 (g-value
 	  (third
-	   (g-value agg :components)) 
+	   (g-value agg :components))
 	  :outline)))
     (dotimes (i n)
       (s-value outline :left (* i 4))

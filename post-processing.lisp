@@ -1,7 +1,6 @@
-(in-package :common-lisp-user)
+(in-package :garnet-user)
 
-
-(eval-when (:load-toplevel :compile-toplevel :execute)
+(eval-when (:load-toplevel)
   (let ((demo-apps
 	 '("(demo-3d::do-go)"
 	   "(demo-angle::do-go)"
@@ -39,11 +38,11 @@
 	   "(demo-xasperate::do-go)"
 	   "(garnet-calculator::do-go)"
 	   "(garnetdraw::do-go)"
-	   "(mge::do-go)"
-	   "(quicklisp::do-go)"
-	   "(tourcommands::do-go)"
-	   "(tour::do-go)"
-	   "(tour-transcript::do-go)")))
-  (format t "~%To run various app eval one of the following:~%")
+	   ;;	 "(mge::do-go)"
+	   ;;	 "(quicklisp::do-go)"
+	   ;;	 "(tourcommands::do-go)"
+	   ;;	 "(tour::do-go)"
+	   "(demos-controller:do-go)")))
+    (format t "~%To run various app eval one of the following:~%")
     (dolist (demo-app demo-apps)
-    (format t "~a~%" demo-app))))
+      (format t "~a~%" demo-app))))

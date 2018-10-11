@@ -1,8 +1,6 @@
 
 
 
-* 
-
 ** TODO-List
 
 *** Mouse buttons seem to be set up for a Mac style environment.

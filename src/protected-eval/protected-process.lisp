@@ -12,7 +12,7 @@
 (in-package :opal)
 
 ;; i.e. low level main event loop
-(defun m-e-l ()
+(defun protected-process-m-e-l ()
   ;; first, throw away any pending events
   (discard-all-pending-events)
   (set-dispatch-macro-character #\# #\k (function kr::k-reader))
