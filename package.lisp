@@ -288,6 +288,7 @@
   (:nicknames :gg)
   (:export *normal-cursor-pair*
 	   *user-type*
+	   demo-motif-menubar
 	   do-prompt
 	   error-prompter-gadget
 	   garnet-error-handler
@@ -295,6 +296,16 @@
 	   garnet-protected-read
 	   garnet-protected-read-from-string
 	   garnet-user-error-hander
+	   make-motif-bar-item
+	   make-motif-menubar
+	   make-motif-submenu-item
+	   make-motif-submenu-win
+	   motif-bar-item
+	   motif-menubar
+	   motif-menubar-go
+	   motif-menubar-stop
+	   motif-menubar-top-agg
+	   motif-menubar-win
 	   mouseline-go
 	   mouseline-stop
 	   prompter-gadget-go

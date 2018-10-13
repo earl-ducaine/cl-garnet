@@ -96,14 +96,10 @@
 (defvar garnet-lib-pathname (append-directory org.xoanonos.asdf-app-config:*base-directory* "lib"))
 (defvar garnet-binary-pathname (get-garnet-binary-pathname))
 
-;; (defvar Garnet-Gem-Src
-;;   (append-directory Garnet-Src-Pathname "gem"))
-;; (defvar Garnet-Gem-Pathname
-;;   (append-directory Garnet-Binary-Pathname "gem"))
-(defvar Garnet-Opal-Src
-  (append-directory Garnet-Src-Pathname "opal"))
-(defvar Garnet-Opal-Pathname
-  (append-directory Garnet-Binary-Pathname "opal"))
+;; (defvar Garnet-Opal-Src
+;;   (append-directory Garnet-Src-Pathname "opal"))
+;; (defvar Garnet-Opal-Pathname
+;;   (append-directory Garnet-Binary-Pathname "opal"))
 (defvar Garnet-Truetype-Src
   (append-directory Garnet-Src-Pathname "truetype"))
 (defvar Garnet-Truetype-Pathname
@@ -171,14 +167,10 @@
   (append-directory Garnet-Lib-Pathname "gesture"))
 
 ;;; Names of loader files.
-;;;(defparameter Garnet-Gem-Loader (merge-pathnames "gem-loader" Garnet-Gem-PathName))
 
 (defparameter Garnet-Inter-Loader (merge-pathnames "inter-loader" Garnet-Inter-PathName))
 
-;;;(defparameter Garnet-Multifont-Loader (merge-pathnames "multifont-loader" Garnet-Opal-PathName))
 (defparameter Garnet-Gesture-Loader (merge-pathnames "gesture-loader" Garnet-Gesture-PathName))
-
-;; (defparameter Garnet-PS-Loader (merge-pathnames "ps-loader" Garnet-PS-PathName))
 
 (defparameter Garnet-Aggregadgets-Loader (merge-pathnames "aggregadgets-loader" Garnet-Aggregadgets-PathName))
 (defparameter Garnet-Aggregraphs-Loader (merge-pathnames "aggregraphs-loader" Garnet-Aggregadgets-PathName))
@@ -195,8 +187,7 @@
 ;;; Target directories (binarys)
   `(("gg"                 . ,Garnet-Gadgets-PathName)
     ("gadgets"            . ,Garnet-Gadgets-PathName)
-;;    ("gem"                . ,Garnet-Gem-Pathname)
-    ("opal"               . ,Garnet-Opal-Pathname)
+;;    ("opal"               . ,Garnet-Opal-Pathname)
     ("truetype"           . ,Garnet-Truetype-PathName)
     ("inter"              . ,Garnet-Inter-PathName)
     ("gesture"            . ,Garnet-Gesture-PathName)
@@ -212,8 +203,7 @@
     ("contrib"            . ,Garnet-Contrib-PathName)
     ("protected-eval"     . ,Garnet-Protected-Eval-PathName)
 ;;; Source directories.
-;;    ("gem-src"            . ,Garnet-Gem-Src)
-    ("opal-src"           . ,Garnet-Opal-Src)
+;;    ("opal-src"           . ,Garnet-Opal-Src)
     ("inter-src"          . ,Garnet-Inter-Src)
     ("gesture-src"        . ,Garnet-Gesture-Src)
     ("gestures-src"       . ,Garnet-Gesture-Src)

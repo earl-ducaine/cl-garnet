@@ -10,52 +10,52 @@
 ;;;
 ;;; $Id::                                                             $
 
-(in-package "COMMON-LISP-USER")
+;;; (in-package "COMMON-LISP-USER")
 
-(defparameter Opal-Version-Number "1.3")
+;; (defparameter Opal-Version-Number "1.3")
 
-(format t "Loading Opal...~%")
+;; (format t "Loading Opal...~%")
 
 ;;; check to see if pathname variable is set
-(unless (boundp 'Garnet-Opal-PathName)
-  (error "Load 'Garnet-Loader' first to set Garnet-Opal-PathName before loading opal."))
+;; (unless (boundp 'Garnet-Opal-PathName)
+;;   (error "Load 'Garnet-Loader' first to set Garnet-Opal-PathName before loading opal."))
 
 ;;;  Load Opal  ...
-(Defvar Garnet-Opal-Files
-  '(
-    ;; "exports"
-    ;; "types"
-    ;; "update-constants"
-    ;; "macros"
-    ;; "defs"
-    ;; "new-defs"
-    ;; "utils"
-    ;; "text-fonts"
-    ;; "create-instances"
-    ;; "text-functions"
-    ;; "text"
-    ;; "update-basics"
-    ;; "halftones"
-    ;; "objects"
-    ;; "roundtangles"
-    ;; "basics"
-    ;; "aggregates"
-    ;; "process"
-    ;; "clean-up"
-    ;; "windows"
-    ;; "update"
-    ;; "fast-redraw"
-    ;; "update-window"
-    ;; "virtual-aggregates"
-    ;; "pixmaps"
-    ;; "open-and-close"
-    ))
+;; (Defvar Garnet-Opal-Files
+;;   '(
+;;     ;; "exports"
+;;     ;; "types"
+;;     ;; "update-constants"
+;;     ;; "macros"
+;;     ;; "defs"
+;;     ;; "new-defs"
+;;     ;; "utils"
+;;     ;; "text-fonts"
+;;     ;; "create-instances"
+;;     ;; "text-functions"
+;;     ;; "text"
+;;     ;; "update-basics"
+;;     ;; "halftones"
+;;     ;; "objects"
+;;     ;; "roundtangles"
+;;     ;; "basics"
+;;     ;; "aggregates"
+;;     ;; "process"
+;;     ;; "clean-up"
+;;     ;; "windows"
+;;     ;; "update"
+;;     ;; "fast-redraw"
+;;     ;; "update-window"
+;;     ;; "virtual-aggregates"
+;;     ;; "pixmaps"
+;;     ;; "open-and-close"
+;;     ))
 
-(dolist (file Garnet-Opal-Files)
-  (load (merge-pathnames file Garnet-Opal-PathName)
-	:verbose T))
+;; (dolist (file Garnet-Opal-Files)
+;;   (load (merge-pathnames file Garnet-Opal-PathName)
+;; 	:verbose T))
 
-(setf (get :garnet-modules :opal) t)
-(format t "...Done Opal.~%")
+;; (setf (get :garnet-modules :opal) t)
+;; (format t "...Done Opal.~%")
 
 ;;(gem:init-device)

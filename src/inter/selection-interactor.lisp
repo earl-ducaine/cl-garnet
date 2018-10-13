@@ -368,9 +368,7 @@
 				(g-value an-interactor :saved-last-points))
       (selection-do-abort an-interactor NIL event)))
 
-
 ;;; Selection schema
-;;
 (Create-Schema 'inter:Selection-Interactor
    (:is-a inter:interactor)
    (:match-parens-p NIL)
@@ -406,18 +404,14 @@
    (:Do-Outside 'Selection-Do-Outside) ;   They call the
    (:Do-Back-Inside 'Selection-Do-Back-Inside)  ; appropriate
    (:Do-Outside-Stop 'Selection-Do-Outside-Stop); -action procedures
-   (:initialize 'Selection-Interactor-Initialize)
-)
+   (:initialize 'Selection-Interactor-Initialize))
 
 
-
-;;; Map for button press types
-;;
-
+;; Map for button press types
 ;; Initializes the hash table of an-interactor with the standard
 ;; translations.  If there is no table in an-interactor, creates one.
-;; Otherwise, removes any translations that are there before adding the
-;; new ones.
+;; Otherwise, removes any translations that are there before adding
+;; the new ones.
 (defun Set-Default-Button-Translations (an-interactor)
   (let ((ht (get-local-value an-interactor :key-translation-table)))
     (if (not (hash-table-p ht))
@@ -444,4 +438,3 @@
     (bind-key-internal :double-rightdown :start-word-selection-continue ht)))
 
 (Set-Default-Button-Translations inter:selection-interactor)
-

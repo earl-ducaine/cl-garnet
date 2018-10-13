@@ -394,8 +394,9 @@
 
 (defun Button-Press (window x y state code event-key time)
   (let (c)
-    ;; Check for null window before getting gem:Check-Double-Press code.
-    (unless window			; if window was just destroyed, exit.
+    ;; Check for null window, i.e. window was destroyed, before
+    ;; getting gem:Check-Double-Press code.
+    (unless window
       (return-from button-press t))
     (setf code (gem:Check-Double-Press window state code time))
     (unless (and window code)		; if window was just destroyed, exit.

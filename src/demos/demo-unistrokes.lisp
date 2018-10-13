@@ -11,17 +11,17 @@
 ;;; $Id$
 
 
-;;; demo-unistrokes.lisp 
+;;; demo-unistrokes.lisp
 ;;;
 ;;; This is DEMO-UNISTROKES. It is a sample application that uses
 ;;; gestures trained by AGATE (the Garnet Gesture training application)
-;;; to implement a simple text editor that uses Dave Goldberg's (Xerox 
+;;; to implement a simple text editor that uses Dave Goldberg's (Xerox
 ;;; PARC) Unistrokes (see INTERCHI '93 paper) for alphabetic input.
 ;;; It also uses some simple gestures to edit the text.
 ;;;
-;;; Designed and implemented by James A. Landay 
+;;; Designed and implemented by James A. Landay
 ;;;
-;;; Future work: 
+;;; Future work:
 ;;;
 ;;; Known bugs:
 ;;;
@@ -34,28 +34,28 @@
 (in-package :DEMO-UNISTROKES)
 
 ;; objects created in do-go
-(declaim (special TOP-WIN MAIN-MENU GESTURE-INTER ERROR-DIALOG QUIT-DIALOG
-		  SAVE-DIALOG LOAD-DIALOG TEXT TEXT-WIN UNISTROKE-ICON-WIN
-		  UNISTROKE-ICON-PROTO UNISTROKE-ICON-AGGL
-		  PUNCTUATION-ICON-AGGL CANVAS-WIN INSTRUCTIONS-TEXT RED-LINE-4
-		  ORANGE-LINE-1 ORANGE-LINE-2 TEXT-LABEL ALPHABET-LABEL
-		  CANVAS-LABEL PUNCTUATION-ICON-PROTO TOP-AGG))
+;; (declaim (special TOP-WIN MAIN-MENU GESTURE-INTER ERROR-DIALOG QUIT-DIALOG
+;; 		  SAVE-DIALOG LOAD-DIALOG TEXT TEXT-WIN UNISTROKE-ICON-WIN
+;; 		  UNISTROKE-ICON-PROTO UNISTROKE-ICON-AGGL
+;; 		  PUNCTUATION-ICON-AGGL CANVAS-WIN INSTRUCTIONS-TEXT RED-LINE-4
+;; 		  ORANGE-LINE-1 ORANGE-LINE-2 TEXT-LABEL ALPHABET-LABEL
+;; 		  CANVAS-LABEL PUNCTUATION-ICON-PROTO TOP-AGG))
 
 ;; Load motif stuff, unless already loaded
-(defvar TRAIN-APP-INIT
-  (progn
-    (dolist (gadget '("motif-text-buttons-loader"
-		      "motif-scrolling-labeled-box-loader"
-		      "motif-radio-buttons-loader"
-		      "motif-scrolling-window-loader"
-		      "motif-save-gadget-loader"
-		      "motif-error-gadget-loader"))
-      (common-lisp-user::garnet-load (concatenate 'string "gadgets:" gadget)))
+;; (defvar TRAIN-APP-INIT
+;;   (progn
+;;     (dolist (gadget '("motif-text-buttons-loader"
+;; 		      "motif-scrolling-labeled-box-loader"
+;; 		      "motif-radio-buttons-loader"
+;; 		      "motif-scrolling-window-loader"
+;; 		      "motif-save-gadget-loader"
+;; 		      "motif-error-gadget-loader"))
+;;       (common-lisp-user::garnet-load (concatenate 'string "gadgets:" gadget)))
 
-    (common-lisp-user::garnet-load "opal:multifont-loader")
-    
-    ;; load gesture-loader
-    (common-lisp-user::garnet-load "gesture:gesture-loader")))
+;;     (common-lisp-user::garnet-load "opal:multifont-loader")
+
+;;     ;; load gesture-loader
+;;     (common-lisp-user::garnet-load "gesture:gesture-loader")))
 
 ;; global variables definitions
 
@@ -63,7 +63,7 @@
 (defparameter *unistroke-examples*  NIL)  ;; unistroke examples
 (defparameter *saved* T)        ;; has current text been saved
                                 ;; since last change? (not dirty yet)
-(defparameter *last-filename* NIL)    ;; last filename saved or loaded 
+(defparameter *last-filename* NIL)    ;; last filename saved or loaded
 (defvar *color-p* (g-value opal:color :color-p)) ;; is this a color screen?
 
 (defparameter *example-icon-size* 60) ;; size of square gesture example icons
@@ -85,12 +85,12 @@
 
 ;; add-punctuation adds the proper punctuation character to the TEXT
 ;; object when the user clicks on the punctuation icon.
-;; 
+;;
 ;; Parameters:
 ;;     obj-over - object clicked on
 ;;
 (defun add-punctuation (obj-over)
-  (let ((punc (char (string (nth (g-value obj-over :rank) 
+  (let ((punc (char (string (nth (g-value obj-over :rank)
 				 (g-value PUNCTUATION-ICON-AGGL :items))) 0)))
 
     (if (equal punc #\c)
@@ -98,7 +98,7 @@
     (opal:add-char TEXT punc)))
 
 
-;; class-name-equal is used to test whether a class in the class-agg items 
+;; class-name-equal is used to test whether a class in the class-agg items
 ;; list is equal to the class we are now considering.
 ;;
 ;; Parameters:
@@ -107,8 +107,8 @@
 (defun class-name-equal (name)
   #'(lambda (&rest arguments)
       (equal (string-upcase (string-trim '(#\Space) name))
-         (string-upcase 
-          (string-trim '(#\Space) 
+         (string-upcase
+          (string-trim '(#\Space)
                (apply #'inter::gest-class-name arguments))))))
 
 
@@ -118,14 +118,14 @@
 ;; Parameters:
 ;;    inter, first-obj-over, attribs - ignored
 ;;    class-name - name of recognized gesture (or NIL if unrecognized)
-;;    points     - points in gesture 
+;;    points     - points in gesture
 ;;    nap        - non-ambiguity of gesture
 ;;    dist       - distance from class-name
 ;;
 (defun handle-unistroke (inter first-obj-over class-name attribs
                          points nap dist)
   (declare (ignore first-obj-over attribs points nap dist))
-  (let ((selected (g-value UNISTROKE-ICON-AGGL :selected))) 
+  (let ((selected (g-value UNISTROKE-ICON-AGGL :selected)))
     (if (null class-name)
         (progn
           ;; de-sellect the selected icon in class agglist
@@ -138,16 +138,16 @@
           (let* ((name (write-to-string class-name :escape nil))
              (index (position-if (class-name-equal name)
                      (g-value UNISTROKE-ICON-AGGL :items)))
-             (selected-icon 
+             (selected-icon
               (if index
 		  (nth index (g-value UNISTROKE-ICON-AGGL :components))
 		nil)))
 
 	    ;; check to see if the class was found (can't happen error)
 	    (if (null index)
-		(do-error 
-		 (format NIL "ERROR: Class named ~s is ~a~%~a~%~a" 
-			 name 
+		(do-error
+		 (format NIL "ERROR: Class named ~s is ~a~%~a~%~a"
+			 name
 			 " not present in current classifier."
 			 "This is a bug, please report to the developers."
 			 "Press OK to continue."))
@@ -159,7 +159,7 @@
 		(if (equal (char (string class-name) 0) #\-)
 		    (opal:add-char TEXT #\space)
 		  (if (equal (g-value inter :start-char) :LEFTDOWN)
-		      (opal:add-char TEXT (char-downcase 
+		      (opal:add-char TEXT (char-downcase
 					   (char (string class-name) 0)))
 		      (opal:add-char TEXT (char (string class-name) 0))))
 		(s-value selected-icon :selected T)
@@ -174,7 +174,7 @@
 ;; Parameters:
 ;;    inter, first-obj-over, attribs - ignored
 ;;    class-name - name of recognized gesture (or NIL if unrecognized)
-;;    points     - points in gesture 
+;;    points     - points in gesture
 ;;    nap        - non-ambiguity of gesture
 ;;    dist       - distance from class-name
 ;;
@@ -187,16 +187,16 @@
      (opal:set-cursor-to-x-y-position TEXT
         (inter:gest-attributes-startx attribs)
 	(inter:gest-attributes-starty attribs))
-     (opal:set-selection-to-x-y-position TEXT 
+     (opal:set-selection-to-x-y-position TEXT
         (inter:gest-attributes-endx attribs)
 	(inter:gest-attributes-endy attribs))
      (opal:toggle-selection TEXT T)
      (setf *cut-buffer* (opal:delete-selection TEXT))
      (setf *saved* NIL))
-     
+
     (:PASTE
      ;; paste the cut buffer to the peak of the paste gesture
-     (opal:set-cursor-to-x-y-position TEXT 
+     (opal:set-cursor-to-x-y-position TEXT
         (+ (inter:gest-attributes-minx attribs)
 	   (floor (- (inter:gest-attributes-maxx attribs)
 		     (inter:gest-attributes-minx attribs)) 2))
@@ -206,38 +206,38 @@
 
     (:SET-CURSOR
      ;; set cursor to location of click
-     (opal:set-cursor-to-x-y-position TEXT 
+     (opal:set-cursor-to-x-y-position TEXT
 	(inter:gest-attributes-startx attribs)
 	(inter:gest-attributes-starty attribs)))
 
-    (otherwise 
+    (otherwise
      (format T "Unrecognized gesture ...~%~%"))))
 
 
-;; scale copies the given points and then scales and translates them to 
+;; scale copies the given points and then scales and translates them to
 ;; the givin origin. The new points are then returned as a LIST!!!
 ;;
 ;; Parameters:
 ;;     x-factor - amount to scale x coordinate by (i.e. divide by)
 ;;     y-factor - amount to scale y coordinate by (i.e. divide by)
-;;     x-origin - new origin to translate to 
-;;     y-origin   
+;;     x-origin - new origin to translate to
+;;     y-origin
 ;;     points   - array of points of form [x1 y1 x2 y2 ...]
 ;;
 (defun scale (x-factor y-factor x-origin y-origin points)
   (do* ((pts (copy-seq points))
     (index 0 (+ index 2)))
       ((>= index (length pts)) (coerce pts 'list)) ;; exit clause
-        
+
     ; scale and translate x coord
-    (setf (aref pts index) 
+    (setf (aref pts index)
       (+ x-origin (ceiling (aref pts index) x-factor)))
     ; scale and translate y coord
-    (setf (aref pts (1+ index)) 
+    (setf (aref pts (1+ index))
       (+ y-origin (ceiling (aref pts (1+ index)) y-factor)))))
 
 
-;; do-load loads some text from a file. 
+;; do-load loads some text from a file.
 ;; classifier has not been saved, it will prompt the user to save
 ;; it.
 ;;
@@ -265,8 +265,8 @@
 (defun load-text (gadget file)
   (declare (ignore gadget))
   (opal:with-hourglass-cursor
-   (opal:set-text 
-    TEXT 
+   (opal:set-text
+    TEXT
     ;; read the text in from the file
     (with-open-file (stream file :direction :input)
 		    (do ((str (make-array '(0)
@@ -274,7 +274,7 @@
 			                #+allegro-v4.0 'cltl1::string-char
 					#-(or lucid allegro-v4.0) 'character
 			  :fill-pointer 0 :adjustable T))
-			 (next-char 
+			 (next-char
 			  (read-char stream NIL :eof)
 			  (read-char stream NIL :eof)))
 			((eq next-char :eof) str)
@@ -305,27 +305,27 @@
   (declare (ignore gadget))
 
   (opal:with-hourglass-cursor
-   (with-open-file (str filename :direction :output 
+   (with-open-file (str filename :direction :output
 			:if-exists :supersede)
 		   (format str "~a" (opal:get-string TEXT))))
   (setf *last-filename* filename)
   (setf *saved* T))
 
 
-;; do-quit calls do-stop when the user hits the quit button. 
+;; do-quit calls do-stop when the user hits the quit button.
 ;; If the classifier is dirty and hasn't been saved asks the
 ;; user if they would like to save it first.
 ;;
 ;; Parmeters:
 ;;     gadgets-object (ignored)
-;;     item-string (ignored)   
+;;     item-string (ignored)
 ;;
 (defun do-quit (gadgets-object item-string)
   (declare (ignore gadgets-object item-string))
   (if *saved*
       (do-stop)                   ;; quit, classifier is not dirty
       (let ((cancel nil))
-    
+
     ;; see if they want to save
     (setf cancel (gg:save-file-if-wanted SAVE-DIALOG
 					 *last-filename*))
@@ -351,13 +351,13 @@
     #-cmu (inter:exit-main-event-loop))
 
 
-;; do-go creates the necessary windows and Garnet objects, and 
+;; do-go creates the necessary windows and Garnet objects, and
 ;; then starts the application.
 ;;
 ;; Parameters (all keyword):
 ;;    dont-enter-main-event-loop - if T, don't enter the main event loop
 ;;    double-buffered-p          - if T, use double buffered windows
-;;  
+;;
 (defun do-go (&key dont-enter-main-event-loop
                    (double-buffered-p T))
     (if (and (boundp 'TOP-WIN) (schema-p TOP-WIN))
@@ -387,7 +387,7 @@
 	   (declare (ignore win))
 	   (common-lisp-user::Garnet-Note-Quitted "DEMO-UNISTROKES"))
        (g-value top-win :destroy-hooks)))
-    
+
     ;; need to update top-win before instantiating dialos
     (opal:update TOP-WIN)
 
@@ -410,10 +410,10 @@
     ;; create a load dialog
     (create-instance 'LOAD-DIALOG garnet-gadgets:motif-load-gadget
         (:parent-window TOP-WIN)
-    (:modal-p t) 
+    (:modal-p t)
     (:selection-function #'load-text))
 
-    ;; create the main menu 
+    ;; create the main menu
     (create-instance 'MAIN-MENU garnet-gadgets:motif-text-button-panel
         ;; can't be constant since we want to center it!
         (:items '(
@@ -426,7 +426,7 @@
         (:direction :horizontal)
         (:h-align :center))
 
-    (opal:update TOP-WIN) 
+    (opal:update TOP-WIN)
 
     ;; create the text object for displaying entered text
     (create-instance 'TEXT opal:multifont-text
@@ -439,7 +439,7 @@
     (create-instance 'TEXT-LABEL opal:text
         (:string "Text")
 	(:font (opal:get-standard-font :serif :bold :medium))
-	(:left (o-formula (- (round (gvl :parent :window :width) 2) 
+	(:left (o-formula (- (round (gvl :parent :window :width) 2)
 			     (round (opal:string-width (gvl :font)
 						       (gvl :string)) 2))))
 	(:top (o-formula (+ (g-value MAIN-MENU :top)
@@ -460,7 +460,7 @@
 	(:double-buffered-p double-buffered-p)
 	(:parent-window TOP-WIN))
 
-    (opal:update TEXT-WIN)  ;; update scrolling window after creation	
+    (opal:update TEXT-WIN)  ;; update scrolling window after creation
     (opal:add-component (g-value TEXT-WIN :inner-aggregate) TEXT)
     (opal:set-cursor-visible TEXT T)
 
@@ -472,8 +472,8 @@
         (:start-event :any-mousedown)
         (:min-non-ambig-prob .7)
         (:max-dist-to-mean 100)
-        (:classifier  
-	 (inter:gest-classifier-read 
+        (:classifier
+	 (inter:gest-classifier-read
 	  (merge-pathnames "demo-unistrokes-edit.classifier"
 			   common-lisp-user::Garnet-Gesture-Data-Pathname)))
         (:final-function #'handle-edit-gesture))
@@ -493,15 +493,15 @@
         (:line-thickness 2))
 
     (setf *max-name-chars*
-      (truncate *example-icon-size* 
+      (truncate *example-icon-size*
             (opal:string-width opal:default-font "W")))
     (setf *max-name-height*
       (opal:string-height opal:default-font "T"))
-    
+
     (create-instance 'ALPHABET-LABEL opal:text
         (:string "Alphabet")
 	(:font (opal:get-standard-font :serif :bold :medium))
-	(:left (o-formula (- (round (gvl :parent :window :width) 2) 
+	(:left (o-formula (- (round (gvl :parent :window :width) 2)
 			     (round (opal:string-width (gvl :font)
 						       (gvl :string)) 2))))
 	(:top (o-formula (+ (g-value TEXT-WIN :top)
@@ -515,29 +515,29 @@
 			       (gvl :gesture-name :height))))
         (:width *example-icon-size*)
         (:parts `((:frame ,opal:rectangle;; frame to box gesture
-		     (:width ,*example-icon-size*) 
+		     (:width ,*example-icon-size*)
 		     (:height ,*example-icon-size*)
-		     (:left ,(o-formula (gvl :parent :left))) 
+		     (:left ,(o-formula (gvl :parent :left)))
 		     (:top  ,(o-formula (gvl :parent :top)))
 		     (:filling-style ,opal:white-fill))
 
                   ;; name of the gesture class this icon represents
                   (:gesture-name ,opal:text
-		     (:left 
-		      ,(o-formula 
+		     (:left
+		      ,(o-formula
 			(+ (gvl :parent :left)
 			   (round (- *example-icon-size*
-				     (opal:string-width opal:default-font 
-							(gvl :string))) 
+				     (opal:string-width opal:default-font
+							(gvl :string)))
 				  2))))
 		     (:top  ,(o-formula (+ (gvl :parent :top)
 					   (gvl :parent :frame :height))))
-		     (:string 
+		     (:string
 		      ,(o-formula
 			(let ((base-string
 			       (coerce
 				(gest-class-name
-				 (nth (gvl :parent :rank) 
+				 (nth (gvl :parent :rank)
 				      (gvl :parent :parent :items)))
 				'string)))
 			  (if (<= (length base-string) *max-name-chars*)
@@ -545,9 +545,9 @@
 			    (string-upcase
 			     (subseq base-string 0 *max-name-chars*)))))))
 
-                  ;; for selected gesture icon  
-                  (:feedback ,opal:rectangle  
-		     (:obj-over NIL);; set by the interactor 
+                  ;; for selected gesture icon
+                  (:feedback ,opal:rectangle
+		     (:obj-over NIL);; set by the interactor
 		     (:left ,(o-formula (gvl :parent :left)))
 		     (:top ,(o-formula (gvl :parent :top)))
 		     (:width ,(o-formula (gvl :parent :width)))
@@ -558,27 +558,27 @@
 		     (:draw-function :xor)
 		     (:fast-redraw-p T))
 
-                  ;; a polyline of scaled version of the gesture 
-                  (:gesture ,opal:polyline 
-		     (:x-scale ,(o-formula 
+                  ;; a polyline of scaled version of the gesture
+                  (:gesture ,opal:polyline
+		     (:x-scale ,(o-formula
 				 (ceiling 510 ; window size trained under!!!!
 					  (gvl :parent :frame :width))))
-		     (:y-scale ,(o-formula 
+		     (:y-scale ,(o-formula
 				 (ceiling 256 ; window size trained under!!!!
 					  (gvl :parent :frame :height))))
-		     (:point-list ,(o-formula  
+		     (:point-list ,(o-formula
 		        (scale (gvl :x-scale) (gvl :y-scale)
 			       (gvl :parent :left) (gvl :parent :top)
 			       (first
 				(gest-class-examples
-				 (nth (gvl :parent :rank) 
+				 (nth (gvl :parent :rank)
 				      (gvl :parent :parent :items))))))))
 
 		  (:arrow ,opal:arrowhead
 		     (:line-style ,orange-line-1)
 		     (:length 6)
 		     (:diameter 6)
-		     (:points ,(o-formula 
+		     (:points ,(o-formula
 				(gvl :parent :gesture :point-list)))
 		     (:visible ,(o-formula ;; make sure points exist
 				 (and (gvl :head-x) (gvl :head-y))))
@@ -587,7 +587,7 @@
 		     (:head-x ,(o-formula (first (gvl :calc-head))))
 		     (:head-y ,(o-formula (second (gvl :calc-head))))
 		     ;; need to do this since don't filter repeated points
-		     (:calc-head ,(o-formula 
+		     (:calc-head ,(o-formula
 				   (do* ((x1 (first (gvl :points)))
 					 (y1 (second (gvl :points)))
 					 (i 2 (+ 2 i))
@@ -595,13 +595,13 @@
 					    (nth i (gvl :points)))
 					 (y (nth (1+ i) (gvl :points))
 					    (nth (1+ i) (gvl :points))))
-				       ((not (and (eq x1 x) (eq y1 y))) 
+				       ((not (and (eq x1 x) (eq y1 y)))
 					(list x y)))))))))
 
-    ;; create the aggrelist for the unistroke icons 
+    ;; create the aggrelist for the unistroke icons
     (create-instance 'UNISTROKE-ICON-AGGL opal:aggrelist
-        (:top  0) 
-        (:left 0) 
+        (:top  0)
+        (:left 0)
         (:width (o-formula (gvl :parent :window :width)))
         (:direction :horizontal)
         (:h-spacing 0)
@@ -617,7 +617,7 @@
         (:how-set :toggle)
 	(:start-where (o-formula (list :element-of (gvl :operates-on)))))
 
-    ;; create a window for the gesture examples icons 
+    ;; create a window for the gesture examples icons
     (create-instance 'UNISTROKE-ICON-WIN inter:interactor-window
         (:left 0)
 	(:top (o-formula (+ (g-value ALPHABET-LABEL :top)
@@ -638,15 +638,15 @@
     (create-instance 'CANVAS-LABEL opal:text
         (:string "Canvas")
 	(:font (opal:get-standard-font :serif :bold :medium))
-	(:left (o-formula (- (round (gvl :parent :window :width) 2) 
+	(:left (o-formula (- (round (gvl :parent :window :width) 2)
 			     (round (opal:string-width (gvl :font)
 						       (gvl :string)) 2))))
 	(:top (o-formula (+ (g-value UNISTROKE-ICON-WIN :top)
 			    (g-value UNISTROKE-ICON-WIN :height) 10))))
 
-    ;; create window for entering and displaying full-sized gestures 
+    ;; create window for entering and displaying full-sized gestures
     (create-instance 'CANVAS-WIN inter:interactor-window
-        (:left 100) 
+        (:left 100)
         (:top (o-formula (+ (g-value CANVAS-LABEL :top)
                             (g-value CANVAS-LABEL :height) 5)))
         (:width (o-formula (- (gvl :parent :width) 200) 150))
@@ -670,13 +670,13 @@
 	;; note: can't be constant (changes)
         (:string "Draw Unistrokes Corresponding to Letters Here")
 	(:font (opal:get-standard-font :serif :bold :medium))
-	(:left (o-formula (- (round (gvl :parent :window :width) 2) 
+	(:left (o-formula (- (round (gvl :parent :window :width) 2)
 			     (round (opal:string-width (gvl :font)
 						       (gvl :string)) 2))))
 	(:top (o-formula (round (gvl :parent :window :height) 3))))
 
     ;; initialize globals
-    (multiple-value-setq 
+    (multiple-value-setq
 	(*unistroke-classifier* *unistroke-examples*)
 	(inter:gest-classifier-read
 	 (merge-pathnames "demo-unistrokes.classifier" common-lisp-user::Garnet-Gesture-Data-Pathname)))
@@ -685,7 +685,7 @@
     ;; create a gesture interactor to recognize the unistrokes
     (create-instance 'GESTURE-INTER inter:gesture-interactor
         (:window CANVAS-WIN)
-        (:start-where (list :in CANVAS-WIN)) 
+        (:start-where (list :in CANVAS-WIN))
         (:running-where (list :in CANVAS-WIN))
         (:start-event :any-leftdown :any-middledown)
         (:classifier *unistroke-classifier*)
@@ -703,32 +703,32 @@
         (:height *punctuation-icon-size*)
         (:width *punctuation-icon-size*)
         (:parts `((:frame ,opal:rectangle   ;; frame to box symbol
-                      (:width ,*punctuation-icon-size*) 
+                      (:width ,*punctuation-icon-size*)
                       (:height ,*punctuation-icon-size*)
-                      (:left ,(o-formula (gvl :parent :left))) 
+                      (:left ,(o-formula (gvl :parent :left)))
                       (:top  ,(o-formula (gvl :parent :top)))
                       (:filling-style ,opal:white-fill))
 
                   ;; punctuation symbol
                   (:symbol ,opal:text
-		      (:left 
+		      (:left
 		       ,(o-formula (+ (gvl :parent :left) 1
 				      (- (floor *punctuation-icon-size* 2)
-					 (floor (opal:string-width 
-						 (gvl :font) 
+					 (floor (opal:string-width
+						 (gvl :font)
 						 (gvl :string)) 2)))))
-		      (:top  
+		      (:top
 		       ,(o-formula (+ (gvl :parent :top)
 				      (round *punctuation-icon-size* 3))))
-		      (:font 
+		      (:font
 		       ,(opal:get-standard-font :fixed :bold :very-large))
                       (:string ,(o-formula
-				 (nth (gvl :parent :rank) 
+				 (nth (gvl :parent :rank)
 				      (gvl :parent :parent :items)))))
 
-                  ;; for selected punctuation icon  
-                  (:feedback ,opal:rectangle  
-                      (:obj-over NIL)  ;; set by the interactor 
+                  ;; for selected punctuation icon
+                  (:feedback ,opal:rectangle
+                      (:obj-over NIL)  ;; set by the interactor
                       (:left ,(o-formula (gvl :parent :left)))
                       (:top ,(o-formula (gvl :parent :top)))
                       (:width ,(o-formula (gvl :parent :width)))
@@ -738,7 +738,7 @@
                       (:draw-function :xor)
                       (:fast-redraw-p T)))))
 
-    ;; create the aggrelist for the punctuation icons 
+    ;; create the aggrelist for the punctuation icons
     (create-instance 'PUNCTUATION-ICON-AGGL opal:aggrelist
         (:top (o-formula (+ (g-value CANVAS-LABEL :top)
                             (g-value CANVAS-LABEL :height) 5)))
@@ -751,15 +751,15 @@
         (:fixed-height-p T)
         (:fixed-height-size *punctuation-icon-size*)
 	(:rank-margin 6)
-	(:items '("," "." ";" ":" "!" "?" 
+	(:items '("," "." ";" ":" "!" "?"
 		  "'" "\"" "cr" "(" ")" "$"))
 	(:item-prototype PUNCTUATION-ICON-PROTO)
-        (:interactors 
+        (:interactors
 	    ;; for selecting an icon
-            `((:press ,inter:button-interactor   
+            `((:press ,inter:button-interactor
 		 (:window ,(o-formula (gv-local :self :operates-on :window)))
 		 (:how-set :toggle)
-		 (:start-where 
+		 (:start-where
 		  ,(o-formula (list :element-of (gvl :operates-on))))
 		 (:stop-action
 		  ,#'(lambda (an-interactor final-obj-over)
@@ -768,13 +768,13 @@
 
     (opal:add-components (g-value CANVAS-WIN :aggregate)
 	     INSTRUCTIONS-TEXT)
-    (opal:add-component (g-value UNISTROKE-ICON-WIN :aggregate) 
+    (opal:add-component (g-value UNISTROKE-ICON-WIN :aggregate)
              UNISTROKE-ICON-AGGL)
     (opal:add-components TOP-AGG
-             MAIN-MENU TEXT-LABEL ALPHABET-LABEL CANVAS-LABEL 
+             MAIN-MENU TEXT-LABEL ALPHABET-LABEL CANVAS-LABEL
 	     PUNCTUATION-ICON-AGGL)
 
-    (opal:update TOP-WIN) 
+    (opal:update TOP-WIN)
 
     ;; print out instructions
     (format t "  To use Demo-Unistrokes, draw any of the shorthand gestures given in the~%")
@@ -790,5 +790,3 @@
     (unless dont-enter-main-event-loop #-cmu (inter:main-event-loop)))
 
 (format t "Type (demo-unistrokes:do-go) to begin.~%")
-
-

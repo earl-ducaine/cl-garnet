@@ -56,10 +56,10 @@ Change log:
 
 
 ;; Only loads this file when not compiling all of Garnet.
-(unless (get :garnet-modules :multifont)
-  (load (merge-pathnames "multifont-loader"
-			 #+cmu "opal:"
-			 #+(not cmu) Garnet-Opal-PathName)))
+;; (unless (get :garnet-modules :multifont)
+;;   (load (merge-pathnames "multifont-loader"
+;; 			 #+cmu "opal:"
+;; 			 #+(not cmu) Garnet-Opal-PathName)))
 
 ;; ---- Load gadgets files
 
@@ -67,7 +67,7 @@ Change log:
                                ;; this variable before loading if only want
 			       ;; to compile some of these files
   '(
-    "GAD-scroll-parts"    ;;  Helper modules containing definitions for 
+    "GAD-scroll-parts"    ;;  Helper modules containing definitions for
     "GAD-slider-parts"    ;;    scroll bar and slider objects
     "GAD-v-arrows"
     "GAD-v-boxes"
@@ -115,7 +115,7 @@ Change log:
 
     "standard-edit"
     "mouseline"
-    
+
     "prop-value-gadgets"
     "prop-sheet"
     "prop-sheet-win"
@@ -214,4 +214,3 @@ Change log:
 (setf (get :garnet-modules :multifont-gadget) t)
 
 (format t "...Done Gadgets.~%")
-

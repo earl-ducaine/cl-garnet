@@ -13,28 +13,28 @@
 
 
 ;;; Load modules required for multifont
-(unless (get :garnet-modules :multifont)
-   (format t "Loading Multifont...~%")
-   (load (merge-pathnames "multifont" Garnet-Opal-PathName)
-         :verbose T)
-   (dolist (file (list
-		  ;; "lispkeyhandling"
-		  ;;      "multifont-textinter"
-		  ;;      "focus-multifont-textinter"
-		  ;;      "selection-interactor"
-		       ))
-     (load (merge-pathnames file Garnet-Inter-PathName)
-	   :verbose T))
-   ; Load special printing functions for multifont if PS module
-   ; already loaded (otherwise they will be loaded by the PS loader
-   ; when needed).
-   ;; (if (get :garnet-modules :ps)
-   ;;     (load (merge-pathnames "ps-multifont" Garnet-PS-Pathname)
-   ;; 	     :verbose T))
-   ; Load special scrolling functions for multifont if PS module
-   ; already loaded (otherwise they will be loaded by the PS loader
-   ; when needed).
-   ;; (if (get :garnet-modules :scrolling-window)
-   ;;     (load (merge-pathnames "scrolling-window-multifont" Garnet-Gadgets-Pathname)
-   ;; 	     :verbose T))
-   (format t "...Done Multifont.~%"))
+;; (unless (get :garnet-modules :multifont)
+;;    (format t "Loading Multifont...~%")
+;;    (load (merge-pathnames "multifont" Garnet-Opal-PathName)
+;;          :verbose T)
+;;    (dolist (file (list
+;; 		  ;; "lispkeyhandling"
+;; 		  ;;      "multifont-textinter"
+;; 		  ;;      "focus-multifont-textinter"
+;; 		  ;;      "selection-interactor"
+;; 		       ))
+;;      (load (merge-pathnames file Garnet-Inter-PathName)
+;; 	   :verbose T))
+;;    ; Load special printing functions for multifont if PS module
+;;    ; already loaded (otherwise they will be loaded by the PS loader
+;;    ; when needed).
+;;    ;; (if (get :garnet-modules :ps)
+;;    ;;     (load (merge-pathnames "ps-multifont" Garnet-PS-Pathname)
+;;    ;; 	     :verbose T))
+;;    ; Load special scrolling functions for multifont if PS module
+;;    ; already loaded (otherwise they will be loaded by the PS loader
+;;    ; when needed).
+;;    ;; (if (get :garnet-modules :scrolling-window)
+;;    ;;     (load (merge-pathnames "scrolling-window-multifont" Garnet-Gadgets-Pathname)
+;;    ;; 	     :verbose T))
+;;    (format t "...Done Multifont.~%"))

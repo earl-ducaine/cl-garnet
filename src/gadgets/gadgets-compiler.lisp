@@ -64,8 +64,9 @@
 
 
 ;; Only loads this file when not compiling all of Garnet.
-(unless (get :garnet-modules :multifont)
-  (load (merge-pathnames "multifont-loader" Garnet-Opal-PathName))) ; The pathname is CORRECT!
+;; (unless (get :garnet-modules :multifont)
+;;   (load (merge-pathnames "multifont-loader" Garnet-Opal-PathName)))
+					; The pathname is CORRECT!
 
 (eval-when (:load-toplevel :compile-toplevel :execute)
   (garnet-mkdir-if-needed Garnet-Gadgets-Pathname))

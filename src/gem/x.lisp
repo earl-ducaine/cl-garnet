@@ -1077,15 +1077,7 @@ this display."
 			   (xlib:window-id event-window)))))))
 
 
-;;; Taken from windows.lisp
-;;;
-
-
-
-
-
 ;;; Returns list of drawable, parent, grandparent, ... , root.
-;;;
 (defun lineage-of-drawable (drawable)
   (multiple-value-bind (children parent root)
       (xlib:query-tree drawable)

@@ -1,79 +1,64 @@
 ;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: GARNETDRAW; Base: 10 -*-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;         The Garnet User Interface Development Environment.      ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; This code was written as part of the Garnet project at          ;;;
-;;; Carnegie Mellon University, and has been placed in the public   ;;;
-;;; domain.  If you are using this code or any part of Garnet,      ;;;
-;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; $Id$
+;;; The Garnet User Interface Development Environment
+;;;
+;;; This code was written as part of the Garnet project at Carnegie
+;;; Mellon University, and has been placed in the public domain.  If
+;;; you are using this code or any part of Garnet, please contact
+;;; garnet@cs.cmu.edu to be put on the mailing list.
 
-
+
+(in-package :garnetdraw)
+
+
 ;;;
 ;;;   GARNET DRAW
 ;;;
 ;;;  Implemented by Vivek Gupta
 
-
-(in-package :GARNETDRAW)
-
 (defparameter GarnetDraw-Version "2.0")
 
-;; Load necessary files
-;;
-(defvar GARNETDRAW-INIT
-  (progn
-    ;;;  Load ps-loader.
-    ;; (common-lisp-user::garnet-load "ps:ps-loader")
+;; VARIABLES
 
-    ;;;  Load gadgets.
-    ;; (dolist (file '("multi-selection-loader" "polyline-creator-loader"
-    ;; 		    "arrow-line-loader"
-    ;; 		    "motif-menubar-loader"
-    ;; 		    "motif-trill-device-loader"
-    ;; 		    "motif-error-gadget-loader"
-    ;; 		    "motif-save-gadget-loader"
-    ;; 		    "standard-edit-loader"))
-    ;;   (common-lisp-user::garnet-load (concatenate 'string "gadgets:" file)))
-    ))
+;; These are the variables used in different
+;; parts of the file
 
-#|
-====================================================================
-VARIABLES
+;; (declaim (special CREATE-OR-EDIT CURRENT-STATE DRAW-WIN MOVER-GROWER
+;; 		  MOVING-AGG MOVING-ARROWLINE NEW-MOVING-ARROWLINE
+;; 		  MOVING-DOUBLEARROWLINE
+;; 		  MOVING-LINE MOVING-OVAL MOVING-RECT MOVING-ROUNDTANGLE
+;; 		  PALETTE-FEEDBACK TEXT-FEEDBACK
+;; 		  TOOLS-MENU TOP-DRAW-AGG WIN PS-READ-WIN GRID-WIN SAVE-WIN
+;; 		  GRID-OBJ MAIN-MENU COMMON-LISP-USER::*GARNET-OBJECT-JUST-CREATED*
+;; 		  EDIT-POLYLINE-INTER CREATOR-DOUBLEARROLINE TOOL-FEEDBACK
+;; 		  LINE-FEEDBACK LINE-PALETTE PALETTE-ITEM STIPPLE-PALETTE
+;; 		  COLOR-PALETTE-ITEM CREATOR-LINE CREATOR-RECT
+;; 		  CREATOR-ROUNDTANGLE CREATOR-OVAL CREATOR-ARROWLINE
+;; 		  CREATOR-DOUBLEARROWLINE TOP-AGG COLOR-PALETTE))
 
-These are the variables used in different
-parts of the file
-====================================================================
-|#
+(defvar *draw-agg*)
+(defvar *grid-db*)
+(defvar *q-box*)
+(defvar *read-db*)
+(defvar *save-db*)
 
-(declaim (special CREATE-OR-EDIT CURRENT-STATE DRAW-WIN MOVER-GROWER
-		  MOVING-AGG MOVING-ARROWLINE NEW-MOVING-ARROWLINE
-		  MOVING-DOUBLEARROWLINE
-		  MOVING-LINE MOVING-OVAL MOVING-RECT MOVING-ROUNDTANGLE
-		  PALETTE-FEEDBACK TEXT-FEEDBACK
-		  TOOLS-MENU TOP-DRAW-AGG WIN PS-READ-WIN GRID-WIN SAVE-WIN
-		  GRID-OBJ MAIN-MENU COMMON-LISP-USER::*GARNET-OBJECT-JUST-CREATED*
-		  EDIT-POLYLINE-INTER CREATOR-DOUBLEARROLINE TOOL-FEEDBACK
-		  LINE-FEEDBACK LINE-PALETTE PALETTE-ITEM STIPPLE-PALETTE
-		  COLOR-PALETTE-ITEM CREATOR-LINE CREATOR-RECT
-		  CREATOR-ROUNDTANGLE CREATOR-OVAL CREATOR-ARROWLINE
-		  CREATOR-DOUBLEARROWLINE TOP-AGG COLOR-PALETTE))
+(defparameter *the-color-list* nil)
 
-(defvar *DRAW-AGG*)(defvar *Q-BOX*)
-(defvar *SAVE-DB*)(defvar *Read-DB*)
-(defvar *GRID-DB*)
+(create-instance 'grid-obj nil
+  ;; Can see gridding?
+  (:gridvis nil)
+  ;; Gridding is in use?
+  (:gridon nil)
+  ;; Amount to grid by
+  (:gridamt 10))
 
-(defparameter the-color-list NIL)
+;; Set with menu bar item for grid on/off
+(defparameter *grid-menu-item* nil)
 
-(create-instance 'GRID-OBJ NIL ; use an object so constraints to values
-		 (:gridvis NIL) ; whether can see gridding or not
-		 (:gridon NIL) ; whether gridding is in use or not
-		 (:gridamt 10)) ; amount to grid by
-(defparameter *Grid-Menu-Item* NIL) ; set with menu bar item for grid on/off
-(defparameter *Grid-Vis-Item* NIL) ; set with menu bar item for grid vis on/off
-(defparameter POLYGON-MAKER NIL)
+;; Set with menu bar item for grid vis on/off
+(defparameter *grid-vis-item* nil)
+
+(defparameter *polygon-maker* nil)
 
 (defparameter rgbvalues
   `((1.00 0.00 0.52) (1.00 0.00 0.82) (,opal:purple-fill ,opal:purple-line)
@@ -86,25 +71,25 @@ parts of the file
     (1.00 0.82 0.00)
     (1.00 0.52 0.00) (,opal:red-fill ,opal:red-line)))
 
-(defvar *TEMP-POINTS* NIL)
-(defvar *TEMP-LIST* NIL)
-(defvar *CLIPBOARD* NIL)
-(defvar *DOCUMENT-NAME* "Untitled")
-(defvar *STORED-LINE-STYLES*
+(defvar *temp-points* nil)
+(defvar *temp-list* nil)
+(defvar *clipboard* nil)
+(defvar *document-name* "untitled")
+(defvar *stored-line-styles*
   (list opal:default-line-style opal:line-1 opal:line-2
 	opal:line-4 opal:line-8 opal:red-line opal:green-line opal:blue-line
 	opal:yellow-line opal:purple-line opal:cyan-line opal:orange-line))
 
-(defvar *FEEDBACK-LINE-STYLE*
-  (create-instance NIL opal:line-style
-    (:constant T)
+(defvar *feedback-line-style*
+  (create-instance nil opal:line-style
+    (:constant t)
     (:line-thickness 3)))
 
 (defvar *garnetdraw-high-priority*
-  (create-instance NIL inter:priority-level
+  (create-instance nil inter:priority-level
     (:stop-when :if-any)))
 (defvar *garnetdraw-high-running-priority*
-  (create-instance NIL inter:priority-level
+  (create-instance nil inter:priority-level
     (:stop-when :if-any)))
 
 ;; need a priority level higher than the motif-tab priority level so
@@ -115,34 +100,34 @@ parts of the file
 
 #|
 ====================================================================
-PROTOTYPES
+prototypes
 
-Below we have the prototypes for all the objects which we are going
-to draw.  The first is the one for grouping objects, the rest are
+below we have the prototypes for all the objects which we are going
+to draw.  the first is the one for grouping objects, the rest are
 individual objects.
 ====================================================================
 |#
 
 
-(defun Create-Moving-Prototypes ()
+(defun create-moving-prototypes ()
   (create-instance 'moving-agg opal:aggregadget
     (:group-p t)
     (:grow-p t))
 
-  (create-instance 'MOVING-LINE opal:line
+  (create-instance 'moving-line opal:line
     (:points (list 0 0 0 0))
     (:x1 (o-formula (first (gvl :points))))
     (:y1 (o-formula (second (gvl :points))))
     (:x2 (o-formula (third (gvl :points))))
     (:y2 (o-formula (fourth (gvl :points))))
     (:grow-p t)
-    (:group-p NIL)
+    (:group-p nil)
     (:line-p t)
     (:draw-function :xor)
     (:fast-redraw-p t)
-    (:visible-p NIL)
+    (:visible-p nil)
     (:line-style opal:dashed-line))
-  (create-instance 'creator-LINE opal:line
+  (create-instance 'creator-line opal:line
     (:points (list 0 0 0 0))
     (:x1 (o-formula (first (gvl :points))))
     (:y1 (o-formula (second (gvl :points))))
@@ -150,7 +135,7 @@ individual objects.
     (:y2 (o-formula (fourth (gvl :points))))
     (:grow-p t))
 
-  (create-instance 'new-moving-arrowline garnet-gadgets:Arrow-Line
+  (create-instance 'new-moving-arrowline garnet-gadgets:arrow-line
     (:points (list 0 0 0 0))
     (:x1 (o-formula (first (gvl :points))))
     (:y1 (o-formula (second (gvl :points))))
@@ -158,23 +143,23 @@ individual objects.
     (:y2 (o-formula (fourth (gvl :points))))
     (:line-p t)
     (:grow-p t)
-    (:group-p NIL)
-    (:visible-p NIL)
-    (:filling-style NIL)
+    (:group-p nil)
+    (:visible-p nil)
+    (:filling-style nil)
     (:line-style opal:dashed-line)
-    (:open-p NIL)
+    (:open-p nil)
     (:parts `((:line :modify (:fast-redraw-p t) (:draw-function :xor))
 	      (:arrowhead :modify (:fast-redraw-p t) (:draw-function :xor)))))
-  (create-instance 'creator-arrowline garnet-gadgets:Arrow-Line
+  (create-instance 'creator-arrowline garnet-gadgets:arrow-line
     (:points (list 0 0 0 0))
     (:x1 (o-formula (first (gvl :points))))
     (:y1 (o-formula (second (gvl :points))))
     (:x2 (o-formula (third (gvl :points))))
     (:y2 (o-formula (fourth (gvl :points))))
     (:grow-p t)
-    (:open-p NIL))
+    (:open-p nil))
 
-  (create-instance 'moving-doublearrowline garnet-gadgets:Double-Arrow-Line
+  (create-instance 'moving-doublearrowline garnet-gadgets:double-arrow-line
     (:points (list 0 0 0 0))
     (:x1 (o-formula (first (gvl :points))))
     (:y1 (o-formula (second (gvl :points))))
@@ -183,16 +168,16 @@ individual objects.
     (:arrow-p t)
     (:arrowhead-p 3)
     (:grow-p t)
-    (:group-p NIL)
+    (:group-p nil)
     (:line-p t)
-    (:visible-p NIL)
-    (:filling-style NIL)
+    (:visible-p nil)
+    (:filling-style nil)
     (:line-style opal:dashed-line)
-    (:open-p NIL)
+    (:open-p nil)
     (:parts `((:line :modify (:fast-redraw-p t) (:draw-function :xor))
 	      (:arrowhead1 :modify (:fast-redraw-p t) (:draw-function :xor))
 	      (:arrowhead2 :modify (:fast-redraw-p t) (:draw-function :xor)))))
-  (create-instance 'creator-doublearrowline garnet-gadgets:Double-Arrow-Line
+  (create-instance 'creator-doublearrowline garnet-gadgets:double-arrow-line
     (:points (list 0 0 0 0))
     (:x1 (o-formula (first (gvl :points))))
     (:y1 (o-formula (second (gvl :points))))
@@ -206,21 +191,21 @@ individual objects.
   (create-instance 'moving-arrowline moving-doublearrowline
     (:arrowhead-p 2))
 
-  (create-instance 'MOVING-RECT opal:rectangle
+  (create-instance 'moving-rect opal:rectangle
     (:box (list 0 0 0 0))
     (:left (o-formula (first (gvl :box))))
     (:top  (o-formula (second (gvl :box))))
     (:width (o-formula (third (gvl :box))))
     (:height (o-formula (fourth (gvl :box))))
-    (:group-p NIL)
+    (:group-p nil)
     (:grow-p t)
-    (:filling-style NIL)
-    (:line-p NIL)
+    (:filling-style nil)
+    (:line-p nil)
     (:fast-redraw-p t)
     (:draw-function :xor)
-    (:visible-p NIL)
+    (:visible-p nil)
     (:line-style opal:dashed-line))
-  (create-instance 'creator-RECT opal:rectangle
+  (create-instance 'creator-rect opal:rectangle
     (:box (list 0 0 0 0))
     (:left (o-formula (first (gvl :box))))
     (:top  (o-formula (second (gvl :box))))
@@ -228,21 +213,21 @@ individual objects.
     (:height (o-formula (fourth (gvl :box))))
     (:grow-p t))
 
-  (create-instance 'MOVING-ROUNDTANGLE opal:roundtangle
+  (create-instance 'moving-roundtangle opal:roundtangle
     (:box (list 0 0 0 0))
     (:left (o-formula (first (gvl :box))))
     (:top (o-formula (second (gvl :box))))
     (:width (o-formula (third (gvl :box))))
     (:height (o-formula (fourth (gvl :box))))
-    (:filling-style NIL)
+    (:filling-style nil)
     (:grow-p t)
-    (:group-p NIL)
-    (:visible-p NIL)
-    (:line-p NIL)
+    (:group-p nil)
+    (:visible-p nil)
+    (:line-p nil)
     (:fast-redraw-p t)
     (:draw-function :xor)
     (:line-style opal:dashed-line))
-  (create-instance 'creator-ROUNDTANGLE opal:roundtangle
+  (create-instance 'creator-roundtangle opal:roundtangle
     (:box (list 0 0 0 0))
     (:left (o-formula (first (gvl :box))))
     (:top (o-formula (second (gvl :box))))
@@ -256,13 +241,13 @@ individual objects.
     (:top (o-formula (second (gvl :box))))
     (:width (o-formula (third (gvl :box))))
     (:height (o-formula (fourth (gvl :box))))
-    (:filling-style NIL)
+    (:filling-style nil)
     (:grow-p t)
-    (:group-p NIL)
+    (:group-p nil)
     (:fast-redraw-p t)
     (:draw-function :xor)
-    (:visible-p NIL)
-    (:line-p NIL)
+    (:visible-p nil)
+    (:line-p nil)
     (:line-style opal:dashed-line))
   (create-instance 'creator-oval opal:oval
     (:box (list 0 0 0 0))
@@ -273,316 +258,286 @@ individual objects.
     (:grow-p t))
   )
 
-(defun Create-Text-Feedback ()
-  (create-instance 'TEXT-FEEDBACK opal:cursor-multi-text
+(defun create-text-feedback ()
+  (create-instance 'text-feedback opal:cursor-multi-text
     (:box (list 0 0 0 0))
     (:string "")
     (:visible (o-formula (gvl :obj-over)))
-    (:group-p NIL)
+    (:group-p nil)
     (:left (o-formula (first (gvl :box))))
     (:top (o-formula (second (gvl :box))))))
 
 
-
-#|
-====================================================================
-DIALOG BOX FUNCTIONS
-
-====================================================================
-|#
-
-;; Since the same save gadget is used for BOTH creating ps files and
+;; Dialog box functions
+;; since the same save gadget is used for both creating ps files and
 ;; for saving, this function resets the :selection-function and the
 ;; :text of the save gadget after it is done.
 
-(defun PS-Sel-Fn (g v)
-  (opal:make-ps-file DRAW-WIN v)
-  (s-value g :selection-function 'Save-Sel-Fn)
-  (s-value (g-value g :text) :string "Saving...")
-  )
+(defun ps-sel-fn (g v)
+  (opal:make-ps-file draw-win v)
+  (s-value g :selection-function 'save-sel-fn)
+  (s-value (g-value g :text) :string "saving..."))
 
-(defun Read-Sel-Fn (g v)
+(defun read-sel-fn (g v)
   (declare (ignore g))
   (let ((filename v))
     (if (probe-file filename)
 	(progn
-	  (gg:set-selection MOVER-GROWER NIL)
-	  (if (schema-p *DRAW-AGG*) (opal:destroy *DRAW-AGG*))
+	  (gg:set-selection mover-grower nil)
+	  (if (schema-p *draw-agg*) (opal:destroy *draw-agg*))
 	  (setf *document-name* filename)
 	  (with-constants-disabled
-	   (load *document-name*))
-
-	  (unless (schema-p *DRAW-AGG*)
+	    (load *document-name*))
+	  (unless (schema-p *draw-agg*)
 	    ;; then is a new style file, have to set *draw-agg*
-	    (setf *draw-agg* common-lisp-user::*Garnet-Object-Just-Created*))
-	  (s-value MOVER-GROWER :start-where (list :element-of-or-none
-						   *DRAW-AGG*))
-	  (s-value CREATE-OR-EDIT :start-where
-		   (list :element-of-or-none *DRAW-AGG*
+	    (setf *draw-agg* common-lisp-user::*garnet-object-just-created*))
+	  (s-value mover-grower :start-where (list :element-of-or-none
+						   *draw-agg*))
+	  (s-value create-or-edit :start-where
+		   (list :element-of-or-none *draw-agg*
 			 :type opal:cursor-multi-text))
-	  (s-value POLYGON-MAKER :start-where
-		   (list :in *DRAW-AGG*))
-
-	  (gg:Standard-Initialize-Gadget MAIN-MENU MOVER-GROWER *DRAW-AGG*)
-
+	  (s-value polygon-maker :start-where
+		   (list :in *draw-agg*))
+	  (gg:standard-initialize-gadget main-menu mover-grower *draw-agg*)
 	  ;; This is necessary because the items functions are called
 	  ;; by the motif-menu sitting in the submenus
-	  (dolist (menu (g-value MAIN-MENU :menubar-items :components))
-	    (gg:Standard-Initialize-Gadget (g-value menu :submenu)
-					   MOVER-GROWER *DRAW-AGG*))
-
+	  (dolist (menu (g-value main-menu :menubar-items :components))
+	    (gg:standard-initialize-gadget (g-value menu :submenu)
+					   mover-grower *draw-agg*))
 	  (with-constants-disabled
-	    (opal:add-component TOP-DRAW-AGG *DRAW-AGG* :where :back))
-	  (s-value WIN :title (file-namestring *document-name*)))
-	(gg:display-query *Q-BOX* "There is no file by that name"
-			  '("OK"))))
+	    (opal:add-component top-draw-agg *draw-agg* :where :back))
+	  (s-value main-window :title (file-namestring *document-name*)))
+	(gg:display-query *q-box* "there is no file by that name"
+			  '("ok")))))
+
+(defun read-file ()
+  (gg:display-load-gadget-and-wait *read-db* *document-name*)
   )
 
-(defun Read-File ()
-  (gg:display-load-gadget-and-wait *Read-DB* *document-name*)
-  )
-
-(defun Write-Draw-Agg ()
+(defun write-draw-agg ()
   (with-open-file (*standard-output* *document-name*
 		   :direction :output :if-exists :supersede)
-    (format T ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;~%")
-    (format T ";;; This file created by GARNETDRAW ~a~%"
-	  GarnetDraw-Version)
-  (format T ";;; on ~a~%" (inter::time-to-string))
-  (format T ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;~%~%")
-  (format T "(in-package :COMMON-LISP-USER)~%(use-package :KR)~%~%")
-  (format T "(defparameter common-lisp-user::*Used-GarnetDraw-Version* ~s)~%~%"
-	  GarnetDraw-Version)
-  (s-value *draw-agg* :package-name "COMMON-LISP-USER")
+    (format t ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;~%")
+    (format t ";;; this file created by garnetdraw ~a~%"
+	  garnetdraw-version)
+  (format t ";;; on ~a~%" (inter::time-to-string))
+  (format t ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;~%~%")
+  (format t "(in-package :common-lisp-user)~%(use-package :kr)~%~%")
+  (format t "(defparameter common-lisp-user::*used-garnetdraw-version* ~s)~%~%"
+	  garnetdraw-version)
+  (s-value *draw-agg* :package-name "common-lisp-user")
   (s-value *draw-agg* :window-height (g-value draw-win :height))
   (s-value *draw-agg* :window-width (g-value draw-win :width))
-  (s-value *draw-agg* :window-title "Garnet Draw")
-  (Format T "(defparameter common-lisp-user::*Garnet-Object-Just-Created* ~%")
-  (opal:write-gadget *DRAW-AGG* T T)
+  (s-value *draw-agg* :window-title "garnet draw")
+  (format t "(defparameter common-lisp-user::*garnet-object-just-created* ~%")
+  (opal:write-gadget *draw-agg* t t)
   (format t ")~%")))
 
-;; This is called by savefun and saveasfun.  If confirm-p is T, it
-;; displays the save gadget.  Else, it simply saves.
+;; this is called by savefun and saveasfun.  if confirm-p is t, it
+;; displays the save gadget.  else, it simply saves.
 
-(defun Save-File (&key confirm-p)
-  (if (or confirm-p (equal *document-name* "Untitled"))
+(defun save-file (&key confirm-p)
+  (if (or confirm-p (equal *document-name* "untitled"))
       (gg:display-save-gadget-and-wait *save-db* *document-name*)
-      (Write-Draw-Agg)))
+      (write-draw-agg)))
 
-;; This is the selection function of the save gadget.  It sets the
+;; this is the selection function of the save gadget.  it sets the
 ;; document name to be the filename the gadget returns, v, and
-;; calls Write-Draw-Agg, which does the saving.
+;; calls write-draw-agg, which does the saving.
 
-(defun Save-Sel-Fn (g v)
+(defun save-sel-fn (g v)
   (declare (ignore g))
   (setq *document-name* v)
-  (Write-Draw-Agg))
+  (write-draw-agg))
 
-#|
-====================================================================
-DIALOG BOXES
+;;; Dialog boxes
 
-====================================================================
-|#
-
-(defun Create-Query-Gadget ()
-  (setf *Q-BOX* (create-instance NIL garnet-gadgets:motif-query-gadget
+(defun create-query-gadget ()
+  (setf *q-box* (create-instance nil garnet-gadgets:motif-query-gadget
 		  (:foreground-color opal:motif-green)
-		  (:parent-window WIN))))
+		  (:parent-window main-window))))
 
-(defun Create-File-DB ()
-  (setf *SAVE-DB*
-	(create-instance NIL gg:motif-save-gadget
+(defun create-file-db ()
+  (setf *save-db*
+	(create-instance nil gg:motif-save-gadget
 	  (:foreground-color opal:motif-green)
 	  (:min-gadget-width 285)
-	  (:parent-window win)
-	  (:modal-p T)
+	  (:parent-window main-window)
+	  (:modal-p t)
 	  (:top 40)
-	  (:button-panel-items '("OK" "Cancel"))
-
-	  (:selection-function 'Save-Sel-Fn)
+	  (:button-panel-items '("ok" "cancel"))
+	  (:selection-function 'save-sel-fn)
 	  (:parts `(:dir-input
 		    :file-menu
 		    :file-input
 		    :message
-		    :OK-Cancel-buttons
+		    :ok-cancel-buttons
 		    (:text ,opal:text
-		     (:constant T  :except :string)
+		     (:constant t  :except :string)
 		     (:left ,(o-formula (gvl :parent :left)))
 		     (:top 10)
-		     (:font ,(opal:get-standard-font NIL :bold-italic :large))
-		     (:string "Saving..."))
+		     (:font ,(opal:get-standard-font nil :bold-italic :large))
+		     (:string "saving..."))
 		    ))))
-  (setf SAVE-WIN (g-value *save-db* :window))
-)
+  (setf save-win (g-value *save-db* :window)))
 
-(defun Create-Grid-DB ()
-  (create-instance 'GRID-WIN inter:interactor-window
+(defun create-grid-db ()
+  (create-instance 'grid-win inter:interactor-window
     (:background-color opal:motif-green)
-    (:parent WIN)
-    (:modal-p T)
-    (:visible NIL)
-    (:left (o-formula (- (floor (gv WIN :width) 2)
+    (:parent main-window)
+    (:modal-p t)
+    (:visible nil)
+    (:left (o-formula (- (floor (gv main-window :width) 2)
 			 (floor (gvl :width) 2))))
-    (:top (o-formula (- (floor (gv WIN :height) 2)
+    (:top (o-formula (- (floor (gv main-window :height) 2)
 			(floor (gvl :height) 2))))
     (:width 345)
     (:height 85))
-  (setf *GRID-DB*
-	(create-instance NIL opal:aggregadget
+  (setf *grid-db*
+	(create-instance nil opal:aggregadget
 	  (:left 0) (:top 0)
 	  (:parts
 	   `((:text ,opal:text
-	      (:constant T)
+	      (:constant t)
 	      (:left 10) (:top 10)
-	      (:font ,(opal:get-standard-font NIL :bold-italic :large))
-	      (:string "New Grid Increment:"))
+	      (:font ,(opal:get-standard-font nil :bold-italic :large))
+	      (:string "new grid increment:"))
 	     (:value ,gg:motif-trill-device
 	      (:foreground-color ,opal:motif-green)
-	      (:constant T)
+	      (:constant t)
 	      (:left 225) (:top 5)
 	      (:height 30) (:width 100))
 	     (:ok-cancel ,gg:motif-text-button-panel
 	      (:foreground-color ,opal:motif-green)
-	      (:constant T)
+	      (:constant t)
 	      (:text-offset 5)
 	      (:left 114) (:top 40)
-	      (:items ("OK" "Cancel"))
-	      (:final-feedback-p NIL)
+	      (:items ("ok" "cancel"))
+	      (:final-feedback-p nil)
 	      (:gray-width 3) (:shadow-offset 5)
 	      (:direction :horizontal)
 	      (:selection-function
 	       ,#'(lambda (g v)
-		    (s-value GRID-WIN :visible NIL)
-		    (opal:update GRID-WIN)
-		    (when (equal v "OK")
-		      (s-value GRID-OBJ :gridamt
+		    (s-value grid-win :visible nil)
+		    (opal:update grid-win)
+		    (when (equal v "ok")
+		      (s-value grid-obj :gridamt
 			       (g-value g :parent :value :value))))))))))
-  (s-value GRID-WIN :aggregate *GRID-DB*)
-  )
+  (s-value grid-win :aggregate *grid-db*))
 
-(defun Create-Read-DB ()
-  (setf *Read-DB*
-	(create-instance NIL gg:motif-load-gadget
+(defun create-read-db ()
+  (setf *read-db*
+	(create-instance nil gg:motif-load-gadget
 	  (:foreground-color opal:motif-green)
-	  (:selection-function #'Read-Sel-Fn)
+	  (:selection-function #'read-sel-fn)
 	  (:min-gadget-width 285)
-	  (:modal-p T)
-	  (:check-filenames-p NIL)
-	  (:parent-window win)
+	  (:modal-p t)
+	  (:check-filenames-p nil)
+	  (:parent-window main-window)
 	  (:top 40)
-	  (:button-panel-items '("OK" "Cancel"))
+	  (:button-panel-items '("ok" "cancel"))
 	  (:parts
 	   `(:dir-input
 	     :file-menu
 	     :file-input
 	     :message
 	     (:text ,opal:text
-	      (:constant T :except :string)
-	      (:left 10) (:top 10)
-	      (:font ,(opal:get-standard-font NIL :bold-italic :large))
-	      (:string "Reading..."))
-
-	     (:OK-cancel-buttons :modify
-		     (:top ,(o-formula (+ (gvl :parent :file-input :top)
-					  (gvl :parent :file-input :height)
-					  20))))))))
-
-  (setf PS-Read-WIN (g-value *Read-DB* :window))
-  )
+		    (:constant t :except :string)
+		    (:left 10) (:top 10)
+		    (:font ,(opal:get-standard-font nil :bold-italic :large))
+		    (:string "reading..."))
+	     (:ok-cancel-buttons :modify
+				 (:top ,(o-formula (+ (gvl :parent :file-input :top)
+						      (gvl :parent :file-input :height)
+						      20))))))))
+  (setf ps-read-win (g-value *read-db* :window)))
 
 
-#|
-====================================================================
-MENU FUNCTIONS AND MENUBAR
-
-These functions are the necessary functions for the Menubar to act
-properly on any action by the user.  Additional functions must be
-added here for cut, paste, copy, and various font functions.
-====================================================================
-|#
+;;; Menu functions and menubar
+;;;
+;;; These functions are the necessary functions for the menubar to act
+;;; properly on any action by the user.  additional functions must be
+;;; added here for cut, paste, copy, and various font functions.
 
 
 (defun quitfun (menubar bar-item submenu-item)
   (declare (ignore menubar bar-item submenu-item))
-  (unless (eq :cancel (gg:Save-File-If-Wanted *save-db* *document-name*))
+  (unless (eq :cancel (gg:save-file-if-wanted *save-db* *document-name*))
     (do-stop)))
 
 (defun psfun (menubar bar-item submenu-item)
   (declare (ignore menubar bar-item submenu-item))
-  (s-value *Save-DB* :selection-function #'PS-Sel-Fn)
-  (s-value (g-value *Save-DB* :text) :string "PS File...")
-  (gg:display-save-gadget-and-wait *Save-DB* *document-name*)
-  )
+  (s-value *save-db* :selection-function #'ps-sel-fn)
+  (s-value (g-value *save-db* :text) :string "ps file...")
+  (gg:display-save-gadget-and-wait *save-db* *document-name*))
 
 (defun openfun (menubar bar-item submenu-item)
   (declare (ignore menubar bar-item submenu-item))
   (unless (eq :cancel (gg:save-file-if-wanted *save-db* *document-name*))
-    (Read-File)))
+    (read-file)))
 
 (defun newfun (menubar bar-item submenu-item)
   (declare (ignore menubar bar-item submenu-item))
-  (unless (eq :cancel (gg:Save-File-If-Wanted *save-db* *document-name*))
-	(gg:set-selection MOVER-GROWER NIL)
-	(opal:remove-component TOP-DRAW-AGG *DRAW-AGG*)
+  (unless (eq :cancel (gg:save-file-if-wanted *save-db* *document-name*))
+	(gg:set-selection mover-grower nil)
+	(opal:remove-component top-draw-agg *draw-agg*)
 	(with-constants-disabled
-	    (dolist (comp (copy-list (g-value *DRAW-AGG* :components)))
+	    (dolist (comp (copy-list (g-value *draw-agg* :components)))
 	      (opal:destroy comp)))
-	(opal:add-component TOP-DRAW-AGG *DRAW-AGG*)))
+	(opal:add-component top-draw-agg *draw-agg*)))
 
 (defun saveasfun (menubar bar-item submenu-item)
   (declare (ignore menubar bar-item submenu-item))
-  (Save-File :confirm-p T))
+  (save-file :confirm-p t))
 
 (defun savefun (menubar bar-item submenu-item)
   (declare (ignore menubar bar-item submenu-item))
-  (Save-File))
+  (save-file))
 
 
-(defun GetFontFromMenu (submenu-item old-font)
+(defun getfontfrommenu (submenu-item old-font)
   (cond
-    ((equal submenu-item " Fixed ")
+    ((equal submenu-item " fixed ")
      (opal:get-standard-font :fixed
 			     (g-value old-font :face)
 			     (g-value old-font :size)))
-    ((equal submenu-item " Serif ")
+    ((equal submenu-item " serif ")
      (opal:get-standard-font :serif
 			     (g-value old-font :face)
 			     (g-value old-font :size)))
-    ((equal submenu-item " Sans-Serif ")
+    ((equal submenu-item " sans-serif ")
      (opal:get-standard-font :sans-serif
 			     (g-value old-font :face)
 			     (g-value old-font :size)))
-
-    ((equal submenu-item " Roman ")
+    ((equal submenu-item " roman ")
      (opal:get-standard-font (g-value old-font :family)
 			     :roman
 			     (g-value old-font :size)))
-    ((equal submenu-item " Bold ")
+    ((equal submenu-item " bold ")
      (opal:get-standard-font (g-value old-font :family)
 			     :bold
 			     (g-value old-font :size)))
-    ((equal submenu-item " Italic ")
+    ((equal submenu-item " italic ")
      (opal:get-standard-font (g-value old-font :family)
 			     :italic
 			     (g-value old-font :size)))
-    ((equal submenu-item " Bold-Italic ")
+    ((equal submenu-item " bold-italic ")
      (opal:get-standard-font (g-value old-font :family)
 			     :bold-italic
 			     (g-value old-font :size)))
-    ((equal submenu-item " Small ")
+    ((equal submenu-item " small ")
      (opal:get-standard-font (g-value old-font :family)
 			     (g-value old-font :face)
 			     :small))
-    ((equal submenu-item " Medium ")
+    ((equal submenu-item " medium ")
      (opal:get-standard-font (g-value old-font :family)
 			     (g-value old-font :face)
 			     :medium))
-    ((equal submenu-item " Large ")
+    ((equal submenu-item " large ")
      (opal:get-standard-font (g-value old-font :family)
 			     (g-value old-font :face)
 			     :large))
-    ((equal submenu-item " Very-Large ")
+    ((equal submenu-item " very-large ")
      (opal:get-standard-font (g-value old-font :family)
 			     (g-value old-font :face)
 			     :very-large))
@@ -590,149 +545,140 @@ added here for cut, paste, copy, and various font functions.
 
 (defun fontfun (gadget menu-item submenu-item)
   (declare (ignore gadget menu-item))
-  (if (g-value MOVER-GROWER :value)
-      (dolist (item (g-value MOVER-GROWER :value))
+  (if (g-value mover-grower :value)
+      (dolist (item (g-value mover-grower :value))
 	(when (g-value item :text-p)
 	  (with-constants-disabled
 		(s-value item :font
-		       (GetFontFromMenu submenu-item (g-value item :font)))))))
-  ;; Always set the global state
-  (let* ((text-state (g-value TOOLS-MENU :text-tool :text-state))
-	 (new-font (GetFontFromMenu submenu-item
+		       (getfontfrommenu submenu-item (g-value item :font)))))))
+  ;; always set the global state
+  (let* ((text-state (g-value tools-menu :text-tool :text-state))
+	 (new-font (getfontfrommenu submenu-item
 				    (g-value text-state :font))))
     (s-value text-state :font new-font)))
 
 (defun gridtoggle (menubar bar-item submenu-item)
   (declare (ignore menubar bar-item submenu-item))
-  (if (g-value GRID-OBJ :gridon)
+  (if (g-value grid-obj :gridon)
       (progn ; turn if off, and make menu so it will turn it on
-	(s-value GRID-OBJ :gridon NIL)
-	(gg:menubar-set-title *Grid-Menu-Item* " Turn Grid On "))
+	(s-value grid-obj :gridon nil)
+	(gg:menubar-set-title *grid-menu-item* " turn grid on "))
       (progn; turn if on, and make menu so it will turn it off
-	(s-value GRID-OBJ :gridon T)
-	(gg:menubar-set-title *Grid-Menu-Item* " Turn Grid Off "))))
+	(s-value grid-obj :gridon t)
+	(gg:menubar-set-title *grid-menu-item* " turn grid off "))))
 
 (defun gridvisible (menubar bar-item submenu-item)
   (declare (ignore menubar bar-item submenu-item))
-  (if (g-value GRID-OBJ :gridvis)
+  (if (g-value grid-obj :gridvis)
       (progn ; turn if off, and make menu so it will turn it on
-	(s-value GRID-OBJ :gridvis NIL)
-	(gg:menubar-set-title *Grid-Vis-Item* " Show Grid Dots "))
+	(s-value grid-obj :gridvis nil)
+	(gg:menubar-set-title *grid-vis-item* " show grid dots "))
       (progn; turn if on, and make menu so it will turn it off
-	(s-value GRID-OBJ :gridvis T)
-	(gg:menubar-set-title *Grid-Vis-Item* " Hide Grid Dots "))))
+	(s-value grid-obj :gridvis t)
+	(gg:menubar-set-title *grid-vis-item* " hide grid dots "))))
 
 (defun setgrid (menubar bar-item submenu-item)
   (declare (ignore menubar bar-item submenu-item))
-  (s-value (g-value *GRID-DB* :value) :value (g-value GRID-OBJ :gridamt))
-  (s-value GRID-WIN :visible T)
-  (opal:raise-window GRID-WIN)
-  (opal:update GRID-WIN))
+  (s-value (g-value *grid-db* :value) :value (g-value grid-obj :gridamt))
+  (s-value grid-win :visible t)
+  (opal:raise-window grid-win)
+  (opal:update grid-win))
 
-;;; This function hides the mover-grower handles.
-;;; This is called by BOTH the accelerator and the edit-polyline-inter.
-;;; Basically, if an object is selected and that object is a polyline,
-;;; then edit it.  Else, if the obj passed to the function is a polyline,
-;;; edit that instead.
+;;; This function hides the mover-grower handles. This is called by
+;;; both the accelerator and the edit-polyline-inter.  basically, if
+;;; an object is selected and that object is a polyline, then edit it.
+;;; else, if the obj passed to the function is a polyline, edit that
+;;; instead.
 (defun reshape-fn (inter obj &optional extra)
   (declare (ignore inter extra))
-  (s-value POLYGON-MAKER :reshape-called-p T)
-  (let* ((selected-objs (g-value MOVER-GROWER :value))
+  (s-value polygon-maker :reshape-called-p t)
+  (let* ((selected-objs (g-value mover-grower :value))
 	 (selected-obj (when (not (cdr selected-objs)) (first selected-objs))))
     (if (is-a-p selected-obj opal:polyline)
 	(progn
-	  (gg::toggle-polyline-handles POLYGON-MAKER selected-obj)
-	  (gg:set-selection MOVER-GROWER NIL))
+	  (gg::toggle-polyline-handles polygon-maker selected-obj)
+	  (gg:set-selection mover-grower nil))
 	(if (is-a-p obj opal:polyline)
 	    (progn
-	      (gg:set-selection MOVER-GROWER NIL)
-	      (gg::toggle-polyline-handles POLYGON-MAKER obj))
+	      (gg:set-selection mover-grower nil)
+	      (gg::toggle-polyline-handles polygon-maker obj))
 	    (inter:beep)))))
 
-(defun Create-Main-Menubar ()
-  (create-instance 'MAIN-MENU garnet-gadgets:MOTIF-MENUBAR
+(defun create-main-menubar ()
+  (create-instance 'main-menu garnet-gadgets:motif-menubar
     (:foreground-color opal:motif-green)
-    (:min-menubar-width (o-formula (gv win :width)))
+    (:min-menubar-width (o-formula (gv main-window :width)))
     (:left 0) (:top 0)
     (:left-offset 60)
     (:title-font (opal:get-standard-font :sans-serif :bold :large))
     (:item-font (opal:get-standard-font :sans-serif :bold :medium))
     (:accel-font (opal:get-standard-font :sans-serif :bold :medium))
     (:items
-     '(("  File  " NIL
-	((" Open " openfun)
-	 (" New " newfun)
-	 (" Save " savefun)
-	 (" Save As " saveasfun)
-	 (" Create PS " psfun)
-	 (" Quit " quitfun)))
-       ("  Edit  " NIL
-	((" Cut " gg:standard-cut) (" Copy " gg:standard-copy)
-	 (" Paste " gg:standard-paste-same-place)
-	 (" Clear " gg:standard-delete)
-	 (" Duplicate " gg:standard-duplicate)
-	 (" Clear All " gg:standard-delete-all)
-	 (" To Top " gg:standard-to-top)
-	 (" To Bottom " gg:standard-to-bottom) (" Group " gg:standard-group)
-	 (" Ungroup " gg:standard-ungroup) (" Reshape " reshape-fn)
-	 (" Refresh " gg:standard-refresh)))
-       ("  Font  " fontfun
-	((" Fixed ")(" Serif ")(" Sans-Serif ")(" Roman ")(" Bold ")
-	 (" Italic ")(" Bold-Italic ")(" Small ")(" Medium ")
-	 (" Large ")(" Very-Large ")))
-       ("  Options  " NIL
-	((" Turn Grid On " gridtoggle) (" Set Grid... " setgrid)
-	 (" Show Grid Dots " gridvisible)
+     '(("  file  " nil
+	((" open " openfun)
+	 (" new " newfun)
+	 (" save " savefun)
+	 (" save as " saveasfun)
+	 (" create ps " psfun)
+	 (" quit " quitfun)))
+       ("  edit  " nil
+	((" cut " gg:standard-cut) (" copy " gg:standard-copy)
+	 (" paste " gg:standard-paste-same-place)
+	 (" clear " gg:standard-delete)
+	 (" duplicate " gg:standard-duplicate)
+	 (" clear all " gg:standard-delete-all)
+	 (" to top " gg:standard-to-top)
+	 (" to bottom " gg:standard-to-bottom) (" group " gg:standard-group)
+	 (" ungroup " gg:standard-ungroup) (" reshape " reshape-fn)
+	 (" refresh " gg:standard-refresh)))
+       ("  font  " fontfun
+	((" fixed ")(" serif ")(" sans-serif ")(" roman ")(" bold ")
+	 (" italic ")(" bold-italic ")(" small ")(" medium ")
+	 (" large ")(" very-large ")))
+       ("  options  " nil
+	((" turn grid on " gridtoggle) (" set grid... " setgrid)
+	 (" show grid dots " gridvisible)
 	 ))
        ))
     (:accelerators
-     '((("M-o" :|META-o|) ("M-n" :|META-n|) ("M-s" :|META-s|) NIL
-	("M-p" :|META-p|) ("M-q" :|META-q|))
-       (("M-x" :|META-x|) ("M-c" :|META-c|) ("M-v" :|META-v|) ("DEL" #\rubout)
-	("M-d" :|META-d|) NIL ("M-f" :|META-f|) ("M-j" :|META-j|)
-	("M-g" :|META-g|) ("M-h" :|META-h|) ("M-r" :|META-r|) ("M-l" :|META-l|))
-       (NIL NIL NIL ("M-R" :|META-R|) ("M-b" :|META-b|) ("M-i" :|META-i|)
-	("M-t" :|META-t|) ("M-1" :|META-1|) ("M-2" :|META-2|)
-	("M-3" :|META-3|) ("M-4" :|META-4|))
-       (NIL NIL NIL)))
+     '((("m-o" :|meta-o|) ("m-n" :|meta-n|) ("m-s" :|meta-s|) nil
+	("m-p" :|meta-p|) ("m-q" :|meta-q|))
+       (("m-x" :|meta-x|) ("m-c" :|meta-c|) ("m-v" :|meta-v|) ("del" #\rubout)
+	("m-d" :|meta-d|) nil ("m-f" :|meta-f|) ("m-j" :|meta-j|)
+	("m-g" :|meta-g|) ("m-h" :|meta-h|) ("m-r" :|meta-r|) ("m-l" :|meta-l|))
+       (nil nil nil ("m-r" :|meta-r|) ("m-b" :|meta-b|) ("m-i" :|meta-i|)
+	("m-t" :|meta-t|) ("m-1" :|meta-1|) ("m-2" :|meta-2|)
+	("m-3" :|meta-3|) ("m-4" :|meta-4|))
+       (nil nil nil)))
     (:bar-above-these-items
-     '(NIL
-       (" To Top ")
-       (" Roman " " Small ")
-       NIL))
-    )
-  )
+     '(nil
+       (" to top ")
+       (" roman " " small ")
+       nil))))
 
+;;; Tool palette
+;;;
+;;; this is the list of tools available for drawing objects.  each
+;;; contains a bitmap representation of the tool and the location
+;;; where it goes.
 
-#|
-====================================================================
-TOOL PALETTE
-
-This is the list of tools available for drawing objects.  Each
-contains a bitmap representation of the tool and the location
-where it goes.
-====================================================================
-|#
-
-(defun Create-Tool-Palette ()
-
-  (create-instance 'TOOL-FEEDBACK opal:rectangle
+(defun create-tool-palette ()
+  (create-instance 'tool-feedback opal:rectangle
     (:left (o-formula (gvl :obj-over :left)))
     (:top (o-formula (gvl :obj-over :top)))
     (:width (o-formula (gvl :obj-over :width)))
     (:height (o-formula (gvl :obj-over :height)))
     (:visible (o-formula (gvl :obj-over)))
     (:line-style opal:line-4))
-
-  (create-instance 'TOOLS-MENU opal:aggregadget
-    (:top (+ 2 (g-value MAIN-MENU :height)))
-    (:selected NIL)
+  (create-instance 'tools-menu opal:aggregadget
+    (:top (+ 2 (g-value main-menu :height)))
+    (:selected nil)
     (:parts
      `((:line-tool ,opal:aggregadget
 	(:left 5) (:height 32) (:width 32)
 	(:top ,(o-formula (gvl :parent :top)))
-	(:feedback-object ,MOVING-LINE)
-	(:creator-object ,creator-LINE)
+	(:feedback-object ,moving-line)
+	(:creator-object ,creator-line)
 	(:parts
 	 ((:bm ,opal:bitmap
 	       (:left 5) (:top ,(o-formula (gvl :parent :top)))
@@ -741,11 +687,10 @@ where it goes.
 		  (merge-pathnames "line.bm"
 				   (merge-pathnames "garnetdraw/"
 						    common-lisp-user::garnet-bitmap-pathname))))))))
-
        (:rect-tool ,opal:aggregadget
 	(:left 5) (:height 32) (:width 32)
 	(:top ,(o-formula (+ 31 (gvl :parent :line-tool :top))))
-	(:feedback-object ,MOVING-RECT)
+	(:feedback-object ,moving-rect)
 	(:creator-object ,creator-rect)
 	(:parts
 	 ((:bm ,opal:bitmap
@@ -758,7 +703,7 @@ where it goes.
        (:roundrect-tool ,opal:aggregadget
 	(:left 5) (:height 32) (:width 32)
 	(:top ,(o-formula (+ 31 (gvl :parent :rect-tool :top))))
-	(:feedback-object ,MOVING-ROUNDTANGLE)
+	(:feedback-object ,moving-roundtangle)
 	(:creator-object ,creator-roundtangle)
 	(:parts
 	 ((:bm ,opal:bitmap
@@ -782,8 +727,8 @@ where it goes.
 				   (merge-pathnames "garnetdraw/"
 						    common-lisp-user::garnet-bitmap-pathname))))))))
        (:text-tool ,opal:aggregadget
-	(:feedback-object ,TEXT-FEEDBACK)
-	(:creator-object ,TEXT-FEEDBACK)
+	(:feedback-object ,text-feedback)
+	(:creator-object ,text-feedback)
 	(:left 5) (:height 32) (:width 32)
 	(:top ,(o-formula (+ 31 (gvl :parent :oval-tool :top))))
 	(:parts
@@ -795,12 +740,12 @@ where it goes.
 	  (:text-state ,opal:text
 		       (:left ,(o-formula (opal:gv-center-x-is-center-of (gvl :parent))))
 		       (:top ,(o-formula (opal:gv-center-y-is-center-of (gvl :parent))))
-		       (:string "T")
-		       (:line-style ,(create-instance NIL opal:default-line-style))
-		       (:font ,(opal:get-standard-font NIL NIL NIL))))))
+		       (:string "t")
+		       (:line-style ,(create-instance nil opal:default-line-style))
+		       (:font ,(opal:get-standard-font nil nil nil))))))
        (:polygon-tool ,opal:aggregadget
-	(:feedback-object ,MOVING-RECT)
-	(:creator-object NIL)
+	(:feedback-object ,moving-rect)
+	(:creator-object nil)
 	(:left 5) (:height 32) (:width 32)
 	(:top ,(o-formula (+ 31 (gvl :parent :text-tool :top))))
 	(:parts
@@ -812,7 +757,6 @@ where it goes.
 				   (merge-pathnames
 				    "garnetdraw/"
 				    common-lisp-user::garnet-bitmap-pathname))))))))
-
        (:arrowline-tool ,opal:aggregadget
 	(:feedback-object ,new-moving-arrowline)
 	(:creator-object ,creator-arrowline)
@@ -828,8 +772,8 @@ where it goes.
 		     "garnetdraw/"
 		     common-lisp-user::garnet-bitmap-pathname))))))))
        (:doublearrowline-tool ,opal:aggregadget
-	(:feedback-object ,MOVING-DOUBLEARROWLINE)
-	(:creator-object ,creator-DOUBLEARROWLINE)
+	(:feedback-object ,moving-doublearrowline)
+	(:creator-object ,creator-doublearrowline)
 	(:left 5) (:height 32) (:width 32)
 	(:top ,(o-formula (+ 31 (gvl :parent :arrowline-tool :top))))
 	(:parts
@@ -845,79 +789,64 @@ where it goes.
      `((:tool-interactor ,inter:button-interactor
 	(:window ,(o-formula (gvl :operates-on :window)))
 	(:start-event :any-mousedown)
-	(:final-feedback-obj ,TOOL-FEEDBACK)
+	(:final-feedback-obj ,tool-feedback)
 	(:how-set :set)
 	(:start-where ,(o-formula (list :element-of (gvl :operates-on))))))))
+  (s-value tools-menu :selected (car (g-value tools-menu :components)))
+  (s-value tool-feedback :obj-over (car (g-value tools-menu :components))))
 
-  (s-value TOOLS-MENU :selected (car (g-value TOOLS-MENU :components)))
-  (s-value TOOL-FEEDBACK :obj-over (car (g-value TOOLS-MENU :components))))
 
+;;; get-line-style:
+;;;
+;;; This function first goes through the *stored-line-styles* list and
+;;; checks to see if the required line-style is already there. If it
+;;; is, then it returns that line-style.  otherwise, it creates a new
+;;; line style with the appropriate thickness and foreground color,
+;;; pushes the new style into the *stored-line-styles* list, and
+;;; returns it.
 
-#|
-====================================================================
-Get-Line-Style:
-
-This function first goes through the *STORED-LINE-STYLES* list and
-checks to see if the required line-style is already there.  If it is,
-then it returns that line-style.  Otherwise, it creates a new line
-style with the appropriate thickness and foreground color, pushes the
-new style into the *STORED-LINE-STYLES* list, and returns it.
-====================================================================
-|#
-
-(defun Get-Line-Style (thickness fg-color)
-  (let ((new-line-style NIL))
-
-    ;; First, go through list and see if the needed
+(defun get-line-style (thickness fg-color)
+  (let ((new-line-style nil))
+    ;; first, go through list and see if the needed
     ;; line style already exists.
-    (dolist (style *STORED-LINE-STYLES*)
-      (when (AND
+    (dolist (style *stored-line-styles*)
+      (when (and
 	     (eql (g-value style :line-thickness) thickness)
 	     (eq (g-value style :foreground-color) fg-color))
 	(setf new-line-style style)
 	(return)))
-
-    ;; If line style doesn't already exist, create it and push
+    ;; if line style doesn't already exist, create it and push
     ;; it onto list.
     (unless new-line-style
       (setf new-line-style
-	    (create-instance NIL opal:line-style
+	    (create-instance nil opal:line-style
 	      (:line-thickness thickness)
 	      (:foreground-color fg-color)))
-      (push new-line-style *STORED-LINE-STYLES*))
-
-    ;; Return the new line style, which was either in the list
+      (push new-line-style *stored-line-styles*))
+    ;; return the new line style, which was either in the list
     ;; or was created.
     new-line-style))
 
+;; Line palette
+;;
+;; This is the line palette and the function which sets the value of
+;; the line style slot of all selected object, if a new value is
+;; selected in the line palette.
 
 
-
-#|
-====================================================================
-LINE PALETTE
-
-This is the line palette and the function which sets the value of
-the line style slot of all selected object, if a new value is
-selected in the line palette.
-====================================================================
-|#
-
-(defun Create-Line-Palette ()
-
-  (create-instance 'LINE-FEEDBACK opal:rectangle
-    (:obj-over NIL)
+(defun create-line-palette ()
+  (create-instance 'line-feedback opal:rectangle
+    (:obj-over nil)
     (:left 2)
     (:top (o-formula (gvl :obj-over :top)))
     (:width 52)
     (:height (o-formula (gvl :obj-over :height)))
-    (:filling-style NIL)
+    (:filling-style nil)
     (:visible (o-formula (gvl :obj-over)))
     (:line-style opal:line-4))
-
-  (create-instance 'LINE-PALETTE opal:aggregadget
+  (create-instance 'line-palette opal:aggregadget
     (:left 2) (:top 321) (:width 52) (:height 106)
-    (:selected NIL)
+    (:selected nil)
     (:parts
      `((:background ,opal:rectangle
 	(:left 2) (:top 321) (:width 52) (:height 106)
@@ -962,62 +891,52 @@ selected in the line palette.
 	(:final-function
 	 ,#'(lambda (an-interactor final-obj-over)
 	      (declare (ignore an-interactor final-obj-over))
-	      (when (g-value MOVER-GROWER :value)
-		(dolist (thing (copy-list (g-value MOVER-GROWER :value)))
+	      (when (g-value mover-grower :value)
+		(dolist (thing (copy-list (g-value mover-grower :value)))
 		  (if (not (g-value thing :group-p))
-
 		      ;; create a new line-style
 		      (let ((new-line-style
-			     (Get-Line-Style
+			     (get-line-style
 			      (g-value line-palette :selected :line-thick)
 			      (g-value thing :line-style :foreground-color))))
-
 			;; set line style to be new line style
 			(s-value thing :line-style new-line-style)))))))
-
 	(:start-where ,(o-formula (list :element-of (gvl :operates-on)
 					:type opal:line)))))))
-
   (let ((line0 (g-value line-palette :line0)))
     (s-value line-palette :selected line0)
-    (s-value line-feedback :obj-over line0))
-  )
+    (s-value line-feedback :obj-over line0)))
 
+;;; selected function
+;;;
+;;; this is used to change the line style or filling color of a selected
+;;; object using the current state aggregadget.
 
-#|
-====================================================================
-SELECTED FUNCTION
-
-This is used to change the line style or filling color of a selected
-object using the current state aggregadget.
-====================================================================
-|#
-
-(defun Selectedfun (an-interactor final-obj-over)
+(defun selectedfun (an-interactor final-obj-over)
   (declare (ignore an-interactor final-obj-over))
-  (when (g-value MOVER-GROWER :value)
-    (if (g-value CURRENT-STATE :selectable-objs :frame :selected)
-	(dolist (thing (g-value MOVER-GROWER :value))
+  (when (g-value mover-grower :value)
+    (if (g-value current-state :selectable-objs :frame :selected)
+	(dolist (thing (g-value mover-grower :value))
 	  (unless (g-value thing :group-p)
 	    (let ((new-line-style
-			     (Get-Line-Style
+			     (get-line-style
 			      (g-value thing :line-style :line-thickness)
-			      (g-value PALETTE-FEEDBACK :obj-over :line-hold
+			      (g-value palette-feedback :obj-over :line-hold
 				       :foreground-color))))
 
 	      ;; set line style to be new line style
 	      (s-value thing :line-style new-line-style))))
 
-	(dolist (thing (g-value MOVER-GROWER :value))
+	(dolist (thing (g-value mover-grower :value))
 	  (unless (g-value thing :group-p)
 	    (s-value thing :filling-style
-		     (g-value PALETTE-FEEDBACK :obj-over :filling-style))))
+		     (g-value palette-feedback :obj-over :filling-style))))
 	))
 
-  (let* ((selectable-objs (g-value CURRENT-STATE :selectable-objs))
+  (let* ((selectable-objs (g-value current-state :selectable-objs))
 	 (frame (g-value selectable-objs :frame))
 	 (filler (g-value selectable-objs :filler))
-	 (obj-over (g-value PALETTE-FEEDBACK :obj-over)))
+	 (obj-over (g-value palette-feedback :obj-over)))
     (if (g-value frame :selected)
 	(progn
 	  (s-value frame :line-hold (g-value obj-over :line-hold))
@@ -1027,31 +946,31 @@ object using the current state aggregadget.
 
 #|
 ====================================================================
-PATTERN AND COLOR PALETTES
+pattern and color palettes
 
-The first one is for the pattern palette, this contains in the items
+the first one is for the pattern palette, this contains in the items
 slot the necessary numbers for creating the different halftone
-values.  The second one uses the values in the color list generated
+values.  the second one uses the values in the color list generated
 earlier.
 ====================================================================
 |#
 
-(defun Create-Palette-Feedback ()
-  (create-instance 'PALETTE-FEEDBACK opal:aggregadget
-    (:obj-over NIL)
+(defun create-palette-feedback ()
+  (create-instance 'palette-feedback opal:aggregadget
+    (:obj-over nil)
     (:left (o-formula (gvl :obj-over :left)))
     (:top (o-formula (gvl :obj-over :top)))
     (:width (o-formula (gvl :obj-over :width)))
     (:height (o-formula (gvl :obj-over :height)))
     (:visible (o-formula (gvl :obj-over)))
-    (:fast-redraw-filling-style NIL)
+    (:fast-redraw-filling-style nil)
     (:parts
      `((:black-rect ,opal:rectangle
 	(:left ,(o-formula (+ 1 (gvl :parent :left))))
 	(:top ,(o-formula (+ 1 (gvl :parent :top))))
 	(:width ,(o-formula (- (gvl :parent :width) 2)))
 	(:height ,(o-formula (- (gvl :parent :height) 2)))
-	(:line-style ,*FEEDBACK-LINE-STYLE*)
+	(:line-style ,*feedback-line-style*)
 	(:fast-redraw-p :rectangle)
 	(:fast-redraw-filling-style
 	 ,(o-formula (gvl :parent :fast-redraw-filling-style))))
@@ -1066,13 +985,13 @@ earlier.
 	 ,(o-formula (gvl :parent :fast-redraw-filling-style)))))))
   )
 
-(defun Create-Stipple-Palette ()
-  (create-instance 'PALETTE-ITEM opal:rectangle
+(defun create-stipple-palette ()
+  (create-instance 'palette-item opal:rectangle
     (:left (o-formula (gvl :parent :left)))
     (:top (o-formula (gvl :parent :top)))
     (:width 32)
     (:line-hold
-     (create-instance NIL opal:line-style
+     (create-instance nil opal:line-style
        (:foreground-color opal:black)
        (:line-thickness 0)))
     (:height 32)
@@ -1083,10 +1002,10 @@ earlier.
 			   (opal:halftone (nth (gvl :rank)
 					       (gvl :parent :items))))))))
 
-  (create-instance 'STIPPLE-PALETTE opal:aggregadget
+  (create-instance 'stipple-palette opal:aggregadget
     (:left 90)
     (:top (o-formula (if (g-value opal:color :color-p) 442 477)))
-    (:selected NIL)
+    (:selected nil)
     (:items `(,opal:white-fill
 	      5 10 15
 	      ,opal:light-gray-fill 30 35 40
@@ -1104,53 +1023,53 @@ earlier.
        (:patterns-agg ,opal:aggrelist
 	(:left ,(o-formula (gvl :parent :left)))
 	(:top ,(o-formula (gvl :parent :top)))
-	(:selected NIL)
+	(:selected nil)
 	(:items ,(o-formula (gvl :parent :items)))
 	(:h-spacing 2)
 	(:direction :horizontal)
 	(:item-prototype ,palette-item))
-       (:NIL-text ,opal:text
+       (:nil-text ,opal:text
 	(:left 674)
 	(:top ,(o-formula (if (g-value opal:color :color-p) 450 485)))
-	(:string "NIL"))))
+	(:string "nil"))))
     (:interactors
      `((:palette-interactor ,inter:button-interactor
 	(:window ,(o-formula (gvl :operates-on :window)))
 	(:start-event :any-mousedown)
 	(:how-set :set)
-	(:final-feedback-obj ,PALETTE-FEEDBACK)
-	(:final-function ,#'Selectedfun)
+	(:final-feedback-obj ,palette-feedback)
+	(:final-function ,#'selectedfun)
 	(:start-where ,(o-formula (list :element-of
 					(gvl :operates-on :patterns-agg))))
 	(:start-action
 	 ,#'(lambda (inter obj)
-	      (let ((fill (g-value PALETTE-FEEDBACK :obj-over :filling-style)))
-		(s-value PALETTE-FEEDBACK :fast-redraw-filling-style fill)
-		(s-value (g-value CURRENT-STATE :feedback)
+	      (let ((fill (g-value palette-feedback :obj-over :filling-style)))
+		(s-value palette-feedback :fast-redraw-filling-style fill)
+		(s-value (g-value current-state :feedback)
 			 :fast-redraw-filling-style (or fill opal:white-fill)))
 	      (call-prototype-method inter obj)))))))
 
   (s-value (car (g-value stipple-palette :patterns-agg :components))
 	   :line-hold
-	   (create-instance NIL opal:line-style
+	   (create-instance nil opal:line-style
 	     (:foreground-color opal:white)
 	     (:line-thickness 0)))
 
-  ;; This is the NIL filling style.
-  (let* ((kr::*constants-disabled* T)
-	 (patterns-agg (g-value STIPPLE-PALETTE :patterns-agg))
+  ;; this is the nil filling style.
+  (let* ((kr::*constants-disabled* t)
+	 (patterns-agg (g-value stipple-palette :patterns-agg))
 	 (line-hold (g-value (car (g-value patterns-agg :components))
 			     :line-hold)))
     (opal:add-component patterns-agg
-         (create-instance 'NIL-PALETTE-ITEM opal:rectangle
+         (create-instance 'nil-palette-item opal:rectangle
 	   (:left 638) (:width 32) (:height 32)
 	   (:top (if (g-value opal:color :color-p) 442 477))
 	   (:line-hold line-hold)
-	   (:filling-style NIL))))
+	   (:filling-style nil))))
   )
 
-(defun Create-Color-Palette ()
-  (create-instance 'COLOR-PALETTE-ITEM opal:rectangle
+(defun create-color-palette ()
+  (create-instance 'color-palette-item opal:rectangle
     (:left (o-formula (gvl :parent :left)))
     (:top (o-formula (gvl :parent :top)))
     (:width 32)(:height 32)
@@ -1159,15 +1078,15 @@ earlier.
     (:filling-style (o-formula (car (nth (gvl :rank) (gvl :parent :items))))))
 
 
-  (create-instance 'COLOR-PALETTE opal:aggregadget
+  (create-instance 'color-palette opal:aggregadget
     (:left 90) (:top 477)
-    (:selected NIL)
-    (:items (copy-list the-color-list))
+    (:selected nil)
+    (:items (copy-list *the-color-list*))
     (:parts
      `((:colors-agg ,opal:aggrelist
 	(:left ,(o-formula (gvl :parent :left)))
 	(:top ,(o-formula (gvl :parent :top)))
-	(:selected NIL)
+	(:selected nil)
 	(:items ,(o-formula (gvl :parent :items)))
 	(:h-spacing 2)
 	(:direction :horizontal)
@@ -1177,26 +1096,26 @@ earlier.
 	(:window ,(o-formula (gvl :operates-on :window)))
 	(:start-event :any-mousedown)
 	(:how-set :set)
-	(:final-feedback-obj ,PALETTE-FEEDBACK)
-	(:final-function ,#'Selectedfun)
+	(:final-feedback-obj ,palette-feedback)
+	(:final-function ,#'selectedfun)
 	(:start-where ,(o-formula (list :element-of
 					(gvl :operates-on :colors-agg))))
 	(:start-action
 	 ,#'(lambda (inter obj)
-	      (let ((fill (g-value PALETTE-FEEDBACK :obj-over :filling-style)))
-		(s-value PALETTE-FEEDBACK :fast-redraw-filling-style fill)
-		(s-value (g-value CURRENT-STATE :feedback)
+	      (let ((fill (g-value palette-feedback :obj-over :filling-style)))
+		(s-value palette-feedback :fast-redraw-filling-style fill)
+		(s-value (g-value current-state :feedback)
 			 :fast-redraw-filling-style (or fill opal:white-fill)))
 	      (call-prototype-method inter obj)))))))
   )
 
-(defun Create-Fill-Palettes ()
-  (Create-Palette-Feedback)       ; Creates PALETTE-FEEDBACK
-  (Create-Stipple-Palette)        ; Creates STIPPLE-PALETTE
+(defun create-fill-palettes ()
+  (create-palette-feedback)       ; creates palette-feedback
+  (create-stipple-palette)        ; creates stipple-palette
   (if (g-value opal:color :color-p)
-      (Create-Color-Palette))     ; Creates COLOR-PALETTE
+      (create-color-palette))     ; creates color-palette
 
-  ;; Set the initial selected values
+  ;; set the initial selected values
   (s-value (g-value stipple-palette :patterns-agg) :selected
 	   (nth 16 (g-value (g-value stipple-palette :patterns-agg) :components)))
   (s-value palette-feedback :obj-over
@@ -1206,52 +1125,52 @@ earlier.
 #|
 ====================================================================
  the-color-list is used to store the list of tuples, made up of
- line-styles and filling-styles.  These are created from the
- list of defined rgbvalues.  This is used to create the color
- palette on screens which can display color.  The function
- Create-Color-List takes care of the actual creation of the
+ line-styles and filling-styles.  these are created from the
+ list of defined rgbvalues.  this is used to create the color
+ palette on screens which can display color.  the function
+ create-color-list takes care of the actual creation of the
  list to be stored in the-color-list.
 ====================================================================
 |#
 
-(defun Create-Color-List ()
+(defun create-color-list ()
   (let ((val 0) l2 l)
     (dotimes (i 18)
       (let* ((triplet (nth val rgbvalues)))
 	(if (schema-p (car triplet))
-	    ;; Must be a pair of styles
+	    ;; must be a pair of styles
 	    (push (copy-list triplet) l2)
 	    (let ((red (first triplet))
 		  (green (second triplet))
 		  (blue (third triplet)))
-	      (push (create-instance NIL opal:line-style
+	      (push (create-instance nil opal:line-style
 		      (:line-thickness 2)
 		      (:foreground-color
-		       (create-instance NIL opal:color
+		       (create-instance nil opal:color
 			 (:red red) (:green green) (:blue blue))))
 		    l)
-	      (push (create-instance NIL opal:filling-style
+	      (push (create-instance nil opal:filling-style
 		      (:foreground-color
-		       (create-instance NIL opal:color
+		       (create-instance nil opal:color
 			 (:red red) (:green green) (:blue blue))))
 		    l)
 	      (push l l2)
-	      (setq l NIL))))
+	      (setq l nil))))
       (incf val 1))
-    (setq the-color-list l2)))
+    (setq *the-color-list* l2)))
 
 
 #|
 ====================================================================
-CURRENT STATE
+current state
 
-The Current-State menu shows the current colors selected for the
+the current-state menu shows the current colors selected for the
 line-styles and filling-styles.
 ====================================================================
 |#
 
-(defun Create-Current-State ()
-  (create-instance 'CURRENT-STATE opal:aggregadget
+(defun create-current-state ()
+  (create-instance 'current-state opal:aggregadget
     (:left 2) (:top 446) (:width 52) (:height 52)
     (:parts
      `((:decoration ,opal:aggregadget
@@ -1262,12 +1181,12 @@ line-styles and filling-styles.
 		       (:filling-style ,opal:white-fill))
 	  (:line-text ,opal:text
 		      (:left 4) (:top 491)
-		      (:string "LINE")
+		      (:string "line")
 		      (:font ,(opal:get-standard-font
 			       :sans-serif :roman :small)))
 	  (:fill-text ,opal:text
 		      (:left 31) (:top 491)
-		      (:string "FILL")
+		      (:string "fill")
 		      (:font ,(opal:get-standard-font
 			       :sans-serif :roman :small))))))
        (:selectable-objs ,opal:aggregadget
@@ -1279,20 +1198,20 @@ line-styles and filling-styles.
 	  (:filler ,opal:rectangle
 		   (:left 27)(:top 448)(:width 24)(:height 40)))))
        (:feedback ,opal:aggregadget
-	(:obj-over NIL)
+	(:obj-over nil)
 	(:left ,(o-formula (gvl :obj-over :left)))
 	(:top ,(o-formula (gvl :obj-over :top)))
 	(:width ,(o-formula (gvl :obj-over :width)))
 	(:height ,(o-formula (gvl :obj-over :height)))
 	(:visible ,(o-formula (gvl :obj-over)))
-	(:fast-redraw-filling-style NIL)
+	(:fast-redraw-filling-style nil)
 	(:parts
 	 ((:black-rect ,opal:rectangle
 		       (:left ,(o-formula (+ 1 (gvl :parent :left))))
 		       (:top ,(o-formula (+ 1 (gvl :parent :top))))
 		       (:width ,(o-formula (- (gvl :parent :width) 2)))
 		       (:height ,(o-formula (- (gvl :parent :height) 2)))
-		       (:line-style ,*FEEDBACK-LINE-STYLE*)
+		       (:line-style ,*feedback-line-style*)
 		       (:fast-redraw-p :rectangle)
 		       (:fast-redraw-filling-style
 			,(o-formula (gvl :parent :fast-redraw-filling-style))))
@@ -1323,11 +1242,11 @@ line-styles and filling-styles.
 	      (call-prototype-method inter obj)))))))
 
 
-  (let* ((selectable-objs (g-value CURRENT-STATE :selectable-objs))
+  (let* ((selectable-objs (g-value current-state :selectable-objs))
 	 (frame (g-value selectable-objs :frame))
 	 (filler (g-value selectable-objs :filler)))
     (s-value selectable-objs :selected frame)
-    (s-value (g-value CURRENT-STATE :feedback) :obj-over frame)
+    (s-value (g-value current-state :feedback) :obj-over frame)
     (s-value frame :selected t)
     (s-value frame :line-hold
 	     (g-value palette-feedback :obj-over :line-hold))
@@ -1338,316 +1257,264 @@ line-styles and filling-styles.
 		      :filling-style)))
   )
 
-(defun Create-Main-Window ()
-
-  ;; This is the main window.
-  (create-instance 'WIN inter:interactor-window
+(defun create-main-window ()
+  ;; this is the main window.
+  (create-instance 'main-window inter:interactor-window
     (:left 10) (:top 40) (:width 750) (:height 512)
-    (:background-color (create-instance NIL opal:color
+    (:background-color (create-instance nil opal:color
 			 (:red 0.65) (:blue 0.65) (:green 0.65)))
-    (:position-by-hand NIL)
-    (:title (concatenate 'simple-string "Garnet Draw V" GarnetDraw-Version)))
-
-  ;; This aggregate is where the tool and paint palette are stored,
+    (:position-by-hand nil)
+    (:title (concatenate 'simple-string "garnet draw v" garnetdraw-version)))
+  ;; this aggregate is where the tool and paint palette are stored,
   ;; and the feedback current selection of the palettes are stored
   ;; here.
-
-  (s-value WIN :aggregate (create-instance 'TOP-AGG opal:aggregate))
-
-  ;; If we get clobbered by the window manager, let the demos
+  (s-value main-window :aggregate (create-instance 'top-agg opal:aggregate))
+  ;; if we get clobbered by the window manager, let the demos
   ;; controller know (if it's there).
-  (when (fboundp 'common-lisp-user::Garnet-Note-Quitted)
+  (when (fboundp 'common-lisp-user::garnet-note-quitted)
     (pushnew
      #'(lambda (win)
 	 (declare (ignore win))
-	 (common-lisp-user::Garnet-Note-Quitted "GARNETDRAW"))
-     (g-value win :destroy-hooks)))
-
-  (Create-Moving-Prototypes) ; Creates MOVING-RECT, MOVING-OVAL, etc.
-  (Create-Text-Feedback)     ; Creates TEXT-FEEDBACK
-  (Create-Main-Menubar)      ; Creates MAIN-MENU
-  (Create-Line-Palette)      ; Creates LINE-PALETTE and LINE-FEEDBACK
-  (Create-Tool-Palette)      ; Creates TOOLS-MENU and TOOL-FEEDBACK
-  (Create-Fill-Palettes)     ; Creates STIPPLE-PALETTE, COLOR-PALETTE, and
-                             ; PALETTE-FEEDBACK
-  (Create-Color-List)
-
-  (Create-Current-State)     ; Creates CURRENT-STATE
-
-  (opal:add-components TOP-AGG
-		       TOOLS-MENU TOOL-FEEDBACK
-		       CURRENT-STATE line-palette line-feedback
+	 (common-lisp-user::garnet-note-quitted "garnetdraw"))
+     (g-value main-window :destroy-hooks)))
+  (create-moving-prototypes) ; creates moving-rect, moving-oval, etc.
+  (create-text-feedback)     ; creates text-feedback
+  (create-main-menubar)      ; creates main-menu
+  (create-line-palette)      ; creates line-palette and line-feedback
+  (create-tool-palette)      ; creates tools-menu and tool-feedback
+  (create-fill-palettes)     ; creates stipple-palette, color-palette, and
+					; palette-feedback
+  (create-color-list)
+  (create-current-state)     ; creates current-state
+  (opal:add-components top-agg
+		       tools-menu tool-feedback
+		       current-state line-palette line-feedback
 		       stipple-palette)
-
   (if (g-value opal:color :color-p)
-      (opal:add-component TOP-AGG color-palette))
-  (opal:add-component TOP-AGG palette-feedback)
-
-  (opal:update win)
-
-  ;; These functions must be called after WIN is updated!
-  (opal:add-component TOP-AGG main-menu)
-
-  (opal:update win)
-  (setf *Grid-Menu-Item* (gg:find-submenu-component main-menu "  Options  "
-						    " Turn Grid On "))
-  (setf *Grid-Vis-Item* (gg:find-submenu-component main-menu "  Options  "
-						    " Show Grid Dots "))
-  (gg:menubar-disable-component *Grid-Vis-Item*) ; not implemented yet
+      (opal:add-component top-agg color-palette))
+  (opal:add-component top-agg palette-feedback)
+  (opal:update main-window)
+  ;; these functions must be called after win is updated!
+  (opal:add-component top-agg main-menu)
+  (opal:update main-window)
+  (setf *grid-menu-item* (gg:find-submenu-component main-menu "  options  "
+						    " turn grid on "))
+  (setf *grid-vis-item* (gg:find-submenu-component main-menu "  options  "
+						   " show grid dots "))
+  (gg:menubar-disable-component *grid-vis-item*) ; not implemented yet
   (gg:menubar-disable-component
-   (gg:find-submenu-component main-menu "  Edit  " " Reshape "))
-  )
+   (gg:find-submenu-component main-menu "  edit  " " reshape ")))
 
+;; Mover grower gadget
+;; This is the gadget used to move and scale different graphical
+;; objects.
 
-#|
-====================================================================
-MOVER GROWER GADGET
-
-This is the gadget used to move and scale different graphical objects.
-====================================================================
-|#
-
-
-;;; If the newly selected object is a *polyline*, enable
-;;; the "reshape" item in the menubar.  Otherwise, disable it.
+;;; If the newly selected object is a *polyline*, enable the "reshape"
+;;; item in the menubar.  otherwise, disable it.
 (defun mover-grower-sel-fn (gad new-sel)
   (declare (ignore gad))
   (let ((selected-obj (when (not (cdr new-sel)) (car new-sel))))
     (if (is-a-p selected-obj opal:polyline)
 	(gg:menubar-enable-component
-	 (gg:find-submenu-component main-menu "  Edit  " " Reshape "))
+	 (gg:find-submenu-component main-menu "  edit  " " reshape "))
 	(gg:menubar-disable-component
-	 (gg:find-submenu-component main-menu "  Edit  " " Reshape ")))))
+	 (gg:find-submenu-component main-menu "  edit  " " reshape ")))))
 
-(defun Create-MOVER-GROWER ()
-  (create-instance 'MOVER-GROWER garnet-gadgets:multi-Graphics-Selection
-    (:input-filter (o-formula (if (gv GRID-OBJ :gridon)
-				  (gv GRID-OBJ :gridamt)
-				  NIL)))
+(defun create-mover-grower ()
+  (create-instance 'mover-grower garnet-gadgets:multi-graphics-selection
+    (:input-filter (o-formula (if (gv grid-obj :gridon)
+				  (gv grid-obj :gridamt)
+				  nil)))
     (:selection-function 'mover-grower-sel-fn)
-    (:start-where (list :element-of-or-none *DRAW-AGG*))
-    (:check-line T)
-    (:check-polygon T)
-    (:check-group T)
-    (:check-grow-p T)
+    (:start-where (list :element-of-or-none *draw-agg*))
+    (:check-line t)
+    (:check-polygon t)
+    (:check-group t)
+    (:check-grow-p t)
     (:multiple-select t)
     (:movegrow-boxes-p t)
     (:movegrow-lines-p t)
-    (:value NIL)
+    (:value nil)
     (:running-where t))
 
   )
 
-#|
-====================================================================
-POLYGON GADGET
 
-Used to make polygons when the polygon tool is the one being used.
-====================================================================
-|#
+;; Polygon gadget
+;; Used to make polygons when the polygon tool is the one being used.
+
 (defun edit-polyline-start-where (obj inter ev)
   (declare (ignore inter))
   ;; make sure event is in the right window
   (when (eq (g-value obj :window) (inter:event-window ev))
-    (let ((obj (kr-send *DRAW-AGG* :point-to-leaf *DRAW-AGG*
+    (let ((obj (kr-send *draw-agg* :point-to-leaf *draw-agg*
 			(inter:event-x ev) (inter:event-y ev) :type opal:polyline)))
       (if obj
 	  obj
-	  T))))
+	  t))))
 
-;; (list :leaf-element-of *DRAW-AGG* :type opal:polyline)
-
-(defun Create-Polygon-Maker ()
-  (create-instance 'POLYGON-MAKER garnet-gadgets:polyline-creator
-    (:input-filter (o-formula (if (gv GRID-OBJ :gridon)
-				  (gv GRID-OBJ :gridamt)
-				  NIL)))
-    (:start-event :rightdown)
-    (:deleter-start-event :double-leftdown)
-    (:start-where `(:in ,*DRAW-AGG*))
-    (:close-enough-value 3)
-    (:active-p (o-formula (gv (nth 5 (gv TOOLS-MENU :components))
-			      :selected)))
-    (:running-where t)
-    (:selection-function
-     #'(lambda (gadget new-point-list)
-	 (declare (ignore gadget))
-	 (garnet-gadgets:set-selection MOVER-GROWER NIL)
-	 (let* ((selectable-objs (g-value CURRENT-STATE :selectable-objs))
-		(fill (g-value selectable-objs :filler :filling-style))
-		(frame (g-value selectable-objs :frame))
-		(line-hold (g-value frame :line-hold))
-		(new-obj
-		 (create-instance NIL opal:polyline
-		   (:point-list (copy-list new-point-list))
-		   (:line-p NIL)
-		   (:polygon-p t)
-		   (:grow-p t)
-		   (:group-p NIL)
-		   (:filling-style (if fill
-				       (create-instance NIL fill)))
-		   (:line-style (Get-Line-Style
-				 (g-value line-palette :selected :line-thick)
-				 (g-value line-hold :foreground-color))))))
-	   (with-constants-disabled
-	       (opal:add-component *DRAW-AGG* new-obj))
-	   (garnet-gadgets:set-selection MOVER-GROWER new-obj)))))
-
-
+(defun create-polygon-maker ()
+  (setf *polygon-maker*
+	(create-instance 'polygon-maker garnet-gadgets:polyline-creator
+	  (:input-filter (o-formula (if (gv grid-obj :gridon)
+					(gv grid-obj :gridamt)
+					nil)))
+	  (:start-event :rightdown)
+	  (:deleter-start-event :double-leftdown)
+	  (:start-where `(:in ,*draw-agg*))
+	  (:close-enough-value 3)
+	  (:active-p (o-formula (gv (nth 5 (gv tools-menu :components))
+				    :selected)))
+	  (:running-where t)
+	  (:selection-function
+	   #'(lambda (gadget new-point-list)
+	       (declare (ignore gadget))
+	       (garnet-gadgets:set-selection mover-grower nil)
+	       (let* ((selectable-objs (g-value current-state :selectable-objs))
+		      (fill (g-value selectable-objs :filler :filling-style))
+		      (frame (g-value selectable-objs :frame))
+		      (line-hold (g-value frame :line-hold))
+		      (new-obj
+		       (create-instance nil opal:polyline
+			 (:point-list (copy-list new-point-list))
+			 (:line-p nil)
+			 (:polygon-p t)
+			 (:grow-p t)
+			 (:group-p nil)
+			 (:filling-style (if fill
+					     (create-instance nil fill)))
+			 (:line-style (get-line-style
+				       (g-value line-palette :selected :line-thick)
+				       (g-value line-hold :foreground-color))))))
+		 (with-constants-disabled
+		   (opal:add-component *draw-agg* new-obj))
+		 (garnet-gadgets:set-selection mover-grower new-obj))))))
   ;; this baby takes care of the case where you have a polyline being edited,
-  ;; and you move the mouse over another polyline and hit meta-r.  It should
+  ;; and you move the mouse over another polyline and hit meta-r.  it should
   ;; start editing the second polyline.
   (create-instance 'edit-polyline-inter inter:button-interactor
-    (:operates-on POLYGON-MAKER)
+    (:operates-on polygon-maker)
     (:active (o-formula
-	      (OR
-	       (gv (gg:find-submenu-component main-menu "  Edit  " " Reshape ") :enabled)
+	      (or
+	       (gv (gg:find-submenu-component main-menu "  edit  " " reshape ") :enabled)
 	       (gvl :operates-on :polyline-being-edited))))
     (:start-where (o-formula (list :custom (gvl :operates-on)
 				   'edit-polyline-start-where)))
-    (:window DRAW-WIN)
+    (:window draw-win)
     (:start-event :meta-\r)
-    (:continuous NIL)
-    ;; When you hit meta-r, the accelerator first calls the reshape
-    ;; function if a polyline is selected.  Then, this interactor is
-    ;; started.  You don't want to call reshape-fn unless it's not
+    (:continuous nil)
+    ;; when you hit meta-r, the accelerator first calls the reshape
+    ;; function if a polyline is selected.  then, this interactor is
+    ;; started.  you don't want to call reshape-fn unless it's not
     ;; been called by the accelerator, since if you call reshape-fn
     ;; twice, it will turn off the handles!!
     (:final-function #'(lambda (inter obj)
-			 (unless (g-value POLYGON-MAKER :reshape-called-p)
+			 (unless (g-value polygon-maker :reshape-called-p)
 			   (reshape-fn inter obj))
-			 (s-value POLYGON-MAKER :reshape-called-p NIL))))
-  )
+			 (s-value polygon-maker :reshape-called-p nil)))))
 
-
-
-(defun Create-Draw-Window ()
-
-  ;; This is the window in which the drawings are done.
-  (create-instance 'DRAW-WIN inter:interactor-window
+;; Note, moving-rect, moving-oval, etc. were created in
+;; create-main-window text-feedback was created in create-main-window
+(defun create-draw-window ()
+  ;; this is the window in which the drawings are done.
+  (create-instance 'draw-win inter:interactor-window
     (:left 55)
-    (:top (+ 2 (g-value MAIN-MENU :height)))
+    (:top (+ 2 (g-value main-menu :height)))
     (:width 680)
-    (:height (- (g-value WIN :height) (g-value MAIN-MENU :height)
-		(g-value STIPPLE-PALETTE :height) 7))
+    (:height (- (g-value main-window :height) (g-value main-menu :height)
+		(g-value stipple-palette :height) 7))
     (:border-width 2)
     (:omit-title-bar t)
-    (:parent WIN))
-
-  ;; This aggregate is where the feedback objects for the different
-  ;; objects are stored.
-
-  (s-value DRAW-WIN :aggregate
-	   (create-instance 'TOP-DRAW-AGG opal:aggregate))
-
-  ;; The *DRAW-AGG* is used to actually store the actual drawings.
-
-  (setf *DRAW-AGG* (create-instance NIL opal:aggregadget
+    (:parent main-window))
+  ;; Holds the feedback objects for the different objects are stored.
+  (s-value draw-win :aggregate
+	   (create-instance 'top-draw-agg opal:aggregate))
+  ;; *draw-agg* is used to actually store the drawings.
+  (setf *draw-agg* (create-instance nil opal:aggregadget
 		     (:left 0) (:top 0)
-		     (:width (o-formula (gv DRAW-WIN :width)))
-		     (:height (o-formula (gv DRAW-WIN :height)))))
-
-  ;; MOVING-RECT, MOVING-OVAL, etc. were created in Create-Main-Window
-  ;; TEXT-FEEDBACK was created in Create-Main-Window
-  (Create-MOVER-GROWER)      ; Creates MOVER-GROWER
-  (Create-Polygon-Maker)     ; Creates POLYGON-MAKER
-
-  (opal:add-components TOP-DRAW-AGG
-		       *DRAW-AGG* MOVER-GROWER MOVING-LINE MOVING-RECT
-		       moving-oval MOVING-ROUNDTANGLE TEXT-FEEDBACK
+		     (:width (o-formula (gv draw-win :width)))
+		     (:height (o-formula (gv draw-win :height)))))
+  (create-mover-grower)
+  (create-polygon-maker)
+  (opal:add-components top-draw-agg
+		       *draw-agg* mover-grower moving-line moving-rect
+		       moving-oval moving-roundtangle text-feedback
 		       new-moving-arrowline moving-doublearrowline
-		       polygon-maker)
-  )
+		       polygon-maker))
 
 
-;; called for rect, oval, line, arrow-lines, etc.
-;; NOT called for text or polygons
+;; Called for rect, oval, line, arrow-lines, etc. Not called for text
+;; or polygons
 (defun create-copy-obj (creator-obj line-p points-list filler-fill
 				    frame-color line-thick)
   (let ((obj (with-constants-disabled
-		 (opal:copy-gadget creator-obj NIL))))
+		 (opal:copy-gadget creator-obj nil))))
     (if line-p
 	(s-value obj :points (copy-list points-list))
 	(s-value obj :box (copy-list points-list)))
     (s-value obj :filling-style (if filler-fill
-				    (create-instance NIL filler-fill)
-				    NIL))
+				    (create-instance nil filler-fill)
+				    nil))
     (s-value obj :line-style
-	     (Get-Line-Style line-thick frame-color))
+	     (get-line-style line-thick frame-color))
     obj))
 
-
-
-(defun Create-Interactors ()
-
-  #|
-  ====================================================================
-  TWO POINT INTERACTOR
-
-  This is the interactor used to give information necessary for drawing
-  a new object.
-  ====================================================================
-  |#
-
-  (create-instance 'NEW-ITEM inter:two-point-interactor
-    (:window DRAW-WIN)
-    (:active (o-formula (and (not (gv (nth 5 (g-value TOOLS-MENU :components))
+(defun create-interactors ()
+  ;; Two point interactor
+  ;; This is the interactor used to give information necessary for
+  ;; drawing a new object.
+  (create-instance 'new-item inter:two-point-interactor
+    (:window draw-win)
+    (:active (o-formula (and (not (gv (nth 5 (g-value tools-menu :components))
 				      :selected))
-			     (not (gv (nth 4 (g-value TOOLS-MENU :components))
+			     (not (gv (nth 4 (g-value tools-menu :components))
 				      :selected)))))
-    (:input-filter (o-formula (if (gv GRID-OBJ :gridon)
-				  (gv GRID-OBJ :gridamt)
-				  NIL)))
+    (:input-filter (o-formula (if (gv grid-obj :gridon)
+				  (gv grid-obj :gridamt)
+				  nil)))
     (:start-event :rightdown)
-    (:start-where T)
+    (:start-where t)
     (:final-function
      #'(lambda (an-interactor points-list)
-	 (garnet-gadgets:set-selection MOVER-GROWER NIL)
+	 (garnet-gadgets:set-selection mover-grower nil)
 	 (when points-list
-	   (let* ((selectable-objs (g-value CURRENT-STATE :selectable-objs))
+	   (let* ((selectable-objs (g-value current-state :selectable-objs))
 		  (creator-obj (g-value an-interactor :creator-obj))
 		  (frame-color (g-value selectable-objs :frame :line-hold
 					:foreground-color))
 		  (filler-fill (g-value selectable-objs :filler
 					:filling-style))
-		  (line-thick (g-value LINE-PALETTE :selected :line-thick))
+		  (line-thick (g-value line-palette :selected :line-thick))
 		  (obj (create-copy-obj creator-obj
 					(g-value an-interactor :line-p)
 					points-list
 					filler-fill frame-color line-thick)))
 	     (with-constants-disabled
-		 (opal:add-component *DRAW-AGG* obj))
-	     (garnet-gadgets:set-selection MOVER-GROWER obj)
+		 (opal:add-component *draw-agg* obj))
+	     (garnet-gadgets:set-selection mover-grower obj)
 	     obj))))
     (:outside-action :last)
-    (:feedback-obj (o-formula (gv TOOLS-MENU :selected :feedback-object)))
-    (:creator-obj (o-formula (gv TOOLS-MENU :selected :creator-object)))
-    (:line-p (o-formula (gv TOOLS-MENU :selected :feedback-object :line-p)))
-    (:Min-length 0)
-    (:Min-height 0)
-    (:Min-width 0))
-
-  #|
-  ====================================================================
-  TEXT EDITING
-
-  This is used to decide if a newly selected object is text, if so
-  then we must set it up so it is editable.  This is the interactor
-  used to do text editing.
-  ====================================================================
-  |#
-
-  (create-instance 'CREATE-OR-EDIT inter:text-interactor
+    (:feedback-obj (o-formula (gv tools-menu :selected :feedback-object)))
+    (:creator-obj (o-formula (gv tools-menu :selected :creator-object)))
+    (:line-p (o-formula (gv tools-menu :selected :feedback-object :line-p)))
+    (:min-length 0)
+    (:min-height 0)
+    (:min-width 0))
+  ;; Text Editing
+  ;; This is used to decide if a newly selected object is text, if so
+  ;; then we must set it up so it is editable.  this is the interactor
+  ;; used to do text editing.
+  (create-instance 'create-or-edit inter:text-interactor
     (:feedback-obj (o-formula (if (eq :none (gvl :first-obj-over))
-				  TEXT-FEEDBACK)))
-    (:active (o-formula (gv (nth 4 (gv TOOLS-MENU :components))
+				  text-feedback)))
+    (:active (o-formula (gv (nth 4 (gv tools-menu :components))
 			    :selected)))
-    (:start-where `(:element-of-or-none ,*DRAW-AGG*
+    (:start-where `(:element-of-or-none ,*draw-agg*
 		    :type ,opal:cursor-multi-text))
-    (:input-filter (o-formula (if (gv GRID-OBJ :gridon)
-				  (gv GRID-OBJ :gridamt)
-				  NIL)))
-    (:window DRAW-WIN)
+    (:input-filter (o-formula (if (gv grid-obj :gridon)
+				  (gv grid-obj :gridamt)
+				  nil)))
+    (:window draw-win)
     (:waiting-priority *garnetdraw-high-priority*)
     (:running-priority *garnetdraw-high-running-priority*)
     (:start-event :any-rightdown)
@@ -1656,7 +1523,7 @@ Used to make polygons when the polygon tool is the one being used.
 		       ;; make sure the font of the feedback object is correct
 		       (let ((feed (g-value inter :feedback-obj)))
 			 (when feed
-			   (let ((current-font (g-value TOOLS-MENU :text-tool
+			   (let ((current-font (g-value tools-menu :text-tool
 							:text-state :font)))
 			     (s-value feed :font
 				      (opal:get-standard-font
@@ -1668,15 +1535,15 @@ Used to make polygons when the polygon tool is the one being used.
     (:final-function
      #'(lambda (an-interactor obj-being-edited stop-event final-string x y)
 	 (declare (ignore an-interactor stop-event))
-	 (garnet-gadgets:set-selection MOVER-GROWER NIL)
+	 (garnet-gadgets:set-selection mover-grower nil)
 	 (when (eq :none obj-being-edited)
-	   (let* ((current-font (g-value TOOLS-MENU :text-tool
+	   (let* ((current-font (g-value tools-menu :text-tool
 					 :text-state :font))
-		  (current-color (g-value CURRENT-STATE :selectable-objs
+		  (current-color (g-value current-state :selectable-objs
 					  :frame :line-hold
 					  :foreground-color))
 		  (new-str
-		   (create-instance NIL opal:cursor-multi-text
+		   (create-instance nil opal:cursor-multi-text
 		     (:box (list x y 0 0))
 		     (:string (copy-seq final-string))
 		     (:left (o-formula (first (gvl :box))))
@@ -1686,154 +1553,141 @@ Used to make polygons when the polygon tool is the one being used.
 			     (g-value current-font :family)
 			     (g-value current-font :face)
 			     (g-value current-font :size)))
-		     (:line-style (Get-Line-Style
+		     (:line-style (get-line-style
 				   (g-value line-palette :selected :line-thick)
 				   current-color)))))
 	     (with-constants-disabled
-		 (opal:add-component *DRAW-AGG* new-str))
-	     (garnet-gadgets:set-selection MOVER-GROWER new-str)
+		 (opal:add-component *draw-agg* new-str))
+	     (garnet-gadgets:set-selection mover-grower new-str)
 	     )))))
-
-  #+comment
-  (create-instance 'DELETE inter:button-interactor
-    (:continuous NIL)
-    (:start-where T)
-    (:start-event #\rubout)
-    (:final-function
-     #'(lambda (an-interactor final-obj-over)
-	 (declare (ignore an-interactor final-obj-over))
-	 (setf *temp-list* NIL)
-	 (dolist (item (copy-list (g-value MOVER-GROWER :value)))
-	   (with-constants-disabled
-	       (opal:remove-component *DRAW-AGG* item))
-	   (setf *temp-list* (cons item *temp-list*)))
-	 (garnet-gadgets:set-selection MOVER-GROWER NIL)
-	 (dolist (item (copy-list *temp-list*))
-	   (opal:destroy item))
-	 (setf *temp-list* NIL)))
-    (:window `(,draw-win ,WIN)))
-
+  ;; (create-instance 'delete inter:button-interactor
+  ;;   (:continuous nil)
+  ;;   (:start-where t)
+  ;;   (:start-event #\rubout)
+  ;;   (:final-function
+  ;;    #'(lambda (an-interactor final-obj-over)
+  ;; 	 (declare (ignore an-interactor final-obj-over))
+  ;; 	 (setf *temp-list* nil)
+  ;; 	 (dolist (item (copy-list (g-value mover-grower :value)))
+  ;; 	   (with-constants-disabled
+  ;; 	       (opal:remove-component *draw-agg* item))
+  ;; 	   (setf *temp-list* (cons item *temp-list*)))
+  ;; 	 (garnet-gadgets:set-selection mover-grower nil)
+  ;; 	 (dolist (item (copy-list *temp-list*))
+  ;; 	   (opal:destroy item))
+  ;; 	 (setf *temp-list* nil)))
+  ;;   (:window `(,draw-win ,win)))
   )
 
-
-(defun Do-Go (&key dont-enter-main-event-loop double-buffered-p)
+(defun do-go (&key dont-enter-main-event-loop double-buffered-p)
   (declare (ignore double-buffered-p))
-  (Create-Color-List)
-  (Create-Main-Window)
-  (Create-Draw-Window)
-  (s-value MAIN-MENU :accelerator-windows `(,WIN ,DRAW-WIN))
-
-  (gg:Standard-Initialize-Gadget MAIN-MENU MOVER-GROWER *DRAW-AGG*)
-
+  (create-color-list)
+  (create-main-window)
+  (create-draw-window)
+  (s-value main-menu :accelerator-windows `(,main-window ,draw-win))
+  (gg:standard-initialize-gadget main-menu mover-grower *draw-agg*)
   ;; This is necessary because the items functions are called
   ;; by the motif-menu sitting in the submenus
-  (dolist (menu (g-value MAIN-MENU :menubar-items :components))
-    (gg:Standard-Initialize-Gadget (g-value menu :submenu)
-				   MOVER-GROWER *DRAW-AGG*))
+  (dolist (menu (g-value main-menu :menubar-items :components))
+    (gg:standard-initialize-gadget (g-value menu :submenu)
+				   mover-grower *draw-agg*))
+  ;; creates *q-box*
+  (create-query-gadget)
+  ;; creates save-win, *save-db*
+  (create-file-db)
+  ;; creates grid-win, *grid-db*
+  (create-grid-db)
+  ;; creates ps-read-db, *read-db*
+  (create-read-db)
+  (create-interactors)
+  (opal:update main-window t)
+  (format t "~%garnet draw v1.0:
 
-  (Create-Query-Gadget)      ; Creates *Q-BOX*
-  (Create-File-DB)           ; Creates SAVE-WIN, *SAVE-DB*
-  (Create-Grid-DB)           ; Creates GRID-WIN, *GRID-DB*
-  (Create-Read-DB)           ; Creates PS-Read-DB, *Read-DB*
-  (Create-Interactors)
-
-  (opal:update WIN T)
-
-  (Format T "~%GARNET DRAW v1.0:
-
-To Draw an object:
+to draw an object:
 ^^^^^^^^^^^^^^^^^
-  1. Select the type of object to be created from the Tools-Menu
+  1. select the type of object to be created from the tools-menu
      on the left side of the screen.
 
-  2. Press and drag the mouse button to the desired size for the
-     object.  If text then just depress mouse button and release,
+  2. press and drag the mouse button to the desired size for the
+     object.  if text then just depress mouse button and release,
      to end editing type ctrl-j or click with the mouse elsewhere.
-     For polygon, depress right mouse button, release and click
+     for polygon, depress right mouse button, release and click
      again for next point, etc. till either you have added enough
-     points or you don't wish to add any more points.  If you don't
+     points or you don't wish to add any more points.  if you don't
      want to add any more points then depress any other button to
      stop.
 
 
-To select objects:
+to select objects:
 ^^^^^^^^^^^^^^^^^
-  1. Use the left button to select a single item or the middle mouse
+  1. use the left button to select a single item or the middle mouse
      button to select multiple objects.
 
-  2. Depress the middle mouse button and select the region within
+  2. depress the middle mouse button and select the region within
      which you want all objects to be selected.
 
 
-To change line or filling color of a(n) object(s):
+to change line or filling color of a(n) object(s):
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  1. Select the object(s) to be changed, choose either fill or line
+  1. select the object(s) to be changed, choose either fill or line
      and then select the appropriate palette pattern or color.
 
-  2. To change the default line and filling colors, make sure no
-     objects are selected.  Then select line/fill and select the
+  2. to change the default line and filling colors, make sure no
+     objects are selected.  then select line/fill and select the
      palette item of your choice.
 
 
-To change size, family, or face of text objects:
+to change size, family, or face of text objects:
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  1. Select text object and use Font menu to change item.
+  1. select text object and use font menu to change item.
 
-  2. To change the default font, deselect all items, then choose
-     appropriate menu items from Font menu.  (NOTE:  You can
+  2. to change the default font, deselect all items, then choose
+     appropriate menu items from font menu.  (note:  you can
      see what the default font is in the text tools slot of the
      tools menu.)
 
-To edit a polygon(s):
+to edit a polygon(s):
 ^^^^^^^^^^^^^^^^^^^^
-  1. Select polygon to be edited.
+  1. select polygon to be edited.
 
-  2. Type Meta-r or select 'Reshape' from the 'Edit' menu.
+  2. type meta-r or select 'reshape' from the 'edit' menu.
 
-  3. To move a point, use the left mouse button to drag the handles.
-     Control-g while moving will return the point to it's previous
-     location.  Typing DELETE while moving will delete the point.
+  3. to move a point, use the left mouse button to drag the handles.
+     control-g while moving will return the point to it's previous
+     location.  typing delete while moving will delete the point.
 
-     To add a point, click left mouse button on the line where you
-     want to add the point.  You can start dragging the point without
+     to add a point, click left mouse button on the line where you
+     want to add the point.  you can start dragging the point without
      letting go of the button.
 
-     To delete a point, double click with the left button on the point
+     to delete a point, double click with the left button on the point
      to be deleted.
 
-  4. To edit a different polygon from the one you are editing now,
+  4. to edit a different polygon from the one you are editing now,
      move the mouse over the polygon you want to edit and hit meta-r.
 
 ~%")
 
-  (unless dont-enter-main-event-loop #-cmu (inter:main-event-loop))
-  )
+  (unless dont-enter-main-event-loop #-cmu (inter:main-event-loop)))
 
-(defun Do-Stop ()
-  (opal:destroy WIN)
-
-  ;; These interactors were probably not active when WIN was destroyed, so
+(defun do-stop ()
+  (opal:destroy main-window)
+  ;; these interactors were probably not active when win was destroyed, so
   ;; we must destroy them explicitly.
-  (dolist (sym '(NEW-ITEM CREATE-OR-EDIT EDIT-POLYLINE-INTER))
+  (dolist (sym '(new-item create-or-edit edit-polyline-inter))
     (if (and (boundp sym) (schema-p (eval sym)))
 	(opal:destroy (eval sym))))
-
-  ;; These prototype objects were not added to a window themselves, so we
+  ;; these prototype objects were not added to a window themselves, so we
   ;; must destroy them explicitly.
-  (dolist (sym '(PALETTE-ITEM COLOR-PALETTE-ITEM MOVING-AGG
-		 CREATOR-LINE CREATOR-ARROWLINE CREATOR-DOUBLEARROWLINE
-		 CREATOR-RECT CREATOR-ROUNDTANGLE CREATOR-OVAL))
+  (dolist (sym '(palette-item color-palette-item moving-agg
+		 creator-line creator-arrowline creator-doublearrowline
+		 creator-rect creator-roundtangle creator-oval))
     (if (and (boundp sym) (schema-p (eval sym)))
 	(opal:destroy (eval sym))))
-
   ;;for demo-controller
-  (unless (and (fboundp 'Common-Lisp-User::Garnet-Note-Quitted)
-	       (Common-Lisp-User::Garnet-Note-Quitted "GARNETDRAW")))
-  )
+  (unless (and (fboundp 'common-lisp-user::garnet-note-quitted)
+	       (common-lisp-user::garnet-note-quitted "garnetdraw"))))
 
-#|
-Things to fix:
 
-* Align-to-grid command
-
-|#
+;; things to fix:
+;; * align-to-grid command
