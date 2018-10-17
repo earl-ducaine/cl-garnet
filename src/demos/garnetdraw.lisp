@@ -1,5 +1,6 @@
 ;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: GARNETDRAW; Base: 10 -*-
-;;;
+
+
 ;;; The Garnet User Interface Development Environment
 ;;;
 ;;; This code was written as part of the Garnet project at Carnegie
@@ -11,14 +12,13 @@
 (in-package :garnetdraw)
 
 
+;;; Garnet draw
 ;;;
-;;;   GARNET DRAW
-;;;
-;;;  Implemented by Vivek Gupta
+;;; Implemented by Vivek Gupta
 
 (defparameter GarnetDraw-Version "2.0")
 
-;; VARIABLES
+;; Variables
 
 ;; These are the variables used in different
 ;; parts of the file
@@ -41,6 +41,8 @@
 (defvar *q-box*)
 (defvar *read-db*)
 (defvar *save-db*)
+(defvar *save-win*)
+(defvar *ps-read-win*)
 
 (defparameter *the-color-list* nil)
 
@@ -92,28 +94,22 @@
   (create-instance nil inter:priority-level
     (:stop-when :if-any)))
 
-;; need a priority level higher than the motif-tab priority level so
+;; Need a priority level higher than the motif-tab priority level so
 ;; text editing will take precedence over accelerators
 (pushnew *garnetdraw-high-priority* inter:priority-level-list)
 (pushnew *garnetdraw-high-running-priority* inter:priority-level-list)
 
 
-#|
-====================================================================
-prototypes
-
-below we have the prototypes for all the objects which we are going
-to draw.  the first is the one for grouping objects, the rest are
-individual objects.
-====================================================================
-|#
-
+;;; Prototypes
+;;;
+;;; Below we have the prototypes for all the objects which we are
+;;; going to draw.  the first is the one for grouping objects, the
+;;; rest are individual objects.
 
 (defun create-moving-prototypes ()
   (create-instance 'moving-agg opal:aggregadget
     (:group-p t)
     (:grow-p t))
-
   (create-instance 'moving-line opal:line
     (:points (list 0 0 0 0))
     (:x1 (o-formula (first (gvl :points))))
@@ -123,8 +119,8 @@ individual objects.
     (:grow-p t)
     (:group-p nil)
     (:line-p t)
-    (:draw-function :xor)
-    (:fast-redraw-p t)
+    ;; (:draw-function :xor)
+    ;; (:fast-redraw-p t)
     (:visible-p nil)
     (:line-style opal:dashed-line))
   (create-instance 'creator-line opal:line
@@ -134,7 +130,6 @@ individual objects.
     (:x2 (o-formula (third (gvl :points))))
     (:y2 (o-formula (fourth (gvl :points))))
     (:grow-p t))
-
   (create-instance 'new-moving-arrowline garnet-gadgets:arrow-line
     (:points (list 0 0 0 0))
     (:x1 (o-formula (first (gvl :points))))
@@ -148,8 +143,12 @@ individual objects.
     (:filling-style nil)
     (:line-style opal:dashed-line)
     (:open-p nil)
-    (:parts `((:line :modify (:fast-redraw-p t) (:draw-function :xor))
-	      (:arrowhead :modify (:fast-redraw-p t) (:draw-function :xor)))))
+    (:parts `((:line :modify)
+		     ;; (:fast-redraw-p t)
+		     ;; (:draw-function :xor)
+	      (:arrowhead :modify))))
+			  ;; (:fast-redraw-p t)
+			  ;; (:draw-function :xor)
   (create-instance 'creator-arrowline garnet-gadgets:arrow-line
     (:points (list 0 0 0 0))
     (:x1 (o-formula (first (gvl :points))))
@@ -158,7 +157,6 @@ individual objects.
     (:y2 (o-formula (fourth (gvl :points))))
     (:grow-p t)
     (:open-p nil))
-
   (create-instance 'moving-doublearrowline garnet-gadgets:double-arrow-line
     (:points (list 0 0 0 0))
     (:x1 (o-formula (first (gvl :points))))
@@ -174,9 +172,13 @@ individual objects.
     (:filling-style nil)
     (:line-style opal:dashed-line)
     (:open-p nil)
-    (:parts `((:line :modify (:fast-redraw-p t) (:draw-function :xor))
-	      (:arrowhead1 :modify (:fast-redraw-p t) (:draw-function :xor))
-	      (:arrowhead2 :modify (:fast-redraw-p t) (:draw-function :xor)))))
+    (:parts `((:line :modify)
+	      ;; (:fast-redraw-p t)
+	      ;; (:draw-function :xor)
+	      (:arrowhead1 :modify)
+	      ;; (:fast-redraw-p t) (:draw-function :xor)
+	      (:arrowhead2 :modify))))
+  ;; (:fast-redraw-p t) (:draw-function :xor)
   (create-instance 'creator-doublearrowline garnet-gadgets:double-arrow-line
     (:points (list 0 0 0 0))
     (:x1 (o-formula (first (gvl :points))))
@@ -186,11 +188,9 @@ individual objects.
     (:arrow-p t)
     (:arrowhead-p 3)
     (:grow-p t))
-
   ;; moving-arrowline is just created so that can read old garnetdraw files
   (create-instance 'moving-arrowline moving-doublearrowline
     (:arrowhead-p 2))
-
   (create-instance 'moving-rect opal:rectangle
     (:box (list 0 0 0 0))
     (:left (o-formula (first (gvl :box))))
@@ -201,8 +201,8 @@ individual objects.
     (:grow-p t)
     (:filling-style nil)
     (:line-p nil)
-    (:fast-redraw-p t)
-    (:draw-function :xor)
+    ;; (:fast-redraw-p t)
+    ;; (:draw-function :xor)
     (:visible-p nil)
     (:line-style opal:dashed-line))
   (create-instance 'creator-rect opal:rectangle
@@ -212,7 +212,6 @@ individual objects.
     (:width (o-formula (third (gvl :box))))
     (:height (o-formula (fourth (gvl :box))))
     (:grow-p t))
-
   (create-instance 'moving-roundtangle opal:roundtangle
     (:box (list 0 0 0 0))
     (:left (o-formula (first (gvl :box))))
@@ -224,8 +223,8 @@ individual objects.
     (:group-p nil)
     (:visible-p nil)
     (:line-p nil)
-    (:fast-redraw-p t)
-    (:draw-function :xor)
+    ;; (:fast-redraw-p t)
+    ;; (:draw-function :xor)
     (:line-style opal:dashed-line))
   (create-instance 'creator-roundtangle opal:roundtangle
     (:box (list 0 0 0 0))
@@ -234,7 +233,6 @@ individual objects.
     (:width (o-formula (third (gvl :box))))
     (:height (o-formula (fourth (gvl :box))))
     (:grow-p t))
-
   (create-instance 'moving-oval opal:oval
     (:box (list 0 0 0 0))
     (:left (o-formula (first (gvl :box))))
@@ -244,8 +242,8 @@ individual objects.
     (:filling-style nil)
     (:grow-p t)
     (:group-p nil)
-    (:fast-redraw-p t)
-    (:draw-function :xor)
+    ;; (:fast-redraw-p t)
+    ;; (:draw-function :xor)
     (:visible-p nil)
     (:line-p nil)
     (:line-style opal:dashed-line))
@@ -255,8 +253,7 @@ individual objects.
     (:top (o-formula (second (gvl :box))))
     (:width (o-formula (third (gvl :box))))
     (:height (o-formula (fourth (gvl :box))))
-    (:grow-p t))
-  )
+    (:grow-p t)))
 
 (defun create-text-feedback ()
   (create-instance 'text-feedback opal:cursor-multi-text
@@ -379,7 +376,7 @@ individual objects.
 		     (:font ,(opal:get-standard-font nil :bold-italic :large))
 		     (:string "saving..."))
 		    ))))
-  (setf save-win (g-value *save-db* :window)))
+  (setf *save-win* (g-value *save-db* :window)))
 
 (defun create-grid-db ()
   (create-instance 'grid-win inter:interactor-window
@@ -450,7 +447,7 @@ individual objects.
 				 (:top ,(o-formula (+ (gvl :parent :file-input :top)
 						      (gvl :parent :file-input :height)
 						      20))))))))
-  (setf ps-read-win (g-value *read-db* :window)))
+  (setf *ps-read-win* (g-value *read-db* :window)))
 
 
 ;;; Menu functions and menubar
@@ -559,21 +556,25 @@ individual objects.
 
 (defun gridtoggle (menubar bar-item submenu-item)
   (declare (ignore menubar bar-item submenu-item))
-  (if (g-value grid-obj :gridon)
-      (progn ; turn if off, and make menu so it will turn it on
-	(s-value grid-obj :gridon nil)
-	(gg:menubar-set-title *grid-menu-item* " turn grid on "))
-      (progn; turn if on, and make menu so it will turn it off
-	(s-value grid-obj :gridon t)
-	(gg:menubar-set-title *grid-menu-item* " turn grid off "))))
+  (cond
+    ((g-value grid-obj :gridon)
+     ;; turn if off, and make menu so it will turn it on
+     (s-value grid-obj :gridon nil)
+     (gg:menubar-set-title *grid-menu-item* " turn grid on "))
+    (t
+     ;; turn if on, and make menu so it will turn it off
+     (s-value grid-obj :gridon t)
+     (gg:menubar-set-title *grid-menu-item* " turn grid off "))))
 
 (defun gridvisible (menubar bar-item submenu-item)
   (declare (ignore menubar bar-item submenu-item))
   (if (g-value grid-obj :gridvis)
-      (progn ; turn if off, and make menu so it will turn it on
+      (progn
+	;; turn if off, and make menu so it will turn it on
 	(s-value grid-obj :gridvis nil)
 	(gg:menubar-set-title *grid-vis-item* " show grid dots "))
-      (progn; turn if on, and make menu so it will turn it off
+      (progn
+	;; turn if on, and make menu so it will turn it off
 	(s-value grid-obj :gridvis t)
 	(gg:menubar-set-title *grid-vis-item* " hide grid dots "))))
 
@@ -585,15 +586,16 @@ individual objects.
   (opal:update grid-win))
 
 ;;; This function hides the mover-grower handles. This is called by
-;;; both the accelerator and the edit-polyline-inter.  basically, if
-;;; an object is selected and that object is a polyline, then edit it.
-;;; else, if the obj passed to the function is a polyline, edit that
-;;; instead.
+;;; both the accelerator and the edit-polyline-inter. Basically, if an
+;;; object is selected and that object is a polyline, then edit it,
+;;; else if the obj passed to the function is a polyline, edit that
+;;; instead.(???)
 (defun reshape-fn (inter obj &optional extra)
   (declare (ignore inter extra))
   (s-value polygon-maker :reshape-called-p t)
   (let* ((selected-objs (g-value mover-grower :value))
-	 (selected-obj (when (not (cdr selected-objs)) (first selected-objs))))
+	 (selected-obj (when (not (cdr selected-objs))
+			 (first selected-objs))))
     (if (is-a-p selected-obj opal:polyline)
 	(progn
 	  (gg::toggle-polyline-handles polygon-maker selected-obj)
@@ -656,12 +658,9 @@ individual objects.
        (" roman " " small ")
        nil))))
 
-;;; Tool palette
-;;;
-;;; this is the list of tools available for drawing objects.  each
-;;; contains a bitmap representation of the tool and the location
-;;; where it goes.
 
+;;; List of tools available for drawing objects. Each contains a
+;;; bitmap representation of the tool and the location where it goes.
 (defun create-tool-palette ()
   (create-instance 'tool-feedback opal:rectangle
     (:left (o-formula (gvl :obj-over :left)))
@@ -670,128 +669,186 @@ individual objects.
     (:height (o-formula (gvl :obj-over :height)))
     (:visible (o-formula (gvl :obj-over)))
     (:line-style opal:line-4))
+  (create-instance 'tools-modal-menu opal:aggregadget
+    (:top (+ 2 (g-value main-menu :height)))
+    (:selected nil)
+    (:parts
+     `((:misc-option-1 ,opal:aggregadget
+		       (:left 5)
+		       (:height 32)
+		       (:width 32)
+		       (:top ,(o-formula (gvl :parent :top)))
+		       (:feedback-object ,moving-line)
+		       (:creator-object ,creator-line)
+		       (:parts
+			((:bm ,opal:bitmap
+			      (:left 5)
+			      Laalic-2
+			      (:top ,(o-formula (gvl :parent :top)))
+			      (:image
+			       ,(opal:read-image
+				 (merge-pathnames "line.bm"
+						  (merge-pathnames "garnetdraw/"
+								   common-lisp-user::garnet-bitmap-pathname))))))))
+       (:misc-option-2 ,opal:aggregadget
+		       ;; (:left 5)
+		       (:left ,(o-formula (+ 31 (g-value :misc-option-1  :left))))
+		       (:height 32)
+		       (:width 32)
+		       (:top ,(o-formula (gvl :parent :top)))
+		       (:feedback-object ,moving-line)
+		       (:creator-object ,creator-line)
+		       (:parts
+			((:bm ,opal:bitmap
+			      (:left 5)
+			      (:top ,(o-formula (gvl :parent :top)))
+			      (:image
+			       ,(opal:read-image
+				 (merge-pathnames "line.bm"
+						  (merge-pathnames "garnetdraw/"
+								   common-lisp-user::garnet-bitmap-pathname)))))))))))
   (create-instance 'tools-menu opal:aggregadget
     (:top (+ 2 (g-value main-menu :height)))
     (:selected nil)
     (:parts
-     `((:line-tool ,opal:aggregadget
-	(:left 5) (:height 32) (:width 32)
-	(:top ,(o-formula (gvl :parent :top)))
-	(:feedback-object ,moving-line)
-	(:creator-object ,creator-line)
-	(:parts
-	 ((:bm ,opal:bitmap
-	       (:left 5) (:top ,(o-formula (gvl :parent :top)))
-	       (:image
-		,(opal:read-image
-		  (merge-pathnames "line.bm"
-				   (merge-pathnames "garnetdraw/"
-						    common-lisp-user::garnet-bitmap-pathname))))))))
+     `((:selector ,opal:aggregadget
+		  (:left 5) (:height 32) (:width 32)
+		  (:top ,(o-formula (+ 31 (g-value tools-modal-menu :misc-option-1 :top))))
+		  (:feedback-object ,moving-line)
+		  (:creator-object ,creator-line)
+		  (:parts
+		   ((:bm ,opal:bitmap
+			 (:left 5)
+			 (:top ,(o-formula (gvl :parent :top)))
+			 (:image
+			  ,(opal:read-image
+			    (merge-pathnames "line.bm"
+					     (merge-pathnames "garnetdraw/"
+							      common-lisp-user::garnet-bitmap-pathname))))))))
+       (:line-tool ,opal:aggregadget
+		   (:left 5) (:height 32) (:width 32)
+		   (:top ,(o-formula (+ 31 (gvl :parent :selector :top))))
+		   (:feedback-object ,moving-line)
+		   (:creator-object ,creator-line)
+		   (:parts
+		    ((:bm ,opal:bitmap
+			  (:left 5)
+			  (:top ,(o-formula (gvl :parent :top)))
+			  (:image
+			   ,(opal:read-image
+			     (merge-pathnames "line.bm"
+					      (merge-pathnames "garnetdraw/"
+							       common-lisp-user::garnet-bitmap-pathname))))))))
        (:rect-tool ,opal:aggregadget
-	(:left 5) (:height 32) (:width 32)
-	(:top ,(o-formula (+ 31 (gvl :parent :line-tool :top))))
-	(:feedback-object ,moving-rect)
-	(:creator-object ,creator-rect)
-	(:parts
-	 ((:bm ,opal:bitmap
-	       (:left 5) (:top ,(o-formula (gvl :parent :top)))
-	       (:image
-		,(opal:read-image
-		  (merge-pathnames "rectangle.bm"
-				   (merge-pathnames "garnetdraw/"
-						    common-lisp-user::garnet-bitmap-pathname))))))))
+		   (:left 5) (:height 32) (:width 32)
+		   (:top ,(o-formula (+ 31 (gvl :parent :line-tool :top))))
+		   (:feedback-object ,moving-rect)
+		   (:creator-object ,creator-rect)
+		   (:parts
+		    ((:bm ,opal:bitmap
+			  (:left 5)
+			  (:top ,(o-formula (gvl :parent :top)))
+			  (:image
+			   ,(opal:read-image
+			     (merge-pathnames "rectangle.bm"
+					      (merge-pathnames "garnetdraw/"
+							       common-lisp-user::garnet-bitmap-pathname))))))))
        (:roundrect-tool ,opal:aggregadget
-	(:left 5) (:height 32) (:width 32)
-	(:top ,(o-formula (+ 31 (gvl :parent :rect-tool :top))))
-	(:feedback-object ,moving-roundtangle)
-	(:creator-object ,creator-roundtangle)
-	(:parts
-	 ((:bm ,opal:bitmap
-	       (:left 5) (:top ,(o-formula (gvl :parent :top)))
-	       (:image
-		,(opal:read-image
-		  (merge-pathnames "roundrect.bm"
-				   (merge-pathnames "garnetdraw/"
-						    common-lisp-user::garnet-bitmap-pathname))))))))
+			(:left 5) (:height 32) (:width 32)
+			(:top ,(o-formula (+ 31 (gvl :parent :rect-tool :top))))
+			(:feedback-object ,moving-roundtangle)
+			(:creator-object ,creator-roundtangle)
+			(:parts
+			 ((:bm ,opal:bitmap
+			       (:left 5)
+			       (:top ,(o-formula (gvl :parent :top)))
+			       (:image
+				,(opal:read-image
+				  (merge-pathnames "roundrect.bm"
+						   (merge-pathnames "garnetdraw/"
+								    common-lisp-user::garnet-bitmap-pathname))))))))
        (:oval-tool ,opal:aggregadget
-	(:feedback-object ,moving-oval)
-	(:creator-object ,creator-oval)
-	(:left 5) (:height 32) (:width 32)
-	(:top ,(o-formula (+ 31 (gvl :parent :roundrect-tool :top))))
-	(:parts
-	 ((:bm ,opal:bitmap
-	       (:left 5) (:top ,(o-formula (gvl :parent :top)))
-	       (:image
-		,(opal:read-image
-		  (merge-pathnames "oval.bm"
-				   (merge-pathnames "garnetdraw/"
-						    common-lisp-user::garnet-bitmap-pathname))))))))
+		   (:feedback-object ,moving-oval)
+		   (:creator-object ,creator-oval)
+		   (:left 5)
+		   (:height 32)
+		   (:width 32)
+		   (:top ,(o-formula (+ 31 (gvl :parent :roundrect-tool :top))))
+		   (:parts
+		    ((:bm ,opal:bitmap
+			  (:left 5)
+			  (:top ,(o-formula (gvl :parent :top)))
+			  (:image
+			   ,(opal:read-image
+			     (merge-pathnames "oval.bm"
+					      (merge-pathnames "garnetdraw/"
+							       common-lisp-user::garnet-bitmap-pathname))))))))
        (:text-tool ,opal:aggregadget
-	(:feedback-object ,text-feedback)
-	(:creator-object ,text-feedback)
-	(:left 5) (:height 32) (:width 32)
-	(:top ,(o-formula (+ 31 (gvl :parent :oval-tool :top))))
-	(:parts
-	 ((:background ,opal:rectangle
-		       (:left 5)(:width 32)(:height 32)
-		       (:top ,(o-formula (gvl :parent :top)))
-		       (:filling-style ,opal:white-fill)
-		       (:line-style ,opal:line-0))
-	  (:text-state ,opal:text
-		       (:left ,(o-formula (opal:gv-center-x-is-center-of (gvl :parent))))
-		       (:top ,(o-formula (opal:gv-center-y-is-center-of (gvl :parent))))
-		       (:string "t")
-		       (:line-style ,(create-instance nil opal:default-line-style))
-		       (:font ,(opal:get-standard-font nil nil nil))))))
+		   (:feedback-object ,text-feedback)
+		   (:creator-object ,text-feedback)
+		   (:left 5) (:height 32) (:width 32)
+		   (:top ,(o-formula (+ 31 (gvl :parent :oval-tool :top))))
+		   (:parts
+		    ((:background ,opal:rectangle
+				  (:left 5)(:width 32)(:height 32)
+				  (:top ,(o-formula (gvl :parent :top)))
+				  (:filling-style ,opal:white-fill)
+				  (:line-style ,opal:line-0))
+		     (:text-state ,opal:text
+				  (:left ,(o-formula (opal:gv-center-x-is-center-of (gvl :parent))))
+				  (:top ,(o-formula (opal:gv-center-y-is-center-of (gvl :parent))))
+				  (:string "t")
+				  (:line-style ,(create-instance nil opal:default-line-style))
+				  (:font ,(opal:get-standard-font nil nil nil))))))
        (:polygon-tool ,opal:aggregadget
-	(:feedback-object ,moving-rect)
-	(:creator-object nil)
-	(:left 5) (:height 32) (:width 32)
-	(:top ,(o-formula (+ 31 (gvl :parent :text-tool :top))))
-	(:parts
-	 ((:bm ,opal:bitmap
-	       (:left 5) (:top ,(o-formula (gvl :parent :top)))
-	       (:image
-		,(opal:read-image
-		  (merge-pathnames "polygon.bm"
-				   (merge-pathnames
-				    "garnetdraw/"
-				    common-lisp-user::garnet-bitmap-pathname))))))))
+		      (:feedback-object ,moving-rect)
+		      (:creator-object nil)
+		      (:left 5) (:height 32) (:width 32)
+		      (:top ,(o-formula (+ 31 (gvl :parent :text-tool :top))))
+		      (:parts
+		       ((:bm ,opal:bitmap
+			     (:left 5) (:top ,(o-formula (gvl :parent :top)))
+			     (:image
+			      ,(opal:read-image
+				(merge-pathnames "polygon.bm"
+						 (merge-pathnames
+						  "garnetdraw/"
+						  common-lisp-user::garnet-bitmap-pathname))))))))
        (:arrowline-tool ,opal:aggregadget
-	(:feedback-object ,new-moving-arrowline)
-	(:creator-object ,creator-arrowline)
-	(:left 5) (:height 32) (:width 32)
-	(:top ,(o-formula (+ 31 (gvl :parent :polygon-tool :top))))
-	(:parts
-	 ((:bm ,opal:bitmap
-	       (:left 5) (:top ,(o-formula (gvl :parent :top)))
-	       (:image
-		,(opal:read-image
-		  (merge-pathnames "linearrow.bm"
-		    (merge-pathnames
-		     "garnetdraw/"
-		     common-lisp-user::garnet-bitmap-pathname))))))))
+			(:feedback-object ,new-moving-arrowline)
+			(:creator-object ,creator-arrowline)
+			(:left 5) (:height 32) (:width 32)
+			(:top ,(o-formula (+ 31 (gvl :parent :polygon-tool :top))))
+			(:parts
+			 ((:bm ,opal:bitmap
+			       (:left 5) (:top ,(o-formula (gvl :parent :top)))
+			       (:image
+				,(opal:read-image
+				  (merge-pathnames "linearrow.bm"
+						   (merge-pathnames
+						    "garnetdraw/"
+						    common-lisp-user::garnet-bitmap-pathname))))))))
        (:doublearrowline-tool ,opal:aggregadget
-	(:feedback-object ,moving-doublearrowline)
-	(:creator-object ,creator-doublearrowline)
-	(:left 5) (:height 32) (:width 32)
-	(:top ,(o-formula (+ 31 (gvl :parent :arrowline-tool :top))))
-	(:parts
-	 ((:bm ,opal:bitmap
-	       (:left 5) (:top ,(o-formula (gvl :parent :top)))
-	       (:image
-		,(opal:read-image
-		  (merge-pathnames "doublelinearrow.bm"
-				   (merge-pathnames
-				    "garnetdraw/"
-				    common-lisp-user::garnet-bitmap-pathname))))))))))
+			      (:feedback-object ,moving-doublearrowline)
+			      (:creator-object ,creator-doublearrowline)
+			      (:left 5) (:height 32) (:width 32)
+			      (:top ,(o-formula (+ 31 (gvl :parent :arrowline-tool :top))))
+			      (:parts
+			       ((:bm ,opal:bitmap
+				     (:left 5) (:top ,(o-formula (gvl :parent :top)))
+				     (:image
+				      ,(opal:read-image
+					(merge-pathnames "doublelinearrow.bm"
+							 (merge-pathnames
+							  "garnetdraw/"
+							  common-lisp-user::garnet-bitmap-pathname))))))))))
     (:interactors
      `((:tool-interactor ,inter:button-interactor
-	(:window ,(o-formula (gvl :operates-on :window)))
-	(:start-event :any-mousedown)
-	(:final-feedback-obj ,tool-feedback)
-	(:how-set :set)
-	(:start-where ,(o-formula (list :element-of (gvl :operates-on))))))))
+			 (:window ,(o-formula (gvl :operates-on :window)))
+			 (:start-event :any-mousedown)
+			 (:final-feedback-obj ,tool-feedback)
+			 (:how-set :set)
+			 (:start-where ,(o-formula (list :element-of (gvl :operates-on))))))))
   (s-value tools-menu :selected (car (g-value tools-menu :components)))
   (s-value tool-feedback :obj-over (car (g-value tools-menu :components))))
 
@@ -1001,7 +1058,6 @@ earlier.
 			   item
 			   (opal:halftone (nth (gvl :rank)
 					       (gvl :parent :items))))))))
-
   (create-instance 'stipple-palette opal:aggregadget
     (:left 90)
     (:top (o-formula (if (g-value opal:color :color-p) 442 477)))
@@ -1014,72 +1070,69 @@ earlier.
 	      ,opal:black-fill))
     (:parts
      `((:background ,opal:rectangle
-	(:left 87)
-	(:top ,(o-formula (if (g-value opal:color :color-p) 439 474)))
-	(:width 616)
-	(:height ,(if (g-value opal:color :color-p) 73 38))
-	(:filling-style ,opal:white-fill)
-	(:line-style ,opal:line-0))
+		    (:left 87)
+		    (:top ,(o-formula (if (g-value opal:color :color-p) 439 474)))
+		    (:width 616)
+		    (:height ,(if (g-value opal:color :color-p) 73 38))
+		    (:filling-style ,opal:white-fill)
+		    (:line-style ,opal:line-0))
        (:patterns-agg ,opal:aggrelist
-	(:left ,(o-formula (gvl :parent :left)))
-	(:top ,(o-formula (gvl :parent :top)))
-	(:selected nil)
-	(:items ,(o-formula (gvl :parent :items)))
-	(:h-spacing 2)
-	(:direction :horizontal)
-	(:item-prototype ,palette-item))
+		      (:left ,(o-formula (gvl :parent :left)))
+		      (:top ,(o-formula (gvl :parent :top)))
+		      (:selected nil)
+		      (:items ,(o-formula (gvl :parent :items)))
+		      (:h-spacing 2)
+		      (:direction :horizontal)
+		      (:item-prototype ,palette-item))
        (:nil-text ,opal:text
-	(:left 674)
-	(:top ,(o-formula (if (g-value opal:color :color-p) 450 485)))
-	(:string "nil"))))
+		  (:left 674)
+		  (:top ,(o-formula (if (g-value opal:color :color-p) 450 485)))
+		  (:string "nil"))))
     (:interactors
      `((:palette-interactor ,inter:button-interactor
-	(:window ,(o-formula (gvl :operates-on :window)))
-	(:start-event :any-mousedown)
-	(:how-set :set)
-	(:final-feedback-obj ,palette-feedback)
-	(:final-function ,#'selectedfun)
-	(:start-where ,(o-formula (list :element-of
-					(gvl :operates-on :patterns-agg))))
-	(:start-action
-	 ,#'(lambda (inter obj)
-	      (let ((fill (g-value palette-feedback :obj-over :filling-style)))
-		(s-value palette-feedback :fast-redraw-filling-style fill)
-		(s-value (g-value current-state :feedback)
-			 :fast-redraw-filling-style (or fill opal:white-fill)))
-	      (call-prototype-method inter obj)))))))
-
+			    (:window ,(o-formula (gvl :operates-on :window)))
+			    (:start-event :any-mousedown)
+			    (:how-set :set)
+			    (:final-feedback-obj ,palette-feedback)
+			    (:final-function ,#'selectedfun)
+			    (:start-where ,(o-formula (list :element-of
+							    (gvl :operates-on :patterns-agg))))
+			    (:start-action
+			     ,#'(lambda (inter obj)
+				  (let ((fill (g-value palette-feedback :obj-over :filling-style)))
+				    (s-value palette-feedback :fast-redraw-filling-style fill)
+				    (s-value (g-value current-state :feedback)
+					     :fast-redraw-filling-style (or fill opal:white-fill)))
+				  (call-prototype-method inter obj)))))))
   (s-value (car (g-value stipple-palette :patterns-agg :components))
 	   :line-hold
 	   (create-instance nil opal:line-style
 	     (:foreground-color opal:white)
 	     (:line-thickness 0)))
-
   ;; this is the nil filling style.
   (let* ((kr::*constants-disabled* t)
 	 (patterns-agg (g-value stipple-palette :patterns-agg))
 	 (line-hold (g-value (car (g-value patterns-agg :components))
 			     :line-hold)))
     (opal:add-component patterns-agg
-         (create-instance 'nil-palette-item opal:rectangle
-	   (:left 638) (:width 32) (:height 32)
-	   (:top (if (g-value opal:color :color-p) 442 477))
-	   (:line-hold line-hold)
-	   (:filling-style nil))))
-  )
+			(create-instance 'nil-palette-item opal:rectangle
+			  (:left 638) (:width 32) (:height 32)
+			  (:top (if (g-value opal:color :color-p) 442 477))
+			  (:line-hold line-hold)
+			  (:filling-style nil)))))
 
 (defun create-color-palette ()
   (create-instance 'color-palette-item opal:rectangle
     (:left (o-formula (gvl :parent :left)))
     (:top (o-formula (gvl :parent :top)))
-    (:width 32)(:height 32)
+    (:width 32)
+    (:height 32)
     (:line-hold (o-formula
 		 (car (cdr (nth (gvl :rank) (gvl :parent :items))))))
     (:filling-style (o-formula (car (nth (gvl :rank) (gvl :parent :items))))))
-
-
   (create-instance 'color-palette opal:aggregadget
-    (:left 90) (:top 477)
+    (:left 90)
+    (:top 700)
     (:selected nil)
     (:items (copy-list *the-color-list*))
     (:parts
@@ -1106,8 +1159,7 @@ earlier.
 		(s-value palette-feedback :fast-redraw-filling-style fill)
 		(s-value (g-value current-state :feedback)
 			 :fast-redraw-filling-style (or fill opal:white-fill)))
-	      (call-prototype-method inter obj)))))))
-  )
+	      (call-prototype-method inter obj))))))))
 
 (defun create-fill-palettes ()
   (create-palette-feedback)       ; creates palette-feedback
@@ -1159,16 +1211,8 @@ earlier.
       (incf val 1))
     (setq *the-color-list* l2)))
 
-
-#|
-====================================================================
-current state
-
-the current-state menu shows the current colors selected for the
-line-styles and filling-styles.
-====================================================================
-|#
-
+;; The current-state menu shows the current colors selected for the
+;; line-styles and filling-styles.
 (defun create-current-state ()
   (create-instance 'current-state opal:aggregadget
     (:left 2) (:top 446) (:width 52) (:height 52)
@@ -1240,8 +1284,6 @@ line-styles and filling-styles.
 		(s-value feedback-obj :fast-redraw-filling-style
 			 (or fill opal:white-fill)))
 	      (call-prototype-method inter obj)))))))
-
-
   (let* ((selectable-objs (g-value current-state :selectable-objs))
 	 (frame (g-value selectable-objs :frame))
 	 (filler (g-value selectable-objs :filler)))
@@ -1254,13 +1296,12 @@ line-styles and filling-styles.
 	     (g-value palette-feedback :obj-over :filling-style))
     (s-value filler :filling-style
 	     (g-value (car (g-value stipple-palette :patterns-agg :components))
-		      :filling-style)))
-  )
+		      :filling-style))))
 
 (defun create-main-window ()
   ;; this is the main window.
   (create-instance 'main-window inter:interactor-window
-    (:left 10) (:top 40) (:width 750) (:height 512)
+    (:left 10) (:top 40) (:width 1000) (:height 768)
     (:background-color (create-instance nil opal:color
 			 (:red 0.65) (:blue 0.65) (:green 0.65)))
     (:position-by-hand nil)
@@ -1277,18 +1318,27 @@ line-styles and filling-styles.
 	 (declare (ignore win))
 	 (common-lisp-user::garnet-note-quitted "garnetdraw"))
      (g-value main-window :destroy-hooks)))
-  (create-moving-prototypes) ; creates moving-rect, moving-oval, etc.
-  (create-text-feedback)     ; creates text-feedback
-  (create-main-menubar)      ; creates main-menu
-  (create-line-palette)      ; creates line-palette and line-feedback
-  (create-tool-palette)      ; creates tools-menu and tool-feedback
-  (create-fill-palettes)     ; creates stipple-palette, color-palette, and
-					; palette-feedback
+  ;; creates moving-rect, moving-oval, etc.
+  (create-moving-prototypes)
+  ;; creates text-feedback
+  (create-text-feedback)
+  ;; creates main-menu
+  (create-main-menubar)
+  ;; creates line-palette and line-feedback
+  (create-line-palette)
+  ;; creates tools-menu and tool-feedback
+  (create-tool-palette)
+  ;; creates stipple-palette, color-palette, and palette-feedback
+  (create-fill-palettes)
   (create-color-list)
   (create-current-state)     ; creates current-state
   (opal:add-components top-agg
-		       tools-menu tool-feedback
-		       current-state line-palette line-feedback
+		       tools-modal-menu
+		       tools-menu
+		       tool-feedback
+		       current-state
+		       line-palette
+		       line-feedback
 		       stipple-palette)
   (if (g-value opal:color :color-p)
       (opal:add-component top-agg color-palette))
@@ -1305,15 +1355,17 @@ line-styles and filling-styles.
   (gg:menubar-disable-component
    (gg:find-submenu-component main-menu "  edit  " " reshape ")))
 
-;; Mover grower gadget
-;; This is the gadget used to move and scale different graphical
-;; objects.
-
+;;; Mover grower gadget
+;;;
+;;; This is the gadget used to move and scale different graphical
+;;; objects.
+;;;
 ;;; If the newly selected object is a *polyline*, enable the "reshape"
 ;;; item in the menubar.  otherwise, disable it.
-(defun mover-grower-sel-fn (gad new-sel)
-  (declare (ignore gad))
-  (let ((selected-obj (when (not (cdr new-sel)) (car new-sel))))
+(defun mover-grower-sel-fn (gadget new-sel)
+  (declare (ignore gadget))
+  (let ((selected-obj (when (not (cdr new-sel))
+			(car new-sel))))
     (if (is-a-p selected-obj opal:polyline)
 	(gg:menubar-enable-component
 	 (gg:find-submenu-component main-menu "  edit  " " reshape "))
@@ -1335,10 +1387,7 @@ line-styles and filling-styles.
     (:movegrow-boxes-p t)
     (:movegrow-lines-p t)
     (:value nil)
-    (:running-where t))
-
-  )
-
+    (:running-where t)))
 
 ;; Polygon gadget
 ;; Used to make polygons when the polygon tool is the one being used.
@@ -1389,7 +1438,7 @@ line-styles and filling-styles.
 		 (with-constants-disabled
 		   (opal:add-component *draw-agg* new-obj))
 		 (garnet-gadgets:set-selection mover-grower new-obj))))))
-  ;; this baby takes care of the case where you have a polyline being edited,
+  ;; This baby takes care of the case where you have a polyline being edited,
   ;; and you move the mouse over another polyline and hit meta-r.  it should
   ;; start editing the second polyline.
   (create-instance 'edit-polyline-inter inter:button-interactor
@@ -1668,7 +1717,8 @@ to edit a polygon(s):
 
 ~%")
 
-  (unless dont-enter-main-event-loop #-cmu (inter:main-event-loop)))
+  (unless dont-enter-main-event-loop
+    (inter:main-event-loop)))
 
 (defun do-stop ()
   (opal:destroy main-window)

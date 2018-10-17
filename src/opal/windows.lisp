@@ -680,29 +680,29 @@
     (if make-new-buffer
       (expand-buffer a-window))))
 
-(defun Delete-Notify (event-debug event-window)
+(defun delete-notify (event-debug event-window)
   (if event-debug (format t " delete-notify ~s~%" event-window))
-  ;; Will be changed to take a-window as a parameter, rather than
-  ;; event-window. Hence, the following will be unnecessary.
+  ;; will be changed to take a-window as a parameter, rather than
+  ;; event-window. hence, the following will be unnecessary.
   ;;
-  ;; XXX FMG I don't think so. Not sure how you deal with orphaned
-  ;; windows if you don't have the event window (X window) available.
+  ;; xxx fmg i don't think so. not sure how you deal with orphaned
+  ;; windows if you don't have the event window (x window) available.
   (let ((a-window (getf (xlib:drawable-plist event-window) :garnet)))
     (if (schema-p a-window)
 	(let ((drawable (g-value a-window :drawable)))
 	  (if (and drawable (= (xlib:window-id drawable)
 			       (xlib:window-id event-window)))
 	      (progn
-		;; Because the window is being destroyed because of an
+		;; because the window is being destroyed because of an
 		;; event from the window manager, we want to allow the
 		;; application to do something about it.
 		(dolist (hook (g-value a-window :destroy-hooks))
 		  (funcall hook a-window))
 		(opal:destroy a-window))
-	      ;; Then event-window is an orphaned window
+	      ;; then event-window is an orphaned window
 	      (gem:delete-window a-window event-window)))
-	;; Then event-window is an orphaned window
-	(gem:delete-window NIL event-window))))
+	;; then event-window is an orphaned window
+	(gem:delete-window nil event-window))))
 
 (define-method :destroy-me window (a-window)
   ;; first recursively destroy all subwindows
