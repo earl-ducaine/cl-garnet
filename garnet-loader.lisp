@@ -96,14 +96,10 @@
 (defvar garnet-lib-pathname (append-directory org.xoanonos.asdf-app-config:*base-directory* "lib"))
 (defvar garnet-binary-pathname (get-garnet-binary-pathname))
 
-;; (defvar Garnet-Opal-Src
-;;   (append-directory Garnet-Src-Pathname "opal"))
-;; (defvar Garnet-Opal-Pathname
-;;   (append-directory Garnet-Binary-Pathname "opal"))
-(defvar Garnet-Truetype-Src
-  (append-directory Garnet-Src-Pathname "truetype"))
-(defvar Garnet-Truetype-Pathname
-  (append-directory Garnet-Binary-Pathname "truetype"))
+;; (defvar Garnet-Truetype-Src
+;;   (append-directory Garnet-Src-Pathname "truetype"))
+;; (defvar Garnet-Truetype-Pathname
+;;   (append-directory Garnet-Binary-Pathname "truetype"))
 (defvar Garnet-Inter-Src
   (append-directory Garnet-Src-Pathname "inter"))
 (defvar Garnet-Inter-Pathname
@@ -152,7 +148,6 @@
   (append-directory Garnet-Src-Pathname "protected-eval"))
 (defvar Garnet-Protected-Eval-Pathname
   (append-directory Garnet-Binary-Pathname "protected-eval"))
-
 (defvar Garnet-Bitmap-Pathname
   (append-directory Garnet-Lib-Pathname "bitmaps"))
 (defvar Garnet-Pixmap-Pathname
@@ -169,9 +164,7 @@
 ;;; Names of loader files.
 
 (defparameter Garnet-Inter-Loader (merge-pathnames "inter-loader" Garnet-Inter-PathName))
-
 (defparameter Garnet-Gesture-Loader (merge-pathnames "gesture-loader" Garnet-Gesture-PathName))
-
 (defparameter Garnet-Aggregadgets-Loader (merge-pathnames "aggregadgets-loader" Garnet-Aggregadgets-PathName))
 (defparameter Garnet-Aggregraphs-Loader (merge-pathnames "aggregraphs-loader" Garnet-Aggregadgets-PathName))
 (defparameter Garnet-Gadgets-Loader (merge-pathnames "gadgets-loader" Garnet-Gadgets-PathName))
@@ -187,8 +180,7 @@
 ;;; Target directories (binarys)
   `(("gg"                 . ,Garnet-Gadgets-PathName)
     ("gadgets"            . ,Garnet-Gadgets-PathName)
-;;    ("opal"               . ,Garnet-Opal-Pathname)
-    ("truetype"           . ,Garnet-Truetype-PathName)
+;;    ("truetype"           . ,Garnet-Truetype-PathName)
     ("inter"              . ,Garnet-Inter-PathName)
     ("gesture"            . ,Garnet-Gesture-PathName)
     ("gestures"           . ,Garnet-Gesture-PathName)
@@ -202,8 +194,6 @@
     ("lapidary"           . ,Garnet-Lapidary-PathName)
     ("contrib"            . ,Garnet-Contrib-PathName)
     ("protected-eval"     . ,Garnet-Protected-Eval-PathName)
-;;; Source directories.
-;;    ("opal-src"           . ,Garnet-Opal-Src)
     ("inter-src"          . ,Garnet-Inter-Src)
     ("gesture-src"        . ,Garnet-Gesture-Src)
     ("gestures-src"       . ,Garnet-Gesture-Src)
@@ -248,7 +238,6 @@ Otherwise just load the filename as given."
         (progn
           (format T "No module name given: Loading ~s~%" filename)
           (load filename)))))
-
 
 ;;; Garnet-Compile.
 ;; This function will compile your garnet files while keeping the

@@ -56,35 +56,36 @@
 (defparameter *dangerous-slots*
   '(:is-a :is-a-inv :components :parent))
 
-(when gem::*x11-server-available*
-  ;; loading gadgets is in c32loader
-  (create-instance 'ital-font opal:font (:face :italic))
-  (create-instance 'bold-font opal:font (:face :bold))
-  (create-instance 'reg-font opal:font)
-  (create-instance 'form-icon opal:bitmap
-    (:image (opal:read-image (merge-pathnames
-			      "formula-icon.bm"
-			      common-lisp-user::garnet-c32-bitmap-pathname))))
-  (create-instance 'inherited-icon opal:bitmap
-    (:image (opal:read-image (merge-pathnames
-			      "inherited-icon.bm"
-			      common-lisp-user::garnet-c32-bitmap-pathname))))
-  (defparameter font-height (max (opal:string-height ital-font "/")
-				 (opal:string-height reg-font "/")))
-  (defparameter font-char-width (max (opal:string-width ital-font "/")  ; fixed width
-				     (opal:string-width reg-font "/"))) ; fonts
-  (defparameter form-icon-width (g-value form-icon :width))
-  (defparameter inherited-icon-width (g-value inherited-icon :width))
-  (defparameter label-width 100)
-  (defparameter max-value-width 120)
-  (defparameter label-num-chars (floor label-width font-char-width))
-  (defparameter label-side-width (+ label-width form-icon-width inherited-icon-width
-				    -4)) ; fudge factor
-  (defparameter icon-at-right-offset (+ label-side-width 2 max-value-width))
-  (defparameter full-item-width (+ icon-at-right-offset inherited-icon-width 2))
-  (defparameter scroll-panel-width (+ 20 full-item-width))
-  (defparameter scroll-panel-num-items 12)
-  (defparameter scroll-panel-height (* scroll-panel-num-items (+ 1 font-height))))
+(eval-when (:execute :load-toplevel :compile-toplevel)
+  (when gem::*x11-server-available*
+    ;; loading gadgets is in c32loader
+    (create-instance 'ital-font opal:font (:face :italic))
+    (create-instance 'bold-font opal:font (:face :bold))
+    (create-instance 'reg-font opal:font)
+    (create-instance 'form-icon opal:bitmap
+      (:image (opal:read-image (merge-pathnames
+				"formula-icon.bm"
+				common-lisp-user::garnet-c32-bitmap-pathname))))
+    (create-instance 'inherited-icon opal:bitmap
+      (:image (opal:read-image (merge-pathnames
+				"inherited-icon.bm"
+				common-lisp-user::garnet-c32-bitmap-pathname))))
+    (defparameter font-height (max (opal:string-height ital-font "/")
+				   (opal:string-height reg-font "/")))
+    (defparameter font-char-width (max (opal:string-width ital-font "/")  ; fixed width
+				       (opal:string-width reg-font "/"))) ; fonts
+    (defparameter form-icon-width (g-value form-icon :width))
+    (defparameter inherited-icon-width (g-value inherited-icon :width))
+    (defparameter label-width 100)
+    (defparameter max-value-width 120)
+    (defparameter label-num-chars (floor label-width font-char-width))
+    (defparameter label-side-width (+ label-width form-icon-width inherited-icon-width
+				      -4)) ; fudge factor
+    (defparameter icon-at-right-offset (+ label-side-width 2 max-value-width))
+    (defparameter full-item-width (+ icon-at-right-offset inherited-icon-width 2))
+    (defparameter scroll-panel-width (+ 20 full-item-width))
+    (defparameter scroll-panel-num-items 12)
+    (defparameter scroll-panel-height (* scroll-panel-num-items (+ 1 font-height)))))
 
 (defun mk-string (val)
   ;; turn off #k<...> notation
@@ -119,23 +120,26 @@
   (:left  (o-formula (+ 2 (gvl :parent :left))))
   (:top  (o-formula (gvl :parent :top)))
   (:font (o-formula (if (gvl :parent :inherited-p)
-			ital-font
-			reg-font)))
-  (:obj nil)
-  (:slot nil)
+		      ital-font
+		      reg-font))))
+
+
+(create-instance 'c32-item opal:aggregadget
+  (:obj NIL)
+  (:slot NIL)
   (:left 0)
   (:top 0)
-  (:width full-item-width)
-  (:height font-height)
+  (:width Full-Item-Width)
+  (:height Font-Height)
   (:visible
    (o-formula (let* ((min-val (gvl :parent :parent :scroll-bar :value))
-		     (max-val (+ -1 min-val scroll-panel-num-items))
+		     (max-val (+ -1 min-val Scroll-Panel-Num-Items))
 		     (index (position (gv :self) (gvl :parent :components))))
 		(and (>= index min-val)
 		     (<= index max-val))))
-   #+dzg (o-formula (let* ((min-val (gvl :parent :parent
+   #+DZG (o-formula (let* ((min-val (gvl :parent :parent
 					 :scroll-bar :value))
-			   (max-val (+ -1 min-val scroll-panel-num-items))
+			   (max-val (+ -1 min-val Scroll-Panel-Num-Items))
 			   (index (gvl :rank)))
 		      (and (>= index min-val)
 			   (<= index max-val)))))
@@ -156,52 +160,52 @@
   (:parts
    `((:label ,c32-label)
      (:form-icon ,form-icon
-					; (:constant t)
-		 (:left ,(o-formula (+ (gvl :parent :left)
-				       label-width)))
-		 (:top ,(o-formula (gvl :parent :top)))
-		 ;; draw it invisible if not a formula, but still have it there
-		 ;; so that it can be selected to create a formula.
-		 (:draw-function ,(o-formula (if (gvl :parent :formula-p)
-						 :copy
-						 :no-op))))
+      ; (:constant T)
+      (:left ,(o-formula (+ (gvl :parent :left)
+			    Label-Width)))
+      (:top ,(o-formula (gvl :parent :top)))
+      ;; draw it invisible if not a formula, but still have it there
+      ;; so that it can be selected to create a formula.
+      (:draw-function ,(o-formula (if (gvl :parent :formula-p)
+				    :copy
+				    :no-op))))
      (:inherited-icon ,inherited-icon
-					; (:constant t)
-		      (:left ,(o-formula
-			       (if (gvl :parent :formula-p)
-				   ;; then value is inherited so put next to form
-				   (+ (gvl :parent :left) label-width form-icon-width 1)
-				   ;; else no formula, put icon at right
-				   (+ (gvl :parent :left) icon-at-right-offset))))
-		      (:top ,(o-formula (gvl :parent :top)))
-		      (:visible ,(o-formula (gvl :parent :inherited-p))))
-     (:value-str ,value-scrolling-string
-					; (:constant t)
-		 (:pretend-to-be-leaf t)
-		 (:value ,(o-formula (if (gvl :parent :slot)
-					 (mk-string (gvl :parent :value))
-					 "")))
-		 ;; italic if value itself is inherited, so if no formula
-		 (:font ,(o-formula (if (and (gvl :parent :inherited-p)
-					     (not (gvl :parent :formula-p)))
-					ital-font
-					reg-font)))
-		 (:width ,max-value-width)
-		 (:selection-function value-edited-func)
-		 (:interactors ((:text-edit :omit)))
-		 (:left ,(o-formula (if (gvl :parent :slot)
-					;; normal slot; value is on the right.
-					(+ (gvl :parent :left) label-side-width)
-					;; last (empty) slot: string on the left, for add
-					;; slot command
-					(gvl :parent :left))))
-		 (:top ,(o-formula (gvl :parent :top))))
+      ; (:constant T)
+      (:left ,(o-formula
+	       (if (gvl :parent :formula-p)
+		 ;; then value is inherited so put next to form
+		 (+ (gvl :parent :left) Label-Width form-icon-width 1)
+		 ;; else no formula, put icon at right
+		 (+ (gvl :parent :left) icon-at-right-offset))))
+      (:top ,(o-formula (gvl :parent :top)))
+      (:visible ,(o-formula (gvl :parent :inherited-p))))
+     (:value-str ,Value-Scrolling-String
+      ; (:constant T)
+      (:pretend-to-be-leaf T)
+      (:value ,(o-formula (if (gvl :parent :slot)
+			    (Mk-String (gvl :parent :value))
+			    "")))
+      ;; italic if value itself is inherited, so if no formula
+      (:font ,(o-formula (if (and (gvl :parent :inherited-p)
+				  (not (gvl :parent :formula-p)))
+			   ital-font
+			   reg-font)))
+      (:width ,Max-Value-Width)
+      (:selection-function Value-Edited-Func)
+      (:interactors ((:text-edit :omit)))
+      (:left ,(o-formula (if (gvl :parent :slot)
+			   ;; Normal slot; value is on the right.
+			   (+ (gvl :parent :left) Label-Side-Width)
+			   ;; Last (empty) slot: string on the left, for Add
+			   ;; Slot command
+			   (gvl :parent :left))))
+      (:top ,(o-formula (gvl :parent :top))))
      (:underline ,opal:line
-					; (:constant t)
-		 (:x1 ,(o-formula (gvl :parent :left)))
-		 (:y1 ,(o-formula (1- (opal:gv-bottom (gvl :parent :value-str)))))
-		 (:x2 ,(o-formula (opal:gv-right (gvl :parent))))
-		 (:y2 ,(o-formula (gvl :y1)))))))
+      ; (:constant t)
+      (:x1 ,(o-formula (gvl :parent :left)))
+      (:y1 ,(o-formula (1- (opal:gv-bottom (gvl :parent :value-str)))))
+      (:x2 ,(o-formula (opal:gv-right (gvl :parent))))
+      (:y2 ,(o-formula (gvl :y1)))))))
 
 (defparameter *header-left-offset* 20)
 (defparameter *header-height* (+ 2 font-height))
