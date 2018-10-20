@@ -29,6 +29,7 @@ See LICENSE file for aditional details
 
 @titlepage
 @title KR: Constraint-Based Knowledge Representation
+@subtitle Garnet Version 2.3.1
 
 @c @begin(TitlePage)
 @c @begin(TitleBox)
@@ -92,7 +93,7 @@ good performance.  These qualities make it suitable for many
 applications that require a mixture of good performance and flexible
 knowledge representation.
 
-@subtitle Garnet Version 2.3.1
+
 
 
 @c @blankspace(0.3 inch)
@@ -232,11 +233,12 @@ maintenance.
 @node  Main Concepts: Schema, Slot, Value
 
 
-An object in KR is known as a @emph{schema}.  A schema@index(schema) is the
-basic unit of representation and consists of an optional @emph{name}, a
-set of @emph{slots}, and a @emph{value} for each slot.  The user can
-assemble networks of schemata by placing a schema as the value in a slot of
-another schema; this causes the two schemata to become linked.
+An object in KR is known as a @emph{schema}.  A schema @cindex(schema)
+is the basic unit of representation and consists of an optional
+@emph{name}, a set of @emph{slots}, and a @emph{value} for each slot.
+The user can assemble networks of schemata by placing a schema as the
+value in a slot of another schema; this causes the two schemata to
+become linked.
 
 A schema @pxref{schema names} may be named @pxref{named schemata} or
 unnamed.  Named schemata are readily accessible and are most useful
@@ -278,8 +280,8 @@ by curly braces.  For example,
 }
 @end lisp
 
-The schema is named FIDO and contains three slots named @pr(:owner),
-@pr(:color), and @pr(:age).  The slot @pr(:age) contains one value,
+The schema is named FIDO and contains three slots named @code{:owner},
+@code{:color}, and @code{:age}.  The slot @code{:age} contains one value,
 the integer 5.
 
 The default printed name of a schema is of the form @c(#k<name>), where
@@ -299,28 +301,30 @@ Garnet application, since the Opal component of Garnet (see the Opal
 manual) already provides a complete graphical object system.
 
 The following KR code is the complete definition of the example schemata:
-@label(kr-examples)
 
-@begin(programexample)
-@index(my-graphical-object)
+@cindex{my-graphical-object}
+@cindex{box-object}
+@cindex{rectangle-1}
+@cindex{rectangle-2}
+
+@float kr-examples
+@lisp
 (create-instance 'MY-GRAPHICAL-OBJECT NIL
   (:color :blue))
 
-@index(box-object)
 (create-instance 'BOX-OBJECT MY-GRAPHICAL-OBJECT
   (:thickness 1))
 
-@index(rectangle-1)
 (create-instance 'RECTANGLE-1 BOX-OBJECT
   (:x 10)
   (:y 20))
 
-@index(rectangle-2)
 (create-instance 'RECTANGLE-2 BOX-OBJECT
   (:x 34)
   (:y (o-formula (+ (gvl :left-obj :y) 15)))
   (:left-obj RECTANGLE-1))
-@end(programexample)
+@end lisp  
+@end float
 
 The exact meaning of the expressions above will become clear after we
 describe the functional interface of the system.  Briefly, however,
@@ -329,30 +333,30 @@ the example can be summarized as follows.  The schema
 objects.  The schema @c(box-object) represents an intermediate level
 in the hierarchy, and describes the general features of all graphical
 objects which are rectangular boxes.  @c(box-object) is placed below
-@c(my-graphical-object) in the hierarchy, and its @pr(:is-a) slot
+@c(my-graphical-object) in the hierarchy, and its @code{:is-a} slot
 points to the schema @c(my-graphical-object).  This is done
 automatically by the macro create-instance.
 
 Finally, two rectangles (@c(rectangle-1) and @c(rectangle-2)) are
 created and placed below @c(box-object) in the hierarchy.  @c(rectangle-1)
-defines the values of the two slots @pr(:x) and @pr(:y) directly, whereas
-@c(rectangle-2) uses a formula for its @pr(:y) slot.  The formula states
-that the value of @pr(:y) is constrained to be the @pr(:y) value of another
+defines the values of the two slots @code{:x} and @code{:y} directly, whereas
+@c(rectangle-2) uses a formula for its @code{:y} slot.  The formula states
+that the value of @code{:y} is constrained to be the @code{:y} value of another
 schema plus 15.  The other schema can be located by following the
-@pr(:left-obj) slot of @c(rectangle-2), as specified in the formula, and
+@code{:left-obj} slot of @c(rectangle-2), as specified in the formula, and
 initially corresponds to @c(rectangle-1).
 
 Figure @ref(all-schemata) shows the four schemata after the definitions
 above have been executed.  Relations are indicated by an arrow going from a
 schema to the ones to which it is related.
 
-@begin(figure)
-@bar()
+@node @code{all-schemata}
+
+@float Figure
 @center(@graphic(Postscript = "kr/schemata.ps",magnify=.75,boundingbox=File))
 @caption(The resulting network of schemata)
-@bar()
-@tag(all-schemata)
-@end(figure)
+
+@end figure
 
 
 Asking the system to print out the
@@ -366,9 +370,9 @@ current status of schema @c(rectangle-2) would produce the following output:
 }
 @end(programexample)
 
-Note that slot @pr(:y) contains a formula, which is printed as
+Note that slot @code{:y} contains a formula, which is printed as
 "#k<F2289>(NIL . NIL)".  This is simply an internal representation for the
-formula and will yield the correct value of @pr(:y) when needed.
+formula and will yield the correct value of @code{:y} when needed.
 
 
 
@@ -378,12 +382,12 @@ formula and will yield the correct value of @pr(:y) when needed.
 
 The primary function of values is to provide information about the object
 represented by a schema.  In the previous example, for instance, asking the
-system for the @pr(:x) value of @c(rectangle-1) would simply return the
-value @pr(10).
+system for the @code{:x} value of @c(rectangle-1) would simply return the
+value 10.
 
 Values@index(values as links) can also perform another function,
 however: They can establish @emph{connections between schemata}.
-Consider the @pr(:left-obj) slot in the example above: if we interpret
+Consider the @code{:left-obj} slot in the example above: if we interpret
 @c(rectangle-1) as a schema name, then the slot tells us that the
 schema @c(rectangle-2) is somehow related to the schema
 @c(rectangle-1).  Graphically, this will mean that the position of
@@ -402,10 +406,10 @@ modifications.  A connection that enables inheritance of values is called an
 always contain a list of values;  in many cases, this is a list of
 only one value.
 
-The most common example of inheritance is provided by the @pr(:is-a)
+The most common example of inheritance is provided by the @code{:is-a}
 relation@index(is-a relation).  If schema A is connected to schema B by the
-@pr(:is-a) relation,@footnote(In other words, if schema B appears as a value
-in the @pr(:is-a) slot of schema A.) then values that are not present in A
+@code{:is-a} relation,@footnote(In other words, if schema B appears as a value
+in the @code{:is-a} slot of schema A.) then values that are not present in A
 may be inherited from B.
 
 Consider the schema @c(rectangle-1) in our example.  If we were to ask
@@ -413,9 +417,9 @@ Consider the schema @c(rectangle-1) in our example.  If we were to ask
 answer by just looking at the schema itself.  But since we stated that
 @c(rectangle-1) is a box object, which is itself a graphical object,
 the value can be inherited from the schema @c(my-graphical-object)
-through two levels of @pr(:is-a).  The answer would thus be
+through two levels of @code{:is-a}.  The answer would thus be
 "@c(rectangle-1) is blue."  Inheritance is possible in this case because
-the slot @pr(:is-a) is pre-defined by the system as a relation.
+the slot @code{:is-a} is pre-defined by the system as a relation.
 
 
 
@@ -471,12 +475,12 @@ methods, which are simply represented as values in a slot.
 
 Prototypes in KR serve two specific functions: they provide an
 initialization method@index(object initialization), and they provide
-default@index(default constraints) constraints@index(object constraints).
-When a KR schema is created via the function
-@pr(create-instance)@index(create-instance), and its prototype has an
-@pr(:initialize)@index(initialize method) method, the method is invoked
-on the instance itself.  This results in a uniform mechanism for handling
-object-dependent initialization tasks.
+default@index(default constraints) constraints@index(object
+constraints).  When a KR schema is created via the function
+@code{create-instance} @findex(create-instance), and its prototype has
+an @code{:initialize} @findex(initialize method) method, the method is
+invoked on the instance itself.  This results in a uniform mechanism
+for handling object-dependent initialization tasks.
 
 
 @Section(Inheritance of Formulas)
@@ -486,7 +490,7 @@ If a prototype provides a constraint for a certain slot, and the slot is
 not explicitly redefined in an instance, the formula@index(inherited
 formulas) which implements the constraint is copied down and installed in
 the instance itself.  The formula, however, is not actually copied down until
-a value is requested for that slot (e.g., when @pr(gv) is used).
+a value is requested for that slot (e.g., when @code{gv} @findex{gv} is used).
 This is a convenient mechanism through which a
 prototype may partially determine the behavior of its instances.  Note that
 this behavior can be overridden both at instance-creation time (by
@@ -566,26 +570,26 @@ is low and most changes are local in nature.
 
 
 Figure @ref(formulas), part @b{(a)}, shows an example of a formula
-installed on slot @pr(:y) of schema @c(point-2).  The formula depends on
-two values, i.e., the value of slots @pr(:y1) and @pr(:y2) in schema
-@c(point-1).  The formula specifies that slot @pr(:y) is constrained to be
+installed on slot @code{:y} of schema @c(point-2).  The formula depends on
+two values, i.e., the value of slots @code{:y1} and @code{:y2} in schema
+@c(point-1).  The formula specifies that slot @code{:y} is constrained to be
 the sum of the two values divided by 2, i.e., the average of the two
 values.  Figure @ref(formulas), part @b{(b)}, shows the internal state of
 the formula in a steady-state situation where the formula contains a valid
 cached value.  Under these circumstances, any request for the value of slot
-@pr(:y) would simply return the cached value, without recomputing the
+@code{:y} would simply return the cached value, without recomputing the
 formula.
 
 Parts @b{(c)} and @b{(d)} show the effects of changes to the depended
 values.  Changes@index(value propagation) are illustrated by small
 rectangles surrounding the modified information.  The first change is to
-slot @pr(:y1) and causes the value in the formula to be marked invalid.
+slot @code{:y1} and causes the value in the formula to be marked invalid.
 Note that the formula is not actually recomputed at this point, and the
-cached value is left untouched.  The second change is to slot @pr(:y2) and
+cached value is left untouched.  The second change is to slot @code{:y2} and
 does not cause any action to occur, since the formula is already marked
 invalid.
 
-Finally, part @b{(e)} shows what happens when the value in slot @pr(:y) is
+Finally, part @b{(e)} shows what happens when the value in slot @code{:y} is
 eventually needed.  The value of the formula is recomputed and again cached
 locally; the cache is marked as valid.  The system is then back to steady
 state.  Note that the formula was recomputed only once, when needed, rather
@@ -615,14 +619,14 @@ result may of course depend on where evaluation started from.
 Typical formulas contain embedded references to other values and
 schemata.  The formula in Figure @ref(formulas), for example, contains
 an indirect reference to schema @c(point-1) through the contents of
-the @pr(:other) slot.  Such references are known as
+the @code{:other} slot.  Such references are known as
 dependency@index(dependency paths) paths@index(paths in formulas).
 Whenever a formula is evaluated, its dependency paths are used to
 recompute the updated value.
 
 It is possible for a dependency path to become temporarily unavailable.
 This would happen, for instance, if schema @c(point-1) in Figure
-@ref(formulas) was deleted, or if slot @pr(:other) in schema
+@ref(formulas) was deleted, or if slot @code{:other} in schema
 @c(point-2) was temporarily set to @value(nil).  KR handles such
 situations automatically.  If a formula needs to be evaluated but one
 of its dependency paths is broken, the current cached value of the
@@ -702,7 +706,7 @@ slot.
 In addition to this basic slot-filling behavior, this macro also performs
 three operations that are connected to inheritance and constraint
 maintenance.  First of all, create-instance links the newly created
-object to the @emph{prototype} via the @pr(:is-a) link, thus making it
+object to the @emph{prototype} via the @code{:is-a} link, thus making it
 an instance.
 
 Second, if the @emph{prototype} contains any slot with a formula, and the
@@ -712,10 +716,10 @@ conveniently provide default formulas@index(default formulas) for any slot
 that is not explicitly defined by its instances.
 
 Third, if either the @emph{prototype} or the object itself defines the
-@pr(:initialize) method@index(initialize method), create-instance sends
-the newly created object the @pr(:initialize) message.  This is done after
-all other operations have been completed, and provides an automatic way to
-perform object-dependent initializations.
+@code{:initialize} method @findex{initialize method}, create-instance
+sends the newly created object the @code{:initialize} message.  This is
+done after all other operations have been completed, and provides an
+automatic way to perform object-dependent initializations.
 
 Example:
 @begin(programexample)
@@ -723,10 +727,10 @@ Example:
 @end(programexample)
 
 The following example@index(defining methods) demonstrates the use of the
-@pr(:initialize)
+@code{:initialize}
 method at the prototype@index(prototypes) level@foot(Defining methods
 on Garnet objects is seldom necessary in practice, since real Opal
-prototypes already have built-in @pr(:initialize) methods.):
+prototypes already have built-in @code{:initialize} methods.):
 @begin(programexample)
 (define-method :initialize BOX-OBJECT (schema)
    (s-value schema :color :RED)
@@ -756,7 +760,7 @@ argument, and prints out the contents of the schema in a standard format.
 Optional arguments also allow you to control precisely what is printed out; the
 more complicated form is described in section @ref(print-control-slots).
 
-The following example shows the simple form of @pr(ps):
+The following example shows the simple form of @code{ps} @findex{ps}:
 @begin(programexample)
 (ps RECTANGLE-1)
 @emph{;; prints out:}
@@ -792,13 +796,13 @@ kr:Is-A-P @emph{schema} @emph{thing}@value(function)
 @index[is-a-p (function)]
 
 This predicate returns @value(T) if @emph{schema} is related to @emph{thing}
-(another schema) via the @pr(:is-a) relation, either directly or through an
+(another schema) via the @code{:is-a} relation, either directly or through an
 inheritance chain.  It returns @value(nil) otherwise.
 
 Note that @emph{thing} may have the special value @value(T), which is used as
-a "super-class" indicator; in this case, @pr(is-a-p) returns @value(T) if
+a "super-class" indicator; in this case, @code{is-a-p} returns @value(T) if
 @emph{schema} is any schema.  If the @emph{schema} is identical to the @emph{thing},
-@pr(is-a-p) also returns @value(T).@* Examples:
+@code{is-a-p} also returns @value(T).@* Examples:
 @begin(programexample)
 (is-a-p RECTANGLE-1 BOX-OBJECT) ==> T
 (is-a-p RECTANGLE-1 MY-GRAPHICAL-OBJECT) ==> T
@@ -821,12 +825,13 @@ described in Section @ref(additional-functions).
 @Subsection(Getting Values with G-Value and GV)
 @label(g-value-and-gv)
 
-When called outside of a formula, @pr(g-value) and @pr(gv) behave identically.
-When used inside a formula, the function @pr(gv) not only returns the value
-of a slot, but also establishes a dependency for the formula on the slot.
-This special property of @pr(gv) is discussed in section @ref(gv-in-form).
+When called outside of a formula, @code{g-value} @findex{g-value} and
+@code{gv} @findex{gv} behave identically.  When used inside a formula,
+the function @code{gv} not only returns the value of a slot, but also
+establishes a dependency for the formula on the slot.  This special
+property of @code{gv} is discussed in section @ref(gv-in-form).
 
-Novice Garnet users only need to learn about @pr(gv), but @pr(g-value) is
+Novice Garnet users only need to learn about @code{gv}, but @code{g-value} is
 supplied for the rare case in which you want to retrieve a slot value from
 inside a formula without establishing a dependency.
 
@@ -838,11 +843,12 @@ kr:G-Value @emph{object} &rest @emph{slot-names}@value(macro)
 @index(g-value)
 
 These macros return the value in a slot of an object.  If the slot is
-empty or not present, they return @value(nil).  Inheritance may be used
-when looking for a value.  @pr(G-value) and @pr(gv) handle constraints
-properly:  If a formula is currently installed in the slot, the value is
-computed (if needed) and returned.  @pr(G-value) will work in place of @pr(gv)
-in any of the following examples:
+empty or not present, they return @value(nil).  Inheritance may be
+used when looking for a value.  @code{g-value} @findex{g-value} and
+@code{gv} @findex{gv} handle constraints properly: If a formula is
+currently installed in the slot, the value is computed (if needed) and
+returned.  @code{g-value} will work in place of @code{gv} in any of the
+following examples:
 
 @begin(programexample)
 (gv RECTANGLE-1 :is-a) ==> #k<BOX-OBJECT>
@@ -851,9 +857,9 @@ in any of the following examples:
 (gv RECTANGLE-2 :y) ==> 35          @emph{; computed formula}
 @end(programexample)
 
-Although it is common to call @pr(g-value) and @pr(gv) with only one slot name,
+Although it is common to call @code{g-value} and @code{gv} with only one slot name,
 these macros may actually be given any number of @emph{slot-names}.  The macros
-expand into repeated calls to @pr(g-value) and @pr(gv), where each slot is
+expand into repeated calls to @code{g-value} and @code{gv}, where each slot is
 used to retrieve another object.  The given slot in the final object (which
 is, in general, different from the @emph{object}) is then
 accessed.  For example:
@@ -865,9 +871,9 @@ is equivalent to
 (gv (gv RECTANGLE-2 :left-obj) :x)
 @end(programexample)
 
-Both expressions return the value of the @pr(:x) slot of the object
-which is contained in the @pr(:left-obj) slot of @c(RECTANGLE-2).  One can
-think of the slot @pr(:left-obj) as providing the name of the place from which
+Both expressions return the value of the @code{:x} slot of the object
+which is contained in the @code{:left-obj} slot of @c(RECTANGLE-2).  One can
+think of the slot @code{:left-obj} as providing the name of the place from which
 the next slot can be accessed.  Such a slot is often called a
 @emph{link}, since it provides a link to another object which can be used to
 compute values.
@@ -881,16 +887,17 @@ kr:S-Value @emph{object slot} [@emph{more-slots}] @i[value]@value(function)
 @end(example)
 @index(s-value)
 
-This function is used to set a slot with a given value or formula.  The
-@emph{slot} in the @emph{object} is set to contain the @emph{value}.  Like with
-@pr(g-value)
-and @pr(gv), @pr(s-value) can be given multiple slots in argument list, when
-the slot to be set is several levels away from @emph{object}.  In the normal
-case, @emph{value} is an ordinary LISP value and simply supersedes any previous
-value in the slot.  If @emph{value} is a formula (i.e.  the result of a call
-to @pr(o-formula) or @pr(formula)), the formula is installed@index(installing
-formulas) in the @emph{slot} and internal bookkeeping information is set up
-appropriately.
+This function is used to set a slot with a given value or formula.
+The @emph{slot} in the @emph{object} is set to contain the
+@emph{value}.  Like with @code{g-value} and @code{gv}, @code{s-value}
+@findex{s-value} can be given multiple slots in argument list, when
+the slot to be set is several levels away from @emph{object}.  In the
+normal case, @emph{value} is an ordinary Lisp value and simply
+supersedes any previous value in the slot.  If @emph{value} is a
+formula (i.e.  the result of a call to @code{o-formula}
+@findex{o-formula} or @code{formula} @findex{formula}), the formula is
+installed@index(installing formulas) in the @emph{slot} and internal
+bookkeeping information is set up appropriately.
 
 If the @emph{slot} already contains a formula, the following two cases arise.
 If @emph{value} is also a formula, the old formula is replaced and any
@@ -900,12 +907,13 @@ its new, temporary cached value.  This means that the @emph{slot} will keep
 the @emph{value} until such time as the old formula needs to be re-evaluated
 (because some of the values on which it depends are modified).
 
-@pr(S-value) returns the new value of the @emph{slot}.
+@code{s-value} returns the new value of the @emph{slot}.
 
-Note that a @b(setf) form is defined for @pr(gv) and @pr(g-value), and
-expands into
-@pr(s-value).  This allows a variety of LISP constructs to be
-used in combination with @pr(gv) and @pr(g-value), such as the idiom 
+Note that a @b(setf) form is defined for @code{gv} and @code{g-value},
+and expands into @code{s-value}.  This allows a variety of Lisp
+constructs to be used in combination with @code{gv} and @code{g-value},
+such as the idiom
+
 @programexample{(incf (gv object slot))}
 which increments the value of a slot in the object.  For example,
 @begin(programexample)
@@ -934,19 +942,22 @@ kr:O-Formula @emph{form} &optional @emph{initial-value}@value(macro)
 
 Given a @emph{form}, this macro returns a formula (formulas are internally
 represented by special structures).  The @emph{form} typically consists of Lisp
-expressions and @pr(gv) or @pr(gvl) references (see below).@*Examples:
-@begin(programexample)
+expressions and @code{gv} or @pref{@code{gvl}} @findex{gvl} references.
+
+
+@lisp
 (o-formula (gvl :ABOVE-GADGET :x))
 (o-formula (min (gvl :ABOVE-GADGET :x)
                 (+ (gvl :OTHER-GADGET :width) 10)))
-@end(programexample)
-The first example@index(expressions in formulas) creates a formula which
+@end lisp
+
+The first example @cindex{expressions in formulas} creates a formula which
 causes the slot on which it is installed to have the same value as slot
-@pr(:x) of the object contained in slot @c(:above-gadget) of the current
+@code{:x} of the object contained in slot @c(:above-gadget) of the current
 object.  The second formula is more complex and constrains the slot on
 which it is installed to have as its value the minimum of two values.  One
 value is computed as before, and the other is computed by adding 10 to the
-@pr(:width) slot of the object contained in slot @c(:other-gadget) of the
+@code{:width} slot of the object contained in slot @c(:other-gadget) of the
 current object.
 
 The @emph{form} can also be an existing formula, rather than a Lisp
@@ -973,9 +984,11 @@ used if the formula is part of a circular dependency, or if one of its
 dependency paths is invalid.  Most applications need not be concerned about
 this feature.
 
-A reader macro has been defined to abbreviate the definition of o-formulas.
-Instead of typing @pr[(o-formula (...))], you could type @pr[#f(...)], which
-expands into a call to @pr(o-formula).  For example, one may write:
+A reader macro has been defined to abbreviate the definition of
+o-formulas.  Instead of typing @pr[(o-formula (...))], you could type
+@pr[#f(...)], which expands into a call to @code{o-formula}
+@findex{o-formula}.  For example, one may write:
+
 @begin(programexample)
    (s-value a :left #f(gvl :top))
 @end(programexample)
@@ -991,7 +1004,7 @@ kr:Formula @emph{form} &optional @emph{initial-value}@value(function)
 @IndexSecondary[Primary="Formulas", Secondary="Formula (function)"]
 
 Given a @emph{form}, this function returns a formula.  It is similar to
-@pr(o-formula), except that the code in @emph{form} is not compiled until
+@code{o-formula}, except that the code in @emph{form} is not compiled until
 run-time, when the @pr(formula) call is actually executed.
 
 Code that can be compiled early should use @pr(o-formula), which
@@ -1095,7 +1108,7 @@ by concatenating the @emph{slot-name}, the string "-METHOD-", and the name of th
   (format t "A rectangle at (~D,~D).~%"
     (gv object :x) (gv object :y)))
 @end(programexample)
-After this, the @pr(:print) method can be inherited by any instance of
+After this, the @code{:print} method can be inherited by any instance of
 @c(box-object).  Sending the message to @c(rectangle-2), for example, would
 cause the following to happen:
 @begin(programexample)
@@ -1103,8 +1116,8 @@ cause the following to happen:
 @emph{;; prints out:}
 A rectangle at (34,35).
 @end(programexample)
-The generated name of the @pr(:print) method, in this example,
-would be @c(print-method-box-object).
+The generated name of the @code{:print} method, in this example,
+would be @code(print-method-box-object).
 
 
 
@@ -1122,10 +1135,9 @@ object; the function is then called with the arguments specified in
 it may be inherited.
 
 If the function, i.e., the value of the expression @t{(g-value object
-slot)}, is @value(NIL), nothing happens and @pr(kr-send) simply returns
-@value(NIL).  Otherwise, the function is invoked and the value(s) it
-returns are returned by @pr(kr-send).
-
+slot)}, is @value(NIL), nothing happens and @code{kr-send}
+@findex{kr-send} simply returns @value(NIL). Otherwise, the function
+is invoked and the value(s) it returns are returned by @code{kr-send}.
 
 
 @value(f-top)
@@ -1149,21 +1161,23 @@ arguments.  For example,
 
 (kr-send A :notify A 10)
 @end(programexample)
-First of all, @pr(kr-send) invokes the method defined locally by object
-@c(a).  Since the method itself contains a call to
-@pr(call-prototype-method), the hierarchy is searched for a prototype
-of object @c(a) which also defines the @pr(:notify) method.  If one exists,
+
+First of all, @code{kr-send} invokes the method defined locally by
+object @c(a).  Since the method itself contains a call to
+@code{call-prototype-method} @findex{call-prototype-method}, the
+hierarchy is searched for a prototype of object @c(a) which also
+defines the @code{:notify} @findex{:notify} method.  If one exists,
 that method is invoked.
 
 A method is free to supply a prototype method with any parameters it
 wants; this can be accomplished simply by using different values in the
-call to @pr(call-prototype-method).  In the example above, for instance, we
+call to @code{call-prototype-method}.  In the example above, for instance, we
 could have written @pr{(call-prototype-method object (+ level 1))}.  It is
-customary, however, to invoke @pr(call-prototype-method) with exactly the
+customary, however, to invoke @code{call-prototype-method} with exactly the
 same parameters as the original call. 
 
 Note that the name of the original object and the message name are not
-specified in @pr(call-prototype-method).  KR automatically provides the
+specified in @code{call-prototype-method}.  KR automatically provides the
 right values.
 
 
@@ -1199,11 +1213,12 @@ be used later to eliminate trace information.@*Example:
 @Section(Reader Macros)
 @index(reader macros)
 
-A reader macro is defined by default for the @pr(#k<...>) notation, which is
-produced by the functions @pr(ps) and @pr(gv) when the variable
-@pr[kr::*print-as-structure*] is non-NIL.  This macro allows objects written
-with the @pr(#k) notation to be read back in as a KR object.
-If necessary, this feature may be disabled by recompiling KR after
+A reader macro is defined by default for the @code{#k<...>} notation,
+which is produced by the functions @code{ps} @findex{ps} and @code{gv}
+@findex{gv} when the variable @pr[kr::*print-as-structure*] is
+non-NIL.  This macro allows objects written with the @code{#k}
+@cindex{#k notation} notation to be read back in as a KR object.  If
+necessary, this feature may be disabled by recompiling KR after
 pushing the keyword @pr[:no-kr-reader] onto the @pr[*features*] list.
 
 A second reader macro is defined for convenience, as discussed previously.
@@ -1268,10 +1283,11 @@ error immediately when the value is set to NIL, because NIL does not
 meet the "integer" declaration.
 
 The KR type-checking mechanism is independent of the lisp type system.
-Even if a type is defined with lisp's @pr(deftype), another corresponding
-type must be defined with KR's @pr(def-kr-type).  The two types may have the
-same name.  The important thing is that the new type must be registered with
-KR's type system.
+Even if a type is defined with lisp's @code{deftype}, another
+corresponding type must be defined with KR's @code{def-kr-type}
+@findex{def-kr-type}.  The two types may have the same name.  The
+important thing is that the new type must be registered with KR's type
+system.
 
 Type-checking may be turned off completely, for maximum performance in
 finished systems, by setting the variable @pr[kr::*types-enabled*] to
@@ -1314,17 +1330,17 @@ declarations.  Here are examples of the two styles:
 @end(programexample)
 
 The first style uses the same syntax as Lisp's @pr[deftype]; the
-@i[body] should be a type expression acceptable to @pr[deftype], and is
-used for typechecking when the name is used.  In the current
+@i[body] should be a type expression acceptable to @pr[deftype], and
+is used for typechecking when the name is used.  In the current
 implementation of the type system, the @emph{args} parameter should
-always be NIL.@foot[The presence of the @emph{args} parameter is to maintain
-consistency of syntax with the standard lisp function @pr(deftype).  If you
-need to pass a parameter to your predicate, then define the predicate using
-@pr(satisfies).]  With either example
-above you could then specify some object's type to be @pr['(or keyword
-null)].  With the first style, however, you could also specify the
-type to be @pr['my-type], which may be more convenient and easier to
-maintain in the long run.
+always be NIL.@foot[The presence of the @emph{args} parameter is to
+maintain consistency of syntax with the standard lisp function
+@code{deftype}.  If you need to pass a parameter to your predicate,
+then define the predicate using @code{satisfies}.]  With either
+example above you could then specify some object's type to be @pr['(or
+keyword null)].  With the first style, however, you could also specify
+the type to be @pr['my-type], which may be more convenient and easier
+to maintain in the long run.
 
 @begin(group)
 The named style also allows a @i[doc-string] to be specified.  This is
@@ -1364,7 +1380,7 @@ The example declares that the values contained in slots @pr[:left] and
 @pr[:link-name] must be either a keyword or NIL.  Note that this
 declaration is legal, as the type @pr[(or keyword null)] was declared
 above using @pr[def-kr-type].  Note also that the declarations for
-slots @pr(:left), @pr(:top), @pr(:width), and @pr(:height) are, in fact,
+slots @code{:left}, @code{:top}, @code{:width}, and @code{:height} are, in fact,
 not necessary, as they would normally be inherited from the prototype.
 
 
@@ -1425,10 +1441,10 @@ string is printed in addition to the raw type.
 @begin(group)
 @Section(Retrieving the Predicate Expression)
 
-When types are named, @pr(g-type) returns just the name of the type, rather
-than its associated expression.  Sometimes it is useful to retrieve the
-predicate of the type associated with the type name.  The following function
-serves this purpose:
+When types are named, @code{g-type} @findex{g-type} returns just the
+name of the type, rather than its associated expression.  Sometimes it
+is useful to retrieve the predicate of the type associated with the
+type name.  The following function serves this purpose:
 
 @index(get-type-definition)
 @begin(example)
@@ -1505,7 +1521,7 @@ commonly used slots.  This is the list of pre-defined basic types:
 @c(T) - Any value satisfies this type.
 
 @index[kr-boolean (type)]
-@c(kr-boolean) - Same as @pr(T), but specifically intended for
+@c(kr-boolean) - Same as @code{T}, but specifically intended for
 slots which take a NIL or non-NIL value, often used as boolean variables.
 
 @index[null (type)]
@@ -1607,10 +1623,12 @@ need to call @pr[def-kr-type] for them.
 
 
 @begin(group)
-The following non-basic types are named, and have associated documentation
-strings.  Users can reference these types anywhere in Garnet programs.
-To access each type's own documentation string, use
-@pr(get-type-documentation).
+
+The following non-basic types are named, and have
+associated documentation strings.  Users can reference these types
+anywhere in Garnet programs.  To access each type's own documentation
+string, use @code{get-type-documentation}
+@findex{get-type-documentation}.
 
 @begin[description, indent=-2]
 
@@ -1618,68 +1636,68 @@ To access each type's own documentation string, use
 @c(known-as-type) - a keyword (this type is used in the @pr[:known-as] slot)
 
 @index[aggregate(-or-nil) type]
-@c(aggregate) - an instance of @pr(opal:aggregate)
+@c(aggregate) - an instance of @code{opal:aggregate}
 
-@c(aggregate-or-nil) - either an instance of @pr(opal:aggregate) or NIL
+@c(aggregate-or-nil) - either an instance of @code{opal:aggregate} or NIL
 
 @index[bitmap(-or-nil) type]
-@c(bitmap) - an instance of @pr(opal:bitmap)
+@c(bitmap) - an instance of @code{opal:bitmap}
 
-@c(bitmap-or-nil) - either an instance of @pr(opal:bitmap) or NIL
+@c(bitmap-or-nil) - either an instance of @code{opal:bitmap} or NIL
 
 @index[color(-or-nil) type]
-@c(color) - an instance of @pr(opal:color)
+@c(color) - an instance of @code{opal:color}
 
-@c(color-or-nil) - either an instance of @pr(opal:color) or NIL
+@c(color-or-nil) - either an instance of @code{opal:color} or NIL
 
 @index[font(-...) type]
-@c(font) - either an instance of @pr(opal:font) or @pr(opal:font-from-file)
+@c(font) - either an instance of @code{opal:font} or @code{opal:font-from-file}
 
-@c(font-family) - one of @pr(:fixed), @pr(:serif), or @pr(:sans-serif)
+@c(font-family) - one of @code{:fixed}, @code{:serif}, or @code{:sans-serif}
 
-@c(font-face) - one of @pr(:roman), @pr(:bold), @pr(:italic), or
-@pr(:bold-italic)
+@c(font-face) - one of @code{:roman}, @code{:bold}, @code{:italic}, or
+@code{:bold-italic}
 
-@c(font-size) - one of @pr(:small), @pr(:medium), @pr(:large), or
-@pr(:very-large)
+@c(font-size) - one of @code{:small}, @code{:medium}, @code{:large}, or
+@code{:very-large}
 
 @index[filling-style(-or-nil) type]
-@c(filling-style) - an instance of @pr(opal:filling-style)
+@c(filling-style) - an instance of @code{opal:filling-style}
 
 @c(filling-style-or-nil) - either an instance of opal:filling-style or NIL
 
 @index[line-style(-or-nil) type]
-@c(line-style) - an instance of @pr(opal:line-style)
+@c(line-style) - an instance of @code{opal:line-style}
 
-@c(line-style-or-nil) - either an instance of @pr(opal:line-style) or NIL
+@c(line-style-or-nil) - either an instance of @code{opal:line-style} or NIL
 
 @index[inter-window-type]
-@c(inter-window-type) - a single @pr(inter:interactor-window), or a list of
+@c(inter-window-type) - a single @code{inter:interactor-window}, or a list of
 windows, or T, or NIL.
 
 @index[window(or-nil) type]
-@c(window) - an instance of @pr(inter:interactor-window)
+@c(window) - an instance of @code{inter:interactor-window}
 
-@c(window-or-nil) - either an instance of @pr(inter:interactor-window) or NIL
+@c(window-or-nil) - either an instance of @code{inter:interactor-window} or NIL
 
 @index[fill-style type]
-@c(fill-style) - one of @pr(:solid), @pr(:stippled), or @pr(:opaque-stippled)
+@c(fill-style) - one of @code{:solid}, @code{:stippled}, or @code{:opaque-stippled}
 
 @index[draw-function type]
-@c(draw-function) - one of @pr(:copy, :xor, :no-op, :or, :clear, :set,
+@c(draw-function) - one of @code{:copy, :xor, :no-op, :or, :clear, :set,
 :copy-inverted, :invert, :and, :equiv, :nand, :nor,
-:and-inverted, :and-reverse, :or-inverted, :or-reverse)
+:and-inverted, :and-reverse, :or-inverted, :or-reverse}
 
 @index[h-align type]
-@c(h-align) - one of @pr(:left), @pr(:center), or @pr(:right)
+@c(h-align) - one of @code{:left}, @code{:center}, or @code{:right}
 
 @index[v-align type]
-@c(v-align) - one of @pr(:top), @pr(:center), or @pr(:bottom)
+@c(v-align) - one of @code{:top}, @code{:center}, or @code{:bottom}
 
 @index[direction(-or-nil) type]
-@c(direction) - either @pr(:vertical) or @pr(:horizontal)
+@c(direction) - either @code{:vertical} or @code{:horizontal}
 
-@c(direction-or-nil) - either @pr(:vertical), @pr(:horizontal), or NIL
+@c(direction-or-nil) - either @code{:vertical}, @code{:horizontal}, or NIL
 
 @index[items-type]
 @c(items-type) - list of items: ("Label2"...)
@@ -1691,7 +1709,7 @@ windows, or T, or NIL.
 @c(filename-type) - a string that represents a pathname
 
 @index[priority-level type]
-@c(priority-level) - an instance of @pr(inter:priority-level)
+@c(priority-level) - an instance of @code{inter:priority-level}
 
 @end[description]
 @end(group)
@@ -1720,7 +1738,7 @@ kr:Create-Schema @emph{object-name} &rest @emph{slot-definitions}@value(macro)
 This macro@index(creating schemata) creates and returns a new object
 named@index(object names) @emph{object-name}.  It is much more primitive than
 create-instance, since it does not copy down formulas from a prototype
-and does not call the @pr(:initialize) method.
+and does not call the @code{:initialize} method.
 
 If @emph{object-name} is @value(nil), an unnamed object is created and
 returned.  If @emph{object-name} is a symbol, a special variable by that name
@@ -1729,7 +1747,7 @@ present, are used to create initial slots and values for the object.  Each
 slot definition should be a list whose first element is the name of a slot,
 and whose second element is the value for that slot.
 
-@pr(Create-schema) understands the @b(:override) keyword and the
+@code{Create-schema} understands the @b(:override) keyword and the
 @b(:name-prefix) keyword; see @ref(create-options) for more details.
 
 Examples:
@@ -1749,7 +1767,7 @@ kr:Create-Prototype @emph{object} &rest @emph{slot-definitions}@value(macro)
 
 This macro is slightly more primitive than create-instance.  Unlike
 create-instance, it does not allow a prototype to be specified
-directly.  Moreover, it does not automatically send the @pr(:initialize)
+directly.  Moreover, it does not automatically send the @code{:initialize}
 message to the newly created @emph{object}.  Like create-instance, it
 copies formulas from any prototype into the newly created @emph{object}.
 
@@ -1764,11 +1782,11 @@ The following two examples are roughly equivalent:
 @end(programexample)
 
 Most applications will find create-instance much more convenient.  The
-only case when @pr(create-prototype) should be used is when it is important
-that the @pr(:initialize) message @emph{not} be sent to an object at creation
+only case when @code{create-prototype} should be used is when it is important
+that the @code{:initialize} message @emph{not} be sent to an object at creation
 time.
 
-@pr(Create-prototype) also understands the  @b(:override) keyword and the
+@code{Create-prototype} also understands the  @b(:override) keyword and the
 @b(:name-prefix) keyword; see @ref(create-options) for more details.
 
 
@@ -1786,7 +1804,7 @@ formula installed on any slot of the @emph{object} is also destroyed.
 
 Usually, Garnet users do not call this function directly.  Instead, they
 use @t{(opal:destroy object)}, which performs all necessary clean-up
-operations and eventually calls @pr(destroy-schema).
+operations and eventually calls @code{destroy-schema}.
 
 
 
@@ -1800,10 +1818,10 @@ Destroys the @emph{slot} from the @emph{object}.  The value previously stored in
 the slot, if there was one, is lost.  All constraints to and from @emph{object}
 are modified accordingly.  The invalidate demon is run on the slot before
 it is destroyed, ensuring that any changes caused by this action become
-visible to formulas that depend on the slot.  Using @pr(destroy-slot) on slots
+visible to formulas that depend on the slot.  Using @code{destroy-slot} on slots
 that are declared constant gives a continuable error.  Continuing from the
 error causes the slot to be destroyed anyway.  This behavior can be overridden
-by using the macro @pr(with-constants-disabled).
+by using the macro @code{with-constants-disabled}.
 
 
 
@@ -1948,7 +1966,7 @@ For other kinds of declarations besides @c(:type), a convenient syntax has
 been provided for specifying declarations in instances.  If you want all the
 declarations in a prototype to be inherited by the
 instance along with several new ones, you could either retype all the 
-declarations in the instance, or you could use the @pr(T) and @pr(:except)
+declarations in the instance, or you could use the @code{T} and @code{:except}
 syntax.  For example, it is possible to write
 @begin(programexample)
 (create-instance 'REC A
@@ -2028,9 +2046,9 @@ KR supports special slots called @i[relations].  Relations serve two
 purposes: allowing inheritance, and automatically creating inverse
 connections.  In addition to a handful of predefined relations,
 application programs can create new relations as needed via the
-function @pr(create-relation) (see below).
+function @code{create-relation} (see below).
 
-Slots such as @pr(:is-a), which enable knowledge to be inherited from
+Slots such as @code{:is-a}, which enable knowledge to be inherited from
 other parts of a network, are called @emph{inheritance relations}.
 Inheritance along such relations proceeds depth-first
 @index(inheritance search) and may include any number of steps.  The
@@ -2041,15 +2059,15 @@ Any relation, including user-defined ones, may also be declared to have an
 inverse relation@index(inverse relations).  If this is the case, KR
 automatically generates an inverse link any time the relation is used to
 connect one object to another.  Imagine, for instance, that we defined
-@pr(:part-of) to be a relation having @pr(:has-parts) as its inverse.  Adding
-object A to the slot @pr(:part-of) of object B would automatically add B to
-the slot @pr(:has-parts) of object A, thereby creating a reverse link.
+@code{:part-of} to be a relation having @code{:has-parts} as its inverse.  Adding
+object A to the slot @code{:part-of} of object B would automatically add B to
+the slot @code{:has-parts} of object A, thereby creating a reverse link.
 
 KR automatically maintains@index(relation maintenance) all relations and
 inverse relations, and the application programmer does not
-have to worry about them.  In the example above, if slot @pr(:part-of)
+have to worry about them.  In the example above, if slot @code{:part-of}
 in object B is deleted, the value B is also removed from the slot
-@pr(:has-parts) of object A.  The same would happen is object B is deleted.
+@code{:has-parts} of object A.  The same would happen is object B is deleted.
 This ensures that the state of the system is consistent at any
 point in time, independent of the particular sequence of operations.
 
@@ -2070,7 +2088,7 @@ non-@value(nil), @emph{name} becomes a relation with inheritance, and
 values may be inherited through it.
 
 The following form defines the non-inheritance relation
-@pr(:has-parts) and its two inverses, @pr(:part-of) and @pr(:subsystem-of):
+@code{:has-parts} and its two inverses, @code{:part-of} and @code{:subsystem-of}:
 @begin(programexample)
 (create-relation :has-parts NIL :part-of :subsystem-of)
 @end(programexample)
@@ -2118,7 +2136,7 @@ kr:DoSlots (@emph{slot-var object} &optional @emph{inherited}) &rest @emph{body}
 
 Iterates@index(slot iterator)@index(iterators) the @emph{body} over all the
 slots of the @emph{object}.  The @emph{slot-var} is bound to each slot in turn.
-The @emph{body} is executed purely for side effects, and @pr(doslots) returns
+The @emph{body} is executed purely for side effects, and @code{doslots} returns
 @value(NIL).  Example:
 
 @begin(programexample) 
@@ -2131,13 +2149,13 @@ Slot :X has value 10
 Slot :IS-A has value #k<BOX-OBJECT>
 @end(programexample)
 
-By default, @pr(doslots) only iterates over the local slots of @emph{object}.
+By default, @code{doslots} only iterates over the local slots of @emph{object}.
 But if the @emph{inherited} parameter is T, then all slots that have been
 inherited from the @emph{object}'s prototype will be iterated over as well.
 Note: Only those slots that have actually been inherited will be included
 in the list of inherited slots.  If they are merely defined in the prototype
-and have not been @pr(gv)'d in the instance, then they will not be
-included in the iteration list.  See the description of the function @pr(ps)
+and have not been @code{gv}'d in the instance, then they will not be
+included in the iteration list.  See the description of the function @code{ps}
 in section @ref(print-control-slots) for a way to display all the slots that
 could possibly be inherited by the object.
 
@@ -2158,14 +2176,14 @@ kr:Change-Formula @emph{object slot} @emph{form}@value(function)
 @IndexSecondary(Primary="Formulas", Secondary="Change-formula")
 
 If the @emph{slot} in @emph{object} contains a formula, the formula is modified
-to contain the @emph{form} as its new function.  @pr(change-formula) works
+to contain the @emph{form} as its new function.  @code{change-formula} works
 properly on any formula, regardless of whether the old function was local
 or inherited from another formula.  If formula inheritance is involved,
 this function makes sure that all the links are modified as appropriate.
 If the @emph{slot} does not contain a formula, nothing happens.
 
 Note that this function cannot be used to install a fixed value on a slot
-where a formula used to be; @pr(change-formula) only modifies the expression
+where a formula used to be; @code{change-formula} only modifies the expression
 within a formula.
 
 
@@ -2194,9 +2212,9 @@ kr:Mark-As-Changed @emph{object slot}@value(function)
 
 This function may be used to trigger constraint propagation for a
 @emph{object} whose @emph{slot} has been modified by means other than
-@pr(s-value).  Some applications may need to use destructive operations on
+@code{s-value}.  Some applications may need to use destructive operations on
 the value in a slot, and then notify the system that certain values were
-changed.  @pr(Mark-as-changed) is used for this purpose.
+changed.  @code{Mark-as-changed} is used for this purpose.
 
 
 @value(f-top)
@@ -2246,7 +2264,7 @@ kr:G-Cached-Value @emph{object slot}@value(function)
 @end(example)
 @index(g-cached-value)
 
-This function is similar to @pr(gv) if the @emph{slot} contains an
+This function is similar to @code{gv} if the @emph{slot} contains an
 ordinary value.  If the @emph{slot} contains a formula, however, the cached
 value@index(cached values) of the formula is returned even if the formula
 is invalid; the formula itself is never re-evaluated.  Only advanced
@@ -2269,8 +2287,8 @@ value does not change.  If the @emph{slot} contains an ordinary value, this
 function has no effect.
 
 Note that the expression @t{(s-value object slot (gv object slot))}
-cannot be used to simulate @pr(destroy-constraint).  This is because
-@pr(s-value) does not remove a formula when it sets a slot to an ordinary
+cannot be used to simulate @code{destroy-constraint}.  This is because
+@code{s-value} does not remove a formula when it sets a slot to an ordinary
 value, and thus the expression above would simply set the cached value of
 the formula without removing the formula itself.
 
@@ -2309,7 +2327,7 @@ installed takes the value that was computed by the formula.
 A slot can become constant in one of three ways.  First, the slot may
 be declared constant explicitly.  This is done by listing the name of
 the slot in the @pr[:constant] slot of an object (see below for more
-details), or calling @pr(declare-constant) on the slot after its object has
+details), or calling @code{declare-constant} on the slot after its object has
 already been created.  For example, adding the following code to
 @pr[create-instance] for object @emph{A} will cause slots @pr[:left] and
 @pr[:top] to be declared constant in object @emph{A}: @w{@pr[(:constant '(:left
@@ -2332,7 +2350,7 @@ and formulas will be allowed to become constant because of their dependencies
 on the constant slots (rather than bluntly declaring the formulas constant).
 This is certaintly not a requirement of programming with constants, however.]
 If you cannot figure out why a formula is not being eliminated, the function
-@pr(garnet-debug:why-not-constant) and related functions in the Debugging Tools
+@code{garnet-debug:why-not-constant} and related functions in the Debugging Tools
 Reference Manual may be useful.
 
 To facilitate the creation of the list of constant slots for an
@@ -2344,7 +2362,7 @@ a list of slot names in the prototype, using the slot
 may choose to declare all of those slots constants by simply adding
 the value @value(t) to its @pr[:constant] slot.  Note that @value(t)
 does @emph{not} mean that @emph{all} slots are constant; it only means that
-all slots in the @pr(:maybe-constant) list become constant.
+all slots in the @code{:maybe-constant} list become constant.
  
 @index(maybe-constant)
 It is also possible for the
@@ -2373,7 +2391,7 @@ specify @w{@pr[(:constant '(T))]}.  This informs the system that all
 parameters declared by the creator of the prototype are, in fact,
 constant, and formulas that depend on them can be eliminated once the
 gadget is created.  All of the standard objects and gadgets supply a
-@pr(:maybe-constant) slot.
+@code{:maybe-constant} slot.
 
 The syntax of the @pr[:constant] slot also allows certain slots that
 appeared in the @pr[:maybe-constant] list to be explicitly excluded from the
@@ -2396,7 +2414,7 @@ It is an error to set slots that have been declared constant.  This
 can happen in three cases: a slot may be set using @pr[s-value] after
 having been declared constant, a call to @pr[create-instance] may
 redefine in the instance a slot that was declared constant in the
-prototype, or @pr(destroy-slot) may be used.  In all cases, a
+prototype, or @code{destroy-slot} may be used.  In all cases, a
 continuable error is signaled.  Note that 
 this behavior can be overridden by wrapping the code in the macro
 @pr[with-constants-disabled] (see below).
@@ -2421,8 +2439,8 @@ slots that appear in the slot @pr[:maybe-constant] (typically
 inherited from a prototype) are declared constant.  This is similar to
 specifying T in the @pr[:constant] slot at instance creation time.
 
-If @pr(declare-constant) is executed on a slot while constants are disabled
-(i.e., inside of a @pr(with-constants-disabled) body), the call will have no
+If @code{declare-constant} is executed on a slot while constants are disabled
+(i.e., inside of a @code{with-constants-disabled} body), the call will have no
 effect and the slot will not become constant.
 
 
@@ -2439,7 +2457,7 @@ constant.  Additionally, constant declarations have no effect when
 @pr[create-instance] is executed inside this macro.  This macro,
 therefore, is intended for experienced users only.
 
-Several functions in the @pr(garnet-debug) package (loaded with Garnet by
+Several functions in the @code{garnet-debug} package (loaded with Garnet by
 default) can be helpful in determining which slots in your application should
 be declared constant for maximum benefit, and can help you determine why some
 slots are not becoming constant.  These functions are documented in the
@@ -2650,7 +2668,7 @@ NIL if none exists.
 @blankspace(1 line)
 
 @begin(group)
-When the function @pr(ps) is given a formula, it can print
+When the function @code{ps} is given a formula, it can print
 associated meta-information.  The latter is printed as an
 object, immediately after the formula itself.  For example:
 @begin(programexample)
@@ -2711,7 +2729,7 @@ The first demon is the @emph{invalidate demon}@index(invalidate demon).  This
 demon is invoked every
 time a formula is invalidated.  At the time the demon is invoked, the
 formula has not yet been re-evaluated, and thus it contains the old cached
-value.  This demon is contained in the @pr(:invalidate-demon) slot of
+value.  This demon is contained in the @code{:invalidate-demon} slot of
 an object.  This makes it possible for different objects to provide
 customized demons to handle slot invalidation.
 
@@ -2721,14 +2739,14 @@ invoked immediately before the value in a formula is actually
 modified, and it is passed the new value.  This allows the pre-set
 demon to record the difference between the old and the new value, if
 needed.  This demon is stored in the variable
-@index(*pre-set-demon*) @pr(kr::*PRE-SET-DEMON*).  Garnet does not use
+@index(*pre-set-demon*) @code{kr::*PRE-SET-DEMON*}.  Garnet does not use
 the pre-set demon.
 
 
 The relationship between value propagation and demon invocation is best
 illustrated by showing the complete sequence of events for the invalidate
 demon.  This is what
-happens when @pr(s-value) is called to set slot @b(s) of schema S to value
+happens when @code{s-value} is called to set slot @b(s) of schema S to value
 @b(v):
 @begin(enumerate)
 If slot @b(s) already contains value @b(v), nothing happens.
@@ -2764,7 +2782,7 @@ The KR demons are only invoked on slots that are listed in the
 Garnet defines a particular demon that is responsible for redrawing the
 objects in a window as the values of their "interesting" slots change.
 These "interesting" slots are declared in each object's @c(:update-slots)
-declaration during @pr(create-instance) (the declaration is usually inherited
+declaration during @code{create-instance} (the declaration is usually inherited
 from the prototype, so that typical Garnet users will never see this
 declaration).  The @c(:update-slots) list contains all the slots in an object
 that should cause Opal's special demon to be invoked when they are modified.
@@ -2772,12 +2790,12 @@ When an update-slot is modified, Opal's demon will "invalidate"
 the @u(object), causing it to be redrawn during the next pass of the update
 algorithm.
 
-The @c(:update-slots) list can only be set directly at @pr(create-instance)
+The @c(:update-slots) list can only be set directly at @code{create-instance}
 time.  That is, after an object is created it is no longer sufficient to
-modify the value of the @pr(:update-slots) slot to change whether a slot is an
+modify the value of the @code{:update-slots} slot to change whether a slot is an
 update-slot or not.  This is because update-slots are internally represented
-by a bit associated with the slot, which is set during the @pr(create-instance)
-call.  Instead of setting the @pr(:update-slots) slot, you must call the
+by a bit associated with the slot, which is set during the @code{create-instance}
+call.  Instead of setting the @code{:update-slots} slot, you must call the
 function:
 
 @index(add-update-slot)
@@ -2874,7 +2892,7 @@ kr:With-Demon-Enabled @emph{demon} &body @emph{body}@value(macro)
 @index(with-demon-enabled)
 
 This macro enables a particular demon if it had been disabled, either
-explicitly or with @pr(with-demons-disabled).
+explicitly or with @code{with-demons-disabled}.
 
 
 
@@ -2940,7 +2958,7 @@ and provides superior performance for the inheritance mechanism.
 This group contains functions which deal with local values in a slot.
 Some of these functions do not
 treat formulas as special objects, and thus can be used to access formulas
-stored in a slot (remember that functions like @pr(gv), for example,
+stored in a slot (remember that functions like @code{gv}, for example,
 return the @emph{value} of a formula, rather than the formula object itself).
 
 
@@ -2952,7 +2970,7 @@ kr:Get-Value @emph{object slot}@value(Macro)
 
 Returns the value in the @emph{slot} from @emph{object}.  If the slot is
 empty or not present, it returns @value(nil).  Inheritance may be used when
-looking for a value.  Given a slot that contains a formula, @pr(get-value)
+looking for a value.  Given a slot that contains a formula, @code{get-value}
 returns the formula itself, rather than its value.  Therefore, its use is
 limited to applications that manipulate formulas explicitly.
 
@@ -2973,7 +2991,7 @@ evaluated.@*Examples:
 	 (#k<RECTANGLE-2> #k<RECTANGLE-1>)
 @end(example)
 
-Since @pr(get-values) does not deal with constraints, @pr(dovalues) (see
+Since @code{get-values} does not deal with constraints, @code{dovalues} (see
 below) is the preferred way to access all values in a slot.  An additional
 advantage is that the expression
 @begin(example)
@@ -2985,8 +3003,8 @@ is potentially more efficient than the equivalent idiom
 @end(example)
 which may create garbage in some situations.
 
-A @b(setf) form@index[setf form for @pr(get-values)] is defined for
-@pr(get-values) and expands into a call to @pr(set-values).
+A @b(setf) form@index[setf form for @code{get-values}] is defined for
+@code{get-values} and expands into a call to @code{set-values}.
 
 
 
@@ -2995,8 +3013,8 @@ A @b(setf) form@index[setf form for @pr(get-values)] is defined for
 @index(set-values)
 
 This function stores a list of values in the @emph{slot} of the @emph{object}.
-The entire list may subsequently be retrieved with @pr(get-values), or the
-first value may be retrieved with @pr(g-value).
+The entire list may subsequently be retrieved with @code{get-values}, or the
+first value may be retrieved with @code{g-value}.
 
 
 
@@ -3009,12 +3027,12 @@ first value may be retrieved with @pr(g-value).
 DOVALUES executes@index(value iterator)@index(iterators) the @emph{body} with
 the @emph{variable} bound in turn to each value in the @emph{slot} of the
 @emph{object}.  The @emph{body} is executed purely for side effects, and DOVALUES
-normally returns @value(nil); if the keyword argument @pr(:result) is
+normally returns @value(nil); if the keyword argument @code{:result} is
 specified, however, the given value is returned.
-The @emph{body} of @pr(dovalues) should never alter the contents of the
+The @emph{body} of @code{dovalues} should never alter the contents of the
 @emph{slot}, since this may cause unpredictable results.
 
-If @pr(:local) (default @value(nil)) is non-@value(nil), DOVALUES only
+If @code{:local} (default @value(nil)) is non-@value(nil), DOVALUES only
 considers local values; otherwise, it iterates over inherited values
 if no local values are present.  If @b(:formulas) is @value(T) (the
 default), any value which is expressed by a formula is computed and
@@ -3049,17 +3067,17 @@ rectangle-1 has vertex 6
 rectangle-1 has vertex #k<F2297>
 @end(example)
 
-@pr(dovalues) may also be used inside formulas; in this case,
-@pr(:in-formula) should be set to @value(T).  The surrounding formula
+@code{dovalues} may also be used inside formulas; in this case,
+@code{:in-formula} should be set to @value(T).  The surrounding formula
 is then re-evaluated when any of the values in the @emph{slot} is
-changed, or whenever a value is added or deleted.  @pr(dovalues) with a
-non-@value(nil) @pr(:in-formula) option, therefore, behaves more like @pr(gv)
-than like @pr(g-value).  When @pr(dovalues) is used in this fashion, the
-keyword @pr(:self) may be used to stand for the object to which the
+changed, or whenever a value is added or deleted.  @code{dovalues} with a
+non-@value(nil) @code{:in-formula} option, therefore, behaves more like @code{gv}
+than like @code{g-value}.  When @code{dovalues} is used in this fashion, the
+keyword @code{:self} may be used to stand for the object to which the
 formula is attached.
 
-The following is an example of a formula which uses @pr(dovalues) and is
-re-evaluated when one of the values in the @pr(:components) slot changes:@*
+The following is an example of a formula which uses @code{dovalues} and is
+re-evaluated when one of the values in the @code{:components} slot changes:@*
 @begin(example)
 (o-formula (let ((is-odd NIL))
 	    (dovalues (value :SELF :components 
@@ -3081,7 +3099,7 @@ kr:Get-Local-Value @emph{object slot}@value(Macro)
 Returns the value in the @emph{slot} from @emph{object}.  If the slot is
 empty or not present, it returns @value(nil).  Inheritance is not used, and
 only local values are considered.  
-Given a slot that contains a formula, @pr(get-local-value) returns the
+Given a slot that contains a formula, @code{get-local-value} returns the
 formula itself, rather than the formula's value.  Therefore, use of this
 macro is limited to applications that manipulate formulas explicitly.
 
@@ -3112,7 +3130,7 @@ kr:G-Local-Value @emph{object} @emph{slot} &rest @emph{other-slots}@value(macro)
 @end(example)
 @index(g-local-value)
 
-This macro is very similar to @pr(g-value), except that it only considers
+This macro is very similar to @code{g-value}, except that it only considers
 local values.  Inheritance is never used when looking for a value.
 
 
@@ -3123,8 +3141,8 @@ kr:Gv-Local @emph{object slot} &rest @emph{more-slots}@value(macro)
 @end(example)
 @index(gv-local)
 
-This macro is similar to @pr(gv), except that it only considers local
-values, and it never returns an inherited value.  @pr(Gv-local) should be 
+This macro is similar to @code{gv}, except that it only considers local
+values, and it never returns an inherited value.  @code{Gv-local} should be 
 used in situations where it is important to only retrieve values that are
 local to the @emph{object}.
 
@@ -3180,7 +3198,7 @@ effect on the instance.  This second option is used more rarely than
 
 Note that none of the above applies to slots whose value (in the prototype) is
 a formula.  Slots which contain formulas are always inherited, independent
-of whether the slot is listed in @pr(:local-only-slots).
+of whether the slot is listed in @code{:local-only-slots}.
 
 
 
@@ -3188,8 +3206,8 @@ of whether the slot is listed in @pr(:local-only-slots).
 @value(s-top)
 
 Two special keywords can be used in the macros that create schemata.  These
-options are recognized by @pr(create-instance), @pr(create-schema), and
-@pr(create-prototype).  They are@label(create-options):
+options are recognized by @code{create-instance}, @code{create-schema}, and
+@code{create-prototype}.  They are@label(create-options):
 
 @value(f-top)
 @example{:OVERRIDE@value(keyword)}
@@ -3201,14 +3219,14 @@ instances, and replaced by a brand new object.  The default
 behavior may be modified by using the keyword @b(:override) as part of the
 @emph{slot-definitions}.  This keyword causes the existing object to be
 modified in place and contain the union of its previous slots and those
-specified by @pr(create-schema).  Previous slots that are not mentioned in the
+specified by @code{create-schema}.  Previous slots that are not mentioned in the
 call retain whatever values they had before the operation.  For example,
 
 @begin(programexample)
 (create-schema 'RECTANGLE-1 :override (:color :magenta))
 @end(programexample)
 adds a slot to the object RECTANGLE-1 if it already exists.  Without
-the @pr(:override) keyword, this would have destroyed the object and created
+the @code{:override} keyword, this would have destroyed the object and created
 a new one with a single slot.
 
 
@@ -3240,7 +3258,7 @@ arises, for example, when certain slots contain very large data structures
 that take a long time to print.
 
 The print control slots are taken from the object which is specified as the
-@emph{print-control} in the complicated form of @pr(ps), described below.  In
+@emph{print-control} in the complicated form of @code{ps}, described below.  In
 many cases, the slots are actually inherited by the object being printed.
 
 
@@ -3251,10 +3269,10 @@ kr:PS @emph{object} &key @i{types-p  all-p} (@i{control} T) (@i{inherit} NIL) @v
 @end(example)
 @index(ps)@index(printing schemata)
 
-This form of @pr(ps) prints the contents of the @emph{object}, and allows fine
+This form of @code{ps} prints the contents of the @emph{object}, and allows fine
 control over what to print and how.  A possible behavior is to print out
 all slots and all values in @emph{object}; this happens when the @emph{control}
-object is @value(nil).  It is possible, however, to cause @pr(ps) to ignore
+object is @value(nil).  It is possible, however, to cause @code{ps} to ignore
 certain slots and to specify that others should be printed in a given
 order.  It is also possible to limit the number of elements printed for list
 values, thus preventing annoyingly long lists of values.
@@ -3277,31 +3295,31 @@ things:
 the control object.  In most cases, the control slots are inherited from an
 ancestor of the @emph{object}.  All Opal prototypes, for example, define
 appropriate slots which reduce the amount of information that is shown by
-@pr(ps).
+@code{ps}.
 
 an object, which is used directly as the control object.
 
-the keyword @pr(:default), which indicates that the KR-supplied default
+the keyword @code{:default}, which indicates that the KR-supplied default
 print control object should be used.  The name of the default print control
 object is @c(print-schema-control) @index(print-schema-control), an object
 in the KR package.  This default object limits the length of lists that
-are printed by @pr(ps) to a maximum of ten for ordinary slots, and five for
-the @pr(:is-a-inv) slot.
+are printed by @code{ps} to a maximum of ten for ordinary slots, and five for
+the @code{:is-a-inv} slot.
 @end(enumerate)
 
 If the @emph{inherit} option is @value(nil) (the default), only local slots
 are printed.  Otherwise, all inheritable values from all prototypes of
 @emph{object} are inherited and printed; inherited values are clearly indicated
 in the printout.  As discussed in Chapter @ref(object-oriented-prog), formulas
-are not copied down from prototypes until they are requested by @pr(gv) or
-@pr(g-value).  Formulas that have not yet been copied down will not be shown
-by @pr(ps), unless the @emph{inherit} parameter is non-@value(nil).
+are not copied down from prototypes until they are requested by @code{gv} or
+@code{g-value}.  Formulas that have not yet been copied down will not be shown
+by @code{ps}, unless the @emph{inherit} parameter is non-@value(nil).
 
-The @pr(:indent) option is only used by debugging code which needs to
+The @code{:indent} option is only used by debugging code which needs to
 specify an indentation level.  This option is not needed by regular
 application programs.
 
-@pr(Ps) prints slots whose value is a formula in a special way.  Besides the
+@code{Ps} prints slots whose value is a formula in a special way.  Besides the
 name of the formula, the current cached value of the formula is
 printed in parentheses, followed by @value(t) if the cache is valid or
 @value(nil) otherwise.  Example:
@@ -3330,7 +3348,7 @@ printed in parentheses, followed by @value(t) if the cache is valid or
 }
 @end(programexample)
 The cached value is not correct, of course, but it will be recomputed as
-soon as its value is requested because formula @pr(F2285) is marked invalid.
+soon as its value is requested because formula @code{F2285} is marked invalid.
 
 The function @pr[ps] prints the expression of a formula, when given
 the formula as argument.  A formula is printed with three pieces
@@ -3344,40 +3362,40 @@ standard output.
 @subsection(Print Control Slots)
 @label(print-control-slots)
 
-If a control object is specified in a call to @pr(ps), it should contain (or
-inherit) six special slots.  These slots determine what @pr(ps) does.  The
+If a control object is specified in a call to @code{ps}, it should contain (or
+inherit) six special slots.  These slots determine what @code{ps} does.  The
 meaning of the print control slots is as follows:
 
 @begin(itemize)
-@pr(:sorted-slots)@index(sorted-slots slot) contains a list of names
+@code{:sorted-slots}@index(sorted-slots slot) contains a list of names
 of slots that should be printed before all other slots, in the desired
 order.
 
-@pr(:ignored-slots)@index(ignored-slots slot) contains a list of names of
+@code{:ignored-slots}@index(ignored-slots slot) contains a list of names of
 slots that should not be printed.  A summary printed at the end of the
 object indicates which slots were ignored.
 
-@pr(:global-limit-values)@index(global-limit-values slot) contains an
+@code{:global-limit-values}@index(global-limit-values slot) contains an
 integer, the maximum number of elements that should be printed for each list
 that is a value for a slot.
 If a list contains more than that many elements, ellipsis are printed after
 the given number to indicate that not all elements of the list were actually
 displayed.
 
-@pr(:limit-values)@index(limit-values slot) allows the same control on a
+@code{:limit-values}@index(limit-values slot) allows the same control on a
 slot-by-slot basis.  It should contain lists of the form @t{(slot number)}.
 If a slot name appears in one of these lists, the number specified there is
-used instead of the one specified in @pr(:global-limit-values).
+used instead of the one specified in @code{:global-limit-values}.
 
-@pr(:print-as-structure)@index(print-as-structure slot) can be @value(t),
+@code{:print-as-structure}@index(print-as-structure slot) can be @value(t),
 in which case the #k<> notation is used when printing object names, or
 @value(nil), in which case only pure object names are printed.
 
-@pr(:print-slots)@index(print-slots slot) is a list of the slots that are
-printed as part of the @emph{#k<>} notation.  It is possible to cause @pr(ps)
+@code{:print-slots}@index(print-slots slot) is a list of the slots that are
+printed as part of the @emph{#k<>} notation.  It is possible to cause @code{ps}
 to print a few slots from each object, inside the @emph{#k<>} printed
 representation; this may make it easier to identify different schemata.
-@pr(:print-slots) should contain a list of the names of the slots which
+@code{:print-slots} should contain a list of the names of the slots which
 should be printed this way.  Note that this option has no effect if schema
 names are not being printed with the @emph{#k<>} notation.
 @end(itemize)
@@ -3385,7 +3403,7 @@ names are not being printed with the @emph{#k<>} notation.
 
 
 The following is a rather comprehensive example of fine control over what
-@pr(ps) prints.
+@code{ps} prints.
 @begin(programexample)
 @emph{; Use top level of the hierarchy to control printing.}
 (create-schema 'TOP-OBJECT
@@ -3397,7 +3415,7 @@ The following is a rather comprehensive example of fine control over what
 
 (dotimes (i 20) (create-instance NIL COLORED-THING))
 @end(programexample)
-Using @pr(ps) with a null @emph{control} prints out the whole contents of
+Using @code{ps} with a null @emph{control} prints out the whole contents of
 the schema:
 @begin(programexample)
 (ps COLORED-THING :control NIL)
@@ -3425,7 +3443,7 @@ the schema:
 }
 @end(programexample)
 Using the system-supplied default control object reduces the clutter in the
-@pr(:is-a-inv) slot, and also eliminates printing of schemata with the
+@code{:is-a-inv} slot, and also eliminates printing of schemata with the
 special #k<> convention:
 @begin(programexample)
 (ps COLORED-THING :control :default)
@@ -3469,7 +3487,7 @@ the hierarchy, so that every object can inherit the information:
 
 It is possible to use the basic mechanism used by the function
 @pr[ps] to print or format objects in a customized way.  This facility
-is used by applications such as the @pr(garnet-@|debug:Inspector),
+is used by applications such as the @code{garnet-@|debug:Inspector},
 which need full control
 over how objects are displayed.  This mechanism is supported by the
 following function.
@@ -3525,7 +3543,7 @@ the @i[function] was called, and NIL otherwise.
 
 
 The following variable can be set globally to achieve the same effect as
-the slot @pr(:print-as-structure) described above:
+the slot @code{:print-as-structure} described above:
 
 @value(f-top)
 kr::*PRINT-AS-STRUCTURE*@value(variable)
@@ -3551,7 +3569,7 @@ kr::*PRINT-NEW-INSTANCES*@value(variable)
 @index(*print-new-instances*) @index(print-new-instances)
 
 This variable controls whether a notification is printed when
-@pr(create-schema) or create-instance are compiled from a file.  The
+@code{create-schema} or create-instance are compiled from a file.  The
 message is printed when kr::*PRINT-NEW-INSTANCES* is @value(t) (the
 default), and may be useful to determine how far into a file compilation
 has progressed.  Setting this variable to @value(nil) turns off the
@@ -3588,7 +3606,7 @@ kr::*WARNING-ON-CREATE-SCHEMA*@value(variable)
 @index(*warning-on-create-schema*)
 
 This variable controls whether a notification is printed when
-@pr(create-instance) creates an object that has the same name as an old object,
+@code{create-instance} creates an object that has the same name as an old object,
 and the old object is destroyed.  If @value(t) (the default), then a
 warning will be printed when an object is redefined.
 
@@ -3612,7 +3630,7 @@ The variable kr::*STORE-LAMBDAS* (default @value[t]) may be set
 to @value(nil) to prevent the expression of a formula from being stored in the
 formula itself.  This produces smaller run-time programs, but because
 the expression is lost it may be impossible to dump a set of objects
-to a file using @pr(opal:write-gadget).
+to a file using @code{opal:write-gadget}.
 
 
 
@@ -3644,8 +3662,8 @@ task.
 
 First of all, we will create the @c(degrees) schema@index(degrees
 schema) as a demonstration of constraints in KR.  This is a schema with two
-slots, namely, @pr(:celsius) and @pr(:fahrenheit).  The schema can be created
-with the following call to @pr(create-schema):
+slots, namely, @code{:celsius} and @code{:fahrenheit}.  The schema can be created
+with the following call to @code{create-schema}:
 @begin(programexample)
 @label(degrees)
 (create-schema 'DEGREES
@@ -3659,29 +3677,29 @@ with the following call to @pr(create-schema):
 
 @end(programexample)
 
-Each of the two slots contains a formula.  The formula in the @pr(:celsius)
+Each of the two slots contains a formula.  The formula in the @code{:celsius}
 slot, for instance, indicates that the value is computed from the value in
-the @pr(:fahrenheit) slot, using the appropriate expression.  The initial
-value, moreover, is 32.  The formula in the @pr(:fahrenheit) slot,
-similarly, is constrained to be a function of the value in the @pr(:celsius)
+the @code{:fahrenheit} slot, using the appropriate expression.  The initial
+value, moreover, is 32.  The formula in the @code{:fahrenheit} slot,
+similarly, is constrained to be a function of the value in the @code{:celsius}
 slot and is initialized with the value 0.
 
 It is clear that this example involves a circular chain of constraints.
-The value of @pr(:celsius) depends on the value of @pr(:fahrenheit), which
-itself depends on the value of @pr(:celsius).  This circularity, however, is
+The value of @code{:celsius} depends on the value of @code{:fahrenheit}, which
+itself depends on the value of @code{:celsius}.  This circularity, however, is
 not a problem for KR.  The system is able to detect such circularities and
 reacts appropriately by stopping value propagation when necessary.
 
-Consider, for instance, setting the value of the @pr(:celsius) slot:
+Consider, for instance, setting the value of the @code{:celsius} slot:
 @begin(programexample)
 (s-value DEGREES :celsius 20)
 (gv DEGREES :celsius)             ==> 20
 (gv DEGREES :fahrenheit)          ==> 68
 @end(programexample)
 
-As the example shows, KR propagates the change to the @pr(:fahrenheit) slot,
+As the example shows, KR propagates the change to the @code{:fahrenheit} slot,
 which is given the correct value.  Similarly, if we modify the value in the
-@pr(:fahrenheit) slot, we have correct propagation in the opposite
+@code{:fahrenheit} slot, we have correct propagation in the opposite
 direction:
 @begin(programexample)
 (s-value DEGREES :fahrenheit 212)
@@ -3702,7 +3720,7 @@ combination.
 We begin with @c(temperature-device), a simple
 prototype@index(temperature-device schema) which contains a
 formula to translate degrees Celsius into Fahrenheit (the formula is the
-same we used in the previous example) and a @pr(:print) method which prints
+same we used in the previous example) and a @code{:print} method which prints
 out both values:
 @begin(programexample)
 (create-schema 'TEMPERATURE-DEVICE
@@ -3732,11 +3750,11 @@ thermometers:
   (:celsius (o-formula (gvl :location :celsius))))
 @end(programexample)
 Note that @c(thermometer) can act as a prototype, since it provides a
-formula which constrains the value of the @pr(:celsius) slot to follow the
-value of the @pr(:celsius) slot of a particular location.  Thermometer
+formula which constrains the value of the @code{:celsius} slot to follow the
+value of the @code{:celsius} slot of a particular location.  Thermometer
 schemata created as instances of @c(thermometer) will then simply track the
 value of temperature at the location with which they are associated.  Note
-that instances of @c(thermometer) inherit the @pr(:print) method from
+that instances of @c(thermometer) inherit the @code{:print} method from
 @c(temperature-device).
 @begin(programexample)
 (create-instance 'TH1 THERMOMETER
@@ -3755,7 +3773,7 @@ Current temperature: 10.0 C (50.0 F)
 @end(programexample)
 Since the temperature in the @c(outside) schema is 10, and thermometer
 @c(th1) is associated with @c(outside), it prints out the current
-temperature outside.  Changing the slot @pr(:location) of @c(th1) to
+temperature outside.  Changing the slot @code{:location} of @c(th1) to
 @c(inside) would automatically change the temperature reading, because of
 the dependency built into the formula in that slot.
 
@@ -3766,7 +3784,7 @@ instance, @c(min-max-thermometer), which inherits all the features of
 @c(thermometer) and defines two new formulas for computing minimum and
 maximum temperatures.  Note the initial values in the formulas.  Also, we
 create an instance of @c(min-max-thermometer) named @c(min-max), and
-send it the @pr(:print) message.
+send it the @code{:print} message.
 @begin(programexample)
 (create-instance 'MIN-MAX-THERMOMETER THERMOMETER
   (:min (o-formula (min (gvl :min)
@@ -3783,10 +3801,10 @@ send it the @pr(:print) message.
 @emph{;; prints out:}
 Current temperature: 10.0 C (50.0 F)
 @end(programexample)
-The @pr(:print) method inherited from @c(temperature-device) is not
+The @code{:print} method inherited from @c(temperature-device) is not
 sufficient for our present purpose, since it does not show minimum and
 maximum temperatures.  We thus specialize@index(combining methods) the
-@pr(:print) method, but we still use the default @pr(:print) method to print
+@code{:print} method, but we still use the default @code{:print} method to print
 out the current values.  Let us specialize the method, print out the
 current status, change the temperature outside a few times, and then print
 out the status again:
@@ -3909,6 +3927,12 @@ constraint maintenance.
 @node Type Index,  , Function Index, Top
 @appendix Type Index
 
+@printindex cp
+
 @printindex tp
+
+@printindex fn
+
+@printindex vr
 
 @bye
