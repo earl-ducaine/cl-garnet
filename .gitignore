@@ -11,3 +11,6 @@
 *#
 #*
 *~
+
+doc/src/kr/*.cp
+doc/src/kr/*.toc
