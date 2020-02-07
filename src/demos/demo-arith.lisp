@@ -724,7 +724,7 @@
 
     ;; Create window for the work area
     (create-instance 'SCROLL-WIN garnet-gadgets:scrolling-window-with-bars
-       (:left 175) (:top -2) ;no extra border at the top
+       (:left 175) (:top 0) ;no extra border at the top
        (:width (o-formula (- (gvl :window :parent :width) (gvl :left))))
        (:height (o-formula (gvl :window :parent :height) 150))
        (:total-width 1000) (:total-height 1000)
