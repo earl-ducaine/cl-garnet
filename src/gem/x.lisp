@@ -661,7 +661,7 @@ this display."
       (setf (xlib:wm-hints drawable)
 	    (xlib:make-wm-hints))
       (setf (xlib:wm-hints-input (xlib:wm-hints drawable)) :on)
-      (setf (xlib:wm-hints-initial-state (xlib:wm-hints drawable)) :on)
+      (setf (xlib:wm-hints-initial-state (xlib:wm-hints drawable)) :normal)
       (setf (xlib:wm-normal-hints drawable)
 	    (xlib:make-wm-size-hints
 	     :width-inc 1
