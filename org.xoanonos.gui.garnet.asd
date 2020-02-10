@@ -10,7 +10,7 @@
    	    :depends-on (package)
    	    :components
 	    ((:file "kr-macros")
-	     (:file "general")
+	     ;; (:file "general")
 	     (:file "kr")
 	     (:file "constraints" :depends-on (kr))))
    (:module opal-boot
