@@ -1054,20 +1054,8 @@ value) and then physically sets the <slot> in the <schema> to be
 
 
 (defun s-value-fn (schema slot value)
-  "Does all the work of the macro S-VALUE.
-
-RGA --- no, returns two values: the value function set to and t if there
-was an error.  Note that in the case of a type error, it returns the
-current value of the slot."
   (locally (declare #.*special-kr-optimization*)
     (unless (schema-p schema)
-      #+GARNET-DEBUG
-      (if schema
-	  (error "S-VALUE called with the non-object  ~S  (slot ~S, value ~S)."
-		 schema slot value)
-	  (error "S-VALUE called with a null schema:  (slot ~S, value ~S)."
-		 slot value))
-      ;; RGA added t for error return.
       (return-from s-value-fn (values value t)))
     (let* ((entry (slot-accessor schema slot))
 	   (old-value (when entry
@@ -1076,12 +1064,10 @@ current value of the slot."
 	   the-bits is-depended)
       ;; give error if setting constant slot
       (check-not-constant schema slot entry)
-
       (if entry
 	  (setf the-bits (sl-bits entry)
 		is-depended (slot-dependents entry))
 	  (setf the-bits 0))
-
       (when (and the-bits
 		 (not (is-inherited the-bits))
 		 (eq old-value value)
@@ -1089,7 +1075,6 @@ current value of the slot."
 	;; We are setting to the same value as the old one!  Do nothing.
 	;; RGA --- Error return function
 	(return-from s-value-fn (values value nil)))
-
       (when (and *types-enabled* (not (formula-p value)))
 	(multiple-value-bind (result error-p)
 	    (check-slot-type schema slot value T entry)
@@ -1102,7 +1087,6 @@ current value of the slot."
 		(T
 		 ;; A type error - user supplied new value
 		 (setf value result)))))
-
       (let ((is-formula nil) (is-relation nil)
 	    (was-formula (formula-p old-value)))
 	;; Check for special cases in relation slots.
@@ -1110,7 +1094,6 @@ current value of the slot."
 		   (eq (setf value (check-relation-slot schema slot value)) *no-value*))
 	  ;; RGA --- added no-error return code
 	  (return-from s-value-fn (values old-value nil)))
-
 	;; If we are installing a formula, make sure that the formula
 	;; points to the schema and slot.
 	(when (formula-p value)
@@ -1128,17 +1111,8 @@ current value of the slot."
 	    ;; there are cases when it may be necessary.
 	    (incf *schema-counter*)
 	    (setf (schema-name value) *schema-counter*)))
-
-	;; Now we call a demon to perform redisplay activities if the new
-	;; value is not a formula. If the new value is a formula, it has
-	;; not been evaluated yet so we do not know what its result is.
-	;; Since the display demon needs to know the new result to determine
-	;; if the object's bounding box should be merged with a clip region,
-	;; it does not make sense to call the display demon until the new
-	;; result is known
 	(unless is-formula
 	  (run-pre-set-demons schema slot value NIL :S-VALUE))
-
 	;; Now we can set the new value.
 	(setf the-bits (logand the-bits *not-inherited-mask*))
 	(run-invalidate-demons schema slot entry)
@@ -1179,13 +1153,11 @@ current value of the slot."
 		 ;; This is not a special slot.
 		 (setf entry (set-slot-accessor schema
 						slot value new-bits nil))))))
-
 	;; Now propagate the change to all the children which used to
 	;; inherit the previous value of this slot from the schema.
 	(when (and the-bits (is-parent the-bits))
 	  (let ((*setting-formula-p* T))
 	    (update-inherited-values schema slot value T)))
-
 	;; Notify all dependents that the value changed.
 	(when is-depended
 	  (let ((*warning-on-disconnected-formula* nil))
@@ -1194,18 +1166,11 @@ current value of the slot."
 	  ;; We validate now, rather than earlier, because of a technicality
 	  ;; in demons-and-old-values.
 	  (set-cache-is-valid old-value T))
-
 	;; Was the old value a formula?
 	(when (and was-formula is-formula)
 	  ;; This is replacing a formula with another.  Eliminate the dependency
 	  ;; to the old one.
 	  (delete-formula old-value T))
-
-	(when is-relation
-	  ;; A relation slot is being changed.  We may need to invalidate all
-	  ;; inherited values.
-	  (reset-inherited-values schema))
-	;; RGA added nil error return flag.
 	(values value nil)))))
 
 
@@ -1481,35 +1446,6 @@ i.e., one which does not use a link."
     ;; Physically delete the schema.
     (delete-schema schema recursive-p)))
 
-
-(defun recursive-destroy-schema (schema level)
-  "This is an internal function used by CREATE-INSTANCE.  The purpose is to
-destroy not only the <schema> itself, but also its instances (and so on,
-recursively)."
-  (unless (or (formula-p schema)	; safety check
-	      (deleted-p schema))
-    (let* ((entry (slot-accessor schema :IS-A-INV))
-	   (children (if entry (sl-value entry))))
-      (unless (eq children *no-value*)
-	(dolist (child children)
-	  (unless (eq child schema)
-	    (recursive-destroy-schema child (1+ level)))))
-      (when *warning-on-create-schema*
-	(if (zerop level)
-	    (format t "Warning - create-schema is destroying the old ~S.~%"
-		    schema)
-	    (format t "Warning - create-schema is recursively destroying ~S.~%"
-		    schema)))))
-  (destroy-schema
-   schema
-   NIL
-   (if (zerop level)
-       ;; if this is a top-level schema which has no prototype, use an
-       ;; indiscriminate destroy.
-       (null (slot-accessor schema :is-a))
-       T)))
-
-
 (defun reset-inherited-values (schema)
   "Since the <relation> slot was changed, all children of the <schema> may
 have to inherit different values."
@@ -1518,8 +1454,6 @@ have to inherit different values."
       (unless (eq value *no-value*)
 	(when (is-inherited (sl-bits iterate-slot-value-entry))
 	  (destroy-slot schema slot))))))
-
-
 
 ;;; SCHEMA PRINTING
 
@@ -2003,15 +1937,6 @@ one by that name if it exists.  The initial number of slots is
 	  ((and (boundp name)
 		(symbolp name))
 	   (let ((schema (symbol-value name)))
-	     (if (is-schema schema)
-		 (progn
-		   (recursive-destroy-schema schema 0)
-		   (allocate-schema-slots schema))
-		 (progn
-		   (setf schema (make-schema))
-		   (allocate-schema-slots schema)
-		   (eval `(defvar ,name))))
-	     ;; Assign the new schema as the value of the variable <name>.
 	     (setf (schema-name schema) name)
 	     (set name schema)))
 
