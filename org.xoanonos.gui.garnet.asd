@@ -11,12 +11,6 @@
 
 
 (asdf:defsystem :org.xoanonos.gui.garnet
-  :depends-on (alexandria
-	       uiop
-	       bordeaux-threads
-	       ;; trivial-features
-	       ;;clx
-	       )
   :license "MIT-ish (also public domain, see LICENSE)"
   :author "CMU Garnet Team (plus various others, see LICENSE)"
   :description " GUI toolkit (c. 1990 look/feel)"

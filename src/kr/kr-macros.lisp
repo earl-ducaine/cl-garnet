@@ -217,15 +217,15 @@
 
 (defvar *formula-pool* nil)
 
-(defvar *formula-lock* (bordeaux-threads:make-lock))
+;; (defvar *formula-lock* (bordeaux-threads:make-lock))
 
 (defun formula-push (f)
-  (bordeaux-threads:with-lock-held  (*formula-lock*)
-    (push f *formula-pool*)))
+;;  (bordeaux-threads:with-lock-held  (*formula-lock*)
+    (push f *formula-pool*))
 
 (defun formula-pop ()
-  (bordeaux-threads:with-lock-held (*formula-lock*)
-    (and *formula-pool* (pop *formula-pool*))))
+  ;;(bordeaux-threads:with-lock-held (*formula-lock*)
+    (and *formula-pool* (pop *formula-pool*)))
 
 (defvar *schema-is-new* nil
   "If non-nil, we are inside the creation of a new schema.  This guarantees
