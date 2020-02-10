@@ -58,22 +58,22 @@
     (format t "~A~%" cl-user::default-garnet-proclaim)))
 
 
-(defun garnet-restart-function ()
-  (format t "*** Restarting Garnet ~A image. ***~%"
-	  common-lisp-user::Garnet-Version-Number)
-  (when (and (boundp 'garnet-image-date) garnet-image-date)
-    (format t "*** Image creation date: ~A ***~%" garnet-image-date))
-  (announce-debug-state)
-  (opal:reconnect-garnet))
+;; (defun garnet-restart-function ()
+;;   (format t "*** Restarting Garnet ~A image. ***~%"
+;; 	  common-lisp-user::Garnet-Version-Number)
+;;   (when (and (boundp 'garnet-image-date) garnet-image-date)
+;;     (format t "*** Image creation date: ~A ***~%" garnet-image-date))
+;;   (announce-debug-state)
+;;   (opal:reconnect-garnet))
 
 
-#-(and)
-(defun garnet-restart-function ()
-  (format t "*** Restarting Garnet ~A image created on ~A ***~%"
-	  common-lisp-user::Garnet-Version-Number
-	  garnet-image-date)
-  (announce-debug-state)
-  (opal:reconnect-garnet))
+;; #-(and)
+;; (defun garnet-restart-function ()
+;;   (format t "*** Restarting Garnet ~A image created on ~A ***~%"
+;; 	  common-lisp-user::Garnet-Version-Number
+;; 	  garnet-image-date)
+;;   (announce-debug-state)
+;;   (opal:reconnect-garnet))
 
 
 (defun Extract-Image-Args (args)
@@ -129,8 +129,8 @@
   ;;   (format t "saved.~%")))
     )
 
-(defun Get-Garnet-Bitmap (bitmapname)
-  (opal:read-image (merge-pathnames bitmapname cl-user::Garnet-Bitmap-PathName)))
+;; (defun Get-Garnet-Bitmap (bitmapname)
+;;   (opal:read-image (merge-pathnames bitmapname cl-user::Garnet-Bitmap-PathName)))
 
 
 ;; Clip-and-Map

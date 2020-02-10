@@ -1,7 +1,7 @@
 
 (in-package :opal)
 
-(define-method :initialize opal:aggregate (a-aggregate)
+(define-method :initialize opal::aggregate (a-aggregate)
   (call-prototype-method a-aggregate)
   (let ((components (g-local-value a-aggregate :components)))
     (let ((kr::*constants-disabled* T))
@@ -13,7 +13,7 @@
 	   (the UPDATE-INFO (g-local-value a-aggregate :update-info)))
 	  T)))
 
-(define-method :destroy-me opal:aggregate (a-aggregate &optional (top-level-p T))
+(define-method :destroy-me opal::aggregate (a-aggregate &optional (top-level-p T))
   (if a-aggregate
       (let* ((the-window (g-local-value a-aggregate :window))
              (erase-p (and top-level-p the-window))
@@ -100,7 +100,7 @@
 		       (list gob)))
        (warn (format nil "Bad where option in add-component: ~S." where))))))
 
-(define-method :add-component opal:aggregate (a-aggregate gob &rest args)
+(define-method :add-component opal::aggregate (a-aggregate gob &rest args)
   (if (eq gob (g-local-value gob :window))		;; Is this a window?
       (error "*** ~A is a WINDOW, and was not added to ~A~%"
 	     gob a-aggregate))
@@ -137,7 +137,7 @@
     (add-component agg component))
   (car (last components)))
 
-(define-method :remove-component opal:aggregate (a-aggregate gob)
+(define-method :remove-component opal::aggregate (a-aggregate gob)
  (if (not (eq (g-local-value gob :parent) a-aggregate))
   (warn (format nil "Cannot remove-component ~A from ~A" gob a-aggregate))
   (let* ((gob-update-info (the UPDATE-INFO (g-local-value gob :update-info)))
@@ -164,7 +164,7 @@
     ;; signal we have changed components list
     (mark-as-changed a-aggregate :components))))
 
-(define-method :move-component opal:aggregate (a-aggregate gob &rest args)
+(define-method :move-component opal::aggregate (a-aggregate gob &rest args)
   (let* ((gob-update-info (g-local-value gob :update-info))
          (a-window (update-info-window gob-update-info))
 	 (a-window-update-info (g-local-value a-window :update-info)))
@@ -191,7 +191,7 @@
 	    (my-is-a-p child (cdr types)))
 	(is-a-p child types))))
 
-(define-method :do-components opal:aggregate (a-aggregate a-function
+(define-method :do-components opal::aggregate (a-aggregate a-function
 					     &key (type t) (self nil))
   (let ((children (g-local-value a-aggregate :components)))
     (dolist (child children)
@@ -204,11 +204,11 @@
       (funcall a-function a-aggregate))))
 
 
-(define-method :do-all-components opal:aggregate (a-aggregate a-function
+(define-method :do-all-components opal::aggregate (a-aggregate a-function
 						 &key (type t) (self nil))
   (let ((children (g-local-value a-aggregate :components)))
     (dolist (child children)
-      (if (is-a-p child opal:aggregate)
+      (if (is-a-p child opal::aggregate)
 	  (do-all-components child a-function :type type :self t)
 	  (when (or (eq type t)
 		    (is-a-p child type))
@@ -227,18 +227,7 @@
 			(point-in-gob child x y))
 	       child)))))
 
-(define-method :point-to-component opal:aggregate
+(define-method :point-to-component opal::aggregate
 	       (a-aggregate x y &key (type t))
   (when (point-in-gob a-aggregate x y)
     (point-to-component-recur (g-local-value a-aggregate :components) x y type)))
-
-;; (defun point-to-leaf-recur (component-list x y type)
-;;   (and component-list
-;;        (or (point-to-leaf-recur (cdr component-list) x y type)
-;; 	   (let ((child (car component-list)))
-;; 	     (cond ((and (is-a-p child opal:aggregate)
-;; 			 (not (g-value child :pretend-to-be-leaf)))
-;; 		    (point-to-leaf child x y :type type))
-;; 		   ((or (eq type t)
-;; 			(my-is-a-p child type))
-;; 		    (when (point-in-gob child x y) child)))))))

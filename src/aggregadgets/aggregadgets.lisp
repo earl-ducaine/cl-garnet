@@ -15,7 +15,7 @@
 (defmacro get-body (def)
   `(cddr ,def))
 
-(create-instance 'opal:aggregadget opal:aggregate
+(create-instance 'opal:aggregadget opal::aggregate
   (:local-only-slots '((:behaviors nil) (:window nil) (:parent nil))))
 
 (defun call-create-instance (class slots agget &key name add-as)
@@ -326,7 +326,7 @@ Could not find component of rank ~S in prototype.~%" agget rank)))))
 	(s-value agg name gob))
       (if (g-value agg :parts)
 	  (declare-constant agg name)))
-    (kr-send opal:aggregate :add-component agg gob key where loc)))
+    (kr-send opal::aggregate :add-component agg gob key where loc)))
 
 
 (define-method :remove-component aggregadget (agg component &optional destroy?)
@@ -349,7 +349,7 @@ Could not find component of rank ~S in prototype.~%" agget rank)))))
 (define-method :remove-local-component opal:aggregadget (agg gob)
   (let ((name (g-local-value gob :known-as)))
     (if name (with-constants-disabled (destroy-slot agg name)))
-    (kr-send opal:aggregate :remove-component agg gob)))
+    (kr-send opal::aggregate :remove-component agg gob)))
 
 (define-method :move-component opal:aggregadget (agg comp &rest args)
   (let (where locator #+comment key)
