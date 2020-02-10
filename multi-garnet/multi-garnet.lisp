@@ -2,13 +2,7 @@
 
 (in-package :multi-garnet)
 
-;; (eval-when (:load-toplevel :execute)
-;;   (when (fboundp 'disable-multi-garnet)
-;;     (disable-multi-garnet)))
-
 (defvar *multi-garnet-version* "2.2")
-
-;; ***** "hook" (advise) facility *****
 
 (eval-when (:load-toplevel :compile-toplevel :execute)
   (defun get-save-fn-symbol-name (sym)
@@ -1284,33 +1278,6 @@
     (run-plan plan)
     cn))
 
-;; execute the selected method, and any downstream mts, for these cns
-(defun propagate-from-cns (cns)
-  (sb:execute-constraints
-   (loop for cn in cns
-       when (and (constraint-p cn)
-		 (cn-connection-p cn :graph))
-       collect cn))
-  (update-invalidated-paths-and-formulas))
-
-;; ***** fns to access state of constraints and variables *****
-
-(defun constraint-state (cn)
-  (if (constraint-p cn)
-    (values (CN-connection cn)
-	    (not (null (sb:enforced cn)))
-	    (OS-object (CN-os cn))
-	    (OS-slot (CN-os cn)))))
-
-(defun variable-state (obj slot)
-  (let* ((var (get-object-slot-prop obj slot :sb-variable))
-	 (var-p (sb:sb-variable-p var))
-	 (valid-p (if var-p (sb:VAR-valid var) nil))
-	 (path-slot-p (not (null (get-object-slot-prop obj slot :sb-path-constraints)))))
-    (values var-p valid-p path-slot-p)))
-
-;; ***** fns to enable and disable multi-garnet hooks into garnet fns *****
-
 (defvar *fn-to-hook-plist* '(kr::s-value-fn                   s-value-fn-hook
 			     kr::kr-call-initialize-method    kr-call-initialize-method-hook
 			     kr::kr-init-method               kr-init-method-hook
@@ -1321,10 +1288,6 @@
 (defun enable-multi-garnet ()
   (loop for (fn hook-fn) on *fn-to-hook-plist* by #'CDDR
 	do (install-hook fn hook-fn)))
-
-(defun disable-multi-garnet ()
-  (loop for (fn hook-fn) on *fn-to-hook-plist* by #'CDDR do
-	(uninstall-hook fn)))
 
 (eval-when (:load-toplevel :execute)
   (enable-multi-garnet))

@@ -97,16 +97,12 @@
 	   #:with-stays
 	   #:with-slots-set
 	   #:s-value-strength
-	   #:propagate-from-cns
 	   #:propagate-plan-from-cn
 	   #:create-plan
 	   #:valid-plan-p
 	   #:run-plan
 	   #:enable-multi-garnet
-	   #:disable-multi-garnet
 	   #:constraint-p
-	   #:constraint-state
-	   #:variable-state
 	   #:clone-constraint
 	   #:change-constraint-strength
 	   #:*default-input-strength*
