@@ -27,7 +27,6 @@
 	    :components
 	    (
 	     (:file "src/utils/general")
-
 	     ))
    (:module kr
    	    :pathname "src/kr"
@@ -55,7 +54,6 @@
 	     (:file "defs")
 	     (:file "new-defs")
 	     (:file "utils")
-	     ;; (:file "text-fonts")
 	     (:file "create-instances")))
    (:module opal
    	    :pathname "src/opal"
@@ -69,33 +67,14 @@
 	     (:file "roundtangles")
 	     (:file "basics")
 	     (:file "aggregates")
-	     ;; (:file "process")
-	     ;; (:file "clean-up")
-	     ;; (:file "windows")
-	     ;; (:file "update")
-	     ;; (:file "fast-redraw")
-	     ;; (:file "update-window")
-	     ;; (:file "multifont")
-	     ;; (:file "virtual-aggregates")
-	     ;; (:file "pixmaps")
-	     ;; (:file "open-and-close")
-	     ;; (:file "opal-init")
 	     ))
    (:module aggregadgets
    	    :pathname "src/aggregadgets"
    	    :depends-on (utils gem kr opal)
    	    :components
-	    ((:file "aggregadgets-compiler")
-	     (:file "agg-macros")
+	    ((:file "agg-macros")
 	     (:file "agg-utils")
-	     (:file "aggregadgets")
-	     (:file "aggrelists")
-	     (:file "add-agg")
-	     (:file "agg-fix-slots")
-	     (:file "copy-agg")
-	     (:file "string-edit")
-	     (:file "agg-labels")
-	     ))
+	     (:file "aggregadgets")))
    (:module multi-garnet
 	    :pathname "multi-garnet"
 	    :depends-on (aggregadgets)
