@@ -37,12 +37,7 @@
 	     ;; (:file "kr-doc")
 	     (:file "kr")
 	     (:file "constraints" :depends-on (kr))))
-   (:module gem
-   	    :pathname "src/gem"
-   	    :depends-on (kr opal-boot)
-   	    :components
-	    ((:file "gem")))
-   (:module opal-boot
+      (:module opal-boot
    	    :pathname "src/opal"
    	    :depends-on (utils kr)
    	    :components
@@ -56,14 +51,14 @@
 	     (:file "create-instances")))
    (:module opal
    	    :pathname "src/opal"
-   	    :depends-on (utils gem kr opal-boot)
+   	    :depends-on (utils kr opal-boot)
    	    :components
 	    ((:file "basics")
 	     (:file "aggregates")
 	     ))
    (:module aggregadgets
    	    :pathname "src/aggregadgets"
-   	    :depends-on (utils gem kr opal)
+   	    :depends-on (utils kr opal)
    	    :components
 	    ((:file "agg-macros")
 	     (:file "aggregadgets")))
