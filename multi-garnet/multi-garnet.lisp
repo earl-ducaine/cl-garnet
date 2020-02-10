@@ -105,7 +105,7 @@
     (setf (CN-variable-names cn) variable-names)
     (setf (CN-path-slot-list cn) path-slot-list)
     ;; want to invalidate plans when setting selected method
-    (sb:add-set-slot-fn cn #'invalidate-plan-fn)
+    ;; (sb:add-set-slot-fn cn #'invalidate-plan-fn)
     cn))
 
 (defun clone-constraint (cn)

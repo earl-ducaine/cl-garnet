@@ -1,18 +1,9 @@
-;;;-*- Mode: COMMON-LISP; Package: SKY-BLUE -*-
 
 (in-package "SKY-BLUE")
 
-;; ********************************************************************************
-;;                       SkyBlue data structures
-;; ********************************************************************************
-
-;; ***** strengths: represented as keywords *****
 
 (defvar *strength-keyword-list*
   (list :>max :max :strong :medium :weak :s1 :s2 :s3 :s4 :s5 :s6 :s7 :min))
-
-;; transfer between strength keywords and numbers.
-;; For convenience, can give either form to either fn.
 
 (defun get-strength (strength)
   (cond ((and (integerp strength)
