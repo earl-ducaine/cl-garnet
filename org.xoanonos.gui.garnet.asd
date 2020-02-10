@@ -38,8 +38,7 @@
   ((:file "post-processing"
 	  :depends-on
 	  (opal inter ps aggregadgets gadgets debug protected-eval
-		gesture demos garnet-desktop-lab lapidary c32 gilt
-		multi-garnet lapidary cl-processing debug-clx))
+		gesture demos multi-garnet lapidary))
    (:file "package")
    (:file "clx-compatability" :depends-on (package))
    (:module utils
@@ -280,28 +279,21 @@
 	     (:file "demo-multifont")
 	     (:file "demo-multiwin")
 	     (:file "demo-pixmap")
-	     (:file "demo-schema-browser")
-	     (:file "demo-scrollbar")
-	     (:file "demo-sequence")
-	     (:file "demo-text")
-	     (:file "demo-truck")
-	     (:file "demo-twop")
-	     (:file "mge")
-	     (:file "demo-othello")
-	     (:file "demo-xasperate")
-	     (:file "demo-unistrokes")
-	     (:file "garnetdraw")
-	     (:file "demos-controller")
-	     (:file "tour")
-	     (:file "tour-transcript")))
-   (:module garnet-desktop-lab
-	    :pathname "src/contrib/garnet-desktop-lab"
-	    :depends-on (demos)
-	    :components
-	    ((:file "package")
-	     (:file "garnet-desktop-lab")
-	     (:file "xomax")
-	     (:file "app-launcher")))
+	     ;; (:file "demo-schema-browser")
+	     ;; (:file "demo-scrollbar")
+	     ;; (:file "demo-sequence")
+	     ;; (:file "demo-text")
+	     ;; (:file "demo-truck")
+	     ;; (:file "demo-twop")
+	     ;; (:file "mge")
+	     ;; (:file "demo-othello")
+	     ;; (:file "demo-xasperate")
+	     ;; (:file "demo-unistrokes")
+	     ;; (:file "garnetdraw")
+	     ;; (:file "demos-controller")
+	     ;; (:file "tour")
+	     ;; (:file "tour-transcript")
+	     ))
    (:module lapidary2
    	    :pathname "src/lapidary"
    	    :depends-on (utils)
@@ -310,48 +302,7 @@
 	     (:file "lapidary-functions-loader")
    	     (:file "lapidary-functions")
    	     (:file "mouse-bindings")))
-   (:module c32
-   	    :pathname "src/c32"
-   	    :depends-on (:gilt)
-   	    :components
-   	    (
-;;	     (:file "c32-compiler")
-	     (:file "c32")
-	     (:file "c32formula")
-	     (:file "c32ref")
-	     (:file "pop-up-generalize")
-	     (:file "pop-up-copy-formula")
-	     (:file "pop-up-ask-object")
-	     (:file "pop-up-functions")
-	     (:file "c32dialog")
-	     (:file "c32-lapidary")))
-   (:module gilt
-   	    :pathname "src/gilt"
-   	    :depends-on (:gadgets)
-   	    :components
-   	    ((:file "gilt-compiler")
-	     (:file "gilt-functions")
-	     (:file "path-functions")
-	     (:file "filter-functions")
-	     (:file "gilt-font-imp")
-	     (:file "motif-gilt-font-props")
-	     (:file "gilt-gadget-utils")
-	     (:file "gilt-gadgets")
-	     (:file "motif-gilt-gadgets")
-	     (:file "gilt")
-	     (:file "motif-gilt-save")
-	     (:file "motif-gilt-read")
-	     (:file "color-imp")
-	     (:file "motif-color-props")
-	     (:file "line-imp")
-	     (:file "motif-line-props")
-	     (:file "fill-imp")
-	     (:file "motif-fill-props")
-	     (:file "align")
-	     (:file "value-control")
-	     (:file "enable-control")
-	     (:file "error-check")))
-   (:module multi-garnet
+      (:module multi-garnet
 	    :pathname "multi-garnet"
 	    :depends-on (lapidary)
 	    :serial t
@@ -359,104 +310,25 @@
 	    ((:file "package")
 	     (:file "sky-blue")
 	     (:file "multi-garnet")
-	     (:file "scatterplot")
-	     (:file "examples")))
+	     (:file "scatterplot-alt")
+	     ;; (:file "examples")
+	     ))
    (:module lapidary
 	    :pathname "src/lapidary"
-	    :depends-on (lapidary2 gadgets gilt c32)
+	    :depends-on (lapidary2 gadgets)
 	    :components
 	    ((:file "mouse-bindings")
 	     (:file "parameters")
 	     (:file "defs")
-	     (:file "macros")
-	     (:file "constraint-gadget-compiler")
-	     (:file "cg-defs")
-	     (:file "support-constraints")
-	     (:file "custom")
-	     (:file "attach-constraints")
-	     (:file "support-box-constraints")
-	     (:file "box-parts")
-	     (:file "box")
-	     (:file "line-constraint-defs")
-	     (:file "line-constraint-objs")
-	     (:file "line-constraint")
-	     (:file "set-feedback")
-	     (:file "lapidary" :depends-on (box))
-	     (:file "dialog-parts2")
-	     (:file "event-card")
-	     (:file "card")
-	     (:file "card1")
-	     (:file "start-where")
-	     (:file "prompt")
-	     (:file "lapidary-objects")
-	     (:file "feedback-objs")
-	     (:file "support-misc")
-	     (:file "support-selection1")
-	     (:file "support-selection2")
-	     (:file "selection")
-	     (:file "create-object")
-	     (:file "delete-object")
-	     (:file "delete-window")
-	     (:file "move-grow")
-	     (:file "aggregates")
-	     (:file "aggparam")
-	     (:file "create-parameters")
-	     (:file "properties")
-	     (:file "line-imp")
-	     (:file "line-props")
-	     (:file "fill-imp")
-	     (:file "fill-props")
-	     (:file "color-imp")
-	     (:file "color-props")
-	     (:file "shapes")
-	     (:file "lap-draw")
-	     (:file "support-menu-editor")
-	     (:file "new-editor")
-	     (:file "text")
-	     (:file "text-properties")
-	     (:file "gadgetcopy")
-	     (:file "save-link-parameters")
-	     (:file "lapidary-save")
-	     (:file "lapidary-read")
-	     (:file "support-save-restore")
-	     (:file "save-restore")
-	     (:file "add-gadget")
-	     (:file "choice-inter")
-	     (:file "text-inter")
-	     (:file "move-grow-box")
-	     (:file "support-move-grow-inter")
-	     (:file "move-grow-inter")
-	     (:file "angle-inter")
-	     (:file "two-point-inter")
-	     (:file "support-inter")
-	     (:file "by-demo")
-	     (:file "interactors")
-	     (:file "interactors-menu")))
-   (:module cl-processing
-	    :pathname "src/cl-processing"
-	    :depends-on (:debug :lapidary)
-	    :components
-	    ((:file "package")
-	     (:file "main")
-	     (:file "console")))
-   (:module debug-clx
-	    :pathname "debug"
-	    :depends-on (:debug :lapidary)
-	    :components
-	    ((:file "debug")
-	     (:file "describe")
-	     (:file "event-test")
-	     (:file "keytrans")
-	     (:file "trace")
-	     (:file "util")))
+	     ;; (:file "macros")
+	     ;; (:file "constraint-gadget-compiler")
+	     ;; (:file "cg-defs")
+	     ))
    (:module last
 	    :pathname ""
 	    :depends-on (:utils :kr :gem :opal :inter :ps :aggregadgets
 				:gadgets :debug :protected-eval :gesture :demos
-				:garnet-desktop-lab :lapidary2
-;;				:build
-				:c32
-				:gilt :multi-garnet :lapidary :cl-processing
-				:debug-clx)
+				:lapidary2
+				 :multi-garnet)
 	    :components
 	    ((:file "post-processing")))))
