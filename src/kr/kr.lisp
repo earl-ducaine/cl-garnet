@@ -2359,22 +2359,17 @@ RETURNS: a list, with elements as follows:
   (unless (listp is-a)
     (setf is-a (list is-a)))
   (when is-a
-    (let ((*schema-is-new* T))	      ; Bind to prevent search on insertion
-				      ; of :is-a-inv in parent schemata.
-      ;; Check for immediate is-a loop, and set the :IS-A slot.
+    (let ((*schema-is-new* T))
       (handle-is-a schema is-a generate-instance override)))
-
   (do* ((slots slot-specifiers (cdr slots))
 	(slot (car slots) (car slots))
 	(initialize-method NIL)
 	(constants NIL)
-	(had-constants NIL)		; true if declared, including NIL
+	(had-constants NIL)
 	(cancel-constants (find '(:constant) slot-specifiers :test #'equal))
 	(parent (car is-a))
 	(slot-counter (if is-a 1 0)))
-
        ((null slots)
-	;; Process the type declarations.
 	(unless (eq types :NONE)
 	  (dolist (type types)
 	    (if (cdr type)
@@ -2409,7 +2404,6 @@ RETURNS: a list, with elements as follows:
 	  ;; We are generating code for a CREATE-INSTANCE, really.
 	  (kr-init-method schema initialize-method))
 	schema)
-
     (cond ((eq slot :NAME-PREFIX)
 	   ;; Skip this and the following argument
 	   (pop slots))
@@ -2433,16 +2427,101 @@ RETURNS: a list, with elements as follows:
 		  "Slot ~S in ~S was declared constant in prototype ~S!~%"
 		  slot-name schema (car is-a))))
 	     (if override
-		 ;; This is more costly - check whether the slot already exists,
-		 ;; dependencies, etc.
+
 		 (s-value schema slot-name slot-value)
-		 ;; No check needed in this case.
 		 (setf slot-counter
 		       (internal-s-value schema slot-name slot-value)))))
 	  (T
 	   (format t "Incorrect slot specification: object ~S ~S~%"
 		   schema slot)))))
 
+(defun do-schema-body-alt (schema is-a generate-instance do-constants override
+		       types &rest slot-specifiers)
+  "Create-schema and friends expand into a call to this function."
+  (when (equal is-a '(nil))
+    (format
+     t
+     "*** (create-instance ~S) called with an illegal (unbound?) class name.~%"
+     schema)
+    (setf is-a NIL))
+  (unless (listp is-a)
+    (setf is-a (list is-a)))
+  (when is-a
+    (let ((*schema-is-new* T))
+      (handle-is-a schema is-a generate-instance override)))
+  (do* ((slots slot-specifiers (cdr slots))
+	(slot (car slots) (car slots))
+	(initialize-method NIL)
+	(constants NIL)
+	(had-constants NIL)
+	(cancel-constants (find '(:constant) slot-specifiers :test #'equal))
+	(parent (car is-a))
+	(slot-counter (if is-a 1 0)))
+       ((null slots)
+	(unless (eq types :NONE)
+	  (dolist (type types)
+	    (if (cdr type)
+		(let ((n (encode-type (car type))))
+		  (dolist (slot (cdr type))
+		    (set-slot-type schema slot n)))
+		(format t "*** ERROR - empty list of slots in type declaration ~
+                          for object ~S:~%  ~S~%" schema (car type)))))
+	;; Process the constant declarations, and check the types.
+	(when do-constants
+	  (process-constant-slots
+	   schema is-a
+	   (if had-constants
+	       ;; There WAS a constant declaration, perhaps NIL.
+	       (if constants
+		   (if (formula-p constants)
+		       (g-value-formula-value schema :CONSTANT constants NIL)
+		       constants)
+		   :NONE)
+	       ;; There was no constant declaration.
+	       NIL)
+	   (not (eq types :NONE))))
+	;; Merge prototype and local declarations.
+	(dolist (slot slot-specifiers)
+	  (when (and (listp slot)
+		     (memberq (car slot)
+			      '(:IGNORED-SLOTS :LOCAL-ONLY-SLOTS
+				:MAYBE-CONSTANT :PARAMETERS :OUTPUT
+				:SORTED-SLOTS :UPDATE-SLOTS)))
+	    (merge-prototype-values schema (car slot) is-a (cdr slot))))
+	(when generate-instance
+	  ;; We are generating code for a CREATE-INSTANCE, really.
+	  (kr-init-method schema initialize-method))
+	schema)
+    (cond ((eq slot :NAME-PREFIX)
+	   ;; Skip this and the following argument
+	   (pop slots))
+	  ((consp slot)
+	   (let ((slot-name (car slot))
+		 (slot-value (cdr slot)))
+	     (case slot-name		; handle a few special slots.
+	       (:INITIALIZE
+		(when slot-value
+		  ;; A local :INITIALIZE method was provided
+		  (setf initialize-method slot-value)))
+	       (:CONSTANT
+		(setf constants (cdr slot))
+		(setf had-constants T)))
+	     ;; Check that the slot is not declared constant in the parent.
+	     (when (and (not cancel-constants) (not *constants-disabled*)
+			(not *redefine-ok*))
+	       (when (and parent (slot-constant-p parent slot-name))
+		 (cerror
+		  "If continued, the value of the slot will change anyway"
+		  "Slot ~S in ~S was declared constant in prototype ~S!~%"
+		  slot-name schema (car is-a))))
+	     (if override
+
+		 (s-value schema slot-name slot-value)
+		 (setf slot-counter
+		       (internal-s-value schema slot-name slot-value)))))
+	  (T
+	   (format t "Incorrect slot specification: object ~S ~S~%"
+		   schema slot)))))
 
 (eval-when (:execute :compile-toplevel :load-toplevel)
   (defun creation-message (name)
