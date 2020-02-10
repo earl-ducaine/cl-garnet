@@ -427,8 +427,8 @@
 (defun s-value-fn-hook (schema slot value)
   (multi-garnet-s-value-fn schema slot value *default-input-strength*))
 
-(defun s-value-strength (obj slot value strength)
-  (multi-garnet-s-value-fn obj slot value strength))
+;; (defun s-value-strength (obj slot value strength)
+;;   (multi-garnet-s-value-fn obj slot value strength))
 
 (defvar *s-value-bad-schema-action* nil)
 
@@ -1111,27 +1111,9 @@
 	 (eql :var-stay-cn (os-slot os)))
     ))
 
-;; ***** entry for enforcing stays during the executing of a form *****
-
-(defmacro with-stays (obj-stay-list &rest forms)
-  (let* ((cns-var (gentemp)))
-    `(let* ((,cns-var ,`(stay-spec-to-cns (list ,@(loop for lst in obj-stay-list
-						      collect `(list ,@lst))))))
-       (unwind-protect
-	   (progn
-	     (add-variable-stays ,cns-var)
-	     (progn ,@forms))
-	 (remove-dispose-variable-stays ,cns-var)))
-    ))
-
 (defun add-variable-stays (cns)
   (loop for cn in cns do
     (mg-add-constraint cn)))
-
-(defun remove-dispose-variable-stays (cns)
-  (loop for cn in cns do
-	(mg-remove-constraint cn)
-	(dispose-variable-stay cn)))
 
 (defun stay-spec-to-cns (stay-spec-list)
   (loop for (obj slot strength) in stay-spec-list
