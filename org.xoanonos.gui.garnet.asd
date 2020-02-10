@@ -14,7 +14,7 @@
   :depends-on (alexandria
 	       uiop
 	       bordeaux-threads
-	       trivial-features
+	       ;; trivial-features
 	       ;;clx
 	       )
   :license "MIT-ish (also public domain, see LICENSE)"
@@ -34,7 +34,7 @@
    	    :depends-on (utils)
    	    :components
 	    ((:file "kr-macros")
-	     (:file "kr-doc")
+	     ;; (:file "kr-doc")
 	     (:file "kr")
 	     (:file "constraints" :depends-on (kr))))
    (:module gem
@@ -58,10 +58,7 @@
    	    :pathname "src/opal"
    	    :depends-on (utils gem kr opal-boot)
    	    :components
-	    ((:file "text-functions")
-	     (:file "text")
-	     (:file "update-basics")
-	     (:file "basics")
+	    ((:file "basics")
 	     (:file "aggregates")
 	     ))
    (:module aggregadgets
