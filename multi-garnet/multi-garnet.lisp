@@ -1143,11 +1143,6 @@
   (loop for cn in cns do
     (mg-add-constraint cn)))
 
-(defun remove-dispose-with-set-cns (cns)
-  (loop for cn in cns do
-	(mg-remove-constraint cn)
-	(dispose-variable-input cn)))
-
 (defun with-set-spec-to-cns (spec-list)
   (loop for (obj slot value strength) in spec-list
    collect (create-variable-input
