@@ -14,17 +14,17 @@
      ((not ,test))
      ,@body))
 
-(defmacro till (test &body body)
-  "Loop until test is true. If already true, don't loop at all."
-  `(do ()
-       (,test)
-     ,@body))
+;; (defmacro till (test &body body)
+;;   "Loop until test is true. If already true, don't loop at all."
+;;   `(do ()
+;;        (,test)
+;;      ,@body))
 
-;; Original Garnet version (loops at least once).
-(defmacro until (test &body body)
-  "Loop until test is true. Loops at least once."
-  `(loop ,@body
-      (when ,test (return))))
+;; ;; Original Garnet version (loops at least once).
+;; (defmacro until (test &body body)
+;;   "Loop until test is true. Loops at least once."
+;;   `(loop ,@body
+;;       (when ,test (return))))
 
 (defmacro string+ (&rest args) `(concatenate 'string ,@args))
 
