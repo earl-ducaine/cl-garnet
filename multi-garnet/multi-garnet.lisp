@@ -27,18 +27,9 @@
       (setf (symbol-function fn)
             (symbol-function hook)))))
 
-(defun uninstall-hook (fn)
-  (let ((save-fn (get-save-fn-symbol-name fn)))
-    (if (fboundp save-fn)
-	(setf (symbol-function fn) (symbol-function save-fn))
-      (format t "~&warning: uninstall-hook: ~S fn never saved~%" fn))))
-
 (defmacro call-hook-save-fn (fn &rest args)
   (let ((save-fn (get-save-fn-symbol-name fn)))
     `(,save-fn ,@args)))
-
-
-;; ***** os (object slot) objects *****
 
 (defmacro os (obj slot) `(cons ,obj ,slot))
 
@@ -352,12 +343,9 @@
 		 (remove-constraint-from-slot obj slot old-value)))
 	     )
 	 )
-
      ;; actually set object slot
      (call-hook-save-fn kr::s-value-fn obj slot value)
-
      ;; after checks
-
      ;; add new constraint in slot
      ,@(if auto-activate-constraints
 	   '(
@@ -373,7 +361,6 @@
 	     (save-invalidated-path-constraints obj slot)
 	     )
 	 )
-
      value))
 
 ;; fn that sets slot only, by calling saved s-value-fn
@@ -525,44 +512,6 @@
     ;; try reconnecting the invalid constraints
     (loop for cn in invalid-cns do (connect-add-constraint cn))
     ))
-
-(defun destroy-schema-hook (schema &optional (send-destroy-message NIL) recursive-p)
-  (let ((invalid-cns nil)
-	(invalid-vars nil))
-    (when (schema-p schema)
-      ;; remove constraints in slots in this obj
-      (doslots
-       (slot schema)
-       (let ((val (get-local-value schema slot)))
-	 (when (and (constraint-p val)
-		    (constraint-in-obj-slot val schema slot))
-	   ;; make sure that :is-a-inv is good before changing any slots
-	   (remove-bad-inv-objects schema)
-	   (remove-constraint-from-slot schema slot val))
-	 ))
-      ;; find all constraints that use slots in this object
-      (doslots
-       (slot schema)
-       (let* ((var (get-object-slot-prop schema slot :sb-variable))
-	      (cns (get-object-slot-prop schema slot :sb-path-constraints)))
-	 (setq invalid-cns (append cns invalid-cns))
-	 (when var
-	   (setq invalid-cns (append (VAR-constraints var) invalid-cns))
-	   (push var invalid-vars))
-	 ))
-      ;; remove invalid constraints
-      (loop for cn in invalid-cns do
-	    ;; make sure that :is-a-inv is good before changing any slots
-	   (remove-bad-inv-objects schema)
-	   (remove-disconnect-constraint cn))
-      ;; flush invalid vars
-      (loop for var in invalid-vars do
-	    (setf (VAR-os var) nil))
-      ;; actually destroy the schema
-      (call-hook-save-fn kr::destroy-schema schema send-destroy-message recursive-p)
-      ;; try reconnecting the invalid constraints
-      (loop for cn in invalid-cns do (connect-add-constraint cn))
-      )))
 
 (defun remove-bad-inv-objects (schema)
   (s-value schema :is-a-inv
@@ -923,7 +872,6 @@
 	 (slot-props (getf os-props slot nil)))
     (setf (getf slot-props prop) val)
     (setf (getf os-props slot) slot-props)
-    (set-slot-no-checks obj :sb-os-props os-props)
     (mark-as-changed obj :sb-os-props)
     val))
 
@@ -1126,7 +1074,6 @@
 (defvar *fn-to-hook-plist* '(kr::s-value-fn                   s-value-fn-hook
 			     kr::kr-call-initialize-method    kr-call-initialize-method-hook
 			     kr::kr-init-method               kr-init-method-hook
-;;			     kr::destroy-schema               destroy-schema-hook
 			     kr::destroy-slot                 destroy-slot-hook
 			     kr::propagate-change             propagate-change-hook))
 
