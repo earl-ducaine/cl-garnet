@@ -79,12 +79,6 @@
 (defmacro cn-connection-p (cn val)
   `(eq (cn-connection ,cn) ,val))
 
-(defun invalidate-plan-fn (obj slot val)
-  (when (and (eql slot :selected-method)
-	     (constraint-p obj))
-    ;; when selected method of constraint is set, may need to invalidate plans
-    (sb:invalidate-plans-on-setting-method obj val)))
-
 (defun create-mg-constraint (&key (strength :max)
 				  (variables nil)
 				  (methods nil)
@@ -104,23 +98,15 @@
     (setf (CN-variable-paths cn) variable-paths)
     (setf (CN-variable-names cn) variable-names)
     (setf (CN-path-slot-list cn) path-slot-list)
-    ;; want to invalidate plans when setting selected method
-    ;; (sb:add-set-slot-fn cn #'invalidate-plan-fn)
     cn))
 
 (defun clone-constraint (cn)
-  ;; copy ptrs to generally-immutable slots
-  ;; (:strength :variable-paths)
-  ;; and initialize others
   (create-mg-constraint :strength (sb:cn-strength cn)
 			:methods (loop for mt in (sb:cn-methods cn)
 				     collect (clone-mg-method mt))
 			:variable-paths (cn-variable-paths cn)
 			:variable-names (cn-variable-names cn)))
 
-;;    variable fields used by multi-garnet:
-;;  os            | os object   | object&slot containing the value of
-;;                |             | this variable.
 (defmacro var-os (v) `(sb:get-sb-variable-slot ,v :mg-os))
 (defsetf var-os (v) (val) `(sb:set-sb-variable-slot ,v :mg-os ,val))
 

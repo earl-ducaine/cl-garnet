@@ -1571,7 +1571,7 @@
     (set-sb-slot invalid-cn :valid-plans nil)
     ))
 
-(defun remove-invalid-plan-from-other-cns (plan cns invalid-cn)
+(defun  remove-invalid-plan-from-other-cns (plan cns invalid-cn)
   (loop for cn in cns do
 	(cond ((eql cn invalid-cn)
 	       nil)
