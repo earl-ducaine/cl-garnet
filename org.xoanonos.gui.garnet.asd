@@ -16,24 +16,17 @@
   :description " GUI toolkit (c. 1990 look/feel)"
   :components
   ((:file "package")
-   (:module utils
-	    :pathname ""
-	    :depends-on (package)
-	    :components
-	    (
-	     (:file "src/utils/general")
-	     ))
    (:module kr
    	    :pathname "src/kr"
-   	    :depends-on (utils)
+   	    :depends-on (package)
    	    :components
 	    ((:file "kr-macros")
-	     ;; (:file "kr-doc")
+	     (:file "general")
 	     (:file "kr")
 	     (:file "constraints" :depends-on (kr))))
-      (:module opal-boot
+   (:module opal-boot
    	    :pathname "src/opal"
-   	    :depends-on (utils kr)
+   	    :depends-on (kr)
    	    :components
    	    ((:file "exports")
 	     (:file "types")
@@ -45,14 +38,14 @@
 	     (:file "create-instances")))
    (:module opal
    	    :pathname "src/opal"
-   	    :depends-on (utils kr opal-boot)
+   	    :depends-on (kr opal-boot)
    	    :components
 	    ((:file "basics")
 	     (:file "aggregates")
 	     ))
    (:module aggregadgets
    	    :pathname "src/aggregadgets"
-   	    :depends-on (utils kr opal)
+   	    :depends-on (kr opal)
    	    :components
 	    ((:file "agg-macros")
 	     (:file "aggregadgets")))
