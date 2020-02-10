@@ -107,9 +107,6 @@
   `(let ((the-schema ,schema))
     (kr-send the-schema :draw the-schema ,@args)))
 
-(defmacro point-in-gob (schema &rest args)
-  `(let ((the-schema ,schema))
-    (kr-send the-schema :point-in-gob the-schema ,@args)))
 
 (defmacro set-styles (schema &rest args)
   `(let ((the-schema ,schema))

@@ -1,26 +1,9 @@
-;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: OPAL; Base: 10 -*-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;         The Garnet User Interface Development Environment.      ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; This code was written as part of the Garnet project at          ;;;
-;;; Carnegie Mellon University, and has been placed in the public   ;;;
-;;; domain.  If you are using this code or any part of Garnet,      ;;;
-;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 
 (in-package "OPAL")
-
-;;; The following allow access and setting to the gobs center
-;;; position.
 
 (declaim (inline center))
 (defun center (gob)
   (values (center-x gob) (center-y gob)))
-
-;;; The accessors for the bottom and right of the gob, make it easier to
-;;; adjust the far side of the gob's bounding box.
-;;; Used to be macros, but were changed to defuns for efficiency.
 
 (declaim (inline bottom))
 (defun bottom (gob)
@@ -87,7 +70,7 @@
 (defun unchecked-gv-bottom-is-top-of (gob)
   (- (gv-fixnum gob :top) (gvl-fixnum :height)))
 
-;; Gives the value for :top such that (gv-bottom :self) equals 
+;; Gives the value for :top such that (gv-bottom :self) equals
 ;; (gv gob :top)
 (declaim (inline gv-bottom-is-top-of))
 (defun gv-bottom-is-top-of (gob)
@@ -174,68 +157,3 @@
   (call-prototype-method gob)
   ;; This is not an aggregate!  Used by update algorithm for efficiency
   (setf (update-info-aggregate-p (g-local-value gob :update-info)) NIL))
-
-(define-method :point-in-gob view-object (gob x y)
- (and (g-value gob :visible)
-  (let ((top (g-value gob :top))
-	(left (g-value gob :left))
-	(width (g-value gob :width))
-	(height (g-value gob :height))
-	(hit (g-value gob :hit-threshold)))
-    (declare (fixnum top left width height))
-    (and (>= x (- left hit))
-	 (< x (+ left width hit))
-	 (>= y (- top hit))
-	 (< y (+ top height hit))))))
-
-(defun assign-draw-function (f n)
-  (let ((pair (assoc f gem:*function-alist*)))
-    (when pair
-	(setf (get f :x-draw-function) n)
-	(rplacd pair n))))
-
-
-;;; Halftone creation functions
-(defun halftone (percent &key (foreground-color black)
-			      (background-color white))
-  (let* ((halftone (aref *halftone-table* (find-halftone percent)))
-	 (fstyle (halftone-filling-style halftone)))
-    (unless fstyle
-      (setf (halftone-filling-style halftone)
-        (setq fstyle
-          (create-instance NIL filling-style
-            (:fill-style :opaque-stippled)
-            (:stipple
-	      (create-instance NIL bitmap
-	        (:percent (halftone-percent halftone))
-	        (:image (halftone-device-image halftone))))))))
-    (values
-      ;; the filling-style
-      (if (and (eq foreground-color black)
-	       (eq background-color white))
-	fstyle
-        (create-instance NIL fstyle
-	   (:foreground-color foreground-color)
-	   (:background-color background-color)))
-      ;; the real percentage
-      (halftone-percent halftone))))
-
-
-
-(defun halftone-darker (percent &key (foreground-color black)
-                                     (background-color white))
-  (halftone (halftone-percent
-               (aref *halftone-table*
-		     (min (1- *halftone-table-size*)
-			  (1+ (find-halftone percent)))))
-            :foreground-color foreground-color
-            :background-color background-color))
-
-
-(defun halftone-lighter (percent &key (foreground-color black)
-                                      (background-color white))
-  (halftone (halftone-percent
-               (aref *halftone-table*
-		     (max 0 (1- (find-halftone percent)))))
-            :foreground-color foreground-color
-            :background-color background-color))
