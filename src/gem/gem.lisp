@@ -206,7 +206,7 @@
 ;; getenv is internal to CLX, so the's some risk of it changing in the
 ;; future.  But in the CL world it's still probably the most portable
 ;; way of extracting DISPLAY host.
-(defparameter *x11-server-available* (xlib::getenv "DISPLAY"))
+(defparameter *x11-server-available* nil)
 
 (defun init-device-post ()
   (initialize-device-values (get-full-display-name) *root-window*)

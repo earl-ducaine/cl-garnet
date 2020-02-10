@@ -15,7 +15,8 @@
 	       uiop
 	       bordeaux-threads
 	       trivial-features
-	       clx)
+	       ;;clx
+	       )
   :license "MIT-ish (also public domain, see LICENSE)"
   :author "CMU Garnet Team (plus various others, see LICENSE)"
   :description " GUI toolkit (c. 1990 look/feel)"
