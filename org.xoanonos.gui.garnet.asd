@@ -55,7 +55,7 @@
 	     (:file "defs")
 	     (:file "new-defs")
 	     (:file "utils")
-	     (:file "text-fonts")
+	     ;; (:file "text-fonts")
 	     (:file "create-instances")))
    (:module opal
    	    :pathname "src/opal"
@@ -69,10 +69,10 @@
 	     (:file "roundtangles")
 	     (:file "basics")
 	     (:file "aggregates")
-	     (:file "process")
-	     (:file "clean-up")
-	     (:file "windows")
-	     (:file "update")
+	     ;; (:file "process")
+	     ;; (:file "clean-up")
+	     ;; (:file "windows")
+	     ;; (:file "update")
 	     ;; (:file "fast-redraw")
 	     ;; (:file "update-window")
 	     ;; (:file "multifont")
