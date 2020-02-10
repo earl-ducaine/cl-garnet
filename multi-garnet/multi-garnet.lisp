@@ -138,27 +138,12 @@
 	 (var (sb:create-sb-variable :name name
 				     :value val)))
     (setf (VAR-os var) os)
-    ;; update OS val when var value changed
-    (sb:add-set-slot-fn var #'update-var-value-fn)
     var))
 
 ;; returns true if this is a *multi-garnet* constraint
 (defun constraint-p (obj)
   (and (sb:sb-constraint-p obj)
        (not (null (CN-connection obj)))))
-
-;; ***** gv-sb-slot and supporting fns *****
-
-;; the following functions support using gv-sb-slot to access sb object
-;; slots from within garnet formulas, so that the formulas will be
-;; invalidated correctly when the slots are changed.  This is implemented
-;; by saving a "copy" kr object on (sb:get-sb-slot obj
-;; :gv-sb-slot-kr-object) Every time a slot on the list (sb:get-sb-slot obj
-;; :gv-sb-slots) is changed, the corresponding slot in the kr object is
-;; also set.  When gv-sb-slot is called, it establishes a formula to this
-;; kr object.  Slot names are added to (sb:get-sb-slot obj :gv-sb-slots)
-;; when gv-sb-slot is called, and removed when it appears that a slot no
-;; longer has any dependencies.
 
 (defun gv-sb-slot-check (obj slot val)
   (when (member slot (sb:get-sb-slot obj :gv-sb-slots))
@@ -324,25 +309,9 @@
  		       cn output-vars output-values))
  	     (loop for output-var in output-vars
  		 as val in output-values
- 		 do (set-variable-value output-var val))
- 	     )))
-    ))
-
-
-;; ***** entry for turning off collection/update of invalidated paths and formulas *****
-;; warning: be very careful using these
+ 		 do (set-variable-value output-var val)))))))
 
 (defvar *collect-invalid-paths-formulas* t)
-
-(defmacro with-no-invalidation-collection (&rest forms)
-  (let* ((old-val-var (gentemp)))
-    `(let* ((,old-val-var *collect-invalid-paths-formulas*))
-       (unwind-protect
-	   (progn
-	     (setq *collect-invalid-paths-formulas* nil)
-	     (progn ,@forms))
-	 (setq *collect-invalid-paths-formulas* ,old-val-var)))
-    ))
 
 (defvar *update-invalid-paths-formulas* t)
 
@@ -587,16 +556,6 @@
 	    (cerror "don't activate cn" "initializing <~S,~S>: found connected cn ~S with os ~S"
 		    schema slot value (CN-os value)))
 	   ))))
-
-(defun set-obj-list4-slot-no-db-hook (obj slot new-list4)
-  (let* ((var (get-object-slot-prop obj slot :sb-variable))
-	 (strength *default-input-strength*))
-    (cond ((null var)
-	   )
-	  (t
-	   (set-input-variable var (copy-list new-list4) strength))
-	  )
-    new-list4))
 
 
 (defun destroy-slot-hook (schema slot)
