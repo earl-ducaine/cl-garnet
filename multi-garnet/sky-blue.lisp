@@ -1449,38 +1449,7 @@
 	 (cerror "cont" "pplan-add: bad object ~S" obj))
 	))
 
-;; ***** extracting and executing plans *****
-
 (defvar *extract-plan-stack* (sb-stack-create 100))
-
-(defun extract-plan (root-cns)
-  (let ((prop-mark (new-mark))
-	(plan-list nil)
-	cn)
-    ;; mark all cns we will be processing, and collect ordered pplan
-    (sb-stack-clear *extract-plan-stack*)
-    (pplan-add *extract-plan-stack* root-cns prop-mark)
-    ;; scan through pplan
-    (loop until (sb-stack-empty *extract-plan-stack*) do
-	  (setq cn (sb-stack-pop *extract-plan-stack*))
-	  (cond ((not (eql prop-mark (CN-mark cn)))
-		 ;; this cn has already been processed: ignore
-		 nil)
-		((any-immediate-upstream-cns-marked cn prop-mark)
-		 ;; Some of this cn's upstream cns have not been processed:
-		 ;; there must be a cycle.  Add cycle to plan, unmarking
-		 ;; cycle cns.
-		 (push (extract-plan-cycle cn prop-mark) plan-list)
-		 )
-		(t
-		 ;; all the upstream cns have been processed, so unmark this one
-		 ;; and add it to the beginning of the plan
-		 ;; (will reverse plan before returning)
-		 (setf (CN-mark cn) nil)
-		 (push cn plan-list)
-		 )))
-    (create-valid-plan root-cns (nreverse plan-list))
-    ))
 
 (defun extract-plan-cycle (cn prop-mark)
   (let* ((cycle-cns (collect-cns-in-cycle (list cn) nil prop-mark))
@@ -1550,34 +1519,3 @@
 		(set-sb-slot cn :valid-plans
 			     (adjoin plan (get-sb-slot cn :valid-plans)))))
 	 ))
-
-(defun invalidate-plans-on-setting-method (cn new-mt)
-  (invalidate-constraint-plans cn)
-  (when new-mt
-    (do-method-input-vars (var cn new-mt)
-      (let ((input-cn (VAR-determined-by var)))
-	(when input-cn
-	  (invalidate-constraint-plans input-cn))
-	)))
-  )
-
-(defun invalidate-constraint-plans (invalid-cn)
-  (let* ()
-    (loop for plan in (get-sb-slot invalid-cn :valid-plans) do
-	  (setf (sb-plan-valid plan) nil)
-	  (remove-invalid-plan-from-other-cns plan (sb-plan-root-cns plan) invalid-cn)
-	  (remove-invalid-plan-from-other-cns plan (sb-plan-list plan) invalid-cn)
-	  )
-    (set-sb-slot invalid-cn :valid-plans nil)
-    ))
-
-(defun  remove-invalid-plan-from-other-cns (plan cns invalid-cn)
-  (loop for cn in cns do
-	(cond ((eql cn invalid-cn)
-	       nil)
-	      ((listp cn)
-	       (remove-invalid-plan-from-other-cns plan (first cn) invalid-cn))
-	      (t
-	       (set-sb-slot cn :valid-plans
-			    (remove plan (get-sb-slot cn :valid-plans)))))
-	))

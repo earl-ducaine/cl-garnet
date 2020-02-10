@@ -47,11 +47,8 @@
 	   #:var-valid
 
 	   #:sb-plan-p
-	   #:extract-plan
 	   #:sb-plan-valid
 	   #:execute-plan
-	   #:invalidate-plans-on-setting-method
-
 	   #:enforced
 	   #:do-method-output-vars
 	   #:do-selected-method-output-vars
