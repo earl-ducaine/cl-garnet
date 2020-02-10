@@ -41,8 +41,7 @@
 	    :depends-on (aggregadgets)
 	    :serial t
 	    :components
-	    ((:file "package")
-	     (:file "sky-blue")
+	    ((:file "sky-blue")
 	     (:file "multi-garnet")
 	     (:file "scatterplot-alt")
 	     ))))

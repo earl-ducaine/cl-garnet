@@ -1,5 +1,5 @@
 
-(in-package "SKY-BLUE")
+(in-package :kr)
 
 
 (defvar *strength-keyword-list*

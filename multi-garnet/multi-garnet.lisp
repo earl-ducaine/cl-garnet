@@ -63,18 +63,18 @@
 ;; variable-paths  | list of paths | paths for accessing constraint variables.
 ;; path-slot-list  | list of os's  | os's of path slots for this cn
 
-;; Multi-Garnet fields go through sb:get-sb-slot (since these fields are
+;; Multi-Garnet fields go through get-sb-slot (since these fields are
 ;; stored on the other-slots list).
-(defmacro cn-os (v) `(sb:get-sb-constraint-slot ,v :mg-os))
-(defmacro cn-connection (v) `(sb:get-sb-constraint-slot ,v :mg-connection))
-(defmacro cn-variable-paths (c) `(sb:get-sb-constraint-slot ,c :mg-variable-paths))
-(defmacro cn-variable-names (c) `(sb:get-sb-constraint-slot ,c :mg-variable-names))
-(defmacro cn-path-slot-list (c) `(sb:get-sb-constraint-slot ,c :mg-path-slot-list))
-(defsetf cn-os (v) (val) `(sb:set-sb-constraint-slot ,v :mg-os ,val))
-(defsetf cn-connection (v) (val) `(sb:set-sb-constraint-slot ,v :mg-connection ,val))
-(defsetf cn-variable-paths (c) (val) `(sb:set-sb-constraint-slot ,c :mg-variable-paths ,val))
-(defsetf cn-variable-names (c) (val) `(sb:set-sb-constraint-slot ,c :mg-variable-names ,val))
-(defsetf cn-path-slot-list (c) (val) `(sb:set-sb-constraint-slot ,c :mg-path-slot-list ,val))
+(defmacro cn-os (v) `(get-sb-constraint-slot ,v :mg-os))
+(defmacro cn-connection (v) `(get-sb-constraint-slot ,v :mg-connection))
+(defmacro cn-variable-paths (c) `(get-sb-constraint-slot ,c :mg-variable-paths))
+(defmacro cn-variable-names (c) `(get-sb-constraint-slot ,c :mg-variable-names))
+(defmacro cn-path-slot-list (c) `(get-sb-constraint-slot ,c :mg-path-slot-list))
+(defsetf cn-os (v) (val) `(set-sb-constraint-slot ,v :mg-os ,val))
+(defsetf cn-connection (v) (val) `(set-sb-constraint-slot ,v :mg-connection ,val))
+(defsetf cn-variable-paths (c) (val) `(set-sb-constraint-slot ,c :mg-variable-paths ,val))
+(defsetf cn-variable-names (c) (val) `(set-sb-constraint-slot ,c :mg-variable-names ,val))
+(defsetf cn-path-slot-list (c) (val) `(set-sb-constraint-slot ,c :mg-path-slot-list ,val))
 
 (defmacro cn-connection-p (cn val)
   `(eq (cn-connection ,cn) ,val))
@@ -89,7 +89,7 @@
 				  (path-slot-list nil)
 				  (name nil)
 				  )
-  (let ((cn (sb:create-sb-constraint :strength strength
+  (let ((cn (create-sb-constraint :strength strength
 				     :variables variables
 				     :methods methods
 				     :name name)))
@@ -101,46 +101,46 @@
     cn))
 
 (defun clone-constraint (cn)
-  (create-mg-constraint :strength (sb:cn-strength cn)
-			:methods (loop for mt in (sb:cn-methods cn)
+  (create-mg-constraint :strength (cn-strength cn)
+			:methods (loop for mt in (cn-methods cn)
 				     collect (clone-mg-method mt))
 			:variable-paths (cn-variable-paths cn)
 			:variable-names (cn-variable-names cn)))
 
-(defmacro var-os (v) `(sb:get-sb-variable-slot ,v :mg-os))
-(defsetf var-os (v) (val) `(sb:set-sb-variable-slot ,v :mg-os ,val))
+(defmacro var-os (v) `(get-sb-variable-slot ,v :mg-os))
+(defsetf var-os (v) (val) `(set-sb-variable-slot ,v :mg-os ,val))
 
 (defun create-mg-variable (&key (name nil)
 				(os nil))
   (let* ((val (if (os-p os)
 		  (g-value (os-object os) (os-slot os))
 		nil))
-	 (var (sb:create-sb-variable :name name
+	 (var (create-sb-variable :name name
 				     :value val)))
     (setf (VAR-os var) os)
     var))
 
 ;; returns true if this is a *multi-garnet* constraint
 (defun constraint-p (obj)
-  (and (sb:sb-constraint-p obj)
+  (and (sb-constraint-p obj)
        (not (null (CN-connection obj)))))
 
 (defun gv-sb-slot-check (obj slot val)
-  (when (member slot (sb:get-sb-slot obj :gv-sb-slots))
+  (when (member slot (get-sb-slot obj :gv-sb-slots))
     (update-sb-slot-formulas obj slot val)))
 
 (defun update-sb-slot-formulas (obj slot val)
-  (let ((slots (sb:get-sb-slot obj :gv-sb-slots)))
+  (let ((slots (get-sb-slot obj :gv-sb-slots)))
     (when (member slot slots)
       (let* ((kr-obj (get-gv-sb-slot-kr-object obj)))
 	(cond ((kr-slot-referenced kr-obj slot)
 	       (s-value kr-obj slot val))
 	      (t
 	       ;; no reference: we don't have to track this slot any more
-	       (sb:set-sb-slot obj :gv-sb-slots (remove slot slots))
+	       (set-sb-slot obj :gv-sb-slots (remove slot slots))
 	       ;; if we have no more slots, can remove check-fn
-	       (when (null (sb:get-sb-slot obj :gv-sb-slots))
-		 (sb:remove-set-slot-fn obj #'gv-sb-slot-check))
+	       (when (null (get-sb-slot obj :gv-sb-slots))
+		 (remove-set-slot-fn obj #'gv-sb-slot-check))
 	       ))
 	))))
 
@@ -148,22 +148,22 @@
   (kr::slot-dependents (kr::slot-accessor schema slot)))
 
 (defun get-gv-sb-slot-kr-object (obj)
-  (let ((kr-obj (sb:get-sb-slot obj :gv-sb-slot-kr-object)))
+  (let ((kr-obj (get-sb-slot obj :gv-sb-slot-kr-object)))
     (unless (schema-p kr-obj)
       (setq kr-obj (create-instance nil nil))
-      (sb:set-sb-slot obj :gv-sb-slot-kr-object kr-obj))
+      (set-sb-slot obj :gv-sb-slot-kr-object kr-obj))
     kr-obj))
 
 ;; fn to use to access sb object slots from within formulas
 (defun gv-sb-slot (obj slot)
-  (let* ((formula-slots (sb:get-sb-slot obj :gv-sb-slots))
+  (let* ((formula-slots (get-sb-slot obj :gv-sb-slots))
 	 (kr-obj (get-gv-sb-slot-kr-object obj)))
     (unless (member slot formula-slots)
-      (sb:set-sb-slot obj :gv-sb-slots (cons slot (sb:get-sb-slot obj :gv-sb-slots)))
+      (set-sb-slot obj :gv-sb-slots (cons slot (get-sb-slot obj :gv-sb-slots)))
       ;; make sure we add check fn
-      (sb:add-set-slot-fn obj #'gv-sb-slot-check)
+      (add-set-slot-fn obj #'gv-sb-slot-check)
       ;; make sure slot value copied to kr object
-      (s-value kr-obj slot (sb:get-sb-slot obj slot)))
+      (s-value kr-obj slot (get-sb-slot obj slot)))
     (kr::gv-value-fn kr-obj slot)))
 
 ;; ***** m-constraint macro used to construct constraint given method forms *****
@@ -173,7 +173,7 @@
 
 (defmacro m-constraint (strength-spec var-specs &rest method-specs)
   (let* ((strength
-	  (cond ((find strength-spec sb:*strength-keyword-list*)
+	  (cond ((find strength-spec *strength-keyword-list*)
 		 strength-spec)
 		(t (error "bad strength in m-constraint: ~S" strength-spec))))
 	 (var-names (loop for spec in var-specs collect
@@ -241,22 +241,22 @@
 
 (defun create-mg-method (&key (output-indices nil)
 			      (code #'(lambda (cn) cn)))
-  (let ((mt (sb:create-sb-method :outputs nil
+  (let ((mt (create-sb-method :outputs nil
 				 :code code)))
-    (sb:set-sb-slot mt :mg-output-indices output-indices)
+    (set-sb-slot mt :mg-output-indices output-indices)
     mt))
 
 (defun clone-mg-method (mt)
-  (create-mg-method :output-indices (sb:get-sb-slot mt :mg-output-indices)
-		    :code (sb:mt-code mt)))
+  (create-mg-method :output-indices (get-sb-slot mt :mg-output-indices)
+		    :code (mt-code mt)))
 
 ;; initialize method :outputs lists
 ;; (possible speed-up: save list, rplaca values)
 (defun init-method-outputs (cn)
-  (let ((vars (sb:cn-variables cn)))
-    (loop for mt in (SB:cn-methods cn) do
-	  (setf (sb:mt-outputs mt)
-	    (loop for index in (sb:get-sb-slot mt :mg-output-indices)
+  (let ((vars (cn-variables cn)))
+    (loop for mt in (cn-methods cn) do
+	  (setf (mt-outputs mt)
+	    (loop for index in (get-sb-slot mt :mg-output-indices)
 		collect (nth index vars))))
     ))
 
@@ -269,14 +269,14 @@
 	 (full-var-specs (loop for name in var-names as spec in var-specs collect
 			       (if (symbolp spec) spec (list name spec)))))
     `(let ((cn (m-constraint ,strength-spec ,full-var-specs (setf ,var-names))))
-       (sb:set-sb-slot cn :stay-flag t)
+       (set-sb-slot cn :stay-flag t)
        cn)))
 
 (defun execute-m-constraint-method (cn method-code)
-  (let* ((vars (SB:CN-variables cn))
+  (let* ((vars (CN-variables cn))
 	 (var-values (loop for v in vars
 			 collect (get-variable-value v)))
-	 (output-vars (sb:selected-method-output-vars cn)))
+	 (output-vars (selected-method-output-vars cn)))
     (cond ((= 1 (length output-vars))
  	   (let* ((output-var (car output-vars))
  		  (val (apply method-code var-values)))
@@ -551,7 +551,7 @@
     (setq invalid-cns (get-object-slot-prop schema slot :sb-path-constraints))
     ;; find any var in this slot
     (when var
-      (setq invalid-cns (append (sb:VAR-constraints var) invalid-cns))
+      (setq invalid-cns (append (VAR-constraints var) invalid-cns))
       (push var invalid-vars))
     ;; remove invalid constraints
     (loop for cn in invalid-cns do (remove-disconnect-constraint cn))
@@ -585,7 +585,7 @@
 	      (cns (get-object-slot-prop schema slot :sb-path-constraints)))
 	 (setq invalid-cns (append cns invalid-cns))
 	 (when var
-	   (setq invalid-cns (append (sb:VAR-constraints var) invalid-cns))
+	   (setq invalid-cns (append (VAR-constraints var) invalid-cns))
 	   (push var invalid-vars))
 	 ))
       ;; remove invalid constraints
@@ -669,11 +669,11 @@
 	     (cond (paths-broken
 		    ;; some paths are broken.
 		    ;; don't alloc vars.
-		    (setf (SB:CN-variables cn) nil)
+		    (setf (CN-variables cn) nil)
 		    (setf (CN-connection cn) :broken-path))
 		   (t
 		    ;; all paths unbroken, find/alloc vars
-		    (setf (SB:CN-variables cn)
+		    (setf (CN-variables cn)
 		      (loop for var-os in var-os-list
 		       collect (get-os-var var-os)))
 		    ;; init output lists in cn methods
@@ -690,7 +690,7 @@
       (set-os-prop path-os :sb-path-constraints
 		   (remove cn (get-os-prop path-os :sb-path-constraints))))
     (setf (CN-path-slot-list cn) nil)
-    (setf (SB:CN-variables cn) nil)
+    (setf (CN-variables cn) nil)
     (setf (CN-connection cn) :unconnected)))
 
 (defvar *invalidated-formulas* nil)
@@ -880,8 +880,8 @@
 (defvar *formula-set-strength* :strong)
 
 (defun add-remove-formula-recomputing-constraint (var)
-  (when (sb:weaker (sb:VAR-walk-strength var)
-		   (sb:get-strength *formula-set-strength*))
+  (when (weaker (VAR-walk-strength var)
+		   (get-strength *formula-set-strength*))
     ;; we _may_ be able to set variable, because the the var walkstrength
     ;; is low.  however, still may not be able to set, because of interactions
     ;; of multi-output cns.  Just add&remove cn to set value.
@@ -901,7 +901,7 @@
 	       (create-mg-constraint
 		:methods (list (create-mg-method
 				:code #'(lambda (cn)
-					  (let* ((var (first (sb:cn-variables cn)))
+					  (let* ((var (first (cn-variables cn)))
 						 (os (VAR-os var))
 						 (obj (OS-object os))
 						 (slot (OS-slot os)))
@@ -915,10 +915,10 @@
 		:os (os nil :formula-recomputing-cn)
 		:name (create-new-name "formula-recomputing-cn")
 		))))
-    (setf (SB:CN-variables cn) (list var))
+    (setf (CN-variables cn) (list var))
     ;; init output lists in cn methods
     (init-method-outputs cn)
-    (setf (SB:CN-strength cn) (sb:get-strength strength))
+    (setf (CN-strength cn) (get-strength strength))
     (setf (CN-connection cn) :connected)
     cn))
 
@@ -958,7 +958,7 @@
   ;; let's catch constraints on the innards of sb-objects.
   ;; eventually, may want to allow such meta-constraints,
   ;; but not now
-  (when (sb:sb-object-p obj)
+  (when (sb-object-p obj)
     (cerror "cont" "trying to set os-prop of ~S, slot ~S, prop ~S"
             obj slot prop))
   (set-object-slot-prop-basic obj slot prop val)
@@ -989,7 +989,7 @@
 
 (defun create-object-slot-var (obj slot)
   (cond ;; << formula check removed >>
-   ((sb:sb-object-p obj)
+   ((sb-object-p obj)
     (error "can't put variable on slot in sky-blue object: <~S,~S>"
 	    obj slot))
    (t
@@ -1016,16 +1016,16 @@
 ;; entries for accessing a variable value
 
 (defun get-variable-value (var)
-  (sb:var-value var))
+  (var-value var))
 
 (defun set-variable-value (var val)
-  (setf (sb:var-value var) val))
+  (setf (var-value var) val))
 
 ;; ***** entries for setting a variable by adding/removing a stay constraint *****
 
 ;; flush test to avoid adding cn if walkstrengths of vars are too high:
 ;; for debugging, we want to save state when input var is added unsuccessfully.
-;; (when (sb:weaker (sb:VAR-walk-strength v) (sb:get-strength strength)))
+;; (when (weaker (VAR-walk-strength v) (get-strength strength)))
 
 (defun set-input-variable (v val strength)
   ;; we _may_ be able to set variable.  Add&remove cn to set value.
@@ -1047,8 +1047,8 @@
 		:methods (list (create-mg-method
 				:code #'(lambda (cn)
 					  (set-variable-value
-					   (first (sb:cn-variables cn))
-					   (sb:get-sb-slot cn :variable-input-value)
+					   (first (cn-variables cn))
+					   (get-sb-slot cn :variable-input-value)
 					   ))
 				:output-indices '(0))
 			       )
@@ -1057,12 +1057,12 @@
 		:os (os nil :var-input-cn)
 		:name (create-new-name "var-input-cn")
 		))))
-    (sb:set-sb-slot cn :variable-input-value val)
-    (sb:set-sb-slot cn :input-flag t)
-    (setf (SB:CN-variables cn) (list v))
+    (set-sb-slot cn :variable-input-value val)
+    (set-sb-slot cn :input-flag t)
+    (setf (CN-variables cn) (list v))
     ;; init output lists in cn methods
     (init-method-outputs cn)
-    (setf (SB:CN-strength cn) (sb:get-strength strength))
+    (setf (CN-strength cn) (get-strength strength))
     (setf (CN-connection cn) :connected)
     cn))
 
@@ -1090,11 +1090,11 @@
 		  :os (os nil :var-stay-cn)
 		  :name (create-new-name "var-stay-cn")
 		  ))))
-    (sb:set-sb-slot stay :stay-flag t)
-    (setf (SB:CN-variables stay) (list v))
+    (set-sb-slot stay :stay-flag t)
+    (setf (CN-variables stay) (list v))
     ;; init output lists in cn methods
     (init-method-outputs stay)
-    (setf (SB:CN-strength stay) (sb:get-strength strength))
+    (setf (CN-strength stay) (get-strength strength))
     (setf (CN-connection stay) :connected)
     stay))
 
@@ -1144,9 +1144,9 @@
 		cn (CN-connection cn)))
     ;; note that cn is in graph, even if it is an unsat req cn
     (setf (CN-connection cn) :graph)
-    (sb:add-constraint cn)
-    (cond ((and (not (sb:enforced cn))
-		(eq sb:*max-strength* (SB:CN-strength cn)))
+    (add-constraint cn)
+    (cond ((and (not (enforced cn))
+		(eq *max-strength* (CN-strength cn)))
 	   ;; We couldn't enforce a newly-added max constraint.
 	   ;; There must be a max-max conflict.  Print msg.
 	   ;; note: we don't remove the cn, so it may become satisfied later
@@ -1171,30 +1171,11 @@
 	(cerror "cont" "trying to remove constraint ~S with connection ~S"
 		cn (CN-connection cn)))
     (setf (CN-connection cn) :connected)
-    (sb:remove-constraint cn)
+    (remove-constraint cn)
     )
   ;; update invalid paths/formulas only after removing cn, to prevent recursive call to skyblue
   (update-invalidated-paths-and-formulas)
   cn)
-
-;; (defun change-constraint-strength (cn strength)
-;;   (let* ((strength-num (sb:get-strength strength)))
-;;     (cond ((not (constraint-p cn))
-;; 	   (cerror "noop" "change-constraint-strength: ~S not a constraint" cn))
-;; 	  ((eql strength-num (sb:cn-strength cn))
-;; 	   ;; don't need to change strength
-;; 	   nil)
-;; 	  ((not (cn-connection-p cn :graph))
-;; 	   ;; cn not in graph -- just change field
-;; 	   (setf (sb:cn-strength cn) strength-num))
-;; 	  (t
-;; 	   (with-no-invalidation-update
-;; 	       (sb:change-constraint-strength cn strength-num))
-;; 	   ;; update invalid paths/formulas only after changing strength,
-;; 	   ;; to prevent recursive call to skyblue
-;; 	   (update-invalidated-paths-and-formulas)
-;; 	   ))
-;;     strength))
 
 (defvar *fn-to-hook-plist* '(kr::s-value-fn                   s-value-fn-hook
 			     kr::kr-call-initialize-method    kr-call-initialize-method-hook
