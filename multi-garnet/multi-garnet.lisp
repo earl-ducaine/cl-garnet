@@ -614,7 +614,8 @@
 	 (strength *default-input-strength*))
     (cond ((null var)
 	   ;; no var for slot: just change value
-	   (call-hook-save-fn inter::set-obj-list4-slot-no-db obj slot new-list4))
+	   ;; (call-hook-save-fn inter::set-obj-list4-slot-no-db obj slot new-list4)
+	   )
 	  (t
 	   ;; _may_ be able to set slot.  Try setting to copy of new list.
 	   (set-input-variable var (copy-list new-list4) strength))

@@ -29,7 +29,8 @@
 
   (proclaim '(special opal::color opal::bitmap opal::filling-style
 	      opal::line-style opal::font opal::font-from-file opal::aggregate
-	      inter::interactor-window inter::priority-level)))
+	      ;; inter::interactor-window inter::priority-level
+	      )))
 
 ;;;; Named types used in Opal, Interactors, etc.
 
@@ -120,21 +121,21 @@
   '(or (is-a-p opal::filling-style) null)
   "[either an instance of opal:FILLING-STYLE or NIL]")
 
-(def-kr-type WINDOW ()
-  '(is-a-p inter::interactor-window)
-  "[an instance of inter::INTERACTOR-WINDOW]")
+;; (def-kr-type WINDOW ()
+;;   '(is-a-p inter::interactor-window)
+;;   "[an instance of inter::INTERACTOR-WINDOW]")
 
-(def-kr-type WINDOW-OR-NIL ()
-  '(or (is-a-p inter::interactor-window) null)
-  "[either an instance of inter:INTERACTOR-WINDOW or NIL]")
+;; (def-kr-type WINDOW-OR-NIL ()
+;;   '(or (is-a-p inter::interactor-window) null)
+;;   "[either an instance of inter:INTERACTOR-WINDOW or NIL]")
 
 (def-kr-type FONT ()
   '(or (is-a-p opal::font) (is-a-p opal::font-from-file))
   "[either an instance of opal:FONT or opal:FONT-FROM-FILE]")
 
-(def-kr-type PRIORITY-LEVEL ()
-  '(is-a-p inter::priority-level)
-  "[an instance of inter:PRIORITY-LEVEL]")
+;; (def-kr-type PRIORITY-LEVEL ()
+;;   '(is-a-p inter::priority-level)
+;;   "[an instance of inter:PRIORITY-LEVEL]")
 
 (def-kr-type AGGREGATE ()
   '(is-a-p opal::aggregate)
@@ -187,7 +188,7 @@
 
 (def-kr-type '(OR NULL (SATISFIES SCHEMA-P)))
 
-(def-kr-type '(OR LIST (IS-A-P inter::INTERACTOR-WINDOW)))
+;; (def-kr-type '(OR LIST (IS-A-P inter::INTERACTOR-WINDOW)))
 
 (def-kr-type '(OR NUMBER NULL))
 
@@ -210,34 +211,34 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(in-package "GARNET-GADGETS")
+;; (in-package "GARNET-GADGETS")
 
-(def-kr-type '(OR NULL STRING KEYWORD (SATISFIES SCHEMA-P)))
+;; (def-kr-type '(OR NULL STRING KEYWORD (SATISFIES SCHEMA-P)))
 
-(def-kr-type '(OR STRING KEYWORD (SATISFIES SCHEMA-P)))
+;; (def-kr-type '(OR STRING KEYWORD (SATISFIES SCHEMA-P)))
 
-(def-kr-type '(OR KEYWORD CHARACTER LIST))
+;; (def-kr-type '(OR KEYWORD CHARACTER LIST))
 
-(def-kr-type '(OR NULL KEYWORD CHARACTER))
+;; (def-kr-type '(OR NULL KEYWORD CHARACTER))
 
-(def-kr-type '(SATISFIES CHECK-MENUBAR-ITEMS))
+;; (def-kr-type '(SATISFIES CHECK-MENUBAR-ITEMS))
 
 
 
 
 ;;;;;;;;;;;;;;;;;; Types specifically for inter::interactor ;;;;;;;;;;;;;;;;
 
-(in-package "INTER")
+;; (in-package "INTER")
 
-(defun list-of-wins-p (l)
-  (let ((succeeded? T))
-    (when (listp l)
-      (dolist (w l)
-	(if (not (is-a-p w inter::interactor-window))
-	    (setf succeeded? NIL)))
-      succeeded?)))
+;; (defun list-of-wins-p (l)
+;;   (let ((succeeded? T))
+;;     (when (listp l)
+;;       (dolist (w l)
+;; 	(if (not (is-a-p w inter::interactor-window))
+;; 	    (setf succeeded? NIL)))
+;;       succeeded?)))
 
-(def-kr-type inter-window-type ()
-  '(or null (is-a-p inter::interactor-window)
-    (member T)
-    (satisfies list-of-wins-p)))
+;; (def-kr-type inter-window-type ()
+;;   '(or null (is-a-p inter::interactor-window)
+;;     (member T)
+;;     (satisfies list-of-wins-p)))
