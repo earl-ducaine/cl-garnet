@@ -471,11 +471,6 @@
 	      *invalidated-path-constraints*))
     ))
 
-;; ***** hook into kr:s-value-n *****
-
-;; This hook is used to cause (s-value obj <slot-with-sb-var> val) to
-;; add&remove an edit constraint.  This also auto-activates a
-;; constraint when it is stored in a slot.
 
 ;; default strength used when setting object slots using s-value
 (defvar *default-input-strength* :strong)
@@ -539,18 +534,6 @@
 	   )))
   value)
 
-;; note: we purposely don't trap calls to set slots when objects are
-;; created (in fns kr::internal-s-value and kr::internal-add-value) because
-;; the constraints are activated when activate-new-instance-cns is called
-;; after the object is created.  This also ensures that any slots that are
-;; set in a call to create-instance are set before any of the cns for that
-;; object are added.
-
-;; ***** hook into inheritence mechanism to inherit constraints *****
-
-;; want to copy down constraints after all other initialization is done.
-;; (note: if CLOS-style :after methods were supported, I'd put this as an
-;;        after method of the top object initialization method)
 
 (defun kr-call-initialize-method-hook (schema slot)
   (call-hook-save-fn kr::kr-call-initialize-method schema slot)
@@ -605,25 +588,16 @@
 		    schema slot value (CN-os value)))
 	   ))))
 
-;; ***** hook into move-grow-interacter and two-point-interactor to set :box or :points slot *****
-
-;; hook to force move-grow-interacter and two-point-interactor to set :box or :points slot
-;; (hence calling constraint solver) rather than destructively changing the list.
 (defun set-obj-list4-slot-no-db-hook (obj slot new-list4)
   (let* ((var (get-object-slot-prop obj slot :sb-variable))
 	 (strength *default-input-strength*))
     (cond ((null var)
-	   ;; no var for slot: just change value
-	   ;; (call-hook-save-fn inter::set-obj-list4-slot-no-db obj slot new-list4)
 	   )
 	  (t
-	   ;; _may_ be able to set slot.  Try setting to copy of new list.
 	   (set-input-variable var (copy-list new-list4) strength))
 	  )
     new-list4))
 
-
-;; ***** fns to destroy slots and schemas (experimental) *****
 
 (defun destroy-slot-hook (schema slot)
   (let ((invalid-cns nil)
@@ -695,8 +669,6 @@
 	       when (schema-p obj)
 	       collect obj)))
 
-;; *** connecting and disconnecting constraints utilities *****
-
 (defun connect-add-constraint (cn)
   (when (and (os-p (cn-os cn))
 	     (cn-connection-p cn :unconnected))
@@ -711,11 +683,7 @@
   (when (and (os-p (cn-os cn))
 	     (or (cn-connection-p cn :connected)
 		 (cn-connection-p cn :broken-path)))
-    ;; if cn is not stored in an object slot
-    ;; (like input cns, with-stays cns),
-    ;; no need to disconnect.
-    (disconnect-constraint cn))
-  )
+    (disconnect-constraint cn)))
 
 (defun connect-constraint (cn)
   (let* ((cn-os (CN-os cn))
@@ -772,9 +740,7 @@
 		    ;; init output lists in cn methods
  		    (init-method-outputs cn)
 		    ;; now, cn is connected
-		    (setf (CN-connection cn) :connected)))
-	     )))
-    ))
+		    (setf (CN-connection cn) :connected))))))))
 
 (defun disconnect-constraint (cn)
   (let* ()
@@ -786,19 +752,11 @@
 		   (remove cn (get-os-prop path-os :sb-path-constraints))))
     (setf (CN-path-slot-list cn) nil)
     (setf (SB:CN-variables cn) nil)
-    (setf (CN-connection cn) :unconnected)
-    ))
-
-;; ***** marking invalid formulas *****
+    (setf (CN-connection cn) :unconnected)))
 
 (defvar *invalidated-formulas* nil)
 
 (in-package :kr)
-
-;; this hook is essentially a complete copy of kr::propagate-change,
-;; because we need to make changes in the middle, to stop propagation when
-;; we reach a constrained variable.  We define it in package :kr, since it
-;; calls so many kr-internal fns and macros.
 
 (defun mg::propagate-change-hook (schema slot)
   (let ((entry (slot-accessor schema slot)))
