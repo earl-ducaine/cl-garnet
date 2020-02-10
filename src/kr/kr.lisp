@@ -1424,7 +1424,6 @@ relations properly."
     ;; This is used as a marker for deleted schemas.
     (setf (schema-bins schema) nil)))
 
-
 (defun find-direct-dependency (expression target)
   "RETURNS: T if the given <expression>, or one of its subexpressions,
 directly depends on the <target>.  This must be a direct dependency,
@@ -1435,7 +1434,6 @@ i.e., one which does not use a link."
 	(dolist (thing expression)
 	  (when (find-direct-dependency thing target)
 	    (return T))))))
-
 
 (defun destroy-schema (schema &optional (send-destroy-message NIL) recursive-p)
   "Destroys the <schema>, eliminates all dependencies to and from it."
@@ -2437,13 +2435,6 @@ RETURNS: a list, with elements as follows:
 
 (defun do-schema-body-alt (schema is-a generate-instance do-constants override
 		       types &rest slot-specifiers)
-  "Create-schema and friends expand into a call to this function."
-  (when (equal is-a '(nil))
-    (format
-     t
-     "*** (create-instance ~S) called with an illegal (unbound?) class name.~%"
-     schema)
-    (setf is-a NIL))
   (unless (listp is-a)
     (setf is-a (list is-a)))
   (when is-a
