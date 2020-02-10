@@ -1396,7 +1396,6 @@
 (defvar *fn-to-hook-plist* '(kr::s-value-fn                   s-value-fn-hook
 			     kr::kr-call-initialize-method    kr-call-initialize-method-hook
 			     kr::kr-init-method               kr-init-method-hook
-			     ;; inter::set-obj-list4-slot-no-db  set-obj-list4-slot-no-db-hook
 			     kr::destroy-schema               destroy-schema-hook
 			     kr::destroy-slot                 destroy-slot-hook
 			     kr::propagate-change             propagate-change-hook))

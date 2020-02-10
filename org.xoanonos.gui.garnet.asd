@@ -31,12 +31,12 @@
   :description " GUI toolkit (c. 1990 look/feel)"
   :components
   ((:file "package")
-   (:file "clx-compatability" :depends-on (package))
+   ;; (:file "clx-compatability" :depends-on (package))
    (:module utils
 	    :pathname ""
-	    :depends-on (package clx-compatability)
+	    :depends-on (package)
 	    :components
-	    ((:file "garnet-loader")
+	    (;; (:file "garnet-loader")
 	     (:file "src/utils/general")
 	     (:file "src/utils/global")))
    (:module kr

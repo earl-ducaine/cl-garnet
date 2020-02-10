@@ -26,8 +26,8 @@ Change log:
 (format t "Loading Aggregraphs ...~%")
 
 ;; check first to see if place is set
-(unless (boundp 'Garnet-Aggregadgets-PathName)
-  (error "Load 'Garnet-Loader' first to set Garnet-Aggregadgets-PathName before loading Aggregraphs."))
+;; (unless (boundp 'Garnet-Aggregadgets-PathName)
+;;   (error "Load 'Garnet-Loader' first to set Garnet-Aggregadgets-PathName before loading Aggregraphs."))
 
 ;; ---- Load aggregraphs themselves
 (Defvar Garnet-Aggregraphs-Files
@@ -40,10 +40,10 @@ Change log:
 
 ;; Now load aggregraphs if not already loaded
 ;;
-(unless (get :garnet-modules :aggregraphs)
-  (dolist (file Garnet-Aggregraphs-Files)
-    (load (merge-pathnames file Garnet-Aggregadgets-PathName)
-	  :verbose T)))
+;; (unless (get :garnet-modules :aggregraphs)
+;;   (dolist (file Garnet-Aggregraphs-Files)
+;;     (load (merge-pathnames file Garnet-Aggregadgets-PathName)
+;; 	  :verbose T)))
 
 (setf (get :garnet-modules :aggregraphs)  t)
 (format t "...Done Aggregraphs.~%")

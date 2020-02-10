@@ -29,8 +29,8 @@ Change log:
 (format t "Loading Aggregadgets ...~%")
 
 ;; check first to see if pathname variable is set
-(unless (boundp 'Garnet-Aggregadgets-PathName)
-  (error "Load 'Garnet-Loader' first to set Garnet-Aggregadgets-PathName before loading Aggregadgets."))
+;; ;; (unless (boundp 'Garnet-Aggregadgets-PathName)
+;; ;;   (error "Load 'Garnet-Loader' first to set Garnet-Aggregadgets-PathName before loading Aggregadgets."))
 
 ;; ---- Load aggregadgets themselves
 
@@ -48,12 +48,9 @@ Change log:
     "agg-labels"
     ))
 
-(dolist (file Garnet-Aggregadgets-Files)
-  (load (merge-pathnames file Garnet-Aggregadgets-PathName)
-	:verbose T))
+;; (dolist (file Garnet-Aggregadgets-Files)
+;;   (load (merge-pathnames file Garnet-Aggregadgets-PathName)
+;; 	:verbose T))
 
 (setf (get :garnet-modules :aggregadgets)  t)
 (format t "...Done Aggregadgets.~%")
-
-
-
