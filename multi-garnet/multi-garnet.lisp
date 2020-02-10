@@ -1139,19 +1139,6 @@
 	    (get-object-slot-var obj slot)
 	    (if strength strength *default-input-strength*))))
 
-;; ***** entry for setting slots with specified strengths during the executing of a form *****
-
-(defmacro with-slots-set (obj-set-list &rest forms)
-  (let* ((cns-var (gentemp)))
-    `(let* ((,cns-var ,`(with-set-spec-to-cns (list ,@(loop for lst in obj-set-list
-							  collect `(list ,@lst))))))
-       (unwind-protect
-	   (progn
-	     (add-with-set-cns ,cns-var)
-	     (progn ,@forms))
-	 (remove-dispose-with-set-cns ,cns-var)))
-    ))
-
 (defun add-with-set-cns (cns)
   (loop for cn in cns do
     (mg-add-constraint cn)))

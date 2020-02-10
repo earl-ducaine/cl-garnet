@@ -1087,12 +1087,6 @@
 
 (defvar *exec-pplan-stack* (sb-stack-create 100))
 
-;; this fn executes methods downstream from the "exec-root" vars and cns on
-;; *exec-roots-stack* to enforce the cns in the method graph.  A constraint
-;; is used as an "exec-root" iff its method has changed, compared to the
-;; original selected method also stored in *exec-roots-stack*.  A variable
-;; is used as an "exec-root" if it is undetermined, and is not valid (in
-;; which case it is marked as valid).
 (defun exec-from-roots (&key (execute-unchanged-cns nil))
   (let* ((prop-mark (new-mark))
 	 cn)

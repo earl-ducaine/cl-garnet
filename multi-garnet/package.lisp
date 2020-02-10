@@ -89,7 +89,6 @@
   (:export #:m-constraint
 	   #:m-stay-constraint
 	   #:with-stays
-	   #:with-slots-set
 	   #:s-value-strength
 	   #:enable-multi-garnet
 	   #:constraint-p
