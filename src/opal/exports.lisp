@@ -27,12 +27,10 @@
 	    gem:Make-Display-Info gem:Copy-Display-Info
 	    gem:Display-Info-Display gem:Display-Info-Screen gem:Display-Info-Root-Window
 	    gem:Display-Info-Line-Style-GC gem:Display-Info-Filling-Style-GC
-;;;	    gem:*update-lock*
-;;;	    gem:*screen-width* gem:*screen-height*
 
-	    gem:*Fixed-Font-Family* gem:*Serif-Font-Family* gem:*Sans-Serif-Font-Family*
-	    gem:*Small-Font-Size* gem:*Medium-Font-Size*
-	    gem:*Large-Font-Size* gem:*Very-Large-Font-Size*
+	    ;; gem:*Fixed-Font-Family* gem:*Serif-Font-Family* gem:*Sans-Serif-Font-Family*
+	    ;; gem:*Small-Font-Size* gem:*Medium-Font-Size*
+	    ;; gem:*Large-Font-Size* gem:*Very-Large-Font-Size*
 	    gem:*Small-Font-Point-Size* gem:*Medium-Font-Point-Size*
 	    gem:*Large-Font-Point-Size* gem:*Very-Large-Font-Point-Size*
 	    gem:default-font-from-file)
@@ -57,11 +55,9 @@
 	    add-components remove-components remove-all-components
 	    do-components do-all-components
 	    point-to-component point-to-leaf
-	    set-aggregate-hit-threshold
 	    update destroy destroy-me
 	    raise-window lower-window iconify-window deiconify-window
 	    zoom-window fullzoom-window
-
 	    ;; Class names
 	    aggregate view-object graphical-object line rectangle
 	    roundtangle multipoint polyline polygon text bitmap arc oval
@@ -80,10 +76,9 @@
 	    move-cursor-to-beginning-of-line
 	    move-cursor-to-end-of-line
 
-	    Get-X-Cut-Buffer Set-X-Cut-Buffer ; for interactors' use
-	    leaf-objects-in-rectangle components-in-rectangle obj-in-rectangle
+	    Get-X-Cut-Buffer
+	    Set-X-Cut-Buffer
 
-	    ;; filling and line style constants
 	    no-fill black-fill white-fill
 	    gray-fill light-gray-fill dark-gray-fill
 	    red-fill green-fill blue-fill yellow-fill
