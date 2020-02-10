@@ -1229,17 +1229,6 @@ Note that <relation> should be a slot name, not a schema."
 	   (not (eq (sl-value entry) *no-value*))
 	   (not (is-inherited (sl-bits entry)))))))
 
-
-;; This is here for compatibility purposes.
-;;
-(declaim (inline set-values))
-(defun set-values (schema slot values)
-  (if (relation-p slot)
-      (s-value schema slot (if (listp values) values (list values)))
-      (s-value schema slot values)))
-
-
-;;; Methods.
 (defmacro kr-send (schema slot &rest args)
   (let ((the-schema (gensym))
 	(the-function (gensym)))
@@ -1251,7 +1240,6 @@ Note that <relation> should be a slot name, not a schema."
 	       (*kr-send-slot* ,slot)
 	       (*kr-send-parent* NIL))
 	   (funcall ,the-function ,@args))))))
-
 
 (defmacro call-prototype-method (&rest args)
   (let ((entry (gensym)))
@@ -1272,27 +1260,6 @@ Note that <relation> should be a slot name, not a schema."
 	    (let ((*kr-send-self* *kr-send-parent*))
 	      (funcall method ,@args)))))))))
 
-
-(defmacro apply-prototype-method (&rest args)
-  (let ((entry (gensym)))
-    `(locally (declare ,*special-kr-optimization*)
-       (let ((first-c-p-m (and (null *kr-send-parent*)
-			     (let ((,entry (slot-accessor *kr-send-self*
-							  *kr-send-slot*)))
-			       (or (null ,entry)
-				   (is-inherited (sl-bits ,entry)))))))
-      (multiple-value-bind (method new-parent)
-	  (find-parent *kr-send-self* *kr-send-slot*)
-	(when method
-	  (if first-c-p-m
-	    (multiple-value-setq (method *kr-send-parent*)
-	      (find-parent new-parent *kr-send-slot*))
-	    (setf *kr-send-parent* new-parent))
-	  (if method
-	    (let ((*kr-send-self* *kr-send-parent*))
-	      (apply method ,@args)))))))))
-
-
 (defmacro define-method (name class arg-list &rest body)
   (unless (keywordp name)
     (setf name (intern (symbol-name name) (find-package "KEYWORD")))
@@ -1307,25 +1274,6 @@ Note that <relation> should be a slot name, not a schema."
 	 ,@body)
        (s-value ,class ,name ',function-name))))
 
-
-(defmacro method-trace (class generic-fn)
-  `(let ((fn (g-value ,class ,generic-fn)))
-    (if fn
-      (eval `(trace ,fn)))))
-
-
-;;; Schemas
-
-;; CREATE-SCHEMA
-;;
-;; The keyword :OVERRIDE may be used to indicate that the schema should
-;; be kept, if it exists, and newly specified slots should simply override
-;; existing ones.  The default behavior is to wipe out the old schema.
-;;
-;; Another keyword that can be used as an argument is name-prefix. If there's
-;; an unnamed schema but :name-prefix <some name> is given as an argument,
-;; the system will auto-generate names for the schemas using the name-prefix
-;; argument as the prefix for the names.
 (defmacro create-schema (name &rest rest)
   (let ((prefix (memberq :NAME-PREFIX rest)))
     ;; Check that all elements of the list are well-formed, give warnings

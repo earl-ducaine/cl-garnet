@@ -8,105 +8,6 @@
 ;;*******************************************************************;;
 
 
-;;; $Id$
-;;
-
-;;; Opal:Create-Instances.Lisp
-;;
-;;  This file contains all the calls to KR:Create-Instance which are in Opal.
-;;  They appear in the order in which they are listed in the overall Opal
-;;  hierarchy, which is listed first.  Please keep it that way!
-;;  NOTE:  the first entry of ":update-slots" MUST be :visible (unless the
-;;    value is NIL), elsewise the update algorithm will break!
-
-;;; The Opal Hierarchy
-;;
-
-;; opal:GRAPHIC-QUALITY
-;; 	opal:FONT
-;; 		opal:DEFAULT-FONT
-;; 	opal:COLOR
-;; 		opal:WHITE
-;; 		opal:BLACK
-;; 		opal:RED
-;; 		opal:GREEN
-;; 		opal:BLUE
-;; 		opal:YELLOW
-;; 		opal:CYAN
-;; 		opal:ORANGE
-;; 		opal:PURPLE
-;; 		opal:MOTIF-GRAY
-;; 		opal:MOTIF-BLUE
-;; 		opal:MOTIF-ORANGE
-;; 		opal:MOTIF-GREEN
-;; 	opal:LINE-STYLE
-;; 		opal:DEFAULT-LINE-STYLE
-;; 		opal:THIN-LINE
-;; 		opal:LINE-0
-;; 		opal:LINE-1
-;; 		opal:LINE-2
-;; 		opal:LINE-4
-;; 		opal:LINE-8
-;; 		opal:DOTTED-LINE
-;; 		opal:DASHED-LINE
-;; 		opal:RED-LINE
-;; 		opal:GREEN-LINE
-;; 		opal:BLUE-LINE
-;; 		opal:YELLOW-LINE
-;; 		opal:ORANGE-LINE
-;; 		opal:CYAN-LINE
-;; 		opal:PURPLE-LINE
-;; 		opal:WHITE-LINE
-;; 	opal:FILLING-STYLE
-;; 		opal:DEFAULT-FILLING-STYLE
-;; 		opal:WHITE-FILL
-;; 		opal:LIGHT-GRAY-FILL
-;; 		opal:GRAY-FILL
-;; 		opal:DARK-GRAY-FILL
-;; 		opal:BLACK-FILL
-;; 		opal:RED-FILL
-;; 		opal:GREEN-FILL
-;; 		opal:BLUE-FILL
-;; 		opal:YELLOW-FILL
-;; 		opal:ORANGE-FILL
-;; 		opal:CYAN-FILL
-;; 		opal:PURPLE-FILL
-;; 		opal:MOTIF-GRAY-FILL
-;; 		opal:MOTIF-BLUE-FILL
-;; 		opal:MOTIF-ORANGE-FILL
-;; 		opal:MOTIF-GREEN-FILL
-;; 	opal:FONT-FROM-FILE
-;;   opal:VIEW-OBJECT
-;; 	opal:AGGREGATE
-;; 		opal:MULTIFONT-TEXT
-;; 		opal:AGGREGADGET
-;; 		opal:AGGRELIST
-;; 	opal:GRAPHICAL-OBJECT
-;; 		opal:LINE
-;; 		opal:RECTANGLE
-;; 			opal:ROUNDTANGLE
-;; 		opal:ARC
-;; 			opal:OVAL
-;; 			opal:CIRCLE
-;; 		opal:MULTIPOINT
-;; 			opal:POLYLINE
-;;                               opal:ARROWHEAD
-;; 		opal:TEXT
-;; 			opal:CURSOR-TEXT
-;;                       opal:MULTI-TEXT
-;;                               opal:CURSOR-MULTI-TEXT
-;; 		opal:BITMAP
-;; 			opal::WHITE-FILL-BITMAP
-;; 			opal::LIGHT-GRAY-FILL-BITMAP
-;; 			opal::GRAY-FILL-BITMAP
-;; 			opal::DARK-GRAY-FILL-BITMAP
-;; 			opal:ARROW-CURSOR
-;; 			opal:ARROW-CURSOR-MASK
-;; 			opal:PIXMAP
-;; 		opal:VIRTUAL-AGGREGATE
-;; 	opal:WINDOW
-
-
 (in-package :opal)
 
 (declaim (notinline bottom))
@@ -796,35 +697,6 @@ avoiding wasted objects.
 		  0))))
   (:filling-style default-filling-style))
 
-
-;;; All the *-FILL-BITMAPs will have their :image slot set once the function
-;;; "halftone-image" is defined...
-
-(create-instance 'WHITE-FILL-BITMAP bitmap
-  (:percent 0)
-  (:image))   ;;; will be (halftone-image 0)
-
-(create-instance 'LIGHT-GRAY-FILL-BITMAP bitmap
-  (:percent 25)
-  (:image))   ;;; will be (halftone-image 25)
-
-(create-instance 'GRAY-FILL-BITMAP bitmap
-  (:percent 50)
-  (:image))   ;;; will be (halftone-image 50)
-
-(create-instance 'DARK-GRAY-FILL-BITMAP bitmap
-  (:percent 75)
-  (:image))   ;;; will be (halftone-image 75)
-
-;; Have to define GRAY-LINE here instead of in create-instances.lisp with
-;; the other line styles because gray-fill-bitmap is defined in this file.
-(create-instance 'GRAY-LINE line-style
-  (:constant T)
-  (:stipple gray-fill-bitmap))
-
-;;; Colors and filling-styles for Motif
-
-;;;  Orange, Green, Blue lists for defining colors
 (defvar MOTIF-GRAY-VALUE (float (/ #xd3d3 #xffff)))
 
 (defvar MOTIF-BLUE-VALUES
@@ -929,119 +801,20 @@ avoiding wasted objects.
 ;;; See windows.lisp for an application of these cursors.
 (defparameter garbage-Pair (cons garbage-CURSOR garbage-CURSOR-MASK))
 
-(create-instance 'ARROWHEAD polyline
-  :declare ((:parameters :head-x :head-y :from-x :from-y :length :diameter
-			 :open-p :line-style :filling-style :draw-function
-			 :visible)
-	    (:type (fixnum :head-x :head-y :from-x :from-y :dx :dy
-			    :connect-x :connect-y :ax :ay :cx :cy :length
-			    :diameter)
-		   (number :radius :ftlength :ux :uy))
-	    (:maybe-constant :line-style :filling-style :length :diameter
-			     :open-p :head-x :head-y :from-x :from-y :radius
-			     :visible)
-	    (:update-slots :visible :fast-redraw-p :point-list
-			   :line-style :filling-style :draw-function
-			   :head-x :head-y :from-x :from-y :length :diameter
-			   :open-p))
-  (:head-x 0)
-  (:head-y 0)
-  (:from-x 0)
-  (:from-y 0)
-  (:radius (o-formula (/ (gvl-fixnum :diameter) 2)))
-  (:dx (o-formula (- (gvl-fixnum :from-x) (gvl-fixnum :head-x))))
-  (:dy (o-formula (- (gvl-fixnum :from-y) (gvl-fixnum :head-y))))
-  (:ftlength (o-formula (let ((dx (gvl-fixnum :dx))
-			      (dy (gvl-fixnum :dy)))
-			  (max 1.0 (sqrt (+ (the fixnum (* dx dx)) (the fixnum (* dy dy))))))))
-  (:ux (o-formula (/ (gvl-fixnum :dx) (gvl :ftlength))))
-  (:uy (o-formula (/ (gvl-fixnum :dy) (gvl :ftlength))))
-  (:connect-x (o-formula (round (+ (gvl-fixnum :head-x) (* (gvl-fixnum :length) (gvl :ux))))))
-  (:connect-y (o-formula (round (+ (gvl-fixnum :head-y) (* (gvl-fixnum :length) (gvl :uy))))))
-  (:ax (o-formula (round (- (gvl :connect-x) (* (gvl :radius) (gvl :uy))))))
-  (:ay (o-formula (round (+ (gvl :connect-y) (* (gvl :radius) (gvl :ux))))))
-  (:cx (o-formula (round (+ (gvl :connect-x) (* (gvl :radius) (gvl :uy))))))
-  (:cy (o-formula (round (- (gvl :connect-y) (* (gvl :radius) (gvl :ux))))))
-  (:point-list (o-formula (let ((ax (gvl-fixnum :ax)) (ay (gvl-fixnum :ay))
-				(head-x (gvl-fixnum :head-x))
-				(head-y (gvl-fixnum :head-y))
-				(cx (gvl-fixnum :cx)) (cy (gvl-fixnum :cy)))
-			    (if (gvl :open-p)
-				(list ax ay head-x head-y cx cy)
-				(list ax ay head-x head-y cx cy ax ay)))))
-  (:length 10)
-  (:diameter 10)
-  (:open-p t)
-)
 
-;;; To create a window for displaying gobs, create a schema which is
-;;  an instance of the window class described below specifying slots
-;;  as needed. For example:
-;;
-;;  (create-instance my-window window
-;;    (:width 100)
-;;    (:height 100))
-;;
-(create-instance 'WINDOW view-object
-  :declare ((:type ((or (is-a-p aggregate) null) :aggregate)
-		   ((integer 1) :width :height)
-		   ((integer 0) :border-width))
-	    (:maybe-constant :left :top :width :height :visible)
-	    (:ignored-slots :buffer-gc)
-	    (:update-slots :visible :fast-redraw-p :aggregate :parent
-			   :top :left :width :height :cursor :title :icon-title
-			   :display :background-color :icon-bitmap
-			   :draw-on-children :modal-p :save-under)
-	    (:local-only-slots (:drawable nil) (:window nil)
-			       (:parent nil) (:destroy-hooks nil)))
-  (:left 0)
-  (:top 0)
-  (:width 355)
-  (:height 277)
-  (:omit-title-bar-p NIL)
-  (:aggregate)
-  (:title)       ; set in :initialize method
-  (:icon-title)  ; set in :initialize method
-  (:border-width 2)
-  (:cursor (o-formula
-	    (let ((parent (gvl :parent)))
-	      (if parent
-		  (gv parent :cursor)
-		  Arrow-Pair))))
-  )
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;  *-FILL ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(create-instance 'LIGHT-GRAY-FILL filling-style
-  (:fill-style :opaque-stippled)
-  (:stipple light-gray-fill-bitmap))
-
-(create-instance 'GRAY-FILL filling-style
-  (:fill-style :opaque-stippled)
-  (:stipple gray-fill-bitmap))
-
-(create-instance 'DARK-GRAY-FILL filling-style
-  (:fill-style :opaque-stippled)
-  (:stipple dark-gray-fill-bitmap))
-
-;; (create-instance 'BLACK-FILL filling-style
-;;   (:fill-style :solid))
-
-(create-instance 'WHITE-FILL filling-style
-  (:foreground-color white))
-(create-instance 'RED-FILL filling-style
-  (:foreground-color red))
-(create-instance 'GREEN-FILL filling-style
-  (:foreground-color green))
-(create-instance 'BLUE-FILL filling-style
-  (:foreground-color blue))
-(create-instance 'YELLOW-FILL filling-style
-  (:foreground-color yellow))
-(create-instance 'ORANGE-FILL filling-style
-  (:foreground-color orange))
-(create-instance 'CYAN-FILL filling-style
-  (:foreground-color cyan))
-(create-instance 'PURPLE-FILL filling-style
-  (:foreground-color purple))
+;; (create-instance 'WHITE-FILL filling-style
+;;   (:foreground-color white))
+;; (create-instance 'RED-FILL filling-style
+;;   (:foreground-color red))
+;; (create-instance 'GREEN-FILL filling-style
+;;   (:foreground-color green))
+;; (create-instance 'BLUE-FILL filling-style
+;;   (:foreground-color blue))
+;; (create-instance 'YELLOW-FILL filling-style
+;;   (:foreground-color yellow))
+;; (create-instance 'ORANGE-FILL filling-style
+;;   (:foreground-color orange))
+;; (create-instance 'CYAN-FILL filling-style
+;;   (:foreground-color cyan))
+;; (create-instance 'PURPLE-FILL filling-style
+;;   (:foreground-color purple))
