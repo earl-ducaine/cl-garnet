@@ -204,30 +204,16 @@
       (funcall a-function a-aggregate))))
 
 
-(define-method :do-all-components opal::aggregate (a-aggregate a-function
-						 &key (type t) (self nil))
-  (let ((children (g-local-value a-aggregate :components)))
-    (dolist (child children)
-      (if (is-a-p child opal::aggregate)
-	  (do-all-components child a-function :type type :self t)
-	  (when (or (eq type t)
-		    (is-a-p child type))
-	    (funcall a-function child))))
-    (when (and self
-	       (or (eq type t)
-		   (is-a-p a-aggregate type)))
-      (funcall a-function a-aggregate))))
-
-(defun point-to-component-recur (component-list x y type)
-  (and component-list
-       (or (point-to-component-recur (cdr component-list) x y type)
-	   (let ((child (car component-list)))
-	     (when (and (or (eq type t)
-			    (my-is-a-p child type))
-			(point-in-gob child x y))
-	       child)))))
-
-(define-method :point-to-component opal::aggregate
-	       (a-aggregate x y &key (type t))
-  (when (point-in-gob a-aggregate x y)
-    (point-to-component-recur (g-local-value a-aggregate :components) x y type)))
+;; (define-method :do-all-components opal::aggregate (a-aggregate a-function
+;; 						 &key (type t) (self nil))
+;;   (let ((children (g-local-value a-aggregate :components)))
+;;     (dolist (child children)
+;;       (if (is-a-p child opal::aggregate)
+;; 	  (do-all-components child a-function :type type :self t)
+;; 	  (when (or (eq type t)
+;; 		    (is-a-p child type))
+;; 	    (funcall a-function child))))
+;;     (when (and self
+;; 	       (or (eq type t)
+;; 		   (is-a-p a-aggregate type)))
+;;       (funcall a-function a-aggregate))))

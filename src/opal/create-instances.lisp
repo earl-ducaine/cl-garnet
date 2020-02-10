@@ -800,21 +800,3 @@ avoiding wasted objects.
 
 ;;; See windows.lisp for an application of these cursors.
 (defparameter garbage-Pair (cons garbage-CURSOR garbage-CURSOR-MASK))
-
-
-;; (create-instance 'WHITE-FILL filling-style
-;;   (:foreground-color white))
-;; (create-instance 'RED-FILL filling-style
-;;   (:foreground-color red))
-;; (create-instance 'GREEN-FILL filling-style
-;;   (:foreground-color green))
-;; (create-instance 'BLUE-FILL filling-style
-;;   (:foreground-color blue))
-;; (create-instance 'YELLOW-FILL filling-style
-;;   (:foreground-color yellow))
-;; (create-instance 'ORANGE-FILL filling-style
-;;   (:foreground-color orange))
-;; (create-instance 'CYAN-FILL filling-style
-;;   (:foreground-color cyan))
-;; (create-instance 'PURPLE-FILL filling-style
-;;   (:foreground-color purple))
