@@ -767,82 +767,6 @@
     )
     cn)
 
-;; (defun change-constraint-strength (cn strength)
-;;   (with-sky-blue-recursion-check
-;;       (let* ((new-strength (get-strength strength))
-;; 	     (old-strength (CN-strength cn))
-;; 	     (old-enforced (enforced cn)))
-;; 	;; change strength
-;; 	(setf (CN-strength cn) new-strength)
-;; 	;; clear stacks
-;; 	(init-stacks)
-;; 	;; propagate walkstrengths, and collect any unenforced cns
-;; 	;; that may now be enforcable
-;; 	(cond ((weaker new-strength old-strength)
-;; 	       ;; making the cn weaker
-;; 	       (cond (old-enforced
-;; 		      ;; weakening an enforced cn: it may be revoked
-;; 		      ;; propagate walkstrength downstream from cn
-;; 		      ;; with new strength
-;; 		      (propagate-walkstrength nil cn)
-;; 		      ;; collect all unenforced cns downstream of cn
-;; 		      ;; with the same or weaker strength than old-strength
-;; 		      (collect-unenforced nil cn old-strength t)
-;; 		      )
-;; 		     (t
-;; 		      ;; weakening an unenforced cn: simply change strength
-;; 		      nil))
-;; 	       )
-;; 	      ((weaker old-strength new-strength)
-;; 	       ;; strengthening the cn
-;; 	       (cond (old-enforced
-;; 		      ;; strengthening an enforced cn: propagate walkstrengths
-;; 		      (propagate-walkstrength nil cn)
-;; 		      )
-;; 		     (t
-;; 		      ;; strengthening an unenforced cn: it may now be enforcable
-;; 		      (sb-cns-set-add *unenforced-cns-stack* cn)
-;; 		      ))
-;; 	       )
-;; 	      (t
-;; 	       ;; strength the same: noop.
-;; 	       ))
-;; 	;; construct LGB mgraph
-;; 	(update-method-graph)
-;; 	;; enforce method graph cns by evaluating cn methods.
-;; 	(exec-from-roots)
-;; 	new-strength)))
-
-;; this fn takes a list of cns in the graph, and executes their selected
-;; methods, and any downstream methods.  This can be used to cause input
-;; constraints to be executed.
-(defun execute-constraints (cns)
-  (with-sky-blue-recursion-check
-      nil
-    ;; push enforced constraints on exec-roots stack
-    (init-stacks)
-    (loop for cn in cns
-	when (and (sb-constraint-p cn)
-		  (enforced cn))
-	do (exec-roots-add-cn cn (CN-selected-method cn)))
-    ;; enforce method graph cns by evaluating cn methods.
-    (exec-from-roots :execute-unchanged-cns t)
-    )
-  nil)
-
-
-;; ***** update-method-graph *****
-
-;; update-method-graph modifies the current method graph to include the
-;; constraints in *unenforced-cns-stack*, maintaining it as a
-;; locally-graph-better method graph.  Each time a cn is enforced, other
-;; unenforced cns that might be enforcable may be found, so these are added
-;; to the stack.  As a heuristic, the stack is kept in order of cn
-;; strength, and we always try enforcing the strongest unenforced cn first.
-;; This fn also updates *exec-roots-stack* by adding any cns were
-;; sucessfully enforced, as well as any newly-undetermined vars that should
-;; now be validated.  *undetermined-vars-stack* is a stack that is used for
-;; temporary storage of a list of undetermined variables.
 (defun update-method-graph ()
   (let* (ok cn)
     (loop until (sb-cns-set-empty *unenforced-cns-stack*) do
@@ -858,23 +782,6 @@
 	    (collect-unenforced *undetermined-vars-stack* cn (CN-strength cn) nil)
 	    ))
     ))
-
-
-;; ***** building method vines *****
-
-;; build-mvine is one of a set of mutually-recursive fns that perform a
-;; backtracking search for a mutually-consistant method assignments for the
-;; specified constraint.  The "mvine" that is being built is a method vine
-;; rooted at the cn originially used to start this process, which had
-;; strength root-strength.  The leaves of the mvine are cns weaker than
-;; this strength, that are left unenforced (with no method selected).  It
-;; is also possible that a leaf may loop back to a lower part of the mvine:
-;; this is acceptable.  These functions perform the search by marking cns
-;; and vars with the specified mark: only when a complete mvine is found
-;; are the selected methods changed to reflect this.  These functions all
-;; return t iff a way was found to enforce the cn, nil otherwise.  All of
-;; the functions add newly-undetermined vars to the stack
-;; *undetermined-vars-stack*.
 
 (defvar *mvine-cns-stack* (sb-stack-create 30))
 
@@ -1367,36 +1274,6 @@
   (declare (ignore eqns))
   nil)
 
-(defun linear-eqn-cycle-solver (cns)
-  (let* ((cycle-vars (loop for cn in cns
-			 append (selected-method-output-vars cn)))
-	 (eqns (loop for cn in cns collect
-		     (let* ((eqn (extract-cn-linear-eqn cn cycle-vars)))
-		       ;; if we can't extract a linear equation from one of
-		       ;; the cns, we can't solve the cycle with this cycle
-		       ;; solver: return nil immediately
-		       (when (null eqn)
-			 (return-from linear-eqn-cycle-solver nil))
-		       eqn)))
-	 (soln (solve-linear-eqns eqns))
-	 )
-    (cond (soln
-	   ;; we have a soln: install calculated values in vars and return t
-	   (loop for var in cycle-vars do
-		 (setf (VAR-value var)
-		   (linear-eqn-soln-val soln var)))
-	   t)
-	  ((linear-eqns-have-no-soln eqns)
-	   ;; no possible soln
-	   :no-soln)
-	  (t
-	   ;; no solution found: return nil
-	   nil))
-    ))
-
-;; takes a list of enforced cns, and unmarks all downstream enforced cns
-;; that are marked with prop-mark (stopping the recursion when unmarked cns
-;; are found).  All vars that are outputs of these cns are marked invalid.
 (defun unmark-invalidate-downstream (cn prop-mark)
   (when (eql prop-mark (CN-mark cn))
     (setf (CN-mark cn) nil)
@@ -1405,18 +1282,6 @@
       (do-consuming-constraints (downstream-cn var)
 	(unmark-invalidate-downstream downstream-cn prop-mark))
       )))
-
-;; ***** constructing propagation plans *****
-
-;; given a cn, pplan-add recursively travels downstream of the cn, marking
-;; all cns with the given mark, and adds all marked cns to the specified
-;; stack.  When this is done, the stack contains, in order, the cns that
-;; will have to be examined to propagate walkstrengths or var values.  Each
-;; cn will only appear at most once on the stack (since they are marked
-;; when they are added).  Note that it will be necessary to check for
-;; cycles while examining the cns.  Note: further cns can be added as roots
-;; of the propagation, simply by calling pplan-add again.  pplan will also
-;; take vars, or lists and stacks of cns and vars.
 
 (defun pplan-add (stack obj done-mark)
   (cond ((sb-constraint-p obj)
@@ -1448,74 +1313,3 @@
 	(t
 	 (cerror "cont" "pplan-add: bad object ~S" obj))
 	))
-
-(defvar *extract-plan-stack* (sb-stack-create 100))
-
-(defun extract-plan-cycle (cn prop-mark)
-  (let* ((cycle-cns (collect-cns-in-cycle (list cn) nil prop-mark))
-	 (cycle-outputs (loop for cn in cycle-cns append
-			      (selected-method-output-vars cn)))
-	 (cycle-inputs
-	  (remove-duplicates
-	   (loop for cn in cycle-cns append
-		 (loop for var in (cn-variables cn)
-		     unless (member var cycle-outputs)
-		     collect var))))
-	 )
-    (loop for cn in cycle-cns do (setf (CN-mark cn) nil))
-    (list cycle-cns cycle-inputs cycle-outputs)))
-
-;; execute the cns and cycles in (sb-plan-list plan).
-(defun execute-plan (plan)
-  (when (not (sb-plan-valid plan))
-    (cerror "noop" "trying to execute invalid plan ~S" plan)
-    (return-from execute-plan nil))
-  (loop for cn in (sb-plan-list plan) do
-	(cond ((sb-constraint-p cn)
-	       (execute-propagate-valid cn))
-	      ((listp cn)
-	       (execute-plan-cycle cn))))
-  )
-
-(defun execute-plan-cycle (cycle-info)
-  (let* ((cycle-cns (first cycle-info))
-	 (cycle-inputs (second cycle-info))
-	 (cycle-outputs (third cycle-info))
-	 (cycle-solvers-found-soln nil)
-	 )
-    ;; if any of the cycle input vars (input vars to any of
-    ;; the cns in the cycle that are not set by other cycle cns)
-    ;; are invalid, invalidate outputs and return without trying
-    ;; to solve the cycle.
-    (when (loop for var in cycle-inputs always (VAR-valid var))
-      ;; input vars valid: try solving cycle
-      ;; print warning
-      (signal-cycle cycle-cns)
-      ;; try cycle solvers
-      (setq cycle-solvers-found-soln (call-cycle-solvers cycle-cns))
-      )
-    ;; set cycle outputs to valid if the cycle is solved, else invalid.
-    (let* ((cycle-output-valid (not (null cycle-solvers-found-soln))))
-      (loop for var in cycle-outputs do
-	    (setf (VAR-valid var) cycle-output-valid)))
-    ))
-
-;; ** plan invalidation **
-
-(defun create-valid-plan (root-cns plan-list)
-  (let ((plan (make-sb-plan :list plan-list
-			    :root-cns root-cns
-			    :valid t)))
-    (add-valid-plan-to-cns plan (sb-plan-list plan))
-    (add-valid-plan-to-cns plan (sb-plan-root-cns plan))
-    plan))
-
-(defun add-valid-plan-to-cns (plan cns)
-  (loop for cn in cns
-      do (cond ((listp cn)
-		;; cycle in list
-		(add-valid-plan-to-cns plan (first cn)))
-	       (t
-		(set-sb-slot cn :valid-plans
-			     (adjoin plan (get-sb-slot cn :valid-plans)))))
-	 ))

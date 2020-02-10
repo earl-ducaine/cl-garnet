@@ -48,7 +48,6 @@
 
 	   #:sb-plan-p
 	   #:sb-plan-valid
-	   #:execute-plan
 	   #:enforced
 	   #:do-method-output-vars
 	   #:do-selected-method-output-vars
@@ -64,7 +63,6 @@
 
 	   #:add-constraint
 	   #:remove-constraint
-	   #:execute-constraints
 	   #:*sky-blue-backtracking-warning*
 	   #:*sky-blue-cycle-warning*
 
