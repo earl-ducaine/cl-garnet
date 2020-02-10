@@ -1,24 +1,3 @@
-;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: OPAL; Base: 10 -*-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;         The Garnet User Interface Development Environment.      ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; This code was written as part of the Garnet project at          ;;;
-;;; Carnegie Mellon University, and has been placed in the public   ;;;
-;;; domain.  If you are using this code or any part of Garnet,      ;;;
-;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;;
-;;; AGGRELISTS. This subclass of aggregates allow the easy creation of
-;;; list-type objects, such as menus. Aggrelists features automatic
-;;; and customizable horizontal or vertical layout, generation of
-;;; items according to a prototype, and can be used with aggregadgets
-;;; in order to create complex objects.
-;;;
-;;; $Id::                                                             $
-
-
-
 (in-package "OPAL")
 
 (eval-when (:execute :load-toplevel :compile-toplevel)
@@ -26,14 +5,10 @@
 	    remove-local-interactor add-local-item
 	    remove-local-item remove-nth-item remove-nth-component
 	    notice-items-changed add-interactor remove-interactor
-	    take-default-component replace-item-prototype-object
+	    take-default-component
+	    ;;replace-item-prototype-object
 	    )))
 
-;;;--------------------------------------------------------------------------
-;;;
-;;; Macros that allow the user to call methods as if they were functions.
-;;;
-;;;--------------------------------------------------------------------------
 
 (defmacro add-local-component (schema &rest args)
   `(kr-send ,schema :add-local-component ,schema ,@args))
@@ -74,6 +49,6 @@
   `(let ((the-schema ,schema))
     (kr-send the-schema :take-default-component the-schema ,@args)))
 
-(defmacro replace-item-prototype-object (schema &rest args)
-  `(let ((the-schema ,schema))
-    (kr-send the-schema :replace-item-prototype-object the-schema ,@args)))
+;; (defmacro replace-item-prototype-object (schema &rest args)
+;;   `(let ((the-schema ,schema))
+;;     (kr-send the-schema :replace-item-prototype-object the-schema ,@args)))

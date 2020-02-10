@@ -38,156 +38,263 @@
 
 (eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(*debug-opal-mode* bottom right center-x center-y
-	    gv-bottom gv-right gv-center-x gv-center-y
-	    gv-center-x-is-center-of gv-center-y-is-center-of
-	    gv-right-is-left-of gv-bottom-is-top-of
-	    q-max q-min q-abs
-	    top-side left-side bottom-side right-side
-	    center set-center
-	    bounding-box set-bounding-box
-	    set-position set-size
-	    draw erase rotate
-	    initialize calculate-bounding-box point-in-gob
-	    halftone halftone-darker halftone-lighter
-	    halftone-image halftone-image-darker halftone-image-lighter
-	    read-image write-image
-	    add-component remove-component move-component
-	    add-components remove-components remove-all-components
-	    do-components do-all-components
-	    point-to-component point-to-leaf
-	    update destroy destroy-me
-	    raise-window lower-window iconify-window deiconify-window
-	    zoom-window fullzoom-window
-	    ;; Class names
-	    aggregate view-object graphical-object line rectangle
-	    roundtangle multipoint polyline polygon text bitmap arc oval
-	    circle arrowhead multi-text cursor-multi-text
-
-	    line-style default-line-style filling-style default-filling-style
-	    font cursor-text graphic-quality font-from-file cursor-font
-	    arrow-cursor arrow-cursor-mask arrow-pair
-	    hourglass-cursor hourglass-cursor-mask hourglass-pair
-	    garbage-cursor garbage-cursor-mask garbage-pair
-	    with-hourglass-cursor with-cursor default-font
-	    convert-coordinates get-cursor-index string-width string-height
-	    change-cursors restore-cursors char-width
-	    move-cursor-down-one-line
-	    move-cursor-up-one-line
-	    move-cursor-to-beginning-of-line
-	    move-cursor-to-end-of-line
-
-	    Get-X-Cut-Buffer
-	    Set-X-Cut-Buffer
-
-	    no-fill black-fill white-fill
-	    gray-fill light-gray-fill dark-gray-fill
-	    red-fill green-fill blue-fill yellow-fill
-	    cyan-fill orange-fill purple-fill
-	    motif-gray-fill motif-blue-fill motif-orange-fill motif-green-fill
-	    motif-light-gray-fill motif-light-blue-fill motif-light-orange-fill
-	    motif-light-green-fill
-
-	    make-filling-style
-	    diamond-fill
-
-	    no-line thin-line line-0 line-1 line-2 line-4 line-8 gray-line
-	    dotted-line dashed-line
-	    red-line green-line blue-line yellow-line
-	    cyan-line orange-line purple-line white-line
-
-	    ;; Colors
-	    color white black red green blue cyan yellow orange purple
-	    motif-gray motif-blue motif-orange motif-green motif-light-gray
-	    motif-light-blue motif-light-orange motif-light-green
-	    color-to-index
-
-	    ;; From Clean-Up.Lisp
-	    clean-up change-garnet-display update-all reset-cursor
-
-	    ;; From open-and-close.lisp
-	    disconnect-garnet reconnect-garnet
-
-	    ;; From process.lisp
-	    launch-main-event-loop-process
-	    kill-main-event-loop-process
-	    main-event-loop-process-running-p
-	    running-main-event-loop-process-elsewhere-p
-
-	    ;; From virtual-aggregates.lisp
-	    virtual-aggregate remove-item add-item change-item point-to-rank
-	    recalculate-virtual-aggregate-bboxes do-in-clip-rect
-	    do-items ;; [2003/09/16:rpg]
-
-
-	    get-standard-font
-
-	    ;; Stuff that should be exported IMHO (fmg).
 	    *garnet-windows*
-
-	    ;; Multifont stuff.
-	    MULTIFONT-TEXT
-
-	    SET-CURSOR-VISIBLE
-	    SET-CURSOR-TO-X-Y-POSITION
-	    SET-CURSOR-TO-LINE-CHAR-POSITION
-	    GET-CURSOR-LINE-CHAR-POSITION
-	    GO-TO-NEXT-CHAR
-	    GO-TO-PREV-CHAR
-	    GO-TO-NEXT-WORD
-	    GO-TO-PREV-WORD
-	    GO-TO-NEXT-LINE
-	    GO-TO-PREV-LINE
-	    GO-TO-BEGINNING-OF-TEXT
-	    GO-TO-END-OF-TEXT
-	    GO-TO-BEGINNING-OF-LINE
-	    GO-TO-END-OF-LINE
-
-	    FETCH-NEXT-CHAR
-	    FETCH-PREV-CHAR
-
-	    TOGGLE-SELECTION
-	    SET-SELECTION-TO-X-Y-POSITION
-	    SET-SELECTION-TO-LINE-CHAR-POSITION
-	    GET-SELECTION-LINE-CHAR-POSITION
-	    CHANGE-FONT-OF-SELECTION
-	    CHANGE-COLOR-OF-SELECTION
-
 	    ADD-CHAR
+	    ADD-OBJECT
+	    BETWEEN-MARKS-P
+	    CHANGE-COLOR-OF-SELECTION
+	    CHANGE-FONT-OF-SELECTION
+	    CONCATENATE-TEXT
+	    COPY-SELECTED-TEXT
+	    Class
+	    Clean-Up.Lisp
+	    Colors
 	    DELETE-CHAR
 	    DELETE-PREV-CHAR
-	    INSERT-STRING
-	    ADD-OBJECT
-	    SEARCH-FOR-MARK
-	    SEARCH-BACKWARDS-FOR-MARK
-	    BETWEEN-MARKS-P
-	    MARK
-	    INSERT-MARK
-	    INSERT-TEXT
+	    DELETE-PREV-WORD
+	    DELETE-SELECTION
 	    DELETE-SUBSTRING
 	    DELETE-WORD
-	    DELETE-PREV-WORD
-	    KILL-REST-OF-LINE
-
-	    COPY-SELECTED-TEXT
-	    DELETE-SELECTION
-
-	    SET-TEXT
+	    EMPTY-TEXT-P
+	    FETCH-NEXT-CHAR
+	    FETCH-PREV-CHAR
+	    From
+	    From
+	    From
+	    From
+	    GET-CURSOR-LINE-CHAR-POSITION
+	    GET-OBJECTS
+	    GET-SELECTION-LINE-CHAR-POSITION
 	    GET-STRING
 	    GET-TEXT
-	    GET-OBJECTS
-
+	    GO-TO-BEGINNING-OF-LINE
+	    GO-TO-BEGINNING-OF-TEXT
+	    GO-TO-END-OF-LINE
+	    GO-TO-END-OF-TEXT
+	    GO-TO-NEXT-CHAR
+	    GO-TO-NEXT-LINE
+	    GO-TO-NEXT-WORD
+	    GO-TO-PREV-CHAR
+	    GO-TO-PREV-LINE
+	    GO-TO-PREV-WORD
+	    Get-X-Cut-Buffer
+	    IMHO
+	    INSERT-MARK
+	    INSERT-STRING
+	    INSERT-TEXT
+	    KILL-REST-OF-LINE
+	    MARK
+	    MULTIFONT-TEXT
+	    Multifont
 	    NOTICE-RESIZE-OBJECT
-
-	    TEXT-TO-PURE-LIST
 	    PURE-LIST-TO-TEXT
+	    SEARCH-BACKWARDS-FOR-MARK
+	    SEARCH-FOR-MARK
+	    SET-CURSOR-TO-LINE-CHAR-POSITION
+	    SET-CURSOR-TO-X-Y-POSITION
+	    SET-CURSOR-VISIBLE
+	    SET-SELECTION-TO-LINE-CHAR-POSITION
+	    SET-SELECTION-TO-X-Y-POSITION
+	    SET-TEXT
+	    Set-X-Cut-Buffer
+	    Stuff
+	    TEXT-TO-PURE-LIST
 	    TEXT-TO-STRING
-	    CONCATENATE-TEXT
-	    EMPTY-TEXT-P
-
-	    ;; Pixmap stuff.
-	    pixmap write-xpm-file read-xpm-file
+	    TOGGLE-SELECTION
+	    add-component
+	    add-components
+	    add-item
+	    aggregate
+	    arc
+	    arrow-cursor
+	    arrow-cursor-mask
+	    arrow-pair
+	    arrowhead
+	    be
+	    bitmap
+	    black
+	    black-fill
+	    blue
+	    blue-fill
+	    blue-line
+	    bottom-side
+	    bounding-box
+	    calculate-bounding-box
+	    center
+	    change-cursors
+	    change-garnet-display
+	    change-item
+	    char-width
+	    circle
+	    clean-up
+	    color
+	    color-to-index
+	    convert-coordinates
 	    create-pixmap-image window-to-pixmap-image
-
-	    ;; Utils.
+	    cursor-font
+	    cursor-multi-text
+	    cursor-text
+	    cyan
+	    cyan-fill
+	    cyan-line
+	    dark-gray-fill
+	    dashed-line
+	    default-filling-style
+	    default-font
+	    default-line-style
+	    deiconify-window
+	    destroy
+	    destroy-me
+	    diamond-fill
+	    disconnect-garnet
+	    do-all-components
+	    do-components
+	    do-in-clip-rect
+	    do-items
+	    dotted-line
+	    draw
+	    erase
+	    exported
+	    filling-style
+	    font
+	    font-from-file
+	    fullzoom-window
+	    garbage-cursor
+	    garbage-cursor-mask
+	    garbage-pair
+	    get-cursor-index
+	    get-standard-font
+	    graphic-quality
+	    graphical-object
+	    gray-fill
+	    gray-line
+	    green
+	    green-fill
+	    green-line
+	    gv-bottom
+	    gv-bottom-is-top-of
+	    gv-center-x
+	    gv-center-x-is-center-of
+	    gv-center-y
+	    gv-center-y-is-center-of
+	    gv-right
+	    gv-right-is-left-of
+	    halftone
+	    halftone-darker
+	    halftone-image
+	    halftone-image-darker
+	    halftone-image-lighter
+	    halftone-lighter
+	    hourglass-cursor
+	    hourglass-cursor-mask
+	    hourglass-pair
+	    iconify-window
+	    initialize
+	    kill-main-event-loop-process
+	    launch-main-event-loop-process
+	    left-side
+	    light-gray-fill
+	    line
+	    line-0
+	    line-1
+	    line-2
+	    line-4
+	    line-8
+	    line-style
+	    lower-window
+	    main-event-loop-process-running-p
+	    make-filling-style
 	    make-image get-garnet-bitmap directory-p
-            time-to-string clip-and-map drawable-to-window)))
+	    motif-blue
+	    motif-blue-fill
+	    motif-gray
+	    motif-gray-fill
+	    motif-green
+	    motif-green-fill
+	    motif-light-blue
+	    motif-light-blue-fill
+	    motif-light-gray
+	    motif-light-gray-fill
+	    motif-light-green
+	    motif-light-green-fill
+	    motif-light-orange
+	    motif-light-orange-fill
+	    motif-orange
+	    motif-orange-fill
+	    move-component
+	    move-cursor-down-one-line
+	    move-cursor-to-beginning-of-line
+	    move-cursor-to-end-of-line
+	    move-cursor-up-one-line
+	    multi-text
+	    multipoint
+	    names
+	    no-fill
+	    no-line
+	    open-and-close.lisp
+	    orange
+	    orange-fill
+	    orange-line
+	    oval
+	    pixmap write-xpm-file read-xpm-file
+	    point-in-gob
+	    point-to-component
+	    point-to-leaf
+	    point-to-rank
+	    polygon
+	    polyline
+	    process.lisp
+	    purple
+	    purple-fill
+	    purple-line
+	    q-abs
+	    q-max
+	    q-min
+	    raise-window
+	    read-image
+	    recalculate-virtual-aggregate-bboxes
+	    reconnect-garnet
+	    rectangle
+	    red
+	    red-fill
+	    red-line
+	    remove-all-components
+	    remove-component
+	    remove-components
+	    remove-item
+	    reset-cursor
+	    restore-cursors
+	    right-side
+	    rotate
+	    roundtangle
+	    running-main-event-loop-process-elsewhere-p
+	    set-bounding-box
+	    set-center
+	    set-position
+	    set-size
+	    should
+	    string-height
+	    string-width
+	    stuff.
+	    text
+	    that
+	    thin-line
+	    top-side
+	    update
+	    update-all
+	    view-object
+	    virtual-aggregate
+	    virtual-aggregates.lisp
+	    white
+	    white-fill
+	    white-line
+	    with-cursor
+	    with-hourglass-cursor
+	    write-image
+	    yellow
+	    yellow-fill
+	    yellow-line
+	    zoom-window
+            time-to-string
+	    clip-and-map
+	    drawable-to-window)))

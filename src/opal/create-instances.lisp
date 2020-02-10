@@ -1026,8 +1026,8 @@ avoiding wasted objects.
   (:fill-style :opaque-stippled)
   (:stipple dark-gray-fill-bitmap))
 
-(create-instance 'BLACK-FILL filling-style
-  (:fill-style :solid))
+;; (create-instance 'BLACK-FILL filling-style
+;;   (:fill-style :solid))
 
 (create-instance 'WHITE-FILL filling-style
   (:foreground-color white))
