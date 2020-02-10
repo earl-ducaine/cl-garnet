@@ -216,84 +216,53 @@
 	     (:file "scrolling-window-multifont")
 	     (:file "standard-edit")
 	     (:file "mouseline")))
-   (:module debug
-   	    :pathname "src/debug"
-   	    :depends-on (utils gem kr opal ps gadgets)
-   	    :components
-	    ((:file "debug-fns")
-	     (:file "objsize")
-	     (:file "inspector")
-	     (:file "suggest-constants")))
-   (:module protected-eval
-   	    :pathname "src/protected-eval"
-   	    :depends-on (utils gem kr opal ps gadgets debug)
-   	    :components
-	    ((:file "protected-eval-compiler")
-	     (:file "error")
-	     (:file "prompter")
-	     (:file "protected-eval")
-	     (:file "protected-process")
-	     (:file "abstract-errors")
-	     (:file "garnet-errors")))
-   (:module gesture
-   	    :pathname "src/gesture"
-   	    :depends-on (utils gem kr opal ps gadgets protected-eval)
-   	    :components
-	    ((:file "gesture-compiler")
-	     (:file "features")
-	     (:file "matrix")
-	     (:file "classify")
-	     (:file "gestureinter")
-	     (:file "fileio")
-	     (:file "train")
-	     (:file "agate")))
-   (:module demos
-   	    :pathname "src/demos"
-   	    :depends-on (:utils :gem :kr :opal :ps :gadgets :protected-eval
-				:gesture)
-   	    :components
-	    (;; (:file "demos")
-	     ;; (:file "demo-3d")
-	     ;; (:file "demo-angle")
-	     ;; (:file "demo-animator")
-	     ;; )
-	     ))
+   ;; (:module debug
+   ;; 	    :pathname "src/debug"
+   ;; 	    :depends-on (utils gem kr opal ps gadgets)
+   ;; 	    :components
+   ;; 	    ((:file "debug-fns")
+   ;; 	     (:file "objsize")
+   ;; 	     (:file "inspector")
+   ;; 	     (:file "suggest-constants")))
+   ;; (:module protected-eval
+   ;; 	    :pathname "src/protected-eval"
+   ;; 	    :depends-on (utils gem kr opal ps gadgets debug)
+   ;; 	    :components
+   ;; 	    ((:file "protected-eval-compiler")
+   ;; 	     (:file "error")
+   ;; 	     (:file "prompter")
+   ;; 	     (:file "protected-eval")
+   ;; 	     (:file "protected-process")
+   ;; 	     (:file "abstract-errors")
+   ;; 	     (:file "garnet-errors")))
+   ;; (:module gesture
+   ;; 	    :pathname "src/gesture"
+   ;; 	    :depends-on (utils gem kr opal ps gadgets protected-eval)
+   ;; 	    :components
+   ;; 	    ((:file "gesture-compiler")
+   ;; 	     (:file "features")
+   ;; 	     (:file "matrix")
+   ;; 	     (:file "classify")
+   ;; 	     (:file "gestureinter")
+   ;; 	     (:file "fileio")
+   ;; 	     (:file "train")
+   ;; 	     (:file "agate")))
    (:module lapidary2
 	    :pathname "src/lapidary"
 	    :depends-on (utils)
 	    :components
 	    ((:file "lapidary-compiler")
 	     (:file "lapidary-functions-loader")
-	     (:file "lapidary-functions")
-	     (:file "mouse-bindings")))
+	     ;; (:file "lapidary-functions")
+	     ;; (:file "mouse-bindings")
+	     ))
    (:module multi-garnet
 	    :pathname "multi-garnet"
-	    :depends-on (lapidary)
+	    :depends-on (lapidary2)
 	    :serial t
 	    :components
 	    ((:file "package")
 	     (:file "sky-blue")
 	     (:file "multi-garnet")
 	     (:file "scatterplot-alt")
-	     ;; (:file "examples")
-	     ))
-   (:module lapidary
-	    :pathname "src/lapidary"
-	    :depends-on (lapidary2 gadgets)
-	    :components
-	    (;; (:file "mouse-bindings")
-	     ;; (:file "parameters")
-	     ;; (:file "defs")
-	     ;; (:file "macros")
-	     ;; (:file "constraint-gadget-compiler")
-	     ;; (:file "cg-defs")
-	     ))
-   ;; (:module last
-   ;; 	    :pathname ""
-   ;; 	    :depends-on (:utils :kr :gem :opal :inter :ps :aggregadgets
-   ;; 				:gadgets :debug :protected-eval :gesture :demos
-   ;; 				:lapidary2
-   ;; 				:multi-garnet)
-   ;; 	    :components
-   ;; 	    ((:file "post-processing")))
-   ))
+	     ))))
