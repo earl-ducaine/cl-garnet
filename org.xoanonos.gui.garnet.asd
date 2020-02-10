@@ -9,36 +9,26 @@
   (:export :*base-directory*
 	   :*garnet-load-truename*))
 
-;; (defparameter org.xoanonos.asdf-app-config:*base-directory*
-;;   (make-pathname :name nil :type nil :defaults *load-truename*))
-
-;; (defparameter org.xoanonos.asdf-app-config:*garnet-load-truename*
-;;   org.xoanonos.asdf-app-config:*base-directory*)
-
 
 (asdf:defsystem :org.xoanonos.gui.garnet
   :depends-on (alexandria
 	       uiop
 	       bordeaux-threads
-	       ;; cl-aa
-	       ;; cl-aa-misc
-	       ;; cl-fad
 	       trivial-features
-	       clx
-	       )
+	       clx)
   :license "MIT-ish (also public domain, see LICENSE)"
   :author "CMU Garnet Team (plus various others, see LICENSE)"
   :description " GUI toolkit (c. 1990 look/feel)"
   :components
   ((:file "package")
-   ;; (:file "clx-compatability" :depends-on (package))
    (:module utils
 	    :pathname ""
 	    :depends-on (package)
 	    :components
-	    (;; (:file "garnet-loader")
+	    (
 	     (:file "src/utils/general")
-	     (:file "src/utils/global")))
+
+	     ))
    (:module kr
    	    :pathname "src/kr"
    	    :depends-on (utils)
@@ -83,13 +73,14 @@
 	     (:file "clean-up")
 	     (:file "windows")
 	     (:file "update")
-	     (:file "fast-redraw")
-	     (:file "update-window")
-	     (:file "multifont")
-	     (:file "virtual-aggregates")
-	     (:file "pixmaps")
-	     (:file "open-and-close")
-	     (:file "opal-init")))
+	     ;; (:file "fast-redraw")
+	     ;; (:file "update-window")
+	     ;; (:file "multifont")
+	     ;; (:file "virtual-aggregates")
+	     ;; (:file "pixmaps")
+	     ;; (:file "open-and-close")
+	     ;; (:file "opal-init")
+	     ))
    (:module aggregadgets
    	    :pathname "src/aggregadgets"
    	    :depends-on (utils gem kr opal)
