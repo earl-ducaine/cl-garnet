@@ -1,6 +1,6 @@
-;;;-*- Mode: COMMON-LISP; Package: MULTI-GARNET -*-
 
-(in-package :multi-garnet)
+
+(in-package :kr)
 
 (defvar *multi-garnet-version* "2.2")
 
@@ -8,7 +8,7 @@
   (defun get-save-fn-symbol-name (sym)
     (cond ((symbolp sym)
 	   (intern (concatenate 'string (symbol-name sym) "-SAVE-FN-SYMBOL")
-		   (find-package :multi-garnet)))
+		   (find-package :kr)))
 	  ((and (consp sym)
 		(eq :quote (first sym))
 		(symbolp (second sym)))
@@ -414,7 +414,7 @@
         ))
 
 (defun save-invalidated-path-constraints (obj slot)
-  (when mg::*collect-invalid-paths-formulas*
+  (when *collect-invalid-paths-formulas*
     (setf *invalidated-path-constraints*
       (append (get-object-slot-prop obj slot :sb-path-constraints)
 	      *invalidated-path-constraints*))
@@ -695,9 +695,9 @@
 
 (defvar *invalidated-formulas* nil)
 
-(in-package :kr)
 
-(defun mg::propagate-change-hook (schema slot)
+
+(defun propagate-change-hook (schema slot)
   (let ((entry (slot-accessor schema slot)))
     ;; access the dependent formulas.
     (do-one-or-list (formula (slot-dependents entry) T)
@@ -715,12 +715,12 @@
 	       formula schema slot))
 	    (continue-out))
 	  (cond ((and schema-ok
-		      (or (mg::get-object-slot-prop new-schema new-slot :sb-variable)
-			  (mg::get-object-slot-prop new-schema new-slot :sb-path-constraints)))
+		      (or (get-object-slot-prop new-schema new-slot :sb-variable)
+			  (get-object-slot-prop new-schema new-slot :sb-path-constraints)))
 		 ;; we want to invalidate a formula that sets a constrained slot or a path slot.
 		 ;; do not invalidate or propagate further: save ptr to formula to eval later
-		 (when mg::*collect-invalid-paths-formulas*
-		   (push formula mg::*invalidated-formulas*))
+		 (when *collect-invalid-paths-formulas*
+		   (push formula *invalidated-formulas*))
 		 (continue-out))
 		(schema-ok
 		 (setf new-entry (slot-accessor new-schema new-slot))
@@ -753,10 +753,6 @@
 		  ;; the formula sits.
 		  (if dependents
 		      (propagate-change new-schema new-slot))))))))))
-
-(in-package :multi-garnet)
-
-;; ***** updating invalidated paths and formulas *****
 
 (defvar *max-path-updates* 10)
 

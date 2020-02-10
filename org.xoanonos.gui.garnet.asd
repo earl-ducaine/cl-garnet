@@ -16,8 +16,7 @@
    	    :pathname "src/opal"
    	    :depends-on (kr)
    	    :components
-   	    (;; (:file "exports")
-	     (:file "types")
+   	    ((:file "types")
 	     (:file "update-constants")
 	     (:file "macros")
 	     (:file "defs")

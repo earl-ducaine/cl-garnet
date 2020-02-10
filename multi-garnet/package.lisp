@@ -77,27 +77,3 @@
 	   #:*required-strength*
 	   #:*weakest-strength*
 	   ))
-
-
-(defpackage :multi-garnet
-  (:nicknames :mg)
-  (:use :common-lisp :kr)
-  (:import-from "SKY-BLUE"
-		#:*sky-blue-backtracking-warning*
-		#:*sky-blue-cycle-warning*
-	   )
-  (:export #:m-constraint
-	   #:m-stay-constraint
-	   #:s-value-strength
-	   #:enable-multi-garnet
-	   #:constraint-p
-	   #:clone-constraint
-	   #:*default-input-strength*
-	   #:*max-path-updates*
-	   #:*max-path-updates-warning*
-	   #:*sky-blue-backtracking-warning*
-	   #:*sky-blue-cycle-warning*
-	   #:*unsatisfied-max-constraint-warning*
-	   #:*multi-garnet-version*
-	   #:*s-value-bad-schema-action*
-	   ))

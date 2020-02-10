@@ -1,4 +1,4 @@
-(in-package :multi-garnet)
+(in-package :kr)
 
 (create-instance '*axis-rectangle* Opal::Rectangle
   (:left-cn (m-constraint :max (box left) (setf left (first box))))
