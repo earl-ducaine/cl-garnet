@@ -1,15 +1,4 @@
 
-;;; This file was written by Earl Ducaine and is released under the
-;;; MIT license.
-
-
-;;; Bad practice muddying up asdf package namespace.
-
-(defpackage :org.xoanonos.asdf-app-config
-  (:export :*base-directory*
-	   :*garnet-load-truename*))
-
-
 (asdf:defsystem :org.xoanonos.gui.garnet
   :license "MIT-ish (also public domain, see LICENSE)"
   :author "CMU Garnet Team (plus various others, see LICENSE)"

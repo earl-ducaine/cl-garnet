@@ -2,9 +2,9 @@
 
 (in-package :multi-garnet)
 
-(eval-when (:load-toplevel :execute)
-  (when (fboundp 'disable-multi-garnet)
-    (disable-multi-garnet)))
+;; (eval-when (:load-toplevel :execute)
+;;   (when (fboundp 'disable-multi-garnet)
+;;     (disable-multi-garnet)))
 
 (defvar *multi-garnet-version* "2.2")
 
@@ -1325,28 +1325,6 @@
 (defun disable-multi-garnet ()
   (loop for (fn hook-fn) on *fn-to-hook-plist* by #'CDDR do
 	(uninstall-hook fn)))
-
-(defun multi-garnet-enabled ()
-  (loop for (fn hook-fn) on *fn-to-hook-plist* by #'CDDR
-      always (eql (symbol-function fn) (symbol-function hook-fn))))
-
-
-;; ***** fn to update mg slot when var value changed *****
-;; defined here because it uses macro set-slot-basic
-
-(defun update-var-value-fn (var slot val)
-  (when (and (eql slot :value)
-	     (sb:sb-variable-p var))
-    (let ((os (VAR-os var)))
-      (when (os-p os)
-	(with-constants-disabled
-	    (set-slot-basic
-	     (os-object os) (os-slot os) val
-	     :prohibit-constraints t
-	     :auto-activate-constraints nil
-	     :invalidate-paths t))
-	))
-    ))
 
 (eval-when (:load-toplevel :execute)
   (enable-multi-garnet))

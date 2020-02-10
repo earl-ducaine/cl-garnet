@@ -104,7 +104,6 @@
 	   #:run-plan
 	   #:enable-multi-garnet
 	   #:disable-multi-garnet
-	   #:multi-garnet-enabled
 	   #:constraint-p
 	   #:constraint-state
 	   #:variable-state
