@@ -332,7 +332,6 @@
 	 (value ,value)
 	 )
      ;; before checks
-
      ;; if prohibit-constraints=t, check that new and old values of slot are not constraints
      ,@(if prohibit-constraints
 	   '(
@@ -342,7 +341,6 @@
 			 "can't set <~S,~S> to constraint" obj slot))
 	     )
 	 )
-
      ;; remove old constraint previously stored in slot
      ,@(if auto-activate-constraints
 	   '(
@@ -417,18 +415,12 @@
   (when *collect-invalid-paths-formulas*
     (setf *invalidated-path-constraints*
       (append (get-object-slot-prop obj slot :sb-path-constraints)
-	      *invalidated-path-constraints*))
-    ))
+	      *invalidated-path-constraints*))))
 
-
-;; default strength used when setting object slots using s-value
 (defvar *default-input-strength* :strong)
 
 (defun s-value-fn-hook (schema slot value)
   (multi-garnet-s-value-fn schema slot value *default-input-strength*))
-
-;; (defun s-value-strength (obj slot value strength)
-;;   (multi-garnet-s-value-fn obj slot value strength))
 
 (defvar *s-value-bad-schema-action* nil)
 
@@ -438,51 +430,21 @@
 	   (:print (format t "~&S-VALUE called with bad schema ~S slot ~S, value ~S.~%"
 			   schema slot value))
 	   (:break (cerror "continue" "S-VALUE called with bad schema ~S slot ~S, value ~S."
-			   schema slot value))
-	   )
-	 )
+			   schema slot value))))
 	((eq slot :is-a)
-	 ;; don't trap KR inheritance manipulation.
-	 ;; do simple set, without worrying about cns or paths
 	 (set-slot-basic schema slot value
 			 :auto-activate-constraints nil
-			 :invalidate-paths nil)
-	 )
+			 :invalidate-paths nil))
 	(t
 	 (let ((slot-var (get-object-slot-prop schema slot :sb-variable)))
-	   (cond ((and (constraint-p value)
-		       ;; have to use inheritence to find if slot currently has formula
-		       (formula-p (get-value schema slot)))
-		  (cerror "noop" "can't put sb constraint ~S in slot <~S,~S> with formula"
-			  value schema slot))
-		 ((and (formula-p value) slot-var)
-		  (cerror "noop" "can't put formula ~S in sb variable slot <~S,~S>"
-                     value schema slot))
-		 ((and (formula-p value)
-		       ;; use get-local-value: cn must be copied down explicitly
-		       (constraint-p (get-local-value schema slot)))
-		  (cerror "noop" "can't put formula ~S in sb constraint slot <~S,~S>"
-			  value schema slot))
-		 ((and (formula-p value)
-		       (get-object-slot-prop schema slot :sb-path-constraints))
-		  (cerror "noop" "can't put formula ~S in sb constraint path slot <~S,~S>"
-			  value schema slot))
-		 (slot-var
-		  ;; set the value of a sb-variable by adding and removing a strong constraint
-		  ;; (note that this implies that the set may not happen if the var's walkabout
-		  ;; strength is strong enough)
-		  (set-input-variable slot-var value input-strength)
-		  )
-		 (t
-		  ;; slot not an sb slot, so do normal set
-		  (set-slot-basic schema slot value
-				  :auto-activate-constraints t
-				  :invalidate-paths t)
-		  ))
-	   (update-invalidated-paths-and-formulas)
-	   )))
+	   (cond (slot-var
+	   	  (set-input-variable slot-var value input-strength))
+	   	 (t
+	   	  (set-slot-basic schema slot value
+	   			  :auto-activate-constraints t
+	   			  :invalidate-paths t)))
+	   (update-invalidated-paths-and-formulas))))
   value)
-
 
 (defun kr-call-initialize-method-hook (schema slot)
   (call-hook-save-fn kr::kr-call-initialize-method schema slot)
@@ -931,8 +893,6 @@
 	 (eql :formula-recomputing-cn (os-slot os)))
     ))
 
-;; ***** OS manipulation *****
-
 (defun get-os-prop (os prop)
   (get-object-slot-prop
    (os-object os) (os-slot os) prop))
@@ -942,9 +902,6 @@
 	      slot nil)
 	prop nil))
 
-;; version of get-object-slot-prop for use in formulas,
-;; that calls kr::gv-gn to tell kr that  it is
-;; accessing :sb-os-props
 (defun gv-object-slot-prop (obj slot prop)
   (when (schema-p obj)
     (kr::gv-fn obj :sb-os-props)
@@ -955,9 +912,6 @@
    (os-object os) (os-slot os) prop val))
 
 (defun set-object-slot-prop (obj slot prop val)
-  ;; let's catch constraints on the innards of sb-objects.
-  ;; eventually, may want to allow such meta-constraints,
-  ;; but not now
   (when (sb-object-p obj)
     (cerror "cont" "trying to set os-prop of ~S, slot ~S, prop ~S"
             obj slot prop))
@@ -970,8 +924,6 @@
     (setf (getf slot-props prop) val)
     (setf (getf os-props slot) slot-props)
     (set-slot-no-checks obj :sb-os-props os-props)
-    ;; mark props slot as changed, so debugger can
-    ;; make (slow) displays depend on os props
     (mark-as-changed obj :sb-os-props)
     val))
 
@@ -1020,12 +972,6 @@
 
 (defun set-variable-value (var val)
   (setf (var-value var) val))
-
-;; ***** entries for setting a variable by adding/removing a stay constraint *****
-
-;; flush test to avoid adding cn if walkstrengths of vars are too high:
-;; for debugging, we want to save state when input var is added unsuccessfully.
-;; (when (weaker (VAR-walk-strength v) (get-strength strength)))
 
 (defun set-input-variable (v val strength)
   ;; we _may_ be able to set variable.  Add&remove cn to set value.
@@ -1180,7 +1126,7 @@
 (defvar *fn-to-hook-plist* '(kr::s-value-fn                   s-value-fn-hook
 			     kr::kr-call-initialize-method    kr-call-initialize-method-hook
 			     kr::kr-init-method               kr-init-method-hook
-			     kr::destroy-schema               destroy-schema-hook
+;;			     kr::destroy-schema               destroy-schema-hook
 			     kr::destroy-slot                 destroy-slot-hook
 			     kr::propagate-change             propagate-change-hook))
 
