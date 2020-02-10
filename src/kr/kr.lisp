@@ -1446,18 +1446,6 @@ i.e., one which does not use a link."
     ;; Physically delete the schema.
     (delete-schema schema recursive-p)))
 
-(defun reset-inherited-values (schema)
-  "Since the <relation> slot was changed, all children of the <schema> may
-have to inherit different values."
-  (iterate-slot-value (schema T NIL T)	; use inheritance!
-    (unless (relation-p slot)
-      (unless (eq value *no-value*)
-	(when (is-inherited (sl-bits iterate-slot-value-entry))
-	  (destroy-slot schema slot))))))
-
-;;; SCHEMA PRINTING
-
-
 (defun print-one-value (value type)
   (let ((string (cond ((formula-p value)
 		       (let ((cached (cached-value value))
@@ -1780,52 +1768,6 @@ The <function> is called with:
 	;; No slot???
 	(terpri)))
   (values))
-
-
-(defun full (&rest schemata)
-  "Internal debugging - print out schemata in gory detail."
-  (dolist (schema schemata)
-    (when (numberp schema)
-      (setf schema (s schema)))
-    (let ((is-formula (a-formula-p schema)))
-      ;; use iterators to get inherited slots as well
-      (if is-formula
-	  ;; This is a formula
-	  (progn
-	    (format
-	     t "---------------------------------------------- formula ~S~%"
-	     schema)
-	    ;; print special formula slots.
-	    (format t "Schema, slot:           ~S  ~S~%"
-		    (on-schema schema) (on-slot schema))
-	    (format t "Cached value:           (~S . ~S)~%"
-		    (cached-value schema) (a-formula-number schema))
-	    (format t "Depends on:             ~S~%"
-		    (a-formula-depends-on schema))
-	    (format t "Lambda:                 ~(~S~)~%"
-		    (a-formula-lambda schema))
-	    (when (a-formula-is-a schema)
-	      (format t
-		      "parent formula:         ~S~%"
-		      (a-formula-is-a schema)))
-	    (when (a-formula-is-a-inv schema)
-	      (format t "children:               ~S~%"
-		      (a-formula-is-a-inv schema)))
-	    (print-meta schema))
-	  ;; This is a normal slot
-	  (progn
-	    (format
-	     t "---------------------------------------------- schema ~S~%"
-	     schema)
-	    (iterate-slot-value (schema T T nil)
-	      value ;; eliminate warning
-	      (full-normal-slot schema slot))))))
-  (values))
-
-
-
-;;; O-O PROGRAMMING
-
 
 (defun find-parent (schema slot)
   "Find a parent of <schema> from which the <slot> can be inherited."
