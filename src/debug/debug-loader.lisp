@@ -15,7 +15,7 @@ Change log:
         08-Nov-93 Andrew Mickish - Moved load of dependent files here from
                     inspector.lisp
         27-Aug-93 Andrew Mickish - Added suggest-constants
-        10-Jan-93 Brad Myers - Added inspector 
+        10-Jan-93 Brad Myers - Added inspector
         20-Jan-92 Andrew Mickish - Moved GARNET-DEBUG package
                                    definition into Garnet-Loader
 	22-Mar-90 Robert Cook - Define the package "GARNET-DEBUG"
@@ -53,11 +53,10 @@ Change log:
     "suggest-constants"))
 
 
-(unless (get :garnet-modules :debug)
-  (dolist (file Garnet-Debug-Files)
-	  (load (merge-pathnames file Garnet-Debug-PathName)
-		:verbose T)))
+;; (unless (get :garnet-modules :debug)
+;;   (dolist (file Garnet-Debug-Files)
+;; 	  (load (merge-pathnames file Garnet-Debug-PathName)
+;; 		:verbose T)))
 
 (setf (get :garnet-modules :debug)  t)
 (format t "...Done Debugging Tools.~%")
-
