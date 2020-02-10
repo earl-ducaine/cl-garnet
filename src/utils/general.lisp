@@ -172,7 +172,8 @@
       (and (symbolp fn) (fboundp fn))))
 
 (defun directory-p (pathname)
-  (cl-fad:directory-exists-p pathname))
+  ;; (cl-fad:directory-exists-p pathname)
+  )
 
 (defmacro str (&rest rest)
   `(concatenate 'string ,@rest))

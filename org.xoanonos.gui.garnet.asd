@@ -20,9 +20,9 @@
   :depends-on (alexandria
 	       uiop
 	       bordeaux-threads
-	       cl-aa
-	       cl-aa-misc
-	       cl-fad
+	       ;; cl-aa
+	       ;; cl-aa-misc
+	       ;; cl-fad
 	       trivial-features
 	       clx
 	       )
