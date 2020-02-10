@@ -59,26 +59,27 @@
 	      substring (if (or j substring)
 			    (subseq string (1+ i) j)
 			    string))
-	(multiple-value-bind (width dummy2 dummy3 left-bearing)
-	    (gem:text-extents (or (gvl :window)
-				  (gv gem:device-info :current-root))
-			      (gvl :font)
-			      substring)
-	  (declare (ignore dummy2 dummy3))
-	  ;; Reuse an old struct, if possible
-	  (cond
-	    (struct
-	     (setf (cut-string-string struct) substring)
-	     (setf (cut-string-width struct) width)
-	     (setf (cut-string-left-bearing struct) left-bearing))
-	    (t (setf structs
-		     ;; Note: only append when we're adding a new line, and
-		     ;; the object has never had this many lines.
-		     (append structs
-			     (list (make-cut-string
-				    :string substring
-				    :width width
-				    :left-bearing left-bearing))))))))
+	;; (multiple-value-bind (width dummy2 dummy3 left-bearing)
+	;;     (gem:text-extents (or (gvl :window)
+	;; 			  (gv gem:device-info :current-root))
+	;; 		      (gvl :font)
+	;; 		      substring)
+	;;   (declare (ignore dummy2 dummy3))
+	;;   ;; Reuse an old struct, if possible
+	;;   (cond
+	;;     (struct
+	;;      (setf (cut-string-string struct) substring)
+	;;      (setf (cut-string-width struct) width)
+	;;      (setf (cut-string-left-bearing struct) left-bearing))
+	;;     (t (setf structs
+	;; 	     ;; Note: only append when we're adding a new line, and
+	;; 	     ;; the object has never had this many lines.
+	;; 	     (append structs
+	;; 		     (list (make-cut-string
+	;; 			    :string substring
+	;; 			    :width width
+	;; 			    :left-bearing left-bearing)))))))
+	)
       (s-value (gv :self) :cut-string-structs structs))))
   (:height (o-formula (* (gvl-fixnum :font :font-height)
 			 (length (gvl :cut-strings)))))
@@ -173,31 +174,33 @@
 		       (do ((count 0 (1+ count))
 			    (remaining cut-strings (cdr remaining)))
 			   ((null remaining))
-			 (let* ((cut-string (car remaining))
-				(width (cut-string-width cut-string))
-				(string (cut-string-string cut-string)))
-			   (gem:draw-text
-			    a-window
-			    (+ left (case justification
-				      (:right (- max-line-width width))
-				      (:center (floor (- max-line-width width) 2))
-				      (t 0)))
-			    (+ top ascent (* count line-height))
-			    string font (aref update-vals +text-draw-function+)
-			    lstyle (aref update-vals +text-fill-background-p+))))
-		       (when cursor-offset
-			 (let ((cursor-left (+ left cursor-offset))
-			       (cursor-top (+ top (* line-number line-height))))
-			   (gem:draw-line a-window
-					  cursor-left
-					  cursor-top
-					  cursor-left
-					  (+ cursor-top line-height)
-					  ;; :xor
-					  (aref update-vals +text-draw-function+)
-					  ;;line-2
-					  lstyle
-					  )))))))
+			 ;; (let* ((cut-string (car remaining))
+			 ;; 	(width (cut-string-width cut-string))
+			 ;; 	(string (cut-string-string cut-string)))
+			 ;;   (gem:draw-text
+			 ;;    a-window
+			 ;;    (+ left (case justification
+			 ;; 	      (:right (- max-line-width width))
+			 ;; 	      (:center (floor (- max-line-width width) 2))
+			 ;; 	      (t 0)))
+			 ;;    (+ top ascent (* count line-height))
+			 ;;    string font (aref update-vals +text-draw-function+)
+			 ;;    lstyle (aref update-vals +text-fill-background-p+)))
+			 )
+		       ;; (when cursor-offset
+		       ;; 	 (let ((cursor-left (+ left cursor-offset))
+		       ;; 	       (cursor-top (+ top (* line-number line-height))))
+		       ;; 	   (gem:draw-line a-window
+		       ;; 			  cursor-left
+		       ;; 			  cursor-top
+		       ;; 			  cursor-left
+		       ;; 			  (+ cursor-top line-height)
+		       ;; 			  ;; :xor
+		       ;; 			  (aref update-vals +text-draw-function+)
+		       ;; 			  ;;line-2
+		       ;; 			  lstyle
+		       ;; 			  )))
+		       ))))
 
 (defun cursor-index-to-line-number (cut-strings index)
   (when index

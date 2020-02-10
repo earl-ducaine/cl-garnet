@@ -39,63 +39,64 @@
 
 ;;; a bit inelegant, perhaps, but very clear
 (defun build-halftone-table (root-window)
-  (let ((halftone-table (make-array *halftone-table-size*)))
-    (setf (aref halftone-table 0)
-	  (make-halftone :percent 0
-			 :device-image (gem:device-image root-window 0)))
-    (setf (aref halftone-table 1)
-	  (make-halftone :percent 6   
-			 :device-image (gem:device-image root-window 1)))
-    (setf (aref halftone-table 2)
-	  (make-halftone :percent 12 
-			 :device-image (gem:device-image root-window 2)))
-    (setf (aref halftone-table 3)
-	  (make-halftone :percent 18
-			 :device-image (gem:device-image root-window 3)))
-    (setf (aref halftone-table 4) 
-	  (make-halftone :percent 25
-			 :filling-style OPAL:LIGHT-GRAY-FILL
-			 :device-image (gem:device-image root-window 4)))
-    (setf (aref halftone-table 5) 
-	  (make-halftone :percent 31
-			 :device-image (gem:device-image root-window 5)))
-    (setf (aref halftone-table 6) 
-	  (make-halftone :percent 37
-			 :device-image (gem:device-image root-window 6)))
-    (setf (aref halftone-table 7) 
-	  (make-halftone :percent  43
-			 :device-image (gem:device-image root-window 7)))
-    (setf (aref halftone-table 8) 
-	  (make-halftone :percent 50
-			 :filling-style OPAL:GRAY-FILL
-			 :device-image (gem:device-image root-window 8)))
-    (setf (aref halftone-table 9) 
-	  (make-halftone :percent 56
-			 :device-image (gem:device-image root-window 9)))
-    (setf (aref halftone-table 10) 
-	  (make-halftone :percent 62
-			 :device-image (gem:device-image root-window 10)))
-    (setf (aref halftone-table 11) 
-	  (make-halftone :percent 68
-			 :device-image (gem:device-image root-window 11)))
-    (setf (aref halftone-table 12) 
-	  (make-halftone :percent 75
-			 :filling-style OPAL:DARK-GRAY-FILL
-			 :device-image (gem:device-image root-window 12)))
-    (setf (aref halftone-table 13) 
-	  (make-halftone :percent 81
-			 :device-image (gem:device-image root-window 13)))
-    (setf (aref halftone-table 14) 
-	  (make-halftone :percent 87
-			 :device-image (gem:device-image root-window 14)))
-    (setf (aref halftone-table 15) 
-	  (make-halftone :percent 93
-			 :device-image (gem:device-image root-window 15)))
-    (setf (aref halftone-table 16) 
-	  (make-halftone :percent 100
-			 :device-image (gem:device-image root-window 16)))
+  ;; (let ((halftone-table (make-array *halftone-table-size*)))
+  ;;   (setf (aref halftone-table 0)
+  ;; 	  (make-halftone :percent 0
+  ;; 			 :device-image (gem:device-image root-window 0)))
+  ;;   (setf (aref halftone-table 1)
+  ;; 	  (make-halftone :percent 6
+  ;; 			 :device-image (gem:device-image root-window 1)))
+  ;;   (setf (aref halftone-table 2)
+  ;; 	  (make-halftone :percent 12
+  ;; 			 :device-image (gem:device-image root-window 2)))
+  ;;   (setf (aref halftone-table 3)
+  ;; 	  (make-halftone :percent 18
+  ;; 			 :device-image (gem:device-image root-window 3)))
+  ;;   (setf (aref halftone-table 4)
+  ;; 	  (make-halftone :percent 25
+  ;; 			 :filling-style OPAL:LIGHT-GRAY-FILL
+  ;; 			 :device-image (gem:device-image root-window 4)))
+  ;;   (setf (aref halftone-table 5)
+  ;; 	  (make-halftone :percent 31
+  ;; 			 :device-image (gem:device-image root-window 5)))
+  ;;   (setf (aref halftone-table 6)
+  ;; 	  (make-halftone :percent 37
+  ;; 			 :device-image (gem:device-image root-window 6)))
+  ;;   (setf (aref halftone-table 7)
+  ;; 	  (make-halftone :percent  43
+  ;; 			 :device-image (gem:device-image root-window 7)))
+  ;;   (setf (aref halftone-table 8)
+  ;; 	  (make-halftone :percent 50
+  ;; 			 :filling-style OPAL:GRAY-FILL
+  ;; 			 :device-image (gem:device-image root-window 8)))
+  ;;   (setf (aref halftone-table 9)
+  ;; 	  (make-halftone :percent 56
+  ;; 			 :device-image (gem:device-image root-window 9)))
+  ;;   (setf (aref halftone-table 10)
+  ;; 	  (make-halftone :percent 62
+  ;; 			 :device-image (gem:device-image root-window 10)))
+  ;;   (setf (aref halftone-table 11)
+  ;; 	  (make-halftone :percent 68
+  ;; 			 :device-image (gem:device-image root-window 11)))
+  ;;   (setf (aref halftone-table 12)
+  ;; 	  (make-halftone :percent 75
+  ;; 			 :filling-style OPAL:DARK-GRAY-FILL
+  ;; 			 :device-image (gem:device-image root-window 12)))
+  ;;   (setf (aref halftone-table 13)
+  ;; 	  (make-halftone :percent 81
+  ;; 			 :device-image (gem:device-image root-window 13)))
+  ;;   (setf (aref halftone-table 14)
+  ;; 	  (make-halftone :percent 87
+  ;; 			 :device-image (gem:device-image root-window 14)))
+  ;;   (setf (aref halftone-table 15)
+  ;; 	  (make-halftone :percent 93
+  ;; 			 :device-image (gem:device-image root-window 15)))
+  ;;   (setf (aref halftone-table 16)
+  ;; 	  (make-halftone :percent 100
+  ;; 			 :device-image (gem:device-image root-window 16)))
 
-    halftone-table))
+  ;;   halftone-table)
+  )
 
 
 ;;; This function is called by Initialize-Display (in windows.lisp) when the
@@ -122,14 +123,14 @@
 (push #'initialize-halftones *auxilliary-reconnect-routines*)
 
 #|
-;; quick and dirty 
+;; quick and dirty
 (defun find-halftone (percent halftone-table)
   (if (< percent (halftone-percent (aref halftone-table 0)))
       0
       (do ((i 1 (1+ i))
 	   (tone nil))
 	  ((>= i *halftone-table-size*) (1- *halftone-table-size*))
-	
+
 	;; decide which one is closer to the value desired
 	(if (> (halftone-percent (setf tone (aref halftone-table i)))
 	       percent)
@@ -200,4 +201,3 @@
     (s-value stipple-entry :image image)
     (s-value result :stipple stipple-entry)
     result))
-

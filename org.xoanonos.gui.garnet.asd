@@ -40,9 +40,7 @@
    	    :pathname "src/gem"
    	    :depends-on (kr opal-boot)
    	    :components
-	    ((:file "gem")
-	     (:file "define-methods")
-	     (:file "x")))
+	    ((:file "gem")))
    (:module opal-boot
    	    :pathname "src/opal"
    	    :depends-on (utils kr)
@@ -62,9 +60,6 @@
 	    ((:file "text-functions")
 	     (:file "text")
 	     (:file "update-basics")
-	     (:file "halftones")
-	     (:file "objects")
-	     (:file "roundtangles")
 	     (:file "basics")
 	     (:file "aggregates")
 	     ))
@@ -73,7 +68,6 @@
    	    :depends-on (utils gem kr opal)
    	    :components
 	    ((:file "agg-macros")
-	     (:file "agg-utils")
 	     (:file "aggregadgets")))
    (:module multi-garnet
 	    :pathname "multi-garnet"

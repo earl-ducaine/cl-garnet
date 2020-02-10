@@ -15,62 +15,65 @@
 
 (defun char-width (fnt char &optional
 			      (display (g-value gem:device-info :current-root)))
-  (or (g-value fnt :char-width)
-      (gem:character-width display fnt (char-code char))))
+  ;; (or (g-value fnt :char-width)
+  ;;     (gem:character-width display fnt (char-code char)))
+  )
 
 (defun string-width (fnt str &key (start 0) end display)
-  (unless display
-    (setq display (g-value gem:DEVICE-INFO :current-root)))
-  ;; If it's a fixed-width font, get the stored width of a single character
-  (let ((char-width (g-value fnt :char-width)))
-    (if (and char-width (not (find #\newline str)))
-	;; For fixed-width single line, just do multiplication
-	(let ((str-len (length str)))
-	  (if (null end)
-	      (if (zerop start)
-		  (* char-width str-len)
-		  (* char-width (- str-len start)))
-	      (if (zerop start)
-		  (* char-width end)
-		  (* char-width (- end start)))))
-	;; For multiple lines, find max width of all lines
-	(do* ((width 0)
-	      (line-end (position #\newline str)
-			(position #\newline remaining-str))
-	      (current-line (if line-end (subseq str 0 line-end) str)
-			    (if line-end
-				(subseq remaining-str 0 line-end)
-				remaining-str))
-	      (remaining-str (if line-end (subseq str (1+ line-end)))
-			     (if line-end
-				 (subseq remaining-str (1+ line-end))))
-	      (width (max width (if char-width
-				    (* char-width (length current-line))
-				    (if (or start end)
-					(gem:text-width
-					 display fnt
-					 (subseq current-line start end))
-					(gem:text-width display fnt current-line))))
-		     (max width (if char-width
-				    (* char-width (length current-line))
-				    (if (or start end)
-					(gem:text-width
-					 display fnt
-					 (subseq current-line start end))
-					(gem:text-width display fnt
-							current-line))))))
-	     ((null line-end) width)))))
+  ;; (unless display
+  ;;   (setq display (g-value gem:DEVICE-INFO :current-root)))
+  ;; ;; If it's a fixed-width font, get the stored width of a single character
+  ;; (let ((char-width (g-value fnt :char-width)))
+  ;;   (if (and char-width (not (find #\newline str)))
+  ;; 	;; For fixed-width single line, just do multiplication
+  ;; 	(let ((str-len (length str)))
+  ;; 	  (if (null end)
+  ;; 	      (if (zerop start)
+  ;; 		  (* char-width str-len)
+  ;; 		  (* char-width (- str-len start)))
+  ;; 	      (if (zerop start)
+  ;; 		  (* char-width end)
+  ;; 		  (* char-width (- end start)))))
+  ;; 	;; For multiple lines, find max width of all lines
+  ;; 	(do* ((width 0)
+  ;; 	      (line-end (position #\newline str)
+  ;; 			(position #\newline remaining-str))
+  ;; 	      (current-line (if line-end (subseq str 0 line-end) str)
+  ;; 			    (if line-end
+  ;; 				(subseq remaining-str 0 line-end)
+  ;; 				remaining-str))
+  ;; 	      (remaining-str (if line-end (subseq str (1+ line-end)))
+  ;; 			     (if line-end
+  ;; 				 (subseq remaining-str (1+ line-end))))
+  ;; 	      (width (max width (if char-width
+  ;; 				    (* char-width (length current-line))
+  ;; 				    (if (or start end)
+  ;; 					(gem:text-width
+  ;; 					 display fnt
+  ;; 					 (subseq current-line start end))
+  ;; 					(gem:text-width display fnt current-line))))
+  ;; 		     (max width (if char-width
+  ;; 				    (* char-width (length current-line))
+  ;; 				    (if (or start end)
+  ;; 					(gem:text-width
+  ;; 					 display fnt
+  ;; 					 (subseq current-line start end))
+  ;; 					(gem:text-width display fnt
+  ;; 							current-line))))))
+  ;; 	     ((null line-end) width))))
+  )
 
 (defun string-height (fnt str &key (actual-heightp nil) display)
-  (unless display
-    (setq display (g-value gem:DEVICE-INFO :current-root)))
-  (if (and actual-heightp (not (find #\newline str)))
-      (multiple-value-bind (width ascent descent)
-	  (gem:text-extents display fnt str)
-	(declare (ignore width))
-	(+ ascent descent))
-      (* (1+ (count #\newline str))
-	 (g-value fnt :font-height))))
+  ;; (unless display
+  ;;   (setq display (g-value gem:DEVICE-INFO :current-root)))
+  ;; (if (and actual-heightp (not (find #\newline str)))
+  ;;     (multiple-value-bind (width ascent descent)
+  ;; 	  (gem:text-extents display fnt str)
+  ;; 	(declare (ignore width))
+  ;; 	(+ ascent descent))
+  ;;     (* (1+ (count #\newline str))
+  ;; 	 (g-value fnt :font-height)))
+  )
 
 
 (defun sign (n) (if (eq n 0) 0 (/ n (abs n))))
