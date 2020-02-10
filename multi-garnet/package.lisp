@@ -67,7 +67,6 @@
 
 	   #:add-constraint
 	   #:remove-constraint
-	   #:change-constraint-strength
 	   #:execute-constraints
 	   #:*sky-blue-backtracking-warning*
 	   #:*sky-blue-cycle-warning*
@@ -97,14 +96,9 @@
 	   #:with-stays
 	   #:with-slots-set
 	   #:s-value-strength
-	   #:propagate-plan-from-cn
-	   #:create-plan
-	   #:valid-plan-p
-	   #:run-plan
 	   #:enable-multi-garnet
 	   #:constraint-p
 	   #:clone-constraint
-	   #:change-constraint-strength
 	   #:*default-input-strength*
 	   #:*max-path-updates*
 	   #:*max-path-updates-warning*

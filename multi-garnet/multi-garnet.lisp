@@ -1231,51 +1231,24 @@
   (update-invalidated-paths-and-formulas)
   cn)
 
-;; ***** change-constraint-strength *****
-
-(defun change-constraint-strength (cn strength)
-  (let* ((strength-num (sb:get-strength strength)))
-    (cond ((not (constraint-p cn))
-	   (cerror "noop" "change-constraint-strength: ~S not a constraint" cn))
-	  ((eql strength-num (sb:cn-strength cn))
-	   ;; don't need to change strength
-	   nil)
-	  ((not (cn-connection-p cn :graph))
-	   ;; cn not in graph -- just change field
-	   (setf (sb:cn-strength cn) strength-num))
-	  (t
-	   (with-no-invalidation-update
-	       (sb:change-constraint-strength cn strength-num))
-	   ;; update invalid paths/formulas only after changing strength,
-	   ;; to prevent recursive call to skyblue
-	   (update-invalidated-paths-and-formulas)
-	   ))
-    strength))
-
-;; ***** experimental fn to access plans *****
-
-(defun create-plan (cns)
-  (let* ((plan (sb:extract-plan cns)))
-    plan))
-
-(defun valid-plan-p (plan)
-  (and (sb:sb-plan-p plan)
-       (sb:sb-plan-valid plan)))
-
-(defun run-plan (plan)
-  (cond ((valid-plan-p plan)
-	 (sb:execute-plan plan)
-	 (update-invalidated-paths-and-formulas))
-	(t
-	 (cerror "noop" "can't run invalidated plan: ~S" plan))))
-
-(defun propagate-plan-from-cn (cn)
-  (let* ((plan (sb:get-sb-slot cn :cached-plan)))
-    (unless (valid-plan-p plan)
-      (setq plan (create-plan (list cn)))
-      (sb:set-sb-slot cn :cached-plan plan))
-    (run-plan plan)
-    cn))
+;; (defun change-constraint-strength (cn strength)
+;;   (let* ((strength-num (sb:get-strength strength)))
+;;     (cond ((not (constraint-p cn))
+;; 	   (cerror "noop" "change-constraint-strength: ~S not a constraint" cn))
+;; 	  ((eql strength-num (sb:cn-strength cn))
+;; 	   ;; don't need to change strength
+;; 	   nil)
+;; 	  ((not (cn-connection-p cn :graph))
+;; 	   ;; cn not in graph -- just change field
+;; 	   (setf (sb:cn-strength cn) strength-num))
+;; 	  (t
+;; 	   (with-no-invalidation-update
+;; 	       (sb:change-constraint-strength cn strength-num))
+;; 	   ;; update invalid paths/formulas only after changing strength,
+;; 	   ;; to prevent recursive call to skyblue
+;; 	   (update-invalidated-paths-and-formulas)
+;; 	   ))
+;;     strength))
 
 (defvar *fn-to-hook-plist* '(kr::s-value-fn                   s-value-fn-hook
 			     kr::kr-call-initialize-method    kr-call-initialize-method-hook

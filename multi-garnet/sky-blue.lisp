@@ -62,7 +62,7 @@
 ;; ***** sky-blue object definitions *****
 
 ;; constraint representation:
-;;   
+;;
 ;;   field         | type      | description
 ;; ----------------+-----------+--------------------------------------------
 ;; variables       | set of    | the variables that this constraint references.
@@ -397,7 +397,7 @@
 
 (defmacro do-selected-method-input-vars ((var-var cn-form) . body)
   (let ((cn-var (gentemp))
-	(mt-var (gentemp)))	
+	(mt-var (gentemp)))
     `(let* ((,cn-var ,cn-form)
 	    (,mt-var (cn-selected-method ,cn-var)))
        (do-method-input-vars (,var-var ,cn-var ,mt-var) ,@body))
@@ -776,56 +776,51 @@
     )
     cn)
 
-;; Changes the strength of a cn that is already within the graph, modifying
-;; the graph and propagating walkabout strengths as needed.  If a
-;; constraint is not in the graph, its strength can simply be changed by
-;; calling (setf (CN-strength) cn), without calling this function.
-
-(defun change-constraint-strength (cn strength)
-  (with-sky-blue-recursion-check
-      (let* ((new-strength (get-strength strength))
-	     (old-strength (CN-strength cn))
-	     (old-enforced (enforced cn)))
-	;; change strength
-	(setf (CN-strength cn) new-strength)
-	;; clear stacks
-	(init-stacks)
-	;; propagate walkstrengths, and collect any unenforced cns
-	;; that may now be enforcable
-	(cond ((weaker new-strength old-strength)
-	       ;; making the cn weaker
-	       (cond (old-enforced
-		      ;; weakening an enforced cn: it may be revoked
-		      ;; propagate walkstrength downstream from cn
-		      ;; with new strength
-		      (propagate-walkstrength nil cn)
-		      ;; collect all unenforced cns downstream of cn
-		      ;; with the same or weaker strength than old-strength
-		      (collect-unenforced nil cn old-strength t)
-		      )
-		     (t
-		      ;; weakening an unenforced cn: simply change strength
-		      nil))
-	       )
-	      ((weaker old-strength new-strength)
-	       ;; strengthening the cn
-	       (cond (old-enforced
-		      ;; strengthening an enforced cn: propagate walkstrengths
-		      (propagate-walkstrength nil cn)
-		      )
-		     (t
-		      ;; strengthening an unenforced cn: it may now be enforcable
-		      (sb-cns-set-add *unenforced-cns-stack* cn)
-		      ))
-	       )
-	      (t
-	       ;; strength the same: noop.
-	       ))
-	;; construct LGB mgraph
-	(update-method-graph)
-	;; enforce method graph cns by evaluating cn methods.
-	(exec-from-roots)
-	new-strength)))
+;; (defun change-constraint-strength (cn strength)
+;;   (with-sky-blue-recursion-check
+;;       (let* ((new-strength (get-strength strength))
+;; 	     (old-strength (CN-strength cn))
+;; 	     (old-enforced (enforced cn)))
+;; 	;; change strength
+;; 	(setf (CN-strength cn) new-strength)
+;; 	;; clear stacks
+;; 	(init-stacks)
+;; 	;; propagate walkstrengths, and collect any unenforced cns
+;; 	;; that may now be enforcable
+;; 	(cond ((weaker new-strength old-strength)
+;; 	       ;; making the cn weaker
+;; 	       (cond (old-enforced
+;; 		      ;; weakening an enforced cn: it may be revoked
+;; 		      ;; propagate walkstrength downstream from cn
+;; 		      ;; with new strength
+;; 		      (propagate-walkstrength nil cn)
+;; 		      ;; collect all unenforced cns downstream of cn
+;; 		      ;; with the same or weaker strength than old-strength
+;; 		      (collect-unenforced nil cn old-strength t)
+;; 		      )
+;; 		     (t
+;; 		      ;; weakening an unenforced cn: simply change strength
+;; 		      nil))
+;; 	       )
+;; 	      ((weaker old-strength new-strength)
+;; 	       ;; strengthening the cn
+;; 	       (cond (old-enforced
+;; 		      ;; strengthening an enforced cn: propagate walkstrengths
+;; 		      (propagate-walkstrength nil cn)
+;; 		      )
+;; 		     (t
+;; 		      ;; strengthening an unenforced cn: it may now be enforcable
+;; 		      (sb-cns-set-add *unenforced-cns-stack* cn)
+;; 		      ))
+;; 	       )
+;; 	      (t
+;; 	       ;; strength the same: noop.
+;; 	       ))
+;; 	;; construct LGB mgraph
+;; 	(update-method-graph)
+;; 	;; enforce method graph cns by evaluating cn methods.
+;; 	(exec-from-roots)
+;; 	new-strength)))
 
 ;; this fn takes a list of cns in the graph, and executes their selected
 ;; methods, and any downstream methods.  This can be used to cause input
@@ -1480,7 +1475,7 @@
 	  (cond ((not (eql prop-mark (CN-mark cn)))
 		 ;; this cn has already been processed: ignore
 		 nil)
-		((any-immediate-upstream-cns-marked cn prop-mark) 
+		((any-immediate-upstream-cns-marked cn prop-mark)
 		 ;; Some of this cn's upstream cns have not been processed:
 		 ;; there must be a cycle.  Add cycle to plan, unmarking
 		 ;; cycle cns.
@@ -1507,7 +1502,7 @@
 		     unless (member var cycle-outputs)
 		     collect var))))
 	 )
-    (loop for cn in cycle-cns do (setf (CN-mark cn) nil))	  
+    (loop for cn in cycle-cns do (setf (CN-mark cn) nil))
     (list cycle-cns cycle-inputs cycle-outputs)))
 
 ;; execute the cns and cycles in (sb-plan-list plan).
@@ -1574,7 +1569,7 @@
 	  (invalidate-constraint-plans input-cn))
 	)))
   )
-  
+
 (defun invalidate-constraint-plans (invalid-cn)
   (let* ()
     (loop for plan in (get-sb-slot invalid-cn :valid-plans) do
@@ -1595,5 +1590,3 @@
 	       (set-sb-slot cn :valid-plans
 			    (remove plan (get-sb-slot cn :valid-plans)))))
 	))
-
-
