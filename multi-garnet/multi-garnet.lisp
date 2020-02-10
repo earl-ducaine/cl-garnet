@@ -1272,7 +1272,6 @@
 (defun propagate-plan-from-cn (cn)
   (let* ((plan (sb:get-sb-slot cn :cached-plan)))
     (unless (valid-plan-p plan)
-      ;; we have to create the plan
       (setq plan (create-plan (list cn)))
       (sb:set-sb-slot cn :cached-plan plan))
     (run-plan plan)
