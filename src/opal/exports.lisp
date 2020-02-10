@@ -1,25 +1,8 @@
-;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: OPAL; Base: 10 -*-
-;;-------------------------------------------------------------------;;
-;;          The Garnet User Interface Development Environment.       ;;
-;;-------------------------------------------------------------------;;
-;;  This code was written as part of the Garnet project at           ;;
-;;  Carnegie Mellon University, and has been placed in the public    ;;
-;;  domain.                                                          ;;
-;;-------------------------------------------------------------------;;
-
-;;; $Id$
-
-
-
-;;  This file contains the export list for Opal.
 
 (in-package "OPAL")
 
 (defvar *debug-opal-mode* nil)
 (setf (get :garnet-modules :opal) T)
-
-
-;;; This is the export list for as much of OPAL as I could find (FMG).
 
 ;;; Import some stuff from GEM that used to be in OPAL.
 (eval-when (:execute :load-toplevel :compile-toplevel)
@@ -28,9 +11,6 @@
 	    gem:Display-Info-Display gem:Display-Info-Screen gem:Display-Info-Root-Window
 	    gem:Display-Info-Line-Style-GC gem:Display-Info-Filling-Style-GC
 
-	    ;; gem:*Fixed-Font-Family* gem:*Serif-Font-Family* gem:*Sans-Serif-Font-Family*
-	    ;; gem:*Small-Font-Size* gem:*Medium-Font-Size*
-	    ;; gem:*Large-Font-Size* gem:*Very-Large-Font-Size*
 	    gem:*Small-Font-Point-Size* gem:*Medium-Font-Point-Size*
 	    gem:*Large-Font-Point-Size* gem:*Very-Large-Font-Point-Size*
 	    gem:default-font-from-file)
@@ -97,80 +77,7 @@
 	    SET-SELECTION-TO-X-Y-POSITION
 	    SET-TEXT
 	    Set-X-Cut-Buffer
-	    Stuff
-	    TEXT-TO-PURE-LIST
-	    TEXT-TO-STRING
-	    TOGGLE-SELECTION
-	    add-component
-	    add-components
-	    add-item
 	    aggregate
-	    arc
-	    arrow-cursor
-	    arrow-cursor-mask
-	    arrow-pair
-	    arrowhead
-	    be
-	    bitmap
-	    black
-	    black-fill
-	    blue
-	    blue-fill
-	    blue-line
-	    bottom-side
-	    bounding-box
-	    calculate-bounding-box
-	    center
-	    change-cursors
-	    change-garnet-display
-	    change-item
-	    char-width
-	    circle
-	    clean-up
-	    color
-	    color-to-index
-	    convert-coordinates
-	    create-pixmap-image window-to-pixmap-image
-	    cursor-font
-	    cursor-multi-text
-	    cursor-text
-	    cyan
-	    cyan-fill
-	    cyan-line
-	    dark-gray-fill
-	    dashed-line
-	    default-filling-style
-	    default-font
-	    default-line-style
-	    deiconify-window
-	    destroy
-	    destroy-me
-	    diamond-fill
-	    disconnect-garnet
-	    do-all-components
-	    do-components
-	    do-in-clip-rect
-	    do-items
-	    dotted-line
-	    draw
-	    erase
-	    exported
-	    filling-style
-	    font
-	    font-from-file
-	    fullzoom-window
-	    garbage-cursor
-	    garbage-cursor-mask
-	    garbage-pair
-	    get-cursor-index
-	    get-standard-font
-	    graphic-quality
-	    graphical-object
-	    gray-fill
-	    gray-line
-	    green
-	    green-fill
-	    green-line
 	    gv-bottom
 	    gv-bottom-is-top-of
 	    gv-center-x
