@@ -27,19 +27,16 @@
 	       cl-fad
 	       cl-ppcre
 	       cl-store
-	       cl-vectors
+	       ;; cl-vectors
 	       trivial-features
 	       clx
-	       trivial-dump-core)
+	       ;; trivial-dump-core
+	       )
   :license "MIT-ish (also public domain, see LICENSE)"
   :author "CMU Garnet Team (plus various others, see LICENSE)"
   :description " GUI toolkit (c. 1990 look/feel)"
   :components
-  ((:file "post-processing"
-	  :depends-on
-	  (opal inter ps aggregadgets gadgets debug protected-eval
-		gesture demos multi-garnet lapidary))
-   (:file "package")
+  ((:file "package")
    (:file "clx-compatability" :depends-on (package))
    (:module utils
 	    :pathname ""
@@ -80,7 +77,7 @@
    	    :pathname "src/opal"
    	    :depends-on (utils gem kr opal-boot)
    	    :components
-	     ((:file "text-functions")
+	    ((:file "text-functions")
 	     (:file "text")
 	     (:file "update-basics")
 	     (:file "halftones")
@@ -255,54 +252,21 @@
    	    :depends-on (:utils :gem :kr :opal :ps :gadgets :protected-eval
 				:gesture)
    	    :components
-	    ((:file "demos")
-	     (:file "demo-3d")
-	     (:file "demo-angle")
-	     (:file "demo-animator")
-	     (:file "demo-arith")
-	     (:file "demo-array")
-	     (:file "garnet-calculator")
-	     (:file "demo-virtual-agg")
-	     (:file "demo-clock")
-	     (:file "demo-editor")
-	     (:file "demo-file-browser")
-	     (:file "demo-gadgets")
-	     (:file "demo-gesture")
-	     (:file "demo-graph")
-	     (:file "demo-grow")
-	     (:file "demo-logo")
-	     (:file "demo-manyobjs")
-	     (:file "demo-menu")
-	     (:file "demo-mode")
-	     (:file "demo-motif")
-	     (:file "demo-moveline")
-	     (:file "demo-multifont")
-	     (:file "demo-multiwin")
-	     (:file "demo-pixmap")
-	     ;; (:file "demo-schema-browser")
-	     ;; (:file "demo-scrollbar")
-	     ;; (:file "demo-sequence")
-	     ;; (:file "demo-text")
-	     ;; (:file "demo-truck")
-	     ;; (:file "demo-twop")
-	     ;; (:file "mge")
-	     ;; (:file "demo-othello")
-	     ;; (:file "demo-xasperate")
-	     ;; (:file "demo-unistrokes")
-	     ;; (:file "garnetdraw")
-	     ;; (:file "demos-controller")
-	     ;; (:file "tour")
-	     ;; (:file "tour-transcript")
+	    (;; (:file "demos")
+	     ;; (:file "demo-3d")
+	     ;; (:file "demo-angle")
+	     ;; (:file "demo-animator")
+	     ;; )
 	     ))
    (:module lapidary2
-   	    :pathname "src/lapidary"
-   	    :depends-on (utils)
-   	    :components
-   	    ((:file "lapidary-compiler")
+	    :pathname "src/lapidary"
+	    :depends-on (utils)
+	    :components
+	    ((:file "lapidary-compiler")
 	     (:file "lapidary-functions-loader")
-   	     (:file "lapidary-functions")
-   	     (:file "mouse-bindings")))
-      (:module multi-garnet
+	     (:file "lapidary-functions")
+	     (:file "mouse-bindings")))
+   (:module multi-garnet
 	    :pathname "multi-garnet"
 	    :depends-on (lapidary)
 	    :serial t
@@ -317,18 +281,19 @@
 	    :pathname "src/lapidary"
 	    :depends-on (lapidary2 gadgets)
 	    :components
-	    ((:file "mouse-bindings")
-	     (:file "parameters")
-	     (:file "defs")
+	    (;; (:file "mouse-bindings")
+	     ;; (:file "parameters")
+	     ;; (:file "defs")
 	     ;; (:file "macros")
 	     ;; (:file "constraint-gadget-compiler")
 	     ;; (:file "cg-defs")
 	     ))
-   (:module last
-	    :pathname ""
-	    :depends-on (:utils :kr :gem :opal :inter :ps :aggregadgets
-				:gadgets :debug :protected-eval :gesture :demos
-				:lapidary2
-				 :multi-garnet)
-	    :components
-	    ((:file "post-processing")))))
+   ;; (:module last
+   ;; 	    :pathname ""
+   ;; 	    :depends-on (:utils :kr :gem :opal :inter :ps :aggregadgets
+   ;; 				:gadgets :debug :protected-eval :gesture :demos
+   ;; 				:lapidary2
+   ;; 				:multi-garnet)
+   ;; 	    :components
+   ;; 	    ((:file "post-processing")))
+   ))

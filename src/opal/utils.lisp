@@ -98,35 +98,36 @@
 
 
 (defun make-image (filename &rest args)
-    (error "Don't know how to automatically save an image for this
-            lisp.  Please consult your lisp's user manual for
-            instructions.~%")
+  ;;   (error "Don't know how to automatically save an image for this
+  ;;           lisp.  Please consult your lisp's user manual for
+  ;;           instructions.~%")
 
-    (multiple-value-bind (quit gc verbose libfile flush-source-info? extra-args)
-	(extract-image-args args)
-  ;; When the image is restarted, we want *readtable* to be restored
-  ;; to its current value, instead of being reinitialized to the
-  ;; default.  This will keep the #k<> and #f() reader macros active
-  ;; in the saved image.
-    (when verbose (format t "Disconnecting Garnet..."))
-    (opal:disconnect-garnet)
-    (when verbose (format t "disconnected.~%"))
-  (setf garnet-image-date (time-to-string))
-  (when gc
-    (when verbose (format t "Garbage collecting..."))
-    (sb-ext:gc :full t)
-    (when verbose (format t "collected.~%")))
+  ;;   (multiple-value-bind (quit gc verbose libfile flush-source-info? extra-args)
+  ;; 	(extract-image-args args)
+  ;; ;; When the image is restarted, we want *readtable* to be restored
+  ;; ;; to its current value, instead of being reinitialized to the
+  ;; ;; default.  This will keep the #k<> and #f() reader macros active
+  ;; ;; in the saved image.
+  ;;   (when verbose (format t "Disconnecting Garnet..."))
+  ;;   (opal:disconnect-garnet)
+  ;;   (when verbose (format t "disconnected.~%"))
+  ;; (setf garnet-image-date (time-to-string))
+  ;; (when gc
+  ;;   (when verbose (format t "Garbage collecting..."))
+  ;;   (sb-ext:gc :full t)
+  ;;   (when verbose (format t "collected.~%")))
 
-  (setf garnet-user::*herald-items* nil)
-  (setf (getf garnet-user::*herald-items* :garnet)
-	`("    Garnet Version " ,common-lisp-user::garnet-version-number))
+  ;; (setf garnet-user::*herald-items* nil)
+  ;; (setf (getf garnet-user::*herald-items* :garnet)
+  ;; 	`("    Garnet Version " ,common-lisp-user::garnet-version-number))
 
-  (when verbose (format t "Saving image..."))
-  (setf sb-ext:*init-hooks*
-	(append sb-ext:*init-hooks* (list #'garnet-restart-function)))
-  (trivial-dump-core:dump-image filename)
-  (when verbose
-    (format t "saved.~%"))))
+  ;; (when verbose (format t "Saving image..."))
+  ;; (setf sb-ext:*init-hooks*
+  ;; 	(append sb-ext:*init-hooks* (list #'garnet-restart-function)))
+  ;; (trivial-dump-core:dump-image filename)
+  ;; (when verbose
+  ;;   (format t "saved.~%")))
+    )
 
 (defun Get-Garnet-Bitmap (bitmapname)
   (opal:read-image (merge-pathnames bitmapname cl-user::Garnet-Bitmap-PathName)))
