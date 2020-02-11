@@ -73,10 +73,6 @@
            (- (g-value-fixnum ,gob :height) (- ,value (g-value-fixnum ,gob :top))))
      (setf (g-value ,gob :top) ,value)))
 
-(defsetf bottom-side (gob) (value)
-  `(setf (g-value ,gob :height)
-         (+ (g-value-fixnum ,gob :height) (- ,value (bottom ,gob)))))
-
 ;; The following allow access and setting to the gobs center
 ;; position.
 
