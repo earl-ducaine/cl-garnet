@@ -82,36 +82,3 @@
 (defmacro draw (schema &rest args)
   `(let ((the-schema ,schema))
     (kr-send the-schema :draw the-schema ,@args)))
-
-
-(defmacro set-styles (schema &rest args)
-  `(let ((the-schema ,schema))
-    (kr-send the-schema :set-styles the-schema ,@args)))
-
-(defmacro set-frr-bbox (schema &rest args)
-  `(let ((the-schema ,schema))
-    (kr-send the-schema :set-frr-bbox the-schema ,@args)))
-
-(defmacro dothings ((varname &rest things) &body body)
- "Same as 'dolist', except 'things' are not a list.  Does not cons."
- (let ((count (length things))
-       (tagname   (gensym "TOP-TAG"))
-       (countname (gensym "COUNT"))
-       case-entries)
-  (dolist (thing things)
-    (push (list (decf count) thing) case-entries))
-  (setq case-entries (nreverse case-entries))
-  `(let ((,countname ,(length things))
-         ,varname)
-    (tagbody
-      ,tagname
-      (unless (zerop ,countname)
-	(setq ,varname (case (decf ,countname) ,@case-entries))
-        ,@body
-        (go ,tagname))))))
-
-(declaim (inline get-thickness))
-(defun get-thickness (gob)
-  (let* ((line-style (g-value gob :line-style))
-	 (thickness  (and line-style (g-value line-style :line-thickness))))
-    (if thickness (max thickness 1) 0)))
