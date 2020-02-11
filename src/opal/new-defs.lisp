@@ -73,35 +73,3 @@
   (format stream "#<Update-Info dirty-p ~A invalid-p ~A>"
 	(update-info-dirty-p struct)
 	(update-info-invalid-p struct)))
-
-(defstruct (win-update-info (:print-function win-update-info-print-function))
-        fix-update-slots-objects
-	invalid-view-objects
-	invalid-objects
-	invalid-xor-fastdraws
-	invalid-copy-fastdraws
-	invalid-slots
-	new-bbox
-	clip-mask-1
-	clip-mask-2
-	old-aggregate
-        width
-        height
-	exposed-bbox)
-
-(defun win-update-info-print-function (struct stream depth)
-  (declare (ignore depth))
-  (format stream "#<Win-UI v ~A o ~A x ~A c ~A s ~A f ~A>"
-     (win-update-info-invalid-view-objects struct)
-     (win-update-info-invalid-objects struct)
-     (win-update-info-invalid-xor-fastdraws struct)
-     (win-update-info-invalid-copy-fastdraws struct)
-     (win-update-info-invalid-slots struct)
-     (win-update-info-fix-update-slots-objects struct)
-     ))
-
-(defvar *free-cons* NIL)
-
-(defvar *font-hash-table* (make-hash-table
-			   :test #'equal
-			   #+sb-thread :synchronized #+sb-thread t))
