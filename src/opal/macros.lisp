@@ -23,15 +23,7 @@
 (in-package "OPAL")
 
 
-;; Wrappers for KR-SEND.
-(defmacro add-component (schema &rest args)
-  `(let ((the-schema ,schema))
-     (kr-send the-schema :add-component the-schema ,@args)))
-
-(defmacro remove-component (schema &rest args)
-  `(let ((the-schema ,schema))
-    (kr-send the-schema :remove-component the-schema ,@args)))
-
-(defmacro move-component (schema &rest args)
-  `(let ((the-schema ,schema))
-    (kr-send the-schema :move-component the-schema ,@args)))
+;; ;; Wrappers for KR-SEND.
+;; (defmacro add-component (schema &rest args)
+;;   `(let ((the-schema ,schema))
+;;      (kr-send the-schema :add-component the-schema ,@args)))
