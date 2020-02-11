@@ -1,27 +1,5 @@
-;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: OPAL; Base: 10 -*-
-;;*******************************************************************;;
-;;          The Garnet User Interface Development Environment.       ;;
-;;*******************************************************************;;
-;;  This code was written as part of the Garnet project at           ;;
-;;  Carnegie Mellon University, and has been placed in the public    ;;
-;;  domain.                                                          ;;
-;;*******************************************************************;;
-
 
 (in-package :opal)
-
-(declaim (notinline bottom))
-(declaim (notinline right))
-
-;;; Some premature optimization.
-(declaim (inline q-min))
-(defun q-min (x y)
-  "Two-argument fixnum version of min."
-  #+cmu
-  (declare (values fixnum))
-  (declare (fixnum x y))
-  (if (< x y) x y))
-
 
 (create-instance 'line-style nil
   (:constant T))
@@ -49,7 +27,6 @@
   (:visible (o-formula (let ((parent (gvl :parent)))
 			    (or (null parent) (gv parent :visible)))
                        t))
-  ;; The following are the controls for the schema printer
   (:limit-values '((:is-a-inv 5)))
   (:global-limit-values 5))
 
@@ -89,12 +66,9 @@
                    (setf max-y (q-max max-y (+ (or (gv child :top) 0)
 					     (or (gv child :height) 0))))))
 	      (q-max 0 (- max-y min-y)))))
-
   (:visible (o-formula (let ((parent (gvl :parent)))
 			    (or (null parent) (gv parent :visible)))
-                       t))
-
-)
+                       t)))
 
 (create-instance 'GRAPHICAL-OBJECT view-object
   :declare ((:type (fixnum :top :left :width :height)

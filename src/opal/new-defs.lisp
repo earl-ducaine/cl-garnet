@@ -224,21 +224,3 @@
 (defmacro aggregate-invalidate (gob win-info)
  `(setf (win-update-info-invalid-view-objects ,win-info)
 	(get-cons ,gob (win-update-info-invalid-view-objects ,win-info))))
-
-;; this adds the object to the window's invalid-objects entry in its
-;; :win-update-info slot and then sets the object's invalid-p to T.
-(defmacro make-object-invalid (gob gob-update-info the-window)
- `(let ((w-info (g-local-value ,the-window :win-update-info)))
-    (if (update-info-aggregate-p ,gob-update-info)
-	(aggregate-invalidate ,gob w-info)
-	(case (g-value ,gob :fast-redraw-p)
-		((NIL) (normal-invalidate ,gob w-info))
-		((T)   (xor-invalidate    ,gob w-info))
-		(T     (copy-invalidate   ,gob w-info))))
-    (setf (update-info-invalid-p ,gob-update-info) T)))
-
-(defun new-garnet-window-name ()
-  (let ((*print-base* 10))
-    (format nil "Opal ~S" (incf *opal-window-count*))))
-
-(defparameter *auxilliary-reconnect-routines* ())

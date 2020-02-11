@@ -106,14 +106,9 @@
     (when a-window
       (let ((gob-update-info (the UPDATE-INFO (g-local-value gob :update-info))))
 	(set-display-slots gob a-window t)
-	;; Place the object on its window's invalid-objects list
-	(make-object-invalid gob gob-update-info a-window)
-	;; Invalidate all of the aggregate's children (recursively)
 	(if (update-info-aggregate-p gob-update-info)
 	    (do-all-components gob
-	      #'(lambda (c)
-		  (let ((c-update-info (g-value c :update-info)))
-		    (make-object-invalid c c-update-info a-window)))))
+	      #'(lambda (c))))
 	(setf (bbox-valid-p (update-info-old-bbox gob-update-info)) NIL))))
   ;; Signal we have changed components list
   (mark-as-changed a-aggregate :components)
