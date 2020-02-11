@@ -27,11 +27,6 @@
 
 (defmacro weaker (s1 s2) `(> ,s1 ,s2))
 
-(defvar *strength-list*
-    (loop for key in *strength-keyword-list*
-	collect (get-strength key)))
-
-
 (defvar *max-strength* (get-strength :max))
 (defvar *min-strength* (get-strength :min))
 
@@ -76,7 +71,9 @@
 		      (format str "{cn-~A}" (get-sb-slot cn :name)))
 		     ((sb-constraint-strength cn)
 		      (format str "{cn~A}"
-			      (get-strength-keyword (sb-constraint-strength cn))))
+			      ;; (get-strength-keyword (sb-constraint-strength cn))
+			      :max
+			      ))
 		     (t (format str "{cn}")))))
 	    )
   variables
@@ -530,18 +527,6 @@
   num-strengths
   cns-stacks)
 
-(defun sb-cns-set-create (max-cns)
-  (let* ((num-strengths (length *strength-list*))
-	 (cns-per-strength (truncate max-cns num-strengths))
-	 (strength-cns-stacks (make-array (list num-strengths))))
-    (loop for index from 0 to (1- num-strengths) do
-	  (setf (aref strength-cns-stacks index)
-	    (sb-stack-create cns-per-strength)))
-    (make-sb-cns-set :size 0
-		     :cns-stacks strength-cns-stacks
-		     :num-strengths num-strengths)
-    ))
-
 (defun sb-cns-set-clear (stack)
   (let ((stacks (sb-cns-set-cns-stacks stack)))
     (loop for index from 0 to (1- (sb-cns-set-num-strengths stack))
@@ -643,41 +628,15 @@
 	    (setq *sky-blue-running* nil))
 	  )))
 
-;; ********************************************************************************
-;;                       SkyBlue algorithm
-;; ********************************************************************************
 
-;; Sky-Blue global stacks: rather than passing these stacks between the
-;; different functions, these are saved as global variables.
-
-;; stack of unenforced cns that we want to try enforcing, sorted by
-;; strength from strongest to weakest
-(defvar *unenforced-cns-stack* (sb-cns-set-create 200))
-
-;; stack of newly-undetermined variables that we will trace downstream from to
-;; find unenforced cns.
 (defvar *undetermined-vars-stack* (sb-stack-create 100))
-
-;; Stack of vars and cns.  To satisfy the enforced cns in the current
-;; method graph, we will trace downstream from these vars and cns, evaling
-;; methods.  Actually, things are a little more complicated: the functions
-;; below should be used to add and remove things from this stack.
 (defvar *exec-roots-stack* (sb-stack-create 100))
 
-;; We only want to exec downstream of undetermined variables that are
-;; invalid.
 (defun exec-roots-add-undet-var (var)
   (when (not (VAR-valid var))
     (sb-stack-push *exec-roots-stack* var)
     ))
 
-;; When a constraint is added to the stack, its original selected method is
-;; also added, so that we can tell whether the constraint method has been
-;; switched back (if the current selected method is the same as the
-;; original method, then the constraint method doesn't need to be
-;; executed).  When a constriant is added to this stack, its :in-exec-roots
-;; property is also set, so that any given constraint is only added once to
-;; this stack.
 (defun exec-roots-add-cn (cn old-mt)
   (unless (get-sb-slot cn :in-exec-roots)
     (sb-stack-push *exec-roots-stack* old-mt)
@@ -688,8 +647,6 @@
 (defun exec-roots-empty ()
   (sb-stack-empty *exec-roots-stack*))
 
-;; pop var or (cn and saved-mt), returning values (1) :var or :cn, (2) the
-;; cn or var, (3) the save-mt, if there is one.
 (defun exec-roots-pop ()
   (let* ((obj (sb-stack-top *exec-roots-stack*)))
     (typecase obj
@@ -712,7 +669,6 @@
       ))
   (sb-stack-clear *exec-roots-stack*)
   (sb-stack-clear *undetermined-vars-stack*)
-  ;; (sb-cns-set-clear *unenforced-cns-stack*)
   )
 
 ;; ***** Sky-Blue Entry Points *****

@@ -157,16 +157,8 @@
       (s-value kr-obj slot (get-sb-slot obj slot)))
     (kr::gv-value-fn kr-obj slot)))
 
-;; ***** m-constraint macro used to construct constraint given method forms *****
-
-;; examples:
-;;  (m-constraint :strong ((yy (gvl :a)) (xx (gvl :a :b))) (setf yy xx))
-
 (defmacro m-constraint (strength-spec var-specs &rest method-specs)
-  (let* ((strength
-	  (cond ((find strength-spec *strength-keyword-list*)
-		 strength-spec)
-		(t (error "bad strength in m-constraint: ~S" strength-spec))))
+  (let* ((strength :max)
 	 (var-names (loop for spec in var-specs collect
 			  (if (symbolp spec) spec (first spec))))
 	 (var-paths (loop for spec in var-specs collect
