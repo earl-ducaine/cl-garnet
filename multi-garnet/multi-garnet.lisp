@@ -729,32 +729,6 @@
 
 (defvar *variable-input-reserve* nil)
 
-(defun create-variable-input (v val strength)
-  (let* ((cn (if *variable-input-reserve*
-		 (pop *variable-input-reserve*)
-	       (create-mg-constraint
-		:methods (list (create-mg-method
-				:code #'(lambda (cn)
-					  (set-variable-value
-					   (first (cn-variables cn))
-					   (get-sb-slot cn :variable-input-value)
-					   ))
-				:output-indices '(0))
-			       )
-		;; create dummy os, so we won't accidently activate
-		;; this cn by storing it in an object slot.
-		:os (os nil :var-input-cn)
-		:name (create-new-name "var-input-cn")
-		))))
-    (set-sb-slot cn :variable-input-value val)
-    (set-sb-slot cn :input-flag t)
-    (setf (CN-variables cn) (list v))
-    ;; init output lists in cn methods
-    (init-method-outputs cn)
-    (setf (CN-strength cn) (get-strength strength))
-    (setf (CN-connection cn) :connected)
-    cn))
-
 (defun dispose-variable-input (cn)
   (push cn *variable-input-reserve*))
 
@@ -765,27 +739,6 @@
     ))
 
 (defvar *variable-stay-reserve* nil)
-
-(defun create-variable-stay (v strength)
-  (let* ((stay (if *variable-stay-reserve*
-		   (pop *variable-stay-reserve*)
-		 (create-mg-constraint
-		  :methods (list (create-mg-method
-				  :code #'(lambda (cn) cn)
-				  :output-indices '(0))
-				 )
-		  ;; create dummy os, so we won't accidently activate
-		  ;; this cn by storing it in an object slot.
-		  :os (os nil :var-stay-cn)
-		  :name (create-new-name "var-stay-cn")
-		  ))))
-    (set-sb-slot stay :stay-flag t)
-    (setf (CN-variables stay) (list v))
-    ;; init output lists in cn methods
-    (init-method-outputs stay)
-    (setf (CN-strength stay) (get-strength strength))
-    (setf (CN-connection stay) :connected)
-    stay))
 
 (defun dispose-variable-stay (stay)
   (push stay *variable-stay-reserve*))
@@ -800,31 +753,12 @@
   (loop for cn in cns do
     (mg-add-constraint cn)))
 
-(defun stay-spec-to-cns (stay-spec-list)
-  (loop for (obj slot strength) in stay-spec-list
-   collect (create-variable-stay
-	    (get-object-slot-var obj slot)
-	    (if strength strength *default-input-strength*))))
-
 (defun add-with-set-cns (cns)
   (loop for cn in cns do
     (mg-add-constraint cn)))
 
-(defun with-set-spec-to-cns (spec-list)
-  (loop for (obj slot value strength) in spec-list
-   collect (create-variable-input
-	    (get-object-slot-var obj slot)
-	    value
-	    (if strength strength *default-input-strength*))))
-
-;; ***** interface to sky-blue add-constraint and remove-constraint *****
-
 (defvar *constraint-hooks* nil)
-
 (defvar *unsatisfied-max-constraint-warning* nil)
-
-;; note: change cn-connection before adding or removing cn, so cn will be
-;; marked correctly in snapshot
 
 (defun mg-add-constraint (cn)
   (with-no-invalidation-update
