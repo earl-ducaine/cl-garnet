@@ -1,38 +1,12 @@
-;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: KR; Base: 10 -*-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;         The Garnet User Interface Development Environment.      ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; This code was written as part of the Garnet project at          ;;;
-;;; Carnegie Mellon University, and has been placed in the public   ;;;
-;;; domain.  If you are using this code or any part of Garnet,      ;;;
-;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
-;;; Change log:
-;;;
-;;;  3-05-94 amickish - Allowed lists for font-face (for Mac)
-;;; 12-20-93 amickish - Added (or string cons) for font-names
-;;; 08-23-93 amickish - Named lots of types, and added documentation strings
-;;; 07-07-93 amickish - Added Check-Menubar-Items type; put some types in
-;;;            different packages for LispWorks
-;;; 03-06-93 amickish - Added (integer 1); added interactor type declarations
-
 
 (in-package :kr)
 
-;; kr-boolean is now defined in KR itself
 
 (eval-when (:execute :load-toplevel :compile-toplevel)
   (export '(items-type accelerators-type known-as-type filename-type
 	    inter-window-type))
+  )
 
-  (proclaim '(special opal::color opal::bitmap opal::filling-style
-	      opal::line-style opal::font opal::font-from-file opal::aggregate
-	      ;; inter::interactor-window inter::priority-level
-	      )))
-
-;;;; Named types used in Opal, Interactors, etc.
 
 (def-kr-type ITEMS-TYPE () 'list
   "[list of items: (\"Label2\"...)]")
@@ -120,22 +94,6 @@
 (def-kr-type FILLING-STYLE-OR-NIL ()
   '(or (is-a-p opal::filling-style) null)
   "[either an instance of opal:FILLING-STYLE or NIL]")
-
-;; (def-kr-type WINDOW ()
-;;   '(is-a-p inter::interactor-window)
-;;   "[an instance of inter::INTERACTOR-WINDOW]")
-
-;; (def-kr-type WINDOW-OR-NIL ()
-;;   '(or (is-a-p inter::interactor-window) null)
-;;   "[either an instance of inter:INTERACTOR-WINDOW or NIL]")
-
-(def-kr-type FONT ()
-  '(or (is-a-p opal::font) (is-a-p opal::font-from-file))
-  "[either an instance of opal:FONT or opal:FONT-FROM-FILE]")
-
-;; (def-kr-type PRIORITY-LEVEL ()
-;;   '(is-a-p inter::priority-level)
-;;   "[an instance of inter:PRIORITY-LEVEL]")
 
 (def-kr-type AGGREGATE ()
   '(is-a-p opal::aggregate)

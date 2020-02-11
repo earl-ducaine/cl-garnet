@@ -190,26 +190,6 @@
 (defun the-font-descent (text-extents)
   (seventh text-extents))
 
-
-;;   IMAGE MACROS
-(declaim (inline read-image))
-(defun read-image (pathname &optional root-window)
-  (gem:read-an-image (or root-window
-			 (g-value gem:device-info :current-root))
-		     pathname))
-
-(declaim (inline write-image))
-(defun write-image (pathname image &optional root-window)
-  (gem:write-an-image (or root-window
-			  (g-value gem:device-info :current-root))
-		      pathname image))
-
-
-;; For "basics.lisp"
-
-;;; The accessors for the sides of the gob adjust both the dimensions,
-;;  and position of the gob based on the given value.
-
 (declaim (inline left-side))
 (defun left-side (gob)
   (g-value gob :left))

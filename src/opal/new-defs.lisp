@@ -203,16 +203,6 @@
   `(or (bbox-intersect-p ,bbox ,bb1)
        (and ,bb2 (bbox-intersect-p ,bbox ,bb2))))
 
-;;; Erases this bbox from this window (or its buffer). Ignores valid bit.
-;;;
-(defun erase-bbox (bb a-window buffer)
-  (gem:clear-area a-window (bbox-x1 bb) (bbox-y1 bb)
-		  (- (bbox-x2 bb) (bbox-x1 bb))
-		  (- (bbox-y2 bb) (bbox-y1 bb))
-		  buffer))
-
-
-
 ;; Takes a bbox and a clip mask, and goes through and sets the fields properly
 ;; within the clip mask.  Ignores valid bit.
 (defmacro bbox-to-clip-mask (bb clip-mask)

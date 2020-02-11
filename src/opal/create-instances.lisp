@@ -40,92 +40,33 @@
 
 (create-instance 'GRAPHIC-QUALITY NIL)
 
+;; (create-instance 'FONT graphic-quality
+;;   :declare ((:type (font-family :family)
+;; 		   (font-face :face)
+;; 		   (font-size :size))
+;; 	    (:type (fixnum :max-char-ascent :max-char-descent :font-height))
+;; 	    (:maybe-constant :family :face :size))
+;;   (:ps-font-name (o-formula (ps-font-name (gvl :family) (gvl :face))))
+;;   (:ps-font-size (o-formula (ps-font-size (gvl :size))))
+;;   (:family :fixed)
+;;   (:face :roman)
+;;   (:size :medium)
+;;   (:char-width (o-formula (when (eq (gvl :family) :fixed)
+;; 			    (gem:text-width (gv gem:device-info :current-root)
+;; 					    (gv :self) "X"))))
+;;   (:max-char-ascent
+;;    (o-formula (let ((root (gv gem:DEVICE-INFO :current-root)))
+;;                 (if root (gem:max-character-ascent root (gv :self)) 0))))
+;;   (:max-char-descent
+;;    (o-formula (let ((root (gv gem:DEVICE-INFO :current-root)))
+;;                 (if root (gem:max-character-descent root (gv :self)) 0))))
+;;   (:font-height (o-formula (+ (gvl-fixnum :max-char-ascent)
+;; 			      (gvl-fixnum :max-char-descent))))
+;;   )
 
-(create-instance 'FONT-FROM-FILE graphic-quality
-  :declare ((:parameters :font-path :font-name)
-	    (:type ((or string cons) :font-name)
-		   ((or null string) :font-path)
-		   (fixnum :max-char-ascent :max-char-descent :font-height))
-	    (:ignored-slots :display-xfont-plist))
-  (:xfont (o-formula (fff-to-xfont (gvl :font-from-file)
-				   (gv gem:DEVICE-INFO :current-root))))
-  (:max-char-ascent
-   (o-formula (let ((root (gv gem:DEVICE-INFO :current-root)))
-                (if root (gem:max-character-ascent root (gv :self)) 0))))
-  (:max-char-descent
-   (o-formula (let ((root (gv gem:DEVICE-INFO :current-root)))
-                (if root (gem:max-character-descent root (gv :self)) 0))))
-  (:font-height (o-formula (+ (gvl-fixnum :max-char-ascent)
-			      (gvl-fixnum :max-char-descent))))
-  (:display-xfont-plist NIL)
-  (:font-path NIL)
-  (:font-name "")
-  ;; Can't transport machine-dependent font info, so just use Courier
-  (:ps-font-name "/Courier")
-  (:ps-font-size (o-formula (gvl :font-height))))
+;; (create-instance 'DEFAULT-FONT FONT
+;;    (:constant T))
 
-
-(define-method :initialize font-from-file (fff)
-  (s-value fff :font-from-file fff))
-
-(setf (gethash '(:fixed :roman :medium) *font-hash-table*)
-      (create-instance 'default-font-from-file font-from-file
-	(:font-name (o-formula (gem:make-font-name
-				(gv gem:DEVICE-INFO :current-device)
-				'(:fixed :roman :medium))))))
-
-(defun fff-to-xfont (fff root-window)
-  (gem:font-to-internal root-window fff))
-
-
-(create-instance 'FONT graphic-quality
-  :declare ((:type (font-family :family)
-		   (font-face :face)
-		   (font-size :size))
-	    (:type (fixnum :max-char-ascent :max-char-descent :font-height))
-	    (:maybe-constant :family :face :size))
-  (:ps-font-name (o-formula (ps-font-name (gvl :family) (gvl :face))))
-  (:ps-font-size (o-formula (ps-font-size (gvl :size))))
-  (:family :fixed)
-  (:face :roman)
-  (:size :medium)
-  (:xfont (o-formula (fff-to-xfont (gvl :font-from-file)
-				   (gv gem:device-info :current-root))))
-  (:char-width (o-formula (when (eq (gvl :family) :fixed)
-			    (gem:text-width (gv gem:device-info :current-root)
-					    (gv :self) "X"))))
-  (:max-char-ascent
-   (o-formula (let ((root (gv gem:DEVICE-INFO :current-root)))
-                (if root (gem:max-character-ascent root (gv :self)) 0))))
-  (:max-char-descent
-   (o-formula (let ((root (gv gem:DEVICE-INFO :current-root)))
-                (if root (gem:max-character-descent root (gv :self)) 0))))
-  (:font-height (o-formula (+ (gvl-fixnum :max-char-ascent)
-			      (gvl-fixnum :max-char-descent))))
-  (:font-from-file
-   (o-formula
-    (let ((key (list (gvl :family) (gvl :face) (gvl :size))))
-      (or (gethash key *font-hash-table*)
-	  (let* ((root-window (gv gem:DEVICE-INFO :current-device))
-                 (font-name (gem:make-font-name root-window key)))
-	    (if (gem:font-name-p root-window font-name)
-                (setf (gethash key *font-hash-table*)
-		      (create-instance NIL font-from-file
-		        (:font-name font-name)))
-	        (progn
-		  (warn "~A not allowed for :~A slot of font; substituting default-font."
-			(car font-name)
-			(cdr font-name))
-		  default-font-from-file))))))))
-
-(create-instance 'DEFAULT-FONT FONT
-   (:constant T))
-
-(create-instance 'CURSOR-FONT FONT-FROM-FILE
-  (:constant T)
-  (:font-name "cursor"))
-
-;; Used in multifonts
 (defvar *Font-Table* (make-array '(3 4 4)
       :initial-contents '(((nil nil nil nil) (nil nil nil nil)
                            (nil nil nil nil) (nil nil nil nil))
@@ -134,8 +75,7 @@
                           ((nil nil nil nil) (nil nil nil nil)
                            (nil nil nil nil) (nil nil nil nil)))))
 
-;; Fetch a font from the font table corresponding to the attribute parameters.
-;;
+
 (defun GET-STANDARD-FONT (family face size)
   "
 Get-Standard-Font returns a font object.  If this function is called multiple
@@ -171,7 +111,7 @@ avoiding wasted objects.
 		(:face face)
 		(:size size))))))
 
-(setf (aref *Font-Table* 0 0 1) default-font)
+;;(setf (aref *Font-Table* 0 0 1) default-font)
 
 (let ((first-time T)
       (first-allocatable-colormap-index 1))
@@ -210,16 +150,17 @@ avoiding wasted objects.
   (:green 1.0)
   (:blue 1.0)
   (:color-p t)    ;; depreciated, all screens are considered to be 'color'
-  (:xcolor
-   (o-formula
-    (gem:colormap-property
-     (gv gem:device-info :current-root)
-     :MAKE-COLOR (gvl :red) (gvl :green) (gvl :blue))))
-  (:colormap-index
-   (o-formula
-    (gem:colormap-property
-     (gv gem:device-info :current-root)
-     :ALLOC-COLOR (gvl :xcolor)))))
+  ;; (:xcolor
+  ;;  (o-formula
+  ;;   (gem:colormap-property
+  ;;    (gv gem:device-info :current-root)
+  ;;    :MAKE-COLOR (gvl :red) (gvl :green) (gvl :blue))))
+  ;; (:colormap-index
+  ;;  (o-formula
+  ;;   (gem:colormap-property
+  ;;    (gv gem:device-info :current-root)
+  ;;    :ALLOC-COLOR (gvl :xcolor))))
+  )
 
 (define-method :destroy-me COLOR (hue)
 	       (destroy-schema hue))
@@ -650,13 +591,6 @@ avoiding wasted objects.
   (:hit-full-interior-p nil))
 
 
-#|
-;;; 11/4/1993	dzg & amickish -- commented out.
-;;; (defun font-to-xfont (opal-font display)
-;;;   (gem:font-to-internal gem::*root-window*
-;;; 			(g-value opal-font :font-from-file)))
-|#
-
 
 (create-instance 'BITMAP graphical-object
   :declare ((:parameters :left :top :image :filling-style
@@ -667,24 +601,24 @@ avoiding wasted objects.
 	    (:update-slots :visible :fast-redraw-p :image :top :left
 			   :line-style :filling-style :draw-function))
   (:image nil)
-  (:width (o-formula (let ((image (gvl :image)))
-		       (if image
-			   (gem:image-size
-			    (or (gvl :window)
-				(gv gem:DEVICE-INFO :current-root))
-			    image)
-			   0))))
-  (:height (o-formula
-	    (let ((image (gvl :image)))
-	      (if image
-		  (multiple-value-bind (width height)
-		      (gem:image-size
-		       (or (gvl :window)
-			   (gv gem:DEVICE-INFO :current-root))
-		       image)
-		    (declare (ignore width))
-		    height)
-		  0))))
+  ;; (:width (o-formula (let ((image (gvl :image)))
+  ;; 		       (if image
+  ;; 			   (gem:image-size
+  ;; 			    (or (gvl :window)
+  ;; 				(gv gem:DEVICE-INFO :current-root))
+  ;; 			    image)
+  ;; 			   0))))
+  ;; (:height (o-formula
+  ;; 	    (let ((image (gvl :image)))
+  ;; 	      (if image
+  ;; 		  (multiple-value-bind (width height)
+  ;; 		      (gem:image-size
+  ;; 		       (or (gvl :window)
+  ;; 			   (gv gem:DEVICE-INFO :current-root))
+  ;; 		       image)
+  ;; 		    (declare (ignore width))
+  ;; 		    height)
+  ;; 		  0))))
   (:filling-style default-filling-style))
 
 (defvar MOTIF-GRAY-VALUE (float (/ #xd3d3 #xffff)))

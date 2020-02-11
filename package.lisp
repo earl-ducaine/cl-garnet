@@ -76,51 +76,8 @@
 (defpackage :gem
   (:use :common-lisp :kr )
   (:export *black*
-	   *color-screen-p*
-	   *exposure-event-mask*
-	   *fixed-font-family*
-	   *function-alist*
-	   *large-font-point-size*
-	   *large-font-size*
-	   *medium-font-point-size*
-	   *medium-font-size*
-	   *read-write-colormap-cells-p*
-	   *sans-serif-font-family*
-	   *screen-height*
-	   *screen-width*
-	   *serif-font-family*
-	   *small-font-point-size*
-	   *small-font-size*
-	   *update-lock*
-	   *very-large-font-point-size*
-	   *very-large-font-size*
-	   *white*
-	   CLEAR-AREA
-	   COLORMAP-PROPERTY
-	   FONT-NAME-P
-	   FONT-TO-INTERNAL
-	   IMAGE-SIZE
-	   MAKE-FONT-NAME
-	   MAX-CHARACTER-ASCENT
-	   READ-AN-IMAGE
-	   TEXT-WIDTH
-	   WINDOW-FROM-DRAWABLE
-	   WRITE-AN-IMAGE
-	   copy-display-info
-	   default-font-from-file
-	   device-info
-	   display-info
-	   display-info-display
-	   display-info-filling-style-gc
-	   display-info-line-style-gc
-	   display-info-root-window
-	   display-info-screen
-	   init-device
-	   make-display-info
-	   max-character-descent)
-  ;; (:import-from :garnet-utils :black)
-  ;; (:import-from :garnet-utils :white)
-  )
+
+  ))
 
 
 
