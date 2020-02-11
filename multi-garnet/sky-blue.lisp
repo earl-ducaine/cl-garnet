@@ -16,25 +16,9 @@
 	(t
 	 (error "get-strength: bad strength: ~S" strength))))
 
-(defun get-strength-keyword (strength)
-  (cond ((and (integerp strength)
-	      (nth strength *strength-keyword-list*))
-	 (nth strength *strength-keyword-list*))
-	((member strength *strength-keyword-list*)
-	 strength)
-	(t
-	 (error "get-strength-keyword: bad strength: ~S" strength))))
-
 (defmacro weaker (s1 s2) `(> ,s1 ,s2))
 
 (defvar *max-strength* (get-strength :max))
-(defvar *min-strength* (get-strength :min))
-
-;; backwards compatibility: support required, wekaest
-(defvar *required-strength* (get-strength :required))
-(defvar *weakest-strength* (get-strength :weakest))
-
-;; ***** marks *****
 
 (defvar *mark-counter* 0)
 
@@ -71,7 +55,6 @@
 		      (format str "{cn-~A}" (get-sb-slot cn :name)))
 		     ((sb-constraint-strength cn)
 		      (format str "{cn~A}"
-			      ;; (get-strength-keyword (sb-constraint-strength cn))
 			      :max
 			      ))
 		     (t (format str "{cn}")))))
@@ -146,7 +129,7 @@
                                (mark nil)
 			       (set-slot-fn nil)
                                )
-  (let ((cn (make-sb-constraint :strength (get-strength strength)
+  (let ((cn (make-sb-constraint :strength :max
                                 :methods methods
                                 :variables variables
                                 :selected-method selected-method
@@ -306,7 +289,7 @@
   (let ((var (make-sb-variable :value value
 			       :constraints constraints
 			       :determined-by determined-by
-			       :walk-strength (get-strength walk-strength)
+			       :walk-strength :max
 			       :mark mark
 			       :valid valid
 			       :set-slot-fn set-slot-fn
@@ -837,66 +820,6 @@
 	 )
 	))
 
-;; ***** propagating walkabout strengths *****
-
-;; propagate walkstrengths downstream from the variables in undet-var-stack
-;; and the constraint root-cn.  Cycles are broken by inserting the most
-;; conservative walkstrength (:min).
-
-(defvar *propagate-walkstrength-stack* (sb-stack-create 100))
-
-(defun propagate-walkstrength (undet-var-stack root-cn)
-  (let* ((prop-mark (new-mark))
-	 cn)
-    ;; mark all cns we will be processing, and collect ordered pplan
-    (sb-stack-clear *propagate-walkstrength-stack*)
-    ;; make sure undetermined vars have walkstrength of :min,
-    ;; and propagate walkstrength below them
-    (when undet-var-stack
-      (do-sb-stack-elts (var undet-var-stack)
-	(setf (VAR-walk-strength var) *min-strength*)
-	(pplan-add *propagate-walkstrength-stack* var prop-mark)
-	))
-    ;; propagate below root-cn, if any
-    (when root-cn
-      (pplan-add *propagate-walkstrength-stack* root-cn prop-mark)
-      )
-    ;; scan through pplan
-    (loop until (sb-stack-empty *propagate-walkstrength-stack*) do
-	  (setq cn (sb-stack-pop *propagate-walkstrength-stack*))
-	  (when (eql (CN-mark cn) prop-mark)
-	    (cond ((any-immediate-upstream-cns-marked cn prop-mark)
-		   ;; Some of this cn's upstream cns have not been processed: there
-		   ;; must be a cycle.  Handle it, possibly unmarking other cns in
-		   ;; the cycle, and calculating their walkstrengths.
-		   (propagate-walkstrength-cycle cn prop-mark)
-		   )
-		  (t
-		   ;; cn is not in a cycle: compute walkstrengths and mark it done
-		   (do-selected-method-output-vars (var cn)
-		     (setf (VAR-walk-strength var) (compute-walkabout cn var)))
-		   (setf (CN-mark cn) nil)
-		   ))
-	    ))
-    ))
-
-;; cn is in a cycle: break the cycle by setting any upstream vars
-;; determined by the unprocessed cns to have :min walkabout strength (the
-;; most conservative choice).
-(defun propagate-walkstrength-cycle (cn prop-mark)
-  (do-selected-method-input-vars (var cn)
-    (let ((upstream-cn (VAR-determined-by var)))
-      (when (and upstream-cn
-		 (eql prop-mark (CN-mark upstream-cn)))
-	(setf (VAR-walk-strength var) *min-strength*))))
-  ;; compute walkstrengths for cn, and mark it done
-  (do-selected-method-output-vars (var cn)
-    (setf (VAR-walk-strength var) (compute-walkabout cn var)))
-  (setf (CN-mark cn) nil)
-  )
-
-;; any-immediate-upstream-cns-unmarked returns t iff none of the cns
-;; determining the inputs of cn are marked with the given mark
 (defun any-immediate-upstream-cns-marked (cn mark)
   (do-selected-method-input-vars (var cn)
     (let ((upstream-cn (VAR-determined-by var)))
@@ -908,38 +831,6 @@
   nil)
 
 
-;; compute-walkabout calculates the walkabout strength of the variable var
-;; which is currently a selected output variable of the constraint cn.
-;; This value is a lower bound on the strength a cn would need to have to
-;; set this variable (causing this cn to change its selected mt).  Note:
-;; different output vars may have different walkstrengths, since the cn may
-;; have different sets of possible mts that don't set each var.  Note: have
-;; to handle the case where some method's output vars is a subset of other
-;; method's output vars.  Normally, one wouldn't define such a cn, but it
-;; is possible to get this in Multi-Garnet with indirect var paths.
-(defun compute-walkabout (cn var)
-  (let* ((min-strength (CN-strength cn))
-         (selected-method (CN-selected-method cn))
-         (selected-out-vars (MT-outputs selected-method)))
-    (loop for mt in (CN-methods cn)
-          unless (eql mt selected-method)
-          do
-          (let ((out-vars (MT-outputs mt))
-                (max-strength *min-strength*))
-            (when (not (member var out-vars))
-              ;; mt doesn't output to var, so this is a possible alternative
-              ;; mt for this cn.  Find max output var walkstrength for this
-              ;; mt, ignoring vars set by currently selected mt
-              (loop for out-var in out-vars
-		  when (and (weaker max-strength (VAR-walk-strength out-var))
-			    (not (member out-var selected-out-vars)))
-		  do (setf max-strength (VAR-walk-strength out-var)))
-              ;; note: final max-strength will be :min if there is a mt
-              ;; with outputs that are a subset of the selected method
-              (when (weaker max-strength min-strength)
-                (setf min-strength max-strength)))
-            ))
-    min-strength))
 
 (defvar *exec-pplan-stack* (sb-stack-create 100))
 
