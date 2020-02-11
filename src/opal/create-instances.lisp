@@ -194,82 +194,6 @@ avoiding wasted objects.
   (:constant T))
 
 
-(create-instance 'LINE-0 line-style
-  (:constant T))
-(defvar THIN-LINE LINE-0)
-(create-instance 'LINE-1 line-style
-  (:constant T)
-  (:line-thickness 1))
-(create-instance 'LINE-2 line-style
-  (:constant T)
-  (:line-thickness 2))
-(create-instance 'LINE-4 line-style
-  (:constant T)
-  (:line-thickness 4))
-(create-instance 'LINE-8 line-style
-  (:constant T)
-  (:line-thickness 8))
-
-(create-instance 'RED-LINE line-style
-  (:constant T)
-  (:foreground-color red))
-(create-instance 'GREEN-LINE line-style
-  (:constant T)
-  (:foreground-color green))
-(create-instance 'BLUE-LINE line-style
-  (:constant T)
-  (:foreground-color blue))
-(create-instance 'CYAN-LINE line-style
-  (:constant T)
-  (:foreground-color cyan))
-(create-instance 'YELLOW-LINE line-style
-  (:constant T)
-  (:foreground-color yellow))
-(create-instance 'ORANGE-LINE line-style
-  (:constant T)
-  (:foreground-color orange))
-(create-instance 'PURPLE-LINE line-style
-  (:constant T)
-  (:foreground-color purple))
-(create-instance 'WHITE-LINE line-style
-  (:constant T)
-  (:foreground-color white))
-
-(create-instance 'DOTTED-LINE line-style
-  (:constant T)
-  (:line-style :dash)
-  (:line-thickness 1)
-  (:dash-pattern '(1 1)))
-
-
-(create-instance 'DASHED-LINE line-style
-  (:constant T)
-  (:line-style :dash)
-  (:dash-pattern '(4 4)))
-
-
-(create-instance 'FILLING-STYLE graphic-quality
-  :declare ((:parameters :foreground-color :background-color :fill-style
-			 :fill-rule :stipple)
-	    (:type (fill-style :fill-style)
-		   ((member :even-odd :winding) :fill-rule)
-		   ((is-a-p color) :foreground-color :background-color)))
-  (:fill-style :solid)    ;; or :opaque-stippled or :stippled
-  (:fill-rule :even-odd)  ;; or :winding
-  (:foreground-color black)
-  (:background-color white)
-  (:stipple nil))
-
-
-(create-instance 'DEFAULT-FILLING-STYLE filling-style)
-
-;; For the *-FILL schemas, please see the end of this file (to avoid
-;; forward references, they had to be put there)....
-
-
-;;; View-Object Hierarchy
-;;
-
 (create-instance 'VIEW-OBJECT NIL
   :declare ((:type (fixnum :left :top)
 		   (fixnum :width :height :hit-threshold)
@@ -293,14 +217,6 @@ avoiding wasted objects.
   (:limit-values '((:is-a-inv 5)))
   (:global-limit-values 5))
 
-
-;; Aggregates allow for a group of graphical-objects to be associated
-;; together to form a new, more complex object.
-;;
-;; An implementation detail:
-;; The children of a gob are stored in a list from bottom most to top
-;; most, since we want to redraw fastest and redraws occur from bottom to
-;; top.
 (create-instance 'AGGREGATE view-object
   :declare (:type (list :components)
 		  (fixnum :left :top :width :height))
