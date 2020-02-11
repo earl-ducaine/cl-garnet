@@ -539,32 +539,3 @@ avoiding wasted objects.
   :declare ((:parameters :point-list :hit-full-interior-p :line-style
 			 :filling-style :draw-function :visible))
   (:hit-full-interior-p nil))
-
-
-
-(create-instance 'BITMAP graphical-object
-  :declare ((:parameters :left :top :image :filling-style
-			 :draw-function :visible)
-	    (:maybe-constant :left :top :image :filling-style :visible)
-	    (:ignored-slots :depended-slots :update-slots :update-slots-values
-			    :root-pixmap-plist :image)
-	    (:update-slots :visible :fast-redraw-p :image :top :left
-			   :line-style :filling-style :draw-function))
-  (:image nil)
-  (:filling-style default-filling-style))
-
-(defvar MOTIF-GRAY-VALUE (float (/ #xd3d3 #xffff)))
-
-(defvar MOTIF-BLUE-VALUES
-  (list (float (/ #x7272 #xffff)) (float (/ #x9f9f #xffff)) 1))
-
-(defvar MOTIF-GREEN-VALUES
-  (list (float (/ #x5f5f #xffff)) (float (/ #x9e9e #xffff))
-        (float (/ #xa0a0 #xffff))))
-
-(defvar MOTIF-ORANGE-VALUES (list 1 .6 .4))
-
-(defvar MOTIF-LIGHT-GRAY-VALUE .9)
-(defvar MOTIF-LIGHT-BLUE-VALUES (list 0.7217459 0.8998047 1))
-(defvar MOTIF-LIGHT-GREEN-VALUES (list 0.61834437 0.8660691 0.7))
-(defvar MOTIF-LIGHT-ORANGE-VALUES (list 1 0.9129001 0.71510005))
