@@ -358,10 +358,7 @@
 
 (defstruct (sb-stack
 	    (:conc-name "SB-STACK-")
-	    (:print-function
-	     (lambda (stack str lvl)
-	       (declare (ignore lvl))
-	       (sb-stack-print stack str)))
+
 	    )
   size
   vector
@@ -377,112 +374,6 @@
 (defun sb-stack-clear (stack)
   (setf (sb-stack-size stack) 0)
   stack)
-
-(defun sb-stack-push (stack elt)
-  (cond ((< (sb-stack-size stack) (sb-stack-max-vector-size stack))
-	 (setf (aref (sb-stack-vector stack) (sb-stack-size stack)) elt))
-	(t
-	 (push elt (sb-stack-overflow stack))))
-  (incf (sb-stack-size stack) 1)
-  elt)
-
-(defun sb-stack-pop (stack)
-  (let* ((new-size (- (sb-stack-size stack) 1)))
-    (setf (sb-stack-size stack) new-size)
-    (cond ((< new-size 0)
-	   (cerror "return nil" "sb-stack-pop: stack empty")
-	   (setf (sb-stack-size stack) 0)
-	   nil)
-	  ((< new-size (sb-stack-max-vector-size stack))
-	   (aref (sb-stack-vector stack) new-size))
-	  (t
-	   (pop (sb-stack-overflow stack))))
-    ))
-
-(defun sb-stack-top (stack)
-  (let* ((new-size (- (sb-stack-size stack) 1)))
-    (cond ((< new-size 0)
-	   (cerror "return nil" "sb-stack-top: stack empty")
-	   nil)
-	  ((< new-size (sb-stack-max-vector-size stack))
-	   (aref (sb-stack-vector stack) new-size))
-	  (t
-	   (car (sb-stack-overflow stack))))
-    ))
-
-(defun sb-stack-empty (stack)
-  (zerop (sb-stack-size stack)))
-
-;; loops over all elts in the stack, without removing any.
-(defmacro do-sb-stack-elts ((var-var stack-form) . body)
-  (let ((stack-var (gentemp))
-	(vector-var (gentemp))
-	(elt-var (gentemp))
-	(overflow-var (gentemp))
-	(vector-size-var (gentemp)))
-    `(let* ((,stack-var ,stack-form)
-	    (,vector-var (sb-stack-vector ,stack-var))
-	    (,overflow-var (sb-stack-overflow ,stack-var))
-	    (,vector-size-var (sb-stack-max-vector-size ,stack-var)))
-       (loop for ,elt-var from (1- (sb-stack-size ,stack-var)) downto 0 do
-	     (let ((,var-var (cond ((< ,elt-var ,vector-size-var)
-				    (aref ,vector-var ,elt-var))
-				   (t (pop ,overflow-var)))))
-	       ,@body)))
-    ))
-
-(defun sb-stack-member (stack obj)
-  (do-sb-stack-elts (elt stack)
-    (when (eql elt obj)
-      (return-from sb-stack-member t)))
-  nil)
-
-(defun sb-stack-print (stack str)
-  (format str "{stack(~S):" (sb-stack-size stack))
-  (do-sb-stack-elts (elt stack) (format str " ~S" elt))
-  (format str "}"))
-
-;; ***** stack of cns sorted by strength *****
-
-(defstruct (sb-cns-set
-	    (:conc-name "SB-CNS-SET-")
-	    ;; (:print-function
-	    ;;  (lambda (stack str lvl)
-	    ;;    (declare (ignore lvl))
-	    ;;    (sb-cns-set-print stack str)))
-	    )
-  size
-  num-strengths
-  cns-stacks)
-
-(defun sb-cns-set-clear (stack)
-  (let ((stacks (sb-cns-set-cns-stacks stack)))
-    (loop for index from 0 to (1- (sb-cns-set-num-strengths stack))
-	do (sb-stack-clear (aref stacks index)))
-    (setf (sb-cns-set-size stack) 0)
-    stack))
-
-(defun sb-cns-set-add (stack cn)
-  (let* ((stacks (sb-cns-set-cns-stacks stack))
-	 (cn-stack (aref stacks (CN-strength cn))))
-    (unless (sb-stack-member cn-stack cn)
-      (sb-stack-push cn-stack cn)
-      (incf (sb-cns-set-size stack) 1))
-    cn))
-
-(defun sb-cns-set-empty (stack)
-  (zerop (sb-cns-set-size stack)))
-
-;; (defun sb-cns-set-print (stack str)
-;;   (format str "{cns-set(~S):" (sb-cns-set-size stack))
-;;   (let ((stacks (sb-cns-set-cns-stacks stack)))
-;;     (loop for index from 0 to (1- (sb-cns-set-num-strengths stack))
-;; 	do (let ((cn-stack (aref stacks index)))
-;; 	     (when (not (sb-stack-empty cn-stack))
-;; 	       (format str " {")
-;; 	       (do-sb-stack-elts (elt cn-stack) (format str "~S " elt))
-;; 	       (format str "}")))))
-;;   (format str "}"))
 
 (defstruct (sb-plan
 	    (:conc-name "SB-PLAN-")
