@@ -1,18 +1,6 @@
 
 (in-package :opal)
 
-(define-method :initialize opal::aggregate (a-aggregate)
-  (call-prototype-method a-aggregate)
-  (let ((components (g-local-value a-aggregate :components)))
-    (let ((kr::*constants-disabled* T))
-      (s-value a-aggregate :components NIL))
-    (dolist (child components)
-      (unless (g-local-value child :parent)
-	(add-component a-aggregate child :where :front)))
-    (setf (update-info-aggregate-p
-	   (the UPDATE-INFO (g-local-value a-aggregate :update-info)))
-	  T)))
-
 (define-method :destroy-me opal::aggregate (a-aggregate &optional (top-level-p T))
   (if a-aggregate
       (let* ((the-window (g-local-value a-aggregate :window))
