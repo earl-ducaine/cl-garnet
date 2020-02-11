@@ -726,9 +726,6 @@
     (setf (CN-mark cn) nil)
     (loop for v in (CN-variables cn) do
 	  (push cn (VAR-constraints v)))
-    ;; find the method graph to enforce the new cn (if possible),
-    ;; collecting any exec-roots.
-    (sb-cns-set-add *unenforced-cns-stack* cn)
     (exec-from-roots)
     )
   cn)
@@ -987,26 +984,6 @@
                 (setf min-strength max-strength)))
             ))
     min-strength))
-
-;; ***** collect unenforced constraints *****
-
-;; collect-unenforced traces downstream from all of the vars in
-;; undet-var-stack and the constraint root-cn, adding to
-;; *unenforced-cns-stack* any unenforced cns that could possibly output to
-;; these vars or downstream vars.  If collect-equal-p is nil, this only
-;; collects cns strictly weaker than collection-strength.  If
-;; collect-equal-p is non-nil, this collects cns weaker than or with the
-;; same strength as collection-strength.
-(defun collect-unenforced (undet-var-stack root-cn
-			   collection-strength collect-equal-p)
-  (let ((done-mark (new-mark)))
-    (when undet-var-stack
-      (do-sb-stack-elts (var undet-var-stack)
-	(collect-unenforced-mark var collection-strength collect-equal-p done-mark)))
-    (when (and root-cn (enforced root-cn))
-      (do-selected-method-output-vars (var root-cn)
-	(collect-unenforced-mark var collection-strength collect-equal-p done-mark)))
-    ))
 
 (defun collect-unenforced-mark (var collection-strength collect-equal-p done-mark)
   (loop for cn in (VAR-constraints var)
