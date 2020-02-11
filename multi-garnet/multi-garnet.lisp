@@ -418,7 +418,8 @@
 	   	  (set-slot-basic schema slot value
 	   			  :auto-activate-constraints t
 	   			  :invalidate-paths t)))
-	   (update-invalidated-paths-and-formulas))))
+	   ;; (update-invalidated-paths-and-formulas)
+	   )))
   value)
 
 (defun kr-call-initialize-method-hook (schema slot)
