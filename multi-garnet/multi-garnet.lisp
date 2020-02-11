@@ -363,15 +363,6 @@
 	 )
      value))
 
-;; fn that sets slot only, by calling saved s-value-fn
-(defun set-slot-no-checks (obj slot value)
-  (set-slot-basic obj slot value
-		  :prohibit-constraints nil
-		  :auto-activate-constraints nil
-		  :invalidate-paths nil
-		  ))
-
-
 (defun add-constraint-to-slot (obj slot cn)
   (cond ((null (CN-variable-paths cn))
          ;; constraint is not a multi-garnet constraint, so don't auto-connect
@@ -407,18 +398,19 @@
 	   (:break (cerror "continue" "S-VALUE called with bad schema ~S slot ~S, value ~S."
 			   schema slot value))))
 	((eq slot :is-a)
-	 (set-slot-basic schema slot value
-			 :auto-activate-constraints nil
-			 :invalidate-paths nil))
+	 ;; (set-slot-basic schema slot value
+	 ;; 		 :auto-activate-constraints nil
+	 ;; 		 :invalidate-paths nil)
+	 )
 	(t
 	 (let ((slot-var (get-object-slot-prop schema slot :sb-variable)))
 	   (cond (slot-var
-	   	  (set-input-variable slot-var value input-strength))
+	   	  ;; (set-input-variable slot-var value input-strength)
+		  )
 	   	 (t
 	   	  (set-slot-basic schema slot value
 	   			  :auto-activate-constraints t
 	   			  :invalidate-paths t)))
-	   ;; (update-invalidated-paths-and-formulas)
 	   )))
   value)
 
@@ -434,7 +426,6 @@
 (defun copy-down-and-activate-constraints (schema)
   (copy-down-mg-constraints schema)
   (activate-new-instance-cns schema)
-  (update-invalidated-paths-and-formulas)
   )
 
 ;; copies down cns from parent, _without_ activating them
@@ -684,26 +675,6 @@
 	    ))
     ))
 
-;; The function update-invalidated-formulas updates all of the invalid
-;; formulas in *invalidated-formulas*, as well as any formulas on
-;; constrained slots that are invalidated when these formulas are updated,
-;; etc.  This is done recursively here, rather than waiting for the loop in
-;; update-invalidated-paths-and-formulas to call this repeatedly, because
-;; of the possibility that there might be a ligitimate long chain of
-;; formulas on constrained slots.  One difficulty is that we have to take
-;; care of possible cycles of formulas.  We don't want to go into an
-;; infinite loop.  This is handled by keeping a list of updated formulas,
-;; and not updating a formula if it was already updated "upstream" of this
-;; formula.  Since there are only a finite number of formulas, this will
-;; terminate.  Another difficulty is that it is possible that we may update
-;; particular formulas more than once.  For example, if formula A is a root
-;; formula, and A->B and A->C and B->D and C->D, we may update formula D
-;; twice, when going down each of the paths.  It isn't possible to do
-;; clever planning to figure out the right order so that there is no
-;; duplication, since we don't necessarily know whether each formula
-;; updating will actually "take", updating the slot value, or whether other
-;; constraints will override the formula input constraint.
-
 (defun update-invalidated-formulas ()
   (let* ((root-formulas *invalidated-formulas*))
     (setf *invalidated-formulas* nil)
@@ -712,9 +683,6 @@
     ))
 
 (defun recursively-update-formulas (formula done)
-  ;; break recursion if this formula is a member of done, which includes all
-  ;; formulas we have updated (in which case there is a loop), as well as
-  ;; formulas we know that we are going to update later.
   (unless (member formula done)
     (update-invalidated-formula formula)
     (let ((new-invalid-formulas *invalidated-formulas*)
@@ -876,17 +844,6 @@
 (defun set-variable-value (var val)
   (setf (var-value var) val))
 
-(defun set-input-variable (v val strength)
-  ;; we _may_ be able to set variable.  Add&remove cn to set value.
-  (let* ((cn (create-variable-input v val strength)))
-    (mg-add-constraint cn)
-    (mg-remove-constraint cn)
-    (dispose-variable-input cn)
-    (update-invalidated-paths-and-formulas)
-    val))
-
-;; ***** fns for managing reserves of simple input and stay constraints *****
-
 (defvar *variable-input-reserve* nil)
 
 (defun create-variable-input (v val strength)
@@ -1003,7 +960,6 @@
 	   (when *unsatisfied-max-constraint-warning*
 	     (format t "~&Warning: Can't enforce max constraint ~S on object ~S, slot ~S~%"
 		     cn (OS-object (CN-os cn)) (OS-slot (CN-os cn)))))))
-
   ;; update invalid paths/formulas only after adding cn,
   ;; to prevent recursive call to skyblue
   (update-invalidated-paths-and-formulas)
