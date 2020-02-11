@@ -207,12 +207,3 @@
 	  (change-cursors HourGlass-Pair)
 	  ,@body)
      (restore-cursors)))
-
-(defmacro opal-window (window-pair)
-  `(cdr ,window-pair))
-
-(defmacro clx-window (window-pair)
-  `(car ,window-pair))
-
-(defmacro already-been-destroyed (a-window)
-  `(not (kr:schema-p ,a-window)))

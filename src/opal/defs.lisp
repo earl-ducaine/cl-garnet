@@ -39,37 +39,18 @@
 (defvar *event-debug* nil)
 (defvar *expose-throw-aways* 0)
 
-(declaim (fixnum *opal-window-count*))
-(defvar *opal-window-count* 0)
+(defvar diamond-fill NIL)
 
-(defvar diamond-fill NIL)		;; set in halftones.lisp
-
-;;; DefStructs
-;;
-
-;; This defstruct generates the functions Make-Halftone, Copy-Halftone,
-;; Halftone-Percent, Halftone-Device-Image, Halftone-Filling-Style, and
-;; Halftone-P.
 (defstruct (HALFTONE (:print-function halftone-print))
   (percent 0)
   (device-image nil)
   (filling-style nil))
 
-;;; This defstruct generates the functions Make-Cut-String, Copy-Cut-String,
-;;; Cut-String-String, Cut-String-Width, and Cut-String-Left-Bearing.
 (defstruct CUT-STRING
   (string)
   (width 0 :type fixnum)
   (left-bearing))
 
-
-;;; DefSetfs
-;;
-
-;;; Accessors that do calculation from basic gob properties
-
-;; The accessors for the bottom and right of the gob, make it easier to
-;; adjust the far side of the gob's bounding box.
 
 (defsetf bottom (gob) (value)
   `(setf (g-value ,gob :top) (1+ (- ,value (g-value-fixnum ,gob :height)))))
