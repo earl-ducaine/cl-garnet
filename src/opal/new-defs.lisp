@@ -59,17 +59,3 @@
 
 (defsetf update-info-force-computation-p (object) (value)
   `(bit-setter ,object 3 ,value))
-
-
-(defmacro update-info-on-fastdraw-list-p (object)
-  `(logbitp 4 (update-info-bits ,object)))
-
-(defsetf update-info-on-fastdraw-list-p (object) (value)
-  `(bit-setter ,object 4 ,value))
-
-
-(defun update-info-print-function (struct stream depth)
-  (declare (ignore depth))
-  (format stream "#<Update-Info dirty-p ~A invalid-p ~A>"
-	(update-info-dirty-p struct)
-	(update-info-invalid-p struct)))
