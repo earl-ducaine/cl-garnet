@@ -4,9 +4,8 @@
   (export '(add-local-component add-local-interactor remove-local-component
 	    remove-local-interactor add-local-item
 	    remove-local-item remove-nth-item remove-nth-component
-	    notice-items-changed add-interactor remove-interactor
+	    notice-items-changed remove-interactor
 	    take-default-component
-	    ;;replace-item-prototype-object
 	    )))
 
 
@@ -37,10 +36,6 @@
 (defmacro notice-items-changed (agg &optional no-propagation)
   `(kr-send ,agg :notice-items-changed ,agg ,no-propagation))
 
-(defmacro add-interactor (schema &rest args)
-  `(let ((the-schema ,schema))
-    (kr-send the-schema :add-interactor the-schema ,@args)))
-
 (defmacro remove-interactor (schema &rest args)
   `(let ((the-schema ,schema))
     (kr-send the-schema :remove-interactor the-schema ,@args)))
@@ -48,7 +43,3 @@
 (defmacro take-default-component (schema &rest args)
   `(let ((the-schema ,schema))
     (kr-send the-schema :take-default-component the-schema ,@args)))
-
-;; (defmacro replace-item-prototype-object (schema &rest args)
-;;   `(let ((the-schema ,schema))
-;;     (kr-send the-schema :replace-item-prototype-object the-schema ,@args)))

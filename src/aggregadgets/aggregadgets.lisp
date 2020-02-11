@@ -351,23 +351,6 @@ Could not find component of rank ~S in prototype.~%" agget rank)))))
     (if name (with-constants-disabled (destroy-slot agg name)))
     (kr-send opal::aggregate :remove-component agg gob)))
 
-(define-method :move-component opal:aggregadget (agg comp &rest args)
-  (let (where locator #+comment key)
-    (multiple-value-setq (where locator #+comment key) (get-wheres args))
-    (remove-component agg comp)
-    (add-component agg comp where locator)))
-
-(define-method :add-interactor aggregadget (agg interactor)
-  (let (known-as)
-    ;; first add to prototype
-    (add-local-interactor agg interactor)
-    ;; now do instances
-    (setf known-as (g-local-value agg :known-as))
-    (dolist (agg-instance (g-local-value agg :is-a-inv))
-      (let ((interactor-instance (create-instance nil interactor)))
-	(s-value interactor-instance :known-as known-as)
-	(add-interactor agg-instance interactor-instance)))))
-
 (define-method :add-local-interactor aggregadget (agg inter)
   (let ((name (g-local-value inter :known-as)))
     (when name
