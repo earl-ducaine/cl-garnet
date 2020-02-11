@@ -131,15 +131,6 @@ avoiding wasted objects.
     (declare (ignore root-window))
     (setf first-allocatable-colormap-index value)))
 
-;;; :xcolor and :colormap-index map to CLX' color and pixel concepts.
-;;; color is a device independant RGB triplet whereas pixel is a
-;;; device dependant RGB triplet encoded as a 32bit integer.  To
-;;; simplify the only case now found in the real world, truecolor
-;;; displays, we assume that there is only on pixmap and that that
-;;; pixmap is truecolor and hardware defined. (Refer to the CLX
-;;; documentation for more information on this) So, no need to
-;;; allocate, deallocate colors from a color map, just translate them
-;;; from color to pixel as the hardware has defined.
 (create-instance 'COLOR GRAPHIC-QUALITY
   ;; note, :color-name is now depreciated.
   :declare ((:parameters :red :green :blue :color-name)
@@ -149,17 +140,7 @@ avoiding wasted objects.
   (:red 1.0)
   (:green 1.0)
   (:blue 1.0)
-  (:color-p t)    ;; depreciated, all screens are considered to be 'color'
-  ;; (:xcolor
-  ;;  (o-formula
-  ;;   (gem:colormap-property
-  ;;    (gv gem:device-info :current-root)
-  ;;    :MAKE-COLOR (gvl :red) (gvl :green) (gvl :blue))))
-  ;; (:colormap-index
-  ;;  (o-formula
-  ;;   (gem:colormap-property
-  ;;    (gv gem:device-info :current-root)
-  ;;    :ALLOC-COLOR (gvl :xcolor))))
+  (:color-p t)
   )
 
 (define-method :destroy-me COLOR (hue)
@@ -361,15 +342,6 @@ avoiding wasted objects.
 			    (or (null parent) (gv parent :visible)))
                        t))
 
-  ;;; TOA OMITTED
-  ;;; ;; The TOA is the Topmost-Overlapping-Aggregate.  This slot will hopefully
-  ;;; ;; improve the performance of the update algorithm.  The formula given here
-  ;;; ;; is only for AGGREGATEs.  A different one appears within Graphical-Object.
-  ;;; (:toa (o-formula
-  ;;; 	  (let ((parent (gvl :parent)))
-  ;;; 	    (or (and parent (gv parent :toa))
-  ;;; 		(if (gvl :overlapping) kr::*schema-self*)))))
-
 )
 
 
@@ -393,29 +365,7 @@ avoiding wasted objects.
   (:filling-style nil)
   (:select-outline-only nil)
 
- ;;; OMITTING TOA
- ;;;  ;; The TOA is the Topmost-Overlapping-Aggregate.  This slot will hopefully
- ;;;  ;; improve the performance of the update algorithm.  The formula given here
- ;;;  ;; is for NON-AGGREGATE objects.  A different one appears within Aggregates.
- ;;;  (:toa (o-formula
- ;;; 	  (let ((parent (gvl :parent)))
- ;;; 	    (and parent (gv parent :toa)))))
-
   )
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Apparently in the days of the Pharaohs, scribes processing long
-;;  Lisp files had problems because the stones containing the object
-;;  code they generated were very large and heavy. For this reason,
-;;  the original "create-instances.lisp" file was broken into two
-;;  pieces, thereby preventing the scribes from getting hernias. Or
-;;  something like that.
-;;
-;;  At any rate, modern Lisp implementations no longer have this
-;;  problem.
-;;
-;; The code from the former create-instances2.lisp follows.
 
 (create-instance 'LINE graphical-object
   :declare ((:parameters :x1 :y1 :x2 :y2 :line-style :draw-function :visible)
@@ -601,24 +551,6 @@ avoiding wasted objects.
 	    (:update-slots :visible :fast-redraw-p :image :top :left
 			   :line-style :filling-style :draw-function))
   (:image nil)
-  ;; (:width (o-formula (let ((image (gvl :image)))
-  ;; 		       (if image
-  ;; 			   (gem:image-size
-  ;; 			    (or (gvl :window)
-  ;; 				(gv gem:DEVICE-INFO :current-root))
-  ;; 			    image)
-  ;; 			   0))))
-  ;; (:height (o-formula
-  ;; 	    (let ((image (gvl :image)))
-  ;; 	      (if image
-  ;; 		  (multiple-value-bind (width height)
-  ;; 		      (gem:image-size
-  ;; 		       (or (gvl :window)
-  ;; 			   (gv gem:DEVICE-INFO :current-root))
-  ;; 		       image)
-  ;; 		    (declare (ignore width))
-  ;; 		    height)
-  ;; 		  0))))
   (:filling-style default-filling-style))
 
 (defvar MOTIF-GRAY-VALUE (float (/ #xd3d3 #xffff)))
@@ -632,95 +564,7 @@ avoiding wasted objects.
 
 (defvar MOTIF-ORANGE-VALUES (list 1 .6 .4))
 
-;;;  Lite values:  Most of the values are just the outline colors
-;;;  of a MOTIF-xxx colored object, with some slight modifications.
-
 (defvar MOTIF-LIGHT-GRAY-VALUE .9)
 (defvar MOTIF-LIGHT-BLUE-VALUES (list 0.7217459 0.8998047 1))
 (defvar MOTIF-LIGHT-GREEN-VALUES (list 0.61834437 0.8660691 0.7))
 (defvar MOTIF-LIGHT-ORANGE-VALUES (list 1 0.9129001 0.71510005))
-
-
-(create-instance 'MOTIF-GRAY-FILL default-filling-style
-   (:foreground-color (create-instance 'MOTIF-GRAY color
-                         (:red MOTIF-GRAY-VALUE)
-                         (:green MOTIF-GRAY-VALUE)
-                         (:blue MOTIF-GRAY-VALUE))))
-
-(create-instance 'MOTIF-BLUE-FILL default-filling-style
-   (:foreground-color (create-instance 'MOTIF-BLUE color
-                         (:red (first MOTIF-BLUE-VALUES))
-                         (:green (second MOTIF-BLUE-VALUES))
-                         (:blue (third MOTIF-BLUE-VALUES)))))
-
-(create-instance 'MOTIF-ORANGE-FILL default-filling-style
-   (:foreground-color (create-instance 'MOTIF-ORANGE color
-                         (:red (first MOTIF-ORANGE-VALUES))
-                         (:green (second MOTIF-ORANGE-VALUES))
-                         (:blue (third MOTIF-ORANGE-VALUES)))))
-
-(create-instance 'MOTIF-GREEN-FILL default-filling-style
-   (:foreground-color (create-instance 'MOTIF-GREEN color
-                         (:red (first MOTIF-GREEN-VALUES))
-                         (:green (second MOTIF-GREEN-VALUES))
-                         (:blue (third MOTIF-GREEN-VALUES)))))
-
-(create-instance 'MOTIF-LIGHT-GRAY-FILL filling-style
-  (:foreground-color (create-instance 'MOTIF-LIGHT-GRAY color
-		       (:red MOTIF-LIGHT-GRAY-VALUE)
-		       (:green MOTIF-LIGHT-GRAY-VALUE)
-		       (:blue MOTIF-LIGHT-GRAY-VALUE))))
-
-(create-instance 'MOTIF-LIGHT-BLUE-FILL filling-style
-  (:foreground-color (create-instance 'MOTIF-LIGHT-BLUE color
-		       (:red (first MOTIF-LIGHT-BLUE-VALUES))
-		       (:green (second MOTIF-LIGHT-BLUE-VALUES))
-		       (:blue (third MOTIF-LIGHT-BLUE-VALUES)))))
-
-(create-instance 'MOTIF-LIGHT-ORANGE-FILL filling-style
-  (:foreground-color (create-instance 'MOTIF-LIGHT-ORANGE color
-		       (:red (first MOTIF-LIGHT-ORANGE-VALUES))
-		       (:green (second MOTIF-LIGHT-ORANGE-VALUES))
-		       (:blue (third MOTIF-LIGHT-ORANGE-VALUES)))))
-
-(create-instance 'MOTIF-LIGHT-GREEN-FILL filling-style
-  (:foreground-color (create-instance 'MOTIF-LIGHT-GREEN color
-		       (:red (first MOTIF-LIGHT-GREEN-VALUES))
-		       (:green (second MOTIF-LIGHT-GREEN-VALUES))
-		       (:blue (third MOTIF-LIGHT-GREEN-VALUES)))))
-
-
-
-(create-instance 'ARROW-CURSOR bitmap
-  (:constant :image)
-  ;; Have to delay Get-Garnet-Bitmap from being executed before device
-  ;; is initialized
-  (:image (o-formula (Get-Garnet-Bitmap "garnet.cursor"))))
-
-(create-instance 'ARROW-CURSOR-MASK bitmap
-  (:constant :image)
-  (:image (o-formula (Get-Garnet-Bitmap "garnet.mask"))))
-
-(defparameter Arrow-Pair (cons ARROW-CURSOR ARROW-CURSOR-MASK))
-
-
-(create-instance 'HOURGLASS-CURSOR bitmap
-  (:constant :image)
-  (:image (o-formula (Get-Garnet-Bitmap "hourglass.cursor"))))
-
-(create-instance 'HOURGLASS-CURSOR-MASK bitmap
-  (:constant :image)
-  (:image (o-formula (Get-Garnet-Bitmap "hourglass.mask"))))
-
-(defparameter HourGlass-Pair (cons HOURGLASS-CURSOR HOURGLASS-CURSOR-MASK))
-
-(create-instance 'GARBAGE-CURSOR bitmap
-  (:constant :image)
-  (:image (o-formula (Get-Garnet-Bitmap "garbage.cursor"))))
-
-(create-instance 'GARBAGE-CURSOR-MASK bitmap
-  (:constant :image)
-  (:image (o-formula (Get-Garnet-Bitmap "garbage.mask"))))
-
-;;; See windows.lisp for an application of these cursors.
-(defparameter garbage-Pair (cons garbage-CURSOR garbage-CURSOR-MASK))
