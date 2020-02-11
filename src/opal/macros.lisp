@@ -63,22 +63,10 @@
   `(let ((the-schema ,schema))
     (kr-send the-schema :initialize the-schema ,@args)))
 
-(defmacro destroy-me (schema &rest args)
-  `(let ((the-schema ,schema))
-    (kr-send the-schema :destroy-me the-schema ,@args)))
-
-(defmacro destroy (schema &rest args)
-  `(let ((the-schema ,schema))
-    (kr-send the-schema :destroy the-schema ,@args)))
-
-;; (defmacro rotate (schema &rest args)
+;; (defmacro destroy-me (schema &rest args)
 ;;   `(let ((the-schema ,schema))
-;;     (kr-send the-schema :rotate the-schema ,@args)))
+;;     (kr-send the-schema :destroy-me the-schema ,@args)))
 
-;; (defmacro update (schema &rest args)
+;; (defmacro destroy (schema &rest args)
 ;;   `(let ((the-schema ,schema))
-;;     (kr-send the-schema :update the-schema ,@args)))
-
-;; (defmacro draw (schema &rest args)
-;;   `(let ((the-schema ,schema))
-;;     (kr-send the-schema :draw the-schema ,@args)))
+;;     (kr-send the-schema :destroy the-schema ,@args)))
