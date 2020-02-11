@@ -454,13 +454,6 @@
 		    schema slot value (CN-os value)))
 	   ))))
 
-
-(defun remove-bad-inv-objects (schema)
-  (s-value schema :is-a-inv
-	   (loop for obj in (g-value schema :is-a-inv)
-	       when (schema-p obj)
-	       collect obj)))
-
 (defun connect-add-constraint (cn)
   (when (and (os-p (cn-os cn))
 	     (cn-connection-p cn :unconnected))
@@ -526,21 +519,7 @@
 		    ;; now, cn is connected
 		    (setf (CN-connection cn) :connected))))))))
 
-(defun disconnect-constraint (cn)
-  (let* ()
-    (when (cn-connection-p cn :graph)
-      (cerror "cont" "trying to disconnect constraint ~S with connection ~S"
-              cn (CN-connection cn)))
-    (loop for path-os in (CN-path-slot-list cn) do
-      (set-os-prop path-os :sb-path-constraints
-		   (remove cn (get-os-prop path-os :sb-path-constraints))))
-    (setf (CN-path-slot-list cn) nil)
-    (setf (CN-variables cn) nil)
-    (setf (CN-connection cn) :unconnected)))
-
 (defvar *invalidated-formulas* nil)
-
-
 
 (defun propagate-change-hook (schema slot)
   (let ((entry (slot-accessor schema slot)))
@@ -608,18 +587,6 @@
 
 (defvar *path-update-loop-warning* nil)
 
-(defun update-invalidated-path-constraints ()
-  (let* ((path-constraints
-	  (remove-duplicates *invalidated-path-constraints*)))
-    ;; may invalidate other paths during this process -- record
-    (setf *invalidated-path-constraints* nil)
-    (when path-constraints
-      (loop for cn in path-constraints do
-	    ;; (remove-disconnect-constraint cn)
-	    (connect-add-constraint cn)
-	    ))
-    ))
-
 (defun recompute-formula-saving-paths (schema slot)
   ;; increment sweep-mark, so formula doesn't erronously detect circularities
   (incf kr::*sweep-mark* 2)
@@ -633,12 +600,6 @@
 
 (defun dispose-formula-recomputing-constraint (cn)
   (push cn *formula-recomputing-constraint-reserve*))
-
-(defun formula-recomputing-cn-p (cn)
-  (let* ((os (cn-os cn)))
-    (and (null (os-object os))
-	 (eql :formula-recomputing-cn (os-slot os)))
-    ))
 
 (defun get-os-prop (os prop)
   (get-object-slot-prop
@@ -724,22 +685,10 @@
 (defun dispose-variable-input (cn)
   (push cn *variable-input-reserve*))
 
-(defun variable-input-cn-p (cn)
-  (let* ((os (cn-os cn)))
-    (and (null (os-object os))
-	 (eql :var-input-cn (os-slot os)))
-    ))
-
 (defvar *variable-stay-reserve* nil)
 
 (defun dispose-variable-stay (stay)
   (push stay *variable-stay-reserve*))
-
-(defun variable-stay-cn-p (cn)
-  (let* ((os (cn-os cn)))
-    (and (null (os-object os))
-	 (eql :var-stay-cn (os-slot os)))
-    ))
 
 (defun add-variable-stays (cns)
   (loop for cn in cns do
@@ -762,13 +711,6 @@
     (add-constraint cn)
     (cond ((and (not (enforced cn))
 		(eq :max (CN-strength cn)))
-	   ;; We couldn't enforce a newly-added max constraint.
-	   ;; There must be a max-max conflict.  Print msg.
-	   ;; note: we don't remove the cn, so it may become satisfied later
-	   ;; when another max cn is removed.
-	   ;; (when *unsatisfied-max-constraint-warning*
-	   ;;   (format t "~&Warning: Can't enforce max constraint ~S on object ~S, slot ~S~%"
-	   ;; 	     cn (OS-object (CN-os cn)) (OS-slot (CN-os cn))))
 	   )))
   (when *constraint-hooks*
     (dolist (hook *constraint-hooks*)
