@@ -761,7 +761,7 @@
     (setf (CN-connection cn) :graph)
     (add-constraint cn)
     (cond ((and (not (enforced cn))
-		(eq *max-strength* (CN-strength cn)))
+		(eq :max (CN-strength cn)))
 	   ;; We couldn't enforce a newly-added max constraint.
 	   ;; There must be a max-max conflict.  Print msg.
 	   ;; note: we don't remove the cn, so it may become satisfied later
