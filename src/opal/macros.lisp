@@ -35,38 +35,3 @@
 (defmacro move-component (schema &rest args)
   `(let ((the-schema ,schema))
     (kr-send the-schema :move-component the-schema ,@args)))
-
-(defmacro do-all-components (schema &rest args)
-  `(let ((the-schema ,schema))
-    (kr-send the-schema :do-all-components the-schema ,@args)))
-
-;; Added do-items because it would be very helpful to operate over the
-;; items of a virtual-aggregate or an aggrelist. [2003/09/16:rpg]
-
-(defmacro do-items (schema &rest args)
-  `(let ((the-schema ,schema))
-    (kr-send the-schema :do-items the-schema ,@args)))
-
-(defmacro point-to-component (schema &rest args)
-  `(let ((the-schema ,schema))
-    (kr-send the-schema :point-to-component the-schema ,@args)))
-
-(defmacro point-to-leaf (schema &rest args)
-  `(let ((the-schema ,schema))
-    (kr-send the-schema :point-to-leaf the-schema ,@args)))
-
-(defmacro fix-update-slots (schema &rest args)
-  `(let ((the-schema ,schema))
-    (kr-send the-schema :fix-update-slots the-schema ,@args)))
-
-(defmacro initialize (schema &rest args)
-  `(let ((the-schema ,schema))
-    (kr-send the-schema :initialize the-schema ,@args)))
-
-;; (defmacro destroy-me (schema &rest args)
-;;   `(let ((the-schema ,schema))
-;;     (kr-send the-schema :destroy-me the-schema ,@args)))
-
-;; (defmacro destroy (schema &rest args)
-;;   `(let ((the-schema ,schema))
-;;     (kr-send the-schema :destroy the-schema ,@args)))
