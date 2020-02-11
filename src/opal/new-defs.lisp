@@ -1,13 +1,3 @@
-;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: OPAL; Base: 10 -*-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;         The Garnet User Interface Development Environment.      ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; This code was written as part of the Garnet project at          ;;;
-;;; Carnegie Mellon University, and has been placed in the public   ;;;
-;;; domain.  If you are using this code or any part of Garnet,      ;;;
-;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 
 (in-package "OPAL")
 
@@ -18,30 +8,11 @@
   (y2 0 :type fixnum)
   (valid-p nil :type (or t nil)))
 
-
-;; Force-Computation-P is necessary since if an object R is in an aggregate A,
-;; and you add-component that aggregate into another (visible) aggregate, then
-;; R will be marked dirty, but it will not be added to the invalid-objects list
-;; of the window, so at update time all its values in :update-slots-values will
-;; be incorrect and will need to be recomputed.  Obtuse, but this works!
-
 (defstruct (update-info (:print-function update-info-print-function))
 	window
 	old-bbox
 	bits)
-
-;;; This constant is used in debug/objsize.lisp to determine the
-;;; size in bytes of an update-info structure.
-;;; NOTE: IF YOU CHANGE THE DEFINITION OF UPDATE-INFO, BE SURE
-;;; TO CHANGE THE VALUE OF THIS CONSTANT.
 (defconstant number-of-slots-of-update-info-struct 3)
-
-;;; The update-info-bits field is used to encode the following:
-;;;   dirty-p
-;;;   aggregate-p
-;;;   invalid-p
-;;;   force-computation-p
-;;;   on-fastdraw-list-p
 
 (defmacro bit-setter (object bit-position value)
   (cond ((eq value T)
@@ -118,8 +89,6 @@
         height
 	exposed-bbox)
 
-;;; The invalid objects slot used to be unprintable because it had
-;;; an extra item at the end, but that has been eliminated.
 (defun win-update-info-print-function (struct stream depth)
   (declare (ignore depth))
   (format stream "#<Win-UI v ~A o ~A x ~A c ~A s ~A f ~A>"
@@ -136,8 +105,6 @@
 (defvar *font-hash-table* (make-hash-table
 			   :test #'equal
 			   #+sb-thread :synchronized #+sb-thread t))
-
-
 
 (defmacro merge-bbox (dest-bbox source-bbox)
   `(when (bbox-valid-p ,source-bbox)
@@ -158,7 +125,6 @@
 	(setf (bbox-y2 ,dest-bbox) (bbox-y2 ,source-bbox))
 	(setf (bbox-valid-p ,dest-bbox) T)))))
 
-;;; Leaves the bboxes valid-p bits alone.  Only copies the dimensions.
 (defmacro copy-bbox-dims (dest-bbox source-bbox)
   `(progn
 	(setf (bbox-x1 ,dest-bbox) (bbox-x1 ,source-bbox))
@@ -166,7 +132,6 @@
 	(setf (bbox-x2 ,dest-bbox) (bbox-x2 ,source-bbox))
 	(setf (bbox-y2 ,dest-bbox) (bbox-y2 ,source-bbox))))
 
-;;; Performs the same function as copy-bbox-dims *AND* copies the valid-p bit
 (defun copy-bbox-fn (dest-bbox source-bbox)
   (copy-bbox-dims dest-bbox source-bbox)
   (setf (bbox-valid-p dest-bbox) (bbox-valid-p source-bbox)))
@@ -179,8 +144,6 @@
 	  (= (bbox-x2 ,bb1) (bbox-x2 ,bb2))
 	  (= (bbox-y2 ,bb1) (bbox-y2 ,bb2)))))
 
-;;; Updates the bbox given (probably the object's :old-bbox slot value) with
-;;; the values from the object.  This *presumes* that the object is visible!
 (defmacro update-bbox (object bbox)
     `(let ((left (g-value ,object :left))
 	   (top  (g-value ,object :top )))
@@ -213,9 +176,6 @@
      (setf (cadr cm) (- (bbox-y2 ,bb) (bbox-y1 ,bb)))))
 
 
-
-;; propagate dirty bit of T from this object up towards root
-;; this will do ugly things if called with object == NULL.
 (defmacro propagate-dirty-bit (object update-info)
    `(unless (update-info-dirty-p ,update-info)
       (let ((temp ,object) (temp-update-info ,update-info))
@@ -281,8 +241,4 @@
   (let ((*print-base* 10))
     (format nil "Opal ~S" (incf *opal-window-count*))))
 
-
-;;; This is a list of init routines that are to be called whenever
-;;; reconnect-garnet is called.  This will be used by the gestures handler
-;;; and multifont.
 (defparameter *auxilliary-reconnect-routines* ())

@@ -68,10 +68,6 @@
 		    slots))))))
   slots)
 
-;;;
-;;; Test if the first component of agg is in the parts-list.
-;;; May also be used to check for behaviors in the :interactors list.
-;;;
 (defun is-first-comp-in-parts-list (components parts-list)
   (if components
       (let ((first-comp (g-value (first components) :known-as)))
@@ -150,11 +146,6 @@
 	  (error "Error while making parts of ~S:
 Could not find component of rank ~S in prototype.~%" agget rank)))))
 
-
-
-;;;
-;;; make-parts - make components for aggregadgets and aggrelists
-;;;
 (defun make-parts (agget parts-list prototype)
   (dolist (part parts-list)
     (let ((name NIL) (protopart NIL) (slots NIL))
@@ -428,8 +419,3 @@ Could not find component of rank ~S in prototype.~%" agget rank)))))
     ;; install a new prototype
     (when component
       (add-component agg (create-instance nil component) where locator))))
-
-;; (define-method :destroy-me opal:aggregadget (agg &optional (top-level-p t))
-;;   (dolist (behavior (copy-list (g-local-value agg :behaviors)))
-;;     (destroy behavior))
-;;   (call-prototype-method agg top-level-p))

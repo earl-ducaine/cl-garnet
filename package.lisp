@@ -73,14 +73,6 @@
 	   self-old-value))
 
 
-(defpackage :gem
-  (:use :common-lisp :kr )
-  (:export *black*
-
-  ))
-
-
-
 (defpackage :garnet-user
   (:use common-lisp kr)
   (:export go-demos))
@@ -100,30 +92,6 @@
   (:use :common-lisp :kr :opal) (:nicknames :gd))
 
 (defpackage :gilt
-  (:use :common-lisp :kr)
-  (:export do-go do-stop))
-
-(defpackage :lapidary
-  (:use common-lisp kr)
-  (:export clean-up
-	   directional-move-grow-interactor
-	   do-go
-	   do-stop
-	   fix-it
-	   lapidary-angle-interactor
-	   lapidary-button-interactor
-	   lapidary-menu-interactor
-	   lapidary-text-interactor
-	   lapidary-two-point-interactor))
-
-
-(defpackage :agate
-  (:use :common-lisp :kr))
-
-(defpackage :demo-3d
-  (:use :common-lisp :kr) (:export do-go do-stop))
-
-(defpackage :xomax
   (:use :common-lisp :kr)
   (:export do-go do-stop))
 

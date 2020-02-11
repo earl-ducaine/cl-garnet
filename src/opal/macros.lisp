@@ -1,21 +1,3 @@
-;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: OPAL; Base: 10 -*-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;         The Garnet User Interface Development Environment.      ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; This code was written as part of the Garnet project at          ;;;
-;;; Carnegie Mellon University, and has been placed in the public   ;;;
-;;; domain.  If you are using this code or any part of Garnet,      ;;;
-;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Opal:Macros.Lisp
-;;;
-
-;;; This file contains most of the defmacros which are used by Opal.
-;;  Others are found in new-defs.lisp and multifont.lisp.
-
-;;  FMG I've tried to change macros to inline functions wherever
-;;  possible.
 
 
 (in-package :kr)
@@ -39,8 +21,6 @@
 
 
 (in-package "OPAL")
-
-;;; General Use
 
 
 ;; Wrappers for KR-SEND.
@@ -134,10 +114,6 @@
         ,@body
         (go ,tagname))))))
 
-
-;;; For "objects.lisp"
-;;
-
 (declaim (inline get-thickness))
 (defun get-thickness (gob)
   (let* ((line-style (g-value gob :line-style))
@@ -207,10 +183,6 @@
   (bottom gob))
 
 
-;;; For "text-fonts.lisp"
-
-;; Font-From-File
-
 (declaim (inline extract-dir))
 (defun extract-dir (font-name)
   (subseq font-name 0 (1+ (position #\/ font-name :from-end t))))
@@ -245,10 +217,6 @@
 	  ,@body)
      (restore-cursors)))
 
-
-
-;; For "clean-up.lisp"
-
 (defmacro opal-window (window-pair)
   `(cdr ,window-pair))
 
@@ -257,9 +225,6 @@
 
 (defmacro already-been-destroyed (a-window)
   `(not (kr:schema-p ,a-window)))
-
-
-;; For aggregadgets, aggrelists, etc.
 
 (defmacro add-item (schema &rest args)
  `(let ((the-schema ,schema))
