@@ -712,7 +712,7 @@
       ))
   (sb-stack-clear *exec-roots-stack*)
   (sb-stack-clear *undetermined-vars-stack*)
-  (sb-cns-set-clear *unenforced-cns-stack*)
+  ;; (sb-cns-set-clear *unenforced-cns-stack*)
   )
 
 ;; ***** Sky-Blue Entry Points *****
@@ -984,33 +984,6 @@
                 (setf min-strength max-strength)))
             ))
     min-strength))
-
-(defun collect-unenforced-mark (var collection-strength collect-equal-p done-mark)
-  (loop for cn in (VAR-constraints var)
-      unless (or
-	      ;; if cn determines var, ignore
-	      (eql cn (VAR-determined-by var))
-	      ;; if we've already processed this cn, ignore it
-	      (eql done-mark (CN-mark cn))
-	      )
-      do
-	;; we will process this cn now: mark it
-	(setf (CN-mark cn) done-mark)
-	(cond ((enforced cn)
-	       ;; cn is an enforced cn that consumes var:
-	       ;; collect cns downstream of cn's outputs
-	       (do-selected-method-output-vars (out-var cn)
-		 (collect-unenforced-mark out-var collection-strength
-					  collect-equal-p done-mark))
-	       )
-	      ((or (weaker (CN-strength cn) collection-strength)
-		   (and collect-equal-p (eql (CN-strength cn) collection-strength)))
-	       ;; cn is an unenforced cn that is weak enough to collect
-	       (sb-cns-set-add *unenforced-cns-stack* cn)
-	       ))
-	))
-
-;; ***** executing methods *****
 
 (defvar *exec-pplan-stack* (sb-stack-create 100))
 
