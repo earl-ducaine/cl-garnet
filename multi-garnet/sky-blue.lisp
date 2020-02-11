@@ -649,45 +649,6 @@
 
 (defvar *sky-blue-cycle-solver-fns* nil)
 
-;; handle cycle by trying a series of cycle solvers.  If one of the solvers
-;; can find a solution, install it in the cycle variables.  If none of the
-;; solvers can find a solution (or one of the solvers returns :no-soln),
-;; invalidate the output vars of all cns in the cycle (and downstream of
-;; it).
-(defun exec-from-cycle (cn prop-mark)
-  (let* ((cycle-cns (collect-cns-in-cycle (list cn) nil prop-mark))
-	 cycle-solvers-found-soln)
-    ;; if any of the cycle input vars (input vars to any of
-    ;; the cns in the cycle that are not set by other cycle cns)
-    ;; are invalid, return without trying to solve the cycle.
-    (loop for cn in cycle-cns do
-	  (do-selected-method-input-vars (var cn)
-	    (when (and (not (VAR-valid var))
-		       (not (member (VAR-determined-by var) cycle-cns)))
-	      ;; mark cn and downstream cns as done, and all outputs invalid
-	      (unmark-invalidate-downstream cn prop-mark)
-	      ;; and return without trying to solve cycle
-	      (return-from exec-from-cycle nil))
-	    ))
-    ;; print warning
-    (signal-cycle cycle-cns)
-    ;; try cycle solvers
-    (setq cycle-solvers-found-soln (call-cycle-solvers cycle-cns))
-    (cond (cycle-solvers-found-soln
-	   ;; some solver has succeeded.  Clear marks in cycle cns, so we
-	   ;; won't process them, and set var-valid for cn outputs
-	   (loop for cn in cycle-cns do
-		 (setf (CN-mark cn) nil)
-		 (do-selected-method-output-vars (var cn)
-		   (setf (VAR-valid var) t)))
-	   )
-	  (t
-	   ;; None of the cycle solvers were sucessful.  Mark cn and
-	   ;; downstream cns as done, and all outputs invalid
-	   (unmark-invalidate-downstream cn prop-mark)
-	   ))
-    ))
-
 ;; Call each cycle solver to try solving the cycle-cns, returning t if a
 ;; soln is found. If a solver can solve the cycle, it must set all of the
 ;; var values of vars set by cycle cns, and return t.  If it cannot solve
@@ -707,10 +668,6 @@
 		 (return t))))
       finally (return nil)))
 
-;; return a list of all cns upstream of the cns in roots that have not been
-;; processed (i.e., cn-mark is not equal to prop-mark).  When called with
-;; the cycle cn found in exec-from-cycle, this returns all of the cns in
-;; the cycle.
 (defun collect-cns-in-cycle (roots collected prop-mark)
   (let* ((cn (car roots))
 	 (next-roots (cdr roots)))
@@ -766,43 +723,3 @@
 (defun linear-eqns-have-no-soln (eqns)
   (declare (ignore eqns))
   nil)
-
-(defun unmark-invalidate-downstream (cn prop-mark)
-  (when (eql prop-mark (CN-mark cn))
-    (setf (CN-mark cn) nil)
-    (do-selected-method-output-vars (var cn)
-      (setf (VAR-valid var) nil)
-      (do-consuming-constraints (downstream-cn var)
-	(unmark-invalidate-downstream downstream-cn prop-mark))
-      )))
-
-(defun pplan-add (stack obj done-mark)
-  (cond ((sb-constraint-p obj)
-	 (when (and (enforced obj)
-		    (not (eql done-mark (CN-mark obj))))
-	   ;; process unmarked, enforced constraint by marking it, collecting
-	   ;; downstream constraints, and pushing it on top of the pplan stack.
-	   (setf (CN-mark obj) done-mark)
-	   (do-selected-method-output-vars (out-var obj)
-	     (pplan-add stack out-var done-mark))
-	   (sb-stack-push stack obj))
-	 )
-	((sb-variable-p obj)
-	 ;; process variable by collecting downstream constraints rooted with
-	 ;; constraints directly consuming the variable
-	 (do-consuming-constraints (cn obj)
-	   (pplan-add stack cn done-mark))
-	 )
-	;; accept list of cns and vars
-	((null obj)
-	 nil)
-	((listp obj)
-	 (pplan-add stack (car obj) done-mark)
-	 (pplan-add stack (cdr obj) done-mark))
-	;; also accept stack of cns and vars
-	((sb-stack-p obj)
-	 (do-sb-stack-elts (elt obj)
-	   (pplan-add stack elt done-mark)))
-	(t
-	 (cerror "cont" "pplan-add: bad object ~S" obj))
-	))

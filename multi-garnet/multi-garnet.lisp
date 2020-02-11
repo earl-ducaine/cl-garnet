@@ -521,63 +521,6 @@
 
 (defvar *invalidated-formulas* nil)
 
-(defun propagate-change-hook (schema slot)
-  (let ((entry (slot-accessor schema slot)))
-    ;; access the dependent formulas.
-    (do-one-or-list (formula (slot-dependents entry) T)
-      ;; Stop propagating if this dependent formula was already marked dirty.
-      (if (and (not-deleted-p formula) (cache-is-valid formula))
-	(let* ((new-schema (on-schema formula))
-	       (new-slot (on-slot formula))
-	       (schema-ok (schema-p new-schema))
-	       (new-entry  NIL))
-	  (unless (and new-schema new-slot)
-	    (when *warning-on-disconnected-formula*
-	      (format
-	       t
-	       "Warning: disconnected formula ~S in propagate-change ~S ~S~%"
-	       formula schema slot))
-	    (continue-out))
-	  (cond ((and schema-ok
-		      (or (get-object-slot-prop new-schema new-slot :sb-variable)
-			  (get-object-slot-prop new-schema new-slot :sb-path-constraints)))
-		 ;; we want to invalidate a formula that sets a constrained slot or a path slot.
-		 ;; do not invalidate or propagate further: save ptr to formula to eval later
-		 (when *collect-invalid-paths-formulas*
-		   (push formula *invalidated-formulas*))
-		 (continue-out))
-		(schema-ok
-		 (setf new-entry (slot-accessor new-schema new-slot))
-		 (run-invalidate-demons new-schema new-slot new-entry)
-		 )
-		(t
-		 #+GARNET-DEBUG
-		 (progn
-		   (format
-		    t
-		    "propagate-change: formula ~S on destroyed object ~S ~S~%    ~
-	from change in schema ~S, slot ~S.~%"
-		    formula new-schema new-slot schema slot))
-		 ))
-	  ;; The formula gets invalidated here.
-	  (set-cache-is-valid formula nil)
-	  ;; Notify all children who used to inherit the old value of the
-	  ;; formula.
-	  (if schema-ok
-	    (if new-entry
-		(let ((new-value  (sl-value new-entry))
-                      (new-bits   (sl-bits new-entry))
-		      (dependents (slot-dependents new-entry)))
-		  (if (and (is-parent new-bits)
-		           entry
-                           (not (eq (sl-value entry) *no-value*)))
-			(update-inherited-values
-			 new-schema new-slot new-value T))
-		  ;; Now recurse, following the slot in the schema on which
-		  ;; the formula sits.
-		  (if dependents
-		      (propagate-change new-schema new-slot))))))))))
-
 (defvar *max-path-updates* 10)
 
 (defvar *save-invalidated-path-constraints* nil)
@@ -721,7 +664,7 @@
 (defvar *fn-to-hook-plist* '(kr::s-value-fn                   s-value-fn-hook
 			     kr::kr-call-initialize-method    kr-call-initialize-method-hook
 			     kr::kr-init-method               kr-init-method-hook
-			     kr::propagate-change             propagate-change-hook))
+			     ))
 
 (defun enable-multi-garnet ()
   (loop for (fn hook-fn) on *fn-to-hook-plist* by #'CDDR
