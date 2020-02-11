@@ -15,15 +15,6 @@
   (when gob (1- (+ (g-value-fixnum gob :left)
 		   (g-value-fixnum gob :width)))))
 
-(declaim (inline unchecked-gv-bottom))
-(defun unchecked-gv-bottom (gob)
-  (1- (+ (gv-fixnum gob :top) (gv-fixnum gob :height))))
-
-(declaim (inline gv-bottom))
-(defun gv-bottom (gob)
-  (if gob (unchecked-gv-bottom gob)
-      (kr::broken-link-throw nil :top)))
-
 (define-method :initialize view-object (gob)
   (let ((temp-info (make-update-info)))
     (setf (update-info-bits temp-info) 0)

@@ -86,10 +86,6 @@
            (- (g-value-fixnum ,gob :width) (- ,value (g-value-fixnum ,gob :left))))
      (setf (g-value ,gob :left) ,value)))
 
-(defsetf right-side (gob) (value)
-  `(setf (g-value ,gob :width)
-         (+ (g-value-fixnum ,gob :width) (- ,value (right ,gob)))))
-
 (defsetf top-side (gob) (value)
   `(progn
      (setf (g-value ,gob :height)

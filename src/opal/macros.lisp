@@ -166,10 +166,6 @@
 (defun left-side (gob)
   (g-value gob :left))
 
-(declaim (inline right-side))
-(defun right-side (gob)
-  (right gob))
-
 (declaim (inline top-side))
 (defun top-side (gob)
   (g-value gob :top))
