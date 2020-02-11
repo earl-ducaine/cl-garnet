@@ -2397,9 +2397,6 @@ have been called on the <schema>."
 			  nil)
   (kr-init-method schema (get-local-value schema :INITIALIZE)))
 
-
-;;; TYPE CHECKING
-
 (declaim (inline get-slot-type-code))
 (defun get-slot-type-code (object slot)
   (let ((entry (slot-accessor object slot)))
@@ -2449,57 +2446,6 @@ RETURNS:
 		(values T T))
 	      message)))))
 
-
-;; This version allows multiple restart actions.  However, it is extremely
-;; slow and sets up a ton of garbage (Cons space and Other space).  It should
-;; not be used for common operations, such as s-value.
-;;
-;;; (defun check-slot-type (object slot value &optional (error-p T))
-;;;   (loop
-;;;    (restart-case
-;;;     (return
-;;;       (let ((type (get-slot-type-code object slot)))
-;;; 	(if type
-;;; 	  (if (zerop type)
-;;; 	    (values T NIL)		; no type specified
-;;; 	    (if (check-kr-type value type)
-;;; 	      (values T NIL)
-;;; 	      (let* ((readable-type (get-type-documentation type))
-;;; 		     (message
-;;; 		      (format
-;;; 		       nil
-;;; 		       "bad KR type: value ~S~:[~*~;, a ~S,~] is not valid for slot ~S in~%  object ~S.  The slot is declared of type ~S~@[,~%  i.e., ~A~].~@[~%  The value was computed by a formula.~]~%"
-;;; 		       value value (type-of value) slot object
-;;; 		       (code-to-type type)
-;;; 		       readable-type
-;;; 		       (formula-p (get-value object slot)))))
-;;; 		(if error-p
-;;; 		  (error message)
-;;; 		  message))))
-;;; 	  (values T NIL))))
-;;;     ;; Allow the user to specify different continuation strategies if we
-;;;     ;; get an error and enter the debugger.
-;;;     (nil (arg)
-;;; 	 :report "Retain old value in the slot"
-;;; 	 :interactive (lambda ()
-;;; 			(list value))
-;;; 	 arg
-;;; 	 (return (values NIL T)))
-;;;     (nil (arg)
-;;; 	 :report "Enter replacement value for the slot"
-;;; 	 :interactive (lambda ()
-;;; 			(format t "New value for ~S slot ~S: " object slot)
-;;; 			(force-output)
-;;; 			(list (read)))
-;;; 	 (multiple-value-bind (new-value result)
-;;; 	     (check-slot-type object slot arg T)
-;;; 	   (cond ((null result)
-;;; 		  ;; no error in replacement value
-;;; 		  (return (values arg :REPLACE)))
-;;; 		 ((eq result :REPLACE)
-;;; 		  (return (values new-value :REPLACE)))))))))
-
-
 (defun set-slot-type (object slot type)
   (let ((entry (or (slot-accessor object slot)
 		   (set-slot-accessor object slot *no-value* type NIL))))
@@ -2525,10 +2471,6 @@ already in the <slot> satisfies the new type declaration."
 	  (cond ((eq result :REPLACE)
 		 (s-value object slot new-value)))))))
   type)
-
-
-
-;;; DECLARATION ACCESSORS
 
 
 (defun get-declarations (schema declaration)
@@ -2585,11 +2527,6 @@ Example: (get-declarations A :type)"
     declarations))
 
 
-
-;;; Define support fns for basic builtin types.  These definitions must come
-;;  before the file CONSTRAINTS.LISP is compiled.
-
-
 (defun T-P (value)
   (declare #.*special-kr-optimization*
 	   (ignore value))
@@ -2618,10 +2555,6 @@ Example:
 			    (not (stringp key)))
 		       (return-from get-type-definition key)))
 	       kr::types-table))))
-
-
-
-;;; FORMULA META-SLOTS
 
 (defun find-meta (formula)
   "Returns, or inherits, the meta-schema associated with the <formula>, or
@@ -2680,9 +2613,6 @@ If no meta-schema exists for the <formula>, creates one."
 	;; Install the new meta-schema.
 	(setf (a-formula-meta formula) meta))
       (s-value meta slot value))))
-
-
-;;; READER MACROS
 
 
 (eval-when (:execute :compile-toplevel :load-toplevel)
