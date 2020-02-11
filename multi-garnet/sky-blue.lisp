@@ -649,90 +649,15 @@
     (setf (CN-mark cn) nil)
     (loop for v in (CN-variables cn) do
 	  (push cn (VAR-constraints v)))
-    (exec-from-roots)
+    ;; (exec-from-roots)
     )
   cn)
 
 (defvar *mvine-cns-stack* (sb-stack-create 30))
 
-(defun mvine-grow (root-strength done-mark)
-  (if (sb-stack-empty *mvine-cns-stack*)
-      ;; no more cns, we have found a complete prop path!
-      t
-    ;; process next cn
-    (let* (cn ok)
-      (setq cn (sb-stack-pop *mvine-cns-stack*))
-      (cond ((eql done-mark (CN-mark cn))
-	     ;; this cn has already been marked: process other cns
-	     (setq ok (mvine-grow root-strength done-mark)))
-	    ((weaker (CN-strength cn) root-strength)
-	     ;; this cn is weaker than the root cn: revoke it
-	     ;; (setq ok (mvine-revoke-cn cn root-strength done-mark))
-	     )
-	    (t
-	     )
-	    )
-      ;; if we are backtracking, must restore *mvine-cns-stack*
-      (when (not ok)
-	(sb-stack-push *mvine-cns-stack* cn))
-      ok)
-    ))
 
-(defun mvine-revoke-cn (cn root-strength done-mark)
-  (let* ((old-mt (CN-selected-method cn))
-	 ok)
-    ;; mark this cn.  we will process it by revoking it.
-    (setf (CN-mark cn) done-mark)
-    ;; try building rest of mvine
-    (setq ok (mvine-grow root-strength done-mark))
-    (cond (ok
-	   ;; we found entire mvine!
-	   ;; undetermine unmarked old-mt outputs,
-	   ;; and save on *undetermined-vars-stack*
-	   (loop for var in (MT-outputs old-mt)
-	       when (not (eql done-mark (VAR-mark var))) do
-		 ;; unmarked vars must be newly undetermined.
-		 (setf (VAR-determined-by var) nil)
-		 (sb-stack-push *undetermined-vars-stack* var)
-		 (exec-roots-add-undet-var var)
-		 )
-	   ;; set selected-method for this cn
-	   (exec-roots-add-cn cn (CN-selected-method cn))
-	   (setf (CN-selected-method cn) nil)
-	   t)
-	  (t
-	   ;; no mvine found: we are backtracking.
-	   ;; there is no other choice for this cn, so just un-mark cn
-	   ;; and continue backtracking.
-	   (setf (CN-mark cn) nil)
-	   nil))
-    ))
 
 (defvar *sky-blue-backtracking-warning* nil)
-
-;; this is called to print a warning message when the mvine-enforce-cn fn
-;; backtracks because cn cannot be extended into a complete mvine.
-;; This message can be prevented by setting *sky-blue-backtracking-warning*
-;; to nil.
-(defun signal-backtracking (cn)
-  (when *sky-blue-backtracking-warning*
-	(format t "~&Sky-blue: backtracking at ~S~%" cn)))
-
-;; a method is only possible if both: (1) all its outputs are unmarked
-;; (i.e. they aren't being used yet in the mvine) (2) every output
-;; walkstrength is weaker than the cn's strength (except for vars that are
-;; current outputs)
-(defun possible-method (mt root-strength mark current-outputs)
-  (loop for var in (MT-outputs mt) never
-	(or
-	 ;; if an output var is marked, we can't use this method
-	 (eql mark (VAR-mark var))
-	 ;; if an output var is too strong, and is not currently
-	 ;; determined by the cn, we can't use this method
-	 (and (not (weaker (VAR-walk-strength var) root-strength))
-	      (not (member var current-outputs)))
-	 )
-	))
 
 (defun any-immediate-upstream-cns-marked (cn mark)
   (do-selected-method-input-vars (var cn)
