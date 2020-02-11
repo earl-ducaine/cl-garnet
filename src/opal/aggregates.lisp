@@ -106,9 +106,6 @@
     (when a-window
       (let ((gob-update-info (the UPDATE-INFO (g-local-value gob :update-info))))
 	(set-display-slots gob a-window t)
-	;; (if (update-info-aggregate-p gob-update-info)
-	;;     (do-all-components gob
-	;;       #'(lambda (c))))
 	(setf (bbox-valid-p (update-info-old-bbox gob-update-info)) NIL))))
   ;; Signal we have changed components list
   (mark-as-changed a-aggregate :components)
