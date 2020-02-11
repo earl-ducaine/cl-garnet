@@ -318,20 +318,6 @@
        (do-method-input-vars (,var-var ,cn-var ,mt-var) ,@body))
     ))
 
-(defmacro do-consuming-constraints ((constraint-var var-form) . body)
-  (let ((var-var (gentemp))
-	(var-determined-by-var (gentemp)))
-    `(let* ((,var-var ,var-form)
-	    (,var-determined-by-var (var-determined-by ,var-var)))
-       (loop for ,constraint-var in (var-constraints ,var-form)
-	   do (when (and (not (eq ,constraint-var ,var-determined-by-var))
-			 (enforced ,constraint-var))
-		,@body)))
-    ))
-
-;; inefficient fns for consing up lists of input, output vars
-;; use methods above for efficiency
-
 (defun method-output-vars (cn mt)
   (declare (ignore cn))
   (mt-outputs mt))
@@ -347,45 +333,6 @@
 (defun selected-method-input-vars (cn)
   (method-input-vars cn (cn-selected-method cn)))
 
-(defun consuming-constraints (v)
-  (loop for cn in (var-constraints v)
-        when (and (enforced cn)
-                  (not (eql cn (var-determined-by v))))
-        collect cn))
-
-
-;; ***** stack objects *****
-
-(defstruct (sb-stack
-	    (:conc-name "SB-STACK-")
-
-	    )
-  size
-  vector
-  max-vector-size
-  overflow)
-
-(defun sb-stack-create (max-vector-size)
-  (make-sb-stack :max-vector-size max-vector-size
-		 :vector (make-array (list max-vector-size))
-		 :size 0
-		 :overflow nil))
-
-(defun sb-stack-clear (stack)
-  (setf (sb-stack-size stack) 0)
-  stack)
-
-(defstruct (sb-plan
-	    (:conc-name "SB-PLAN-")
-	    (:print-function
-	     (lambda (plan str lvl)
-	       (declare (ignore lvl))
-	       (sb-plan-print plan str)))
-	    )
-  list
-  root-cns
-  valid
-  )
 
 (defun add-constraint (cn)
     (setf (CN-selected-method cn) nil)
