@@ -37,18 +37,8 @@
   (declare (fixnum x))
   (if (< x 0) (- x) x))
 
-;;; Graphic-Quality Hierarchy
-;;
 
 (create-instance 'GRAPHIC-QUALITY NIL)
-
-(define-method :destroy-me graphic-quality (quality)
-  (destroy-schema quality))
-
-(define-method :destroy graphic-quality (quality)
-  (dolist (instance (copy-list (g-local-value quality :is-a-inv)))
-    (destroy instance))
-  (destroy-me quality))
 
 
 (create-instance 'FONT-FROM-FILE graphic-quality

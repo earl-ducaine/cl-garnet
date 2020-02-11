@@ -429,7 +429,7 @@ Could not find component of rank ~S in prototype.~%" agget rank)))))
     (when component
       (add-component agg (create-instance nil component) where locator))))
 
-(define-method :destroy-me opal:aggregadget (agg &optional (top-level-p t))
-  (dolist (behavior (copy-list (g-local-value agg :behaviors)))
-    (destroy behavior))
-  (call-prototype-method agg top-level-p))
+;; (define-method :destroy-me opal:aggregadget (agg &optional (top-level-p t))
+;;   (dolist (behavior (copy-list (g-local-value agg :behaviors)))
+;;     (destroy behavior))
+;;   (call-prototype-method agg top-level-p))
