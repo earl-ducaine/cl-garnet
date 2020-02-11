@@ -52,10 +52,3 @@
 
 (defsetf update-info-invalid-p (object) (value)
   `(bit-setter ,object 2 ,value))
-
-
-(defmacro update-info-force-computation-p (object)
-  `(logbitp 3 (update-info-bits ,object)))
-
-(defsetf update-info-force-computation-p (object) (value)
-  `(bit-setter ,object 3 ,value))
