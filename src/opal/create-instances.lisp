@@ -111,41 +111,6 @@ avoiding wasted objects.
 		(:face face)
 		(:size size))))))
 
-;;(setf (aref *Font-Table* 0 0 1) default-font)
-
-(let ((first-time T)
-      (first-allocatable-colormap-index 1))
-
-  (defun first-allocatable-colormap-index (root-window)
-    "Noop.  Get rid of all calls to this."
-    (declare (ignore root-window))
-    (when first-time
-      (setf first-time NIL))
-    1)
-
-  (defun reset-first-allocatable-colormap-index (root-window)
-    (setf first-time T)
-    (first-allocatable-colormap-index root-window))
-
-  (defun set-first-allocatable-colormap-index (root-window value)
-    (declare (ignore root-window))
-    (setf first-allocatable-colormap-index value)))
-
-(create-instance 'COLOR GRAPHIC-QUALITY
-  ;; note, :color-name is now depreciated.
-  :declare ((:parameters :red :green :blue :color-name)
-	    (:type ((real 0 1) :red :green :blue)
-		   ((or string atom) :color-name))
-	    (:constant :color-p))
-  (:red 1.0)
-  (:green 1.0)
-  (:blue 1.0)
-  (:color-p t)
-  )
-
-(define-method :destroy-me COLOR (hue)
-	       (destroy-schema hue))
-
 (create-instance 'line-style nil
   (:constant T))
 
