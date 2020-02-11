@@ -146,49 +146,8 @@ avoiding wasted objects.
 (define-method :destroy-me COLOR (hue)
 	       (destroy-schema hue))
 
-(create-instance 'RED color
-  (:red 1.0) (:green 0.0) (:blue 0.0))
-
-(create-instance 'GREEN color
-  (:red 0.0) (:green 1.0) (:blue 0.0))
-
-(create-instance 'BLUE color
-  (:red 0.0) (:green 0.0) (:blue 1.0))
-
-(create-instance 'YELLOW color
-  (:red 1.0) (:green 1.0) (:blue 0.0))
-
-(create-instance 'CYAN color
-  (:red 0.0) (:green 1.0) (:blue 1.0))
-
-(create-instance 'PURPLE color
-  (:red 1.0) (:green 0.0) (:blue 1.0))
-
-(create-instance 'ORANGE color
-  (:red 1.0) (:green 0.65) (:blue 0.0))
-
-(create-instance 'WHITE color
-  (:red 1.0) (:green 1.0) (:blue 1.0))
-
-(create-instance 'BLACK color
-  (:red 0.0) (:green 0.0) (:blue 0.0))
-
-(create-instance 'LINE-STYLE graphic-quality
-  :declare ((:type (fixnum :line-thickness) ;(integer :line-thickness)
-		   (keyword :line-style :cap-style :join-style)
-		   ((is-a-p color) :foreground-color :background-color))
-	    (:maybe-constant :line-thickness :line-style :cap-style :join-style
-			     :dash-pattern :foreground-color :background-color
-			     :stipple))
-  (:line-thickness (the fixnum 0))
-  (:line-style :solid)			; or :dash or :double-dash
-  (:cap-style :butt)			; or :not-last, :round or :projecting
-  (:join-style :miter)			; or :round or :bevel
-  (:dash-pattern nil)
-  (:foreground-color black)
-  (:background-color white)
-  (:stipple nil))
-
+(create-instance 'line-style nil
+  (:constant T))
 
 (create-instance 'DEFAULT-LINE-STYLE line-style
   (:constant T))
