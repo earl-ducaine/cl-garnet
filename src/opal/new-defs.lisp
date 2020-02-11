@@ -45,10 +45,3 @@
 
 (defsetf update-info-aggregate-p (object) (value)
   `(bit-setter ,object 1 ,value))
-
-
-(defmacro update-info-invalid-p (object)
-  `(logbitp 2 (update-info-bits ,object)))
-
-(defsetf update-info-invalid-p (object) (value)
-  `(bit-setter ,object 2 ,value))
