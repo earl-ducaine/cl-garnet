@@ -446,10 +446,10 @@
 
 (defstruct (sb-cns-set
 	    (:conc-name "SB-CNS-SET-")
-	    (:print-function
-	     (lambda (stack str lvl)
-	       (declare (ignore lvl))
-	       (sb-cns-set-print stack str)))
+	    ;; (:print-function
+	    ;;  (lambda (stack str lvl)
+	    ;;    (declare (ignore lvl))
+	    ;;    (sb-cns-set-print stack str)))
 	    )
   size
   num-strengths
@@ -470,52 +470,19 @@
       (incf (sb-cns-set-size stack) 1))
     cn))
 
-(defun sb-cns-set-pop-strongest (stack)
-  (incf (sb-cns-set-size stack) -1)
-  (cond ((< (sb-cns-set-size stack) 0)
-	 (cerror "return nil" "sb-cns-set-pop: stack empty")
-	 (sb-cns-set-clear stack)
-	 nil)
-	(t
-	 (let ((stacks (sb-cns-set-cns-stacks stack)))
-	   (loop for index from 0 to (1- (sb-cns-set-num-strengths stack))
-	       do (let ((cn-stack (aref stacks index)))
-		    (when (not (sb-stack-empty cn-stack))
-		      (return (sb-stack-pop cn-stack))))
-	       finally (cerror "return nil" "sb-cns-set-pop: all substacks empty")))
-	 )))
-
 (defun sb-cns-set-empty (stack)
   (zerop (sb-cns-set-size stack)))
 
-(defun sb-cns-set-print (stack str)
-  (format str "{cns-set(~S):" (sb-cns-set-size stack))
-  (let ((stacks (sb-cns-set-cns-stacks stack)))
-    (loop for index from 0 to (1- (sb-cns-set-num-strengths stack))
-	do (let ((cn-stack (aref stacks index)))
-	     (when (not (sb-stack-empty cn-stack))
-	       (format str " {")
-	       (do-sb-stack-elts (elt cn-stack) (format str "~S " elt))
-	       (format str "}")))))
-  (format str "}"))
-
-
-;; loops over all elts in the set, from strongest-to-weakest,
-;; without removing any.
-(defmacro do-sb-cns-set-elts ((var-var set-form) . body)
-  (let ((set-var (gentemp))
-	(stacks-var (gentemp))
-	(index-var (gentemp))
-	(cn-stack-var (gentemp)))
-    `(let* ((,set-var ,set-form)
-	    (,stacks-var (sb-cns-set-cns-stacks ,set-var)))
-       (loop for ,index-var from 0 to (1- (sb-cns-set-num-strengths ,set-var))
-	   do (let ((,cn-stack-var (aref ,stacks-var ,index-var)))
-		(when (not (sb-stack-empty ,cn-stack-var))
-		  (do-sb-stack-elts (,var-var ,cn-stack-var) ,@body)))))
-    ))
-
-;; ***** plans *****
+;; (defun sb-cns-set-print (stack str)
+;;   (format str "{cns-set(~S):" (sb-cns-set-size stack))
+;;   (let ((stacks (sb-cns-set-cns-stacks stack)))
+;;     (loop for index from 0 to (1- (sb-cns-set-num-strengths stack))
+;; 	do (let ((cn-stack (aref stacks index)))
+;; 	     (when (not (sb-stack-empty cn-stack))
+;; 	       (format str " {")
+;; 	       (do-sb-stack-elts (elt cn-stack) (format str "~S " elt))
+;; 	       (format str "}")))))
+;;   (format str "}"))
 
 (defstruct (sb-plan
 	    (:conc-name "SB-PLAN-")
@@ -529,43 +496,9 @@
   valid
   )
 
-(defun sb-plan-print (plan str)
-  (format str "{~Aplan:~Sroots,~Slist}"
-	  (if (sb-plan-valid plan) "valid-" "invalid-")
-	  (length (sb-plan-root-cns plan))
-	  (length (sb-plan-list plan))
-	  ))
-
-;; ***** interlock to prevent accidental recursive calls to skyblue *****
-;; add-constraint and remove-constraint should never be called recursively
-;; (for example: from within a constraint method).  This signals a
-;; continuable error if this is done.
-
-(defvar *sky-blue-running* nil)
-
-(defmacro with-sky-blue-recursion-check (&rest forms)
-  `(cond ;; (*sky-blue-running*
-	 ;;  (cerror "add-constraint or remove-constraint ignored"
-	 ;; 	  "sky-blue add-constraint or remove-constraint called recursively!")
-	 ;;  )
-	 (t
-	  (unwind-protect
-	      (progn
-		;; (setq *sky-blue-running* t)
-		(progn ,@forms))
-	    ;; (setq *sky-blue-running* nil)
-	    )
-	  )))
-
-
-
 (defun add-constraint (cn)
-  (with-sky-blue-recursion-check
-      ;; clear stacks
-    ;; initialize constraint fields, and register with variables
     (setf (CN-selected-method cn) nil)
     (setf (CN-mark cn) nil)
     (loop for v in (CN-variables cn) do
 	  (push cn (VAR-constraints v)))
-    )
   cn)
