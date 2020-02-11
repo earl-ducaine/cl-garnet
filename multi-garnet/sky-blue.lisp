@@ -2,10 +2,6 @@
 (in-package :kr)
 
 
-(defvar *strength-keyword-list*
-  (list :>max :max :strong :medium :weak :s1 :s2 :s3 :s4 :s5 :s6 :s7 :min))
-
-
 (defmacro weaker (s1 s2) `(> ,s1 ,s2))
 
 (defvar *mark-counter* 0)
@@ -659,11 +655,6 @@
 
 (defvar *mvine-cns-stack* (sb-stack-create 30))
 
-(defun build-mvine (cn)
-  (sb-stack-clear *mvine-cns-stack*)
-  ;; try to build mvine starting with enforcing root cn as a branch
-  (mvine-enforce-cn cn (cn-strength cn) (new-mark)))
-
 (defun mvine-grow (root-strength done-mark)
   (if (sb-stack-empty *mvine-cns-stack*)
       ;; no more cns, we have found a complete prop path!
@@ -679,7 +670,8 @@
 	     (setq ok (mvine-revoke-cn cn root-strength done-mark)))
 	    (t
 	     ;; try to find a method for this cn
-	     (setq ok (mvine-enforce-cn cn root-strength done-mark)))
+	     ;; (setq ok (mvine-enforce-cn cn root-strength done-mark))
+	     )
 	    )
       ;; if we are backtracking, must restore *mvine-cns-stack*
       (when (not ok)
