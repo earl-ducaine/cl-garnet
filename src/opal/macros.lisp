@@ -40,10 +40,6 @@
   `(let ((the-schema ,schema))
     (kr-send the-schema :do-all-components the-schema ,@args)))
 
-(defmacro do-components (schema &rest args)
-  `(let ((the-schema ,schema))
-    (kr-send the-schema :do-components the-schema ,@args)))
-
 ;; Added do-items because it would be very helpful to operate over the
 ;; items of a virtual-aggregate or an aggrelist. [2003/09/16:rpg]
 
