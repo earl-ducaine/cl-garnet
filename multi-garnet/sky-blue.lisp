@@ -2,55 +2,16 @@
 (in-package :kr)
 
 
-(defmacro weaker (s1 s2) `(> ,s1 ,s2))
-
 (defvar *mark-counter* 0)
 
-;; new-mark returns a new, unique mark.  new-mark will never return nil,
-;; so we can use nil as a mark to "unmark" objects.
-(defun new-mark ()
-  (incf *mark-counter* 1)
-  *mark-counter*)
-
-;; ***** sky-blue object definitions *****
-
-;; constraint representation:
-;;
-;;   field         | type      | description
-;; ----------------+-----------+--------------------------------------------
-;; variables       | set of    | the variables that this constraint references.
-;;                 | variables |
-;; strength        | strength  | this constraint's level in the constraint
-;;                 |           |  hierarchy.
-;; methods         | set of    | the potential methods for satisfying this
-;;                 | methods   | constraint.
-;; selected-method | method    | the method used to satisfy this constraint,
-;;                 |           | nil if the constraint is not satisfied.
-;;		   |	       | should only be manipulated by skyblue.
-;; mark            | integer   | this constraint's mark value.
-;; other-slots     | alist     | association list of other slot/value pairs
-;; set-slot-fn     | fn(s)     | fn or list of fns to call before setting any slot
-
-(defstruct (sb-Constraint
-	    (:print-function
-	     (lambda (cn str lvl)
-	       (declare (ignore lvl))
-	       (cond ((get-sb-slot cn :name)
-		      (format str "{cn-~A}" (get-sb-slot cn :name)))
-		     ((sb-constraint-strength cn)
-		      (format str "{cn~A}"
-			      :max
-			      ))
-		     (t (format str "{cn}")))))
-	    )
+(defstruct (sb-Constraint)
   variables
   strength
   methods
   selected-method
   mark
   other-slots
-  set-slot-fn
-  )
+  set-slot-fn)
 
 (defun get-sb-constraint-slot (obj slot)
   (case slot
@@ -669,56 +630,8 @@
   ;; none of the cns are marked: return nil
   nil)
 
-
-
 (defvar *exec-pplan-stack* (sb-stack-create 100))
 
-(defun exec-from-roots (&key (execute-unchanged-cns nil))
-  (let* ((prop-mark (new-mark))
-	 cn)
-    ;; examine all vars and cns in *exec-roots-stack*,
-    ;; and add to pplan
-    (sb-stack-clear *exec-pplan-stack*)
-    (loop until (exec-roots-empty) do
-	  (multiple-value-bind (var-cn-keyword var-or-cn old-mt)
-	      (exec-roots-pop)
-	    (case var-cn-keyword
-	      (:cn
-	       (when (or execute-unchanged-cns
-			 (not (eql old-mt (CN-selected-method var-or-cn))))
-		 (pplan-add *exec-pplan-stack* var-or-cn prop-mark))
-	       )
-	      (:var
-	       (when (and (not (VAR-determined-by var-or-cn))
-			  (not (VAR-valid var-or-cn)))
-		 (pplan-add *exec-pplan-stack* var-or-cn prop-mark)
-		 (setf (VAR-valid var-or-cn) t)
-		 )
-	       ))
-	    ))
-    ;; scan through pplan
-    (loop until (sb-stack-empty *exec-pplan-stack*) do
-	  (setq cn (sb-stack-pop *exec-pplan-stack*))
-	  (cond ((not (eql prop-mark (CN-mark cn)))
-		 ;; this cn has already been processed: ignore
-		 nil)
-		((any-immediate-upstream-cns-marked cn prop-mark)
-		 ;; Some of this cn's upstream cns have not been processed:
-		 ;; there must be a cycle.  Call fn to handle cycle: this
-		 ;; fn may mark other cns as done.
-		 (exec-from-cycle cn prop-mark)
-		 )
-		(t
-		 ;; All of this cn's upstream cns have been processed, so we
-		 ;; can now process this one and mark it done
-		 (execute-propagate-valid cn)
-		 (setf (CN-mark cn) nil)
-		 )
-		))
-    ))
-
-;; executes the selected method of cn if all of its inputs are valid.  In
-;; any case, it propagate the valid flag to the outputs.
 (defun execute-propagate-valid (cn)
   (let ((inputs-valid (block valid-block
 			(do-selected-method-input-vars (var cn)

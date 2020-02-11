@@ -766,9 +766,10 @@
 	   ;; There must be a max-max conflict.  Print msg.
 	   ;; note: we don't remove the cn, so it may become satisfied later
 	   ;; when another max cn is removed.
-	   (when *unsatisfied-max-constraint-warning*
-	     (format t "~&Warning: Can't enforce max constraint ~S on object ~S, slot ~S~%"
-		     cn (OS-object (CN-os cn)) (OS-slot (CN-os cn)))))))
+	   ;; (when *unsatisfied-max-constraint-warning*
+	   ;;   (format t "~&Warning: Can't enforce max constraint ~S on object ~S, slot ~S~%"
+	   ;; 	     cn (OS-object (CN-os cn)) (OS-slot (CN-os cn))))
+	   )))
   (when *constraint-hooks*
     (dolist (hook *constraint-hooks*)
       (funcall hook cn :add)))
