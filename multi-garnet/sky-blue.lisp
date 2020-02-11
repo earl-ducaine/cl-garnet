@@ -599,12 +599,10 @@
   (sb-stack-clear *undetermined-vars-stack*)
   )
 
-;; ***** Sky-Blue Entry Points *****
-
 (defun add-constraint (cn)
   (with-sky-blue-recursion-check
       ;; clear stacks
-      (init-stacks)
+      ;; (init-stacks)
     ;; initialize constraint fields, and register with variables
     (setf (CN-selected-method cn) nil)
     (setf (CN-mark cn) nil)
@@ -613,8 +611,6 @@
     ;; (exec-from-roots)
     )
   cn)
-
-(defvar *mvine-cns-stack* (sb-stack-create 30))
 
 
 
@@ -628,98 +624,4 @@
 	(return-from any-immediate-upstream-cns-marked t))
       ))
   ;; none of the cns are marked: return nil
-  nil)
-
-(defvar *exec-pplan-stack* (sb-stack-create 100))
-
-(defun execute-propagate-valid (cn)
-  (let ((inputs-valid (block valid-block
-			(do-selected-method-input-vars (var cn)
-			  (when (not (VAR-valid var))
-			    (return-from valid-block nil)))
-			t)))
-    (when inputs-valid
-      (execute-selected-method cn))
-    (do-selected-method-output-vars (var cn)
-      (setf (VAR-valid var) inputs-valid))
-    ))
-
-(defun execute-selected-method (cn)
-  (funcall (MT-code (CN-selected-method cn)) cn))
-
-(defvar *sky-blue-cycle-solver-fns* nil)
-
-;; Call each cycle solver to try solving the cycle-cns, returning t if a
-;; soln is found. If a solver can solve the cycle, it must set all of the
-;; var values of vars set by cycle cns, and return t.  If it cannot solve
-;; the cycle, it must not change anything, and return nil.  If it finds
-;; that the cycle has no solution, it must not change anything, and return
-;; :no-soln.
-(defun call-cycle-solvers (cycle-cns)
-  (loop for solver-fn in *sky-blue-cycle-solver-fns* do
-	(let* ((solver-result (funcall solver-fn cycle-cns)))
-	  (cond ((eql solver-result :no-soln)
-		 ;; There is no solution to this cycle.
-		 ;; Return nil without trying other cycle solvers.
-		 (return nil))
-		((eql solver-result t)
-		 ;; This solver fn has succeeded.
-		 ;; Return t without trying other cycle solvers.
-		 (return t))))
-      finally (return nil)))
-
-(defun collect-cns-in-cycle (roots collected prop-mark)
-  (let* ((cn (car roots))
-	 (next-roots (cdr roots)))
-    (cond ((null roots) collected)
-	  ((not (equal prop-mark (CN-mark cn)))
-	   (collect-cns-in-cycle next-roots collected prop-mark))
-	  ((member cn collected)
-	   (collect-cns-in-cycle next-roots collected prop-mark))
-	  (t
-	   (do-selected-method-input-vars (var cn)
-	     (when (VAR-determined-by var)
-	       (push (VAR-determined-by var) next-roots)))
-	   (collect-cns-in-cycle
-	    next-roots (cons cn collected) prop-mark)
-	   ))
-    ))
-
-(defvar *sky-blue-cycle-warning* nil)
-
-(defun signal-cycle (cns)
-  (when *sky-blue-cycle-warning*
-    (let* ((*print-length* 5))
-#-(and)      (declare (special *print-length*))
-      (format t "~&Sky-blue cycle: ~S~%" cns))
-    ))
-
-;; linear-eqn-cycle-solver is an example of how one might write a cycle
-;; solver to be added to the list *sky-blue-cycle-solver-fns*.  Note that
-;; this is an incomplete example: the functions extract-cn-linear-eqn,
-;; solve-linear-eqns, linear-eqn-soln-val, and linear-eqns-have-no-soln are
-;; not defined.  In order to complete this example, you would need to
-;; associate additional information with the constraints allowing
-;; extract-cn-linear-eqn to extract the appropriate linear equation from a
-;; constraint.  Note that the equation is extracted relative to a given set
-;; of variables in a cycle: other variables in the constraint may be set
-;; external to the cycle.  This would allow non-linear constraints to be
-;; solved, if enough variables are determined to reduce them to linear
-;; constraints.  For example, given the selected methods {5->A, A*B->C,
-;; C+4->B}, the loop containing the second and third methods is a cycle of
-;; linear equations, since A is determined outside of the cycle, reducing
-;; the second method to 5*B->C.
-
-;;; Define stubs to silence compiler.
-(defun extract-cn-linear-eqn (cn cycle-vars)
-  (declare (ignore cn cycle-vars))
-  nil)
-(defun solve-linear-eqns (eqns)
-  (declare (ignore eqns))
-  nil)
-(defun linear-eqn-soln-val (soln var)
-  (declare (ignore soln var))
-  nil)
-(defun linear-eqns-have-no-soln (eqns)
-  (declare (ignore eqns))
   nil)
