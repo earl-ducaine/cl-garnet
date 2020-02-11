@@ -398,14 +398,10 @@
 	   (:break (cerror "continue" "S-VALUE called with bad schema ~S slot ~S, value ~S."
 			   schema slot value))))
 	((eq slot :is-a)
-	 ;; (set-slot-basic schema slot value
-	 ;; 		 :auto-activate-constraints nil
-	 ;; 		 :invalidate-paths nil)
 	 )
 	(t
 	 (let ((slot-var (get-object-slot-prop schema slot :sb-variable)))
 	   (cond (slot-var
-	   	  ;; (set-input-variable slot-var value input-strength)
 		  )
 	   	 (t
 	   	  (set-slot-basic schema slot value
@@ -620,49 +616,6 @@
 
 (defvar *path-update-loop-warning* nil)
 
-(defun update-invalidated-paths-and-formulas ()
-  (when *update-invalid-paths-formulas*
-    (with-no-invalidation-update
-	nil
-      ;;  Repeatedly update any constraints whose paths may have been
-      ;; invalidated, and invalidated formulas on constrained variables.
-      ;; This process may cause other paths or formulas to be invalidated, so
-      ;; repeat until no other paths are invalidated.  If this is repeated
-      ;; more than *max-path-updates* times, this indicates that there may
-      ;; be a cycle: break, and optionally continue.
-      (loop for invalidation-count from 1 to *max-path-updates*
-	  while (or *invalidated-path-constraints*
-		    *invalidated-formulas*)
-	  do (when (or (eql *path-update-loop-warning* t)
-		       (and (numberp *path-update-loop-warning*)
-			    (>= invalidation-count *path-update-loop-warning*)))
-	       (format t "~&update loop ~S: invalid paths= ~S, invalid formulas= ~S~%"
-		       invalidation-count *invalidated-path-constraints* *invalidated-formulas*))
-	     (update-invalidated-path-constraints)
-	     (update-invalidated-formulas))
-      (when (or *invalidated-path-constraints*
-		*invalidated-formulas*)
-	;; we have looped too many times: assume that there is an infinite loop.
-	;; Print warning, and save remaining unresolved cns and formulas
-	(cond ((eql *max-path-updates-warning* :error)
-	       (cerror
-		"clear lists of invalidated constraints and formulas"
-		"updated paths and formulas ~S times without resolving invalidated constraints ~S and formulas ~S"
-		*max-path-updates* *invalidated-path-constraints* *invalidated-formulas*)
-	       )
-	      (*max-path-updates-warning*
-	       (format
-		t
-		"~&updated paths and formulas ~S times without resolving invalidated constraints ~S and formulas ~S:  clearing lists~%"
-		*max-path-updates* *invalidated-path-constraints* *invalidated-formulas*)
-	       )
-	      )
-	(setf *save-invalidated-path-constraints* *invalidated-path-constraints*)
-	(setf *invalidated-path-constraints* nil)
-	(setf *save-invalidated-formulas* *invalidated-formulas*)
-	(setf *invalidated-formulas* nil))
-      )))
-
 (defun update-invalidated-path-constraints ()
   (let* ((path-constraints
 	  (remove-duplicates *invalidated-path-constraints*)))
@@ -675,35 +628,6 @@
 	    ))
     ))
 
-(defun update-invalidated-formulas ()
-  (let* ((root-formulas *invalidated-formulas*))
-    (setf *invalidated-formulas* nil)
-    (loop for (formula . more-roots) on root-formulas
-	do (recursively-update-formulas formula more-roots))
-    ))
-
-(defun recursively-update-formulas (formula done)
-  (unless (member formula done)
-    (update-invalidated-formula formula)
-    (let ((new-invalid-formulas *invalidated-formulas*)
-	  (new-done (cons formula done)))
-      (setf *invalidated-formulas* nil)
-      (loop for child-formula in new-invalid-formulas
-	  do (recursively-update-formulas child-formula new-done))
-      )
-    ))
-
-(defun update-invalidated-formula (formula)
-  (let* ((new-schema (kr::on-schema formula))
-	 (new-slot (kr::on-slot formula))
-	 (schema-ok (schema-p new-schema)))
-    (when schema-ok
-      (let* ((var (get-object-slot-prop new-schema new-slot :sb-variable)))
-	(if var
-	    (add-remove-formula-recomputing-constraint var)
-	  (recompute-formula-saving-paths new-schema new-slot))))
-    ))
-
 (defun recompute-formula-saving-paths (schema slot)
   ;; increment sweep-mark, so formula doesn't erronously detect circularities
   (incf kr::*sweep-mark* 2)
@@ -713,48 +637,7 @@
 
 (defvar *formula-set-strength* :strong)
 
-(defun add-remove-formula-recomputing-constraint (var)
-  (when (weaker (VAR-walk-strength var)
-		   (get-strength *formula-set-strength*))
-    ;; we _may_ be able to set variable, because the the var walkstrength
-    ;; is low.  however, still may not be able to set, because of interactions
-    ;; of multi-output cns.  Just add&remove cn to set value.
-    (let* ((cn (create-formula-recomputing-constraint var *formula-set-strength*)))
-      (mg-add-constraint cn)
-      (mg-remove-constraint cn)
-      (dispose-formula-recomputing-constraint cn))
-    ))
-
 (defvar *formula-recomputing-constraint-reserve* nil)
-
-;; dummy for input var os
-
-(defun create-formula-recomputing-constraint (var strength)
-  (let* ((cn (if *formula-recomputing-constraint-reserve*
-		 (pop *formula-recomputing-constraint-reserve*)
-	       (create-mg-constraint
-		:methods (list (create-mg-method
-				:code #'(lambda (cn)
-					  (let* ((var (first (cn-variables cn)))
-						 (os (VAR-os var))
-						 (obj (OS-object os))
-						 (slot (OS-slot os)))
-					    (recompute-formula-saving-paths obj slot)
-					    (set-variable-value var (g-value obj slot))
-					    ))
-				:output-indices '(0))
-			       )
-		;; create dummy os, so we won't accidently activate
-		;; this cn by storing it in an object slot.
-		:os (os nil :formula-recomputing-cn)
-		:name (create-new-name "formula-recomputing-cn")
-		))))
-    (setf (CN-variables cn) (list var))
-    ;; init output lists in cn methods
-    (init-method-outputs cn)
-    (setf (CN-strength cn) (get-strength strength))
-    (setf (CN-connection cn) :connected)
-    cn))
 
 (defun dispose-formula-recomputing-constraint (cn)
   (push cn *formula-recomputing-constraint-reserve*))
@@ -960,25 +843,10 @@
 	   (when *unsatisfied-max-constraint-warning*
 	     (format t "~&Warning: Can't enforce max constraint ~S on object ~S, slot ~S~%"
 		     cn (OS-object (CN-os cn)) (OS-slot (CN-os cn)))))))
-  ;; update invalid paths/formulas only after adding cn,
-  ;; to prevent recursive call to skyblue
-  (update-invalidated-paths-and-formulas)
-
   (when *constraint-hooks*
     (dolist (hook *constraint-hooks*)
       (funcall hook cn :add)))
 
-  cn)
-
-(defun mg-remove-constraint (cn)
-  (with-no-invalidation-update
-      (when (not (cn-connection-p cn :graph))
-	(cerror "cont" "trying to remove constraint ~S with connection ~S"
-		cn (CN-connection cn)))
-    (setf (CN-connection cn) :connected)
-    )
-  ;; update invalid paths/formulas only after removing cn, to prevent recursive call to skyblue
-  (update-invalidated-paths-and-formulas)
   cn)
 
 (defvar *fn-to-hook-plist* '(kr::s-value-fn                   s-value-fn-hook
