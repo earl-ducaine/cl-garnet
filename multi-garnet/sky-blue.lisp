@@ -5,20 +5,8 @@
 (defvar *strength-keyword-list*
   (list :>max :max :strong :medium :weak :s1 :s2 :s3 :s4 :s5 :s6 :s7 :min))
 
-(defun get-strength (strength)
-  (cond ((and (integerp strength)
-	      (nth strength *strength-keyword-list*))
-	 strength)
-	((member strength *strength-keyword-list*)
-	 (position strength *strength-keyword-list*))
-	((eql strength :required) (get-strength :max))
-	((eql strength :weakest) (get-strength :min))
-	(t
-	 (error "get-strength: bad strength: ~S" strength))))
 
 (defmacro weaker (s1 s2) `(> ,s1 ,s2))
-
-(defvar *max-strength* (get-strength :max))
 
 (defvar *mark-counter* 0)
 
