@@ -21,7 +21,6 @@
 	     (:file "macros")
 	     (:file "defs")
 	     (:file "new-defs")
-	     (:file "utils")
 	     (:file "create-instances")))
    (:module opal
    	    :pathname "src/opal"

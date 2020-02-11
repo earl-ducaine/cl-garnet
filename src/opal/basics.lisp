@@ -72,77 +72,41 @@
 
 ;; Gives the value for :top such that (gv-bottom :self) equals
 ;; (gv gob :top)
-(declaim (inline gv-bottom-is-top-of))
-(defun gv-bottom-is-top-of (gob)
-  (if gob (unchecked-gv-bottom-is-top-of gob)
-      (kr::broken-link-throw nil :top)))
+;; (declaim (inline gv-bottom-is-top-of))
+;; (defun gv-bottom-is-top-of (gob)
+;;   (if gob (unchecked-gv-bottom-is-top-of gob)
+;;       (kr::broken-link-throw nil :top)))
 
 ;; Gives the value for :left such that (gv-center-x :self) equals
 ;; (gv-center-x gob)
-(defun gv-center-x-is-center-of (gob)
-  (if gob
-      (if (and (is-a-p gob WINDOW)
-	       (or (eq (gvl :window) gob) (eq (gvl :parent) gob)))
-	  ;; If I am trying to center myself within a window, and I am going
-	  ;; to be drawn w.r.t the window's coordinate system (i.e., I am an
-	  ;; object or child in gob), then I want to ignore the window's :left
-	  (truncate (- (gv-fixnum gob :width) (gvl-fixnum :width)) 2)
-	  (- (the fixnum (gv-center-x gob)) (truncate (gvl-fixnum :width) 2)))
-      (kr::broken-link-throw nil :left)))
+;; (defun gv-center-x-is-center-of (gob)
+;;   (if gob
+;;       (if (and (is-a-p gob WINDOW)
+;; 	       (or (eq (gvl :window) gob) (eq (gvl :parent) gob)))
+;; 	  ;; If I am trying to center myself within a window, and I am going
+;; 	  ;; to be drawn w.r.t the window's coordinate system (i.e., I am an
+;; 	  ;; object or child in gob), then I want to ignore the window's :left
+;; 	  (truncate (- (gv-fixnum gob :width) (gvl-fixnum :width)) 2)
+;; 	  (- (the fixnum (gv-center-x gob)) (truncate (gvl-fixnum :width) 2)))
+;;       (kr::broken-link-throw nil :left)))
 
 ; Gives the value for :top such that (gv-center-y :self) equals (gv-center-y
 ; gob)
-(defun gv-center-y-is-center-of (gob)
-  (if gob
-      (if (and (is-a-p gob WINDOW)
-	       (or (eq (gvl :window) gob) (eq (gvl :parent) gob)))
-	  ;; If I am trying to center myself within a window, and I am going
-	  ;; to be drawn w.r.t the window's coordinate system (i.e., I am an
-	  ;; object or child in gob), then I want to ignore the window's :top
-	  (truncate (- (gv-fixnum gob :height) (gvl-fixnum :height)) 2)
-	  (- (the fixnum (unchecked-gv-center-y gob)) (truncate (gvl-fixnum :height) 2)))
-      (kr::broken-link-throw nil :top)))
+;; (defun gv-center-y-is-center-of (gob)
+;;   (if gob
+;;       (if (and (is-a-p gob WINDOW)
+;; 	       (or (eq (gvl :window) gob) (eq (gvl :parent) gob)))
+;; 	  ;; If I am trying to center myself within a window, and I am going
+;; 	  ;; to be drawn w.r.t the window's coordinate system (i.e., I am an
+;; 	  ;; object or child in gob), then I want to ignore the window's :top
+;; 	  (truncate (- (gv-fixnum gob :height) (gvl-fixnum :height)) 2)
+;; 	  (- (the fixnum (unchecked-gv-center-y gob)) (truncate (gvl-fixnum :height) 2)))
+;;       (kr::broken-link-throw nil :top)))
 
-;;; bounding-box just returns the current cached value of the bounding box
-;;; as four values (top left width height)
-(defun bounding-box (gob)
-  (values (g-value-fixnum gob :left) (g-value-fixnum gob :top)
-	  (g-value-fixnum gob :width) (g-value-fixnum gob :height)))
+;; (defun bounding-box (gob)
+;;   (values (g-value-fixnum gob :left) (g-value-fixnum gob :top)
+;; 	  (g-value-fixnum gob :width) (g-value-fixnum gob :height)))
 
-;;; Unified setting methods
-;;;
-;;; These set more than one property of a gob, and may be much faster than
-;;; calling numerous methods.
-
-;;;
-;;; Currently they aren't.
-
-(defun set-center (gob x y)
-  (declare (fixnum x y))
-  (setf (center-x gob) x)
-  (setf (center-y gob) y))
-
-
-(defun set-position (gob left top)
-  (declare (fixnum left top))
-  (setf (g-value gob :left) left)
-  (setf (g-value gob :top) top))
-
-(defun set-size (gob width height)
-  (declare (fixnum width height))
-  (setf (g-value gob :width) width)
-  (setf (g-value gob :height) height))
-
-(defun set-bounding-box (gob left top width height)
-  (declare (fixnum left top width height))
-  (set-size gob width height)
-  (set-position gob left top))
-
-
-;;; Methods on view objects
-;;; This sets up the update-info slot (allocates memory for it), and then
-;;; copies down the :update-slots value to make it local.
-;;; -- dzg,amickish -- removed copy-down of :update-slots and :fast-redraw-p
 (define-method :initialize view-object (gob)
   (let ((temp-info (make-update-info)))
     (setf (update-info-bits temp-info) 0)
@@ -150,9 +114,6 @@
     (s-value gob :update-info temp-info)))
 
 
-;;; Methods on graphical objects
-
-;;; Initialize sets up the default values of objects
 (define-method :initialize graphical-object (gob)
   (call-prototype-method gob)
   ;; This is not an aggregate!  Used by update algorithm for efficiency
