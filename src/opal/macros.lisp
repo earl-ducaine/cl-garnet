@@ -174,7 +174,6 @@
 (defun bottom-side (gob)
   (bottom gob))
 
-
 (declaim (inline extract-dir))
 (defun extract-dir (font-name)
   (subseq font-name 0 (1+ (position #\/ font-name :from-end t))))
@@ -217,62 +216,3 @@
 
 (defmacro already-been-destroyed (a-window)
   `(not (kr:schema-p ,a-window)))
-
-(defmacro add-item (schema &rest args)
- `(let ((the-schema ,schema))
-   (kr-send the-schema :add-item the-schema ,@args)))
-
-(defmacro change-item (schema &rest args)
-  "Change-Item puts the specified item in the :items list, replacing
-the item that was previously in the specified position.
-    agg  - the aggrelist or gadget to be changed
-    item - the new item to put in the :items list
-    n    - the position of the old item to be replaced"
-  `(let ((the-schema ,schema))
-    (kr-send the-schema :change-item the-schema ,@args)))
-
-(defmacro remove-item (schema &rest args)
- `(let ((the-schema ,schema))
-   (kr-send the-schema :remove-item the-schema ,@args)))
-
-
-;; Virtual aggregates.
-
-(defmacro point-to-rank (schema &rest args)
- `(let ((the-schema ,schema))
-   (kr-send the-schema :point-to-rank the-schema ,@args)))
-
-(defmacro do-in-clip-rect ((m n agg rect) &body body)
-  `(let* ((agg* ,agg)
-	  (p-to-r (g-value agg* :point-to-rank))
-	  (r* ,rect)
-	  (array-size* (g-value agg* :array-length)) ; list
-	  (max-x2* (1- (first array-size*)))
-	  (max-y2* (1- (second array-size*)))
-	  (first* (first r*))
-	  (second* (second r*)))
-     (declare (fixnum max-x2* max-y2* first* second*))
-     (multiple-value-bind (x1* y1*)
-       		          (funcall p-to-r agg* first* second*)
-       (declare (fixnum x1* y1*))
-       (multiple-value-bind (x2* y2*)
-			    (funcall p-to-r agg* (+ first* (third r*) -1)
-						 (+ second* (fourth r*) -1))
-	 (declare (fixnum x2* y2*))
-	 (setq x1* (if x1* (max 0 x1*) 0))
-	 (setq y1* (if y1* (max 0 y1*) 0))
-	 (setq x2* (if x2* (min x2* max-x2*) max-x2*))
-	 (setq y2* (if y2* (min y2* max-y2*) max-y2*))
-	 (when (and (<= x1* x2*) (<= y1* y2*))
-	   (do ((,m x1* (1+ ,m)))
-	       ((> ,m x2*))
-	     (declare (fixnum ,m))
-	     (do ((,n y1* (1+ ,n)))
-	         ((> ,n y2*))
-	       (declare (fixnum ,n))
-	       ,@body)))))))
-
-
-;; Utility
-
-(defmacro swap(a b) `(rotatef ,a ,b))
