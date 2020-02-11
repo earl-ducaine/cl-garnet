@@ -129,10 +129,6 @@
 (defvar *types-enabled* T
   "Set to T to enable type checking on s-value and formula reevaluation")
 
-(defvar *warning-on-create-schema* T
-  "If nil, no warning is printed when create-schema is redefining an existing
-  schema.")
-
 (defvar *warning-on-circularity* nil
   "Set this to NIL to prevent warning when a circularity is detected.")
 
