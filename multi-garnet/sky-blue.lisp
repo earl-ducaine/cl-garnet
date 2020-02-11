@@ -544,84 +544,28 @@
 (defvar *sky-blue-running* nil)
 
 (defmacro with-sky-blue-recursion-check (&rest forms)
-  `(cond (*sky-blue-running*
-	  (cerror "add-constraint or remove-constraint ignored"
-		  "sky-blue add-constraint or remove-constraint called recursively!")
-	  )
+  `(cond ;; (*sky-blue-running*
+	 ;;  (cerror "add-constraint or remove-constraint ignored"
+	 ;; 	  "sky-blue add-constraint or remove-constraint called recursively!")
+	 ;;  )
 	 (t
 	  (unwind-protect
 	      (progn
-		(setq *sky-blue-running* t)
+		;; (setq *sky-blue-running* t)
 		(progn ,@forms))
-	    (setq *sky-blue-running* nil))
+	    ;; (setq *sky-blue-running* nil)
+	    )
 	  )))
 
 
-(defvar *undetermined-vars-stack* (sb-stack-create 100))
-(defvar *exec-roots-stack* (sb-stack-create 100))
-
-(defun exec-roots-add-undet-var (var)
-  (when (not (VAR-valid var))
-    (sb-stack-push *exec-roots-stack* var)
-    ))
-
-(defun exec-roots-add-cn (cn old-mt)
-  (unless (get-sb-slot cn :in-exec-roots)
-    (sb-stack-push *exec-roots-stack* old-mt)
-    (sb-stack-push *exec-roots-stack* cn)
-    (set-sb-slot cn :in-exec-roots t)
-    ))
-
-(defun exec-roots-empty ()
-  (sb-stack-empty *exec-roots-stack*))
-
-(defun exec-roots-pop ()
-  (let* ((obj (sb-stack-top *exec-roots-stack*)))
-    (typecase obj
-      (sb-constraint
-       ;; make sure that cn :in-exec-roots is cleared *before*
-       ;; object is popped, in case interrupt occurs
-       (set-sb-slot obj :in-exec-roots nil)
-       (sb-stack-pop *exec-roots-stack*)
-       ;; return cn and mt
-       (values :cn obj (sb-stack-pop *exec-roots-stack*)))
-      (sb-variable
-       (sb-stack-pop *exec-roots-stack*)
-       (values :var obj)))
-    ))
-
-(defun init-stacks ()
-  (do-sb-stack-elts (cn *exec-roots-stack*)
-    (when (sb-constraint-p cn)
-      (set-sb-slot cn :in-exec-roots nil)
-      ))
-  (sb-stack-clear *exec-roots-stack*)
-  (sb-stack-clear *undetermined-vars-stack*)
-  )
 
 (defun add-constraint (cn)
   (with-sky-blue-recursion-check
       ;; clear stacks
-      ;; (init-stacks)
     ;; initialize constraint fields, and register with variables
     (setf (CN-selected-method cn) nil)
     (setf (CN-mark cn) nil)
     (loop for v in (CN-variables cn) do
 	  (push cn (VAR-constraints v)))
-    ;; (exec-from-roots)
     )
   cn)
-
-
-
-(defvar *sky-blue-backtracking-warning* nil)
-
-(defun any-immediate-upstream-cns-marked (cn mark)
-  (do-selected-method-input-vars (var cn)
-    (let ((upstream-cn (VAR-determined-by var)))
-      (when (and upstream-cn
-		 (eql mark (CN-mark upstream-cn)))
-	(return-from any-immediate-upstream-cns-marked t))
-      ))
-  ;; none of the cns are marked: return nil
-  nil)
