@@ -1019,7 +1019,6 @@
 	(cerror "cont" "trying to remove constraint ~S with connection ~S"
 		cn (CN-connection cn)))
     (setf (CN-connection cn) :connected)
-    (remove-constraint cn)
     )
   ;; update invalid paths/formulas only after removing cn, to prevent recursive call to skyblue
   (update-invalidated-paths-and-formulas)

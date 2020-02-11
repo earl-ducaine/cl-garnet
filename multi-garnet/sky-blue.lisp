@@ -729,58 +729,9 @@
     ;; find the method graph to enforce the new cn (if possible),
     ;; collecting any exec-roots.
     (sb-cns-set-add *unenforced-cns-stack* cn)
-    (update-method-graph)
-    ;; enforce method graph cns by evaluating cn methods.
     (exec-from-roots)
     )
   cn)
-
-(defun remove-constraint (cn)
-  (with-sky-blue-recursion-check
-      ;; unregister cn from variables
-      (loop for v in (CN-variables cn) do
-	    (setf (VAR-constraints v)
-              (remove cn (VAR-constraints v))))
-    (when (enforced cn)
-      ;; clear stacks
-      (init-stacks)
-      ;; loop over current outputs of cn
-      (do-selected-method-output-vars (var cn)
-	;; un-determine current method's output vars
-	(setf (VAR-determined-by var) nil)
-	(sb-stack-push *undetermined-vars-stack* var)
-	(exec-roots-add-undet-var var)
-	)
-      ;; un-enforce cn
-      (setf (CN-selected-method cn) nil)
-      ;; propagate walkstrength from newly undetermined vars
-      (propagate-walkstrength *undetermined-vars-stack* nil)
-      ;; collect all unenforced cns downstream of undetermined vars
-      ;; that have the same or weaker strength than the removed cn
-      (collect-unenforced *undetermined-vars-stack* nil (CN-strength cn) t)
-      ;; find method graph to enforce the collected unenforced cns
-      (update-method-graph)
-      ;; enforce method graph cns by evaluating cn methods.
-      (exec-from-roots)
-      )
-    )
-    cn)
-
-(defun update-method-graph ()
-  (let* (ok cn)
-    (loop until (sb-cns-set-empty *unenforced-cns-stack*) do
-	  (setq cn (sb-cns-set-pop-strongest *unenforced-cns-stack*))
-	  ;; try building mvine, collecting newly-undetermined vars
-	  (sb-stack-clear *undetermined-vars-stack*)
-	  (setq ok (build-mvine cn))
-	  (when ok
-	    ;; we found an mvine!
-	    ;; prop walkstrengths down mvine, and from newly undetermined vars
-	    (propagate-walkstrength *undetermined-vars-stack* cn)
-	    ;; collect any cns strictly weaker than cn that may now be enforcible
-	    (collect-unenforced *undetermined-vars-stack* cn (CN-strength cn) nil)
-	    ))
-    ))
 
 (defvar *mvine-cns-stack* (sb-stack-create 30))
 
