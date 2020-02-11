@@ -344,8 +344,6 @@ avoiding wasted objects.
 
 )
 
-
-;; Class Graphical-object
 (create-instance 'GRAPHICAL-OBJECT view-object
   :declare ((:type (fixnum :top :left :width :height)
 		   ((or (is-a-p line-style) null) :line-style)
@@ -363,9 +361,7 @@ avoiding wasted objects.
   (:draw-function :copy)
   (:line-style default-line-style)
   (:filling-style nil)
-  (:select-outline-only nil)
-
-  )
+  (:select-outline-only nil))
 
 (create-instance 'RECTANGLE graphical-object
   :declare ((:parameters :left :top :width :height :line-style :filling-style
