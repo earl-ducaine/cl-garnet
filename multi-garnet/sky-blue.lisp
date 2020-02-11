@@ -667,10 +667,9 @@
 	     (setq ok (mvine-grow root-strength done-mark)))
 	    ((weaker (CN-strength cn) root-strength)
 	     ;; this cn is weaker than the root cn: revoke it
-	     (setq ok (mvine-revoke-cn cn root-strength done-mark)))
+	     ;; (setq ok (mvine-revoke-cn cn root-strength done-mark))
+	     )
 	    (t
-	     ;; try to find a method for this cn
-	     ;; (setq ok (mvine-enforce-cn cn root-strength done-mark))
 	     )
 	    )
       ;; if we are backtracking, must restore *mvine-cns-stack*
@@ -708,71 +707,6 @@
 	   (setf (CN-mark cn) nil)
 	   nil))
     ))
-
-(defun mvine-enforce-cn (cn root-strength done-mark)
-  (let* ((old-mt (CN-selected-method cn))
-	 ;; note: old-mt=nil if cn is the unenforced mvine root
-	 (old-outputs (if old-mt (MT-outputs old-mt) nil))
-	 ok)
-    ;; mark this constraint: we will try to make it into a branch
-    (setf (CN-mark cn) done-mark)
-    ;; try each possible method: returning if one is found that allows
-    ;; mvine to be built
-    (loop for mt in (CN-methods cn)
-	when (possible-method mt root-strength done-mark old-outputs)
-	do
-	  (let* ((next-cns-cnt 0))
-	    ;; add constraints determining this mt's outputs onto stack
-	    ;; (and count them so we know how many to pop during backtracking)
-	    (loop for var in (MT-outputs mt) do
-		  (let ((next-cn (VAR-determined-by var)))
-		    (when (and next-cn (not (eql cn next-cn)))
-		      (sb-stack-push *mvine-cns-stack* next-cn)
-		      (setq next-cns-cnt (+ next-cns-cnt 1)))))
-	    ;; let's try to build the mvine with this cn/mt.
-	    ;; mark the output vars of the method
-	    (loop for var in (MT-outputs mt) do
-		  (setf (VAR-mark var) done-mark))
-	    ;; try building rest of mvine
-	    (setq ok (mvine-grow root-strength done-mark))
-	    (cond (ok
-		   ;; we found entire mvine!
-		   ;; undetermine unmarked output vars of old mt,
-		   ;; and save on *undetermined-vars-stack*
-		   (loop for var in old-outputs
-		       when (not (eql done-mark (VAR-mark var))) do
-			 ;; unmarked vars must be newly undetermined.
-			 ;; reset determined-by of newly undetermined vars
-			 (setf (VAR-determined-by var) nil)
-			 (sb-stack-push *undetermined-vars-stack* var)
-			 (exec-roots-add-undet-var var)
-			 )
-		   ;; set selected method for this cn, and ptrs in new outputs
-		   (exec-roots-add-cn cn old-mt)
-		   (setf (CN-selected-method cn) mt)
-		   (loop for var in (MT-outputs mt) do
-			 (setf (VAR-determined-by var) cn)
-			 )
-		   ;; return t without trying any more methods
-		   (return-from mvine-enforce-cn t))
-		  (t
-		   ;; no mvine found: try next method
-		   ;; "undo" current method choice: unmark method outputs
-		   (loop for var in (MT-outputs mt) do
-			 (setf (VAR-mark var) nil))
-		   ;; pop constraints we added above
-		   (loop for cnt from 1 to next-cns-cnt do
-			 (sb-stack-pop *mvine-cns-stack*))
-		   ))
-	    ;; unless we found a soln: continue loop to try next method
-	    ))
-    ;; loop finished: no more methods to try: unmark cn and backtrack
-    (setf (CN-mark cn) nil)
-    ;; signal backtracking point (unless this is root cn)
-    (unless (null old-mt)
-      (signal-backtracking cn))
-    nil))
-
 
 (defvar *sky-blue-backtracking-warning* nil)
 
