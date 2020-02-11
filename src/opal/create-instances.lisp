@@ -367,39 +367,6 @@ avoiding wasted objects.
 
   )
 
-(create-instance 'LINE graphical-object
-  :declare ((:parameters :x1 :y1 :x2 :y2 :line-style :draw-function :visible)
-	    (:type (fixnum :x1 :y1 :x2 :y2))
-	    (:maybe-constant :x1 :y1 :x2 :y2 :line-style :line-p :visible)
-	    (:update-slots :visible :fast-redraw-p :x1 :x2 :y1 :y2 :line-style
-			   :filling-style :draw-function))
-
-  (:x1 0)
-  (:y1 0)
-  (:x2 0)
-  (:y2 0)
-  (:left
-   (o-formula (- (q-min (gvl-fixnum :x1) (gvl-fixnum :x2))
-		 (if (eq (gvl :line-style :cap-style) :projecting)
-		     (q-max 1 (the fixnum (or (gvl :line-style :line-thickness) 0)))
-		     (the fixnum (floor (or (gvl :line-style :line-thickness) 0) 2))))
-	      0))
-  (:top
-   (o-formula  (- (q-min (gvl-fixnum :y1) (gvl-fixnum :y2))
-		  (if (eq (gvl :line-style :cap-style) :projecting)
-		      (q-max 1 (gvl-fixnum :line-style :line-thickness))
-		      (the fixnum (floor (or (gvl :line-style :line-thickness) 0) 2))))
-	       0))
-  (:width
-   (o-formula (+ (q-abs (- (or (gvl-fixnum :x1) 0) (or (gvl-fixnum :x2) 0)))
-		 (* (if (eq (gvl :line-style :cap-style) :projecting) 2 1)
-		    (q-max 1 (the fixnum (or (gvl :line-style :line-thickness) 0)))))))
-  (:height
-   (o-formula (+ (q-abs (- (or (gvl-fixnum :y1) 0) (or (gvl-fixnum :y2) 0)))
-		 (* (if (eq (gvl :line-style :cap-style) :projecting) 2 1)
-		    (q-max 1 (the fixnum (or (gvl :line-style :line-thickness) 0)))))))
-  (:line-p T))
-
 (create-instance 'RECTANGLE graphical-object
   :declare ((:parameters :left :top :width :height :line-style :filling-style
 			 :draw-function :visible)
