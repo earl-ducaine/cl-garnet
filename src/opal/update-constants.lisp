@@ -18,7 +18,7 @@
 ;;  corresponding changes in this file, lest havoc result...
 ;;
 ;;  You do not have to supply constants for :visible, :line-style,
-;;  :filling-style, or :draw-function.  
+;;  :filling-style, or :draw-function.
 
 
 ;;; Changes:
@@ -73,21 +73,12 @@
 
 
 ;;; MULTIPOINT
-(declaim (fixnum +multi-point-list+ +multi-lstyle+ 
+(declaim (fixnum +multi-point-list+ +multi-lstyle+
 		 +multi-fstyle+ +multi-draw-function+))
 (defconstant +multi-point-list+      2)
 (defconstant +multi-lstyle+	     3)
 (defconstant +multi-fstyle+	     4)
 (defconstant +multi-draw-function+   5)
-
-
-;;; POLYLINE
-(declaim (fixnum +polyline-point-list+ +polyline-lstyle+
-		 +polyline-fstyle+ +polyline-draw-function+))
-(defconstant +polyline-point-list+    2)
-(defconstant +polyline-lstyle+	      3)
-(defconstant +polyline-fstyle+	      4)
-(defconstant +polyline-draw-function+ 5)
 
 
 ;;; TEXT
@@ -138,8 +129,8 @@
 (defconstant +bm-image+		2)
 (defconstant +bm-top+		3)
 (defconstant +bm-left+		4)
-(defconstant +bm-lstyle+	5) 
-(defconstant +bm-fstyle+	6) 
+(defconstant +bm-lstyle+	5)
+(defconstant +bm-fstyle+	6)
 (defconstant +bm-draw-function+ 7)
 
 
@@ -171,4 +162,3 @@
 (defconstant +circle-lstyle+		8)
 (defconstant +circle-fstyle+		9)
 (defconstant +circle-draw-function+	10)
-

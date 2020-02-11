@@ -533,9 +533,3 @@ avoiding wasted objects.
 		      (setf min-y (q-min min-y (cadr point)))
 		      (setf max-y (q-max max-y (cadr point)))))
 		  0)))))
-
-
-(create-instance 'POLYLINE multipoint
-  :declare ((:parameters :point-list :hit-full-interior-p :line-style
-			 :filling-style :draw-function :visible))
-  (:hit-full-interior-p nil))
