@@ -340,7 +340,7 @@
 	       (when (and (constraint-p old-value)
 		      ;; only de-activate if this cn was activated for _this_ obj,slot
 		      (constraint-in-obj-slot old-value obj slot))
-		 (remove-constraint-from-slot obj slot old-value)))
+		 ))
 	     )
 	 )
      ;; actually set object slot
@@ -384,18 +384,6 @@
          (setf (CN-os cn) (os obj slot))
          ;; activate new constraint
          (connect-add-constraint cn))
-        ))
-
-(defun remove-constraint-from-slot (obj slot cn)
-  (declare (ignore obj slot))
-  (cond ((null (CN-variable-paths cn))
-         ;; constraint is not a multi-garnet constraint, so don't auto-connect
-         nil)
-        (t
-         ;; remove old constraint
-         (remove-disconnect-constraint cn)
-         ;; clear constraint fields
-         (setf (CN-os cn) nil))
         ))
 
 (defun save-invalidated-path-constraints (obj slot)
@@ -487,32 +475,6 @@
 	   ))))
 
 
-(defun destroy-slot-hook (schema slot)
-  (let ((invalid-cns nil)
-	(invalid-vars nil)
-	(val (get-local-value schema slot))
-	(var (get-object-slot-prop schema slot :sb-variable)))
-      ;; remove constraint in slot
-    (when (and (constraint-p val)
-	       (constraint-in-obj-slot val schema slot))
-      (remove-constraint-from-slot schema slot val))
-    ;; find all constraints that use this slot
-    (setq invalid-cns (get-object-slot-prop schema slot :sb-path-constraints))
-    ;; find any var in this slot
-    (when var
-      (setq invalid-cns (append (VAR-constraints var) invalid-cns))
-      (push var invalid-vars))
-    ;; remove invalid constraints
-    (loop for cn in invalid-cns do (remove-disconnect-constraint cn))
-    ;; flush invalid vars
-    (loop for var in invalid-vars do
-	  (setf (VAR-os var) nil))
-    ;; actually destroy the slot
-    (call-hook-save-fn kr::destroy-slot schema slot)
-    ;; try reconnecting the invalid constraints
-    (loop for cn in invalid-cns do (connect-add-constraint cn))
-    ))
-
 (defun remove-bad-inv-objects (schema)
   (s-value schema :is-a-inv
 	   (loop for obj in (g-value schema :is-a-inv)
@@ -526,14 +488,6 @@
   (when (cn-connection-p cn :connected)
     (mg-add-constraint cn))
   )
-
-(defun remove-disconnect-constraint (cn)
-  (when (cn-connection-p cn :graph)
-    (mg-remove-constraint cn))
-  (when (and (os-p (cn-os cn))
-	     (or (cn-connection-p cn :connected)
-		 (cn-connection-p cn :broken-path)))
-    (disconnect-constraint cn)))
 
 (defun connect-constraint (cn)
   (let* ((cn-os (CN-os cn))
@@ -724,7 +678,7 @@
     (setf *invalidated-path-constraints* nil)
     (when path-constraints
       (loop for cn in path-constraints do
-	    (remove-disconnect-constraint cn)
+	    ;; (remove-disconnect-constraint cn)
 	    (connect-add-constraint cn)
 	    ))
     ))
@@ -1074,7 +1028,6 @@
 (defvar *fn-to-hook-plist* '(kr::s-value-fn                   s-value-fn-hook
 			     kr::kr-call-initialize-method    kr-call-initialize-method-hook
 			     kr::kr-init-method               kr-init-method-hook
-			     kr::destroy-slot                 destroy-slot-hook
 			     kr::propagate-change             propagate-change-hook))
 
 (defun enable-multi-garnet ()

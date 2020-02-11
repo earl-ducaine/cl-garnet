@@ -18,7 +18,6 @@
    	    :components
    	    ((:file "types")
 	     (:file "update-constants")
-	     ;; (:file "macros")
 	     (:file "defs")
 	     (:file "new-defs")
 	     (:file "create-instances")))

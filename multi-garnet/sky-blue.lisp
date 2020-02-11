@@ -11,7 +11,6 @@
 	 strength)
 	((member strength *strength-keyword-list*)
 	 (position strength *strength-keyword-list*))
-	;; backwards compatibility: support required, wekaest
 	((eql strength :required) (get-strength :max))
 	((eql strength :weakest) (get-strength :min))
 	(t
