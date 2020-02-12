@@ -28,6 +28,6 @@
 (defmacro notice-items-changed (agg &optional no-propagation)
   `(kr-send ,agg :notice-items-changed ,agg ,no-propagation))
 
-(defmacro remove-interactor (schema &rest args)
-  `(let ((the-schema ,schema))
-    (kr-send the-schema :remove-interactor the-schema ,@args)))
+;; (defmacro remove-interactor (schema &rest args)
+;;   `(let ((the-schema ,schema))
+;;     (kr-send the-schema :remove-interactor the-schema ,@args)))

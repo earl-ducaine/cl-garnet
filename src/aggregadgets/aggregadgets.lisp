@@ -348,24 +348,24 @@ Could not find component of rank ~S in prototype.~%" agget rank)))))
     (s-value agg :behaviors
 	     (nconc (g-local-value agg :behaviors) (list inter)))))
 
-(define-method :remove-interactor aggregadget (agg interactor &optional destroy?)
-  (let ((interactor-instances (g-local-value interactor :is-a-inv))
-	(known-as (g-local-value interactor :known-as)))
-    (dolist (instance interactor-instances)
-      (let ((parent (g-local-value instance :operates-on)))
-	(when (is-a-p parent agg)
-	  (remove-interactor parent instance destroy?))))
-    (when known-as
-      (dolist (agg-instance (g-local-value agg :is-a-inv))
-	(let ((interactor (g-local-value agg-instance known-as)))
-	  (when interactor
-	    (remove-interactor agg-instance interactor destroy?)))))
-    (s-value interactor :active nil)
-    (remove-local-interactor agg interactor)
-    (when destroy?
-      (destroy interactor))))
+;; (define-method :remove-interactor aggregadget (agg interactor &optional destroy?)
+;;   (let ((interactor-instances (g-local-value interactor :is-a-inv))
+;; 	(known-as (g-local-value interactor :known-as)))
+;;     (dolist (instance interactor-instances)
+;;       (let ((parent (g-local-value instance :operates-on)))
+;; 	(when (is-a-p parent agg)
+;; 	  (remove-interactor parent instance destroy?))))
+;;     (when known-as
+;;       (dolist (agg-instance (g-local-value agg :is-a-inv))
+;; 	(let ((interactor (g-local-value agg-instance known-as)))
+;; 	  (when interactor
+;; 	    (remove-interactor agg-instance interactor destroy?)))))
+;;     (s-value interactor :active nil)
+;;     (remove-local-interactor agg interactor)
+;;     (when destroy?
+;;       (destroy interactor))))
 
-(define-method :remove-local-interactor aggregadget (agg inter)
-  (let ((name (g-local-value inter :known-as)))
-    (if name (with-constants-disabled (destroy-slot agg name)))
-    (s-value agg :behaviors (delete inter (g-local-value agg :behaviors)))))
+;; (define-method :remove-local-interactor aggregadget (agg inter)
+;;   (let ((name (g-local-value inter :known-as)))
+;;     (if name (with-constants-disabled (destroy-slot agg name)))
+;;     (s-value agg :behaviors (delete inter (g-local-value agg :behaviors)))))
