@@ -91,13 +91,6 @@
     (setf (CN-path-slot-list cn) path-slot-list)
     cn))
 
-(defun clone-constraint (cn)
-  (create-mg-constraint :strength (cn-strength cn)
-			:methods (loop for mt in (cn-methods cn)
-				     collect (clone-mg-method mt))
-			:variable-paths (cn-variable-paths cn)
-			:variable-names (cn-variable-names cn)))
-
 (defmacro var-os (v) `(get-sb-variable-slot ,v :mg-os))
 (defsetf var-os (v) (val) `(set-sb-variable-slot ,v :mg-os ,val))
 
@@ -402,11 +395,6 @@
 	   )))
   value)
 
-(defun kr-call-initialize-method-hook (schema slot)
-  (call-hook-save-fn kr::kr-call-initialize-method schema slot)
-  (when (eql slot :initialize)
-    (copy-down-and-activate-constraints schema)))
-
 (defun kr-init-method-hook (schema the-function)
   (call-hook-save-fn kr::kr-init-method schema the-function)
   (copy-down-and-activate-constraints schema))
@@ -431,7 +419,6 @@
 			    (constraint-p (get-local-value parent slot))
 			    (constraint-in-obj-slot (get-local-value parent slot) parent slot))
 		   (set-slot-basic schema slot
-				   ;; (clone-constraint (get-local-value parent slot))
 				   (get-local-value parent slot)
 				   :auto-activate-constraints nil
 				   :invalidate-paths t)
@@ -520,34 +507,12 @@
 		    ;; now, cn is connected
 		    (setf (CN-connection cn) :connected))))))))
 
-(defvar *invalidated-formulas* nil)
+;; (defvar *invalidated-formulas* nil)
 
-(defvar *max-path-updates* 10)
+;; (defvar *max-path-updates* 10)
 
-(defvar *save-invalidated-path-constraints* nil)
-(defvar *save-invalidated-formulas* nil)
-
-(defvar *max-path-updates-warning* t)
-
-(defvar *path-update-loop-warning* nil)
-
-(defun recompute-formula-saving-paths (schema slot)
-  ;; increment sweep-mark, so formula doesn't erronously detect circularities
-  (incf kr::*sweep-mark* 2)
-  (kr::recompute-formula schema slot)
-  (save-invalidated-path-constraints schema slot)
-  )
-
-(defvar *formula-set-strength* :strong)
-
-(defvar *formula-recomputing-constraint-reserve* nil)
-
-(defun dispose-formula-recomputing-constraint (cn)
-  (push cn *formula-recomputing-constraint-reserve*))
-
-(defun get-os-prop (os prop)
-  (get-object-slot-prop
-   (os-object os) (os-slot os) prop))
+;; (defvar *save-invalidated-path-constraints* nil)
+;; (defvar *save-invalidated-formulas* nil)
 
 (defun get-object-slot-prop (obj slot prop)
   (getf (getf (g-local-value obj :sb-os-props)
@@ -643,7 +608,6 @@
     (mg-add-constraint cn)))
 
 (defvar *constraint-hooks* nil)
-(defvar *unsatisfied-max-constraint-warning* nil)
 
 (defun mg-add-constraint (cn)
   (with-no-invalidation-update
@@ -663,7 +627,6 @@
   cn)
 
 (defvar *fn-to-hook-plist* '(kr::s-value-fn                   s-value-fn-hook
-			     kr::kr-call-initialize-method    kr-call-initialize-method-hook
 			     kr::kr-init-method               kr-init-method-hook
 			     ))
 
