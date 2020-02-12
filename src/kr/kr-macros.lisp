@@ -11,38 +11,12 @@
       (space 0)
       (debug 0)
       )))
-
-;; This enables the eager-evaluation version.
-;;  Currently turned off.
-
-;;;     (eval-when (:execute :load-toplevel :compile-toplevel)
-;;;       (unless (find :lazy *features*)
-;;;         (pushnew :eager *features*)))
-
-
-;;; Internal structures.
-
-;; The internal representation of a schema is as a structure, where the
-;; <name> slot holds the name (or internal number) of the schema and the
-;; <slots> slot holds a p-list of slot names and slot values.
-;;
 (defstruct (schema (:predicate is-schema)
                    (:print-function print-the-schema))
   name      ; the schema name, or a number
   bins      ; bins of lists of slots
   )
 
-;;;    (ts (locally (declare (optimize (speed 3) (safety 0) (debug 0)))
-;;;      (schema-bins a)) 100000)
-
-;;;     (defun foo (object)
-;;;        (locally (declare (optimize (speed 3) (safety 0) (debug 0)))
-;;;        (schema-bins object)))
-
-;; SCHEMA-P
-;;
-;; Returns T if the <obj> is a schema which was not destroyed.
-;;
 (declaim (inline schema-p))
 (defun schema-p (obj)
   (locally (declare #.*special-kr-optimization*)
@@ -51,14 +25,10 @@
 	 (hash-table-p (schema-bins obj))
 	 T)))
 
-;; This structure is similar to a schema, but is used to store formulas.
-;; It prints out with an F instead of an S, and it uses the same positions for
-;; different functions.
-;;
 (defstruct (a-formula (:include schema) (:print-function print-the-schema))
-  #-(and)
-  number			   ; valid/invalid bit, and sweep mark.  Actually stored in the
-				   ; structure slot "a-formula-bins", inherited from schema.
+  ;; #-(and)
+  ;; number			   ; valid/invalid bit, and sweep mark.  Actually stored in the
+  ;; 				   ; structure slot "a-formula-bins", inherited from schema.
   depends-on			   ; list of schemata on which this function depends (or single
 				   ; schema if there is only one)
   schema			   ; schema on which this formula is installed
@@ -69,40 +39,16 @@
   function			   ; executable formula function
   lambda			   ; the original lambda expression, if applicable
   is-a-inv			   ; list of formulas that inherit from this one
-  meta				   ; NIL, or a KR schema that contains meta-information
-  #+EAGER
-  priority			   ; formula's position in topological order
-  #+EAGER
-  bits				   ; contains the valid/invalid, visited/not-visited,
-				   ; renumbered/not-renumbered, eval-q/not-eval-q, and
-				   ; cycle/non-cycle bits, as well as a count of the number
-				   ; of times the formula has been evaluated
-  #+EAGER
-  valid
-  #+EAGER
-  dfnumber			   ; number assigned by depth-first search
-  #+EAGER
-  lowlink			   ; lowest dfnumber of a node that this formula is linked to
-  )
+  meta)
 
-
-;; The value in a slot is represented as a structure of this type.
-;;
 (defstruct (sl (:print-function print-the-slot))
   name
   value
   (bits 0 :type fixnum))
 
 
-;; This is similar; it includes room to store dependent formulas.
-;;
 (defstruct (full-sl (:include sl))
-  dependents
-  ;; demons
-  )
-
-
-;;; Variables, etc.
+  dependents)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defvar *store-lambdas* T
@@ -188,21 +134,12 @@
   "An a-list of relations known to the system, with their inverse(s).
    Used for the creation of automatic reverse-links.")
 
-;;;
-;; FMG Make formula-reuse SMP safe. Don't like the heavy
-;; conditionalization here, but where else to put it?
-;;
-
 (defvar *formula-pool* nil)
 
-;; (defvar *formula-lock* (bordeaux-threads:make-lock))
-
 (defun formula-push (f)
-;;  (bordeaux-threads:with-lock-held  (*formula-lock*)
     (push f *formula-pool*))
 
 (defun formula-pop ()
-  ;;(bordeaux-threads:with-lock-held (*formula-lock*)
     (and *formula-pool* (pop *formula-pool*)))
 
 (defvar *schema-is-new* nil
@@ -230,12 +167,8 @@
 		 *is-local-only-slot-bit* *is-parameter-slot-bit*))
 (eval-when (:execute :compile-toplevel :load-toplevel)
   (defparameter *type-bits* 10)  ;; # of bits for encoding type
-
   (defparameter *type-mask* (1- (expt 2 *type-bits*))) ;; to extract type
-
-  ;; bit is 1 if slot contains inherited values, 0 for local values
   (defparameter *inherited-bit*          *type-bits*)
-  ;; bit is 1 if any other schema inherited the value from here
   (defparameter *is-parent-bit*          (1+ *inherited-bit*))
   (defparameter *is-constant-bit*        (1+ *is-parent-bit*))
   (defparameter *is-update-slot-bit*     (1+ *is-constant-bit*))
@@ -254,17 +187,14 @@
   (defparameter *is-update-slot-mask* (ash 1 *is-update-slot-bit*))
   (defparameter *inherited-mask* (ash 1 *inherited-bit*))
   (defparameter *is-parent-mask* (ash 1 *is-parent-bit*))
-
   (defparameter *clear-slot-mask*
     (logior *local-mask* *type-mask* *constant-mask* *is-update-slot-mask*))
-
   (defparameter *inherited-parent-mask*
     (logior *inherited-mask* *is-parent-mask*))
   (defparameter *not-inherited-mask* (lognot *inherited-mask*))
   (defparameter *not-parent-mask* (lognot *is-parent-mask*))
   (defparameter *not-parent-constant-mask*
     (lognot (logior *is-parent-mask* *constant-mask*)))
-
   (defparameter *all-bits-mask* (lognot *type-mask*)))
 
 (defvar *check-constants* NIL
@@ -289,261 +219,8 @@
   "Name of the current object being defined by Create-Instance.  Used for
    debugging only.")
 
-
-
-;;; EAGER EVALUATION
-
-;;  Definitions of value-information bits.
-
-#+EAGER
-(eval-when (:execute :compile-toplevel :load-toplevel)
-  ;; bit is 1 if formula is part of a cycle, 0 otherwise
-  (defparameter *cycle-bit* 0)
-  ;; bit is 1 if formula is on the evaluation queue, 0 otherwise
-  (defparameter *eval-bit* 1)
-  ;; bit is 1 if the formula has been visited during a depth-first
-  ;; search, 0 otherwise
-  (defparameter *visited-bit* 2)
-  ;; bit is 1 if the formula's priority has been renumbered during the
-  ;; renumbering of a cycle, 0 otherwise
-  (defparameter *renumber-bit* 3)
-  ;; count keeps track of how many times the formula has been evaluated and
-  ;; is called the formula's timestamp
-  (defparameter *fixed-bit* 4)
-  ;; indicates if formula's value is fixed on this iteration of the constraint
-  ;; solver and thus should not be reevaluated
-
-  (defparameter *count-bit* 5)
-  (defparameter *neg-count-bit* (- *count-bit*))
-
-  ;;; Bits in a dependency structure.
-  ;; bit is 1 if the dependency is part of a cycle, 0 otherwise
-  (defparameter *cycle-edge-bit* 0)
-  ;; the status of a dependency is indicated by a timestamp. if the
-  ;; timestamp is greater than or equal to the timestamp in the dependency's
-  ;; formula, the dependency is valid; otherwise the dependency is invalid
-  (defparameter *status-bit* 1)
-  (defparameter *neg-status-bit* (- *status-bit*)))
-
-
-
-#+EAGER
-(eval-when (:execute :compile-toplevel :load-toplevel)
-  (defparameter *cycle-mask* (ash 1 *cycle-bit*))
-  (defparameter *eval-mask* (ash 1 *eval-bit*))
-  (defparameter *visited-mask* (ash 1 *visited-bit*))
-  (defparameter *renumber-mask* (ash 1 *renumber-bit*))
-  (defparameter *fixed-mask* (ash 1 *fixed-bit*))
-  (defparameter *count-mask* (ash 1 *count-bit*))
-  (defparameter *status-mask* (ash 1 *status-bit*))
-  (defparameter *cycle-edge-mask* (ash 1 *cycle-edge-bit*)))
-
-
-#+EAGER
-(defvar *eval-queue* nil
-  "Contains formulas to be evaluated")
-
-#+EAGER
-(defvar *eval-count* 0
-  "Number of times propagate has been called")
-
-#+EAGER
-(defvar *not-within-propagate* t
-  "Set to nil within propagate")
-
-#+EAGER
-(defvar *do-not-eval-list* nil
-  "Contains a list of formulas that should not be evaluated during an
-  iteration of the constraint solver")
-
-#+EAGER
-;; types of evaluation--normal, in a cycle, or evaluation of a new formula
-;;
-(defvar *eval-type* :normal)
-
-#+EAGER
-(defmacro set-cycle-bit (formula value)
-  `(setf (a-formula-bits ,formula)
-	 (if ,value
-	     (logior (a-formula-bits ,formula) ,*cycle-mask*)
-	     (logand (a-formula-bits ,formula) ,(lognot *cycle-mask*)))))
-
-#+EAGER
-(defmacro set-eval-bit (formula value)
-  `(setf (a-formula-bits ,formula)
-	 ,(if value
-	      `(logior (a-formula-bits ,formula) ,*eval-mask*)
-	      `(logand (a-formula-bits ,formula) ,(lognot *eval-mask*)))))
-
-
-#+EAGER
-(defmacro set-visited-bit (formula value)
-  `(setf (a-formula-bits ,formula)
-	 ,(if value
-	      `(logior (a-formula-bits ,formula) ,*visited-mask*)
-	      `(logand (a-formula-bits ,formula) ,(lognot *visited-mask*)))))
-
-#+EAGER
-(defmacro set-valid-bit (formula value)
-  `(if ,value
-       (setf (a-formula-valid ,formula) (1- *eval-count*))
-       (setf (a-formula-valid ,formula) *eval-count*)))
-
-#+EAGER
-(defmacro set-renumber-bit (formula value)
-  `(setf (a-formula-bits ,formula)
-	 ,(if value
-	      `(logior (a-formula-bits ,formula) ,*renumber-mask*)
-	      `(logand (a-formula-bits ,formula) ,(lognot *renumber-mask*)))))
-
-#+EAGER
-(defmacro set-fixed-bit (formula value)
-  `(setf (a-formula-bits ,formula)
-	 ,(if value
-	      `(logior (a-formula-bits ,formula) ,*fixed-mask*)
-	      `(logand (a-formula-bits ,formula) ,(lognot *fixed-mask*)))))
-
-#+EAGER
-(defmacro prev-priority (index)
-  `(aref *prev-priority-array* ,index))
-
-#+EAGER
-(defmacro succ-priority (index)
-  `(aref *succ-priority-array* ,index))
-
-#+EAGER
-(defmacro priority-value (index)
-  `(car (aref *priority-array* ,index)))
-
-#+EAGER
-(defmacro priority-<=-p (p1 p2)
-  `(<= (priority-value ,p1) (priority-value ,p2)))
-
-#+EAGER
-(defmacro priority-<-p (p1 p2)
-  `(< (priority-value ,p1) (priority-value ,p2)))
-
-#+EAGER
-(defmacro priority-=-p (p1 p2)
-  `(= ,p1 ,p2))
-
-#+EAGER
-(defmacro priority->-p (p1 p2)
-  `(> (priority-value ,p1) (priority-value ,p2)))
-
-#+EAGER
-(defmacro priority->=-p (p1 p2)
-  `(>= (priority-value ,p1) (priority-value ,p2)))
-
-#+EAGER
-(defmacro min-priority (p1 p2)
-  `(if (priority-<=-p ,p1 ,p2)
-       ,p1
-       ,p2))
-
-#+EAGER
-(defmacro max-priority (p1 p2)
-  `(if (priority->=-p ,p1 ,p2)
-       ,p1
-       ,p2))
-
-#+EAGER
-(defmacro dolist-test-elim ((list-var list test) &body body)
-  `(let ((dotest-prev ,list))
-     (do ((list-vars ,list list-vars)) ; loop control handled in loop
-	 ((null list-vars) ,list)
-       (let ((,list-var (car list-vars)))
-	 (if ,test
-	     (progn
-	       ,@body
-	       ; update the loop variables
-	       (setf dotest-prev list-vars)
-	       (setf list-vars (cdr list-vars)))
-	     ; if element does not meet test, remove it from the list
-	     (if (eq list-vars ,list) ; if front of list
-		 (progn
-		   (pop list-vars)
-		   (setf ,list list-vars)
-		   (setf dotest-prev list-vars))
-		 (progn
-		   (pop (cdr dotest-prev))
-		   (setf list-vars (cdr dotest-prev)))))))))
-
-#+EAGER
-(defmacro dolist-test ((list-var list test) &body body)
-  `(do ((list-vars ,list (cdr list-vars)))
-      ((null list-vars))
-    (let ((,list-var (car list-vars)))
-      (when ,test
-	,@body))))
-
-
-;;; Low-level slot access
-
-;; Replace these macros with inline functions.
-
-;; (defmacro deleted-p (schema)
-;;   `(locally (declare ,*special-kr-optimization*)
-;;      (null (schema-bins ,schema))))
-
-;; (defmacro not-deleted-p (schema)
-;;   `(locally (declare ,*special-kr-optimization*)
-;;      (schema-bins ,schema)))
-
-;; (defmacro is-inherited (bits)
-;;   `(logbitp ,*inherited-bit* ,bits))
-
-;; (defmacro is-parent (bits)
-;;   `(logbitp ,*is-parent-bit* ,bits))
-
-;; (defmacro is-constant (bits)
-;;   `(logbitp ,*is-constant-bit* ,bits))
-
-;; (defmacro is-update-slot (bits)
-;;   `(logbitp ,*is-update-slot-bit* ,bits))
-
-;; (defmacro set-is-update-slot (bits)
-;;   `(logior ,*is-update-slot-mask* ,bits))
-
-;; (defmacro is-local-only (bits)
-;;   `(logbitp ,*is-local-only-slot-bit* ,bits))
-
-;; (defmacro is-parameter (bits)
-;;   `(logbitp ,*is-parameter-slot-bit* ,bits))
-
-;; (defmacro extract-type-code (bits)
-;;   `(logand ,*type-mask* ,bits))
-
-;; (defmacro get-entry-type-code (entry)
-;;   `(locally (declare ,*special-kr-optimization*)
-;;      (extract-type-code (sl-bits ,entry))))
-
-;; (defmacro code-to-type (type-code)
-;;   `(svref types-array ,type-code))
-
-;; (defmacro code-to-type-fn (type-code)
-;;   `(svref type-fns-array ,type-code))
-
-;; (defmacro code-to-type-doc (type-code)
-;;   `(svref type-docs-array ,type-code))
-
-;; (defmacro check-kr-type (value code)
-;;   `(funcall (code-to-type-fn ,code) ,value))
-
-
-
-;;; Macros.
-;;  FMG Changed many of them to inline functions; tried to only leave macros
-;;      that are somehow syntactic in nature.
-
-;; This macro will output the <forms> only if GARNET-DEBUG is defined.
-;;;
 (defmacro when-debug (&rest forms)
-  #+GARNET-DEBUG
-  `(progn ,@forms)
-  #-GARNET-DEBUG
   (declare (ignore forms))
-  #-GARNET-DEBUG
   nil)
 
 (declaim (inline
@@ -598,12 +275,7 @@
   (declare #.*special-kr-optimization*)
   (extract-type-code (sl-bits entry)))
 
-;; Moved type functions to kr.lisp (to get rid of free variable warnings).
 
-;;; DEF-KR-TYPE
-;;
-;; Create a new type, which can then be used for typechecking.
-;;
 (defmacro def-kr-type (typename-or-type &optional args body type-doc)
   "Defines a new type for KR's type-checking mechanism.  You must define
 a type using def-kr-type before you can reference that type.  There
@@ -636,7 +308,6 @@ You can also provide a documentation string as the last parameter, as in:
   (setq body (eval body))
   `(add-new-type ,typename-or-type ',body ,(type-to-fn body) ,type-doc))
 
-;;; List-or-value code
 (defmacro memberq (item list)
   "Member, but with a test of EQ.  Interestingly, if 'item' is a keyword,
 then it is faster to use the normal member fn!"
@@ -752,14 +423,6 @@ modified to be a full-slot structure."
 	       (setf (full-sl-dependents ,the-entry) ,the-dependents))
 	     (setf (gethash ,slot ,the-bins) ,the-entry))))))
 
-
-;;; A few specialized accessors for formula slots.
-;;
-
-;; The "bins" structure slot, which is defined by the <schema> defstruct, is
-;; not used in formulas, so we reuse it to store the formula number.
-;; XXX This unfortunately means that we can't properly declare the slot
-;; as a fixnum since it gets set to nil when the formula is destroyed.
 (defmacro a-formula-number (formula)
   `(the (or null fixnum) (a-formula-bins ,formula)))
 
@@ -792,15 +455,8 @@ modified to be a full-slot structure."
     ,thing
     (logior (logand (a-formula-number ,thing) 1) ,mark)))
 
-;; This is a global because some of KR's internals want to access the
-;; entry on which iterate-slot-value is working.
-;;
 (defparameter iterate-slot-value-entry nil
   "Ugly")
-
-
-
-;;; Iterators
 
 (defmacro iterate-slot-value ((a-schema inherited everything check-formula-p)
 			      &body body)
@@ -831,23 +487,13 @@ bit set) are used."
 			       body
 			       `((unless (eq value *no-value*)
 				   ,@body))))))))
-	 (schema-bins ,a-schema))
-	)))
-
-
-;; (defmacro iterate-slot-value ((a-schema inherited everything check-formula-p)
-;;			      &body body)
-;;   `(locally (declare ,*special-kr-optimization*)
-;;     (,@(if check-formula-p `(if (not (formula-p ,a-schema))) '(progn))
-;;      (print ,a-schema))))
-
+	 (schema-bins ,a-schema)))))
 
 (defmacro doslots ((slot-var a-schema &optional inherited) &body body)
 "Executes the <body> with <slot> bound in turn to each slot in the <schema>."
   `(iterate-slot-value (,a-schema ,inherited NIL NIL)
      (let ((,slot-var slot))
        ,@body)))
-
 
 (declaim (inline get-local-value))
 (defun get-local-value (schema slot)
@@ -856,12 +502,9 @@ bit set) are used."
       (if (if entry (not (is-inherited (sl-bits entry))))
 	  (sl-value entry)))))
 
-;; Compatibility only!
-;;
 (declaim (inline get-local-values))
 (defun get-local-values (schema slot)
   (get-local-value schema slot))
-
 
 (defmacro expand-accessor (accessor-function schema &rest slots)
 "EXPAND-ACCESSOR is used by macros such as GV or G-VALUE, which can
@@ -921,8 +564,6 @@ where a demon or demons are disabled)."
 (defun relation-p (slot)
   (assocq slot *relations*))
 
-
-;;
 (defmacro g-value-body (schema slot inherit-p formula-p)
 "This implements g-value, g-local-value, get-value, and get-local-value.
 If <inherit-p> is true, generates code to inherit a value; otherwise,
@@ -935,17 +576,6 @@ the formula object itself is returned."
     `(locally (declare ,*special-kr-optimization*)
        (let* (,@(unless (symbolp schema) `((schema ,schema)))
 	    (,entry
-	     #+GARNET-DEBUG
-	     (if (is-schema ,schema-form) ; this is just schema-p
-	       ;; make sure it's not a formula or deleted
-	       (let ((bins (schema-bins ,schema-form)))
-		 (if (and bins (not (integerp bins)))
-		   (slot-accessor ,schema-form ,slot)
-		   (error "Non-object ~S in g-value or get-value (slot is ~S)"
-			  ,schema-form ,slot)))
-	       (error "Non-object ~S in g-value or get-value (slot is ~S)"
-		      ,schema-form ,slot))
-	     #-GARNET-DEBUG
 	     (slot-accessor ,schema-form ,slot))
 	    (,value (if ,entry
 		      ,@(if (not inherit-p)
@@ -993,14 +623,6 @@ the formula object itself is returned."
   `(g-value-body ,schema ,slot T NIL))
 
 
-;; GET-VALUES
-;;
-;;(defmacro get-values (schema slot)
-;;  `(let ((values (get-value ,schema ,slot)))
-;;     (if (listp values)
-;;	 values
-;;	 (list values))))
-
 
 (defmacro g-value (schema &rest slots)
   "This macro expands into nested calls to g-value-fn.  For example:
@@ -1033,13 +655,6 @@ the formula object itself is returned."
     (when .entry.
       (is-update-slot (sl-bits .entry.)))))
 
-#-(and)
-(defmacro slot-requires-demon (schema slot &optional entry)
-  `(let ((update (get-value ,schema, :UPDATE-SLOTS)))
-    (or (eq (car update) T)
-     (memberq ,slot update))))
-
-
 (declaim (inline run-invalidate-demons))
 (defun run-invalidate-demons (schema slot entry)
   "Execute the update demon associated with the <schema> and <slot>, if there
@@ -1064,9 +679,6 @@ was changed."
   #-GARNET-DEBUG
   (declare (ignore reason))
   `(unless (eq *demons-disabled* T)
-    #+GARNET-DEBUG
-    (if *slot-setter-debug*
-	(funcall *slot-setter-debug* ,schema ,slot ,new-value ,reason))
     (if *pre-set-demon*
       (if (not (demon-is-disabled *pre-set-demon*))
 	(if (slot-requires-demon ,schema ,slot)
@@ -1082,12 +694,6 @@ was changed."
 		  `(T))
 	      (funcall *pre-set-demon* ,schema ,slot ,new-value)))))))
 
-
-
-;;; S-VALUE
-
-;; Helper function for multi-level S-VALUE
-;;
 (defun s-value-chain (schema &rest slots)
   (locally (declare #.*special-kr-optimization*)
     (if (null schema)
@@ -1111,13 +717,8 @@ at slot ~S  (non-schema value is ~S, last schema was ~S)"
 		     schema slots (car s) new-schema intermediate)))
 	(setf intermediate new-schema)))))
 
-
-
-;;; S-VALUE & FRIENDS
-
 (defmacro s-value (schema &rest slots)
 "The basic value-setting macro.
-
 Inputs:
    - <schema>: the name of a schema
    - <slot>: name of the slot to be modified.
@@ -1129,7 +730,6 @@ Inputs:
 	`(s-value-chain ,schema ,@slots)
 	;; One (non-special) slot only.
 	`(s-value-fn ,schema ,(first slots) ,(second slots)))))
-
 
 (defmacro dovalues ((variable schema slot &key (local nil) (result nil)
 			      (formulas T) (in-formula NIL))
@@ -1174,10 +774,6 @@ Inputs:
 			      schema ,slot ,variable NIL)))))
 	   ,@body)))
      ,result)))
-
-
-
-;;; Various
 
 (defmacro create-relation (relation inheritance-p &rest inverses)
 "Defines a new relation with its inverses.  If <inheritance-p>
@@ -1298,10 +894,6 @@ in (create-schema ~S).~%   Ignoring the :NAME-PREFIX.~%"
   `(create-schema ,name ,@slots))
 
 
-;; create-instance
-;;
-;; I am not sure the following enhancement will work because of the
-;; quote around the instance name... [2005/12/20:rpg]
 (defmacro create-instance (name class &body body)
   "If CLASS is not nil, creates a schema with an IS-A slot set to that class.
    Otherwise, just creates a schema."
@@ -1322,8 +914,6 @@ in (create-schema ~S).~%   Ignoring the :NAME-PREFIX.~%"
       (setf body (remove (assocq :IS-A body) body))))
   ;; Everything is OK.
   `(progn
-     #+allegro
-     (excl:record-source-file ,name :type :kr-instance)
      (create-schema ,name :GENERATE-INSTANCE
 		    ;; class might be nil, which means no IS-A slot
 		    ,@(if class `((:is-a ,class)))
@@ -1367,10 +957,6 @@ found in aggrelists."
   "At the top-level, (setf (gv ...)) behaves just like s-value; when
 inside a formula, it also sets up a dependency, just like gv would.")
 
-
-
-;;; Internal debugging function
-;;
 (defmacro with (schema slot &body form)
   `(let* ((*schema-self* (if (numberp ,schema) (s ,schema) ,schema))
 	  (*schema-slot* ,slot)
