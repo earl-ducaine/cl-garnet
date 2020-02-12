@@ -7,10 +7,9 @@
   (defvar *special-kr-optimization*
     '(optimize
       (speed 3)
-      #-allegro (safety 0) #+allegro (safety 1)
+      (safety 0)
       (space 0)
-      #-cmu (debug 0)
-      #+cmu (debug 0.5)
+      (debug 0)
       )))
 
 ;; This enables the eager-evaluation version.
