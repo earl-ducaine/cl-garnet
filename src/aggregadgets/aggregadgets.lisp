@@ -35,7 +35,8 @@
     (when name (s-value obj :known-as name))
     (case add-as
       (:component (with-constants-disabled (add-local-component agget obj)))
-      (:interactor (with-constants-disabled (add-local-interactor agget obj))))
+      (:interactor
+		   ))
     ;; The following instruction would have been done during the add, but
     ;; constants were disabled.
     (when (and add-as name) (declare-constant agget name))
@@ -328,44 +329,11 @@ Could not find component of rank ~S in prototype.~%" agget rank)))))
 	(let ((component (g-local-value agg-instance known-as)))
 	  (when component
 	    (remove-component agg-instance component destroy?)))))
-    (remove-local-component agg component)
+    ;; (remove-local-component agg component)
     (when destroy?
       (destroy component))))
 
-(define-method :remove-local-component opal:aggregadget (agg gob)
-  (let ((name (g-local-value gob :known-as)))
-    (if name (with-constants-disabled (destroy-slot agg name)))
-    (kr-send opal::aggregate :remove-component agg gob)))
-
-(define-method :add-local-interactor aggregadget (agg inter)
-  (let ((name (g-local-value inter :known-as)))
-    (when name
-      (let ((kr::*constants-disabled* T))
-	(s-value agg name inter))
-      (if (g-value agg :interactors)
-	  (declare-constant agg name)))
-    (s-value inter :operates-on agg)
-    (s-value agg :behaviors
-	     (nconc (g-local-value agg :behaviors) (list inter)))))
-
-;; (define-method :remove-interactor aggregadget (agg interactor &optional destroy?)
-;;   (let ((interactor-instances (g-local-value interactor :is-a-inv))
-;; 	(known-as (g-local-value interactor :known-as)))
-;;     (dolist (instance interactor-instances)
-;;       (let ((parent (g-local-value instance :operates-on)))
-;; 	(when (is-a-p parent agg)
-;; 	  (remove-interactor parent instance destroy?))))
-;;     (when known-as
-;;       (dolist (agg-instance (g-local-value agg :is-a-inv))
-;; 	(let ((interactor (g-local-value agg-instance known-as)))
-;; 	  (when interactor
-;; 	    (remove-interactor agg-instance interactor destroy?)))))
-;;     (s-value interactor :active nil)
-;;     (remove-local-interactor agg interactor)
-;;     (when destroy?
-;;       (destroy interactor))))
-
-;; (define-method :remove-local-interactor aggregadget (agg inter)
-;;   (let ((name (g-local-value inter :known-as)))
+;; (define-method :remove-local-component opal:aggregadget (agg gob)
+;;   (let ((name (g-local-value gob :known-as)))
 ;;     (if name (with-constants-disabled (destroy-slot agg name)))
-;;     (s-value agg :behaviors (delete inter (g-local-value agg :behaviors)))))
+;;     (kr-send opal::aggregate :remove-component agg gob)))
