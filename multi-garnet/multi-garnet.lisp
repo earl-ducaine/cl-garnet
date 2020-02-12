@@ -431,7 +431,8 @@
 			    (constraint-p (get-local-value parent slot))
 			    (constraint-in-obj-slot (get-local-value parent slot) parent slot))
 		   (set-slot-basic schema slot
-				   (clone-constraint (get-local-value parent slot))
+				   ;; (clone-constraint (get-local-value parent slot))
+				   (get-local-value parent slot)
 				   :auto-activate-constraints nil
 				   :invalidate-paths t)
 		   ))

@@ -123,15 +123,6 @@
 (defmacro mt-code (mt) `(sb-method-code ,mt))
 (defmacro mt-outputs (mt) `(sb-method-outputs ,mt))
 
-(defun set-sb-method-slot (mt slot val)
-  (call-set-slot-fn (sb-method-set-slot-fn mt) mt slot val)
-  (case slot
-    (:code (setf (sb-method-code mt) val))
-    (:outputs (setf (sb-method-outputs mt) val))
-    (:set-slot-fn (setf (sb-method-set-slot-fn mt) val))
-    (t
-     (setf (getf (sb-method-other-slots mt) slot nil) val))))
-
 (defsetf mt-code (mt) (val)
   `(let ((mt ,mt)(val ,val))
      (call-set-slot-fn (sb-method-set-slot-fn mt) mt :code val)
