@@ -1,13 +1,5 @@
 (in-package "OPAL")
 
-(eval-when (:execute :load-toplevel :compile-toplevel)
-  (export '(add-local-component add-local-interactor remove-local-component
-	    remove-local-interactor add-local-item
-	    remove-local-item remove-nth-item remove-nth-component
-	    notice-items-changed remove-interactor
-	    take-default-component
-	    )))
-
 
 (defmacro add-local-component (schema &rest args)
   `(kr-send ,schema :add-local-component ,schema ,@args))
@@ -39,7 +31,3 @@
 (defmacro remove-interactor (schema &rest args)
   `(let ((the-schema ,schema))
     (kr-send the-schema :remove-interactor the-schema ,@args)))
-
-(defmacro take-default-component (schema &rest args)
-  `(let ((the-schema ,schema))
-    (kr-send the-schema :take-default-component the-schema ,@args)))

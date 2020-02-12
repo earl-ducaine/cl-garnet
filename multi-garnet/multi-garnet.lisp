@@ -501,18 +501,11 @@
 		    ;; all paths unbroken, find/alloc vars
 		    (setf (CN-variables cn)
 		      (loop for var-os in var-os-list
-		       collect (get-os-var var-os)))
+		    	 collect (get-os-var var-os)))
 		    ;; init output lists in cn methods
  		    (init-method-outputs cn)
 		    ;; now, cn is connected
 		    (setf (CN-connection cn) :connected))))))))
-
-;; (defvar *invalidated-formulas* nil)
-
-;; (defvar *max-path-updates* 10)
-
-;; (defvar *save-invalidated-path-constraints* nil)
-;; (defvar *save-invalidated-formulas* nil)
 
 (defun get-object-slot-prop (obj slot prop)
   (getf (getf (g-local-value obj :sb-os-props)
@@ -566,9 +559,6 @@
       (copy-down-slot-value obj slot)
       var))))
 
-;; this fn is called when a sb-var is created, or a slot is used
-;; on a constraint path, to copy down the slot value, if it is
-;; inherited.  This allows us to detect when the value is changed.
 (defun copy-down-slot-value (obj slot)
   (unless (has-slot-p obj slot)
     (with-constants-disabled

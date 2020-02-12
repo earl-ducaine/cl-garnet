@@ -300,12 +300,7 @@ Could not find component of rank ~S in prototype.~%" agget rank)))))
 	(s-value element-instance :known-as known-as)
 	(cond ((member where '(:front :tail :back :head)))
 	      ((member where '(:behind :before :in-front :after))
-	       ;; see if instance of locator is in agg-instance
-	       (setf my-locator (find-locator-instance locator agg-instance))
-	       (cond (my-locator) ; no problem
-		     (t           ; put new component at the :front
-		      (setf my-where :front))))
-	      ;; otherwise this must be an :at
+	       )
 	      (t (setf my-locator locator)))
 	(add-component agg-instance element-instance my-where my-locator)))))
 
@@ -374,48 +369,3 @@ Could not find component of rank ~S in prototype.~%" agget rank)))))
   (let ((name (g-local-value inter :known-as)))
     (if name (with-constants-disabled (destroy-slot agg name)))
     (s-value agg :behaviors (delete inter (g-local-value agg :behaviors)))))
-
-(defun find-locator-instance (locator agg-instance)
-  (let ((agg-instance-components (g-local-value agg-instance :components))
-	my-locator ; the locator we are trying to find
-	known-as)  ; the :known-as field of locator
-    (dolist (locator-instance (g-local-value locator :is-a-inv))
-      (when (member locator-instance agg-instance-components)
-	(setf my-locator locator-instance)
-	(return)))
-    (when (null my-locator)
-      (setf known-as (g-local-value locator :known-as))
-      (when known-as
-	(setf my-locator (g-local-value agg-instance known-as))))
-    (when (null my-locator)
-      (warn "~A ~A in aggregate ~A~%~A ~A."
-	    "No component corresponding to locator"
-	    locator (g-value locator :parent)
-	    "could be found for aggregate " agg-instance))
-
-    my-locator))
-
-(define-method :take-default-component aggregadget (agg name &optional destroy?)
-  (let ((component (g-local-value agg name))
-	(proto-agg (g-local-value agg :is-a))
-	(where :in-front)
-	locator)
-    ;; if the component exists locally, remove it
-    (when component
-      (remove-component agg component destroy?))
-    ;; find the new prototype component in the prototype aggregadget
-    (setf component (g-local-value proto-agg name))
-    (when component
-      ;; find the element before component to serve as a locator
-      (dolist (element (g-local-value proto-agg :components))
-	(if (eq element component) (return))
-	(setf locator element)))
-    (cond (locator
-	   (setf locator (find-locator-instance locator agg))
-	   (when (null locator)
-	     (setf where :front))) ; mapping failed, move to :front
-	  (t
-	   (setf where :back))) ; null locator -> :back of aggregate
-    ;; install a new prototype
-    (when component
-      (add-component agg (create-instance nil component) where locator))))
