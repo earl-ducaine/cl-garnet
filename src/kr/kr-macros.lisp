@@ -1,20 +1,3 @@
-;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: KR; Base: 10 -*-
-
-;;*******************************************************************;;
-;;          The Garnet User Interface Development Environment.       ;;
-;;*******************************************************************;;
-;;  This code was written as part of the Garnet project at           ;;
-;;  Carnegie Mellon University, and has been placed in the public    ;;
-;;  domain.                                                          ;;
-;;*******************************************************************;;
-
-;;; $Id::                                                             $
-;;
-
-(in-package "COMMON-LISP-USER")
-
-(defvar *debug-kr-mode* t)
-
 
 (in-package :kr)
 
