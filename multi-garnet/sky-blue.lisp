@@ -254,7 +254,8 @@
   (etypecase obj
     (sb-constraint (set-sb-constraint-slot obj slot val))
     (sb-variable (set-sb-variable-slot obj slot val))
-    (sb-method (set-sb-method-slot obj slot val))))
+    (sb-method ;; (set-sb-method-slot obj slot val)
+	       )))
 
 (defun sb-object-p (obj)
   (or (sb-constraint-p obj)
