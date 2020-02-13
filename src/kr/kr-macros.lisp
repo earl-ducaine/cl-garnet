@@ -938,15 +938,9 @@ found in aggrelists."
      ,@(if class `((:is-a ,class)))
      ,@body))
 
-
-;;; Setf forms for several macros
-
 (defsetf g-value s-value)
-
 (defsetf get-values s-value)
-
 (defsetf get-local-values s-value)
-
 (defsetf g-local-value s-value)
 
 (defsetf gv (schema &rest slots) (value)
@@ -956,11 +950,3 @@ found in aggrelists."
     (s-value ,schema ,@slots ,value))
   "At the top-level, (setf (gv ...)) behaves just like s-value; when
 inside a formula, it also sets up a dependency, just like gv would.")
-
-(defmacro with (schema slot &body form)
-  `(let* ((*schema-self* (if (numberp ,schema) (s ,schema) ,schema))
-	  (*schema-slot* ,slot)
-	  (*current-formula* (get-value *schema-self* *schema-slot*))
-	  (*warning-on-null-link* T))
-     (catch 'no-link
-       ,@form)))

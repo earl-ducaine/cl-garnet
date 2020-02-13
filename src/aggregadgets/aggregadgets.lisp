@@ -195,26 +195,6 @@ Could not find component of rank ~S in prototype.~%" agget rank)))))
 			       name prototype agget T)))
 	       (create-part name protopart slots agget))))))
 
-(defun create-inter (name class slots agget)
-  (unless (schema-p class)
-    (error "Comma missing before ~A in declaration of interactor ~A~%   of aggregadget ~A."
-	   class name agget))
-  ;; Take out :inherit keyword and install "inherited" formulas in slot list
-  (setf slots (inherit-values slots agget name))
-  ;; Add a few slots to the slots list
-  (let (new-inter)
-    (with-constants-disabled
-      (setf new-inter (call-create-instance class slots agget
-					    :name name
-					    :add-as :interactor)))
-    (when (g-value agget :interactors)
-      (declare-constant new-inter :known-as))))
-
-
-(defun make-inters-from (agget prototype)
-  (dolist (inter (g-local-value prototype :behaviors))
-    (create-inter (g-value inter :known-as) inter nil agget)))
-
 (defun get-inters-from-function (agget inter-function)
   (multiple-value-bind (inters names)
 		       (funcall inter-function agget)
@@ -238,28 +218,6 @@ Could not find component of rank ~S in prototype.~%" agget rank)))))
                    (nconc (g-local-value agget :behaviors) (list new-inter)))
 	  (s-value new-inter :operates-on agget)))))
 
-(defun make-interactors (agget inter-list prototype)
-  ;; now do the interactors
-  (dolist (inter inter-list)
-    (let (name slots protointer)
-      (cond ((listp inter)
-	     (setf name (get-name inter))
-	     (setf protointer (get-class-name inter))
-	     (setf slots (get-body inter)))
-	    ((keywordp inter)
-	     (setf name inter)
-	     (setf protointer :modify))
-	    (t (error "bad interactor specification: ~A" inter)))
-      (cond ((eq protointer :omit))
-	    ((eq protointer :modify)
-	     (setf protointer (g-value prototype name))
-	     (cond ((null protointer)
-		    (format t
-		     "Warning in AGGREGADGET-INITIALIZE-METHOD: ~S not found ~
-		     in prototype, ignoring this inter: ~A~%" name inter-list))
-		   (t (create-inter name protointer slots agget))))
-	    (t (create-inter name protointer slots agget))))))
-
 (define-method :initialize aggregadget (agget)
   (call-prototype-method agget)
   (let ((prototype (car (g-local-value agget :is-a)))
@@ -268,14 +226,14 @@ Could not find component of rank ~S in prototype.~%" agget rank)))))
     (if (or (null parts-list)
 	    (not (is-first-comp-in-parts-list
 		  (g-local-value prototype :components) parts-list)))
-	;; create instances of components of a prototype aggregadget
-	(make-instances-from agget prototype))
+	nil
+	)
     (make-parts agget parts-list prototype)
     (if (or (null inter-list)
 	    (not (is-first-comp-in-parts-list  ; use same fn for inters
 		  (g-local-value prototype :behaviors) inter-list)))
-	(make-inters-from agget prototype))
-    (make-interactors agget inter-list prototype)
+	nil
+	)
     (if (or parts-list (g-value agget :parts))
 	(declare-constant agget :components))))
 
@@ -314,26 +272,3 @@ Could not find component of rank ~S in prototype.~%" agget rank)))))
       (if (g-value agg :parts)
 	  (declare-constant agg name)))
     (kr-send opal::aggregate :add-component agg gob key where loc)))
-
-
-(define-method :remove-component aggregadget (agg component &optional destroy?)
-  (let ((component-instances (g-local-value component :is-a-inv))
-	(known-as (g-local-value component :known-as)))
-    (dolist (instance component-instances)
-      (let ((parent (g-local-value instance :parent)))
-        ;;; Condition used to be (is-a-p parent agg)
-	(when (and (is-a-p parent agg) (not (eq parent agg)))
-	  (remove-component parent instance destroy?))))
-    (when known-as
-      (dolist (agg-instance (g-local-value agg :is-a-inv))
-	(let ((component (g-local-value agg-instance known-as)))
-	  (when component
-	    (remove-component agg-instance component destroy?)))))
-    ;; (remove-local-component agg component)
-    (when destroy?
-      (destroy component))))
-
-;; (define-method :remove-local-component opal:aggregadget (agg gob)
-;;   (let ((name (g-local-value gob :known-as)))
-;;     (if name (with-constants-disabled (destroy-slot agg name)))
-;;     (kr-send opal::aggregate :remove-component agg gob)))
