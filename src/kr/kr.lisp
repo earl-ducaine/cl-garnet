@@ -1576,57 +1576,6 @@ one by that name if it exists.  The initial number of slots is
 		 (process-one-constant schema slot)
 		 (return))))))))
 
-
-(defun merge-prototype-values (object slot parents values)
-  "Process declarations such as :DECLARE (:PARAMETERS T :EXCEPT :WIDTH),
-which modify the prototype's specification of a declaration by adding or
-removing new slot names."
-  (unless values
-    (setf values (when parents (g-value (car parents) slot))))
-  (let ((exceptions nil)
-	(add-prototype nil)
-	(results nil))
-    ;; process declarations
-    (when (and values (not (eq values :NONE)))
-      (if (listp values)
-	  (progn
-	    (if (eq (car values) 'QUOTE)
-		(format
-		 t "The ~S list for schema ~S is specified incorrectly - too many quotes:~%   ~S~%" slot object values))
-	    ;; Normal case - a list
-	    (do ((c values (cdr c)))
-		((null c))
-	      (cond ((eq (car c) T)
-		     (setf add-prototype T))
-		    ((eq (car c) :EXCEPT) ; following is list of exceptions.
-		     (setf exceptions (cdr c))
-		     (return))
-		    (t
-		     (if (eq slot :CONSTANT)
-			 (process-one-constant object (car c))
-			 (pushnew (car c) results))))))
-	  ;; For the case (:CONSTANT T), for example - single value
-	  (if (eq values T)
-	      (setf add-prototype T)
-	      (if (eq slot :CONSTANT)
-		  (process-one-constant object values)
-		  (setf results (list values)))))
-      (when add-prototype			; Add slots declared in prototype
-	(let ((maybe-constant
-	       (if (eq slot :CONSTANT)
-		   (g-value-no-copy object :MAYBE-CONSTANT)
-		   (g-value (car parents) slot))))
-	  (do-one-or-list (c maybe-constant)
-	    (unless (memberq c exceptions)
-	      (if (eq slot :CONSTANT)
-		  (process-one-constant object c)
-		  (pushnew c results))))))
-      (unless (eq slot :CONSTANT)
-	(setf results (nreverse results))
-	(unless (equal results values)
-	  (s-value object slot results))))))
-
-
 (defun process-constant-slots (the-schema parents constants do-types)
   "Process local-only and constant declarations."
   (locally (declare #.*special-kr-optimization*)
@@ -1660,10 +1609,6 @@ the expression ~S instead."
 		    (internal-s-value the-schema slot (g-value parent slot))))
 		;; Avoid inheritance and set the slot to NIL.
 		(internal-s-value the-schema slot NIL))))))
-    ;; Now process constant declarations.
-    (unless *constants-disabled*
-      (merge-prototype-values the-schema :CONSTANT parents constants))
-    ;; Now process type declarations
     (when (and do-types *types-enabled*)
       ;; Copy type declarations down from the parent(s), unless overridden
       ;; locally.
@@ -1889,7 +1834,7 @@ RETURNS: a list, with elements as follows:
 			      '(:IGNORED-SLOTS :LOCAL-ONLY-SLOTS
 				:MAYBE-CONSTANT :PARAMETERS :OUTPUT
 				:SORTED-SLOTS :UPDATE-SLOTS)))
-	    (merge-prototype-values schema (car slot) is-a (cdr slot))))
+	    ))
 	(when generate-instance
 	  ;; We are generating code for a CREATE-INSTANCE, really.
 	  (kr-init-method schema initialize-method))
@@ -1969,7 +1914,7 @@ RETURNS: a list, with elements as follows:
 			      '(:IGNORED-SLOTS :LOCAL-ONLY-SLOTS
 				:MAYBE-CONSTANT :PARAMETERS :OUTPUT
 				:SORTED-SLOTS :UPDATE-SLOTS)))
-	    (merge-prototype-values schema (car slot) is-a (cdr slot))))
+	    ))
 	(when generate-instance
 	  ;; We are generating code for a CREATE-INSTANCE, really.
 	  (kr-init-method schema initialize-method))
