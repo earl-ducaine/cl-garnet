@@ -346,9 +346,7 @@ and the same parent (if any)."
 		      (sl-bits full-entry) (sl-bits entry))
 		(setf (sl-value full-entry) value
 		      (sl-bits full-entry) *local-mask*))
-	    (setf entry full-entry)))
-	;; (setup-dependency schema slot value entry)
-	)
+	    (setf entry full-entry))))
       (unless (eq value *no-value*) value))))
 
 
@@ -377,13 +375,7 @@ difference is what accessor function to use."
 		       ;; If slot is constant, never set up a dependency.
 		       (setf setup NIL)
 		       (setf *is-constant* NIL))
-		   (setf *accessed-slots* T)) ; indicate we have done something
-		 ;; Record the link dependency for this parent and formula
-		 (when (and setup *current-formula*)
-		   (let ((,the-value (if ,entry (sl-value ,entry))))
-		     (setup-dependency schema slot (if (eq ,the-value *no-value*)
-						       *no-value* ,value)
-				       ,entry)))
+		   (setf *accessed-slots* T))
 		 ,value)
 	       ;; A link is broken.  Get out of here!
 	       (broken-link-throw schema slot))
@@ -398,7 +390,8 @@ difference is what accessor function to use."
 but is not a valid object.  This happened in the formula
 in slot ~S of ~S.~%~%"
 		  schema *schema-slot* *schema-self*)
-		 (broken-link-throw schema slot))
+		 ;; (broken-link-throw schema slot)
+		 )
 	       ;; This happened at the top level.
 	       #+GARNET-DEBUG
 	       (cerror "Return NIL"
@@ -406,68 +399,8 @@ in slot ~S of ~S.~%~%"
 inside a formula)"
 		       schema slot))))))
 
-
-;;; This function is for use in formulas.  It represents a direct (i.e.,
-;;; no-link) dependency.  If the <slot> of the <schema> changes, the formula
-;;; will be re-evaluated.
-;;;
 (defun gv-fn (schema slot)
   (gv-fn-body g-value))
-
-
-(defun setup-dependency (schema slot value entry)
-  "Set up a dependency: the *current-formula* depends on the <slot> of the
-<schema>."
-  (when *setup-dependencies*
-    (unless (formula-p *current-formula*)
-      (when (eq *current-formula* :IGNORE)
-	;; This is used when evaluating expressions OUTSIDE formulas (by
-	;; Gilt, for example) - just do nothing.
-	(return-from setup-dependency schema))
-      (cerror "Return NIL"
-	      " (in setup-dependency) ~S is not a formula!~%"
-	      *current-formula*)
-      (return-from setup-dependency NIL))
-    (unless schema
-      ;; A link is broken.  Get out of here!
-      (broken-link-throw schema slot))
-    ;; Record the link dependency for this parent and formula
-    (let ((dependents (slot-dependents entry)))
-      (cond ((null dependents)
-	     ;; No dependents yet.
-	     (if (full-sl-p entry)
-		 (setf (full-sl-dependents entry) *current-formula*)
-		 ;; make sure we have a place on which to hang the dependency!
-		 (let ((value (if entry (sl-value entry) value))
-		       (bits  (if entry (sl-bits entry) 0)))
-		   (setf entry (set-slot-accessor
-				schema slot value bits *current-formula*)))))
-            ((listp dependents)
-	     ;; List of dependents, make sure we're not there, then push
-	     (if (memberq *current-formula* dependents)
-		 (return-from setup-dependency NIL)
-		 (setf (full-sl-dependents entry)
-		       (cons *current-formula* dependents))))
-            (T
-	     ;; Just one dependent, make sure not the same, then make a list
-	     (if (eq *current-formula* dependents)
-		 (return-from setup-dependency NIL)
-		 (setf (full-sl-dependents entry)
-		       (list *current-formula* dependents))))))
-
-    ;; We reach this point only if *current-formula* was not already one
-    ;; of the dependents of <schema> <slot>.
-    (let ((depended (a-formula-depends-on *current-formula*)))
-      (cond ((null depended)
-	     (setf (a-formula-depends-on *current-formula*) schema))
-	    ((listp depended)
-	     (unless (memberq schema depended)
-	       (setf (a-formula-depends-on *current-formula*)
-		     (cons schema depended))))
-	    (T
-	     (unless (eq schema depended)
-	       (setf (a-formula-depends-on *current-formula*)
-		     (list schema depended))))))))
 
 (defmacro gv (schema &rest slots)
   "Used in formulas. Expands into a chain of value accesses,
