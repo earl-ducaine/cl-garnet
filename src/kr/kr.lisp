@@ -124,16 +124,16 @@ RETURNS: the inherited value, or NIL."
 	      ;; If value, just set bits.
 	      (setf bits (sl-bits entry)))
 	  (unless (eq value *no-value*)
-	    (if (and bits (is-parent bits))
-		;; Clear the parent bit, since we will set the child.
-		(setf bits (logand bits *not-parent-mask*))
-		;; Set the bit in the parent which says that the value was
-		;; inherited by someone.
-		(if entry
-		    ;; Destructively set the bits.
-		    (setf (sl-bits entry) (logior bits *is-parent-mask*))
-		    (set-slot-accessor parent slot value
-				       (logior bits *is-parent-mask*) nil)))
+	    ;; (if (and bits (is-parent bits))
+	    ;; 	;; Clear the parent bit, since we will set the child.
+	    ;; 	(setf bits (logand bits *not-parent-mask*))
+	    ;; 	;; Set the bit in the parent which says that the value was
+	    ;; 	;; inherited by someone.
+	    ;; 	(if entry
+	    ;; 	    ;; Destructively set the bits.
+	    ;; 	    (setf (sl-bits entry) (logior bits *is-parent-mask*))
+	    ;; 	    (set-slot-accessor parent slot value
+	    ;; 			       (logior bits *is-parent-mask*) nil)))
 	    ;; Copy the value down to the inheriting slot, unless the value
 	    ;; contains a formula.
 	    (let ((was-formula (formula-p value)))
@@ -146,13 +146,14 @@ RETURNS: the inherited value, or NIL."
 	      ;; Copy down, mark as inherited if inherited
 	      (when (and is-leaf slot-structure)	; slot had constant bit
 		(setf bits (logior bits (sl-bits slot-structure))))
-	      (setf bits (logior *inherited-mask* bits
-				 #+TEST
-				 (logand bits *not-parent-constant-mask*)))
+	      ;; (setf bits (logior *inherited-mask* bits
+	      ;; 			 #+TEST
+	      ;; 			 (logand bits *not-parent-constant-mask*)))
 	      (when intermediate-constant
 		(setf bits (logior *constant-mask* bits)))
-	      (set-slot-accessor schema slot value bits
-				 (slot-dependents slot-structure)))
+	      ;; (set-slot-accessor schema slot value bits
+	      ;; 			 (slot-dependents slot-structure))
+	      )
 	    (return-from g-value-inherit-values (values value bits))))))
     ;; We didn't find anything, so return an appropriate null value and set
     ;; the local cache (even though we have no value) to avoid further
@@ -845,46 +846,6 @@ This allows it to be a destructive function."
 	    (visit-inherited-values child a-slot function)
 	    (funcall function child a-slot)))))))
 
-
-(defun run-demons-and-set-value (schema slot new-value old-value is-relation
-				 is-formula was-formula the-bits entry)
-  "Internal function which runs demons as appropriate (before changing the
-value) and then physically sets the <slot> in the <schema> to be
-<new-value>."
-  (run-invalidate-demons schema slot entry)
-  ;; Now set the value in the slot to be new-value.
-  (cond ((and was-formula (not is-formula))
-	 ;; This is the case when we allow temporary overwriting
-	 (setf (cached-value old-value) new-value)
-	 ;; Set this to NIL, temporarily, in order to cause propagation
-	 ;; to leave the value alone.  It will be validated by s-value.
-	 (set-cache-is-valid old-value NIL))
-	(t
-	 ;; All other cases
-	 (when (and is-formula (null (cached-value new-value)))
-	   ;; place old value in the cache only if an initial value
-	   ;; was not provided for the new formula
-	   ;; Set value, but keep formula invalid.
-	   (setf (cached-value new-value)
-		 (if was-formula (cached-value old-value) old-value)))
-	 ;; Take care of relations.
-	 (when is-relation
-	   (when old-value (unlink-all-values schema slot))
-	   (link-in-relation schema slot new-value))
-	 (let ((new-bits (or the-bits *local-mask*)))
-	   (if entry
-	       ;; This is a special slot - just set it
-	       (setf (sl-value entry) new-value
-		     (sl-bits entry) new-bits)
-	       ;; This is not a special slot.
-	       (set-slot-accessor schema slot new-value new-bits nil)))))
-  ;; Now propagate the change to all the children which used to
-  ;; inherit the previous value of this slot from the schema.
-  (when (and the-bits (is-parent the-bits))
-    (let ((*setting-formula-p* T))
-      (update-inherited-values schema slot new-value T))))
-
-
 (defun constant-slot-error (schema slot)
   (cerror "Set the slot anyway"
 	  "Schema ~S - trying to set slot ~S, which is constant."
@@ -922,16 +883,17 @@ value) and then physically sets the <slot> in the <schema> to be
     (unless (schema-p schema)
       (return-from s-value-fn (values value t)))
     (let* ((entry (slot-accessor schema slot))
-	   (old-value (when entry
-			;; Slot position is known at compile time
-			(sl-value entry)))
-	   the-bits is-depended)
+	   (old-value
+	    nil
+	     )
+	    is-depended)
       ;; give error if setting constant slot
       (check-not-constant schema slot entry)
-      (if entry
-	  (setf the-bits (sl-bits entry)
-		is-depended (slot-dependents entry))
-	  (setf the-bits 0))
+      ;; (if entry
+      ;; 	  ;; (setf the-bits (sl-bits entry)
+      ;; 	  ;; 	is-depended (slot-dependents entry))
+      ;; 	  ;; (setf the-bits 0)
+      ;; 	  )
       (when (and the-bits
 		 (not (is-inherited the-bits))
 		 (eq old-value value)
@@ -978,7 +940,7 @@ value) and then physically sets the <slot> in the <schema> to be
 	(unless is-formula
 	  (run-pre-set-demons schema slot value NIL :S-VALUE))
 	;; Now we can set the new value.
-	(setf the-bits (logand the-bits *not-inherited-mask*))
+	;; (setf the-bits (logand the-bits *not-inherited-mask*))
 	(run-invalidate-demons schema slot entry)
 	;; Now set the value in the slot to be <value>.
 	(cond
@@ -1408,95 +1370,6 @@ The <function> is called with:
 		       (g-formula-value schema name) nil 0 indent nil)))))
     (when is-ps
       (format t "  }~%"))))
-
-
-(defun call-on-one-slot (schema slot function)
-  "Similar to CALL-ON-PS-SLOTS, but works on one slot only."
-  (call-func-on-one-slot schema slot T function NIL 0 NIL))
-
-
-(defun slot-printer (schema name formula are-inherited valid values
-			    type-p bits indent limit-values)
-  "Used by PS to print out one slot."
-  (declare (ignore schema))
-  (let ((number 0)
-	(printed nil)
-	(column (+ 20 (indent-by indent)))
-	(*print-length* 10)		; do not print out very long arrays!
-	type)
-    (if are-inherited
-      (format t "  ~(~S~) (inherited): " name)
-      (format t "  ~S = " name))
-    (when type-p
-      (setf type (code-to-type (extract-type-code bits))))
-    (when formula
-      (format t "~S(" formula))
-    (cond ((eq values *no-value*)
-	   (if type-p
-	     (setf column (print-one-slot-helper ; print types
-			   *no-value* column indent T type)))
-	   (setf printed T))
-	  ((and values (listp values) (listp (cdr values)))
-	   (format t "(")
-	   (dolist (value values)
-	     (setf printed t)
-	     (setf column (print-one-slot-helper value column indent
-						 (> number 0) nil))
-	     (incf number)
-	     (when (and limit-values (> number limit-values))
-	       ;; Too many values: use ellipsis form.
-	       (format t " ...")
-	       (return nil)))
-	   (format t ")")
-	   (when formula
-	     (format t " . ~S)" valid))
-	   (when type
-	     (print-one-slot-helper	; print out type
-	      *no-value* column indent nil type)))
-	  ((null values)
-	   (if formula
-	     (format t "nil . ~S)" valid)
-	     (format t " NIL"))
-	   (setf printed T)
-	   (when type
-	     (print-one-slot-helper	; print out type
-	      *no-value* column indent nil type)))
-	  (t
-	   (setf printed t)
-	   (setf column
-		 (print-one-slot-helper values column indent (not formula) type))
-	   (when formula
-	     (format t " . ~S)" valid))))
-    (if printed
-      (terpri)
-      (format t " NIL~%"))))
-
-
-(defun ps (schema &key (control t) inherit (indent 0) types-p all-p
-		  (stream *standard-output*))
-  "PS prints the <schema>.  The optional arguments allow fancy control of
-  what is printed.
-
-  A control schema may be used to determine which options are printed, which
-  ones are ignored, etc.  See the manual for details.
-
-  <control> can be one of the following:
- -  T, which means that the <schema> itself is used as the control schema;
- -  :DEFAULT, which means that the schema KR:PRINT-SCHEMA-CONTROL is used;
- -  any schema, which is used as the control schema.
- -  NIL, which means that the <schema> is printed in its entirety (i.e. no
-    schema control.)
-
-  If <inherit> is non-nil, slots that have been inherited are also printed.
-  <indent> is used for debugging and should not be set by the user."
-
-  (let ((*standard-output* stream))
-    (call-on-ps-slots schema 'SLOT-PRINTER
-		      :control control :inherit inherit :indent indent
-		      :types-p types-p :all-p all-p)
-    (when (formula-p schema)
-      (print-meta schema)))
-  schema)
 
 
 (defun the-bits (bits)
@@ -2027,7 +1900,6 @@ RETURNS: a list, with elements as follows:
 	  (process-constant-slots
 	   schema is-a
 	   (if had-constants
-	       ;; There WAS a constant declaration, perhaps NIL.
 	       (if constants
 		   (if (formula-p constants)
 		       (g-value-formula-value schema :CONSTANT constants NIL)
@@ -2108,7 +1980,6 @@ RETURNS: a list, with elements as follows:
 	  (process-constant-slots
 	   schema is-a
 	   (if had-constants
-	       ;; There WAS a constant declaration, perhaps NIL.
 	       (if constants
 		   (if (formula-p constants)
 		       (g-value-formula-value schema :CONSTANT constants NIL)
@@ -2373,63 +2244,3 @@ no new meta-schema is created as a result of this operation."
        (let ((meta (find-meta formula)))
 	 (if meta
 	     (g-value meta slot)))))))
-
-
-(defun s-formula-value (formula slot value)
-  "Sets the value of the meta-slot <slot> in the <formula> to be <value>.
-If no meta-schema exists for the <formula>, creates one."
-  (when (formula-p formula)
-    (let ((meta (a-formula-meta formula)))
-      (unless meta
-	(setf meta (find-meta formula))
-	(if meta
-	    ;; We do have a meta-schema that can be inherited.
-	    (let ((new (create-schema nil)))
-	      (s-value new :is-a (list meta))
-	      (setf meta new))
-	    ;; Create a brand new, non-inheriting meta-schema.
-	    (setf meta (create-schema nil)))
-	;; Install the new meta-schema.
-	(setf (a-formula-meta formula) meta))
-      (s-value meta slot value))))
-
-
-(eval-when (:execute :compile-toplevel :load-toplevel)
-  (defun k-reader (stream subchar arg)
-    "Modify the readtable so #k<NAME> is read as the KR object NAME, if
-defined.  This allows objects written with the *print-as-structure*
-notation to be read back in."
-    (declare (ignore subchar arg))
-    (let ((next-char (read-char stream)))
-      (if (char= next-char #\<)
-	  ;; This is a KR #k<...> object name
-	  (let ((string ""))
-	    (do ((c (read-char stream) (read-char stream)))
-		((char= c #\>))
-	      (setf string (format nil "~A~C" string c)))
-	    (setf string (read-from-string string))
-	    (if (and (boundp string)
-		     (or (schema-p (symbol-value string))
-			 (formula-p (symbol-value string))))
-		(symbol-value string)
-		(cerror "Ignore the object"
-			"Non-existing KR object: ~S" string)))
-	  ;; This is something else
-	  (cerror
-	   "Ignore the token"
-	   "  Illegal character ~S after reader macro #k (expecting \"<\")"
-	   next-char)))))
-
-
-;; Install this reader macro in the standard readtable.
-(eval-when (:execute :compile-toplevel :load-toplevel)
-  (set-dispatch-macro-character #\# #\k (function k-reader)))
-
-(defun o-formula-reader (stream subchar arg)
-  "Modify the readtable to #f(...) is read as (o-formula ...).  For example,
-this allows you to write
-(S-VALUE A :LEFT #F(GVL :TOP))"
-  (declare (ignore subchar arg))
-  `(o-formula ,(read stream t nil t)))
-
-(set-dispatch-macro-character #\# #\f #'o-formula-reader)

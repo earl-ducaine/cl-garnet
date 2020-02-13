@@ -11,11 +11,11 @@
       (space 0)
       (debug 0)
       )))
+
 (defstruct (schema (:predicate is-schema)
                    (:print-function print-the-schema))
-  name      ; the schema name, or a number
-  bins      ; bins of lists of slots
-  )
+  name
+  bins)
 
 (declaim (inline schema-p))
 (defun schema-p (obj)
