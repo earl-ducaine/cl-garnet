@@ -24,9 +24,6 @@
   (:width 0)
   (:height 0)
   (:hit-threshold 0)
-  (:visible (o-formula (let ((parent (gvl :parent)))
-			    (or (null parent) (gv parent :visible)))
-                       t))
   (:limit-values '((:is-a-inv 5)))
   (:global-limit-values 5))
 
@@ -35,9 +32,7 @@
 		  (fixnum :left :top :width :height))
   (:components)
   (:update-slots NIL)
-  (:visible (o-formula (let ((parent (gvl :parent)))
-			    (or (null parent) (gv parent :visible)))
-                       t)))
+  )
 
 (create-instance 'GRAPHICAL-OBJECT view-object
   :declare ((:type (fixnum :top :left :width :height)

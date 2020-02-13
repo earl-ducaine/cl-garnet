@@ -237,8 +237,6 @@
     ))
 
 
-;; handles stay specified as (m-stay-constraint :max box (gvl :a) (gvl :b :c))
-
 (defmacro m-stay-constraint (strength-spec &rest var-specs)
   (let* ((var-names (loop for spec in var-specs collect
 			  (if (symbolp spec) spec (gentemp))))

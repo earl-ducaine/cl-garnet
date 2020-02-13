@@ -747,10 +747,10 @@ Inputs:
 			`((get-local-value schema ,slot)))
 		      (if formulas
 			(if in-formula
-			    `((gv schema ,slot))
+			    nil
 			    `((g-value schema ,slot)))
 			(if in-formula
-			  `((gv schema ,slot))
+			    nil
 			  `((get-value schema ,slot)))))))
      ;; Now iterate
      (if values
@@ -942,11 +942,3 @@ found in aggrelists."
 (defsetf get-values s-value)
 (defsetf get-local-values s-value)
 (defsetf g-local-value s-value)
-
-(defsetf gv (schema &rest slots) (value)
-  `(progn
-    (if *current-formula*
-      (gv ,schema ,@slots))
-    (s-value ,schema ,@slots ,value))
-  "At the top-level, (setf (gv ...)) behaves just like s-value; when
-inside a formula, it also sets up a dependency, just like gv would.")

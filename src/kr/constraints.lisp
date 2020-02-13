@@ -265,11 +265,6 @@ and the same parent (if any)."
 
 (declaim (inline slot-is-not-constant))
 (defun slot-is-not-constant (schema slot)
-  "RETURNS:
-     T if the slot is not constant, i.e., it was not declared constant and we
-     are not in the middle of a gv chain where the slot is declared a link
-     constant.
-"
   (let ((entry (slot-accessor schema slot)))
     (when entry
       (not (is-constant (sl-bits entry))))))
@@ -321,40 +316,6 @@ and the same parent (if any)."
 		      (sl-bits full-entry) *local-mask*))
 	    (setf entry full-entry))))
       (unless (eq value *no-value*) value))))
-
-
-(defmacro gv (schema &rest slots)
-  "Used in formulas. Expands into a chain of value accesses,
-or a single call to gv-value-fn."
-  (cond
-    (slots
-     (if (and (keywordp schema) (not (eq schema :SELF)))
-	 ;; Missing object name!
-	 (cerror
-	  "Return NIL"
-	  "The first argument to GV must be an object.
-Found in the expression   (gv ~S~{ ~S~}) ,~:[
-  which appeared at the top level (i.e., not inside any formula)~;
-  in the formula on slot ~S of object ~S~]."
-	  schema slots *current-formula*
-	  *schema-slot* *schema-self*)
-	 ;; No error
-	 (if (null (cdr slots))
-	     ;; This is a GV with a single slot.
-	     `(gv-value-fn ,(if (eq schema :self)
-				(setf schema '*schema-self*)
-				schema)
-			   ,(car slots))
-	     )))
-    ((eq schema :self)
-     `(progn *schema-self*))
-    (t
-     `(progn ,schema))))
-
-(defmacro gvl (name &rest names)
-  "Used in formulas. Equivalent to a call to GV
-with a :SELF added as the first parameter."
-  `(gv *schema-self* ,name ,@names))
 
 (declaim (inline invalidate-demon))
 (defun invalidate-demon (schema slot save)
