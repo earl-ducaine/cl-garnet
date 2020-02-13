@@ -25,9 +25,7 @@
    	    :pathname "src/opal"
    	    :depends-on (kr opal-boot)
    	    :components
-	    ((:file "basics")
-	     (:file "aggregates")
-	     ))
+	    ((:file "basics")))
    (:module aggregadgets
    	    :pathname "src/aggregadgets"
    	    :depends-on (kr opal)
