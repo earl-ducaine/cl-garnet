@@ -664,25 +664,6 @@ Always returns the CODE of the resulting type (whether new or not)"
   "RETURNS: the documentation string for the internal number <type>."
   (aref type-docs-array (encode-type type)))
 
-
-
-;;; Formula and slot code.
-
-;; Helper function
-;;
-(defun eliminate-constant-formula ()
-  (declare (ftype (function (t t) t) destroy-constraint))
-  ;; This was a constant formula!  Commit suicide.
-  (with-demons-disabled
-    (destroy-constraint *schema-self* *schema-slot*))
-  (when *warning-on-evaluation*
-      (format t "formula (~S ~S) is constant - eliminated~%"
-	      *schema-self* *schema-slot*))
-  (let ((entry (slot-accessor *schema-self* *schema-slot*)))
-    (if entry
-	(setf (sl-bits entry)
-	      (logior *constant-mask* (sl-bits entry))))))
-
 (declaim (inline slot-is-constant))
 (defun slot-is-constant (schema slot)
   (let ((entry (slot-accessor schema slot)))
@@ -691,73 +672,6 @@ Always returns the CODE of the resulting type (whether new or not)"
 
 (declaim (fixnum *warning-level*))
 (defparameter *warning-level* 0)
-
-;; Helper function
-;;
-(defun re-evaluate-formula (schema-self schema-slot current-formula entry #+EAGER eval-type)
-  (let ((*schema-self* schema-self)
-	(*schema-slot* schema-slot)
-	(*current-formula* current-formula)
-	#+EAGER (*eval-type* eval-type)
-	)
-    (when *warning-on-evaluation*
-      (dotimes (i *warning-level*) (write-string " "))
-      (format t "evaluating ~S (on ~S, slot ~S)~%"
-	      *current-formula* *schema-self* *schema-slot*)
-      (incf *warning-level* 2))
-    (let* ((*within-g-value* T)
-	   (*check-constants*		; only for the first evaluation!
-	    (unless *constants-disabled*
-	      (zerop (the fixnum (a-formula-number *current-formula*)))))
-	   (*accessed-slots* NIL)
-	   (*is-constant* T)
-	   (declared-constant (when *check-constants*
-				(when (or entry
-					  (setf entry (slot-accessor
-						       *schema-self*
-						       *schema-slot*)))
-				  (is-constant (sl-bits entry))))))
-      (when declared-constant		; save work, since we know the answer
-	(setf *check-constants* nil))
-      (set-cache-mark *current-formula* *sweep-mark*)
-      (let ((the-result
-	     (catch 'no-link
-	       ;; If no-link, return cached-value anyway.
-	       ;; Evaluate the formula.
-	       (let ((new-v (funcall (coerce (a-formula-function *current-formula*) 'function))))
-		 (if (and *types-enabled*
-			  (multiple-value-bind (value result)
-			      (check-slot-type *schema-self* *schema-slot* new-v
-					       T entry)
-			    (cond ((eq result :REPLACE)
-				   (setf new-v value)
-				   NIL)
-				  ((eq result T) T)
-				  (T NIL))))
-		     ;; A type error
-		     (setf new-v NIL)
-		     ;; OK
-		     (unless (eq new-v (cached-value *current-formula*))
-		       ;; Do nothing if value has not changed.
-		       (let ((*check-constants* *check-constants*))
-			 ;; Call the pre-set-demon function on this schema if
-			 ;; this slot is an interesting slot.
-			 (run-pre-set-demons *schema-self* *schema-slot* new-v
-					     :CURRENT-FORMULA :FORMULA-EVALUATION)
-			 #+EAGER
-			 (do-eager-reeval new-v)
-			 ;; Set the cache to the new value
-			 (setf (cached-value *current-formula*) new-v))))
-		 new-v))))
-	(if (or declared-constant
-		(and *check-constants* *is-constant* *accessed-slots*))
-	    ;; Eliminate constant formulas, if needed.
-	    (eliminate-constant-formula)
-	    ;; Mark formula as valid here.
-	    (unless *setting-formula-p*
-	      (set-cache-is-valid *current-formula* t)))
-	(when *warning-on-evaluation* (decf *warning-level* 2))
-	the-result))))
 
 (defun g-value-formula-value (schema-self slot formula entry)
   (let ((*schema-self* schema-self))
@@ -769,22 +683,13 @@ Always returns the CODE of the resulting type (whether new or not)"
 	    ;; accesses.  Increment by 2 since lower bit is "valid" flag.
 	    (incf *sweep-mark* 2))
 	  (if (= (cache-mark formula) *sweep-mark*)
-	      ;; If the sweep mark is the same as the current one, WE ARE IN THE
-	      ;; MIDDLE OF A CIRCULARITY.  Just use the old value, and mark it
-	      ;; valid.
 	      (progn
 		(when *warning-on-circularity*
 		  (format t "Warning - circularity detected on ~S, slot ~S~%"
 			  *schema-self* slot))
 		(unless *setting-formula-p*
 		  (set-cache-is-valid formula T))
-		(a-formula-cached-value formula))
-	      ;; Compute, cache and return the new value.
-	      ;; (re-evaluate-formula *schema-self* slot formula entry)
-	      )))))
-
-
-;;; Inheritance
+		(a-formula-cached-value formula)))))))
 
 (defun copy-to-all-instances (schema a-slot value &optional (is-first T))
   "Forces the <value> to be physically copied to the <a-slot> of all

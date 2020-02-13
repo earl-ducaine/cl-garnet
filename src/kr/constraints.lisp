@@ -245,33 +245,6 @@ RETURNS:  the <formula>
       (setf (a-formula-lambda formula) form))))
 
 
-(defun move-formula (from-schema from-slot to-schema to-slot)
-  "This function is used to move a formula from a slot to another.  It is
-not safe to simply do (s-value new :slot (get-value old :slot)),
-because this creates a formula which sits on two slots, and this is
-definitely a no-no.
-Any formula in to-schema.to-slot is destroyed, even if
-from-schema.from-slot contains a regular value (as opposed to a formula)."
-  (let ((formula (get-value from-schema from-slot)))
-    (if (formula-p formula)
-	(let ((value (g-value-formula-value from-schema
-					    from-slot formula NIL)))
-	  (eliminate-formula-dependencies formula NIL)
-	  ;; Invalidate the formula.
-	  (set-cache-is-valid formula nil)
-	  (setf (a-formula-schema formula) NIL)
-	  (setf (a-formula-slot formula) NIL)
-	  (setf (a-formula-depends-on formula) NIL)
-	  (set-slot-accessor from-schema from-slot value *local-mask* NIL)
-	  (s-value to-schema to-slot formula))
-	;; This is just a regular value, not a formula.
-	(let* ((entry (slot-accessor to-schema to-slot))
-	       (value (when entry (sl-value entry))))
-	  (when (formula-p value)
-	    (destroy-constraint to-schema to-slot))
-	  (s-value to-schema to-slot formula)))))
-
-
 (defun copy-formula (formula)
   "Makes and returns a copy of the <formula>, keeping the same initial value
 and the same parent (if any)."
@@ -329,10 +302,6 @@ and the same parent (if any)."
       (not (is-constant (sl-bits entry))))))
 
 
-;; This is similar to g-value-fn, but does a few things needed for constant
-;; formula checking before it does anything else.  Also, sets up
-;; dependencies at the end.
-;;
 (defun gv-value-fn (schema slot)
   (locally (declare #.*special-kr-optimization*)
     #+GARNET-DEBUG
@@ -378,7 +347,8 @@ and the same parent (if any)."
 		(setf (sl-value full-entry) value
 		      (sl-bits full-entry) *local-mask*))
 	    (setf entry full-entry)))
-	(setup-dependency schema slot value entry))
+	;; (setup-dependency schema slot value entry)
+	)
       (unless (eq value *no-value*) value))))
 
 
@@ -499,25 +469,6 @@ inside a formula)"
 	       (setf (a-formula-depends-on *current-formula*)
 		     (list schema depended))))))))
 
-;;
-(defun gv-chain (schema slot-descriptors)
-  "Used for chains of slots (i.e., links) in GV/GVL.  It keeps
-accessing slots until the end of the link."
-  (do* ((s slot-descriptors (cdr s)))
-       ((null s))
-    (if (setf schema (gv-value-fn
-		      ;; for backwards compatibility.
-		      (if (listp schema) (car schema) schema)
-		      (car s)))
-	;; We did get a schema.
-	(when (eq schema :SELF)
-	  (setf schema *schema-self*))
-	;; There was no schema.  If we are in the middle, this is a broken link.
-	(when (cdr s)
-
-	  (return (broken-link-throw schema (car s))))))
-  schema)
-
 (defmacro gv (schema &rest slots)
   "Used in formulas. Expands into a chain of value accesses,
 or a single call to gv-value-fn."
@@ -540,13 +491,7 @@ Found in the expression   (gv ~S~{ ~S~}) ,~:[
 				(setf schema '*schema-self*)
 				schema)
 			   ,(car slots))
-	     ;; this is the more general case
-	     `(gv-chain ,(if (eq schema :self) '*schema-self* schema)
-			,@(if (find-if-not #'keywordp slots)
-			      ;; Some slot is not a keyword - use list.
-			      `((list ,@slots))
-			      ;; All slots are keywords - use literal.
-			      `((quote ,slots)))))))
+	     )))
     ((eq schema :self)
      `(progn *schema-self*))
     (t
@@ -578,40 +523,6 @@ with a :SELF added as the first parameter."
   "This is the default invalidate demon."
   (kr-send schema :UPDATE-DEMON schema slot save))
 
-
-(defun destroy-constraint (schema slot)
-  "If the value in the <slot> of the <schema> is a formula, replace it with
-  the current value of the formula and eliminate the formula.  This
-  effectively eliminates the constraint on the value."
-  (let* ((entry (slot-accessor schema slot))
-	 (formula (if entry
-		      (sl-value entry)
-		      (g-value-inherit-values schema slot T entry))))
-    (when (and (formula-p formula)
-	       (not-deleted-p formula))	; not already deleted
-      (let ((value (g-cached-value schema slot)))
-	;; All children formulas are eliminated as well.
-	(do-one-or-list (child (a-formula-is-a-inv formula))
-	  (when (not-deleted-p child)			; do nothing if already deleted.
-	    (g-value (on-schema child) (on-slot child))	; get value
-	    (destroy-constraint (on-schema child) (on-slot child))))
-	;; Inform dependents, even if value does not change.  This is
-	;; for applications (such as C32) which need to know whether a
-	;; formula is present.
-	(mark-as-changed schema slot)
-	(delete-formula formula T)
-	;; Replace formula with its cached value.
-	(set-slot-accessor schema slot value
-			   ;; Keep the update-slot bit
-			   (logior *local-mask* (logand (sl-bits entry)
-							*is-update-slot-mask*))
-			   NIL)
-	NIL))))
-
-
-
-;;; INITIALIZE THE WHOLE THING
-;;
 
 (defun initialize-kr ()
   "Called once at the 'beginning.'"

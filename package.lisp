@@ -41,7 +41,6 @@
 	   with-demon-disabled
 	   with-demon-enabled
 	   change-formula
-	   move-formula
 	   copy-formula
 	   kr-path
 	   mark-as-changed
