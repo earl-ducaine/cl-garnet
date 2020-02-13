@@ -263,33 +263,6 @@ and the same parent (if any)."
 	    (s-value new-meta slot (g-value meta slot))))))
     new))
 
-(defun broken-link-throw (schema slot)
-  (declare (ignore schema))
-  (when *current-formula*
-    ;; 1. eliminate the dependencies from the formula, since they are no
-    ;; longer accurate
-    #+TEST (setf (a-formula-depends-on *current-formula*) nil)
-    (setf *last-formula* *current-formula*)
-    ;; 2. give warning if so desired.
-    (when *warning-on-null-link*
-      (format
-       t
-       "Warning: broken link in schema ~S (last slot ~S);~%~:
-	 reusing stale value in formula ~S.~%"
-       *schema-self* slot *current-formula*))
-    ;; 3. throw to the top level
-    (throw 'no-link (a-formula-cached-value *current-formula*)))
-
-  ;; We get here if a GV expression was used outside a formula
-  (format
-   t
-   "*** Current formula seems to be missing.   You may have used GV or~%~:
-   ~4TGVL in an expression outside a formula.  Last slot was ~s.~%"
-   slot))
-
-;;; Slot code
-;;
-
 (declaim (inline slot-is-not-constant))
 (defun slot-is-not-constant (schema slot)
   "RETURNS:
@@ -310,8 +283,6 @@ and the same parent (if any)."
 	      schema slot)
       (return-from gv-value-fn NIL))
     (when (or (null schema) (deleted-p schema))
-      ;; Schema was destroyed
-      ;; (broken-link-throw schema slot)
       nil
       )
     (let* ((setup T)
@@ -352,56 +323,6 @@ and the same parent (if any)."
       (unless (eq value *no-value*) value))))
 
 
-(defmacro gv-fn-body (accessor-function)
-  "Generates the body of gv-local-fn.  The only
-difference is what accessor function to use."
-  (let ((entry (gensym))
-	(value (gensym))
-	(the-value (gensym)))
-    `(locally (declare ,*special-kr-optimization*)
-       (when (eq schema :self)
-	 (setf schema *schema-self*))
-       ;; Handle special relation slots which return a list of values.  In this
-       ;; case, use the first value.  This code is for backward compatibility.
-       (when (listp schema)
-	 (setf schema (car schema)))
-       (if (schema-p schema)
-	   ;; Schema is OK
-	   (if (if schema (not-deleted-p schema))
-	       ;; Normal case
-	       (let* ((,value (,accessor-function schema slot))
-		      (,entry (slot-accessor schema slot))
-		      (setup T))
-		 (when *check-constants*
-		   (if (and ,entry (is-constant (sl-bits ,entry)))
-		       ;; If slot is constant, never set up a dependency.
-		       (setf setup NIL)
-		       (setf *is-constant* NIL))
-		   (setf *accessed-slots* T))
-		 ,value)
-	       ;; A link is broken.  Get out of here!
-	       ;; (broken-link-throw schema slot)
-	       nil)
-	   ;; Error!
-	   (if *current-formula*
-	       ;; This happened inside a formula - broken link.
-	       (progn
-		 #+COMMENT ;; amickish - 6/24/93
-		 (format
-		  t
-		  "~%****~% ~S was found in a GV or GVL expression as an object name,
-but is not a valid object.  This happened in the formula
-in slot ~S of ~S.~%~%"
-		  schema *schema-slot* *schema-self*))
-	       #+GARNET-DEBUG
-	       (cerror "Return NIL"
-		       "GV or GVL on the non-schema ~S, slot ~S (not
-inside a formula)"
-		       schema slot))))))
-
-(defun gv-fn (schema slot)
-  (gv-fn-body g-value))
-
 (defmacro gv (schema &rest slots)
   "Used in formulas. Expands into a chain of value accesses,
 or a single call to gv-value-fn."
@@ -430,17 +351,11 @@ Found in the expression   (gv ~S~{ ~S~}) ,~:[
     (t
      `(progn ,schema))))
 
-
-(declaim (inline gv-local-fn))
-(defun gv-local-fn (schema slot)
-  "Similar to GV-VALUE-FN, but only gets local values."
-  (gv-fn-body g-local-value))
-
 (defmacro gv-local (schema &rest slots)
   "Used in formulas. Expands into a chain of nested calls to gv-local-fn,
 which creates a dependency point in a formula."
   (cond (slots
-	 `(expand-accessor gv-local-fn ,schema ,@slots))
+	 )
 	((eq schema :self)
 	 `(progn *schema-self*))
 	(t
