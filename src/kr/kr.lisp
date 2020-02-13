@@ -1478,25 +1478,6 @@ and friends, which know whether an :initialize method was specified locally."
 	    #-(and) (*demons-disabled* T))
 	(funcall the-function schema)))))
 
-
-(defun call-prototype-function (&rest args)
-  "Functional version of CALL-PROTOTYPE-METHOD."
-  (let (parent)
-    (if (get-local-value *kr-send-self* *kr-send-slot*)
-	(setf parent *kr-send-self*)
-	(multiple-value-bind (method real-parent)
-			     (find-parent *kr-send-self* *kr-send-slot*)
-	  (declare (ignore method))
-	  (setf parent real-parent)))
-    (multiple-value-bind (function- the-parent)
-			 (find-parent parent *kr-send-slot*)
-      (when function-
-	(let ((*kr-send-self* the-parent)
-	      (*kr-send-parent* NIL))
-	  (apply function- args))))))
-
-;;; Schemas
-
 (defun allocate-schema-slots (schema)
   (locally (declare #.*special-kr-optimization*)
     (setf (schema-bins schema)
@@ -1518,14 +1499,12 @@ one by that name if it exists.  The initial number of slots is
 	     (setf (schema-name schema) *schema-counter*)
 	     (allocate-schema-slots schema)
 	     schema))
-
 	  ((stringp name)
 	   ;; This clause must precede the next!
 	   (let ((schema (make-schema)))
 	     (allocate-schema-slots schema)
 	     (setf (schema-name schema) name)
 	     schema))
-
 	  ;; Is this an existing schema?  If so, destroy the old one and its
 	  ;; children.
 	  ((and (boundp name)
@@ -1533,7 +1512,6 @@ one by that name if it exists.  The initial number of slots is
 	   (let ((schema (symbol-value name)))
 	     (setf (schema-name schema) name)
 	     (set name schema)))
-
 	  ((symbolp name)
 	   (eval `(defvar ,name))
 	   (let ((schema (make-schema)))
@@ -1543,10 +1521,6 @@ one by that name if it exists.  The initial number of slots is
 	  (t
 	   (format t "Error in CREATE-SCHEMA - ~S is not a valid schema name.~%"
 		   name)))))
-
-
-;;; Constant slots
-
 
 (defun process-one-constant (schema slot)
   "The <slot> in <schema> was declared constant."
