@@ -311,7 +311,9 @@ and the same parent (if any)."
       (return-from gv-value-fn NIL))
     (when (or (null schema) (deleted-p schema))
       ;; Schema was destroyed
-      (broken-link-throw schema slot))
+      ;; (broken-link-throw schema slot)
+      nil
+      )
     (let* ((setup T)
 	   (entry (slot-accessor schema slot))
 	   (value (if entry (sl-value entry) *no-value*)))
@@ -378,7 +380,8 @@ difference is what accessor function to use."
 		   (setf *accessed-slots* T))
 		 ,value)
 	       ;; A link is broken.  Get out of here!
-	       (broken-link-throw schema slot))
+	       ;; (broken-link-throw schema slot)
+	       nil)
 	   ;; Error!
 	   (if *current-formula*
 	       ;; This happened inside a formula - broken link.
@@ -389,10 +392,7 @@ difference is what accessor function to use."
 		  "~%****~% ~S was found in a GV or GVL expression as an object name,
 but is not a valid object.  This happened in the formula
 in slot ~S of ~S.~%~%"
-		  schema *schema-slot* *schema-self*)
-		 ;; (broken-link-throw schema slot)
-		 )
-	       ;; This happened at the top level.
+		  schema *schema-slot* *schema-self*))
 	       #+GARNET-DEBUG
 	       (cerror "Return NIL"
 		       "GV or GVL on the non-schema ~S, slot ~S (not
