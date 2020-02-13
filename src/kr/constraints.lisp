@@ -351,16 +351,6 @@ Found in the expression   (gv ~S~{ ~S~}) ,~:[
     (t
      `(progn ,schema))))
 
-(defmacro gv-local (schema &rest slots)
-  "Used in formulas. Expands into a chain of nested calls to gv-local-fn,
-which creates a dependency point in a formula."
-  (cond (slots
-	 )
-	((eq schema :self)
-	 `(progn *schema-self*))
-	(t
-	 `(progn ,schema))))
-
 (defmacro gvl (name &rest names)
   "Used in formulas. Equivalent to a call to GV
 with a :SELF added as the first parameter."

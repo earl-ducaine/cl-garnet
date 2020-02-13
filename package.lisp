@@ -26,7 +26,6 @@
 	   g-local-value
 	   gv
 	   gvl
-	   gv-local
 	   get-value
 	   get-local-value
 	   dovalues
