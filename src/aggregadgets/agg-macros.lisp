@@ -1,12 +1,5 @@
 (in-package "OPAL")
 
-
-(defmacro add-local-component (schema &rest args)
-  `(kr-send ,schema :add-local-component ,schema ,@args))
-
-;; (defmacro remove-local-component (schema &rest args)
-;;   `(kr-send ,schema :remove-local-component ,schema ,@args))
-
 (defmacro remove-local-interactor (schema &rest args)
   `(kr-send ,schema :remove-local-interactor ,schema ,@args))
 
