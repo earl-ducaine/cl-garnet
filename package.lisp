@@ -42,7 +42,6 @@
 	   with-demon-enabled
 	   change-formula
 	   move-formula
-	   recompute-formula
 	   copy-formula
 	   kr-path
 	   mark-as-changed
@@ -52,9 +51,6 @@
 	   name-for-schema
 	   declare-constant
 	   slot-constant-p
-	   destroy-slot
-	   destroy-schema
-	   destroy-constraint
 	   def-kr-type
 	   g-type
 	   s-type

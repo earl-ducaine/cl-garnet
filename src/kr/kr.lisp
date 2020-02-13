@@ -1,22 +1,5 @@
-;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: KR; Base: 10 -*-
-
-;; The Garnet User Interface Development Environment
-;;
-;; This code was written as part of the Garnet project at Carnegie
-;; Mellon University, and has been placed in the public domain.
-
-;;; Slot bits assignment:
-;; 0-9 types encoding
-;;   - inherited
-;;   - is-parent
-;;   - constant-slot
-;;   - is-update-slot
-;;   - local-only-slot    ; not implemented
-;;   - parameter-slot     ; not implemented
 
 (in-package :kr)
-
-(declaim (inline clear-one-slot))
 
 (defun clear-one-slot (schema slot entry)
   "Completely clear a slot, including dependencies, inherited, etc...
@@ -776,9 +759,6 @@ Always returns the CODE of the resulting type (whether new or not)"
 	(when *warning-on-evaluation* (decf *warning-level* 2))
 	the-result))))
 
-;; We are working with a formula.  Note that broken links leave
-;; the formula valid.
-;;
 (defun g-value-formula-value (schema-self slot formula entry)
   (let ((*schema-self* schema-self))
     (if (cache-is-valid formula)
@@ -800,7 +780,8 @@ Always returns the CODE of the resulting type (whether new or not)"
 		  (set-cache-is-valid formula T))
 		(a-formula-cached-value formula))
 	      ;; Compute, cache and return the new value.
-	      (re-evaluate-formula *schema-self* slot formula entry))))))
+	      ;; (re-evaluate-formula *schema-self* slot formula entry)
+	      )))))
 
 
 ;;; Inheritance
@@ -896,28 +877,6 @@ to all the ordinary places."
   (let ((value (get-value schema slot)))
     (when (formula-p value)
       (set-cache-is-valid value NIL))))
-
-
-(defun recompute-formula (schema slot)
-  "Forces the formula installed on the <slot> of the <schema> to be
-recomputed, propagating the change as needed.
-This may be used for implementation of formulas which depend on some
-non-KR value."
-  (let* ((entry (slot-accessor schema slot))
-	 (formula (when entry (sl-value entry))))
-    (when (formula-p formula)
-      (let ((bits (sl-bits entry)))
-	(unless *within-g-value*
-	  (incf *sweep-mark* 2))
-	(re-evaluate-formula schema slot formula entry #+EAGER *eval-type*)
-	(run-invalidate-demons schema slot entry)
-	(when (is-parent bits)
-	  (update-inherited-values schema slot formula T))
-	#-EAGER
-	(propagate-change schema slot)
-	#+EAGER
-	(propagate)))))
-
 
 (defun propagate-change (schema slot)
   "Since the <slot> of the <schema> was modified, we need to propagate the
@@ -1260,91 +1219,6 @@ INPUTS:
 	(setf (a-formula-meta formula) NIL)
 	(destroy-schema meta)))
     (formula-push formula)))
-
-
-(defun destroy-slot-helper (x slot)
-  ;; Make sure formulas are updated properly
-  (mark-as-changed x slot)
-  ;; Physically remove the slot in the child.
-  (clear-one-slot x slot NIL))
-
-(defparameter *in-destroy-slot* 0)
-(defparameter *invalid-destroy-slot* 0)
-
-
-(defun destroy-slot (schema slot)
-  "Eliminates the <slot>, and all the values it contains, from the <schema>,
-taking care of possible constraints."
-  ;; Take care of all formulas which used to depend on this slot.
-  (let ((entry (slot-accessor schema slot))
-	old-value)
-    (when entry
-      (setf old-value (sl-value entry))
-      (check-not-constant schema slot entry)
-      (let ((bits (sl-bits entry))
-	    (dependents (slot-dependents entry))
-	    new-value)
-	(run-invalidate-demons schema slot entry)
-	(when dependents
-	  ;; Access all dependent formulas.
-	  (do-one-or-list (formula dependents)
-	    #+EAGER
-	    (setf formula (car formula))
-	    #+EAGER
-	    (setf in-pq (eval-bit-set formula))
-	    (incf *in-destroy-slot*)
-	    (unless (cache-is-valid formula)
-	      (incf *invalid-destroy-slot*))
-	    ;; If this value is depended on by others, replace their value
-	    ;; by the current value.
-	    (let ((the-schema (on-schema formula))
-		  (the-slot (on-slot formula)))
-	      (when (and the-schema
-			 (schema-p the-schema) ; not destroyed
-			 (not (formula-p (g-value the-schema the-slot))))
-		;; Avoid complications with shared formulas.
-		(s-value the-schema the-slot
-			 (g-value the-schema the-slot))))
-	    ;; The formula is then marked invalid.
-	    #-EAGER
-	    (set-cache-is-valid formula NIL)
-	    #+EAGER
-	    (progn
-	      ;; set the formula's fixed bit back to nil to indicate it should
-	      ;; be evaluated during this iteration of the constraint solver
-	      (set-fixed-bit formula nil)
-	      (when (not in-pq)
-		(setf *eval-queue* (insert-pq formula *eval-queue*))))))
-
-	;; Destroy the formula, if this was a constrained slot.
-	(when (formula-p old-value)
-	  (delete-formula old-value T))
-
-	(when (relation-p slot)
-	  (unlink-all-values schema slot))
-
-	(setf new-value (g-value-inherit-values schema slot T entry))
-	;; Call the pre-set-demon function on this schema if
-	;; this slot is an interesting slot and the value it is
-	;; now inheriting is different from its previous value
-	(run-pre-set-demons schema slot new-value old-value :DESTROY-SLOT)
-
-	#+EAGER
-	;; Add this slot's dependents to the evaluation queue if its
-	;; new inherited value is different from its old value.
-	(unless (equal old-value new-value)
-	  (add-to-reeval schema slot))
-
-	(let ((was-parent (and bits (is-parent bits))))
-	  (when was-parent
-	    ;; Was this slot inherited by other schemata?  If so, make sure
-	    ;; they will inherit the right value afterwards.
-	    (update-inherited-values schema slot new-value T)
-	    (visit-inherited-values schema slot #'destroy-slot-helper))))
-      ;; Now go ahead and physically destroy the slot.
-      (clear-one-slot schema slot NIL)
-      NIL)))
-
 
 (defun delete-schema (schema recursive-p)
   "Internal function.  If <recursive-p>, this is being called from within
