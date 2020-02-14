@@ -480,7 +480,7 @@
 		    (setf (CN-connection cn) :connected))))))))
 
 (defun get-object-slot-prop (obj slot prop)
-  (getf (getf (g-local-value obj)
+  (getf (getf (g-value-body OBJ :SB-OS-PROPS)
 	      slot nil)
 	prop nil))
 
@@ -501,7 +501,7 @@
   val)
 
 (defun set-object-slot-prop-basic (obj slot prop val)
-  (let* ((os-props (g-local-value obj))
+  (let* ((os-props (g-value-body OBJ :SB-OS-PROPS))
 	 (slot-props (getf os-props slot nil)))
     (setf (getf slot-props prop) val)
     (setf (getf os-props slot) slot-props)

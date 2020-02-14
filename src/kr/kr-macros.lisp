@@ -571,17 +571,6 @@ bit set) are used."
       nil
     `(progn ,schema)))
 
-(defmacro g-local-value (schema)
-  (let ((slots (cond
-  		 ((eq schema 'a-parent)
-  		  'slot)
-  		 ((eq schema 'obj)
-  		  :SB-OS-PROPS)
-  		 (t
-  		  (error "error")))))
-    `(expand-accessor g-local-value-fn ,schema ,slots)))
-
-
 (declaim (inline slot-requires-demon))
 (defun slot-requires-demon (schema slot &optional entry)
   (declare #.*special-kr-optimization*)

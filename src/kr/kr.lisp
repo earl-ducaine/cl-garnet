@@ -663,8 +663,7 @@ This allows it to be a destructive function."
 			  (get-local-value schema :IS-A)
 			  (get-local-value schema relation)))
       (when a-parent
-	(format t "finding slot: ~s from schema: ~s~%" slot (slot-value schema 'name))
-	(let ((value (g-local-value a-parent)))
+	(let ((value (g-value-body A-PARENT SLOT)))
 	  (if value
 	      (return-from find-parent (values value a-parent))
 	      (multiple-value-bind (value the-parent)
