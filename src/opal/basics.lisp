@@ -20,8 +20,3 @@
     (setf (update-info-bits temp-info) 0)
     (setf (update-info-old-bbox temp-info) (make-bbox))
     (s-value gob :update-info temp-info)))
-
-(define-method :initialize graphical-object (gob)
-  (call-prototype-method gob)
-  ;; This is not an aggregate!  Used by update algorithm for efficiency
-  (setf (update-info-aggregate-p (g-local-value gob :update-info)) NIL))

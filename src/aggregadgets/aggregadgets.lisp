@@ -26,20 +26,3 @@
 			    (if (numberp name)
 				(eql 0 name)
 				(eq fc name))))))))
-
-(define-method :initialize aggregadget (agget)
-  (call-prototype-method agget)
-  (let ((prototype (car (g-local-value agget :is-a)))
-	(parts-list (g-local-value agget :parts))
-	(inter-list (g-local-value agget :interactors)))
-    (if (or (null parts-list)
-	    (not (is-first-comp-in-parts-list
-		  (g-local-value prototype :components) parts-list)))
-	nil)
-    (if (or (null inter-list)
-	    (not (is-first-comp-in-parts-list  ; use same fn for inters
-		  (g-local-value prototype :behaviors) inter-list)))
-	nil
-	)
-    (if (or parts-list (g-value agget :parts))
-	(declare-constant agget :components))))

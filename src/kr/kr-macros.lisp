@@ -497,10 +497,6 @@ bit set) are used."
       (if (if entry (not (is-inherited (sl-bits entry))))
 	  (sl-value entry)))))
 
-(declaim (inline get-local-values))
-(defun get-local-values (schema slot)
-  (get-local-value schema slot))
-
 (defmacro expand-accessor (accessor-function schema &rest slots)
 "EXPAND-ACCESSOR is used by macros such as GV or G-VALUE, which can
 be called with any number of slot names and expand into
@@ -684,25 +680,6 @@ Note that <relation> should be a slot name, not a schema."
 	       (*kr-send-parent* NIL))
 	   (funcall ,the-function ,@args))))))
 
-(defmacro call-prototype-method (&rest args)
-  (let ((entry (gensym)))
-    `(locally (declare ,*special-kr-optimization*)
-       (let ((first-c-p-m (and (null *kr-send-parent*)
-			     (let ((,entry (slot-accessor *kr-send-self*
-							  *kr-send-slot*)))
-			       (or (null ,entry)
-				   (is-inherited (sl-bits ,entry)))))))
-      (multiple-value-bind (method new-parent)
-	  (find-parent *kr-send-self* *kr-send-slot*)
-	(when method
-	  (if first-c-p-m
-	    (multiple-value-setq (method *kr-send-parent*)
-	      (find-parent new-parent *kr-send-slot*))
-	    (setf *kr-send-parent* new-parent))
-	  (if method
-	    (let ((*kr-send-self* *kr-send-parent*))
-	      (funcall method ,@args)))))))))
-
 (defmacro define-method (name class arg-list &rest body)
   (unless (keywordp name)
     (setf name (intern (symbol-name name) (find-package "KEYWORD")))
@@ -780,7 +757,6 @@ in (create-schema ~S).~%   Ignoring the :NAME-PREFIX.~%"
        "CREATE-INSTANCE ~S ~S: do not specify the :IS-A slot!  Ignored.~%"
        name class)
       (setf body (remove (assocq :IS-A body) body))))
-  ;; Everything is OK.
   `(progn
      (create-schema ,name :GENERATE-INSTANCE
 		    ;; class might be nil, which means no IS-A slot
@@ -788,25 +764,6 @@ in (create-schema ~S).~%   Ignoring the :NAME-PREFIX.~%"
 		    ,@body)))
 
 
-(defmacro begin-create-instance (name class &body body)
-  "Processes the first half of a create-instance where constant-slot
-processing needs to be delayed.
-This should only be used for specialized applications, such as those
-found in aggrelists."
-  (dolist (descriptor body)
-    (when (and (listp descriptor) (eq (car descriptor) :IS-A))
-      (format
-       t
-       "BEGIN-CREATE-INSTANCE ~S ~S: do not specify the :IS-A slot!  Ignored.~%"
-       name class)
-      (setf body (remove descriptor body))
-      (return)))
-  `(create-schema ,name :DELAYED-PROCESSING
-     ;; class might be nil, which means no IS-A slot
-     ,@(if class `((:is-a ,class)))
-     ,@body))
 
 (defsetf g-value s-value)
-(defsetf get-values s-value)
-(defsetf get-local-values s-value)
 (defsetf g-local-value s-value)
