@@ -22,7 +22,6 @@
 	   formula-p
 	   s-value
 	   g-value
-	   g-local-value
 	   gv
 	   gvl
 	   get-value

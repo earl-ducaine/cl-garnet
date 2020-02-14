@@ -3,7 +3,7 @@
 
 (defun g-local-value-fn (schema slot)
   "Similar to g-value-fn, but no inheritance."
-  (g-value-body schema slot NIL T))
+  (g-value-body schema slot))
 
 (defun g-value-inherit-values (schema slot is-leaf slot-structure)
   (declare (ftype (function (t &optional t) t) formula-fn))
@@ -663,7 +663,8 @@ This allows it to be a destructive function."
 			  (get-local-value schema :IS-A)
 			  (get-local-value schema relation)))
       (when a-parent
-	(let ((value (g-local-value a-parent slot)))
+	(format t "finding slot: ~s from schema: ~s~%" slot (slot-value schema 'name))
+	(let ((value (g-local-value a-parent)))
 	  (if value
 	      (return-from find-parent (values value a-parent))
 	      (multiple-value-bind (value the-parent)
@@ -1144,8 +1145,6 @@ Example: (get-declarations A :type)"
       ((:IGNORED-SLOTS :SORTED-SLOTS :MAYBE-CONSTANT
 		       :PARAMETERS :OUTPUT :UPDATE-SLOTS)
        (return-from get-declarations (g-value schema declaration)))
-      (:LOCAL-ONLY-SLOTS
-       (return-from get-declarations (g-local-value schema declaration)))
       (t
        (return-from get-declarations NIL)))
     ;; Visit all slots, construct information

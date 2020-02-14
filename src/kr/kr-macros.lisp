@@ -499,9 +499,6 @@ bit set) are used."
 	  (sl-value entry)))))
 
 (defmacro expand-accessor (accessor-function schema &rest slots)
-"EXPAND-ACCESSOR is used by macros such as GV or G-VALUE, which can
-be called with any number of slot names and expand into
-a nested chain of calls to <accessor-function>."
   (if slots
       (let ((kernel schema))
 	(do ((slot slots (cdr slot)))
@@ -533,63 +530,57 @@ a nested chain of calls to <accessor-function>."
 (defun relation-p (slot)
   (assocq slot *relations*))
 
-(defmacro g-value-body (schema slot inherit-p formula-p)
+(defmacro g-value-body (schema slot)
   (let ((schema-form (if (symbolp schema) schema 'schema))
 	(entry (gensym))
 	(value (gensym)))
     `(locally (declare ,*special-kr-optimization*)
        (let* (,@(unless (symbolp schema) `((schema ,schema)))
-	    (,entry
-	     (slot-accessor ,schema-form ,slot))
-	    (,value (if ,entry
-		      ,@(if (not inherit-p)
-			  `((if (is-inherited (sl-bits ,entry))
-			      ,@(if formula-p
-				  `((if (a-formula-p (sl-value ,entry))
-				      (sl-value ,entry)))
-				  `(NIL))
-			      (sl-value ,entry)))
-			  `((sl-value ,entry)))
-		      ,@(if (or inherit-p formula-p)
-			  `(*no-value*)))))
-      (if (eq ,value *no-value*)
-	,@(cond ((and (not inherit-p) (not formula-p))
-		 `((setf ,value NIL)))
-		((and (not inherit-p) formula-p)
-		 `((if ,entry
-		     (setf ,value NIL)
-		     (if (not (formula-p (setf ,value
-					       (g-value-inherit-values
-						,schema-form ,slot T NIL))))
-		       (setf ,value NIL)))))
-		((a-local-only-slot slot)
-		 `((setf ,value NIL)))
-		(t
-		 `((if (if ,entry (is-inherited (sl-bits ,entry)))
-		     (setf ,value NIL)
-		     (progn
-		       (setf ,value (g-value-inherit-values ,schema-form ,slot
-							    T ,entry))
-		       (if (eq ,value *no-value*)
-			 (setf ,value NIL))))))))
-      ,@(if formula-p
-	  `((if (a-formula-p ,value)
-	      (g-value-formula-value ,schema-form ,slot ,value ,entry)
-	      ,value))
-	  `(,value))))))
+	      (,entry
+	       (slot-accessor ,schema-form ,slot))
+		(,value (if ,entry
+			    ,@(progn
+				  `((if (is-inherited (sl-bits ,entry))
+					,@(progn
+					      `((if (a-formula-p (sl-value ,entry))
+						    (sl-value ,entry)))
+					      )
+					(sl-value ,entry))))
+			    ,@(progn
+				  `(*no-value*)))))
+	 (if (eq ,value *no-value*)
+	     ,@(cond
+		     (t
+		      `((if ,entry
+			    (setf ,value NIL)
+			    (if (not (formula-p (setf ,value
+						      (g-value-inherit-values
+						       ,schema-form ,slot T NIL))))
+				(setf ,value NIL)))))
+		     ))
+	 ,@(progn
+	       `((if (a-formula-p ,value)
+		     (g-value-formula-value ,schema-form ,slot ,value ,entry)
+		     ,value)))))))
 
 (defmacro get-value (schema slot)
-  `(g-value-body ,schema ,slot T NIL))
+  `(g-value-body ,schema ,slot))
 
 (defmacro g-value (schema &rest slots)
   (if slots
       nil
     `(progn ,schema)))
 
-(defmacro g-local-value (schema &rest slots)
-  (if slots
-      `(expand-accessor g-local-value-fn ,schema ,@slots)
-      `(progn ,schema)))
+(defmacro g-local-value (schema)
+  (let ((slots (cond
+  		 ((eq schema 'a-parent)
+  		  'slot)
+  		 ((eq schema 'obj)
+  		  :SB-OS-PROPS)
+  		 (t
+  		  (error "error")))))
+    `(expand-accessor g-local-value-fn ,schema ,slots)))
+
 
 (declaim (inline slot-requires-demon))
 (defun slot-requires-demon (schema slot &optional entry)
@@ -767,4 +758,3 @@ in (create-schema ~S).~%   Ignoring the :NAME-PREFIX.~%"
 
 
 (defsetf g-value s-value)
-(defsetf g-local-value s-value)
