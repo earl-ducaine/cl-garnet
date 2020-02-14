@@ -262,14 +262,11 @@ and the same parent (if any)."
 	   (entry (slot-accessor schema slot))
 	   (value (if entry (sl-value entry) *no-value*)))
       (when (eq value *no-value*)
-	(g-value-inherit-values schema slot T entry)
 	(setf entry (slot-accessor schema slot))
 	(when entry (setf value (sl-value entry))))
       (when (a-formula-p value)
 	;; we are working with a formula
 	(setf value (g-value-formula-value schema slot value entry)
-	      ;; This is necessary, because G-VALUE-FORMULA-VALUE may change
-	      ;; the entry.
 	      entry (slot-accessor schema slot)))
       (when *check-constants*
 	(if (and entry (is-constant (sl-bits entry)))

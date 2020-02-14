@@ -17,42 +17,21 @@
 	(setf has-parents T)
 	(let ((entry (slot-accessor parent slot))
 	      (value *no-value*)
-	      bits			; parent bits
+	      bits
 	      (intermediate-constant NIL))
 	  (when entry
 	    (setf value (sl-value entry))
 	    (when (is-constant (sl-bits entry))
 	      (setf intermediate-constant T)))
 	  (if (eq value *no-value*)
-	      ;; Attempt to inherit from its ancestors.
 	      (multiple-value-setq (value bits)
 		(g-value-inherit-values parent slot NIL nil))
-	      ;; If value, just set bits.
 	      (setf bits (sl-bits entry)))
 	  (unless (eq value *no-value*)
-	    (let ((was-formula (formula-p value)))
-	      (when was-formula
-		;; Inherit the formula, making a copy of it.
-		(setf value (formula-fn value (a-formula-cached-value value)))
-		(setf (a-formula-schema value) schema)
-		(setf (a-formula-slot value) slot)
-		(set-cache-is-valid value NIL))
-	      (when (and is-leaf slot-structure)	; slot had constant bit
-		(setf bits (logior bits (sl-bits slot-structure))))
-	      (when intermediate-constant
-		(setf bits (logior *constant-mask* bits)))
-	      )
 	    (return-from g-value-inherit-values (values value bits))))))
     (set-slot-accessor schema slot
-		       (if has-parents NIL *no-value*)
-		       (cond (is-leaf
-			      (if slot-structure
-				  (logior *inherited-mask*
-					  (sl-bits slot-structure))
-				  *inherited-mask*))
-			     (has-parents *inherited-parent-mask*)
-			     (t		; top-level, no parents
-			      *is-parent-mask*))
+		       nil
+		       *is-parent-mask*
 		       (slot-dependents slot-structure))
     *no-value*))
 
