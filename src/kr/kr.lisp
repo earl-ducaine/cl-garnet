@@ -717,13 +717,6 @@ However, if there was a local formula, do nothing."
     (unless (eq old-value *no-value*)
       (let ((child-bits (sl-bits entry)))
 	(when (is-inherited child-bits)
-	  ;; NOTE: we erase the inherited value in all cases, even if it might
-	  ;; have been inherited from somewhere else (in the case of multiple
-	  ;; inheritance).  In any case, this is correct; at worst, it may
-	  ;; cause the value to be needlessly inherited again.
-	  ;; Force the children to re-inherit.
-	  (when (formula-p old-value)
-	    (delete-formula old-value T))
 	  (clear-one-slot child a-slot entry)
 	  ;; Recursively change children.
 	  (update-inherited-values child a-slot *no-value* NIL))))))
@@ -962,12 +955,8 @@ This allows it to be a destructive function."
 	  ;; in demons-and-old-values.
 	  (set-cache-is-valid old-value T))
 	;; Was the old value a formula?
-	(when (and was-formula is-formula)
-	  ;; This is replacing a formula with another.  Eliminate the dependency
-	  ;; to the old one.
-	  (delete-formula old-value T))
+	(when (and was-formula is-formula))
 	(values value nil)))))
-
 
 (defun internal-s-value (schema slot value)
   "This is a stripped-down version of s-value-fn which is used by
@@ -1027,74 +1016,6 @@ not be tracked down."
 	      ;; One dependent
 	      (when (eq formula formulas)
 		(setf (full-sl-dependents iterate-slot-value-entry) NIL))))))))
-
-
-(defun delete-formula (formula remove-from-parent)
-  "Eliminate all dependency pointers from the <formula>, since it is no
-longer installed on a slot.
-
-INPUTS:
- - <formula>: the formula to get rid of
- - <hard-p>: if T, do a more thorough job of deleting everything, and
-   destroy the <formula> schema itself."
-  (when (a-formula-number formula)
-    (eliminate-formula-dependencies formula NIL)
-    (when remove-from-parent
-      ;; Eliminate the <formula> from its parent's list of children.
-      (let ((parent (a-formula-is-a formula)))
-	(when parent
-	  (delete-one-or-list formula (a-formula-is-a-inv parent)))))
-    ;; Formula was not destroyed yet
-    (setf (a-formula-bins formula) nil	; mark as destroyed.
-	  (a-formula-schema formula) nil
-	  (a-formula-slot formula) nil
-	  (a-formula-lambda formula) nil
-	  (a-formula-depends-on formula) nil)
-    (let ((meta (a-formula-meta formula)))
-      (when meta
-	(setf (a-formula-meta formula) NIL)
-	))
-    (formula-push formula)))
-
-(defun delete-schema (schema recursive-p)
-  (when (not-deleted-p schema)	; do nothing if schema is already destroyed
-    ;; Remove all inverse links.
-    (if (formula-p schema)
-	;; Formulas do not use regular relations.
-	(let ((parent (a-formula-is-a schema))
-	      children)
-	  (when parent
-	    (setf children (a-formula-is-a-inv parent))
-	    (setf (a-formula-is-a-inv parent)
-		  (if (listp children)
-		    (delete schema children)
-		    (if (eq schema children)
-		      NIL
-		      children))))
-	  (do-one-or-list (child (a-formula-is-a-inv schema))
-	    ;; ? What exactly should happen here ?
-	    (setf (a-formula-is-a child) NIL)))
-	;; A normal schema
-	(progn
-	  (unless recursive-p
-	    (iterate-slot-value (schema NIL NIL NIL)
-	      value                     ; eliminate warning
-	      (when (relation-p slot)
-		(unlink-all-values schema slot))))
-	  (iterate-slot-value (schema NIL NIL NIL)
-	    slot value			; eliminate warning
-	    ;; Delete any formula value.
-	    (when (formula-p value)
-	      ;; This is a formula.  Get rid of it.
-	      (delete-formula value (not recursive-p))
-	      (delete-schema value recursive-p)))
-	  ;; Physically delete all the slots
-	  (clear-schema-slots schema)))
-    ;; Now wipe out the symbol value as well.
-    (when (symbolp (schema-name schema))
-      (makunbound (schema-name schema)))
-    ;; This is used as a marker for deleted schemas.
-    (setf (schema-bins schema) nil)))
 
 (defun find-parent (schema slot)
   "Find a parent of <schema> from which the <slot> can be inherited."
