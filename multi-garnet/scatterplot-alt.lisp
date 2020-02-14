@@ -1,16 +1,15 @@
 (in-package :kr)
 
-(DO-SCHEMA-BODY-alt (MAKE-A-NEW-SCHEMA '*AXIS-RECTANGLE*) OPAL::RECTANGLE T  NIL
-                NIL
-                (CONS :HEIGHT-CN
-                      (M-CONSTRAINT :MAX (BOX HEIGHT)
-                                    (SETF HEIGHT (FOURTH BOX))))
-                (CONS :WIDTH-CN
-                      (M-CONSTRAINT :MAX (BOX WIDTH) (SETF WIDTH (THIRD BOX))))
-                (CONS :TOP-CN
-                      (M-CONSTRAINT :MAX (BOX TOP) (SETF TOP (SECOND BOX))))
-                (CONS :LEFT-CN
-                      (M-CONSTRAINT :MAX (BOX LEFT) (SETF LEFT (FIRST BOX)))))
+(do-schema-body-alt (make-a-new-schema '*axis-rectangle*) opal::rectangle
+		    (cons :height-cn
+			  (m-constraint :max (box height)
+					(setf height (fourth box))))
+		    (cons :width-cn
+			  (m-constraint :max (box width) (setf width (third box))))
+		    (cons :top-cn
+			  (m-constraint :max (box top) (setf top (second box))))
+		    (cons :left-cn
+			  (m-constraint :max (box left) (setf left (first box)))))
 
-(DO-SCHEMA-BODY-alt (MAKE-A-NEW-SCHEMA '*V-AXIS*) OPAL:AGGREGADGET T  NIL NIL
-                (CONS :PARTS `((:MAIN ,*AXIS-RECTANGLE*))))
+(do-schema-body-alt (make-a-new-schema '*v-axis*) opal:aggregadget
+		    (cons :parts `((:main ,*axis-rectangle*))))

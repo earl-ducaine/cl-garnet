@@ -507,11 +507,8 @@ This allows it to be a destructive function."
 
 
 (defun set-is-a (schema value)
-  "A specialized version of internal-s-value"
-  ;; Check for special cases in relation slots.
   (when (eq (setf value (check-relation-slot schema :is-a value)) *no-value*)
     (return-from set-is-a NIL))
-  ;; Set slot
   (set-slot-accessor schema :IS-A value *local-mask* NIL)
   (link-in-relation schema :IS-A value)
   value)
@@ -848,53 +845,55 @@ RETURNS: a list, with elements as follows:
 	   (format t "Incorrect slot specification: object ~S ~S~%"
 		   schema slot)))))
 
-(defun do-schema-body-alt (schema is-a generate-instance override types &rest slot-specifiers)
-  (unless (listp is-a)
-    (setf is-a (list is-a)))
-  (when is-a
-    (let ((*schema-is-new* T))
-      (set-is-a schema is-a)))
-  (do* ((slots slot-specifiers (cdr slots))
-	(slot (car slots) (car slots))
-	(initialize-method NIL)
-	(constants NIL)
-	(had-constants NIL)
-	(cancel-constants (find '(:constant) slot-specifiers :test #'equal))
-	(slot-counter (if is-a 1 0)))
-       ((null slots)
-	(unless (eq types :NONE)
-	  (dolist (type types)
-	    (if (cdr type)
-		(let ((n (encode-type (car type))))
-		  (dolist (slot (cdr type))
-		    (set-slot-type schema slot n)))
-		(format t "*** ERROR - empty list of slots in type declaration ~
+(defun do-schema-body-alt (schema is-a &rest slot-specifiers)
+  (let ((generate-instance t)
+	(types nil))
+    (unless (listp is-a)
+      (setf is-a (list is-a)))
+    (when is-a
+      (let ((*schema-is-new* T))
+	(set-is-a schema is-a)))
+    (do* ((slots slot-specifiers (cdr slots))
+	  (slot (car slots) (car slots))
+	  (initialize-method NIL)
+	  (constants NIL)
+	  (had-constants NIL)
+	  (cancel-constants (find '(:constant) slot-specifiers :test #'equal))
+	  (slot-counter (if is-a 1 0)))
+	 ((null slots)
+	  (unless (eq types :NONE)
+	    (dolist (type types)
+	      (if (cdr type)
+		  (let ((n (encode-type (car type))))
+		    (dolist (slot (cdr type))
+		      (set-slot-type schema slot n)))
+		  (format t "*** ERROR - empty list of slots in type declaration ~
                           for object ~S:~%  ~S~%" schema (car type)))))
-	;; Process the constant declarations, and check the types.
-	(process-constant-slots schema is-a nil (not (eq types :NONE)))
-	(dolist (slot slot-specifiers)
-	  (when (and (listp slot)
-		     (memberq (car slot)
-			      '(:IGNORED-SLOTS :LOCAL-ONLY-SLOTS
-				:MAYBE-CONSTANT :PARAMETERS :OUTPUT
-				:SORTED-SLOTS :UPDATE-SLOTS)))
-	    ))
-	(when generate-instance
-	  (kr-init-method schema))
-	schema)
-    (cond ((eq slot :NAME-PREFIX)
-	   (pop slots))
-	  ((consp slot)
-	   (let ((slot-name (car slot))
-		 (slot-value (cdr slot)))
-	     (case slot-name
-	       (:CONSTANT
-		(setf constants (cdr slot))
-		(setf had-constants T)))
-		 (internal-s-value schema slot-name slot-value)))
-	  (T
-	   (format t "Incorrect slot specification: object ~S ~S~%"
-		   schema slot)))))
+	  ;; Process the constant declarations, and check the types.
+	  (process-constant-slots schema is-a nil (not (eq types :NONE)))
+	  (dolist (slot slot-specifiers)
+	    (when (and (listp slot)
+		       (memberq (car slot)
+				'(:IGNORED-SLOTS :LOCAL-ONLY-SLOTS
+				  :MAYBE-CONSTANT :PARAMETERS :OUTPUT
+				  :SORTED-SLOTS :UPDATE-SLOTS)))
+	      ))
+	  (when generate-instance
+	    (kr-init-method schema))
+	  schema)
+      (cond ((eq slot :NAME-PREFIX)
+	     (pop slots))
+	    ((consp slot)
+	     (let ((slot-name (car slot))
+		   (slot-value (cdr slot)))
+	       (case slot-name
+		 (:CONSTANT
+		  (setf constants (cdr slot))
+		  (setf had-constants T)))
+	       (internal-s-value schema slot-name slot-value)))
+	    (T
+	     (format t "Incorrect slot specification: object ~S ~S~%"
+		     schema slot))))))
 
 (defun set-slot-type (object slot type)
   (let ((entry (or (slot-accessor object slot)
