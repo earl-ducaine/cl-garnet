@@ -272,11 +272,6 @@ and the same parent (if any)."
 
 (defun gv-value-fn (schema slot)
   (locally (declare #.*special-kr-optimization*)
-    #+GARNET-DEBUG
-    (unless (or *current-formula* (schema-p schema))
-      (cerror "Return NIL" "  GV attempted on the non-object ~S (slot ~S)."
-	      schema slot)
-      (return-from gv-value-fn NIL))
     (when (or (null schema) (deleted-p schema))
       nil
       )

@@ -618,16 +618,6 @@ the formula object itself is returned."
       `(expand-accessor g-local-value-fn ,schema ,@slots)
       `(progn ,schema)))
 
-
-;;; Demons
-
-;; Used to look in the :UPDATE-SLOTS of the <schema> to determine whether the
-;; <slot> has an associated demon.  This gives us the freedom to let different
-;; schemata have demons on possibly different slots.
-;;
-;; Now, it uses the <slot>'s is-update-slot bit to check.  This bit is set at
-;; create-instance time by traversing the :UPDATE-SLOTS list of the <schema>.
-;;
 (declaim (inline slot-requires-demon))
 (defun slot-requires-demon (schema slot &optional entry)
   (declare #.*special-kr-optimization*)
@@ -637,39 +627,9 @@ the formula object itself is returned."
 
 (declaim (inline run-invalidate-demons))
 (defun run-invalidate-demons (schema slot entry)
-  "Execute the update demon associated with the <schema> and <slot>, if there
-is one."
   (unless (eq *demons-disabled* T)
     (when (slot-requires-demon schema slot entry)
       (let ((demon (get-value schema :INVALIDATE-DEMON)))))))
-
-
-(defmacro run-pre-set-demons (schema slot new-value is-formula reason)
-"Invokes the pre-set demon, if one is defined and if the <slot> is an
-'interesting' slot (i.e., if it is listed in the :update-slots of the
-<schema>).
-Also, if *slot-setter-debug* is bound, it invokes it.  This is a debugging
-function that gets called every time a slot is modified, either by s-value
-or as a result of formula evaluation.  The <reason> is given as the fourth
-parameter to the function; it is a keyword that explains why the slot
-was changed."
-  #-GARNET-DEBUG
-  (declare (ignore reason))
-  `(unless (eq *demons-disabled* T)
-    (if *pre-set-demon*
-      (if (not (demon-is-disabled *pre-set-demon*))
-	(if (slot-requires-demon ,schema ,slot)
-	  (if ,@(if is-formula
-		  `((not (equal
-			  ,new-value
-			  ,@(cond ((eq is-formula :CURRENT-FORMULA)
-				   `((cached-value *current-formula*)))
-				  ((eq is-formula T)
-				   `((g-cached-value ,schema ,slot)))
-				  (t
-				   `(,is-formula))))))
-		  `(T))
-	      (funcall *pre-set-demon* ,schema ,slot ,new-value)))))))
 
 (defun s-value-chain (schema &rest slots)
   (locally (declare #.*special-kr-optimization*)

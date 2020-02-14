@@ -28,18 +28,6 @@ disabled, the variable *demons-disabled* is made of the form
 	(t
 	 *demons-disabled*)))
 
-
-(defun demon-is-disabled (demon)
-  "Is the <demon> currently enabled?"
-  (if (listp *demons-disabled*)
-      (if (eq (car *demons-disabled*) T)
-	  ;; Special format
-	  (not (memberq demon (cdr *demons-disabled*)))
-	  ;; Normal format
-	  (memberq demon *demons-disabled*))
-      (eq demon *demons-disabled*)))
-
-
 (defun g-value-inherit-values (schema slot is-leaf slot-structure)
   "Search up the tree for inherited slot.
 RETURNS: the inherited value, or NIL."
@@ -674,8 +662,6 @@ INPUTS:
 "
   (let ((*schema-self* schema))
     (unless is-first
-      ;; Invoke demons and propagate change around.
-      (run-pre-set-demons schema a-slot value NIL :INHERITANCE-PROPAGATION)
       (run-invalidate-demons schema a-slot NIL)
       (propagate-change schema a-slot))
     (dolist (inverse *inheritance-inverse-relations*)
@@ -740,14 +726,8 @@ change to all the formulas which depended on the old value."
 	  (if schema-ok
 	    (progn
 	      (setf new-entry (slot-accessor new-schema new-slot))
-	      (run-invalidate-demons new-schema new-slot new-entry))
-	    #+GARNET-DEBUG
-	    (progn
-	      (format
-	       t
-	       "propagate-change: formula ~S on destroyed object ~S ~S~%    ~
-	from change in schema ~S, slot ~S.~%"
-	       formula new-schema new-slot schema slot)))
+	      )
+	    )
 	  ;; The formula gets invalidated here.
 	  (set-cache-is-valid formula nil)
 	  ;; Notify all children who used to inherit the old value of the
@@ -837,14 +817,8 @@ This allows it to be a destructive function."
 	  (setf (on-schema value) schema)
 	  (setf (on-slot value) slot)
 	  (unless (schema-name value)
-	    ;; This is an obscure case.  It may happen if somebody stores a
-	    ;; formula away, deletes the formula from its original slot, and
-	    ;; then restores the formula.  This is generally bad practice, but
-	    ;; there are cases when it may be necessary.
 	    (incf *schema-counter*)
 	    (setf (schema-name value) *schema-counter*)))
-	(unless is-formula
-	  (run-pre-set-demons schema slot value NIL :S-VALUE))
 	(run-invalidate-demons schema slot entry)
 	(cond
 	  ((and was-formula (not is-formula))
