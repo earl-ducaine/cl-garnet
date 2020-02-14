@@ -5,29 +5,6 @@
   "Similar to g-value-fn, but no inheritance."
   (g-value-body schema slot NIL T))
 
-(defun enable-a-demon (demon)
-  "Turns ON a demon if it was turned off.  If all demons are currently
-disabled, the variable *demons-disabled* is made of the form
-(T demon), where the names following the T are, in fact, enabled."
-  (cond ((eq *demons-disabled* T)
-	 (list T demon))
-	((eq *demons-disabled* NIL))	; nothing is disabled
-	((listp *demons-disabled*)
-	 ;; A list
-	 (if (eq (car *demons-disabled*) T)
-	     ;; Special format
-	     (if (memberq demon (cdr *demons-disabled*))
-		 *demons-disabled*	; nothing is needed
-		 (cons T (cons demon (cdr *demons-disabled*))))
-	     ;; Normal format
-	     (if (memberq demon *demons-disabled*)
-		 (remove demon *demons-disabled*)
-		 *demons-disabled*)))
-	((eq demon *demons-disabled*)
-	 NIL)
-	(t
-	 *demons-disabled*)))
-
 (defun g-value-inherit-values (schema slot is-leaf slot-structure)
   "Search up the tree for inherited slot.
 RETURNS: the inherited value, or NIL."
@@ -874,9 +851,6 @@ This allows it to be a destructive function."
 	(values value nil)))))
 
 (defun internal-s-value (schema slot value)
-  "This is a stripped-down version of s-value-fn which is used by
-create-schema and friends.  It skips a lot of the stuff that is
-unnecessary at schema creation time."
   (let ((is-formula (formula-p value))
 	(is-relation (relation-p slot)))
     (when is-relation
@@ -1354,7 +1328,6 @@ RETURNS: a list, with elements as follows:
 		  "Slot ~S in ~S was declared constant in prototype ~S!~%"
 		  slot-name schema (car is-a))))
 	     (if override
-
 		 (s-value schema slot-name slot-value)
 		 (setf slot-counter
 		       (internal-s-value schema slot-name slot-value)))))

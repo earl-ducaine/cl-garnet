@@ -28,7 +28,6 @@
 	   gvl
 	   get-value
 	   get-local-value
-	   dovalues
 	   doslots
 	   define-method
 	   kr-send

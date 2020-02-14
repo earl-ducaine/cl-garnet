@@ -511,15 +511,12 @@ bit set) are used."
 be called with any number of slot names and expand into
 a nested chain of calls to <accessor-function>."
   (if slots
-      ;; At least one slot was specified.
       (let ((kernel schema))
-	;; "Grow" the kernel by wrapping more gv-fn's around it
 	(do ((slot slots (cdr slot)))
 	    ((null slot))
 	  (setf kernel
 		`(,accessor-function ,kernel ,(car slot))))
 	kernel)
-      ;; No slots!
       (error "expand-accessor: at least one slot is required")))
 
 
@@ -545,11 +542,6 @@ a nested chain of calls to <accessor-function>."
   (assocq slot *relations*))
 
 (defmacro g-value-body (schema slot inherit-p formula-p)
-"This implements g-value, g-local-value, get-value, and get-local-value.
-If <inherit-p> is true, generates code to inherit a value; otherwise,
-generates code for the local-only case.
-If <formula-p> is true, generates code to evaluate formulas; otherwise,
-the formula object itself is returned."
   (let ((schema-form (if (symbolp schema) schema 'schema))
 	(entry (gensym))
 	(value (gensym)))
@@ -578,7 +570,6 @@ the formula object itself is returned."
 					       (g-value-inherit-values
 						,schema-form ,slot T NIL))))
 		       (setf ,value NIL)))))
-
 		((a-local-only-slot slot)
 		 ;; slots such as :IS-A-INV should never be inherited!
 		 `((setf ,value NIL)))
@@ -598,20 +589,13 @@ the formula object itself is returned."
 	      ,value))
 	  `(,value))))))
 
-
 (defmacro get-value (schema slot)
   `(g-value-body ,schema ,slot T NIL))
 
-
-
 (defmacro g-value (schema &rest slots)
-  "This macro expands into nested calls to g-value-fn.  For example:
-  (g-value schema :slot1 :slot2 :slot3 5) expands into
-  (g-value-fn (g-value-fn (g-value-fn schema :slot1 0) :slot2 0) :slot3 5)"
   (if slots
       nil
     `(progn ,schema)))
-
 
 (defmacro g-local-value (schema &rest slots)
   (if slots
@@ -625,7 +609,6 @@ the formula object itself is returned."
     (when .entry.
       (is-update-slot (sl-bits .entry.)))))
 
-(declaim (inline run-invalidate-demons))
 (defun run-invalidate-demons (schema slot entry)
   (unless (eq *demons-disabled* T)
     (when (slot-requires-demon schema slot entry)
@@ -668,50 +651,6 @@ Inputs:
 	`(s-value-chain ,schema ,@slots)
 	;; One (non-special) slot only.
 	`(s-value-fn ,schema ,(first slots) ,(second slots)))))
-
-(defmacro dovalues ((variable schema slot &key (local nil) (result nil)
-			      (formulas T) (in-formula NIL))
-		    &rest body)
-"Executes <body> with <variable> bound to all the values of the <slot> in
-<schema>."
-
-  `(locally (declare ,*special-kr-optimization*)
-     (let* ((schema ,@(if (eq schema :SELF)
-			`(*schema-self*)
-			`(,schema)))
-	  (values ,@(if local
-		      (if formulas
-			`((g-local-value schema ,slot))
-			`((get-local-value schema ,slot)))
-		      (if formulas
-			(if in-formula
-			    nil
-			    `((g-value schema ,slot)))
-			(if in-formula
-			    nil
-			  `((get-value schema ,slot)))))))
-     ;; Now iterate
-     (if values
-       (progn
-	 (unless (listp values)
-	   (format t "(DOVALUES ~s ~s) does not contain a list of values!~%"
-		   ,schema ,slot)
-	   (setf values (list values)))
-	 ;; Extra code for the case FORMULAS = T
-	 (dolist (,variable values)
-	   ,@(if formulas
-	       ;; Generate test for formula-p, unless :FORMULAS is nil
-	       `((when (formula-p ,variable)
-		       #+EAGER
-		       (propagate)
-		       (setf ,variable
-			     #+EAGER
-			     (cached-value ,variable)
-			     #-EAGER
-			     (g-value-formula-value
-			      schema ,slot ,variable NIL)))))
-	   ,@body)))
-     ,result)))
 
 (defmacro create-relation (relation inheritance-p &rest inverses)
 "Defines a new relation with its inverses.  If <inheritance-p>
