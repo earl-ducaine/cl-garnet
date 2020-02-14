@@ -911,48 +911,11 @@ RETURNS: a list, with elements as follows:
 	   (format t "Incorrect slot specification: object ~S ~S~%"
 		   schema slot)))))
 
-(declaim (inline get-slot-type-code))
-(defun get-slot-type-code (object slot)
-  (let ((entry (slot-accessor object slot)))
-    (and entry
-	 (get-entry-type-code entry))))
-
-
-(declaim (inline g-type))
-(defun g-type (object slot)
-  (let ((type (get-slot-type-code object slot)))
-    (and type
-	 (code-to-type type))))
-
-
-
 (defun set-slot-type (object slot type)
   (let ((entry (or (slot-accessor object slot)
 		   (set-slot-accessor object slot *no-value* type NIL))))
     (setf (sl-bits entry)
 	  (logior (logand (sl-bits entry) *all-bits-mask*) type))))
-
-
-(defun s-type (object slot type &optional (check-p T))
-  "Adds a type declaration to the given <slot>, eliminating any previous
-type declarations.  If <check-p> is true, checks whether the value
-already in the <slot> satisfies the new type declaration."
-  (set-slot-type object slot (if type
-			       (encode-type type)
-			       ;; 0 means "no type declarations"
-			       0))
-  (when check-p
-    (let* ((entry (slot-accessor object slot))
-	   (value (if entry (sl-value entry))))
-      (unless (or (eq value *no-value*)
-		  (formula-p value))
-	)))
-  type)
-
-
-
-
-
 
 (defun T-P (value)
   (declare #.*special-kr-optimization*
