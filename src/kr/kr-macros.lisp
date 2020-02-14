@@ -873,7 +873,6 @@ in (create-schema ~S).~%   Ignoring the :NAME-PREFIX.~%"
 	   (*create-schema-schema* name)
 	   (slots (process-slots rest))
 	   (generate-instance (not (null (memberq :generate-instance rest)))))
-      (creation-message name)
       `(do-schema-body
 	   ,(if destroy
 		`(make-a-new-schema ,name)

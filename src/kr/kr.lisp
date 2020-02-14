@@ -901,18 +901,6 @@ This allows it to be a destructive function."
 	;; We are setting to the same value as the old one!  Do nothing.
 	;; RGA --- Error return function
 	(return-from s-value-fn (values value nil)))
-      (when (and *types-enabled* (not (formula-p value)))
-	(multiple-value-bind (result error-p)
-	    (check-slot-type schema slot value T entry)
-	  (cond ((not error-p))  ; Everything is OK
-		((eq error-p T)
-		 ;; A type error - user wants to do nothing
-		 ;; RGA --should return old-value, added a second
-		 ;; value indicating error.
-		 (return-from s-value-fn (values old-value t)))
-		(T
-		 ;; A type error - user supplied new value
-		 (setf value result)))))
       (let ((is-formula nil) (is-relation nil)
 	    (was-formula (formula-p old-value)))
 	;; Check for special cases in relation slots.
@@ -1627,15 +1615,7 @@ the expression ~S instead."
 			(setf (sl-bits the-entry)
 			      (logior (logand schema-bits *all-bits-mask*)
 				      bits))))
-		    (set-slot-accessor the-schema slot *no-value* bits NIL)))))))
-      ;; Typecheck
-      (iterate-slot-value (the-schema T T nil)
-	(unless (eq value *no-value*)
-	  (unless (formula-p value)	; don't bother with formulas.
-	    (multiple-value-bind (new-value result)
-		(check-slot-type the-schema slot value)
-	      (when (eq result :REPLACE)
-		(s-value the-schema slot new-value)))))))))
+		    (set-slot-accessor the-schema slot *no-value* bits NIL))))))))))
 
 
 (defun add-update-slot (schema slot &optional turn-off)
@@ -1950,22 +1930,6 @@ RETURNS: a list, with elements as follows:
 	   (format t "Incorrect slot specification: object ~S ~S~%"
 		   schema slot)))))
 
-(eval-when (:execute :compile-toplevel :load-toplevel)
-  (defun creation-message (name)
-    (when *print-new-instances*
-      (when (and (listp name)
-		 (eq (car name) 'QUOTE))
-	(format *standard-output* "~&Object ~S~%" (eval name))))))
-
-
-(defun end-create-instance (schema)
-  "Processes the second half of a create-instance.  Begin-create-instance must
-have been called on the <schema>."
-  (process-constant-slots schema (get-local-value schema :IS-A)
-			  (get-local-value schema :CONSTANT)
-			  nil)
-  (kr-init-method schema (get-local-value schema :INITIALIZE)))
-
 (declaim (inline get-slot-type-code))
 (defun get-slot-type-code (object slot)
   (let ((entry (slot-accessor object slot)))
@@ -1980,40 +1944,6 @@ have been called on the <schema>."
 	 (code-to-type type))))
 
 
-(defun check-slot-type (object slot value &optional (error-p T) entry)
-  "Check whether <value> has the right type for the <slot> in the <object>.
-
-RETURNS:
- if error-p is non-nil: multiple values:
- - a replacement value, if the user chose to continue and supply a
-   replacement;  T if no error;  NIL otherwise;
- - T (if type error and the user did not supply a value), or
-   NIL (if there was no type error), or
-   :REPLACE, if a replacement value was supplied by the user.
- if error-p is nil:
- an error string describing what error condition was found.
-"
-  (let ((type-code (if entry
-		       (get-entry-type-code entry)
-		       (get-slot-type-code object slot))))
-    (or (null type-code)
-        (zerop type-code)
-	(check-kr-type value type-code)
-	(let* ((type (code-to-type type-code))
-	       (readable-type (get-type-documentation type))
-	       (message
-		(format
-		 nil
-		 "bad KR type: value ~S~:[~*~;, a ~S,~] is not valid for slot ~S in~%  object ~S.  The slot is declared of type ~S~@[,~%  i.e., ~A~].~@[~%  The value was computed by a formula.~]~%"
-		 value value (type-of value)
-		 slot object type
-		 readable-type
-		 (formula-p (get-local-value object slot)))))
-	  (if error-p
-	      (progn
-		(cerror "Retain old value in the slot" message)
-		(values T T))
-	      message)))))
 
 (defun set-slot-type (object slot type)
   (let ((entry (or (slot-accessor object slot)
@@ -2035,10 +1965,7 @@ already in the <slot> satisfies the new type declaration."
 	   (value (if entry (sl-value entry))))
       (unless (or (eq value *no-value*)
 		  (formula-p value))
-	(multiple-value-bind (new-value result)
-	    (check-slot-type object slot value T entry)
-	  (cond ((eq result :REPLACE)
-		 (s-value object slot new-value)))))))
+	)))
   type)
 
 

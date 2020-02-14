@@ -52,7 +52,6 @@
 	   def-kr-type
 	   g-type
 	   s-type
-	   check-slot-type
 	   kr-boolean
 	   get-slot-doc
 	   set-slot-doc
