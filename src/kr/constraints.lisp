@@ -76,17 +76,9 @@
       `(formula-fn ,form ,initial-value (create-schema nil ,@slots))
       `(formula-fn ,form ,initial-value NIL)))
 
-(declaim (inline prepare-formula))
-(defun prepare-formula (initial-value)
-  (locally (declare #.*special-kr-optimization*)
-    (let ((formula (make-new-formula)))
-      (setf (schema-name formula) (incf *schema-counter*)
-	    (cached-value formula) initial-value)
-      formula)))
-
-(declaim (inline prepare-formula))
 (defun o-formula-fn (function lambda initial-value meta)
-  (let ((formula (prepare-formula initial-value)))
+  (let ((formula (make-new-formula)
+		 ))
     (setf (a-formula-function formula) function
 	  (a-formula-lambda formula) lambda
 	  (a-formula-meta formula) meta)
@@ -114,7 +106,7 @@ compile them."
 		  ;; Just create an inherited formula
 		  (formula ',form ,initial-value meta)
 		  ;; This is a real o-formula
-		  (let ((formula (prepare-formula ,initial-value)))
+		  (let ((formula (make-new-formula)))
 		    (setf (a-formula-function formula)
 			  (function (lambda () ,form)))
 		    (setf (a-formula-lambda formula) ',form)
@@ -126,7 +118,7 @@ compile them."
 		(formula-fn ',form ,initial-value NIL)
 		;; This is a real o-formula
 		(progn
-		  (let ((formula (prepare-formula ,initial-value)))
+		  (let ((formula (make-new-formula)))
 		    (setf (a-formula-function formula)
 			  (function (lambda () ,form)))
 		    (setf (a-formula-lambda formula) ',form)
