@@ -860,7 +860,6 @@ RETURNS: a list, with elements as follows:
 	(constants NIL)
 	(had-constants NIL)
 	(cancel-constants (find '(:constant) slot-specifiers :test #'equal))
-	(parent (car is-a))
 	(slot-counter (if is-a 1 0)))
        ((null slots)
 	(unless (eq types :NONE)
@@ -889,24 +888,10 @@ RETURNS: a list, with elements as follows:
 	   (let ((slot-name (car slot))
 		 (slot-value (cdr slot)))
 	     (case slot-name
-	       (:INITIALIZE
-		(when slot-value
-		  (setf initialize-method slot-value)))
 	       (:CONSTANT
 		(setf constants (cdr slot))
 		(setf had-constants T)))
-	     ;; Check that the slot is not declared constant in the parent.
-	     (when (and (not cancel-constants) (not *constants-disabled*)
-			(not *redefine-ok*))
-	       (when (and parent (slot-constant-p parent slot-name))
-		 (cerror
-		  "If continued, the value of the slot will change anyway"
-		  "Slot ~S in ~S was declared constant in prototype ~S!~%"
-		  slot-name schema (car is-a))))
-	     (if override
-		 (s-value schema slot-name slot-value)
-		 (setf slot-counter
-		       (internal-s-value schema slot-name slot-value)))))
+		 (internal-s-value schema slot-name slot-value)))
 	  (T
 	   (format t "Incorrect slot specification: object ~S ~S~%"
 		   schema slot)))))
