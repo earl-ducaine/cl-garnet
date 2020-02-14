@@ -367,7 +367,7 @@
 	   )))
   value)
 
-(defun kr-init-method-hook (schema the-function)
+(defun kr-init-method-hook (schema &optional the-function)
   (call-hook-save-fn kr::kr-init-method schema the-function)
   (copy-down-and-activate-constraints schema))
 

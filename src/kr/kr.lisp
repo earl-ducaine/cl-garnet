@@ -531,33 +531,14 @@ This allows it to be a destructive function."
 		(when value
 		  (return-from find-parent (values value the-parent))))))))))
 
-(defun kr-call-initialize-method (schema slot)
-  "This is similar to kr-send-function, except that it is careful NOT to
-inherit the method, which is only used once.  This is to reduce unnecessary
-storage in every object."
-  (let ((the-function (g-value-no-copy schema slot)))
-    (when the-function
-      ;; Bind these in case call prototype method is used.
-      (let ((*kr-send-self* schema)
-	    (*kr-send-slot* slot)
-	    (*kr-send-parent* NIL))
-	(funcall the-function schema)))))
 
-
-(defun kr-init-method (schema the-function)
-  "Similar, but even more specialized.  It is only called by create-schema
-and friends, which know whether an :initialize method was specified locally."
-  (let ((*kr-send-parent* nil))
-    (if the-function
-      (setf *kr-send-parent* schema)
-      (multiple-value-setq (the-function *kr-send-parent*)
+(defun kr-init-method (schema  &optional the-function )
+  (if the-function
+      nil
+      (multiple-value-setq (the-function)
 	(find-parent schema :INITIALIZE)))
-    (when the-function
-      ;; Bind these in case call prototype method is used.
-      (let ((*kr-send-self* schema)
-	    (*kr-send-slot* :INITIALIZE)
-            (*kr-send-parent* NIL))
-	(funcall the-function schema)))))
+  (when the-function
+    (funcall the-function schema)))
 
 (defun allocate-schema-slots (schema)
   (locally (declare #.*special-kr-optimization*)
@@ -835,8 +816,7 @@ RETURNS: a list, with elements as follows:
 				:SORTED-SLOTS :UPDATE-SLOTS)))
 	    ))
 	(when generate-instance
-	  ;; We are generating code for a CREATE-INSTANCE, really.
-	  (kr-init-method schema initialize-method))
+	  (kr-init-method schema))
 	schema)
     (cond ((eq slot :NAME-PREFIX)
 	   ;; Skip this and the following argument
@@ -901,19 +881,16 @@ RETURNS: a list, with elements as follows:
 				:SORTED-SLOTS :UPDATE-SLOTS)))
 	    ))
 	(when generate-instance
-	  ;; We are generating code for a CREATE-INSTANCE, really.
-	  (kr-init-method schema initialize-method))
+	  (kr-init-method schema))
 	schema)
     (cond ((eq slot :NAME-PREFIX)
-	   ;; Skip this and the following argument
 	   (pop slots))
 	  ((consp slot)
 	   (let ((slot-name (car slot))
 		 (slot-value (cdr slot)))
-	     (case slot-name		; handle a few special slots.
+	     (case slot-name
 	       (:INITIALIZE
 		(when slot-value
-		  ;; A local :INITIALIZE method was provided
 		  (setf initialize-method slot-value)))
 	       (:CONSTANT
 		(setf constants (cdr slot))

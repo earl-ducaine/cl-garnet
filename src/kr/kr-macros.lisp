@@ -152,15 +152,6 @@
 
 (defvar *accessed-slots* NIL)
 
-(defvar *kr-send-self* nil
-  "The current schema for kr-send.")
-
-(defvar *kr-send-slot* nil
-  "The current slot for kr-send.")
-
-(defvar *kr-send-parent* nil
-  "The schema from which the last prototype method was obtained.")
-
 (defvar *create-schema-schema* nil
   "Name of the current object being defined by Create-Instance.  Used for
    debugging only.")
@@ -571,11 +562,7 @@ Note that <relation> should be a slot name, not a schema."
     `(let* ((,the-schema ,schema)
 	    (,the-function (g-value ,the-schema ,slot)))
        (when ,the-function
-	 ;; Bind these in case call prototype method is used.
-	 (let ((*kr-send-self* ,the-schema)
-	       (*kr-send-slot* ,slot)
-	       (*kr-send-parent* NIL))
-	   (funcall ,the-function ,@args))))))
+	 (funcall ,the-function ,@args)))))
 
 (defmacro define-method (name class arg-list &rest body)
   (unless (keywordp name)
