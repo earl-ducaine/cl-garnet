@@ -9,8 +9,7 @@
       (speed 3)
       (safety 0)
       (space 0)
-      (debug 0)
-      )))
+      (debug 0))))
 
 (defstruct (schema (:predicate is-schema)
                    (:print-function print-the-schema))
@@ -26,9 +25,6 @@
 	 T)))
 
 (defstruct (a-formula (:include schema) (:print-function print-the-schema))
-  ;; #-(and)
-  ;; number			   ; valid/invalid bit, and sweep mark.  Actually stored in the
-  ;; 				   ; structure slot "a-formula-bins", inherited from schema.
   depends-on			   ; list of schemata on which this function depends (or single
 				   ; schema if there is only one)
   schema			   ; schema on which this formula is installed
@@ -571,13 +567,10 @@ a nested chain of calls to <accessor-function>."
 						,schema-form ,slot T NIL))))
 		       (setf ,value NIL)))))
 		((a-local-only-slot slot)
-		 ;; slots such as :IS-A-INV should never be inherited!
 		 `((setf ,value NIL)))
 		(t
 		 `((if (if ,entry (is-inherited (sl-bits ,entry)))
-		     ;; in which case, no-value was already inherited.
 		     (setf ,value NIL)
-		     ;; otherwise, try to inherit the value.
 		     (progn
 		       (setf ,value (g-value-inherit-values ,schema-form ,slot
 							    T ,entry))

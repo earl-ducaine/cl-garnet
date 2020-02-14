@@ -82,36 +82,19 @@
       (if (formula-p form)
 	  ;; We were passed an object which is already a formula.  Link to it.
 	  (progn
-	    ;; See if we need to make the meta-schema inherit from the formula's
-	    ;; parent.
-	    (when meta
-	      (let ((parent-meta (find-meta form)))
-		(when parent-meta
-		  (s-value meta :is-a (list parent-meta)))))
 	    (setf (a-formula-is-a formula) form)
 	    (setf (a-formula-function formula) (a-formula-function form))
 	    (setf (a-formula-lambda formula) (a-formula-lambda form))
 	    (push-one-or-list formula (a-formula-is-a-inv form)))
-	  ;; Normal case: we were given a Lisp expression
 	  (progn
 	    (setf (a-formula-function formula)
-		  ;; This version does not work with CL version 2.  It is,
-		  ;; however, much more efficient than calling the compiler.
 		  #-(or CMU ANSI-CL)
 		  `(lambda () ,form)
-		  ;; This version works with CL version 2.
 		  #+(or CMU ANSI-CL)
-		  (compile nil `(lambda () ,form))
-		  )
+		  (compile nil `(lambda () ,form)))
 	    (setf (a-formula-lambda formula) form)))
       formula)))
 
-
-;; FORMULA
-;; This version stores the formula as an INTERPRETED lambda.
-;; If <initial-value> is supplied, it is stored as the cached value for the
-;; formula; the formula, however, is still marked invalid.
-;;
 (defmacro formula (form &optional (initial-value nil) &rest slots)
   (if slots
       `(formula-fn ,form ,initial-value (create-schema nil ,@slots))
@@ -427,10 +410,6 @@ dotted pairs, where each pair consists of a schema and a slot."
 	  value))))
 
 
-
-;;; Define basic builtin types.  These definitions must come after the
-;; file KR.LISP is loaded. Note that ORDER IS CRUCIAL HERE.
-;;
 
 (def-kr-type kr-no-type () '(satisfies no-type-error-p)
 	     "No type defined for this slot")

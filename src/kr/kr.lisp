@@ -56,12 +56,7 @@
 		       (slot-dependents slot-structure))
     *no-value*))
 
-
 (defun g-value-no-copy (schema slot &optional skip-local)
-  "This is a specialized function which does inheritance but does NOT copy
-values down.  It is used by the :INITIALIZE method, which is called exactly
-once per object and should NOT copy down anything (since the method will
-never be used again)."
   (unless skip-local
     ;; Is there a local value?
     (let ((value (slot-accessor schema slot)))
@@ -1402,60 +1397,3 @@ Example: (get-declarations A :type)"
           "KR typechecking called on value ~S with no type"
           value)
   T)
-
-
-(defun get-type-definition (type-descriptor)
-  "Given the symbol which names a KR type (e.g., 'KR-BOOLEAN), this function
-returns the type expression that was used to define the type.
-
-Example:
- (base-type-for 'bitmap-or-nil) ==>
- (OR NULL (IS-A-P OPAL:BITMAP))
-"
-  (let* ((name (if (symbolp type-descriptor) (symbol-name type-descriptor)))
-	 (code (gethash name kr::types-table)))
-    (when name
-      (maphash #'(lambda (key value)
-		   (when (and (eq value code)
-			    (not (stringp key)))
-		       (return-from get-type-definition key)))
-	       kr::types-table))))
-
-(defun find-meta (formula)
-  "Returns, or inherits, the meta-schema associated with the <formula>, or
-NIL if none exists."
-  (let ((meta (a-formula-meta formula)))
-    (unless meta
-      ;; Try to inherit the meta-information from the formula's parent(s).
-      (do ((f (a-formula-is-a formula) (a-formula-is-a f)))
-	  ((null f))
-	(if (setf meta (a-formula-meta f))
-	    ;; Do not copy down the meta-schema, to reduce storage.
-	    (return))))
-    meta))
-
-
-(defun g-formula-value (formula slot)
-  "RETURNS:
-the value of the meta-slot <slot> in the <formula>, or NIL if none
-exists.  The value may be inherited from the <formula>'s parent(s), but
-no new meta-schema is created as a result of this operation."
-  (when (formula-p formula)
-    (case slot
-      (:NUMBER (a-formula-number formula))
-      (:VALID (cache-is-valid formula))
-      (:DEPENDS-ON (a-formula-depends-on formula))
-      (:SCHEMA (a-formula-schema formula))
-      (:SLOT (a-formula-slot formula))
-      (:CACHED-VALUE (a-formula-cached-value formula))
-      (:PATH (a-formula-path formula))
-      (:IS-A (a-formula-is-a formula))
-      (:FUNCTION (a-formula-function formula))
-      (:LAMBDA (a-formula-lambda formula))
-      (:IS-A-INV (a-formula-is-a-inv formula))
-      (:META (a-formula-meta formula))
-      (T
-       ;; Normal case: this is not a built-in formula slot.  Use meta-slots.
-       (let ((meta (find-meta formula)))
-	 (if meta
-	     (g-value meta slot)))))))

@@ -22,7 +22,6 @@
 	   formula-p
 	   s-value
 	   g-value
-	   g-cached-value
 	   g-local-value
 	   gv
 	   gvl
@@ -52,10 +51,6 @@
 	   set-slot-doc
 	   get-type-documentation
 	   set-type-documentation
-	   get-type-definition
-	   get-declarations
-	   get-slot-declarations
-	   g-formula-value
 	   s-formula-value
 	   self-old-value))
 
