@@ -950,56 +950,8 @@ already in the <slot> satisfies the new type declaration."
   type)
 
 
-(defun get-declarations (schema declaration)
-  "RETURNS: a list of all slots in the <schema> which are declared as
-<declaration>.
-
-Example: (get-declarations A :type)"
-  (let ((slots nil))
-    (case declaration
-      (:CONSTANT nil)
-      (:TYPE nil)
-      ((:IGNORED-SLOTS :SORTED-SLOTS :MAYBE-CONSTANT
-		       :PARAMETERS :OUTPUT :UPDATE-SLOTS)
-       (return-from get-declarations (g-value schema declaration)))
-      (t
-       (return-from get-declarations NIL)))
-    ;; Visit all slots, construct information
-    (iterate-slot-value (schema T T NIL)
-      value ;; suppress warning
-      (let ((bits (sl-bits iterate-slot-value-entry)))
-	(case declaration
-	  (:CONSTANT
-	   (when (is-constant bits)
-	     (push slot slots)))
-	  (:TYPE
-	   (let ((type (extract-type-code bits)))
-	     (unless (zerop type)
-	       (push (list slot (code-to-type type)) slots)))))))
-    slots))
 
 
-(defun get-slot-declarations (schema slot)
-  (let* ((entry (slot-accessor schema slot))
-	 (bits (if entry (sl-bits entry) 0))
-	 (declarations nil))
-    (if (is-constant bits)
-      (push :CONSTANT declarations))
-    (if (memberq slot (g-value schema :update-slots))
-      (push :UPDATE-SLOTS declarations))
-    (if (memberq slot (g-value schema :local-only-slots))
-      (push :LOCAL-ONLY-SLOTS declarations))
-    (if (memberq slot (g-value schema :maybe-constant))
-      (push :MAYBE-CONSTANT declarations))
-    (let ((type (extract-type-code bits)))
-      (unless (zerop type)
-	(push (list :type (code-to-type type)) declarations)))
-    ;; Now process all declarations that are not stored in the slot bits.
-    (dolist (s-slot '(:IGNORED-SLOTS :PARAMETERS :OUTPUT :SORTED-SLOTS))
-      (let ((values (g-value schema s-slot)))
-	(if (memberq slot values)
-	  (push s-slot declarations))))
-    declarations))
 
 
 (defun T-P (value)
