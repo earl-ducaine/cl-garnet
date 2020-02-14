@@ -507,17 +507,6 @@ bit set) are used."
       nil
     `(progn ,schema)))
 
-(declaim (inline slot-requires-demon))
-(defun slot-requires-demon (schema slot &optional entry)
-  (declare #.*special-kr-optimization*)
-  (let ((.entry. (or entry (slot-accessor schema slot))))
-    (when .entry.
-      (is-update-slot (sl-bits .entry.)))))
-
-(defun run-invalidate-demons (schema slot entry)
-    (when (slot-requires-demon schema slot entry)
-      (let ((demon (get-value schema :INVALIDATE-DEMON))))))
-
 (defun s-value-chain (schema &rest slots)
   (locally (declare #.*special-kr-optimization*)
     (if (null schema)

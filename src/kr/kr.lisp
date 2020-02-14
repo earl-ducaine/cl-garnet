@@ -330,13 +330,7 @@ Always returns the CODE of the resulting type (whether new or not)"
 
 (declaim (inline mark-as-changed))
 (defun mark-as-changed (schema slot)
-  "Forces formulas which depend on the <slot> in the <schema> to be
-invalidated.  Mostly used for internal implementation.
-This function can be used when manually changing a slot (without using
-s-value).  It will run the demons and propagate the invalidate wave
-to all the ordinary places."
   (let ((entry (slot-accessor schema slot)))
-    (run-invalidate-demons schema slot entry)
     (when (and entry (is-parent (sl-bits entry)))
       (update-inherited-values schema slot (sl-value entry) T)))
   (propagate-change schema slot))
@@ -436,7 +430,7 @@ This allows it to be a destructive function."
 	   (old-value
 	    nil
 	     )
-	    is-depended)
+	   is-depended)
       ;; give error if setting constant slot
       (check-not-constant schema slot entry)
       (let ((is-formula nil) (is-relation nil)
@@ -455,32 +449,17 @@ This allows it to be a destructive function."
 	  (unless (schema-name value)
 	    (incf *schema-counter*)
 	    (setf (schema-name value) *schema-counter*)))
-	(run-invalidate-demons schema slot entry)
+	(when (and (slot-accessor schema slot)
+		   (is-update-slot (sl-bits entry)))
+	  (get-value schema :invalidate-demon))
 	(cond
 	  ((and was-formula (not is-formula))
-	   (when (zerop (a-formula-number old-value))
-	     (format t "*** Warning: you are setting the value of slot ~S of
- object ~S.  This slot contains a formula which was never evaluated.
- The formula is now valid, but its dependencies are not set up properly.  As
- a result, the formula will never be evaluated.
- In order for this formula to work properly, you should have used
- (g-value ~S ~S) before using S-VALUE.  If you want to fix things now,
- re-install the formula using s-value.~%"
-		     slot schema schema slot))
-	   ;; This is the case when we allow temporary overwriting
 	   (setf (cached-value old-value) value)
-	   ;; Set this to NIL, temporarily, in order to cause propagation
-	   ;; to leave the value alone.  It will be validated by s-value.
 	   (set-cache-is-valid old-value NIL))
 	  (t
-	   ;; All other cases
 	   (when (and is-formula (null (cached-value value)))
-	     ;; place old value in the cache only if an initial value
-	     ;; was not provided for the new formula
-	     ;; Set value, but keep formula invalid.
 	     (setf (cached-value value)
 		   (if was-formula (cached-value old-value) old-value)))
-	   ;; Take care of relations.
 	   (when is-relation
 	     (link-in-relation schema slot value))
 	   (let ((new-bits (or the-bits *local-mask*)))
@@ -494,7 +473,7 @@ This allows it to be a destructive function."
 	(when (and the-bits (is-parent the-bits))
 	  (update-inherited-values schema slot value T))
 	(when is-depended
-	    (propagate-change schema slot)) ;;)
+	  (propagate-change schema slot)) ;;)
 	(when (and was-formula (not is-formula))
 	  (set-cache-is-valid old-value T))
 	;; Was the old value a formula?
