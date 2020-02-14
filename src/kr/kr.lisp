@@ -1053,13 +1053,10 @@ INPUTS:
     (let ((meta (a-formula-meta formula)))
       (when meta
 	(setf (a-formula-meta formula) NIL)
-	(destroy-schema meta)))
+	))
     (formula-push formula)))
 
 (defun delete-schema (schema recursive-p)
-  "Internal function.  If <recursive-p>, this is being called from within
-recursive-destroy-schema, so there is no need to maintain upwards
-relations properly."
   (when (not-deleted-p schema)	; do nothing if schema is already destroyed
     ;; Remove all inverse links.
     (if (formula-p schema)
@@ -1098,149 +1095,6 @@ relations properly."
       (makunbound (schema-name schema)))
     ;; This is used as a marker for deleted schemas.
     (setf (schema-bins schema) nil)))
-
-(defun find-direct-dependency (expression target)
-  "RETURNS: T if the given <expression>, or one of its subexpressions,
-directly depends on the <target>.  This must be a direct dependency,
-i.e., one which does not use a link."
-  (when (listp expression)
-    (or (and (eq (car expression) 'GV)
-	     (eq (cadr expression) target))
-	(dolist (thing expression)
-	  (when (find-direct-dependency thing target)
-	    (return T))))))
-
-(defun destroy-schema (schema &optional (send-destroy-message NIL) recursive-p)
-  "Destroys the <schema>, eliminates all dependencies to and from it."
-  (unless (schema-p schema)
-    ;; If schema is already destroyed, do nothing.
-    (return-from destroy-schema))
-  (let ((done nil)
-	bizarre)
-    (iterate-slot-value (schema T T NIL)
-      slot				; eliminate warning
-      (unless (eq value *no-value*)
-	;; Look at all formulas which depend on this slot.
-	(do-one-or-list (formula (slot-dependents iterate-slot-value-entry))
-	  (when (and formula		; defensive programming
-		     (not (memberq formula done)))
-	    ;; If this is a value depended on by others, replace their
-	    ;; value by the current value.  Do this, however, only if the
-	    ;; dependency is a DIRECT one, i.e., if the name of the
-	    ;; schema we are destroying is wired into the formula.  If
-	    ;; this is a link, leave things as they are.
-	    (let ((the-form
-		   (or (a-formula-lambda formula) ; for o-formulas
-		       (and (setf bizarre
-				  ;; This should always be a
-				  ;; list, but be prudent just
-				  ;; in case.
-				  (a-formula-function formula))
-			    (listp bizarre)
-			    (cddr bizarre)))))
-	      (when (find-direct-dependency the-form schema)
-		;; This is indeed a direct-dependency formula.  Install the
-		;; appropriate value.
-		(s-value (on-schema formula) (on-slot formula)
-			 (g-value (on-schema formula) (on-slot formula)))
-		(push formula done)
-		;; The formula now commits suicide.
-		(delete-formula formula (not recursive-p))))))
-	;; If this is a formula, eliminate dependencies to it, so we
-	;; do not get warnings in propagate-change.
-	(when (formula-p value)
-	  (delete-formula value T))))
-    (when send-destroy-message
-      ;; Call the :DESTROY method.
-      (kr-call-initialize-method schema :DESTROY))
-    ;; Physically delete the schema.
-    (delete-schema schema recursive-p)))
-
-(defun print-one-value (value type)
-  (let ((string (cond ((formula-p value)
-		       (let ((cached (cached-value value))
-			     (valid (cache-is-valid value)))
-			 (if (or valid cached)
-			     (format nil "~S(~S . ~D)"
-				     value
-				     cached
-				     valid)
-			     (format nil "~S(nil . NIL)" value))))
-		      ((eq value *no-value*)
-		       "")
-		      (t
-		       (format nil "~S" value)))))
-    (when type
-      (setf string (concatenate 'simple-string string
-				(format nil "  ~([~S]~)" type))))
-    (write-string string)
-    (length string)))
-
-
-(defun print-one-slot-helper (value column indent space-p type)
-  (when (> column 78)
-    (format t "~%    ")
-    (setf column (indent-by indent)))
-  (when space-p
-    (write-string " "))
-  (incf column (print-one-value value type))
-  column)
-
-(defun indent-by (indent)
-  (dotimes (i indent)
-    (write-string "   "))
-  (* indent 3))
-
-
-(defun force-down-helper (schema original-slots slots)
-  (iterate-slot-value (schema T T NIL)
-    value				; eliminate warning
-    (unless (memberq slot original-slots)
-      (pushnew slot slots)))
-  (dolist (parent (get-local-value schema :IS-A))
-    (setf slots (force-down-helper parent original-slots slots)))
-  slots)
-
-
-(defun force-down-all-inheritance (schema)
-  "A potentially VERY expensive operation.  It is done by PS when it wants
-to print out all inherited and inheritable slots of an object."
-  (let ((original-slots nil))
-    (iterate-slot-value (schema T NIL NIL)
-      value				; eliminate warning
-      (push slot original-slots))
-    (dolist (slot (force-down-helper schema original-slots nil))
-      (get-value schema slot))))
-
-
-(defun call-func-on-one-slot (schema slot inherited-ok function
-				     types-p indent limits)
-  "Helper function for the following.
-The <function> is called with:
-(schema slot formula inherited valid real-value types-p indent limits)"
-  (let* ((entry (slot-accessor schema slot))
-	 (values (when entry (sl-value entry)))
-	 (bits (when entry (sl-bits entry)))
-	 form valid real-value)
-    (when bits
-      (let ((are-inherited (and (is-inherited bits)
-				;; inherited formulas are printed anyway.
-				(not (formula-p values)))))
-	(unless (and (not inherited-ok) are-inherited)
-	  (unless (eq values *no-value*)
-	    (if (formula-p values)
-		(let ((cached (cached-value values))
-		      (is-valid (cache-is-valid values)))
-		  (setq form values)
-		  (setq valid is-valid)
-		  (setq real-value cached))
-		;; else not a formula
-		(setq real-value values))
-	    (funcall function
-		     schema slot form are-inherited valid real-value
-		     types-p bits indent limits)))
-	;; Indicate that the function was called.
-	T))))
 
 (defun find-parent (schema slot)
   "Find a parent of <schema> from which the <slot> can be inherited."
