@@ -164,7 +164,7 @@ and the same parent (if any)."
   "Called once at the 'beginning.'"
   (setf *relations* nil)
   (setf *inheritance-relations* nil)
-  (create-relation :IS-A T :IS-A-INV)
+  (create-relation)
   (create-schema 'PRINT-SCHEMA-CONTROL
     (:sorted-slots :left :top :width :height)
     (:limit-values '(:IS-A-INV 5) '(:COMPONENTS 20))

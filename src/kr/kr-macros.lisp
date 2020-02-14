@@ -528,24 +528,24 @@ at slot ~S  (non-schema value is ~S, last schema was ~S)"
 	`(s-value-chain ,schema ,@slots)
 	`(s-value-fn ,schema ,(first slots) ,(second slots)))))
 
-(defmacro create-relation (relation inheritance-p &rest inverses)
-"Defines a new relation with its inverses.  If <inheritance-p>
-is non-nil, classifies the relation as one that performs inheritance.
-Note that <relation> should be a slot name, not a schema."
-  (let ((entry (gensym)))
+(defmacro create-relation ()
+  (let ((relation :IS-A)
+	(inheritance-p t)
+	(inverses '(:IS-A-INV))
+	(entry (gensym)))
     `(let ((inverses ',inverses))
-      (when ,inheritance-p
-	(pushnew ,relation *inheritance-relations*)
-	(dolist (inverse inverses)
-	  (pushnew inverse *inheritance-inverse-relations*)))
-      (unless (assocq ,relation *relations*)
-	(push (cons ,relation inverses) *relations*))
-      (dolist (inv inverses)
-	(let ((,entry (assocq inv *relations*)))
-	  (if ,entry
-	    (pushnew ,relation (cdr ,entry))
-	    (progn
-	      (push (list inv ,relation) *relations*))))))))
+       (when ,inheritance-p
+	 (pushnew :IS-A *inheritance-relations*)
+	 (dolist (inverse inverses)
+	   (pushnew inverse *inheritance-inverse-relations*)))
+       (unless (assocq :IS-A *relations*)
+	 (push (cons :IS-A inverses) *relations*))
+       (dolist (inv inverses)
+	 (let ((,entry (assocq inv *relations*)))
+	   (if ,entry
+	       (pushnew :IS-A (cdr ,entry))
+	       (progn
+		 (push (list inv :IS-A) *relations*))))))))
 
 
 (declaim (inline has-slot-p))

@@ -3,7 +3,6 @@
 
 (defun g-value-inherit-values (schema slot)
   (declare (ftype (function (t &optional t) t) formula-fn))
-  (format t "args: schema(~s) slot(~s)~%" schema slot)
   (let (has-parents)
     (dolist (relation *inheritance-relations*)
       (dolist (parent (if (eq relation :IS-A)
