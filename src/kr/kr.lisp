@@ -100,142 +100,23 @@ to a schema."
 		      (mod (incf *debug-index*) *debug-names-length*)))
 	  schema)))
 
-(defun make-new-schema-name (schema name)
-  (let* (parent
-	 (symbol))
-    ))
-
-(defun print-the-slot (slot stream level)
-  (declare (ignore level))
-  (format stream "<slot ~S  value ~S, bits ~S"
-	  (sl-name slot) (sl-value slot) (sl-bits slot))
-  (if (full-sl-p slot)
-      (format stream ",  dependents ~S>" (full-sl-dependents slot))
-      (format stream ">")))
-
-(defun print-the-schema (schema stream level)
-  (declare (ignore level))
-  (let ((name (schema-name schema))
-	(destroyed (not (not-deleted-p schema))))
-    ;; This version is for debugging.  Record the latest schemata in the
-    ;; array.
-    (cond ((or (integerp name) (stringp name))
-	   ;; This is a nameless schema.  Print it out, and record it in the
-	   ;; debugging array.
-	   (when *intern-unnamed-schemata*
-	     (make-new-schema-name schema name))
-	   (cache-schema-name schema name)
-	   ;; This gives control over whether unnamed schemata are interned.
-	   (setf name (schema-name schema)))
-	  ((null name)
-	   ;; This was a deleted schema
-	   (setf name '*DESTROYED*)))
-    (when destroyed (format stream "*DESTROYED*(was "))
-    (if *print-as-structure*
-	(progn
-	  (format stream "#k<~S" name)
-	  (dolist (slot *print-structure-slots*)
-	    (let ((value (g-value schema slot)))
-	      (when value
-		(format stream " (~S ~S)" slot value))))
-	  (format stream ">")
-	  (when destroyed (format stream ")")))
-	(progn
-	  (format stream "~S" name)
-	  (when destroyed (format stream ")"))))))
-
-(defun s (number)
-  "This is a debugging function which returns a schema, given its internal
-number.  It only works if the schema was printed out rather recently,
-i.e., if it is contained in the temporary array of names."
-  (setf number (format nil "~D" number))
-  (find-if #'(lambda (x)
-	       (and x
-		    (symbolp (schema-name x))
-		    (do* ((name (symbol-name (schema-name x)))
-			  (i (1- (length name)) (1- i))
-			  (j (1- (length number)) (1- j)))
-			 ((minusp j)
-			  (unless (digit-char-p (schar name i))
-			    x))
-		      (unless (char= (schar name i) (schar number j))
-			(return nil)))))
-	   *debug-names*))
-
-
-
-;;; RELATIONS
-
-(defun unlink-one-value (schema slot value)	    ; e.g., child :is-a parent
-  "Remove the inverse link from <value> to <schema>, following the inverse
-of <slot>."
-  (let ((inverse (cadr (assocq slot *relations*)))) ; e.g., is-a-inv
-    (when inverse
-      ;; If the relation has an INVERSE slot, remove <schema> from the
-      ;; inverse slot.
-      (let ((entry (slot-accessor value inverse)) ; e.g., A child B
-	    values)
-	(when entry
-	  (setf values (sl-value entry))
-	  (if (eq (car values) schema)
-	      ;; <schema> is first in the inverse list
-	      (set-slot-accessor value inverse (delete schema values)
-				 (sl-bits entry) (slot-dependents entry))
-	      ;; just do a destructive operation
-	      (setf (cdr values) (delete schema (cdr values)))))))))
-
-(defun unlink-all-values (schema slot)
-  "Same as above, but unlinks all schemata that are in <slot>."
-  (let ((inverse (cadr (assocq slot *relations*))))
-    (when inverse
-      (let ((entry (if (eq slot :IS-A)
-		       (slot-accessor schema :IS-A)
-		       (if (eq slot :IS-A-INV)
-			   (slot-accessor schema :IS-A-INV)
-			   (slot-accessor schema slot)))))
-	(when entry
-	  (dolist (parent (sl-value entry))
-	    (when (not-deleted-p parent) ; parent is not destroyed
-	      ;; If the terminal has an INVERSE slot, remove <schema> from the
-	      ;; inverse slot.
-	      (let ((entry (if (eq inverse :is-a-inv)
-			       (slot-accessor parent :is-a-inv) ; e.g., A child B
-			       (slot-accessor parent inverse)))
-		    values)
-		(when entry
-		  (setf values (sl-value entry))
-		  (if (eq (car values) schema)
-		      (pop (sl-value entry))
-		      (setf (cdr values) (delete schema (cdr values)))))))))))))
-
-
 (defun link-in-relation (schema slot values)
-  "Since the <values> are being added to <slot>, see if we need to put in an
-inverse link to <schema> from each of the <values>.
-This happens when <slot> is a relation with an inverse."
   (let ((inverse (if (eq slot :is-a)
 		     :is-a-inv
 		     (cadr (assocq slot *relations*)))))
     (when inverse
-      ;; <values> is a list: cycle through them all
       (dolist (value values)
 	(let* ((entry (if (eq slot :is-a)
 			  (slot-accessor value :is-a-inv)
 			  (slot-accessor value inverse)))
 	       (previous-values (when entry (sl-value entry))))
 	  (if entry
-	      ;; Create the back-link.  We use primitives here to avoid looping.
 	      (if (or *schema-is-new*
 		      (not (memberq schema previous-values)))
-		  ;; Handle an important special case efficiently.
 		  (if (eq (sl-value entry) *no-value*)
-		      ;; There was no value after all!
 		      (setf (sl-value entry) (list schema))
-		      ;; There were real values.
 		      (push schema (sl-value entry))))
-	      ;; There was no inverse in the parent yet.
 	      (set-slot-accessor value inverse (list schema) *local-mask* nil)))))))
-
 
 (defun check-relation-slot (schema slot values)
   "We are setting the <slot> (a relation) to <values>.  Check that the
@@ -734,7 +615,6 @@ This allows it to be a destructive function."
 		   (if was-formula (cached-value old-value) old-value)))
 	   ;; Take care of relations.
 	   (when is-relation
-	     (when old-value (unlink-all-values schema slot))
 	     (link-in-relation schema slot value))
 	   (let ((new-bits (or the-bits *local-mask*)))
 	     (if entry
@@ -1069,18 +949,6 @@ RETURNS: a list, with elements as follows:
 		slot kr::*create-schema-schema* slots))))
       (cons is-a output))))
 
-(defun handle-is-a (schema is-a generate-instance override)
-  (if (or (eq schema is-a)
-	  (memberq schema is-a))
-      (format t "~A: cannot make ~S an instance of itself!  ~
-    			Using NIL instead.~%"
-	      (if generate-instance
-		  "CREATE-INSTANCE" "CREATE-SCHEMA")
-	      schema)
-      ;; Make sure :override does not duplicate is-a-inv contents.
-      (let ((*schema-is-new* (not override)))
-	(set-is-a schema is-a))))
-
 (defun do-schema-body (schema is-a generate-instance do-constants override
 		       types &rest slot-specifiers)
   "Create-schema and friends expand into a call to this function."
@@ -1094,7 +962,7 @@ RETURNS: a list, with elements as follows:
     (setf is-a (list is-a)))
   (when is-a
     (let ((*schema-is-new* T))
-      (handle-is-a schema is-a generate-instance override)))
+      (set-is-a schema is-a)))
   (do* ((slots slot-specifiers (cdr slots))
 	(slot (car slots) (car slots))
 	(initialize-method NIL)
@@ -1173,7 +1041,7 @@ RETURNS: a list, with elements as follows:
     (setf is-a (list is-a)))
   (when is-a
     (let ((*schema-is-new* T))
-      (handle-is-a schema is-a generate-instance override)))
+      (set-is-a schema is-a)))
   (do* ((slots slot-specifiers (cdr slots))
 	(slot (car slots) (car slots))
 	(initialize-method NIL)

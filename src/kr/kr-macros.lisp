@@ -11,8 +11,7 @@
       (space 0)
       (debug 0))))
 
-(defstruct (schema (:predicate is-schema)
-                   (:print-function print-the-schema))
+(defstruct (schema (:predicate is-schema))
   name
   bins)
 
@@ -24,7 +23,7 @@
 	 (hash-table-p (schema-bins obj))
 	 T)))
 
-(defstruct (a-formula (:include schema) (:print-function print-the-schema))
+(defstruct (a-formula (:include schema))
   depends-on			   ; list of schemata on which this function depends (or single
 				   ; schema if there is only one)
   schema			   ; schema on which this formula is installed
@@ -37,7 +36,7 @@
   is-a-inv			   ; list of formulas that inherit from this one
   meta)
 
-(defstruct (sl (:print-function print-the-slot))
+(defstruct (sl)
   name
   value
   (bits 0 :type fixnum))
