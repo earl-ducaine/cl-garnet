@@ -326,8 +326,6 @@ Always returns the CODE of the resulting type (whether new or not)"
 	(a-formula-cached-value formula)
 	(progn
 	  (unless *within-g-value*
-	    ;; Bump the sweep mark only at the beginning of a chain of formula
-	    ;; accesses.  Increment by 2 since lower bit is "valid" flag.
 	    (incf *sweep-mark* 2))
 	  (if (= (cache-mark formula) *sweep-mark*)
 	      (progn
@@ -626,8 +624,7 @@ storage in every object."
       ;; Bind these in case call prototype method is used.
       (let ((*kr-send-self* schema)
 	    (*kr-send-slot* slot)
-	    (*kr-send-parent* NIL)
-	    (*demons-disabled* T))
+	    (*kr-send-parent* NIL))
 	(funcall the-function schema)))))
 
 
@@ -643,8 +640,7 @@ and friends, which know whether an :initialize method was specified locally."
       ;; Bind these in case call prototype method is used.
       (let ((*kr-send-self* schema)
 	    (*kr-send-slot* :INITIALIZE)
-            (*kr-send-parent* NIL)
-	    #-(and) (*demons-disabled* T))
+            (*kr-send-parent* NIL))
 	(funcall the-function schema)))))
 
 (defun allocate-schema-slots (schema)

@@ -50,10 +50,6 @@
 (defvar *sweep-mark* 0
   "Used as a sweep mark to detect circularities")
 
-(defvar *demons-disabled* nil
-  "May be bound to T to cause demons NOT to be executed when a slot is set.
-  If the value is a single value, or a list, ")
-
 (defvar *constants-disabled* NIL
   "May be bound to NIL to cause constant declarations to be ignore in
   create-instance.")
@@ -535,9 +531,8 @@ bit set) are used."
       (is-update-slot (sl-bits .entry.)))))
 
 (defun run-invalidate-demons (schema slot entry)
-  (unless (eq *demons-disabled* T)
     (when (slot-requires-demon schema slot entry)
-      (let ((demon (get-value schema :INVALIDATE-DEMON)))))))
+      (let ((demon (get-value schema :INVALIDATE-DEMON))))))
 
 (defun s-value-chain (schema &rest slots)
   (locally (declare #.*special-kr-optimization*)
@@ -564,17 +559,9 @@ at slot ~S  (non-schema value is ~S, last schema was ~S)"
 	(setf intermediate new-schema)))))
 
 (defmacro s-value (schema &rest slots)
-"The basic value-setting macro.
-Inputs:
-   - <schema>: the name of a schema
-   - <slot>: name of the slot to be modified.
-   - <value>: new value for the <slot>."
   (when slots
-    ;; This is the more general case.
     (if (cddr slots)
-	;; Several slots.
 	`(s-value-chain ,schema ,@slots)
-	;; One (non-special) slot only.
 	`(s-value-fn ,schema ,(first slots) ,(second slots)))))
 
 (defmacro create-relation (relation inheritance-p &rest inverses)
