@@ -889,27 +889,11 @@ This allows it to be a destructive function."
 	    is-depended)
       ;; give error if setting constant slot
       (check-not-constant schema slot entry)
-      ;; (if entry
-      ;; 	  ;; (setf the-bits (sl-bits entry)
-      ;; 	  ;; 	is-depended (slot-dependents entry))
-      ;; 	  ;; (setf the-bits 0)
-      ;; 	  )
-      (when (and the-bits
-		 (not (is-inherited the-bits))
-		 (eq old-value value)
-		 value)
-	;; We are setting to the same value as the old one!  Do nothing.
-	;; RGA --- Error return function
-	(return-from s-value-fn (values value nil)))
       (let ((is-formula nil) (is-relation nil)
 	    (was-formula (formula-p old-value)))
-	;; Check for special cases in relation slots.
 	(when (and (setf is-relation (relation-p slot))
 		   (eq (setf value (check-relation-slot schema slot value)) *no-value*))
-	  ;; RGA --- added no-error return code
 	  (return-from s-value-fn (values old-value nil)))
-	;; If we are installing a formula, make sure that the formula
-	;; points to the schema and slot.
 	(when (formula-p value)
 	  (when (on-schema value)
 	    ;; RGA --- added error return code.
@@ -927,10 +911,7 @@ This allows it to be a destructive function."
 	    (setf (schema-name value) *schema-counter*)))
 	(unless is-formula
 	  (run-pre-set-demons schema slot value NIL :S-VALUE))
-	;; Now we can set the new value.
-	;; (setf the-bits (logand the-bits *not-inherited-mask*))
 	(run-invalidate-demons schema slot entry)
-	;; Now set the value in the slot to be <value>.
 	(cond
 	  ((and was-formula (not is-formula))
 	   (when (zerop (a-formula-number old-value))
@@ -1360,55 +1341,6 @@ The <function> is called with:
       (format t "  }~%"))))
 
 
-(defun the-bits (bits)
-  (if (integerp bits)
-      ;; The normal case
-      (let ((type (extract-type-code bits)))
-	(format t "~:[-~;p~]~:[-~;l~]~:[-~;C~]~:[-~;P~]~:[-~;u~]~:[-~;i~] "
-		(is-parameter bits) (is-local-only bits)
-		(is-constant bits) (is-parent bits)
-		(is-update-slot bits) (is-inherited bits))
-	(unless (zerop type)
-	  (format t "[~(~S~)]   " (code-to-type type))))
-      ;; A special case for formula slots which are stored in a special way
-      (format t "---- ")))
-
-
-(defun full-normal-slot (schema slot)
-  "Helper function for FULL."
-  (format t "~(~24S~) " slot)
-  (let* ((entry (slot-accessor schema slot))
-	 (values (if entry (sl-value entry)))
-	 (bits (if entry (sl-bits entry)))
-	 (dependents (slot-dependents entry)))
-    (the-bits bits)
-    (if entry
-	;; Slot is there
-	(let ((first t))
-	  (when (eq values *no-value*)
-	    (setf values NIL))
-	  (if (and (listp values) (listp (cdr values)))
-	      (when values
-		(format t " (")
-		(dolist (value values)
-		  (if first
-		      (setf first nil)
-		      (write-string " "))
-		  (print-one-value value NIL))
-		(format t ")"))
-	      (progn
-		(write-string " ")
-		(print-one-value values NIL)))
-	  ;; Show dependent formulas, if any
-	  (when dependents
-	    (format t "   ****--> ")
-	    (do-one-or-list (f dependents)
-	      (format t " ~s" f)))
-	  (terpri))
-	;; No slot???
-	(terpri)))
-  (values))
-
 (defun find-parent (schema slot)
   "Find a parent of <schema> from which the <slot> can be inherited."
   (dolist (relation *inheritance-relations*)
@@ -1423,18 +1355,6 @@ The <function> is called with:
 		  (find-parent a-parent slot)
 		(when value
 		  (return-from find-parent (values value the-parent))))))))))
-
-
-(defun old-kr-send-function (schema slot &rest args)
-  "Same as KR-SEND, but as a function."
-  (let ((the-function (g-value schema slot)))
-    (when the-function
-      ;; Bind these in case call prototype method is used.
-      (let ((*kr-send-self* schema)
-	    (*kr-send-slot* slot)
-	    (*demons-disabled* T))
-	(apply the-function args)))))
-
 
 (defun kr-call-initialize-method (schema slot)
   "This is similar to kr-send-function, except that it is careful NOT to
@@ -1510,17 +1430,6 @@ one by that name if it exists.  The initial number of slots is
 	   (format t "Error in CREATE-SCHEMA - ~S is not a valid schema name.~%"
 		   name)))))
 
-(defun process-one-constant (schema slot)
-  "The <slot> in <schema> was declared constant."
-  ;; set slot information
-  (let ((entry (slot-accessor schema slot)))
-    (if (null entry)
-	;; Slot is not present - create it, mark constant.
-	(set-slot-accessor schema slot *no-value* *constant-mask* nil)
-	;; Slot is present
-	(setf (sl-bits entry) (logior *constant-mask* (sl-bits entry))))))
-
-
 (defun declare-constant (schema slot)
   "Declare slot constants AFTER instance creation time."
   (unless *constants-disabled*
@@ -1540,16 +1449,12 @@ one by that name if it exists.  The initial number of slots is
 	     (setf constant-list (cons slot (if (listp constant-list)
 					      constant-list
 					      (list constant-list))))
-	     (s-value schema :CONSTANT constant-list)
-	     (process-one-constant schema slot))
+	     (s-value schema :CONSTANT constant-list))
 	  (setf c (if (listp list) (car list) list))
 	  (cond ((eq c :EXCEPT)
 		 (setf positive NIL))
 		((eq c slot)
 		 (when positive
-		   ;; Slot is already marked constant, so there's nothing
-		   ;; to do.
-		   (process-one-constant schema slot)
 		   (return nil))
 		 ;; Slot was explicitly excepted from constant list.
 		 (setf (cdr prev) (cddr prev)) ; remove from :EXCEPT
@@ -1561,7 +1466,6 @@ one by that name if it exists.  The initial number of slots is
 		     (setf (cdr end) nil)))
 		 (setf constant-list (cons c constant-list))
 		 (s-value schema :CONSTANT constant-list)
-		 (process-one-constant schema slot)
 		 (return))))))))
 
 (defun process-constant-slots (the-schema parents constants do-types)
