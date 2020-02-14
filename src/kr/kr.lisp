@@ -46,34 +46,6 @@
 	  (when value
 	    (return-from g-value-no-copy value)))))))
 
-
-;;; PRINTING AND DEBUGGING
-
-(declaim (fixnum *debug-names-length* *debug-index*))
-(defparameter *debug-names-length* 500)
-
-(defvar *debug-names* (make-array *debug-names-length* :initial-element nil))
-
-(defvar *debug-index* -1)
-
-(defvar *intern-unnamed-schemata* T
-  "This variable may be set to NIL to prevent PS from automatically creating
-  any unnamed schemata it prints out.")
-
-(defun cache-schema-name (schema name)
-  "This does not cause any creation of symbols.  It simply records
-the schema in an array, thus creating a semi-permanent way to refer
-to a schema."
-  (unless (find-if #'(lambda (x)
-		       (and x (eql (schema-name x) name)))
-		   *debug-names*)
-    ;; A new schema.  Store it in the next position (cycle if
-    ;; we reach the end of the array).
-    (setf (aref *debug-names*
-		(setf *debug-index*
-		      (mod (incf *debug-index*) *debug-names-length*)))
-	  schema)))
-
 (defun link-in-relation (schema slot values)
   (let ((inverse (if (eq slot :is-a)
 		     :is-a-inv
@@ -359,11 +331,7 @@ Always returns the CODE of the resulting type (whether new or not)"
 	    (incf *sweep-mark* 2))
 	  (if (= (cache-mark formula) *sweep-mark*)
 	      (progn
-		(when *warning-on-circularity*
-		  (format t "Warning - circularity detected on ~S, slot ~S~%"
-			  *schema-self* slot))
-		(unless *setting-formula-p*
-		  (set-cache-is-valid formula T))
+		(set-cache-is-valid formula T)
 		(a-formula-cached-value formula)))))))
 
 (defun copy-to-all-instances (schema a-slot value &optional (is-first T))
@@ -588,12 +556,8 @@ This allows it to be a destructive function."
 		 ;; This is not a special slot.
 		 (setf entry (set-slot-accessor schema
 						slot value new-bits nil))))))
-	;; Now propagate the change to all the children which used to
-	;; inherit the previous value of this slot from the schema.
 	(when (and the-bits (is-parent the-bits))
-	  (let ((*setting-formula-p* T))
-	    (update-inherited-values schema slot value T)))
-	;; Notify all dependents that the value changed.
+	  (update-inherited-values schema slot value T))
 	(when is-depended
 	    (propagate-change schema slot)) ;;)
 	(when (and was-formula (not is-formula))
@@ -798,7 +762,7 @@ the expression ~S instead."
 		    (internal-s-value the-schema slot (g-value parent slot))))
 		;; Avoid inheritance and set the slot to NIL.
 		(internal-s-value the-schema slot NIL))))))
-    (when (and do-types *types-enabled*)
+    (when do-types
       ;; Copy type declarations down from the parent(s), unless overridden
       ;; locally.
       (dolist (parent parents)

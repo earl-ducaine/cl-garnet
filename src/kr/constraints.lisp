@@ -132,7 +132,7 @@ compile them."
 	      (lambda ()
 	       (declare #.*special-kr-optimization*)
 	       ,form))
-	     ,(if *store-lambdas* `(quote ,form) nil)
+	     ,`(quote ,form)
 	     ,initial-value
 	     ,meta))
 	  (meta

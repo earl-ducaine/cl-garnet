@@ -1,8 +1,6 @@
 
 (in-package :kr)
 
-(defparameter *kr-version* "2.3.4")
-
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defvar *special-kr-optimization*
     '(optimize
@@ -44,28 +42,6 @@
 
 (defstruct (full-sl (:include sl))
   dependents)
-
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (defvar *store-lambdas* T
-    "If NIL, lambda expressions are not stored in formulas"))
-
-(defvar *types-enabled* T
-  "Set to T to enable type checking on s-value and formula reevaluation")
-
-(defvar *warning-on-circularity* nil
-  "Set this to NIL to prevent warning when a circularity is detected.")
-
-(defvar *warning-on-evaluation* nil
-  "If non-NIL, a warning is printed every time a formula is reevaluated.
-  This may be useful during debugging.")
-
-(defvar *warning-on-null-link* NIL
-  "If non-NIL, a warning is printed when a null link is evaluated inside a
-  GV (or GVL) within a formula.  This is the case when the stale value of the
-  formula is reused.")
-
-(defvar *setting-formula-p* nil
-  "Set to T only when we are setting a slot with a formula")
 
 (defvar *within-g-value* nil
   "Set to non-nil within a sub-formula evaluation")
@@ -497,18 +473,10 @@ bit set) are used."
 	kernel)
       (error "expand-accessor: at least one slot is required")))
 
-
 (defmacro with-constants-disabled (&body body)
 "Execute the <body> with constant processing disabled."
   `(let ((*constants-disabled* t))
      ,@body))
-
-
-(defmacro with-types-disabled (&body body)
-"Execute the <body> with type declaration processing disabled."
-  `(let ((*types-enabled* nil))
-     ,@body))
-
 
 (defmacro with-dependencies-disabled (&body body)
 "Execute the <body> with dependencies processing disabled."
