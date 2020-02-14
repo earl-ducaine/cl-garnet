@@ -117,19 +117,12 @@
   (let ((slots (get-sb-slot obj :gv-sb-slots)))
     (when (member slot slots)
       (let* ((kr-obj (get-gv-sb-slot-kr-object obj)))
-	(cond ((kr-slot-referenced kr-obj slot)
-	       (s-value kr-obj slot val))
-	      (t
-	       ;; no reference: we don't have to track this slot any more
-	       (set-sb-slot obj :gv-sb-slots (remove slot slots))
-	       ;; if we have no more slots, can remove check-fn
-	       (when (null (get-sb-slot obj :gv-sb-slots))
-		 (remove-set-slot-fn obj #'gv-sb-slot-check))
-	       ))
-	))))
+	(set-sb-slot obj :gv-sb-slots (remove slot slots))
+	(when (null (get-sb-slot obj :gv-sb-slots))
+	  (remove-set-slot-fn obj #'gv-sb-slot-check))))))
 
 (defun kr-slot-referenced (schema slot)
-  (kr::slot-dependents (kr::slot-accessor schema slot)))
+  nil)
 
 (defun get-gv-sb-slot-kr-object (obj)
   (let ((kr-obj (get-sb-slot obj :gv-sb-slot-kr-object)))

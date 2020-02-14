@@ -375,9 +375,10 @@ prematurely."
 (declaim (inline slot-dependents))
 (defun slot-dependents (slot-structure)
   (declare #.*special-kr-optimization*)
-  (let ((entry slot-structure))
-    (when (full-sl-p entry)
-      (full-sl-dependents entry))))
+  ;; (let ((entry slot-structure))
+  ;;   (when (full-sl-p entry)
+  ;;     (full-sl-dependents entry)))
+  )
 
 
 (declaim (inline slot-accessor))
