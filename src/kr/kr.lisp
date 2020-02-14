@@ -1186,15 +1186,6 @@ i.e., one which does not use a link."
   (incf column (print-one-value value type))
   column)
 
-
-(defun print-meta (formula)
-  "Print the meta-information associated with a formula."
-  (let ((meta (a-formula-meta formula)))
-    (when (and meta (schema-p meta))
-      (format t "  ---- meta information (~A):~%" meta)
-      (call-on-ps-slots meta 'SLOT-PRINTER))))
-
-
 (defun indent-by (indent)
   (dotimes (i indent)
     (write-string "   "))
@@ -1250,96 +1241,6 @@ The <function> is called with:
 		     types-p bits indent limits)))
 	;; Indicate that the function was called.
 	T))))
-
-
-(defun call-on-ps-slots (schema function
-			 &key (control t)
-			      inherit
-			      (indent NIL)
-			      types-p
-			      all-p)
-  "Apply the <function> to slots, the way PS would."
-  (declare (special print-schema-control))
-  (let ((is-ps (eq function 'SLOT-PRINTER))) ; true if inside PS
-    (when (null indent)
-      (setf indent 0))
-    (when (numberp schema)
-      (setf schema (s schema)))
-    (unless (or (schema-p schema) (formula-p schema))
-      (when is-ps
-	(format t "~S~%" schema))
-      (return-from call-on-ps-slots nil))
-    (when is-ps
-      (indent-by indent))
-    (cond ((formula-p schema)
-	   (setf control NIL))
-	  ((eq control :default)
-	   ;; use default control schema
-	   (setf control PRINT-SCHEMA-CONTROL))
-	  ((eq control T)
-	   ;; use schema itself as the control schema (i.e., use hierarchy)
-	   (setf control schema)))
-    (let ((slots-ignored (when control (g-value-no-copy control :IGNORED-SLOTS)))
-	  (sorted (when control (g-value-no-copy control :SORTED-SLOTS)))
-	  (limit-values (when control (g-value-no-copy control :LIMIT-VALUES)))
-	  (global-limit (if control
-			    (g-value-no-copy control :GLOBAL-LIMIT-VALUES)
-			    most-positive-fixnum))
-	  (*print-as-structure*
-	   (if (and control (g-value-no-copy control :print-as-structure))
-	       ;; value is defined
-	       (g-value-no-copy control :print-as-structure)
-	       ;; value is undefined
-	       *print-as-structure*))
-	  (*print-structure-slots*
-	   (when control (g-value-no-copy control :print-slots))))
-      (when is-ps
-	(format t "{~S~%" schema))
-      ;; Print out all the sorted slots, first.
-      (dolist (o sorted)
-	(call-func-on-one-slot schema o inherit function types-p indent
-			       (or (second (assocq o limit-values)) global-limit)))
-      ;; Now print the remaining slots.
-      (unless (listp slots-ignored)
-	(setf slots-ignored (list slots-ignored)))
-      ;; Pre-inherit all slots that are inheritable.
-      (unless (a-formula-p schema)
-	(when inherit
-	  (force-down-all-inheritance schema))
-	(if all-p
-	    (iterate-slot-value (schema T T NIL)
-	      (unless (or (memberq slot slots-ignored) (memberq slot sorted)
-			  (eq value *no-value*))
-		(call-func-on-one-slot
-		 schema slot inherit function types-p indent
-		 (or (second (assocq slot limit-values)) global-limit))))
-	    (iterate-slot-value (schema T NIL NIL)
-	      (unless (or (memberq slot slots-ignored) (memberq slot sorted)
-			  (eq value *no-value*))
-		(call-func-on-one-slot
-		 schema slot inherit function types-p indent
-		 (or (second (assocq slot limit-values)) global-limit))))))
-      (when (and slots-ignored is-ps)
-	(indent-by indent)
-	(format t "  List of ignored slots:  ~{ ~A~}~%" slots-ignored))
-      ;; special formula slots?
-      (when (a-formula-p schema)
-	(if is-ps
-	    (progn
-	      (indent-by indent)
-	      (format t "  lambda:        ~(~S~)~%" (a-formula-lambda schema))
-	      (format t "  cached value:  (~S . ~S)~%"
-		      (cached-value schema) (cache-is-valid schema))
-	      (format t "  on schema ~S, slot ~S~%"
-		      (on-schema schema) (on-slot schema))
-	      (indent-by indent))
-	    (dolist (name '(:lambda :cached-value-valid :cached-value
-			    :schema :slot))
-	      (funcall function schema name nil nil T ; valid
-		       (g-formula-value schema name) nil 0 indent nil)))))
-    (when is-ps
-      (format t "  }~%"))))
-
 
 (defun find-parent (schema slot)
   "Find a parent of <schema> from which the <slot> can be inherited."

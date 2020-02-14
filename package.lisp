@@ -45,7 +45,6 @@
 	   mark-as-changed
 	   mark-as-invalid
 	   ps
-	   call-on-ps-slots
 	   name-for-schema
 	   declare-constant
 	   slot-constant-p
