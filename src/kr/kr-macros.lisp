@@ -540,19 +540,6 @@ a nested chain of calls to <accessor-function>."
   `(let ((*setup-dependencies* nil))
      ,@body))
 
-
-(defmacro with-demons-disabled (&body body)
-"Execute the <body> with pre- and post-demons disabled."
-  `(let ((*demons-disabled* t))
-     ,@body))
-
-
-(defmacro with-demon-disabled (demon &body body)
-"Execute the <body> with a specific demon disabled."
-  `(let ((*demons-disabled* (disable-a-demon ,demon)))
-    ,@body))
-
-
 (declaim (inline relation-p))
 (defun relation-p (slot)
   (assocq slot *relations*))
@@ -654,10 +641,7 @@ the formula object itself is returned."
 is one."
   (unless (eq *demons-disabled* T)
     (when (slot-requires-demon schema slot entry)
-      (let ((demon (get-value schema :INVALIDATE-DEMON)))
-	(when demon
-	  (unless (demon-is-disabled demon)
-	    (funcall demon schema slot nil)))))))
+      (let ((demon (get-value schema :INVALIDATE-DEMON)))))))
 
 
 (defmacro run-pre-set-demons (schema slot new-value is-formula reason)

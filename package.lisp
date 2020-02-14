@@ -36,8 +36,6 @@
 	   *print-as-structure*
 	   with-constants-disabled
 	   with-types-disabled
-	   with-demons-disabled
-	   with-demon-disabled
 	   change-formula
 	   copy-formula
 	   kr-path

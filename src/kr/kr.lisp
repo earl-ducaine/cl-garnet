@@ -28,27 +28,6 @@ disabled, the variable *demons-disabled* is made of the form
 	(t
 	 *demons-disabled*)))
 
-(defun disable-a-demon (demon)
-  (if (eq *demons-disabled* T)
-      T					; everything is already turned off
-      (if (eq *demons-disabled* NIL)
-	  demon
-	  (if (listp *demons-disabled*)
-	      ;; A list
-	      (if (eq (car *demons-disabled*) T)
-		  ;; Special format used by with-demon-enable
-		  (if (memberq demon *demons-disabled*)
-		      (let ((new-value (delete demon *demons-disabled*)))
-			(if (null (cdr new-value))
-			    T
-			    new-value))
-		      ;; Already disabled
-		      *demons-disabled*)
-		  ;; Normal format
-		  (cons demon *demons-disabled*))
-	      ;; A single value - make a list.
-	      (list demon *demons-disabled*)))))
-
 
 (defun demon-is-disabled (demon)
   "Is the <demon> currently enabled?"
