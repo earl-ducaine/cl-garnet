@@ -64,17 +64,6 @@
   GV (or GVL) within a formula.  This is the case when the stale value of the
   formula is reused.")
 
-(defvar *warning-on-disconnected-formula* T
-  "If nil, no warning is printed when propagate-change sees a disconnected
-  formula.")
-
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (defvar *print-new-instances* T))
-
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (defmacro a-local-only-slot (slot)
-    `(eq ,slot :is-a-inv)))
-
 (defvar *setting-formula-p* nil
   "Set to T only when we are setting a slot with a formula")
 
@@ -554,8 +543,7 @@ bit set) are used."
 		      `((if ,entry
 			    (setf ,value NIL)
 			    (if (not (formula-p (setf ,value
-						      (g-value-inherit-values
-						       ,schema-form ,slot T NIL))))
+						      (g-value-inherit-values ,schema-form ,slot))))
 				(setf ,value NIL)))))
 		     ))
 	 ,@(progn

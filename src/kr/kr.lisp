@@ -1,15 +1,10 @@
 
 (in-package :kr)
 
-(defun g-local-value-fn (schema slot)
-  "Similar to g-value-fn, but no inheritance."
-  (g-value-body schema slot))
-
-(defun g-value-inherit-values (schema slot is-leaf slot-structure)
+(defun g-value-inherit-values (schema slot)
   (declare (ftype (function (t &optional t) t) formula-fn))
+  (format t "args: schema(~s) slot(~s)~%" schema slot)
   (let (has-parents)
-    (when (a-local-only-slot slot)
-      (return-from g-value-inherit-values NIL))
     (dolist (relation *inheritance-relations*)
       (dolist (parent (if (eq relation :IS-A)
 			  (get-local-value schema :IS-A)
@@ -25,14 +20,14 @@
 	      (setf intermediate-constant T)))
 	  (if (eq value *no-value*)
 	      (multiple-value-setq (value bits)
-		(g-value-inherit-values parent slot NIL nil))
+		(g-value-inherit-values parent slot))
 	      (setf bits (sl-bits entry)))
 	  (unless (eq value *no-value*)
 	    (return-from g-value-inherit-values (values value bits))))))
     (set-slot-accessor schema slot
 		       nil
 		       *is-parent-mask*
-		       (slot-dependents slot-structure))
+		       (slot-dependents nil))
     *no-value*))
 
 (defun g-value-no-copy (schema slot &optional skip-local)
@@ -453,8 +448,6 @@ to all the ordinary places."
       (set-cache-is-valid value NIL))))
 
 (defun propagate-change (schema slot)
-  "Since the <slot> of the <schema> was modified, we need to propagate the
-change to all the formulas which depended on the old value."
   (let ((entry (slot-accessor schema slot)))
     ;; access the dependent formulas.
     (do-one-or-list (formula (slot-dependents entry) T)
@@ -465,21 +458,13 @@ change to all the formulas which depended on the old value."
 	       (schema-ok (schema-p new-schema))
 	       (new-entry  NIL))
 	  (unless (and new-schema new-slot)
-	    (when *warning-on-disconnected-formula*
-	      (format
-	       t
-	       "Warning: disconnected formula ~S in propagate-change ~S ~S~%"
-	       formula schema slot))
 	    (continue-out))
 	  (if schema-ok
 	    (progn
 	      (setf new-entry (slot-accessor new-schema new-slot))
 	      )
 	    )
-	  ;; The formula gets invalidated here.
 	  (set-cache-is-valid formula nil)
-	  ;; Notify all children who used to inherit the old value of the
-	  ;; formula.
 	  (if (and schema-ok new-entry)
 	    (if (slot-dependents new-entry)
 	      (propagate-change new-schema new-slot))))))))
@@ -610,11 +595,8 @@ This allows it to be a destructive function."
 	    (update-inherited-values schema slot value T)))
 	;; Notify all dependents that the value changed.
 	(when is-depended
-	  (let ((*warning-on-disconnected-formula* nil))
-	    (propagate-change schema slot)))
+	    (propagate-change schema slot)) ;;)
 	(when (and was-formula (not is-formula))
-	  ;; We validate now, rather than earlier, because of a technicality
-	  ;; in demons-and-old-values.
 	  (set-cache-is-valid old-value T))
 	;; Was the old value a formula?
 	(when (and was-formula is-formula))
