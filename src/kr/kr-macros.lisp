@@ -17,21 +17,19 @@
 (defun schema-p (obj)
   (locally (declare #.*special-kr-optimization*)
     (and (is-schema obj)
-	 ;; make sure it's not a formula, and it's not deleted.
 	 (hash-table-p (schema-bins obj))
 	 T)))
 
 (defstruct (a-formula (:include schema))
-  depends-on			   ; list of schemata on which this function depends (or single
-				   ; schema if there is only one)
-  schema			   ; schema on which this formula is installed
-  slot				   ; slot on which this formula is installed
-  cached-value			   ; the cached value
-  path				   ; holds cached paths
-  is-a				   ; parent formula, if any
-  function			   ; executable formula function
-  lambda			   ; the original lambda expression, if applicable
-  is-a-inv			   ; list of formulas that inherit from this one
+  depends-on
+  schema
+  slot
+  cached-value
+  path
+  is-a
+  function
+  lambda
+  is-a-inv
   meta)
 
 (defstruct (sl)
@@ -62,11 +60,7 @@
   "May be bound to a function to be called as a slot is set in a schema
   with the slots new-value.")
 
-(defvar *slot-setter-debug* nil
-  "May be bound to a function of three arguments for debugging situations
-   in which it is important to know when a slot is being set, either
-   indirectly of via formula re-evaluation.  The function is called with
-   the object, the slot name, and the new value.")
+(defvar *slot-setter-debug* nil)
 
 (defvar *schema-self* nil
   "The schema being acted upon by the accessor functions.")
@@ -74,8 +68,7 @@
 (defvar *schema-slot* nil
   "The slot in *schema-self* being acted upon by the accessor functions.")
 
-(defvar *current-formula* nil
-  "The formula being acted upon by the accessor functions.")
+(defvar *current-formula* nil)
 
 (defvar *last-formula* nil
   "Similar to *current-formula*, used for debugging only.")
@@ -153,14 +146,11 @@
     (lognot (logior *is-parent-mask* *constant-mask*)))
   (defparameter *all-bits-mask* (lognot *type-mask*)))
 
-(defvar *check-constants* NIL
-  "If T, first-time evaluation for the current formula.  Check whether it
-   is a constant formula.")
+(defvar *check-constants* NIL)
 
 (defvar *is-constant* T)
 
-(defvar *accessed-slots* NIL
-  "Tells whether any slot was accessed during formula evaluation")
+(defvar *accessed-slots* NIL)
 
 (defvar *kr-send-self* nil
   "The current schema for kr-send.")
@@ -329,7 +319,6 @@ prematurely."
 
 (declaim (inline get-dependent-formula))
 (defun get-dependent-formula (dependency)
-  "Returns the formula in a dependency."
   (car dependency))
 
 
@@ -406,11 +395,6 @@ modified to be a full-slot structure."
 
 (defmacro cache-mark (thing)
   `(logand (a-formula-number ,thing) (lognot 1)))
-
-(defmacro set-cache-mark (thing mark)
-  `(set-formula-number
-    ,thing
-    (logior (logand (a-formula-number ,thing) 1) ,mark)))
 
 (defparameter iterate-slot-value-entry nil
   "Ugly")

@@ -14,7 +14,6 @@
 	   create-relation
 	   create-schema
 	   formula
-;;	   o-formula
 	   schema-p
 	   relation-p
 	   is-a-p

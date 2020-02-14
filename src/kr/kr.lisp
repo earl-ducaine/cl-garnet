@@ -329,7 +329,7 @@ Always returns the CODE of the resulting type (whether new or not)"
 	    (incf *sweep-mark* 2))
 	  (if (= (cache-mark formula) *sweep-mark*)
 	      (progn
-		(set-cache-is-valid formula T)
+		;; (set-cache-is-valid formula T)
 		(a-formula-cached-value formula)))))))
 
 (defun update-inherited-internal (child a-slot entry)
