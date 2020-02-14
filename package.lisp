@@ -30,10 +30,6 @@
 	   doslots
 	   define-method
 	   kr-send
-	   call-prototype-method
-	   *print-as-structure*
-	   with-constants-disabled
-	   with-types-disabled
 	   change-formula
 	   copy-formula
 	   kr-path
