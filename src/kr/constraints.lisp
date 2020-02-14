@@ -1,24 +1,9 @@
-;;; -*- Mode: LISP; Package: KR; Base: 10; Syntax: Common-Lisp -*-
 
-;;*******************************************************************;;
-;;          The Garnet User Interface Development Environment.       ;;
-;;*******************************************************************;;
-;;  This code was written as part of the Garnet project at           ;;
-;;  Carnegie Mellon University, and has been placed in the public    ;;
-;;  domain.                                                          ;;
-;;*******************************************************************;;
-
-;;; $Id::                                                             $
-;;;
-
 (in-package :kr)
 
 (defvar *setup-dependencies* T
   "If T (the default), dependencies are set up whenever GV and GVL are
    evaluated inside formulas.  If nil, no dependencies are set up.")
-
-;;; Fixed-path code.
-;;
 
 (defun fixed-path-accessor (schema slots path-number)
   (let* ((current (a-formula-path *current-formula*))
@@ -41,15 +26,6 @@
 	  (setf (elt current path-number) schema)
 	  schema))))
 
-(defmacro kr-path (path-number &rest slots)
-  `(fixed-path-accessor *schema-self* ',slots ,path-number))
-
-
-;;; FORMULAS
-;;
-
-;; Reuses one of the destroyed formulas, or allocates one if none exist.
-;; FMG Note: *reuse-formulas* is set to nil to defeat this.
 (defun make-new-formula ()
   (let ((f (formula-pop)))
     (if f

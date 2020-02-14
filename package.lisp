@@ -31,12 +31,7 @@
 	   kr-send
 	   change-formula
 	   copy-formula
-	   kr-path
-	   mark-as-invalid
-	   ps
-	   g-type
 	   DEF-KR-TYPE
-	   s-type
 	   kr-boolean
 	   get-slot-doc
 	   set-slot-doc
