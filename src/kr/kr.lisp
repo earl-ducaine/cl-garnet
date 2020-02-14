@@ -1,45 +1,9 @@
 
 (in-package :kr)
 
-(defun clear-one-slot (schema slot entry)
-  "Completely clear a slot, including dependencies, inherited, etc...
-   BUT... Leave around the declarations (constant, type, update,...)"
-  (locally (declare #.*special-kr-optimization*)
-    (let ((the-entry (or entry (slot-accessor schema slot))))
-      (when the-entry
-	(setf (sl-value the-entry) *no-value*
-	      (sl-bits the-entry)  (logand (sl-bits the-entry)
-					   *clear-slot-mask*))))))
-
-(declaim (inline clear-schema-slots))
-(defun clear-schema-slots (schema)
-  "Completely clear ALL the slots in the <schema>."
-  (locally (declare #.*special-kr-optimization*)
-    (clrhash (schema-bins schema))))
-
-(defun value-fn (schema slot)
-  "Does the actual work of G-VALUE."
-  (g-value-body schema slot T T))
-
 (defun g-local-value-fn (schema slot)
   "Similar to g-value-fn, but no inheritance."
   (g-value-body schema slot NIL T))
-
-(let ((list-of-one (list nil)))
-  (defun get-dependents (schema slot)
-    "RETURNS: the formulas which depend on the <slot> of the <schema>."
-    (let ((value (slot-dependents (slot-accessor schema slot))))
-      (if (listp value)
-	  value
-	  (progn
-	    (setf (car list-of-one) value)
-	    list-of-one)))))
-
-(declaim (inline get-lambda))
-(defun get-lambda (formula)
-  "Returns the lambda expression in a formula, or NIL."
-  (when (formula-p formula)
-    (a-formula-lambda formula)))
 
 (defun enable-a-demon (demon)
   "Turns ON a demon if it was turned off.  If all demons are currently
@@ -717,8 +681,6 @@ However, if there was a local formula, do nothing."
     (unless (eq old-value *no-value*)
       (let ((child-bits (sl-bits entry)))
 	(when (is-inherited child-bits)
-	  (clear-one-slot child a-slot entry)
-	  ;; Recursively change children.
 	  (update-inherited-values child a-slot *no-value* NIL))))))
 
 (defun update-inherited-values (schema a-slot value is-first)
@@ -997,26 +959,6 @@ unnecessary at schema creation time."
   (link-in-relation schema :IS-A value)
   value)
 
-
-(defun eliminate-formula-dependencies (formula except-schema)
-  "If <except-schema> is non-nil, it indicates that a schema is in the
-process of being destroyed, and hence dependencies to THAT schema should
-not be tracked down."
-  (do-one-or-list (schema (a-formula-depends-on formula))
-    (unless (or (eq schema except-schema)
-		(deleted-p schema))	; schema is destroyed
-      (iterate-slot-value (schema T T T)
-	slot value			; suppress warning
-	(let ((formulas (slot-dependents iterate-slot-value-entry)))
-	  (if (listp formulas)
-	      ;; Several dependents
-	      (when (memberq formula formulas)
-		(setf (full-sl-dependents iterate-slot-value-entry)
-		      (delete formula formulas)))
-	      ;; One dependent
-	      (when (eq formula formulas)
-		(setf (full-sl-dependents iterate-slot-value-entry) NIL))))))))
-
 (defun find-parent (schema slot)
   "Find a parent of <schema> from which the <slot> can be inherited."
   (dolist (relation *inheritance-relations*)
@@ -1197,15 +1139,6 @@ the expression ~S instead."
 				      bits))))
 		    (set-slot-accessor the-schema slot *no-value* bits NIL))))))))))
 
-
-(eval-when (:execute :compile-toplevel :load-toplevel)
-  (defun process-slot-descriptor (x)
-    (if (listp x)
-	(if nil
-	    (cons 'list x)
-	    `',x)
-	x)))
-
 (defun merge-declarations (declaration keyword output)
   (let ((old (find keyword output :key #'second)))
     (if old
@@ -1219,7 +1152,6 @@ the expression ~S instead."
   (defun process-slots (slots)
     "This function processes all the parameters of CREATE-INSTANCE and returns
 an argument list suitable for do-schema-body.  It is called at compile time.
-
 RETURNS: a list, with elements as follows:
  - FIRST: the prototype (or list of prototypes), or NIL;
  - SECOND: the list of type declarations, in the form (type slot slot ...)
@@ -1299,7 +1231,6 @@ RETURNS: a list, with elements as follows:
 		slot kr::*create-schema-schema* slots))))
       (cons is-a output))))
 
-
 (defun handle-is-a (schema is-a generate-instance override)
   (if (or (eq schema is-a)
 	  (memberq schema is-a))
@@ -1311,7 +1242,6 @@ RETURNS: a list, with elements as follows:
       ;; Make sure :override does not duplicate is-a-inv contents.
       (let ((*schema-is-new* (not override)))
 	(set-is-a schema is-a))))
-
 
 (defun do-schema-body (schema is-a generate-instance do-constants override
 		       types &rest slot-specifiers)
@@ -1392,7 +1322,6 @@ RETURNS: a list, with elements as follows:
 		  "Slot ~S in ~S was declared constant in prototype ~S!~%"
 		  slot-name schema (car is-a))))
 	     (if override
-
 		 (s-value schema slot-name slot-value)
 		 (setf slot-counter
 		       (internal-s-value schema slot-name slot-value)))))

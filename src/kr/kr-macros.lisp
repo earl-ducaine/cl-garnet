@@ -629,7 +629,7 @@ the formula object itself is returned."
   (g-value schema :slot1 :slot2 :slot3 5) expands into
   (g-value-fn (g-value-fn (g-value-fn schema :slot1 0) :slot2 0) :slot3 5)"
   (if slots
-      `(expand-accessor value-fn ,schema ,@slots)
+      nil
     `(progn ,schema)))
 
 
@@ -705,7 +705,8 @@ was changed."
 	  (intermediate schema))
 	 ((null (cddr s))
 	  (s-value-fn intermediate (first s) (second s)))
-      (let ((new-schema (value-fn intermediate (car s))))
+      (let ((new-schema nil
+			))
 	(if (null new-schema)
 	    (error
 	     "An intermediate schema is null:  slot ~S of object ~S has value

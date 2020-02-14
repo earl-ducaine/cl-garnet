@@ -38,7 +38,6 @@
 	   with-types-disabled
 	   with-demons-disabled
 	   with-demon-disabled
-	   with-demon-enabled
 	   change-formula
 	   copy-formula
 	   kr-path
