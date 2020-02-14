@@ -106,9 +106,6 @@
     (let ((formula (make-new-formula)))
       (setf (schema-name formula) (incf *schema-counter*)
 	    (cached-value formula) initial-value)
-      #+EAGER
-      (setf (a-formula-bits formula) 0
-	    (a-formula-priority formula) *min-priority*)
       formula)))
 
 (declaim (inline prepare-formula))
@@ -176,21 +173,7 @@ RETURNS:  the <formula>
 		(eval `(function (lambda () ,form))))))
     formula))
 
-
-;; CHANGE-FORMULA
-;;
-;; Modify the function associated with a formula.  Several possible
-;; combinations exist:
-;; - If the function is local and there are no children, just go ahead and
-;;   invalidate the formula.
-;; - if the function is local and there are children, invalidate all the
-;;   children formulas as well.
-;; - if the function used to be inherited, replace it and eliminate the
-;;   link with the parent formula.
-;;
 (defun change-formula (schema slot form)
-  "Modifies the formula at position 0 in the <slot> of the <schema> to have
-  <form> as its new function.  Inherited formulas are treated appropriately."
   (let ((formula (get-value schema slot)))
     (when (formula-p formula)
       (when (a-formula-is-a formula)
@@ -202,29 +185,7 @@ RETURNS:  the <formula>
 		    (delete formula inv)
 		    (if (eq inv formula) NIL inv))))
 	(setf (a-formula-is-a formula) NIL))
-
-      ;; If this formula has children, we need to invalidate them as well.
-      (do-one-or-list (f-child (a-formula-is-a-inv formula))
-	#-EAGER
-	(set-cache-is-valid f-child nil)
-	#-EAGER
-	(mark-as-changed (on-schema f-child) (on-slot f-child))
-	#+EAGER
-	;; If this formula has children, we need to place them on the
-	;; evaluation queue
-	(setf *eval-queue* (insert-pq f-child *eval-queue*)))
-      #-EAGER
-      ;; Invalidate the formula itself.
-      (set-cache-is-valid formula nil)
-      #-EAGER
-      (mark-as-changed schema slot)
-      #+EAGER
-      ;; Add the formula itself to the evaluation queue
-      (setf *eval-queue* (insert-pq formula *eval-queue*))
-
-      ;; Record the new function.
       (setf (a-formula-function formula) `(lambda () ,form))
-      ;; store the new form in the lambda slot of the formula
       (setf (a-formula-lambda formula) form))))
 
 
@@ -297,31 +258,17 @@ and the same parent (if any)."
   "This is the default invalidate demon."
   (kr-send schema :UPDATE-DEMON schema slot save))
 
-
 (defun initialize-kr ()
   "Called once at the 'beginning.'"
   (setf *relations* nil)
   (setf *inheritance-relations* nil)
-  #+EAGER
-  ;; set up the priority list
-  (init-priority-list)
-
-  ;; Create the IS-A relation, which should come first in the list.
   (create-relation :IS-A T :IS-A-INV)
-  ;; Create the default schema which controls the behavior of PS
-  ;;
   (create-schema 'PRINT-SCHEMA-CONTROL
-    ;; Names of slots which should be printed out first, in the right order.
     (:sorted-slots :left :top :width :height)
-    ;; A list of slots and maximum numbers.  If the number of values in a slot
-    ;; exceed the limit, ellipsis will be printed.
     (:limit-values '(:IS-A-INV 5) '(:COMPONENTS 20))
-    ;; Maximum limit for number of values (global).
     (:global-limit-values 10)))
 
-
 (initialize-kr)
-
 
 (defun is-a-p (schema type)
   "Tests whether the <schema> is linked via :IS-A to schema <type>, either

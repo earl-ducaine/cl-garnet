@@ -32,7 +32,6 @@
 	   change-formula
 	   copy-formula
 	   kr-path
-	   mark-as-changed
 	   mark-as-invalid
 	   ps
 	   g-type

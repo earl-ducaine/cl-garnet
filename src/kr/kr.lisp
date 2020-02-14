@@ -332,63 +332,12 @@ Always returns the CODE of the resulting type (whether new or not)"
 		(set-cache-is-valid formula T)
 		(a-formula-cached-value formula)))))))
 
-(defun copy-to-all-instances (schema a-slot value &optional (is-first T))
-  "Forces the <value> to be physically copied to the <a-slot> of all
-instances of the <schema>, even though local values were defined.
-However, if there was a local formula, do nothing."
-  (s-value schema a-slot value)
-  ;; Do not create copies of formulas, but set things up for inheritance
-  (when (and is-first (formula-p value))
-    (setf value *no-value*))
-  (dolist (inverse *inheritance-inverse-relations*)
-    (let ((children (if (eq inverse :IS-A-INV) ; for efficiency
-			(let ((entry (slot-accessor schema :IS-A-INV)))
-			  (when entry (sl-value entry)))
-			(get-local-value schema inverse))))
-      (unless (eq children *no-value*)
-	(dolist (child children)
-	  ;; force new inheritance
-	  (unless (formula-p (get-value child a-slot))
-	    ;; Do not override if the user has specified a local formula!
-	    (copy-to-all-instances child a-slot value NIL)))))))
-
 (defun update-inherited-internal (child a-slot entry)
   (let ((old-value (sl-value entry)))
     (unless (eq old-value *no-value*)
       (let ((child-bits (sl-bits entry)))
 	(when (is-inherited child-bits)
 	  (update-inherited-values child a-slot *no-value* NIL))))))
-
-(defun update-inherited-values (schema a-slot value is-first)
-  "This function is used when a value is changed in a prototype.  It makes
-sure that any child schema which inherited the previous value is updated
-with the new value.
-INPUTS:
-  - <value>: the new (i.e., current) value for the <schema>
-  - <old-bits>: the setting of the slot bits for the <schema>, before the
-    current value-setting operation.
-  - <is-first>: if non-nil, this is the top-level call.
-"
-  (let ((*schema-self* schema))
-    (unless is-first
-      (run-invalidate-demons schema a-slot NIL)
-      (propagate-change schema a-slot))
-    (dolist (inverse *inheritance-inverse-relations*)
-      (let ((children (if (eq inverse :IS-A-INV) ; for efficiency
-			  (let ((entry (slot-accessor schema :IS-A-INV)))
-			    (when entry (sl-value entry)))
-			  (get-local-value schema inverse))))
-	(unless (eq children *no-value*)
-	  (dolist (child children)
-	    (let ((entry (slot-accessor child a-slot)))
-	      (when entry
-		;; If child had no value, no need to propagate down
-		(setf is-first NIL)
-		;; force new inheritance
-		(update-inherited-internal child a-slot entry)))))))))
-
-
-;;; Slot and formula change  code.
 
 
 (declaim (inline mark-as-changed))

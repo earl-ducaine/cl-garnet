@@ -505,7 +505,6 @@
 	 (slot-props (getf os-props slot nil)))
     (setf (getf slot-props prop) val)
     (setf (getf os-props slot) slot-props)
-    (mark-as-changed obj :sb-os-props)
     val))
 
 (defun get-os-val (os)
