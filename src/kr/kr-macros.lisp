@@ -553,13 +553,6 @@ a nested chain of calls to <accessor-function>."
     ,@body))
 
 
-(defmacro with-demon-enabled (demon &body body)
-"Execute the <body> with a specific demon enabled (in the context
-where a demon or demons are disabled)."
-  `(let ((*demons-disabled* (enable-a-demon ,demon)))
-    ,@body))
-
-
 (declaim (inline relation-p))
 (defun relation-p (slot)
   (assocq slot *relations*))
