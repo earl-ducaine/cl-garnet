@@ -320,18 +320,6 @@ Always returns the CODE of the resulting type (whether new or not)"
 (declaim (fixnum *warning-level*))
 (defparameter *warning-level* 0)
 
-(defun g-value-formula-value (schema-self slot formula entry)
-  (let ((*schema-self* schema-self))
-    (if (cache-is-valid formula)
-	(a-formula-cached-value formula)
-	(progn
-	  (unless *within-g-value*
-	    (incf *sweep-mark* 2))
-	  (if (= (cache-mark formula) *sweep-mark*)
-	      (progn
-		;; (set-cache-is-valid formula T)
-		(a-formula-cached-value formula)))))))
-
 (defun update-inherited-internal (child a-slot entry)
   (let ((old-value (sl-value entry)))
     (unless (eq old-value *no-value*)
@@ -857,7 +845,8 @@ RETURNS: a list, with elements as follows:
 	   (if had-constants
 	       (if constants
 		   (if (formula-p constants)
-		       (g-value-formula-value schema :CONSTANT constants NIL)
+		       ;; (g-value-formula-value schema :CONSTANT constants NIL)
+		       nil
 		       constants)
 		   :NONE)
 	       ;; There was no constant declaration.
@@ -936,7 +925,8 @@ RETURNS: a list, with elements as follows:
 	   (if had-constants
 	       (if constants
 		   (if (formula-p constants)
-		       (g-value-formula-value schema :CONSTANT constants NIL)
+		       ;; (g-value-formula-value schema :CONSTANT constants NIL)
+		       nil
 		       constants)
 		   :NONE)
 	       ;; There was no constant declaration.

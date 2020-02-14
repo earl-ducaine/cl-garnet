@@ -129,8 +129,7 @@ and the same parent (if any)."
 	(setf entry (slot-accessor schema slot))
 	(when entry (setf value (sl-value entry))))
       (when (a-formula-p value)
-	;; we are working with a formula
-	(setf value (g-value-formula-value schema slot value entry)
+	(setf value  nil
 	      entry (slot-accessor schema slot)))
       (when *check-constants*
 	(if (and entry (is-constant (sl-bits entry)))

@@ -496,7 +496,7 @@ bit set) are used."
 		     ))
 	 ,@(progn
 	       `((if (a-formula-p ,value)
-		     (g-value-formula-value ,schema-form ,slot ,value ,entry)
+		     nil
 		     ,value)))))))
 
 (defmacro get-value (schema slot)
