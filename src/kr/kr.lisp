@@ -100,40 +100,9 @@ to a schema."
 		      (mod (incf *debug-index*) *debug-names-length*)))
 	  schema)))
 
-;;
 (defun make-new-schema-name (schema name)
-  "Creates symbols for all automatic schema names that happen to
-be printed out."
-  (let* (
-	 parent
-	 (symbol
-	  ;; (intern (cond ((stringp name)
-	  ;; 		 ;; a name-prefix schema
-	  ;; 		 (format nil "~A-~D"
-	  ;; 			 name (incf *schema-counter*)))
-	  ;; 		((setf parent
-	  ;; 		       (if (formula-p schema)
-	  ;; 			   (a-formula-is-a schema)
-	  ;; 			   (when (not-deleted-p schema)
-	  ;; 			     (car (get-local-value schema :IS-A)))))
-	  ;; 		 (let ((parent-name (when parent (schema-name parent))))
-	  ;; 		   (when (or (integerp parent-name)
-	  ;; 			     (stringp parent-name))
-	  ;; 		     ;; Parent is unnamed yet - force a name.
-	  ;; 		     (with-output-to-string
-	  ;; 			 (bit-bucket)
-	  ;; 		       (print-the-schema parent bit-bucket 0))
-	  ;; 		     (setf parent-name (schema-name parent)))
-	  ;; 		   (format nil "~A-~D" parent-name name)))
-	  ;; 		(t
-	  ;; 		 (format nil "~C~D"
-	  ;; 			 (if (formula-p schema) #\F #\S)
-	  ;; 			 name)))
-	  ;; 	  debug-package)
-	   ))
-    ;; (set symbol schema)
-    ;; (setf (schema-name schema) symbol)
-    ;; (export symbol debug-package)
+  (let* (parent
+	 (symbol))
     ))
 
 (defun print-the-slot (slot stream level)
@@ -174,23 +143,6 @@ be printed out."
 	(progn
 	  (format stream "~S" name)
 	  (when destroyed (format stream ")"))))))
-
-
-(defun name-for-schema (schema)
-  "Given a schema, returns its printable name as a string.  The string
-CANNOT be destructively modified.
-Note that this returns the pure name, without the #k<> notation."
-  (let ((name (schema-name schema)))
-    (when (or (integerp name) (stringp name))
-      ;; This is a nameless schema.  Print it out, and record it in the
-      ;; debugging array.
-      ;; (when *intern-unnamed-schemata*
-      ;; 	(make-new-schema-name schema name))
-      (cache-schema-name schema name)
-      ;; This gives control over whether unnamed schemata are interned.
-      (setf name (schema-name schema)))
-    (symbol-name name)))
-
 
 (defun s (number)
   "This is a debugging function which returns a schema, given its internal

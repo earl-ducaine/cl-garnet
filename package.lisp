@@ -40,11 +40,8 @@
 	   mark-as-changed
 	   mark-as-invalid
 	   ps
-	   name-for-schema
-	   declare-constant
-	   slot-constant-p
-	   def-kr-type
 	   g-type
+	   DEF-KR-TYPE
 	   s-type
 	   kr-boolean
 	   get-slot-doc
