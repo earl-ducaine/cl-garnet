@@ -6,11 +6,9 @@
   (g-value-body schema slot NIL T))
 
 (defun g-value-inherit-values (schema slot is-leaf slot-structure)
-  "Search up the tree for inherited slot.
-RETURNS: the inherited value, or NIL."
   (declare (ftype (function (t &optional t) t) formula-fn))
   (let (has-parents)
-    (when (a-local-only-slot slot)	; These CANNOT be inherited.
+    (when (a-local-only-slot slot)
       (return-from g-value-inherit-values NIL))
     (dolist (relation *inheritance-relations*)
       (dolist (parent (if (eq relation :IS-A)
@@ -32,18 +30,6 @@ RETURNS: the inherited value, or NIL."
 	      ;; If value, just set bits.
 	      (setf bits (sl-bits entry)))
 	  (unless (eq value *no-value*)
-	    ;; (if (and bits (is-parent bits))
-	    ;; 	;; Clear the parent bit, since we will set the child.
-	    ;; 	(setf bits (logand bits *not-parent-mask*))
-	    ;; 	;; Set the bit in the parent which says that the value was
-	    ;; 	;; inherited by someone.
-	    ;; 	(if entry
-	    ;; 	    ;; Destructively set the bits.
-	    ;; 	    (setf (sl-bits entry) (logior bits *is-parent-mask*))
-	    ;; 	    (set-slot-accessor parent slot value
-	    ;; 			       (logior bits *is-parent-mask*) nil)))
-	    ;; Copy the value down to the inheriting slot, unless the value
-	    ;; contains a formula.
 	    (let ((was-formula (formula-p value)))
 	      (when was-formula
 		;; Inherit the formula, making a copy of it.
@@ -51,21 +37,12 @@ RETURNS: the inherited value, or NIL."
 		(setf (a-formula-schema value) schema)
 		(setf (a-formula-slot value) slot)
 		(set-cache-is-valid value NIL))
-	      ;; Copy down, mark as inherited if inherited
 	      (when (and is-leaf slot-structure)	; slot had constant bit
 		(setf bits (logior bits (sl-bits slot-structure))))
-	      ;; (setf bits (logior *inherited-mask* bits
-	      ;; 			 #+TEST
-	      ;; 			 (logand bits *not-parent-constant-mask*)))
 	      (when intermediate-constant
 		(setf bits (logior *constant-mask* bits)))
-	      ;; (set-slot-accessor schema slot value bits
-	      ;; 			 (slot-dependents slot-structure))
 	      )
 	    (return-from g-value-inherit-values (values value bits))))))
-    ;; We didn't find anything, so return an appropriate null value and set
-    ;; the local cache (even though we have no value) to avoid further
-    ;; inheritance search.
     (set-slot-accessor schema slot
 		       (if has-parents NIL *no-value*)
 		       (cond (is-leaf
@@ -78,19 +55,6 @@ RETURNS: the inherited value, or NIL."
 			      *is-parent-mask*))
 		       (slot-dependents slot-structure))
     *no-value*))
-
-;; G-CACHED-VALUE
-;;
-(declaim (inline g-cached-value))
-(defun g-cached-value (schema slot)
-  "Returns the value of the <slot> in the <schema>.  If this is a formula, it
-  returns the cached value of the formula, without ever recomputing the
-  formula."
-  ;; Note use of GET-VALUE
-  (let ((g-cached-value-val (get-value schema slot)))
-    (if (formula-p g-cached-value-val)
-	(cached-value g-cached-value-val)
-	g-cached-value-val)))
 
 
 (defun g-value-no-copy (schema slot &optional skip-local)
