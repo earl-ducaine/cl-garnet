@@ -663,7 +663,6 @@ one by that name if it exists.  The initial number of slots is
 		 (return))))))))
 
 (defun process-constant-slots (the-schema parents constants do-types)
-  "Process local-only and constant declarations."
   (locally (declare #.*special-kr-optimization*)
     ;; Install all update-slots entries, and set their is-update-slot bits
     (dolist (slot (g-value-no-copy the-schema :UPDATE-SLOTS))
@@ -807,9 +806,7 @@ RETURNS: a list, with elements as follows:
 		slot kr::*create-schema-schema* slots))))
       (cons is-a output))))
 
-(defun do-schema-body (schema is-a generate-instance do-constants override
-		       types &rest slot-specifiers)
-  "Create-schema and friends expand into a call to this function."
+(defun do-schema-body (schema is-a generate-instance override types &rest slot-specifiers)
   (when (equal is-a '(nil))
     (format
      t
@@ -838,20 +835,18 @@ RETURNS: a list, with elements as follows:
 		    (set-slot-type schema slot n)))
 		(format t "*** ERROR - empty list of slots in type declaration ~
                           for object ~S:~%  ~S~%" schema (car type)))))
-	;; Process the constant declarations, and check the types.
-	(when do-constants
-	  (process-constant-slots
-	   schema is-a
-	   (if had-constants
-	       (if constants
-		   (if (formula-p constants)
-		       ;; (g-value-formula-value schema :CONSTANT constants NIL)
-		       nil
-		       constants)
-		   :NONE)
-	       ;; There was no constant declaration.
-	       NIL)
-	   (not (eq types :NONE))))
+	(process-constant-slots
+	 schema is-a
+	 (if had-constants
+	     (if constants
+		 (if (formula-p constants)
+		     ;; (g-value-formula-value schema :CONSTANT constants NIL)
+		     nil
+		     constants)
+		 :NONE)
+	     ;; There was no constant declaration.
+	     NIL)
+	 (not (eq types :NONE)))
 	;; Merge prototype and local declarations.
 	(dolist (slot slot-specifiers)
 	  (when (and (listp slot)
@@ -894,8 +889,7 @@ RETURNS: a list, with elements as follows:
 	   (format t "Incorrect slot specification: object ~S ~S~%"
 		   schema slot)))))
 
-(defun do-schema-body-alt (schema is-a generate-instance do-constants override
-		       types &rest slot-specifiers)
+(defun do-schema-body-alt (schema is-a generate-instance override types &rest slot-specifiers)
   (unless (listp is-a)
     (setf is-a (list is-a)))
   (when is-a
@@ -919,20 +913,7 @@ RETURNS: a list, with elements as follows:
 		(format t "*** ERROR - empty list of slots in type declaration ~
                           for object ~S:~%  ~S~%" schema (car type)))))
 	;; Process the constant declarations, and check the types.
-	(when do-constants
-	  (process-constant-slots
-	   schema is-a
-	   (if had-constants
-	       (if constants
-		   (if (formula-p constants)
-		       ;; (g-value-formula-value schema :CONSTANT constants NIL)
-		       nil
-		       constants)
-		   :NONE)
-	       ;; There was no constant declaration.
-	       NIL)
-	   (not (eq types :NONE))))
-	;; Merge prototype and local declarations.
+	(process-constant-slots schema is-a nil (not (eq types :NONE)))
 	(dolist (slot slot-specifiers)
 	  (when (and (listp slot)
 		     (memberq (car slot)

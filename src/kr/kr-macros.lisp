@@ -604,26 +604,17 @@ Note that <relation> should be a slot name, not a schema."
 
 (defmacro create-schema (name &rest rest)
   (let ((prefix (memberq :NAME-PREFIX rest)))
-    ;; Check that all elements of the list are well-formed, give warnings
-    ;; otherwise
     (when prefix
       (if name
 	  (progn
-	    (format
-	     t "Warning - you specified both a name and a :NAME-PREFIX option~:
-in (create-schema ~S).~%   Ignoring the :NAME-PREFIX.~%"
-	     name)
 	    (setf prefix nil))
 	  (progn
-	    ;; We have an unnamed schema but a name prefix - use it.
 	    (setf name (second prefix))
 	    (setf prefix NIL))))
-    ;; Make the schema name known at compile time, so we do not issue
-    ;; silly warnings.
     (when (and (listp name) (eq (car name) 'QUOTE))
       (proclaim `(special ,(eval name))))
     (let* ((override (not (null (memberq :OVERRIDE rest))))
-	   (destroy (and name (not override))) ; avoid trouble with (c-s NIL :override)
+	   (destroy (and name (not override)))
 	   (*create-schema-schema* name)
 	   (slots (process-slots rest))
 	   (generate-instance (not (null (memberq :generate-instance rest)))))
@@ -635,17 +626,14 @@ in (create-schema ~S).~%   Ignoring the :NAME-PREFIX.~%"
 			 (boundp (second name)))
 		    (eval name)
 		    `(make-a-new-schema ,name)))
-	 ,(car slots)				    ; is-a
-	 ,generate-instance			    ; create instance
-	 ,(null (memberq :delayed-processing rest)) ; process constant slots
-	 ,override
-	 ,@(cdr slots)))))		; types, plus slot specifiers
-
+	 ,(car slots)
+	 ,generate-instance
+		 ,override
+	 ,@(cdr slots)))))
 
 (defmacro create-prototype (name &rest slots)
   "Creates a prototype; really just another name for create-schema."
   `(create-schema ,name ,@slots))
-
 
 (defmacro create-instance (name class &body body)
   "If CLASS is not nil, creates a schema with an IS-A slot set to that class.
