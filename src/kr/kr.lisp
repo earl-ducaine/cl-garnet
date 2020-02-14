@@ -1618,40 +1618,10 @@ the expression ~S instead."
 		    (set-slot-accessor the-schema slot *no-value* bits NIL))))))))))
 
 
-(defun add-update-slot (schema slot &optional turn-off)
-  "Turn the <slot> of the <schema> into an :update-slot; add the <slot> to
-the contents of :update-slots, and turn on the internal bit.  If
-<turn-off> is T, make the <slot> be no longer an update slot."
-  (let ((entry (slot-accessor schema slot)))
-    (if entry
-      ;; There is an entry - manipulate the bits directly
-      (if turn-off
-	;; Turn bit off
-	(setf (sl-bits entry) (logand (sl-bits entry)
-				      (lognot *is-update-slot-mask*)))
-	;; Turn bit on
-	(setf (sl-bits entry) (set-is-update-slot (sl-bits entry))))
-      ;; There is no entry
-      (unless turn-off
-	(set-slot-accessor schema slot *no-value*
-			   (set-is-update-slot *local-mask*)
-			   NIL))))
-  (if turn-off
-    (setf (g-value schema :UPDATE-SLOTS)
-	  (delete slot (g-value schema :UPDATE-SLOTS)))
-    (pushnew slot (g-value schema :UPDATE-SLOTS))))
-
-
-(eval-when (:execute :compile-toplevel :load-toplevel)
-  (defun cannot-be-quoted (value)
-    (or (listp value)
-	(and (symbolp value)
-	     (not (keywordp value))))))
-
 (eval-when (:execute :compile-toplevel :load-toplevel)
   (defun process-slot-descriptor (x)
     (if (listp x)
-	(if (find-if #'cannot-be-quoted (cdr x))
+	(if nil
 	    (cons 'list x)
 	    `',x)
 	x)))
@@ -1733,7 +1703,7 @@ RETURNS: a list, with elements as follows:
 				  `(list ,@(cdr slot))
 				  (cadr slot)))
 		   (if (listp (cdr slot))
-		       (if (find-if #'cannot-be-quoted (cdr slot))
+		       (if  nil
 			   (if (cddr slot)
 			       (push `(list ,(car slot) . ,(cdr slot)) output)
 			       (push `(cons ,(car slot) . ,(cdr slot)) output))
