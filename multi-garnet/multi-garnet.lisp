@@ -109,21 +109,6 @@
   (and (sb-constraint-p obj)
        (not (null (CN-connection obj)))))
 
-(defun gv-sb-slot-check (obj slot val)
-  (when (member slot (get-sb-slot obj :gv-sb-slots))
-    (update-sb-slot-formulas obj slot val)))
-
-(defun update-sb-slot-formulas (obj slot val)
-  (let ((slots (get-sb-slot obj :gv-sb-slots)))
-    (when (member slot slots)
-      (let* ((kr-obj (get-gv-sb-slot-kr-object obj)))
-	(set-sb-slot obj :gv-sb-slots (remove slot slots))
-	(when (null (get-sb-slot obj :gv-sb-slots))
-	  (remove-set-slot-fn obj #'gv-sb-slot-check))))))
-
-(defun kr-slot-referenced (schema slot)
-  nil)
-
 (defun get-gv-sb-slot-kr-object (obj)
   (let ((kr-obj (get-sb-slot obj :gv-sb-slot-kr-object)))
     (unless (schema-p kr-obj)
@@ -131,15 +116,11 @@
       (set-sb-slot obj :gv-sb-slot-kr-object kr-obj))
     kr-obj))
 
-;; fn to use to access sb object slots from within formulas
 (defun gv-sb-slot (obj slot)
   (let* ((formula-slots (get-sb-slot obj :gv-sb-slots))
 	 (kr-obj (get-gv-sb-slot-kr-object obj)))
     (unless (member slot formula-slots)
       (set-sb-slot obj :gv-sb-slots (cons slot (get-sb-slot obj :gv-sb-slots)))
-      ;; make sure we add check fn
-      (add-set-slot-fn obj #'gv-sb-slot-check)
-      ;; make sure slot value copied to kr object
       (s-value kr-obj slot (get-sb-slot obj slot)))
     (kr::gv-value-fn kr-obj slot)))
 
