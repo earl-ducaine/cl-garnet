@@ -17,7 +17,6 @@
    	    :depends-on (kr)
    	    :components
    	    ((:file "types")
-	     ;; (:file "defs")
 	     ))
    (:module multi-garnet
 	    :pathname "multi-garnet"
