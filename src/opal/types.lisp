@@ -88,114 +88,13 @@
   '(or (is-a-p opal::filling-style) null)
   "[either an instance of opal:FILLING-STYLE or NIL]")
 
-(def-kr-type AGGREGATE ()
-  '(is-a-p opal::aggregate)
-  "[an instance of opal:AGGREGATE]")
-
-(def-kr-type AGGREGATE-OR-NIL ()
-  '(or (is-a-p opal::aggregate) null)
-  "[either an instance of opal:AGGREGATE or NIL]")
-
-(def-kr-type BOOLEAN ()
-  '(member t nil))
-
 (defun fixnump (object) (typep object 'fixnum))
 
 (def-kr-type fixnum ()
   '(satisfies sb-int:fixnump)
   "Potential efficiency hack.")
 
-;;;; Unnamed types used in Opal, Interactors, etc.
-
-(def-kr-type '(member :even-odd :winding))
-
-(def-kr-type '(MEMBER 0 1 2 3))
-
-(def-kr-type '(OR (MEMBER :BELOW :LEFT :RIGHT) LIST))
-
-(def-kr-type '(OR LIST STRING))
-
-(def-kr-type '(OR LIST (MEMBER T)))
-
-(def-kr-type '(OR LIST (SATISFIES SCHEMA-P)))
-
-(def-kr-type '(OR STRING ATOM))
-
-(def-kr-type '(OR STRING CONS))
-
-(def-kr-type '(OR STRING (SATISFIES SCHEMA-P)))
-
-(def-kr-type '(OR FUNCTION SYMBOL))
-
-(def-kr-type '(OR LIST INTEGER FUNCTION SYMBOL))
-
-(def-kr-type '(OR NULL FUNCTION SYMBOL))
-
-(def-kr-type '(OR NULL INTEGER))
-
-(def-kr-type '(OR NULL (INTEGER 0)))
-
-(def-kr-type '(OR NULL STRING))
-
-(def-kr-type '(OR NULL (SATISFIES SCHEMA-P)))
-
-;; (def-kr-type '(OR LIST (IS-A-P inter::INTERACTOR-WINDOW)))
-
-(def-kr-type '(OR NUMBER NULL))
-
-(def-kr-type '(REAL 0 1))
-
-(def-kr-type '(INTEGER 0 1))
-
-(def-kr-type '(INTEGER 0))
-
-(def-kr-type '(INTEGER 1))
-
-(def-kr-type '(INTEGER 2))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (in-package "OPAL")
-
-(def-kr-type '(OR KEYWORD (INTEGER 0)))
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; (in-package "GARNET-GADGETS")
-
-;; (def-kr-type '(OR NULL STRING KEYWORD (SATISFIES SCHEMA-P)))
-
-;; (def-kr-type '(OR STRING KEYWORD (SATISFIES SCHEMA-P)))
-
-;; (def-kr-type '(OR KEYWORD CHARACTER LIST))
-
-;; (def-kr-type '(OR NULL KEYWORD CHARACTER))
-
-;; (def-kr-type '(SATISFIES CHECK-MENUBAR-ITEMS))
-
-
-
-
-;;;;;;;;;;;;;;;;;; Types specifically for inter::interactor ;;;;;;;;;;;;;;;;
-
-;; (in-package "INTER")
-
-;; (defun list-of-wins-p (l)
-;;   (let ((succeeded? T))
-;;     (when (listp l)
-;;       (dolist (w l)
-;; 	(if (not (is-a-p w inter::interactor-window))
-;; 	    (setf succeeded? NIL)))
-;;       succeeded?)))
-
-;; (def-kr-type inter-window-type ()
-;;   '(or null (is-a-p inter::interactor-window)
-;;     (member T)
-;;     (satisfies list-of-wins-p)))
-
-
-
 
 (defstruct (update-info (:print-function update-info-print-function))
 	window
