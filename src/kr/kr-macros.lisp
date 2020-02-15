@@ -85,12 +85,6 @@
 
 (defvar *formula-pool* nil)
 
-(defun formula-push (f)
-    (push f *formula-pool*))
-
-(defun formula-pop ()
-    (and *formula-pool* (pop *formula-pool*)))
-
 (defvar *schema-is-new* nil
   "If non-nil, we are inside the creation of a new schema.  This guarantees
   that we do not have to search for inverse links when creating relations,

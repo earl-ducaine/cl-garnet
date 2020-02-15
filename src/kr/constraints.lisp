@@ -26,27 +26,10 @@
 	  (setf (elt current path-number) schema)
 	  schema))))
 
-(defun make-new-formula ()
-  (let ((f (formula-pop)))
-    (if f
-	;; Reuse a formula
-	(progn
-	  (setf (a-formula-depends-on f) nil)
-	  (setf (a-formula-cached-value f) nil)
-	  (setf (a-formula-path f) nil)
-	  (setf (a-formula-is-a f) nil)
-	  (setf (a-formula-function f) nil)
-	  (setf (a-formula-lambda f) nil)
-	  (setf (a-formula-is-a-inv f) nil))
-	;; No formulas to reuse
-	(setf f (make-a-formula))
-	)
-    (set-formula-number f 0)
-    f))
-
 (defun formula-fn (form &optional (initial-value nil) meta)
   (locally (declare #.*special-kr-optimization*)
-    (let ((formula (make-new-formula)))
+    (let ((formula (make-a-formula)))
+      (set-formula-number formula 0)
       (setf (schema-name formula) (incf *schema-counter*))
       (setf (cached-value formula) initial-value)
       (setf (a-formula-meta formula) meta)
