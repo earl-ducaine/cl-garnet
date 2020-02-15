@@ -49,14 +49,17 @@
   `(let ((cn ,cn)(val ,val))
      (call-set-slot-fn (sb-constraint-set-slot-fn cn) cn :strength val)
      (setf (sb-constraint-strength cn) val)))
+
 (defsetf cn-variables (cn) (val)
   `(let ((cn ,cn)(val ,val))
      (call-set-slot-fn (sb-constraint-set-slot-fn cn) cn :variables val)
      (setf (sb-constraint-variables cn) val)))
+
 (defsetf cn-methods (cn) (val)
   `(let ((cn ,cn)(val ,val))
      (call-set-slot-fn (sb-constraint-set-slot-fn cn) cn :methods val)
      (setf (sb-constraint-methods cn) val)))
+
 (defsetf cn-selected-method (cn) (val)
   `(let ((cn ,cn)(val ,val))
      (call-set-slot-fn (sb-constraint-set-slot-fn cn) cn :selected-method val)
@@ -101,8 +104,7 @@
 		  :outputs outputs
 		  :other-slots nil))
 
-
-(defstruct (sb-Variable)
+(defstruct (sb-variable)
   constraints
   determined-by
   walk-strength
@@ -111,7 +113,6 @@
   value
   other-slots
   set-slot-fn)
-
 
 (defmacro var-value (var) `(sb-variable-value ,var))
 (defmacro var-constraints (var) `(sb-variable-constraints ,var))
@@ -168,14 +169,8 @@
 (defmacro enforced (c)
   `(cn-selected-method ,c))
 
-(defun method-input-vars (cn mt)
-  (loop for var in (cn-variables cn)
-      when (not (member var (mt-outputs mt)))
-      collect var))
-
 (defun selected-method-input-vars (cn)
   (method-input-vars cn (cn-selected-method cn)))
-
 
 (defun add-constraint (cn)
     (setf (CN-selected-method cn) nil)

@@ -199,8 +199,7 @@
 	     (cn-connection-p cn :unconnected))
     (connect-constraint cn))
   (when (cn-connection-p cn :connected)
-    (mg-add-constraint cn))
-  )
+    (mg-add-constraint cn)))
 
 (defun connect-constraint (cn)
   (let* ((cn-os (CN-os cn))
@@ -214,48 +213,30 @@
 		  (cn-path-links nil)
 		  (paths-broken nil)
 		  var-os-list)
-	     ;; follow paths to get os-list for vars,
-	     ;; while setting up dependency links
 	     (setf var-os-list
 		   (loop for path in cn-var-paths collect
 			(let ((obj root-obj))
 			  (loop for (slot next-slot) on path do
-			     ;; if at end of path, return os to final slot
 			       (when (null next-slot)
 				 (return (os obj slot)))
-			     ;; at link slot: set up dependency and back ptrs
 			       (set-object-slot-prop obj slot :sb-path-constraints
 						     (adjoin cn nil))
 			       (push (os obj slot) cn-path-links)
-			     ;; check that path slot doesn't contain local formula
-			     ;; (doesn't matter if inherited slot contains formula,
-			     ;; since we copy down value.)
-			     ;;  << formula check removed >>
-			     ;; make sure that value is copied down, so we detect changes
 			       (copy-down-slot-value obj slot)
-			     ;; ...and continue to next step on path
 			       (setf obj (g-value obj slot))
-			     ;; if next obj is not a schema, path is broken
 			       (when (not (schema-p obj))
 				 (setf paths-broken t)
 				 (return nil))
 			       ))))
-	     ;; update ptrs from constraint to links
 	     (setf (CN-path-slot-list cn) cn-path-links)
-	     ;; iff no paths are broken, find/alloc vars
 	     (cond (paths-broken
-		    ;; some paths are broken.
-		    ;; don't alloc vars.
 		    (setf (CN-variables cn) nil)
 		    (setf (CN-connection cn) :broken-path))
 		   (t
-		    ;; all paths unbroken, find/alloc vars
 		    (setf (CN-variables cn)
 			  (loop for var-os in var-os-list
 			     collect (create-object-slot-var (os-object var-os) (os-slot var-os))))
-		    ;; init output lists in cn methods
  		    (init-method-outputs cn)
-		    ;; now, cn is connected
 		    (setf (CN-connection cn) :connected))))))))
 
 (defun set-object-slot-prop (obj slot prop val)
@@ -285,22 +266,6 @@
 (defun set-variable-value (var val)
   (setf (var-value var) val))
 
-(defvar *variable-input-reserve* nil)
-
-(defun dispose-variable-input (cn)
-  (push cn *variable-input-reserve*))
-
-(defvar *variable-stay-reserve* nil)
-
-(defun dispose-variable-stay (stay)
-  (push stay *variable-stay-reserve*))
-
-(defun add-variable-stays (cns)
-  (loop for cn in cns do
-       (mg-add-constraint cn)))
-
-(defvar *constraint-hooks* nil)
-
 (defun mg-add-constraint (cn)
   (with-no-invalidation-update
       (when (not (cn-connection-p cn :connected))
@@ -310,12 +275,7 @@
     (setf (CN-connection cn) :graph)
     (add-constraint cn)
     (cond ((and (not (enforced cn))
-		(eq :max (CN-strength cn)))
-	   )))
-  (when *constraint-hooks*
-    (dolist (hook *constraint-hooks*)
-      (funcall hook cn :add)))
-
+		(eq :max (CN-strength cn))))))
   cn)
 
 (defvar *fn-to-hook-plist* '(kr::s-value-fn                   s-value-fn-hook
