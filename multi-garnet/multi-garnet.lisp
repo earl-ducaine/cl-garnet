@@ -13,9 +13,7 @@
 		(eq :quote (first sym))
 		(symbolp (second sym)))
 	   (get-save-fn-symbol-name (second sym)))
-	  (t (cerror "cont" "get-save-fn-symbol-name: bad symbol ~S" sym))
-	  ))
-  )
+	  (t (cerror "cont" "get-save-fn-symbol-name: bad symbol ~S" sym)))))
 
 (defun install-hook (fn hook)
   (if (not (fboundp fn))
@@ -27,10 +25,6 @@
 	(setf (symbol-function fn)
 	      (symbol-function hook)))))
 
-(defmacro call-hook-save-fn (fn &rest args)
-  (let ((save-fn (get-save-fn-symbol-name fn)))
-    `(,save-fn ,@args)))
-
 (defmacro os (obj slot) `(cons ,obj ,slot))
 
 (defmacro os-p (os)
@@ -40,11 +34,6 @@
 
 (defmacro os-object (os) `(car ,os))
 (defmacro os-slot (os) `(cdr ,os))
-
-(defvar *new-name-number* 0)
-
-(defun create-new-name (name)
-  (format nil "~A-~A" name (incf *new-name-number* 1)))
 
 ;; ***** access to extra cn, var slots used by multi-garnet *****
 
@@ -264,7 +253,7 @@
 	(WHEN
 	    (AND (CONSTRAINT-P OLD-VALUE)
 		 (CONSTRAINT-IN-OBJ-SLOT OLD-VALUE OBJ SLOT))))
-      (CALL-HOOK-SAVE-FN S-VALUE-FN OBJ SLOT VALUE)
+      (S-VALUE-FN-SAVE-FN-SYMBOL OBJ SLOT VALUE)
       (WHEN (AND (CONSTRAINT-P VALUE) (NULL (CN-OS VALUE)))
 	(ADD-CONSTRAINT-TO-SLOT OBJ SLOT VALUE))
       (SAVE-INVALIDATED-PATH-CONSTRAINTS OBJ SLOT)
@@ -272,7 +261,7 @@
   value)
 
 (defun kr-init-method-hook (schema &optional the-function)
-  (call-hook-save-fn kr::kr-init-method schema the-function)
+  (KR-INIT-METHOD-SAVE-FN-SYMBOL SCHEMA THE-FUNCTION)
   (copy-down-and-activate-constraints schema))
 
 (defun copy-down-and-activate-constraints (schema)
@@ -295,7 +284,7 @@
 		     (constraint-p (get-local-value parent slot))
 		     (constraint-in-obj-slot (get-local-value parent slot) parent slot))
 	    (LET ((OBJ SCHEMA) (SLOT SLOT) (VALUE (GET-LOCAL-VALUE PARENT SLOT)))
-	      (CALL-HOOK-SAVE-FN S-VALUE-FN OBJ SLOT VALUE)
+	      (S-VALUE-FN-SAVE-FN-SYMBOL OBJ SLOT VALUE)
 	      (SAVE-INVALIDATED-PATH-CONSTRAINTS OBJ SLOT)
 	      VALUE)
 	    ))
@@ -400,7 +389,7 @@
     (LET ((OBJ OBJ) (SLOT SLOT) (VALUE (G-VALUE OBJ SLOT)))
       (IF (OR (CONSTRAINT-P VALUE) (CONSTRAINT-P (GET-LOCAL-VALUE OBJ SLOT)))
 	  (CERROR "cont" "can't set <~S,~S> to constraint" OBJ SLOT))
-      (CALL-HOOK-SAVE-FN S-VALUE-FN OBJ SLOT VALUE)
+      (S-VALUE-FN-SAVE-FN-SYMBOL OBJ SLOT VALUE)
       VALUE)))
 
 (defun get-variable-value (var)
