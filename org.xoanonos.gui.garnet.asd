@@ -12,18 +12,11 @@
 	    ((:file "kr-macros")
 	     (:file "kr")
 	     (:file "constraints" :depends-on (kr))))
-   (:module opal-boot
-   	    :pathname "src/opal"
-   	    :depends-on (kr)
-   	    :components
-   	    ((:file "types")
-	     ))
    (:module multi-garnet
 	    :pathname "multi-garnet"
-	    :depends-on (opal-boot)
+	    :depends-on (kr)
 	    :serial t
 	    :components
 	    ((:file "sky-blue")
 	     (:file "multi-garnet")
-	     (:file "scatterplot-alt")
-	     ))))
+	     (:file "scatterplot-alt")))))
