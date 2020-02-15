@@ -2,14 +2,33 @@
 
 (do-schema-body-alt (make-a-new-schema '*axis-rectangle*) opal::rectangle
 		    (cons :height-cn
-			  (m-constraint :max (box height)
-					(setf height (fourth box))))
+			  (CREATE-MG-CONSTRAINT :STRENGTH :MAX :METHODS
+                      (LIST
+                       (CREATE-MG-METHOD :OUTPUT-INDICES '(1) :CODE
+                                         #'(LAMBDA (CN) NIL)))
+                      :VARIABLE-PATHS '((:BOX) (:HEIGHT)) :VARIABLE-NAMES
+                      '(BOX HEIGHT)))
 		    (cons :width-cn
-			  (m-constraint :max (box width) (setf width (third box))))
+			  (CREATE-MG-CONSTRAINT :STRENGTH :MAX :METHODS
+                      (LIST
+                       (CREATE-MG-METHOD :OUTPUT-INDICES '(1) :CODE
+                                         #'(LAMBDA (CN) NIL)))
+                      :VARIABLE-PATHS '((:BOX) (:WIDTH)) :VARIABLE-NAMES
+                      '(BOX WIDTH)))
 		    (cons :top-cn
-			  (m-constraint :max (box top) (setf top (second box))))
+			  (CREATE-MG-CONSTRAINT :STRENGTH :MAX :METHODS
+                      (LIST
+                       (CREATE-MG-METHOD :OUTPUT-INDICES '(1) :CODE
+                                         #'(LAMBDA (CN) NIL)))
+                      :VARIABLE-PATHS '((:BOX) (:TOP)) :VARIABLE-NAMES
+                      '(BOX TOP)))
 		    (cons :left-cn
-			  (m-constraint :max (box left) (setf left (first box)))))
+			  (CREATE-MG-CONSTRAINT :STRENGTH :MAX :METHODS
+                      (LIST
+                       (CREATE-MG-METHOD :OUTPUT-INDICES '(1) :CODE
+                                         #'(LAMBDA (CN) NIL)))
+                      :VARIABLE-PATHS '((:BOX) (:LEFT)) :VARIABLE-NAMES
+                      '(BOX LEFT))))
 
 (do-schema-body-alt (make-a-new-schema '*v-axis*) opal:aggregadget
 		    (cons :parts `((:main ,*axis-rectangle*))))

@@ -35,16 +35,7 @@
 (defmacro os-object (os) `(car ,os))
 (defmacro os-slot (os) `(cdr ,os))
 
-;; ***** access to extra cn, var slots used by multi-garnet *****
 
-;;    constraint fields used by multi-garnet:
-;; os              | os object | object&slot containing this constraint.
-;; connection      | keyword   | connection status of this constraint.
-;; variable-paths  | list of paths | paths for accessing constraint variables.
-;; path-slot-list  | list of os's  | os's of path slots for this cn
-
-;; Multi-Garnet fields go through get-sb-slot (since these fields are
-;; stored on the other-slots list).
 (defmacro cn-os (v) `(get-sb-constraint-slot ,v :mg-os))
 (defmacro cn-connection (v) `(get-sb-constraint-slot ,v :mg-connection))
 (defmacro cn-variable-paths (c) `(get-sb-constraint-slot ,c :mg-variable-paths))
@@ -113,70 +104,6 @@
       (s-value kr-obj slot (get-sb-slot obj slot)))
     (kr::gv-value-fn kr-obj slot)))
 
-(defmacro m-constraint (strength-spec var-specs &rest method-specs)
-  (let* ((strength :max)
-	 (var-names (loop for spec in var-specs collect
-			 (if (symbolp spec) spec (first spec))))
-	 (var-paths (loop for spec in var-specs collect
-			 (cond ((symbolp spec)
-				(list
-				 (intern (symbol-name spec)
-					 (find-package :keyword))))
-			       ((and (listp spec)
-				     (listp (second spec))
-				     (eql 'gvl (first (second spec))))
-				(cdr (second spec)))
-			       (t (error "bad var-specs in m-constraint")))))
-         (method-output-var-name-lists
-          (loop for spec in method-specs collect
-	       (let ((names (if (listp spec)
-				(if (listp (second spec))
-				    (second spec)
-				    (list (second spec))))))
-		 (cond ((or (not (listp spec))
-			    (not (eql 'setf (first spec))))
-			(error "bad method form in m-constraint: ~S" spec))
-		       ((loop for varname in names
-			   thereis (not (member varname var-names)))
-			(error "unknown var name in method form: ~S" spec)))
-		 names)))
-         (method-output-index-lists
-	  (loop for var-name-list in method-output-var-name-lists collect
-	       (loop for varname in var-name-list collect
-		    (position varname var-names))))
-	 (method-forms
-	  (loop for spec in method-specs
-	     as output-var-names in method-output-var-name-lists
-	     collect
-	       (if (null (cddr spec))
-		   ;; if form is nil, this is a stay cn
-		   nil
-		   `(progn
-		      ;; include output vars, to avoid "var never used" warnings
-		      ,@output-var-names
-		      ,@(cddr spec))
-		   )))
-	 (method-list-form
-	  `(list ,@(loop for indices in method-output-index-lists
-		      as form in method-forms
-		      collect
-			`(create-mg-method
-			  :output-indices (quote ,indices)
-			  :code ,(if form
-				     `(function (lambda (cn)
-					nil))
-				     ;; if form is nil, this method is a stay.
-				     '(function (lambda (cn) cn)))
-			  ))))
-	 (constraint-form
-	  `(create-mg-constraint
-	    :strength ,strength
-	    :methods ,method-list-form
-	    :variable-paths (quote ,var-paths)
-	    :variable-names (quote ,var-names)))
-	 )
-    constraint-form))
-
 (defun create-mg-method (&key (output-indices nil)
 			   (code #'(lambda (cn) cn)))
   (let ((mt (create-sb-method :outputs nil
@@ -195,18 +122,7 @@
     (loop for mt in (cn-methods cn) do
 	 (setf (mt-outputs mt)
 	       (loop for index in (get-sb-slot mt :mg-output-indices)
-		  collect (nth index vars))))
-    ))
-
-
-(defmacro m-stay-constraint (strength-spec &rest var-specs)
-  (let* ((var-names (loop for spec in var-specs collect
-			 (if (symbolp spec) spec (gentemp))))
-	 (full-var-specs (loop for name in var-names as spec in var-specs collect
-			      (if (symbolp spec) spec (list name spec)))))
-    `(let ((cn (m-constraint ,strength-spec ,full-var-specs (setf ,var-names))))
-       (set-sb-slot cn :stay-flag t)
-       cn)))
+		  collect (nth index vars))))))
 
 (defvar *update-invalid-paths-formulas* t)
 
