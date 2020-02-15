@@ -88,47 +88,6 @@
 		    (is-a-p parent type))
 	    (return T))))))
 
-(defun i-depend-on (object slot)
-  "Given an object and a slot, if the <slot> contains a formula it returns
-all the slots upon which the formula depends.  The result is a list of
-dotted pairs, where each pair consists of a schema and a slot."
-  (locally (declare #.*special-kr-optimization*)
-    (if (schema-p object)
-	(let ((formula (LOCALLY
-		     (DECLARE (OPTIMIZE (SPEED 3) (SAFETY 0) (SPACE 0) (DEBUG 0)))
-		   (LET* ((.local-var-alt. (SLOT-ACCESSOR SCHEMA SLOT))
-			  (.local-var.
-			   (IF .local-var-alt.
-			       (IF (IS-INHERITED (SL-BITS .local-var-alt.))
-				   (IF (A-FORMULA-P (SL-VALUE .local-var-alt.))
-				       (SL-VALUE .local-var-alt.))
-				   (SL-VALUE .local-var-alt.))
-			       *NO-VALUE*)))
-		     (IF (EQ .local-var. *NO-VALUE*)
-			 (IF .local-var-alt.
-			     (SETF .local-var. NIL)
-			     (IF (NOT
-				  (FORMULA-P (SETF .local-var. (G-VALUE-INHERIT-VALUES SCHEMA SLOT))))
-				 (SETF .local-var. NIL))))
-		     (IF (A-FORMULA-P .local-var.)
-			 NIL
-			 .local-var.))))
-	      (dependencies nil))
-	  (when (formula-p formula)
-	    (do-one-or-list (schema (a-formula-depends-on formula))
-	      (iterate-slot-value (schema T T T)
-		(unless (eq value *no-value*)
-		  (do-one-or-list (f (slot-dependents
-				      kr::iterate-slot-value-entry))
-		    (when (eq f formula)
-		      (push (cons schema slot) dependencies)))))))
-	  dependencies)
-	;; An error
-	(cerror
-	 "Return NIL"
-	 "I-DEPEND-ON called on the ~:[non-~;destroyed ~]object ~S."
-	 (is-schema object) object))))
-
 
 ;; Make this the first type
 (def-kr-type kr-boolean () T

@@ -189,9 +189,8 @@ the lisp predicate to test this ('NULL, 'KEYWORDP, etc....)"
 			`(,pred value))))
 		 (T  (error "Unknown complex-type specifier: ~S~%" fn)))))
 	    ((setq code (gethash (symbol-name complex-type) types-table))
-	     ;; is this a def-kr-type?
 	     (make-lambda-body (code-to-type code)))
-	    (T ;; simple-type
+	    (T
 	     (list (find-lisp-predicate complex-type) 'value))))))
 
 (defun type-to-fn (type)
@@ -235,24 +234,15 @@ if necessary."
        *next-type-code*
      (incf *next-type-code*))))
 
-
 (defun add-new-type (typename type-body type-fn &optional type-doc)
   "This adds a new type, if necessary
 Always returns the CODE of the resulting type (whether new or not)"
   (with-types-table-lock-held (types-table)
     (let ((code (gethash (or typename type-body) types-table)))
       (if code
-	  ;; redefining same name
 	  (if (equal (code-to-type code) type-body)
-	      ;; redefining same name, same type
-	      (progn
-		(format t "Ignoring redundant def-kr-type of ~S to ~S~%"
-			typename type-body)
-		(return-from add-new-type code))
-	      ;; redefining same name, new type --> replace it!
-	      (format t "def-kr-type redefining ~S from ~S to ~S~%"
-		      typename (code-to-type code) type-body))
-	  ;; defining a new name, establish new code
+	      (return-from add-new-type code)
+	      nil)
 	  (progn
 	    (setq code (or (gethash type-body types-table)
 			   (get-next-type-code)))
@@ -273,9 +263,6 @@ Always returns the CODE of the resulting type (whether new or not)"
 		type-fn))
       code)))
 
-(defun kr-type-error (type)
-  (error "Type ~S not defined; use~% (def-kr-type ... () '~S)~%" type type))
-
 (eval-when (:execute :compile-toplevel :load-toplevel)
   (defun encode-type (type)
     "Given a LISP type, returns its encoding."
@@ -290,8 +277,9 @@ Always returns the CODE of the resulting type (whether new or not)"
 		 (let ((predicate (find-lisp-predicate type)))
 		   (when predicate
 		     (add-new-type NIL type predicate)))
-		 (kr-type-error type)))
-	    (T (kr-type-error type))))))
+		 nil
+		 ))
+	    (T)))))
 
 (defun set-type-documentation (type string)
   "Add a human-readable description to a Lisp type."

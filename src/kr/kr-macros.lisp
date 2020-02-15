@@ -206,24 +206,7 @@
   (declare #.*special-kr-optimization*)
   (extract-type-code (sl-bits entry)))
 
-
 (defmacro def-kr-type (typename-or-type &optional args body type-doc)
-  "Defines a new type for KR's type-checking mechanism.  You must define
-a type using def-kr-type before you can reference that type.  There
-are 2 formats for def-kr-type, one named, one un-named, as the following
-examples show:
-
-     (def-kr-type my-named-type () '(or keyword null))
-     (def-kr-type '(or keyword null))
-
-Note that the first format is the same syntax as Lisp's 'deftype'.
-With either definition, you could then specify some object's type to be
- (OR KEYWORD NULL).  With the first defn, you could also specify the type
-to be \"MY-NAMED-TYPE\".
-
-You can also provide a documentation string as the last parameter, as in:
-     (def-kr-type my-named-type () '(or keyword null) \"Sample doc string\")"
-
   (cond ((listp typename-or-type)
 	   (unless (eq (car typename-or-type) 'QUOTE)
 	     (error "Illegal typename to def-kr-type: ~S" typename-or-type))
