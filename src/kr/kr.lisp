@@ -657,21 +657,11 @@ the expression ~S instead."
 
 (eval-when (:execute :compile-toplevel :load-toplevel)
   (defun process-slots (slots)
-    "This function processes all the parameters of CREATE-INSTANCE and returns
-an argument list suitable for do-schema-body.  It is called at compile time.
-RETURNS: a list, with elements as follows:
- - FIRST: the prototype (or list of prototypes), or NIL;
- - SECOND: the list of type declarations, in the form (type slot slot ...)
-   or NIL (if there were no type declarations) or :NONE (if the declaration
-   (type) was used, which explicitly turns off all types declared in the
-   prototype(s).
- - REST OF THE LIST: all slot specifiers, with :IS-A removed (because that
-   information is moved to the prototype list)."
     (let ((output nil)
 	  (is-a nil))
       (do ((head slots (cdr head))
 	   (types nil)
-	   (had-types nil)		; true if there is a declaration
+	   (had-types nil)
 	   slot)
 	  ((null head)
 	   (if types
@@ -680,19 +670,9 @@ RETURNS: a list, with elements as follows:
 		   (push :NONE output)
 		   (push NIL output))))
 	(setf slot (car head))
-	(cond ((null slot)
-	       ;; This is an error.
-	       (cerror
-		"Ignore the specification"
-		"Error in CREATE-SCHEMA: NIL is not a valid slot ~
-		 specifier; ignored.~%~
-	         Object ~S, slot specifiers are ~S~%"
-		kr::*create-schema-schema* head))
+	(cond
 	      ((keywordp slot)
-	       ;; Process declarations and the like.
 	       (case slot
-		 (:NAME-PREFIX
-		  (pop head))
 		 (:DECLARE
 		  (pop head)
 		  (dolist (declaration (if (listp (caar head))
@@ -709,14 +689,8 @@ RETURNS: a list, with elements as follows:
 		       (setf output (merge-declarations declaration
 							(car declaration)
 							output)))
-		      (t
-		       (cerror
-			"Ignore the declaration"
-			"Unknown declaration (~S) in object creation:~%~S~%"
-			(car declaration)
-			declaration)))))))
+		      )))))
 	      ((listp slot)
-	       ;; Process slot descriptors.
 	       (if (eq (car slot) :IS-A)
 		   (setf is-a (if (cddr slot)
 				  `(list ,@(cdr slot))
