@@ -161,14 +161,18 @@ and the same parent (if any)."
   (kr-send schema :UPDATE-DEMON schema slot save))
 
 (defun initialize-kr ()
-  "Called once at the 'beginning.'"
-  (setf *relations* nil)
-  (setf *inheritance-relations* nil)
-  (create-relation)
-  (create-schema 'PRINT-SCHEMA-CONTROL
-    (:sorted-slots :left :top :width :height)
-    (:limit-values '(:IS-A-INV 5) '(:COMPONENTS 20))
-    (:global-limit-values 10)))
+  "called once at the 'beginning.'"
+  ;;(setf *relations* nil)
+  ;; (setf *inheritance-relations* nil)
+  (pushnew :is-a *inheritance-relations*)
+  (pushnew :is-a-inv *inheritance-inverse-relations*)
+  (push (list :is-a :is-a-inv) *relations*)
+  (let ((local-var (assocq :is-a-inv *relations*)))
+    (push (list :is-a-inv :is-a) *relations*))
+  (create-schema 'print-schema-control
+		 (:sorted-slots :left :top :width :height)
+		 (:limit-values '(:is-a-inv 5) '(:components 20))
+		 (:global-limit-values 10)))
 
 (initialize-kr)
 

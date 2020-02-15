@@ -11,11 +11,6 @@
   (:export schema
 	   create-instance
 	   create-prototype
-	   create-relation
-	   create-schema
-	   formula
-	   schema-p
-	   relation-p
 	   is-a-p
 	   has-slot-p
 	   formula-p
