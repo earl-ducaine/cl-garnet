@@ -306,7 +306,7 @@
 (defun save-invalidated-path-constraints (obj slot)
   (when *collect-invalid-paths-formulas*
     (setf *invalidated-path-constraints*
-      (append (get-object-slot-prop obj slot :sb-path-constraints)
+      (append nil
 	      *invalidated-path-constraints*))))
 
 (defun s-value-fn-hook (schema slot value)
@@ -433,9 +433,9 @@
 		    (setf (CN-connection cn) :connected))))))))
 
 (defun get-object-slot-prop (obj slot prop)
-  (getf (getf (g-value-body OBJ :SB-OS-PROPS)
-	      slot nil)
-	prop nil))
+  (let ((return-value ))
+    (format t "return-value: ~s~%" return-value)
+    return-value))
 
 (defun gv-object-slot-prop (obj slot prop)
   (when (schema-p obj)
