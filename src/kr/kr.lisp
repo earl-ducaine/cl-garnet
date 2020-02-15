@@ -559,13 +559,7 @@ the expression ~S instead."
 	  ((listp slot)
 	   (if (eq (car slot) :IS-A)
 	       (setf is-a (cadr slot))
-		   (if  nil
-			(if (cddr slot)
-			    (push `(list ,(car slot) . ,(cdr slot)) output)
-			    (push `(cons ,(car slot) . ,(cdr slot)) output))
-			(if (cddr slot)
-			    (push `'(,(car slot) . ,(cdr slot)) output)
-			    (push `'(,(car slot) . ,(cadr slot)) output)))))))
+	       (push `'(,(car slot) . ,(cadr slot)) output)))))
       (cons is-a output))))
 
 (defun do-schema-body (schema is-a generate-instance override types &rest slot-specifiers)
