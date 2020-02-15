@@ -462,15 +462,10 @@
     var))
 
 (defun create-object-slot-var (obj slot)
-  (cond ;; << formula check removed >>
-   ((sb-object-p obj)
-    (error "can't put variable on slot in sky-blue object: <~S,~S>"
-	    obj slot))
-   (t
-    (let ((var (create-mg-variable :os (os obj slot))))
-      (set-object-slot-prop obj slot :sb-variable var)
-      (copy-down-slot-value obj slot)
-      var))))
+  (let ((var (create-mg-variable :os (os obj slot))))
+    (set-object-slot-prop obj slot :sb-variable var)
+    (copy-down-slot-value obj slot)
+    var))
 
 (defun copy-down-slot-value (obj slot)
   (unless (has-slot-p obj slot)
