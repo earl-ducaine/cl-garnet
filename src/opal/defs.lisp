@@ -1,27 +1,11 @@
-;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: OPAL; Base: 10 -*-
-;;
-;;          The Garnet User Interface Development Environment.       ;;
-;;
-;;  This code was written as part of the Garnet project at           ;;
-;;  Carnegie Mellon University, and has been placed in the public    ;;
-;;  domain.                                                          ;;
-
-;;; This file contains all the defvars, defconstants, defstructs,
-;;; etc., which are used by Opal.  This does not contain any
-;;; defmacros, however.
 
 (in-package "OPAL")
 
-;;; DefConstants
 (defconstant +twopi+ (min (* 2 pi) (coerce (* 2 pi) 'short-float)))
 
-;;; DefParameters
 (defvar *colormap-index-table*
-  ;; arguments to make-hash-table NOT well thought out!  [1995/09/12:
-  ;; goldman]
   (make-hash-table :size 256))
 
-;;; DefVars
 (declaim (fixnum *halftone-table-size*))
 (defvar *halftone-table-size* 17)
 (defvar *halftone-table* nil)		; used to be set to (build-halftone-table)
@@ -80,6 +64,30 @@
   `(setf (g-value ,gob :left)
          (- ,value (truncate (g-value-fixnum ,gob :width) 2))))
 
-(defsetf center-y (gob) (value)
-  `(setf (g-value ,gob :top)
-         (- ,value (truncate (g-value-fixnum ,gob :height) 2))))
+
+(defstruct (update-info (:print-function update-info-print-function))
+	window
+	old-bbox
+	bits)
+
+(create-instance 'view-object nil
+  :declare ((:type
+		   (fixnum :hit-threshold)
+		   (known-as-type :known-as)
+		   (kr-boolean :visible))
+	    (:local-only-slots (:window nil) (:parent nil))))
+
+(create-instance 'graphical-object view-object
+  :declare ((:type
+	     ((or (is-a-p line-style) null) :line-style)
+	     ((or (is-a-p filling-style) null) :filling-style)
+	     ((member  :copy :xor :no-op :or :clear :set :copy-inverted
+		      :invert :and :equiv :nand :nor :and-inverted
+		      :and-reverse :or-inverted :or-reverse)
+	      :draw-function))))
+
+(create-instance 'rectangle graphical-object
+  :declare ((:update-slots :fast-redraw-p :top)))
+
+(define-method :initialize view-object (gob)
+    (s-value gob :update-info (make-update-info)))

@@ -18,7 +18,7 @@
    	    :components
    	    ((:file "types")
 	     (:file "defs")
-	     (:file "new-defs")))
+	     ))
    (:module multi-garnet
 	    :pathname "multi-garnet"
 	    :depends-on (opal-boot)
