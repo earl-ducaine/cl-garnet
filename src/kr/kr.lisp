@@ -389,7 +389,6 @@ This allows it to be a destructive function."
 
 (declaim (inline slot-constant-p))
 (defun slot-constant-p (schema slot)
-  "RETURN: T if the <slot> in the <schema> is constant, nil otherwise"
   (let ((entry (slot-accessor schema slot)))
     (when entry
       (is-constant (sl-bits entry)))))
@@ -472,7 +471,6 @@ This allows it to be a destructive function."
   value)
 
 (defun find-parent (schema slot)
-  "Find a parent of <schema> from which the <slot> can be inherited."
   (dolist (relation *inheritance-relations*)
     (dolist (a-parent (if (eq relation :is-a)
 			  (get-local-value schema :IS-A)
@@ -485,7 +483,6 @@ This allows it to be a destructive function."
 		  (find-parent a-parent slot)
 		(when value
 		  (return-from find-parent (values value the-parent))))))))))
-
 
 (defun kr-init-method (schema  &optional the-function )
   (if the-function
@@ -501,47 +498,15 @@ This allows it to be a destructive function."
 	  (make-hash-table :test #'eq #+sbcl :synchronized #+sbcl t)))
   schema)
 
-
 (defun make-a-new-schema (name)
-  "Creates a schema with the given <name>, making sure to destroy the old
-one by that name if it exists.  The initial number of slots is
-<needed-slots>."
   (locally (declare #.*special-kr-optimization*)
-    (when (keywordp name)
-      (setf name (symbol-name name)))
-    (cond ((null name)
-	   ;; An unnamed schema.
-	   (let ((schema (make-schema)))
-	     (setf *schema-counter* (1+ *schema-counter*))
-	     (setf (schema-name schema) *schema-counter*)
-	     (allocate-schema-slots schema)
-	     schema))
-	  ((stringp name)
-	   ;; This clause must precede the next!
-	   (let ((schema (make-schema)))
-	     (allocate-schema-slots schema)
-	     (setf (schema-name schema) name)
-	     schema))
-	  ;; Is this an existing schema?  If so, destroy the old one and its
-	  ;; children.
-	  ((and (boundp name)
-		(symbolp name))
-	   (let ((schema (symbol-value name)))
-	     (setf (schema-name schema) name)
-	     (set name schema)))
-	  ((symbolp name)
-	   (eval `(defvar ,name))
-	   (let ((schema (make-schema)))
-	     (allocate-schema-slots schema)
-	     (setf (schema-name schema) name)
-	     (set name schema)))
-	  (t
-	   (format t "Error in CREATE-SCHEMA - ~S is not a valid schema name.~%"
-		   name)))))
+    (eval `(defvar ,name))
+    (let ((schema (make-schema)))
+      (allocate-schema-slots schema)
+      (set name schema))))
 
 (defun process-constant-slots (the-schema parents constants do-types)
   (locally (declare #.*special-kr-optimization*)
-    ;; Install all update-slots entries, and set their is-update-slot bits
     (dolist (slot (g-value-no-copy the-schema :UPDATE-SLOTS))
       (let ((entry (slot-accessor the-schema slot)))
 	(if entry
@@ -549,7 +514,6 @@ one by that name if it exists.  The initial number of slots is
 	    (set-slot-accessor the-schema slot *no-value*
 			       (set-is-update-slot *local-mask*)
 			       NIL))))
-    ;; Mark the local-only slots.
     (dolist (parent parents)
       (dolist (local (g-value-no-copy parent :LOCAL-ONLY-SLOTS))
 	(unless (listp local)
