@@ -50,25 +50,16 @@
 (defmacro cn-connection-p (cn val)
   `(eq (cn-connection ,cn) ,val))
 
-(defun create-mg-constraint (&key (strength :max)
-			       (variables nil)
-			       (methods nil)
-			       (os nil)
-			       (connection :unconnected)
-			       (variable-paths nil)
-			       (variable-names nil)
-			       (path-slot-list nil)
-			       (name nil)
-			       )
-  (let ((cn (create-sb-constraint :strength strength
-				  :variables variables
-				  :methods methods
-				  :name name)))
-    (setf (CN-os cn) os)
-    (setf (CN-connection cn) connection)
+(defun create-mg-constraint (&key (variable-paths nil) (variable-names nil))
+  (let* ((cn (create-sb-constraint
+	      :strength :max
+	      :variables nil
+	      :methods (list
+			(create-mg-method :output-indices '(1) :code
+					  #'(lambda (cn) nil)))
+	      :name nil)))
+    (setf (CN-connection cn) :unconnected)
     (setf (CN-variable-paths cn) variable-paths)
-    (setf (CN-variable-names cn) variable-names)
-    (setf (CN-path-slot-list cn) path-slot-list)
     cn))
 
 (defmacro var-os (v) `(get-sb-variable-slot ,v :mg-os))
