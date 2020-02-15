@@ -307,13 +307,6 @@ Always returns the CODE of the resulting type (whether new or not)"
   (let ((entry (slot-accessor schema slot)))
     (is-constant (sl-bits entry))))
 
-(defun update-inherited-internal (child a-slot entry)
-  (let ((old-value (sl-value entry)))
-    (unless (eq old-value *no-value*)
-      (let ((child-bits (sl-bits entry)))
-	(when (is-inherited child-bits)
-	  (update-inherited-values child a-slot *no-value* NIL))))))
-
 (declaim (inline mark-as-changed))
 (defun mark-as-changed (schema slot)
   (let ((entry (slot-accessor schema slot)))
@@ -323,9 +316,7 @@ Always returns the CODE of the resulting type (whether new or not)"
 
 (defun propagate-change (schema slot)
   (let ((entry (slot-accessor schema slot)))
-    ;; access the dependent formulas.
     (do-one-or-list (formula (slot-dependents entry) T)
-      ;; Stop propagating if this dependent formula was already marked dirty.
       (if (and (not-deleted-p formula) (cache-is-valid formula))
 	(let* ((new-schema (on-schema formula))
 	       (new-slot (on-slot formula))
@@ -334,10 +325,7 @@ Always returns the CODE of the resulting type (whether new or not)"
 	  (unless (and new-schema new-slot)
 	    (continue-out))
 	  (if schema-ok
-	    (progn
-	      (setf new-entry (slot-accessor new-schema new-slot))
-	      )
-	    )
+	      (setf new-entry (slot-accessor new-schema new-slot)))
 	  (set-cache-is-valid formula nil)
 	  (if (and schema-ok new-entry)
 	    (if (slot-dependents new-entry)
@@ -549,46 +537,35 @@ the expression ~S instead."
 		   (push :NONE output)
 		   (push NIL output))))
 	(setf slot (car head))
+	(format t "slot: ~s~%" slot)
 	(cond
-	      ((keywordp slot)
-	       (case slot
-		 (:DECLARE
-		  (pop head)
-		  (dolist (declaration (if (listp (caar head))
-					   (car head)
-					   (list (car head))))
-		    (case (car declaration)
-		      (:TYPE
-		       (setf had-types T)
-		       (dolist (spec (cdr declaration))
-			 (push spec types)))
-		      ((:CONSTANT :IGNORED-SLOTS :LOCAL-ONLY-SLOTS
-				  :MAYBE-CONSTANT :PARAMETERS :OUTPUT
-				  :SORTED-SLOTS :UPDATE-SLOTS)
-		       (setf output (merge-declarations declaration
-							(car declaration)
-							output)))
-		      )))))
-	      ((listp slot)
-	       (if (eq (car slot) :IS-A)
-		   (setf is-a (if (cddr slot)
-				  `(list ,@(cdr slot))
-				  (cadr slot)))
-		   (if (listp (cdr slot))
-		       (if  nil
-			   (if (cddr slot)
-			       (push `(list ,(car slot) . ,(cdr slot)) output)
-			       (push `(cons ,(car slot) . ,(cdr slot)) output))
-			   (if (cddr slot)
-			       (push `'(,(car slot) . ,(cdr slot)) output)
-			       (push `'(,(car slot) . ,(cadr slot)) output)))
-		       (push (cdr slot) output))))
-	      (T
-	       (cerror
-		"Ignore the specification"
-		"A slot specification should be of the form ~
-		 (:name [values]*) ;~%found ~S instead.  Object ~S, slots ~S."
-		slot kr::*create-schema-schema* slots))))
+	  ((keywordp slot)
+	   (when (eq slot :DECLARE)
+	     (pop head)
+	     (dolist (declaration (if (listp (caar head))
+				      (car head)
+				      (list (car head))))
+	       (case (car declaration)
+		 (:TYPE
+		  (setf had-types T)
+		  (dolist (spec (cdr declaration))
+		    (push spec types)))
+		 ((:CONSTANT :IGNORED-SLOTS :LOCAL-ONLY-SLOTS
+			     :MAYBE-CONSTANT :PARAMETERS :OUTPUT
+			     :SORTED-SLOTS :UPDATE-SLOTS)
+		  (setf output (merge-declarations declaration
+						   (car declaration)
+						   output)))))))
+	  ((listp slot)
+	   (if (eq (car slot) :IS-A)
+	       (setf is-a (cadr slot))
+		   (if  nil
+			(if (cddr slot)
+			    (push `(list ,(car slot) . ,(cdr slot)) output)
+			    (push `(cons ,(car slot) . ,(cdr slot)) output))
+			(if (cddr slot)
+			    (push `'(,(car slot) . ,(cdr slot)) output)
+			    (push `'(,(car slot) . ,(cadr slot)) output)))))))
       (cons is-a output))))
 
 (defun do-schema-body (schema is-a generate-instance override types &rest slot-specifiers)
