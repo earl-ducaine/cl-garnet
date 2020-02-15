@@ -165,45 +165,8 @@
 	(t
 	 (funcall fns obj slot val))))
 
-
 (defmacro enforced (c)
   `(cn-selected-method ,c))
-
-(defmacro do-method-output-vars ((var-var cn-form mt-form) . body)
-  (declare (ignore cn-form))
-  `(loop for ,var-var in (MT-outputs ,mt-form) do
-	 (progn ,@body)))
-
-(defmacro do-selected-method-output-vars ((var-var cn-form) . body)
-  `(loop for ,var-var in (MT-outputs (cn-selected-method ,cn-form))
-       do (progn ,@body)))
-
-(defmacro do-method-input-vars ((var-var cn-form mt-form) . body)
-  (let ((cn-var (gentemp))
-	(mt-var (gentemp))
-	(outputs-var (gentemp)))
-    `(let* ((,cn-var ,cn-form)
-	    (,mt-var ,mt-form)
-	    (,outputs-var (mt-outputs ,mt-var)))
-       (loop for ,var-var in (cn-variables ,cn-var)
-	   do (when (not (member ,var-var ,outputs-var))
-		,@body)))
-    ))
-
-(defmacro do-selected-method-input-vars ((var-var cn-form) . body)
-  (let ((cn-var (gentemp))
-	(mt-var (gentemp)))
-    `(let* ((,cn-var ,cn-form)
-	    (,mt-var (cn-selected-method ,cn-var)))
-       (do-method-input-vars (,var-var ,cn-var ,mt-var) ,@body))
-    ))
-
-(defun method-output-vars (cn mt)
-  (declare (ignore cn))
-  (mt-outputs mt))
-
-(defun selected-method-output-vars (cn)
-  (MT-outputs (cn-selected-method cn)))
 
 (defun method-input-vars (cn mt)
   (loop for var in (cn-variables cn)
