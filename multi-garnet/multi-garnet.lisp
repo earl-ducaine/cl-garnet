@@ -253,8 +253,6 @@
 	 (setq *update-invalid-paths-formulas* ,old-val-var)))
     ))
 
-;; ***** set-slot-basic macro *****
-
 (defvar *invalidated-path-constraints* nil)
 
 (defun constraint-in-obj-slot (cn obj slot)
@@ -264,11 +262,10 @@
 	 (eql (os-slot os) slot))))
 
 (defmacro set-slot-basic (obj slot value
-			   &key
-			   (prohibit-constraints nil)
-			   (auto-activate-constraints t)
-			   (invalidate-paths t)
-			   )
+			  &key
+			    (prohibit-constraints nil)
+			    (auto-activate-constraints t)
+			    (invalidate-paths t))
   (unless (and (member auto-activate-constraints '(nil t))
 	       (member invalidate-paths '(nil t))
 	       (member prohibit-constraints '(nil t)))
@@ -277,47 +274,23 @@
     (cerror "cont" "set-slot-basic: prohibit-constraints and auto-activate-constraints are both t"))
   `(let ((obj ,obj)
 	 (slot ,slot)
-	 (value ,value)
-	 )
-     ;; before checks
-     ;; if prohibit-constraints=t, check that new and old values of slot are not constraints
+	 (value ,value))
      ,@(if prohibit-constraints
-	   '(
-	     (if (or (constraint-p value)
+	   '((if (or (constraint-p value)
 		     (constraint-p (get-local-value obj slot)))
 		 (cerror "cont"
-			 "can't set <~S,~S> to constraint" obj slot))
-	     )
-	 )
-     ;; remove old constraint previously stored in slot
+			 "can't set <~S,~S> to constraint" obj slot))))
      ,@(if auto-activate-constraints
-	   '(
-	     ;; get old value using get-local-value, so we won't eval formula if one is stored in slot
-	     (let ((old-value (get-local-value obj slot)))
+	   '((let ((old-value (get-local-value obj slot)))
 	       (when (and (constraint-p old-value)
-		      ;; only de-activate if this cn was activated for _this_ obj,slot
-		      (constraint-in-obj-slot old-value obj slot))
-		 ))
-	     )
-	 )
-     ;; actually set object slot
+			  (constraint-in-obj-slot old-value obj slot))))))
      (call-hook-save-fn kr::s-value-fn obj slot value)
-     ;; after checks
-     ;; add new constraint in slot
      ,@(if auto-activate-constraints
-	   '(
-	     (when (and (constraint-p value)
-			;; only auto-activate if os=nil
+	   '((when (and (constraint-p value)
 			(null (cn-os value)))
-	       (add-constraint-to-slot obj slot value))
-	     )
-	 )
-     ;; invalidate constraints whose paths use this slot
+	       (add-constraint-to-slot obj slot value))))
      ,@(if invalidate-paths
-	   '(
-	     (save-invalidated-path-constraints obj slot)
-	     )
-	 )
+	   '((save-invalidated-path-constraints obj slot)))
      value))
 
 (defun add-constraint-to-slot (obj slot cn)
@@ -340,31 +313,17 @@
       (append (get-object-slot-prop obj slot :sb-path-constraints)
 	      *invalidated-path-constraints*))))
 
-(defvar *default-input-strength* :strong)
-
 (defun s-value-fn-hook (schema slot value)
-  (multi-garnet-s-value-fn schema slot value *default-input-strength*))
-
-(defvar *s-value-bad-schema-action* nil)
+  (multi-garnet-s-value-fn schema slot value :strong))
 
 (defun multi-garnet-s-value-fn (schema slot value input-strength)
-  (cond ((not (schema-p schema))
-	 (case *s-value-bad-schema-action*
-	   (:print (format t "~&S-VALUE called with bad schema ~S slot ~S, value ~S.~%"
-			   schema slot value))
-	   (:break (cerror "continue" "S-VALUE called with bad schema ~S slot ~S, value ~S."
-			   schema slot value))))
-	((eq slot :is-a)
-	 )
-	(t
-	 (let ((slot-var (get-object-slot-prop schema slot :sb-variable)))
-	   (cond (slot-var
-		  )
-	   	 (t
-	   	  (set-slot-basic schema slot value
-	   			  :auto-activate-constraints t
-	   			  :invalidate-paths t)))
-	   )))
+  (when (not (eq slot :is-a))
+    (let ((slot-var (get-object-slot-prop schema slot :sb-variable)))
+      (cond (slot-var)
+	    (t
+	     (set-slot-basic schema slot value
+			     :auto-activate-constraints t
+			     :invalidate-paths t)))))
   value)
 
 (defun kr-init-method-hook (schema &optional the-function)
