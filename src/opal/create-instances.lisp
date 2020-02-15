@@ -62,3 +62,9 @@
 	    (:update-slots :visible :fast-redraw-p :top :left :width :height
 			   :line-style :filling-style :draw-function))
   )
+
+(define-method :initialize view-object (gob)
+  (let ((temp-info (make-update-info)))
+    (setf (update-info-bits temp-info) 0)
+    (setf (update-info-old-bbox temp-info) (make-bbox))
+    (s-value gob :update-info temp-info)))

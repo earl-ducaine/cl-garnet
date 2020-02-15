@@ -17,18 +17,13 @@
    	    :depends-on (kr)
    	    :components
    	    ((:file "types")
-	     (:file "update-constants")
+	     ;; (:file "update-constants")
 	     (:file "defs")
 	     (:file "new-defs")
 	     (:file "create-instances")))
-   (:module opal
-   	    :pathname "src/opal"
-   	    :depends-on (kr opal-boot)
-   	    :components
-	    ((:file "basics")))
    (:module multi-garnet
 	    :pathname "multi-garnet"
-	    :depends-on (opal)
+	    :depends-on (opal-boot)
 	    :serial t
 	    :components
 	    ((:file "sky-blue")
