@@ -82,21 +82,6 @@
   (and (sb-constraint-p obj)
        (not (null (CN-connection obj)))))
 
-(defun get-gv-sb-slot-kr-object (obj)
-  (let ((kr-obj (get-sb-slot obj :gv-sb-slot-kr-object)))
-    (unless (schema-p kr-obj)
-      (setq kr-obj (create-instance nil nil))
-      (set-sb-slot obj :gv-sb-slot-kr-object kr-obj))
-    kr-obj))
-
-(defun gv-sb-slot (obj slot)
-  (let* ((formula-slots (get-sb-slot obj :gv-sb-slots))
-	 (kr-obj (get-gv-sb-slot-kr-object obj)))
-    (unless (member slot formula-slots)
-      (set-sb-slot obj :gv-sb-slots (cons slot (get-sb-slot obj :gv-sb-slots)))
-      (s-value kr-obj slot (get-sb-slot obj slot)))
-    (kr::gv-value-fn kr-obj slot)))
-
 (defun create-mg-method (&key (output-indices nil)
 			   (code #'(lambda (cn) cn)))
   (let ((mt (create-sb-method :outputs nil
@@ -104,17 +89,11 @@
     (set-sb-slot mt :mg-output-indices output-indices)
     mt))
 
-(defun clone-mg-method (mt)
-  (create-mg-method :output-indices (get-sb-slot mt :mg-output-indices)
-		    :code (mt-code mt)))
-
-;; initialize method :outputs lists
-;; (possible speed-up: save list, rplaca values)
 (defun init-method-outputs (cn)
   (let ((vars (cn-variables cn)))
     (loop for mt in (cn-methods cn) do
 	 (setf (mt-outputs mt)
-	       (loop for index in (get-sb-slot mt :mg-output-indices)
+	       (loop for index in (get-sb-method-slot mt :mg-output-indices)
 		  collect (nth index vars))))))
 
 (defvar *update-invalid-paths-formulas* t)

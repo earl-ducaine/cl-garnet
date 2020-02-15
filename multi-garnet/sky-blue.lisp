@@ -188,9 +188,6 @@
     (when name (set-sb-slot var :name name))
     var))
 
-(defun get-sb-slot (obj slot)
-  (get-sb-method-slot obj slot))
-
 (defun set-sb-slot (obj slot val)
   (etypecase obj
     (sb-constraint (set-sb-constraint-slot obj slot val))
@@ -205,20 +202,6 @@
 	(t
 	 (funcall fns obj slot val))))
 
-(defun add-set-slot-fn (obj fn)
-  (let* ((curr (get-sb-slot obj :set-slot-fn))
-	 (curr-list (if (listp curr) curr (list curr))))
-    (unless (member fn curr-list)
-      (set-sb-slot obj :set-slot-fn (cons fn curr)))
-    ))
-
-(defun remove-set-slot-fn (obj fn)
-  (let* ((curr (get-sb-slot obj :set-slot-fn))
-	 (curr-list (if (listp curr) curr (list curr))))
-    (set-sb-slot obj :set-slot-fn (remove fn curr-list))
-    ))
-
-;; useful macros
 
 (defmacro enforced (c)
   `(cn-selected-method ,c))
