@@ -764,7 +764,7 @@ RETURNS: a list, with elements as follows:
 	    (if (cdr type)
 		(let ((n (encode-type (car type))))
 		  (dolist (slot (cdr type))
-		    (set-slot-type schema slot n)))
+		    (set-slot-accessor schema slot *no-value* 33 nil)))
 		(format t "*** ERROR - empty list of slots in type declaration ~
                           for object ~S:~%  ~S~%" schema (car type)))))
 	(process-constant-slots
@@ -841,7 +841,7 @@ RETURNS: a list, with elements as follows:
 	      (if (cdr type)
 		  (let ((n (encode-type (car type))))
 		    (dolist (slot (cdr type))
-		      (set-slot-type schema slot n)))
+		      (set-slot-accessor schema slot *no-value* 33 nil)))
 		  (format t "*** ERROR - empty list of slots in type declaration ~
                           for object ~S:~%  ~S~%" schema (car type)))))
 	  ;; Process the constant declarations, and check the types.
@@ -869,12 +869,6 @@ RETURNS: a list, with elements as follows:
 	    (T
 	     (format t "Incorrect slot specification: object ~S ~S~%"
 		     schema slot))))))
-
-(defun set-slot-type (object slot type)
-  (let ((entry (or (slot-accessor object slot)
-		   (set-slot-accessor object slot *no-value* type NIL))))
-    (setf (sl-bits entry)
-	  (logior (logand (sl-bits entry) *all-bits-mask*) type))))
 
 (defun T-P (value)
   (declare #.*special-kr-optimization*
