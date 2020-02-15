@@ -59,9 +59,7 @@
 	    (:type (fixnum :left :top :width :height))
 	    (:maybe-constant :left :top :width :height :line-style
 			     :filling-style :draw-function :visible)
-	    (:update-slots :visible :fast-redraw-p :top :left :width :height
-			   :line-style :filling-style :draw-function))
-  )
+	    (:update-slots :fast-redraw-p :top)))
 
 (define-method :initialize view-object (gob)
   (let ((temp-info (make-update-info)))

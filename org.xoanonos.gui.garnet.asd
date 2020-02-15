@@ -17,7 +17,6 @@
    	    :depends-on (kr)
    	    :components
    	    ((:file "types")
-	     ;; (:file "update-constants")
 	     (:file "defs")
 	     (:file "new-defs")
 	     (:file "create-instances")))
