@@ -433,7 +433,26 @@ Always returns the CODE of the resulting type (whether new or not)"
 			  (get-local-value schema :IS-A)
 			  (get-local-value schema relation)))
       (when a-parent
-	(let ((value (g-value-body A-PARENT SLOT)))
+	(let ((value (LOCALLY
+			 (DECLARE (OPTIMIZE (SPEED 3) (SAFETY 0) (SPACE 0) (DEBUG 0)))
+		       (LET* ((.a-local-var-alt. (SLOT-ACCESSOR A-PARENT SLOT))
+			      (.a-local-var.
+			       (IF .a-local-var-alt.
+				   (IF (IS-INHERITED (SL-BITS .a-local-var-alt.))
+				       (IF (A-FORMULA-P (SL-VALUE .a-local-var-alt.))
+					   (SL-VALUE .a-local-var-alt.))
+				       (SL-VALUE .a-local-var-alt.))
+				   *NO-VALUE*)))
+			 (IF (EQ .a-local-var. *NO-VALUE*)
+			     (IF .a-local-var-alt.
+				 (SETF .a-local-var. NIL)
+				 (IF (NOT
+				      (FORMULA-P
+				       (SETF .a-local-var. (G-VALUE-INHERIT-VALUES A-PARENT SLOT))))
+				     (SETF .a-local-var. NIL))))
+			 (IF (A-FORMULA-P .a-local-var.)
+			     NIL
+			     .a-local-var.)))))
 	  (if value
 	      (return-from find-parent (values value a-parent))
 	      (multiple-value-bind (value the-parent)
@@ -537,7 +556,6 @@ the expression ~S instead."
 		   (push :NONE output)
 		   (push NIL output))))
 	(setf slot (car head))
-	(format t "slot: ~s~%" slot)
 	(cond
 	  ((keywordp slot)
 	   (when (eq slot :DECLARE)
@@ -545,6 +563,7 @@ the expression ~S instead."
 	     (dolist (declaration (if (listp (caar head))
 				      (car head)
 				      (list (car head))))
+	       (format t "declaration ~s~%" declaration)
 	       (case (car declaration)
 		 (:TYPE
 		  (setf had-types T)
@@ -591,15 +610,10 @@ the expression ~S instead."
 		    (set-slot-accessor schema slot *no-value* 33 nil)))
 		(format t "*** ERROR - empty list of slots in type declaration ~
                           for object ~S:~%  ~S~%" schema (car type)))))
+	(format t "had-constants: ~s; constants: ~s; formula-p: ~s~%" had-constants constants (formula-p constants))
 	(process-constant-slots
 	 schema is-a
-	 (if had-constants
-	     (if constants
-		 (if (formula-p constants)
-		     nil
-		     constants)
-		 :NONE)
-	     NIL)
+	 had-constants
 	 (not (eq types :NONE)))
 	(dolist (slot slot-specifiers)
 	  (when (and (listp slot)
