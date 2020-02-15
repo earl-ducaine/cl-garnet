@@ -411,14 +411,6 @@ This allows it to be a destructive function."
     (when entry
       (is-constant (sl-bits entry)))))
 
-(defun set-formula-error (schema slot formula)
-  "Called to give error message on multiply-installed formulas."
-  ;; Formulas can only be installed on one slot!
-  (format t "(s-value ~S ~S): formula ~S is already installed on~%~
-	schema ~S, slot ~S.  Ignored.~%"
-	  schema slot formula (on-schema formula) (on-slot formula))
-  formula)
-
 (defun s-value-fn (schema slot value)
   (locally (declare #.*special-kr-optimization*)
     (unless (schema-p schema)
@@ -469,8 +461,6 @@ This allows it to be a destructive function."
 	  (propagate-change schema slot)) ;;)
 	(when (and was-formula (not is-formula))
 	  (set-cache-is-valid old-value T))
-	;; Was the old value a formula?
-	(when (and was-formula is-formula))
 	(values value nil)))))
 
 (defun internal-s-value (schema slot value)
@@ -490,7 +480,6 @@ This allows it to be a destructive function."
     (when is-relation
       (link-in-relation schema slot value))
     value))
-
 
 (defun set-is-a (schema value)
   (when (eq (setf value (check-relation-slot schema :is-a value)) *no-value*)
