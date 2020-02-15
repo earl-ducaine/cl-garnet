@@ -73,7 +73,7 @@
 (defvar *last-formula* nil
   "Similar to *current-formula*, used for debugging only.")
 
-(defvar *inheritance-relations* '()
+(defvar *inheritance-relations* '(:is-a)
   "All relations in this list perform inheritance.")
 
 (defvar *inheritance-inverse-relations* '()

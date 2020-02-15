@@ -411,7 +411,6 @@ This allows it to be a destructive function."
     (when entry
       (is-constant (sl-bits entry)))))
 
-
 (defun set-formula-error (schema slot formula)
   "Called to give error message on multiply-installed formulas."
   ;; Formulas can only be installed on one slot!
@@ -419,7 +418,6 @@ This allows it to be a destructive function."
 	schema ~S, slot ~S.  Ignored.~%"
 	  schema slot formula (on-schema formula) (on-slot formula))
   formula)
-
 
 (defun s-value-fn (schema slot value)
   (locally (declare #.*special-kr-optimization*)
@@ -438,10 +436,6 @@ This allows it to be a destructive function."
 		   (eq (setf value (check-relation-slot schema slot value)) *no-value*))
 	  (return-from s-value-fn (values old-value nil)))
 	(when (formula-p value)
-	  (when (on-schema value)
-	    ;; RGA --- added error return code.
-	    (return-from s-value-fn
-	      (values (set-formula-error schema slot value) T)))
 	  (setf is-formula T)
 	  (setf (on-schema value) schema)
 	  (setf (on-slot value) slot)
@@ -488,17 +482,10 @@ This allows it to be a destructive function."
       ;; Check for special cases in relation slots.
       (when (eq (setf value (check-relation-slot schema slot value)) *no-value*)
 	(return-from internal-s-value NIL)))
-
-    ;; If we are installing a formula, make sure that the formula
-    ;; points to the schema and slot.
     (when is-formula
-      (when (on-schema value)
-	(return-from internal-s-value (set-formula-error schema slot value)))
       (setf (on-schema value) schema)
       (setf (on-slot value) slot))
-
     (set-slot-accessor schema slot value *local-mask* nil)
-
     ;; Take care of relations.
     (when is-relation
       (link-in-relation schema slot value))

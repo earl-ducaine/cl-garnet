@@ -160,63 +160,22 @@ and the same parent (if any)."
   "This is the default invalidate demon."
   (kr-send schema :UPDATE-DEMON schema slot save))
 
-(defun initialize-kr ()
-  (pushnew :is-a *inheritance-relations*)
-  (pushnew :is-a-inv *inheritance-inverse-relations*)
-  (push (list :is-a :is-a-inv) *relations*)
-  (push (list :is-a-inv :is-a) *relations*))
-
-(initialize-kr)
-
 (defun is-a-p (schema type)
-  "Tests whether the <schema> is linked via :IS-A to schema <type>, either
-  directly or through several links.  Note that (is-a-p <schema> T) returns
-  true if <schema> is a schema. FMG Check that it actually is a schema, otherwise
-  return NIL. This seems not to break anything but changes the behavior of this
-  function."
   (locally (declare #.*special-kr-optimization*)
-    ;; Profiling indicated that this function is expensive, so I tried to
-    ;; avoid unnecessary repetition of tests and exit as early as possible.
-
     (unless (and schema (schema-p schema))
       (return-from is-a-p nil))
-
-    ;; We know we've got something, and it's a schema. So if type is T
-    ;; or if the schema is eq to the type, return T.
     (when (or (eq type T)
-	      (eq schema type))		; (is-a-p foo foo) is true
+	      (eq schema type))
       (return-from is-a-p T))
-
-    ;; The schema itself is not eq to TYPE so we have to check
-    ;; the parents (inheritance).
     (if (formula-p schema)
-	;; A formula (a formula is a schema).
 	(if (eq (a-formula-is-a schema) type)
 	    T
-	    ;; No multiple inheritance, so there's only
-	    ;; one parent.
 	    (is-a-p (a-formula-is-a schema) type))
-	;; A schema.
-
-	;; This seems to implement a breadth-first search. I'm not sure how much
-	;; it matters but it seems like the IS-A tree would be bushy downward,
-	;; not upward, so it's better to just iterate through the IS-A list
-	;; once, calling is-a-p on the parents if they aren't eq to TYPE.
-	#-(and)
-	(or (dolist (parent (g-value schema :IS-A))
-	      (when (eq parent type)
-		(return T)))
-	    ;; Not directly in the list: how about the parents?
-	    (dolist (parent (g-value schema :IS-A))
-	      (when (is-a-p parent type)
-		(return t))))
-
 	(dolist (parent (g-value schema :IS-A))
 	  (when (or (eq parent type)
 		    ;; Not directly in the IS-A list: how about the parents?
 		    (is-a-p parent type))
 	    (return T))))))
-
 
 (defun i-depend-on (object slot)
   "Given an object and a slot, if the <slot> contains a formula it returns
