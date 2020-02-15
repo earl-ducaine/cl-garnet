@@ -34,8 +34,8 @@
   (:update-slots NIL)
   )
 
-(create-instance 'GRAPHICAL-OBJECT view-object
-  :declare ((:type (fixnum :top :left :width :height)
+(create-instance 'graphical-object view-object
+  :declare ((:type
 		   ((or (is-a-p line-style) null) :line-style)
 		   ((or (is-a-p filling-style) null) :filling-style)
 		   ((member :copy :xor :no-op :or :clear :set :copy-inverted
@@ -44,22 +44,11 @@
 		    :draw-function))
 	    (:update-slots :visible :fast-redraw-p :line-style :filling-style
 			   :draw-function))
-  (:top 0)
-  (:left 0)
-  (:width 20)
-  (:height 20)
-  (:draw-function :copy)
-  (:line-style default-line-style)
   (:filling-style nil)
   (:select-outline-only nil))
 
 (create-instance 'RECTANGLE graphical-object
-  :declare ((:parameters :left :top :width :height :line-style :filling-style
-			 :draw-function :visible)
-	    (:type (fixnum :left :top :width :height))
-	    (:maybe-constant :left :top :width :height :line-style
-			     :filling-style :draw-function :visible)
-	    (:update-slots :fast-redraw-p :top)))
+  :declare ((:update-slots :fast-redraw-p :top)))
 
 (define-method :initialize view-object (gob)
   (let ((temp-info (make-update-info)))
