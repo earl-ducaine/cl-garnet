@@ -51,9 +51,17 @@
   `(eq (cn-connection ,cn) ,val))
 
 (defun create-mg-constraint (&key (variable-paths nil) (variable-names nil))
-  (let* ((cn (create-sb-constraint)))
-    (setf (CN-connection cn) :unconnected)
-    (setf (CN-variable-paths cn) variable-paths)
+  (let ((cn (make-sb-constraint :strength :max
+				:methods (list
+					  (create-mg-method :output-indices '(1) :code
+							    #'(lambda (cn) nil)))
+				:variables nil
+				:selected-method nil
+				:mark nil
+				:set-slot-fn nil
+				:other-slots nil)))
+    (setf (cn-connection cn) :unconnected)
+    (setf (cn-variable-paths cn) variable-paths)
     cn))
 
 (defmacro var-os (v) `(get-sb-variable-slot ,v :mg-os))

@@ -61,50 +61,17 @@
   `(let ((cn ,cn)(val ,val))
      (call-set-slot-fn (sb-constraint-set-slot-fn cn) cn :selected-method val)
      (setf (sb-constraint-selected-method cn) val)))
+
 (defsetf cn-mark (cn) (val)
   `(let ((cn ,cn)(val ,val))
      (call-set-slot-fn (sb-constraint-set-slot-fn cn) cn :mark val)
      (setf (sb-constraint-mark cn) val)))
 
-(defun create-sb-constraint ()
-  (let ((cn (make-sb-constraint :strength :max
-                                :methods (list
-					  (create-mg-method :output-indices '(1) :code
-							    #'(lambda (cn) nil)))
-                                :variables nil
-                                :selected-method nil
-                                :mark nil
-				:set-slot-fn nil
-                                :other-slots nil)))
-    cn))
-
-;; methods:
-;;   a method represents one possible procedure for satisfying a constraint.
-;;   fields of a method representation are initialized at the constraint
-;;   creation time and never modified.
-;;
-;;   field        | type      | description
-;;   -------------+-----------+--------------------------------------------
-;;   code         | procedure | the procedure to be called to execute this
-;;                |           | method (passed the constraint whose selected
-;;                |           | method this is).
-;;   outputs      | list of vars | list of output vars for this method.
-;; other-slots    | alist     | association list of other slot/value pairs
-;;   set-slot-fn  |  fn(s)    | fn or list of fns to call before setting any slot
-
-(defstruct (sb-Method
-	    (:print-function
-	     (lambda (mt str lvl)
-	       (declare (ignore lvl))
-	       (cond ((get-sb-slot mt :name)
-		      (format str "{mt-~A}" (get-sb-slot mt :name)))
-		     (t (format str "{mt}")))))
-	    )
+(defstruct (sb-Method)
   code
   outputs
   other-slots
-  set-slot-fn
-  )
+  set-slot-fn)
 
 (defun get-sb-method-slot (mt slot)
   (case slot
@@ -151,12 +118,6 @@
 ;; set-slot-fn    | fn(s)       | fn or list of fns to call before setting any slot
 
 (defstruct (sb-Variable
-	    (:print-function
-	     (lambda (var str lvl)
-	       (declare (ignore lvl))
-	       (cond ((get-sb-slot var :name)
-		      (format str "{var-~A}" (get-sb-slot var :name)))
-		     (t (format str "{var}")))))
 	    )
   constraints
   determined-by
@@ -227,13 +188,8 @@
     (when name (set-sb-slot var :name name))
     var))
 
-;; ***** generic sb object fns *****
-
 (defun get-sb-slot (obj slot)
-  (etypecase obj
-    (sb-constraint (get-sb-constraint-slot obj slot))
-    (sb-variable (get-sb-variable-slot obj slot))
-    (sb-method (get-sb-method-slot obj slot))))
+  (get-sb-method-slot obj slot))
 
 (defun set-sb-slot (obj slot val)
   (etypecase obj
