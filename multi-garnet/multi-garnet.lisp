@@ -51,13 +51,7 @@
   `(eq (cn-connection ,cn) ,val))
 
 (defun create-mg-constraint (&key (variable-paths nil) (variable-names nil))
-  (let* ((cn (create-sb-constraint
-	      :strength :max
-	      :variables nil
-	      :methods (list
-			(create-mg-method :output-indices '(1) :code
-					  #'(lambda (cn) nil)))
-	      :name nil)))
+  (let* ((cn (create-sb-constraint)))
     (setf (CN-connection cn) :unconnected)
     (setf (CN-variable-paths cn) variable-paths)
     cn))

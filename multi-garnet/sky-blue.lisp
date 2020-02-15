@@ -66,22 +66,16 @@
      (call-set-slot-fn (sb-constraint-set-slot-fn cn) cn :mark val)
      (setf (sb-constraint-mark cn) val)))
 
-(defun create-sb-constraint (&key (name nil)
-                               (variables nil)
-                               (strength :max)
-                               (methods nil)
-                               (selected-method nil)
-                               (mark nil)
-			       (set-slot-fn nil)
-                               )
+(defun create-sb-constraint ()
   (let ((cn (make-sb-constraint :strength :max
-                                :methods methods
-                                :variables variables
-                                :selected-method selected-method
-                                :mark mark
-				:set-slot-fn set-slot-fn
+                                :methods (list
+					  (create-mg-method :output-indices '(1) :code
+							    #'(lambda (cn) nil)))
+                                :variables nil
+                                :selected-method nil
+                                :mark nil
+				:set-slot-fn nil
                                 :other-slots nil)))
-    (when name (set-sb-slot cn :name name))
     cn))
 
 ;; methods:
