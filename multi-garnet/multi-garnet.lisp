@@ -314,7 +314,6 @@
 
 (defun multi-garnet-s-value-fn (schema slot value)
   (when (not (eq slot :is-a))
-    (unless (get-object-slot-prop schema slot :sb-variable))
     (set-slot-basic schema slot value
 		    :auto-activate-constraints t
 		    :invalidate-paths t))
@@ -398,8 +397,7 @@
 		       (return (os obj slot)))
 		     ;; at link slot: set up dependency and back ptrs
 		     (set-object-slot-prop obj slot :sb-path-constraints
-					   (adjoin cn (get-object-slot-prop
-						       obj slot :sb-path-constraints)))
+					   (adjoin cn nil))
 		     (push (os obj slot) cn-path-links)
 		     ;; check that path slot doesn't contain local formula
 		     ;; (doesn't matter if inherited slot contains formula,
@@ -426,21 +424,16 @@
 		    ;; all paths unbroken, find/alloc vars
 		    (setf (CN-variables cn)
 		      (loop for var-os in var-os-list
-		    	 collect (get-os-var var-os)))
+		    	 collect (create-object-slot-var (os-object var-os) (os-slot var-os))))
 		    ;; init output lists in cn methods
  		    (init-method-outputs cn)
 		    ;; now, cn is connected
 		    (setf (CN-connection cn) :connected))))))))
 
-(defun get-object-slot-prop (obj slot prop)
-  (let ((return-value ))
-    (format t "return-value: ~s~%" return-value)
-    return-value))
-
 (defun gv-object-slot-prop (obj slot prop)
   (when (schema-p obj)
     (kr::gv-fn obj :sb-os-props)
-    (get-object-slot-prop obj slot prop)))
+    nil))
 
 (defun set-object-slot-prop (obj slot prop val)
   (let* ((os-props (g-value-body OBJ :SB-OS-PROPS))
@@ -448,18 +441,6 @@
     (setf (getf slot-props prop) val)
     (setf (getf os-props slot) slot-props)
     val))
-
-(defun get-os-val (os)
-  (g-value (os-object os) (os-slot os)))
-
-(defun get-os-var (os)
-  (get-object-slot-var (os-object os) (os-slot os)))
-
-(defun get-object-slot-var (obj slot)
-  (let ((var (get-object-slot-prop obj slot :sb-variable)))
-    (when (null var)
-      (setq var (create-object-slot-var obj slot)))
-    var))
 
 (defun create-object-slot-var (obj slot)
   (let ((var (create-mg-variable :os (os obj slot))))
@@ -474,9 +455,6 @@
 	 :prohibit-constraints t
 	 :auto-activate-constraints nil
 	 :invalidate-paths nil)))
-
-(defun has-object-slot-var (obj slot)
-  (get-object-slot-prop obj slot :sb-variable))
 
 (defun get-variable-value (var)
   (var-value var))
