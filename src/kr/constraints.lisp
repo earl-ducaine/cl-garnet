@@ -130,29 +130,9 @@ dotted pairs, where each pair consists of a schema and a slot."
 	 (is-schema object) object))))
 
 
-(declaim (inline self-old-value))
-(defun self-old-value ()
-  "Returns the cached value of a formula."
-  (when *current-formula*
-    (let ((value (a-formula-cached-value *current-formula*)))
-      (if (eq value *no-value*)
-	  NIL
-	  value))))
-
-
-
-(def-kr-type kr-no-type () '(satisfies no-type-error-p)
-	     "No type defined for this slot")
-
-;; We want 0 to mean "no type".
-(setf (aref types-array 0) NIL)
-
 ;; Make this the first type
 (def-kr-type kr-boolean () T
 	     "Any value is legal")
-
-;; (dolist (type '(null string keyword integer number list cons schema))
-;;   (encode-type type))
 
 (def-kr-type KNOWN-AS-TYPE () '(or keyword null)
   "[keyword]")

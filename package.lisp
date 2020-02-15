@@ -18,23 +18,11 @@
 	   g-value
 	   gv
 	   gvl
-	   get-value
-	   get-local-value
-	   doslots
 	   define-method
-	   kr-send
-;;	   change-formula
-	   DEF-KR-TYPE
-	   ;; get-type-documentation
-	   ;; set-type-documentation
-	   ;; s-formula-value
-	   self-old-value))
+	   ))
 
 (defpackage :opal
-  (:use :common-lisp :kr)
-
-
-)
+  (:use :common-lisp :kr))
 
 (defpackage :mge (:use :common-lisp :kr)
 	    (:export do-go do-stop
