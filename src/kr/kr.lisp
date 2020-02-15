@@ -307,17 +307,12 @@ Always returns the CODE of the resulting type (whether new or not)"
   (let ((entry (slot-accessor schema slot)))
     (is-constant (sl-bits entry))))
 
-
-(declaim (fixnum *warning-level*))
-(defparameter *warning-level* 0)
-
 (defun update-inherited-internal (child a-slot entry)
   (let ((old-value (sl-value entry)))
     (unless (eq old-value *no-value*)
       (let ((child-bits (sl-bits entry)))
 	(when (is-inherited child-bits)
 	  (update-inherited-values child a-slot *no-value* NIL))))))
-
 
 (declaim (inline mark-as-changed))
 (defun mark-as-changed (schema slot)
@@ -348,16 +343,7 @@ Always returns the CODE of the resulting type (whether new or not)"
 	    (if (slot-dependents new-entry)
 	      (propagate-change new-schema new-slot))))))))
 
-
 (defun visit-inherited-values (schema a-slot function)
-  "Similar to update-inherited-values, but used when the hierarchy is
-modified or when an inheritable slot is destroyed.
-SIDE EFFECTS:
- - the <function> is called on all children which actually inherit the
-   values in the <a-slot> of the <schema>.  This is determined by a fast
-   check (the list of values should be EQ to that of the parent).
-Note that the <function> is called after all children have been visited..
-This allows it to be a destructive function."
   (let* ((entry (slot-accessor schema a-slot))
 	 (parent-entry (when entry (sl-value entry))))
     (dolist (inverse *inheritance-inverse-relations*)
@@ -371,21 +357,6 @@ This allows it to be a destructive function."
 		     (eq value parent-entry))
 	    (visit-inherited-values child a-slot function)
 	    (funcall function child a-slot)))))))
-
-(defun constant-slot-error (schema slot)
-  (cerror "Set the slot anyway"
-	  "Schema ~S - trying to set slot ~S, which is constant."
-	  schema slot))
-
-
-(declaim (inline check-not-constant))
-(defun check-not-constant (schema slot entry)
-  "Signals an error if the <slot> of the <schema> is not constant."
-  (and (not *constants-disabled*)
-       entry
-       (is-constant (sl-bits entry))
-       (constant-slot-error schema slot)))
-
 
 (declaim (inline slot-constant-p))
 (defun slot-constant-p (schema slot)
@@ -402,8 +373,6 @@ This allows it to be a destructive function."
 	    nil
 	     )
 	   is-depended)
-      ;; give error if setting constant slot
-      (check-not-constant schema slot entry)
       (let ((is-formula nil) (is-relation nil)
 	    (was-formula (formula-p old-value)))
 	(when (and (setf is-relation (relation-p slot))
@@ -495,7 +464,8 @@ This allows it to be a destructive function."
 (defun allocate-schema-slots (schema)
   (locally (declare #.*special-kr-optimization*)
     (setf (schema-bins schema)
-	  (make-hash-table :test #'eq #+sbcl :synchronized #+sbcl t)))
+	  (make-hash-table :test #'eq
+			   )))
   schema)
 
 (defun make-a-new-schema (name)
@@ -699,8 +669,7 @@ the expression ~S instead."
 		   schema slot)))))
 
 (defun do-schema-body-alt (schema is-a &rest slot-specifiers)
-  (let ((generate-instance t)
-	(types nil))
+  (let ((types nil))
     (unless (listp is-a)
       (setf is-a (list is-a)))
     (when is-a
@@ -731,8 +700,7 @@ the expression ~S instead."
 				  :MAYBE-CONSTANT :PARAMETERS :OUTPUT
 				  :SORTED-SLOTS :UPDATE-SLOTS)))
 	      ))
-	  (when generate-instance
-	    (kr-init-method schema))
+	  (kr-init-method schema)
 	  schema)
       (cond ((eq slot :NAME-PREFIX)
 	     (pop slots))

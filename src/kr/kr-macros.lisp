@@ -558,7 +558,7 @@ at slot ~S  (non-schema value is ~S, last schema was ~S)"
 		    `(make-a-new-schema ,name)))
 	 ,(car slots)
 	 ,generate-instance
-		 ,override
+	 ,override
 	 ,@(cdr slots)))))
 
 (defmacro create-prototype (name &rest slots)
