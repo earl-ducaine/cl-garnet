@@ -295,17 +295,13 @@
 
 (defun add-constraint-to-slot (obj slot cn)
   (cond ((null (CN-variable-paths cn))
-         ;; constraint is not a multi-garnet constraint, so don't auto-connect
          nil)
         ((CN-os cn)
          (error "shouldn't happen: can't add constraint ~S to <~S,~S>, already stored in <~S,~S>"
 		cn obj slot (os-object (CN-os cn)) (os-slot (CN-os cn))))
         (t
-         ;; set up constraint fields
          (setf (CN-os cn) (os obj slot))
-         ;; activate new constraint
-         (connect-add-constraint cn))
-        ))
+         (connect-add-constraint cn))))
 
 (defun save-invalidated-path-constraints (obj slot)
   (when *collect-invalid-paths-formulas*
@@ -314,16 +310,14 @@
 	      *invalidated-path-constraints*))))
 
 (defun s-value-fn-hook (schema slot value)
-  (multi-garnet-s-value-fn schema slot value :strong))
+  (multi-garnet-s-value-fn schema slot value))
 
-(defun multi-garnet-s-value-fn (schema slot value input-strength)
+(defun multi-garnet-s-value-fn (schema slot value)
   (when (not (eq slot :is-a))
-    (let ((slot-var (get-object-slot-prop schema slot :sb-variable)))
-      (cond (slot-var)
-	    (t
-	     (set-slot-basic schema slot value
-			     :auto-activate-constraints t
-			     :invalidate-paths t)))))
+    (unless (get-object-slot-prop schema slot :sb-variable))
+    (set-slot-basic schema slot value
+		    :auto-activate-constraints t
+		    :invalidate-paths t))
   value)
 
 (defun kr-init-method-hook (schema &optional the-function)
@@ -448,18 +442,7 @@
     (kr::gv-fn obj :sb-os-props)
     (get-object-slot-prop obj slot prop)))
 
-(defun set-os-prop (os prop val)
-  (set-object-slot-prop
-   (os-object os) (os-slot os) prop val))
-
 (defun set-object-slot-prop (obj slot prop val)
-  (when (sb-object-p obj)
-    (cerror "cont" "trying to set os-prop of ~S, slot ~S, prop ~S"
-            obj slot prop))
-  (set-object-slot-prop-basic obj slot prop val)
-  val)
-
-(defun set-object-slot-prop-basic (obj slot prop val)
   (let* ((os-props (g-value-body OBJ :SB-OS-PROPS))
 	 (slot-props (getf os-props slot nil)))
     (setf (getf slot-props prop) val)
