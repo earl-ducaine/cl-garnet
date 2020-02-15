@@ -26,15 +26,9 @@
    	    :depends-on (kr opal-boot)
    	    :components
 	    ((:file "basics")))
-   (:module aggregadgets
-   	    :pathname "src/aggregadgets"
-   	    :depends-on (kr opal)
-   	    :components
-	    ((:file "agg-macros")
-	     (:file "aggregadgets")))
    (:module multi-garnet
 	    :pathname "multi-garnet"
-	    :depends-on (aggregadgets)
+	    :depends-on (opal)
 	    :serial t
 	    :components
 	    ((:file "sky-blue")

@@ -20,5 +20,5 @@
 	   :variable-paths '((:box) (:left))
 	   :variable-names '(box left))))
 
-(do-schema-body-alt (make-a-new-schema '*v-axis*) opal:aggregadget
-		    (cons :parts `((:main ,*axis-rectangle*))))
+;; (do-schema-body-alt (make-a-new-schema '*v-axis*) opal:aggregadget
+;; 		    (cons :parts `((:main ,*axis-rectangle*))))
