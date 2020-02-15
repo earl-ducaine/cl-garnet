@@ -161,7 +161,7 @@
   nil)
 
 (declaim (inline
-	  formula-p deleted-p not-deleted-p is-inherited is-parent is-constant
+	  deleted-p not-deleted-p is-inherited is-parent is-constant
 	  is-update-slot set-is-update-slot is-local-only is-parameter
 	  extract-type-code get-entry-type-code))
 

@@ -334,15 +334,6 @@ Always returns the CODE of the resulting type (whether new or not)"
       (update-inherited-values schema slot (sl-value entry) T)))
   (propagate-change schema slot))
 
-
-(declaim (inline mark-as-invalid))
-(defun mark-as-invalid (schema slot)
-  "Invalidates the value of the formula at <position> in the <slot> of the
-  <schema>.  If the value is not a formula, nothing happens."
-  (let ((value (get-value schema slot)))
-    (when (formula-p value)
-      (set-cache-is-valid value NIL))))
-
 (defun propagate-change (schema slot)
   (let ((entry (slot-accessor schema slot)))
     ;; access the dependent formulas.
@@ -746,14 +737,11 @@ the expression ~S instead."
 	 (if had-constants
 	     (if constants
 		 (if (formula-p constants)
-		     ;; (g-value-formula-value schema :CONSTANT constants NIL)
 		     nil
 		     constants)
 		 :NONE)
-	     ;; There was no constant declaration.
 	     NIL)
 	 (not (eq types :NONE)))
-	;; Merge prototype and local declarations.
 	(dolist (slot slot-specifiers)
 	  (when (and (listp slot)
 		     (memberq (car slot)
@@ -765,15 +753,13 @@ the expression ~S instead."
 	  (kr-init-method schema))
 	schema)
     (cond ((eq slot :NAME-PREFIX)
-	   ;; Skip this and the following argument
 	   (pop slots))
 	  ((consp slot)
 	   (let ((slot-name (car slot))
 		 (slot-value (cdr slot)))
-	     (case slot-name		; handle a few special slots.
+	     (case slot-name
 	       (:INITIALIZE
 		(when slot-value
-		  ;; A local :INITIALIZE method was provided
 		  (setf initialize-method slot-value)))
 	       (:CONSTANT
 		(setf constants (cdr slot))

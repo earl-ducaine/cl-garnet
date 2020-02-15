@@ -77,7 +77,25 @@
       `(formula-fn ,form ,initial-value NIL)))
 
 (defun change-formula (schema slot form)
-  (let ((formula (get-value schema slot)))
+  (let ((formula (LOCALLY
+		     (DECLARE (OPTIMIZE (SPEED 3) (SAFETY 0) (SPACE 0) (DEBUG 0)))
+		   (LET* ((.local-var-alt. (SLOT-ACCESSOR SCHEMA SLOT))
+			  (.local-var.
+			   (IF .local-var-alt.
+			       (IF (IS-INHERITED (SL-BITS .local-var-alt.))
+				   (IF (A-FORMULA-P (SL-VALUE .local-var-alt.))
+				       (SL-VALUE .local-var-alt.))
+				   (SL-VALUE .local-var-alt.))
+			       *NO-VALUE*)))
+		     (IF (EQ .local-var. *NO-VALUE*)
+			 (IF .local-var-alt.
+			     (SETF .local-var. NIL)
+			     (IF (NOT
+				  (FORMULA-P (SETF .local-var. (G-VALUE-INHERIT-VALUES SCHEMA SLOT))))
+				 (SETF .local-var. NIL))))
+		     (IF (A-FORMULA-P .local-var.)
+			 NIL
+			 .local-var.)))))
     (when (formula-p formula)
       (when (a-formula-is-a formula)
 	;; This function was inherited.  Cut the IS-A link.
@@ -128,22 +146,15 @@ and the same parent (if any)."
       (when (eq value *no-value*)
 	(setf entry (slot-accessor schema slot))
 	(when entry (setf value (sl-value entry))))
-      (when (a-formula-p value)
-	(setf value  nil
-	      entry (slot-accessor schema slot)))
       (when *check-constants*
 	(if (and entry (is-constant (sl-bits entry)))
-	    ;; Constant, so do NOT set up dependencies.
 	    (setf setup NIL)
-	    ;; Not constant
 	    (setf *is-constant* NIL))
 	(setf *accessed-slots* T))
-      ;; Now set up the dependencies.
-      (when (and setup *current-formula*) ; do we need to set up dependencies?
+      (when (and setup *current-formula*)
 	(unless entry
 	  (setf entry (set-slot-accessor schema slot *no-value* 0 NIL)))
 	(unless (full-sl-p entry)
-	  ;; We did have an entry, but it was too small.
 	  (let ((full-entry (make-full-sl)))
 	    (setf (gethash slot (schema-bins schema)) full-entry)
 	    (setf (sl-name full-entry) slot)
@@ -183,7 +194,25 @@ all the slots upon which the formula depends.  The result is a list of
 dotted pairs, where each pair consists of a schema and a slot."
   (locally (declare #.*special-kr-optimization*)
     (if (schema-p object)
-	(let ((formula (get-value object slot))
+	(let ((formula (LOCALLY
+		     (DECLARE (OPTIMIZE (SPEED 3) (SAFETY 0) (SPACE 0) (DEBUG 0)))
+		   (LET* ((.local-var-alt. (SLOT-ACCESSOR SCHEMA SLOT))
+			  (.local-var.
+			   (IF .local-var-alt.
+			       (IF (IS-INHERITED (SL-BITS .local-var-alt.))
+				   (IF (A-FORMULA-P (SL-VALUE .local-var-alt.))
+				       (SL-VALUE .local-var-alt.))
+				   (SL-VALUE .local-var-alt.))
+			       *NO-VALUE*)))
+		     (IF (EQ .local-var. *NO-VALUE*)
+			 (IF .local-var-alt.
+			     (SETF .local-var. NIL)
+			     (IF (NOT
+				  (FORMULA-P (SETF .local-var. (G-VALUE-INHERIT-VALUES SCHEMA SLOT))))
+				 (SETF .local-var. NIL))))
+		     (IF (A-FORMULA-P .local-var.)
+			 NIL
+			 .local-var.))))
 	      (dependencies nil))
 	  (when (formula-p formula)
 	    (do-one-or-list (schema (a-formula-depends-on formula))
