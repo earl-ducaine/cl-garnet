@@ -539,44 +539,6 @@ one by that name if it exists.  The initial number of slots is
 	   (format t "Error in CREATE-SCHEMA - ~S is not a valid schema name.~%"
 		   name)))))
 
-(defun declare-constant (schema slot)
-  "Declare slot constants AFTER instance creation time."
-  (unless *constants-disabled*
-    (if (eq slot T)
-      ;; This means that all constants declared in :MAYBE-CONSTANT should be
-      ;; made constant
-      (let ((maybe (g-value-no-copy schema :MAYBE-CONSTANT)))
-	(dolist (m maybe)
-	  (declare-constant schema m)))
-      ;; This is the normal case - only 1 slot.
-      (let ((constant-list (g-value schema :CONSTANT))
-	    (positive T))
-	(do ((list constant-list (if (listp list) (cdr list) NIL))
-	     (prev nil list)
-	     c)
-	    ((null list)
-	     (setf constant-list (cons slot (if (listp constant-list)
-					      constant-list
-					      (list constant-list))))
-	     (s-value schema :CONSTANT constant-list))
-	  (setf c (if (listp list) (car list) list))
-	  (cond ((eq c :EXCEPT)
-		 (setf positive NIL))
-		((eq c slot)
-		 (when positive
-		   (return nil))
-		 ;; Slot was explicitly excepted from constant list.
-		 (setf (cdr prev) (cddr prev)) ; remove from :EXCEPT
-		 (when (and (null (cdr prev))
-			    (eq (car prev) :EXCEPT))
-		   ;; We are removing the last exception to the constant list
-		   (let ((end (nthcdr (- (length constant-list) 2)
-				      constant-list)))
-		     (setf (cdr end) nil)))
-		 (setf constant-list (cons c constant-list))
-		 (s-value schema :CONSTANT constant-list)
-		 (return))))))))
-
 (defun process-constant-slots (the-schema parents constants do-types)
   (locally (declare #.*special-kr-optimization*)
     ;; Install all update-slots entries, and set their is-update-slot bits

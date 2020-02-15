@@ -428,26 +428,6 @@ bit set) are used."
       (if (if entry (not (is-inherited (sl-bits entry))))
 	  (sl-value entry)))))
 
-(defmacro expand-accessor (accessor-function schema &rest slots)
-  (if slots
-      (let ((kernel schema))
-	(do ((slot slots (cdr slot)))
-	    ((null slot))
-	  (setf kernel
-		`(,accessor-function ,kernel ,(car slot))))
-	kernel)
-      (error "expand-accessor: at least one slot is required")))
-
-(defmacro with-constants-disabled (&body body)
-"Execute the <body> with constant processing disabled."
-  `(let ((*constants-disabled* t))
-     ,@body))
-
-(defmacro with-dependencies-disabled (&body body)
-"Execute the <body> with dependencies processing disabled."
-  `(let ((*setup-dependencies* nil))
-     ,@body))
-
 (declaim (inline relation-p))
 (defun relation-p (slot)
   (assocq slot *relations*))

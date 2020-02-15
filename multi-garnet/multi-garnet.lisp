@@ -532,17 +532,14 @@
 
 (defun copy-down-slot-value (obj slot)
   (unless (has-slot-p obj slot)
-    (with-constants-disabled
 	(set-slot-basic
 	 obj slot (g-value obj slot)
 	 :prohibit-constraints t
 	 :auto-activate-constraints nil
-	 :invalidate-paths nil))))
+	 :invalidate-paths nil)))
 
 (defun has-object-slot-var (obj slot)
   (get-object-slot-prop obj slot :sb-variable))
-
-;; entries for accessing a variable value
 
 (defun get-variable-value (var)
   (var-value var))

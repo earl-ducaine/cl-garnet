@@ -1,31 +1,6 @@
 
 (in-package :kr)
 
-(defvar *setup-dependencies* T
-  "If T (the default), dependencies are set up whenever GV and GVL are
-   evaluated inside formulas.  If nil, no dependencies are set up.")
-
-(defun fixed-path-accessor (schema slots path-number)
-  (let* ((current (a-formula-path *current-formula*))
-	 (length (length current)))
-    (or (and (< path-number length)
-	     (elt current path-number))
-	(progn
-	  (dolist (slot slots)
-	    (setf schema (g-value schema slot))
-	    (when (listp schema)
-	      ;; This handles relation slots, which are ALWAYS stored as
-	      ;; a list.
-	      (setf schema (first schema))))
-	  (unless (> length path-number)
-	    ;; create more storage
-	    (setf current
-		  (setf (a-formula-path *current-formula*)
-			(append current
-				(make-list (- path-number length -1))))))
-	  (setf (elt current path-number) schema)
-	  schema))))
-
 (defun formula-fn (form &optional (initial-value nil) meta)
   (locally (declare #.*special-kr-optimization*)
     (let ((formula (make-a-formula)))
