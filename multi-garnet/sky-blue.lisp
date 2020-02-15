@@ -88,37 +88,21 @@
   `(let ((mt ,mt)(val ,val))
      (call-set-slot-fn (sb-method-set-slot-fn mt) mt :code val)
      (setf (sb-method-code mt) val)))
+
 (defsetf mt-outputs (mt) (val)
   `(let ((mt ,mt)(val ,val))
      (call-set-slot-fn (sb-method-set-slot-fn mt) mt :outputs val)
      (setf (sb-method-outputs mt) val)))
 
 (defun create-sb-method (&key (name nil)
-			      (code #'(lambda (cn) cn))
-			      (outputs nil))
-  (let ((mt (make-sb-method :code code
-			    :outputs outputs
-			    :other-slots nil)))
-    (when name (set-sb-slot mt :name name))
-    mt))
+			   (code #'(lambda (cn) cn))
+			   (outputs nil))
+  (make-sb-method :code code
+		  :outputs outputs
+		  :other-slots nil))
 
-;; variables:
-;;
-;;   field        | type        | description
-;;  --------------+-------------+--------------------------------------------
-;;  value         | any         | value of the variable
-;;  constraints   | set of      | all the constraints that reference this
-;;                | constraints | variable.
-;;  determined-by | constraint  | the constraint that determines this
-;;                |             | variable's value.
-;;  walk-strength | strength    | the walkabout strength of this variable.
-;;  mark          | integer     | this variable's mark value.
-;;  valid         | boolean     | true if this variable value is valid
-;; other-slots    | alist       | association list of other slot/value pairs
-;; set-slot-fn    | fn(s)       | fn or list of fns to call before setting any slot
 
-(defstruct (sb-Variable
-	    )
+(defstruct (sb-Variable)
   constraints
   determined-by
   walk-strength
@@ -126,20 +110,8 @@
   valid
   value
   other-slots
-  set-slot-fn
-  )
+  set-slot-fn)
 
-(defun get-sb-variable-slot (var slot)
-  (case slot
-    (:value (sb-variable-value var))
-    (:constraints (sb-variable-constraints var))
-    (:determined-by (sb-variable-determined-by var))
-    (:walk-strength (sb-variable-walk-strength var))
-    (:mark (sb-variable-mark var))
-    (:valid (sb-variable-valid var))
-    (:set-slot-fn (sb-variable-set-slot-fn var))
-    (t
-     (getf (sb-variable-other-slots var) slot nil))))
 
 (defmacro var-value (var) `(sb-variable-value ,var))
 (defmacro var-constraints (var) `(sb-variable-constraints ,var))
@@ -175,24 +147,15 @@
 				(walk-strength :min)
 				(mark 0)
 				(valid t)
-				(set-slot-fn nil)
-				)
-  (let ((var (make-sb-variable :value value
+				(set-slot-fn nil))
+ (make-sb-variable :value value
 			       :constraints constraints
 			       :determined-by determined-by
 			       :walk-strength :max
 			       :mark mark
 			       :valid valid
 			       :set-slot-fn set-slot-fn
-			       :other-slots nil)))
-    (when name (set-sb-slot var :name name))
-    var))
-
-(defun set-sb-slot (obj slot val)
-  (etypecase obj
-    (sb-constraint (set-sb-constraint-slot obj slot val))
-    (sb-variable (set-sb-variable-slot obj slot val))
-    (sb-method)))
+			       :other-slots nil))
 
 (defun call-set-slot-fn (fns obj slot val)
   (cond ((null fns)

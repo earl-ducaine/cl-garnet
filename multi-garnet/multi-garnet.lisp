@@ -64,7 +64,6 @@
     (setf (cn-variable-paths cn) variable-paths)
     cn))
 
-(defmacro var-os (v) `(get-sb-variable-slot ,v :mg-os))
 (defsetf var-os (v) (val) `(set-sb-variable-slot ,v :mg-os ,val))
 
 (defun create-mg-variable (&key (name nil)
@@ -86,7 +85,7 @@
 			   (code #'(lambda (cn) cn)))
   (let ((mt (create-sb-method :outputs nil
 			      :code code)))
-    (set-sb-slot mt :mg-output-indices output-indices)
+    nil
     mt))
 
 (defun init-method-outputs (cn)
