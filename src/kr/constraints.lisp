@@ -45,11 +45,6 @@
     f))
 
 (defun formula-fn (form &optional (initial-value nil) meta)
-  "Creates an interpreted formula.  The <form> can be either a Lisp expression
- (which is used as the body of the formula), or another formula.  In the
- latter case, the other formula is made the parent, and this function
- creates an inherited formula.  The <initial-value>, which defaults to nil,
- is used as the initial cached value before the formula is evaluated."
   (locally (declare #.*special-kr-optimization*)
     (let ((formula (make-new-formula)))
       (setf (schema-name formula) (incf *schema-counter*))
@@ -76,64 +71,11 @@
       `(formula-fn ,form ,initial-value (create-schema nil ,@slots))
       `(formula-fn ,form ,initial-value NIL)))
 
-(defun change-formula (schema slot form)
-  (let ((formula (LOCALLY
-		     (DECLARE (OPTIMIZE (SPEED 3) (SAFETY 0) (SPACE 0) (DEBUG 0)))
-		   (LET* ((.local-var-alt. (SLOT-ACCESSOR SCHEMA SLOT))
-			  (.local-var.
-			   (IF .local-var-alt.
-			       (IF (IS-INHERITED (SL-BITS .local-var-alt.))
-				   (IF (A-FORMULA-P (SL-VALUE .local-var-alt.))
-				       (SL-VALUE .local-var-alt.))
-				   (SL-VALUE .local-var-alt.))
-			       *NO-VALUE*)))
-		     (IF (EQ .local-var. *NO-VALUE*)
-			 (IF .local-var-alt.
-			     (SETF .local-var. NIL)
-			     (IF (NOT
-				  (FORMULA-P (SETF .local-var. (G-VALUE-INHERIT-VALUES SCHEMA SLOT))))
-				 (SETF .local-var. NIL))))
-		     (IF (A-FORMULA-P .local-var.)
-			 NIL
-			 .local-var.)))))
-    (when (formula-p formula)
-      (when (a-formula-is-a formula)
-	;; This function was inherited.  Cut the IS-A link.
-	(let* ((parent (a-formula-is-a formula))
-	       (inv (a-formula-is-a-inv parent)))
-	  (setf (a-formula-is-a-inv parent)
-		(if (listp inv)
-		    (delete formula inv)
-		    (if (eq inv formula) NIL inv))))
-	(setf (a-formula-is-a formula) NIL))
-      (setf (a-formula-function formula) `(lambda () ,form))
-      (setf (a-formula-lambda formula) form))))
-
-
-(defun copy-formula (formula)
-  "Makes and returns a copy of the <formula>, keeping the same initial value
-and the same parent (if any)."
-  (let* ((parent (a-formula-is-a formula))
-	 (value (a-formula-cached-value formula))
-	 (new (formula parent value)))
-    (unless parent
-      ;; Copy lambda expression and compiled lambda.
-      (setf (a-formula-function new) (a-formula-function formula))
-      (setf (a-formula-lambda new) (a-formula-lambda formula)))
-    (let ((meta (a-formula-meta formula)))
-      (when meta
-	(let ((new-meta (create-schema nil)))
-	  (setf (a-formula-meta new) new-meta)
-	  (doslots (slot meta)
-	    (s-value new-meta slot (g-value meta slot))))))
-    new))
-
 (declaim (inline slot-is-not-constant))
 (defun slot-is-not-constant (schema slot)
   (let ((entry (slot-accessor schema slot)))
     (when entry
       (not (is-constant (sl-bits entry))))))
-
 
 (defun gv-value-fn (schema slot)
   (locally (declare #.*special-kr-optimization*)

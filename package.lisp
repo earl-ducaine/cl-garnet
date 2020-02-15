@@ -23,15 +23,11 @@
 	   doslots
 	   define-method
 	   kr-send
-	   change-formula
-	   copy-formula
+;;	   change-formula
 	   DEF-KR-TYPE
-	   kr-boolean
-	   get-slot-doc
-	   set-slot-doc
-	   get-type-documentation
-	   set-type-documentation
-	   s-formula-value
+	   ;; get-type-documentation
+	   ;; set-type-documentation
+	   ;; s-formula-value
 	   self-old-value))
 
 (defpackage :opal
