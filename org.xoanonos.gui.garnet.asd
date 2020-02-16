@@ -4,13 +4,7 @@
   :author "CMU Garnet Team (plus various others, see LICENSE)"
   :description " GUI toolkit (c. 1990 look/feel)"
   :components
-  ((:file "package")
-   (:module multi-garnet
-	    :pathname "multi-garnet"
-	    :serial t
-	    :components
-	    ((:file "kr-macros")
-	     (:file "kr")
-	     (:file "sky-blue")
-	     (:file "multi-garnet")
-	     (:file "scatterplot-alt")))))
+  ((:file "kr-macros")
+   (:file "kr")
+   (:file "sky-blue")
+   (:file "multi-garnet")))
