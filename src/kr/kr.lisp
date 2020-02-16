@@ -99,10 +99,6 @@ an inherited formula."
 (defparameter *types-table* (make-hash-table :test #'equal)
   "Hash table used to look up a Lisp type and returns its code")
 
-(defmacro with-types-table-lock-held ((table) &body body)
-  `(let ((,table *types-table*))
-     ,@body))
-
 (declaim (fixnum *types-array-inc*))
 (defparameter *types-array-inc* 255) ;; allocate in blocks of this size
 
@@ -148,7 +144,7 @@ the lisp predicate to test this ('NULL, 'KEYWORDP, etc....)"
 			simple-type))))))
 
 (defun make-lambda-body (complex-type)
-  (with-types-table-lock-held (types-table)
+  (let ((types-table *types-table*))
     (let (code)
       (cond ((consp complex-type)	;; complex type (a list)
 	     (let ((fn   (first complex-type))
@@ -184,9 +180,7 @@ the lisp predicate to test this ('NULL, 'KEYWORDP, etc....)"
 	     (list (find-lisp-predicate complex-type) 'value))))))
 
 (defun type-to-fn (type)
-  "Given the Lisp type, construct the lambda expr, or return the
-   built-in function"
-  (with-types-table-lock-held (types-table)
+  (let ((types-table *types-table*))
     (let (code)
       (cond ((consp type)			; complex type
 	     (if (eq (car type) 'SATISFIES)
@@ -224,7 +218,7 @@ if necessary."
       (incf *next-type-code*))))
 
 (defun add-new-type (typename type-body type-fn &optional type-doc)
-  (with-types-table-lock-held (types-table)
+  (let ((types-table *types-table*))
     (let ((code (gethash (or typename type-body) types-table)))
       (if code
 	  (if (equal (code-to-type code) type-body)
@@ -253,8 +247,7 @@ if necessary."
 (eval-when (:execute :compile-toplevel :load-toplevel)
   (defun encode-type (type)
     "Given a LISP type, returns its encoding."
-    (with-types-table-lock-held (types-table)
-      ;; if there, just return it!
+    (let ((types-table *types-table*))
       (cond ((gethash type types-table))
 	    ((and (listp type) (eq (car type) 'SATISFIES))
 	     ;; add new satisfies type

@@ -88,11 +88,6 @@
 		    (is-a-p parent type))
 	    (return T))))))
 
-
-;; Make this the first type
-
-;;(DEF-KR-TYPE KR-BOOLEAN NIL T "Any value is legal")
-
 (ADD-NEW-TYPE "KR-BOOLEAN" 'T 'T-P "Any value is legal")
 
 (ADD-NEW-TYPE "KNOWN-AS-TYPE" '(OR KEYWORD NULL)
