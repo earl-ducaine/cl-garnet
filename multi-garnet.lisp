@@ -96,17 +96,6 @@
 		  collect (nth index vars))))))
 
 (defvar *update-invalid-paths-formulas* t)
-
-(defmacro with-no-invalidation-update (&rest forms)
-  (let* ((old-val-var (gentemp)))
-    `(let* ((,old-val-var *update-invalid-paths-formulas*))
-       (unwind-protect
-	    (progn
-	      (setq *update-invalid-paths-formulas* nil)
-	      (progn ,@forms))
-	 (setq *update-invalid-paths-formulas* ,old-val-var)))
-    ))
-
 (defvar *invalidated-path-constraints* nil)
 
 (defun constraint-in-obj-slot (cn obj slot)
@@ -198,8 +187,7 @@
   (when (and (os-p (cn-os cn))
 	     (cn-connection-p cn :unconnected))
     (connect-constraint cn))
-  (when (cn-connection-p cn :connected)
-    (mg-add-constraint cn)))
+    cn)
 
 (defun connect-constraint (cn)
   (let* ((cn-os (CN-os cn))
@@ -223,7 +211,8 @@
       (setf (CN-variables cn)
 	    (loop for var-os in var-os-list
 	       collect (create-object-slot-var
-			(os-object var-os) (os-slot var-os))))
+			(os-object var-os)
+			(os-slot var-os))))
       (init-method-outputs cn)
       (setf (CN-connection cn) :connected))))
 
@@ -254,28 +243,11 @@
 (defun set-variable-value (var val)
   (setf (var-value var) val))
 
-(defun mg-add-constraint (cn)
-  (with-no-invalidation-update
-      (when (not (cn-connection-p cn :connected))
-	(cerror "cont" "trying to add constraint ~S with connection ~S"
-		cn (CN-connection cn)))
-    ;; note that cn is in graph, even if it is an unsat req cn
-    (setf (CN-connection cn) :graph)
-    (add-constraint cn)
-    (cond ((and (not (enforced cn))
-		(eq :max (CN-strength cn))))))
-  cn)
-
-(defvar *fn-to-hook-plist* '(s-value-fn                   s-value-fn-hook
-			     kr-init-method               kr-init-method-hook
-			     ))
-
-(defun enable-multi-garnet ()
-  (loop for (fn hook-fn) on *fn-to-hook-plist* by #'CDDR
-     do (install-hook fn hook-fn)))
-
 (eval-when (:load-toplevel :execute)
-  (enable-multi-garnet))
+  (loop for (fn hook-fn) on '(s-value-fn s-value-fn-hook
+			      kr-init-method kr-init-method-hook
+			      ) by #'CDDR
+     do (install-hook fn hook-fn)))
 
 (do-schema-body-alt
     (make-a-new-schema '*axis-rectangle*) rectangle
