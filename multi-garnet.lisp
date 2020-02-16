@@ -98,101 +98,35 @@
 (defvar *update-invalid-paths-formulas* t)
 (defvar *invalidated-path-constraints* nil)
 
-(defun constraint-in-obj-slot (cn obj slot)
-  (let* ((os (cn-os cn)))
-    (and os
-	 (eql (os-object os) obj)
-	 (eql (os-slot os) slot))))
 
 (defun add-constraint-to-slot (obj slot cn)
-  (cond ((null (CN-variable-paths cn))
-         nil)
-        ((CN-os cn)
-         (error "shouldn't happen: can't add constraint ~S to <~S,~S>, already stored in <~S,~S>"
-		cn obj slot (os-object (CN-os cn)) (os-slot (CN-os cn))))
-        (t
-         (setf (CN-os cn) (os obj slot))
-         (connect-add-constraint cn))))
-
-(defun save-invalidated-path-constraints (obj slot)
-  (setf *invalidated-path-constraints*
-	(append nil
-		*invalidated-path-constraints*)))
-
-(defun s-value-fn-hook (schema slot value)
-  (multi-garnet-s-value-fn schema slot value))
-
-(defun multi-garnet-s-value-fn (schema slot value)
-  (when (not (eq slot :is-a))
-    (LET ((OBJ SCHEMA) (SLOT SLOT) (VALUE VALUE))
-      (LET ((OLD-VALUE (GET-LOCAL-VALUE OBJ SLOT)))
-	(WHEN
-	    (AND (CONSTRAINT-P OLD-VALUE)
-		 (CONSTRAINT-IN-OBJ-SLOT OLD-VALUE OBJ SLOT))))
-      (S-VALUE-FN-SAVE-FN-SYMBOL OBJ SLOT VALUE)
-      (WHEN (AND (CONSTRAINT-P VALUE) (NULL (CN-OS VALUE)))
-	(ADD-CONSTRAINT-TO-SLOT OBJ SLOT VALUE))
-      (SAVE-INVALIDATED-PATH-CONSTRAINTS OBJ SLOT)
-      VALUE))
-  value)
+  (setf (CN-os cn) (os obj slot))
+  (connect-constraint cn))
 
 (defun kr-init-method-hook (schema &optional the-function)
-  (KR-INIT-METHOD-SAVE-FN-SYMBOL SCHEMA THE-FUNCTION)
+  (kr-init-method-save-fn-symbol schema the-function)
   (copy-down-and-activate-constraints schema))
 
 (defun copy-down-and-activate-constraints (schema)
-  (copy-down-mg-constraints schema)
-  (activate-new-instance-cns schema)
-  )
-
-;; copies down cns from parent, _without_ activating them
-(defun copy-down-mg-constraints (schema)
   (let ((parent (car (get-value schema :is-a))))
-    (when parent
-      (let* ((local-only-slots-val (g-value-no-copy parent :LOCAL-ONLY-SLOTS))
-	     (local-only-slots (if (listp local-only-slots-val)
-				   local-only-slots-val
-				   (list local-only-slots-val))))
-	(doslots (slot parent)
-	  (when (and (not (eq slot :is-a))
-		     (not (member slot local-only-slots))
-		     (not (has-slot-p schema slot))
-		     (constraint-p (get-local-value parent slot))
-		     (constraint-in-obj-slot (get-local-value parent slot) parent slot))
-	    (LET ((OBJ SCHEMA) (SLOT SLOT) (VALUE (GET-LOCAL-VALUE PARENT SLOT)))
-	      (S-VALUE-FN-SAVE-FN-SYMBOL OBJ SLOT VALUE)
-	      (SAVE-INVALIDATED-PATH-CONSTRAINTS OBJ SLOT)
-	      VALUE)
-	    ))
-	))))
+    (let* ((local-only-slots-val (g-value-no-copy parent :LOCAL-ONLY-SLOTS))
+	   (local-only-slots (if (listp local-only-slots-val)
+				 local-only-slots-val
+				 (list local-only-slots-val))))
+      (doslots (slot parent)
+	(let ((value (get-local-value parent slot)))
+	  (s-value-fn-save-fn-symbol schema slot value)))))
+  (activate-new-instance-cns schema))
 
-;; activates all cns in new instance (which all should be unconnected)
 (defun activate-new-instance-cns (schema)
-  (doslots
-      (slot schema)
+  (doslots (slot schema)
     (let ((value (get-local-value schema slot)))
-      (cond ((not (constraint-p value))
-	     nil)
-	    ((not (null (CN-os value)))
-	     ;; inherited cn that belongs to another os
-	     nil)
-	    ((cn-connection-p value :unconnected)
-	     (add-constraint-to-slot schema slot value))
-	    (t
-	     (cerror "don't activate cn" "initializing <~S,~S>: found connected cn ~S with os ~S"
-		     schema slot value (CN-os value)))
-	    ))))
-
-(defun connect-add-constraint (cn)
-  (when (and (os-p (cn-os cn))
-	     (cn-connection-p cn :unconnected))
-    (connect-constraint cn))
-    cn)
+      (if (constraint-p value)
+	  (add-constraint-to-slot schema slot value)))))
 
 (defun connect-constraint (cn)
-  (let* ((cn-os (CN-os cn))
-	 (cn-var-paths (CN-variable-paths cn)))
-    (let* ((root-obj (os-object cn-os))
+  (let* ((cn-var-paths (CN-variable-paths cn)))
+    (let* ((root-obj (os-object (CN-os cn)))
 	   (cn-path-links nil)
 	   (paths-broken nil)
 	   var-os-list)
@@ -205,7 +139,7 @@
 			(set-object-slot-prop obj slot :sb-path-constraints
 					      (adjoin cn nil))
 			(push (os obj slot) cn-path-links)
-			(copy-down-slot-value obj slot)
+			(s-value-fn-save-fn-symbol obj slot (g-value obj slot))
 			(setf obj (g-value obj slot))))))
       (setf (CN-path-slot-list cn) cn-path-links)
       (setf (CN-variables cn)
@@ -226,25 +160,11 @@
 (defun create-object-slot-var (obj slot)
   (let ((var (create-mg-variable :os (os obj slot))))
     (set-object-slot-prop obj slot :sb-variable var)
-    (copy-down-slot-value obj slot)
+    (s-value-fn-save-fn-symbol obj slot (g-value obj slot))
     var))
 
-(defun copy-down-slot-value (obj slot)
-  (unless (has-slot-p obj slot)
-    (LET ((OBJ OBJ) (SLOT SLOT) (VALUE (G-VALUE OBJ SLOT)))
-      (IF (OR (CONSTRAINT-P VALUE) (CONSTRAINT-P (GET-LOCAL-VALUE OBJ SLOT)))
-	  (CERROR "cont" "can't set <~S,~S> to constraint" OBJ SLOT))
-      (S-VALUE-FN-SAVE-FN-SYMBOL OBJ SLOT VALUE)
-      VALUE)))
-
-(defun get-variable-value (var)
-  (var-value var))
-
-(defun set-variable-value (var val)
-  (setf (var-value var) val))
-
 (eval-when (:load-toplevel :execute)
-  (loop for (fn hook-fn) on '(s-value-fn s-value-fn-hook
+  (loop for (fn hook-fn) on '(s-value-fn s-value-fn-save-fn-symbol
 			      kr-init-method kr-init-method-hook
 			      ) by #'CDDR
      do (install-hook fn hook-fn)))
