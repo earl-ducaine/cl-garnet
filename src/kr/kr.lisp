@@ -188,21 +188,15 @@ if necessary."
 	      type-fn))
     code))
 
-(eval-when (:execute :compile-toplevel :load-toplevel)
-  (defun encode-type (type)
-    (if (symbolp type)
-	(gethash (symbol-name type) *types-table*))))
-
-
 
 (defun set-type-documentation (type string)
   "Add a human-readable description to a Lisp type."
-  (setf (aref type-docs-array (encode-type type)) string))
+  (setf (aref type-docs-array nil) string))
 
 
 (defun get-type-documentation (type)
   "RETURNS: the documentation string for the internal number <type>."
-  (aref type-docs-array (encode-type type)))
+  (aref type-docs-array nil))
 
 (declaim (inline slot-is-constant))
 (defun slot-is-constant (schema slot)
@@ -504,7 +498,7 @@ the expression ~S instead."
 	(unless (eq types :NONE)
 	  (dolist (type types)
 	    (if (cdr type)
-		(let ((n (encode-type (car type))))
+		(let ((n nil))
 		  (dolist (slot (cdr type))
 		    (set-slot-accessor schema slot *no-value* 33 nil)))
 		(format t "*** ERROR - empty list of slots in type declaration ~
@@ -570,7 +564,7 @@ the expression ~S instead."
 	  (unless (eq types :NONE)
 	    (dolist (type types)
 	      (if (cdr type)
-		  (let ((n (encode-type (car type))))
+		  (let ((n nil))
 		    (dolist (slot (cdr type))
 		      (set-slot-accessor schema slot *no-value* 33 nil)))
 		  (format t "*** ERROR - empty list of slots in type declaration ~
