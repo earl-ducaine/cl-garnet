@@ -98,10 +98,10 @@
 
 (ADD-NEW-TYPE "FIXNUM" '(SATISFIES SB-INT:FIXNUMP) 'SB-INT:FIXNUMP)
 
-(defstruct (update-info (:print-function update-info-print-function))
-	window
-	old-bbox
-	bits)
+(defstruct (update-info)
+  window
+  old-bbox
+  bits)
 
 (create-instance 'view-object nil
   :declare ((:type
@@ -114,7 +114,9 @@
   :declare ((:type
 	     ((or (is-a-p line-style) null) :line-style)
 	     ((or (is-a-p filling-style) null) :filling-style)
-	     ((member  :copy :xor :no-op :or :clear :set :copy-inverted
+	     ((member
+		       ;; :no-op
+		       :or :clear :set :copy-inverted
 		      :invert :and :equiv :nand :nor :and-inverted
 		      :and-reverse :or-inverted :or-reverse)
 	      :draw-function))))
