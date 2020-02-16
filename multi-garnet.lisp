@@ -50,16 +50,8 @@
 (defmacro cn-connection-p (cn val)
   `(eq (cn-connection ,cn) ,val))
 
-(defun create-mg-constraint (&key (variable-paths nil) (variable-names nil))
-  (let ((cn (make-sb-constraint :strength :max
-				:methods (list
-					  (create-mg-method :output-indices '(1) :code
-							    #'(lambda (cn) nil)))
-				:variables nil
-				:selected-method nil
-				:mark nil
-				:set-slot-fn nil
-				:other-slots nil)))
+(defun create-mg-constraint (&key variable-paths variable-names)
+  (let ((cn (make-sb-constraint)))
     (setf (cn-connection cn) :unconnected)
     (setf (cn-variable-paths cn) variable-paths)
     cn))
@@ -76,28 +68,9 @@
     (setf (VAR-os var) os)
     var))
 
-;; returns true if this is a *multi-garnet* constraint
 (defun constraint-p (obj)
   (and (sb-constraint-p obj)
        (not (null (CN-connection obj)))))
-
-(defun create-mg-method (&key (output-indices nil)
-			   (code #'(lambda (cn) cn)))
-  (let ((mt (create-sb-method :outputs nil
-			      :code code)))
-    nil
-    mt))
-
-(defun init-method-outputs (cn)
-  (let ((vars (cn-variables cn)))
-    (loop for mt in (cn-methods cn) do
-	 (setf (mt-outputs mt)
-	       (loop for index in (get-sb-method-slot mt :mg-output-indices)
-		  collect (nth index vars))))))
-
-(defvar *update-invalid-paths-formulas* t)
-(defvar *invalidated-path-constraints* nil)
-
 
 (defun add-constraint-to-slot (obj slot cn)
   (setf (CN-os cn) (os obj slot))
@@ -147,7 +120,6 @@
 	       collect (create-object-slot-var
 			(os-object var-os)
 			(os-slot var-os))))
-      (init-method-outputs cn)
       (setf (CN-connection cn) :connected))))
 
 (defun set-object-slot-prop (obj slot prop val)
