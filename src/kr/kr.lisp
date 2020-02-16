@@ -190,12 +190,8 @@ if necessary."
 
 (eval-when (:execute :compile-toplevel :load-toplevel)
   (defun encode-type (type)
-    "Given a LISP type, returns its encoding."
-    (format t "encode-type: ~s~%" type)
-    (let ((types-table *types-table*))
-      (cond ((symbolp type)
-	     (format t "type is symbol~%")
- 	     (or (gethash (symbol-name type) *types-table*)))))))
+    (if (symbolp type)
+	(gethash (symbol-name type) *types-table*))))
 
 
 
