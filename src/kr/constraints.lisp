@@ -98,31 +98,14 @@
 
 (ADD-NEW-TYPE "FIXNUM" '(SATISFIES SB-INT:FIXNUMP) 'SB-INT:FIXNUMP)
 
-(defstruct (update-info)
-  window
-  old-bbox
-  bits)
 
-(create-instance 'view-object nil
-  :declare ((:type
-		   (fixnum :hit-threshold)
-		   (known-as-type :known-as)
-		   (kr-boolean :visible))
-	    (:local-only-slots (:window nil) (:parent nil))))
-
-(create-instance 'graphical-object view-object
+(create-instance 'graphical-object nil
   :declare ((:type
 	     ((or (is-a-p line-style) null) :line-style)
-	     ((or (is-a-p filling-style) null) :filling-style)
-	     ((member
-		       ;; :no-op
-		       :or :clear :set :copy-inverted
-		      :invert :and :equiv :nand :nor :and-inverted
-		      :and-reverse :or-inverted :or-reverse)
-	      :draw-function))))
+	     ((or (is-a-p filling-style) null) :filling-style))))
 
 (create-instance 'rectangle graphical-object
   :declare ((:update-slots :fast-redraw-p :top)))
 
-(define-method :initialize view-object (gob)
-    (s-value gob :update-info (make-update-info)))
+(define-method :initialize graphical-object (gob)
+	       (S-VALUE-FN GOB :UPDATE-INFO 'A))
