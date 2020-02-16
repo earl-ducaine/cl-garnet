@@ -90,33 +90,20 @@
 
 
 ;; Make this the first type
-(def-kr-type kr-boolean () T
-	     "Any value is legal")
 
-(def-kr-type KNOWN-AS-TYPE () '(or keyword null)
-  "[keyword]")
+;;(DEF-KR-TYPE KR-BOOLEAN NIL T "Any value is legal")
 
-(def-kr-type DRAW-FUNCTION ()
-  '(member :copy :xor :no-op :or :clear :set
-    :copy-inverted :invert :and :equiv :nand :nor
-    :and-inverted :and-reverse :or-inverted :or-reverse)
-  "[one of :COPY, :XOR, :NO-OP, :OR, :CLEAR, :SET,
-                :COPY-INVERTED, :INVERT, :AND, :EQUIV, :NAND, :NOR,
-                :AND-INVERTED, :AND-REVERSE, :OR-INVERTED, or :OR-REVERSE]")
+(ADD-NEW-TYPE "KR-BOOLEAN" 'T 'T-P "Any value is legal")
 
-(def-kr-type LINE-STYLE-OR-NIL ()
-  '(or (is-a-p opal::line-style) null)
-  "[either an instance of opal:LINE-STYLE or NIL]")
+(ADD-NEW-TYPE "KNOWN-AS-TYPE" '(OR KEYWORD NULL)
+              #'(LAMBDA (VALUE)
+                  (DECLARE (OPTIMIZE (SPEED 3) (SAFETY 0) (SPACE 0) (DEBUG 0)))
+                  (OR (KEYWORDP VALUE) (NULL VALUE)))
+              "[keyword]")
 
-(def-kr-type FILLING-STYLE-OR-NIL ()
-  '(or (is-a-p opal::filling-style) null)
-  "[either an instance of opal:FILLING-STYLE or NIL]")
 
-(defun fixnump (object) (typep object 'fixnum))
-
-(def-kr-type fixnum ()
-  '(satisfies sb-int:fixnump)
-  "Potential efficiency hack.")
+(ADD-NEW-TYPE "FIXNUM" '(SATISFIES SB-INT:FIXNUMP) 'SB-INT:FIXNUMP
+              "Potential efficiency hack.")
 
 (in-package "OPAL")
 

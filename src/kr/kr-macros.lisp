@@ -37,7 +37,6 @@
   value
   (bits 0 :type fixnum))
 
-
 (defstruct (full-sl (:include sl))
   dependents)
 
@@ -72,9 +71,6 @@
 
 (defvar *last-formula* nil
   "Similar to *current-formula*, used for debugging only.")
-
-(defvar *inheritance-relations* '(:is-a)
-  "All relations in this list perform inheritance.")
 
 (defvar *inheritance-inverse-relations* '()
   "Inverses of all relations which perform inheritance.")
@@ -205,22 +201,6 @@
 (defun get-entry-type-code (entry)
   (declare #.*special-kr-optimization*)
   (extract-type-code (sl-bits entry)))
-
-(defmacro def-kr-type (typename-or-type &optional args body type-doc)
-  (cond ((listp typename-or-type)
-	   (unless (eq (car typename-or-type) 'QUOTE)
-	     (error "Illegal typename to def-kr-type: ~S" typename-or-type))
-	   (unless (and (null args) (null body) (null type-doc))
-	     (error "Illegal specification: (DEF-KR-TYPE ~S ~S ~S ~S)"
-			typename-or-type args body type-doc))
-	   (setq body typename-or-type)
-	   (setq typename-or-type NIL))
-        (args
-	   (error "DEF-KR-TYPE only works with NULL args, not ~S~%" args))
-        (T
-	   (setq typename-or-type (symbol-name typename-or-type))))
-  (setq body (eval body))
-  `(add-new-type ,typename-or-type ',body ,(type-to-fn body) ,type-doc))
 
 (defmacro memberq (item list)
   "Member, but with a test of EQ.  Interestingly, if 'item' is a keyword,

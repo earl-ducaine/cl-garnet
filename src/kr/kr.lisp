@@ -3,8 +3,9 @@
 
 (defun g-value-inherit-values (schema slot)
   (declare (ftype (function (t &optional t) t) formula-fn))
+  (format t "*inheritance-relations* ~s~%" *inheritance-relations*)
   (let (has-parents)
-    (dolist (relation *inheritance-relations*)
+    (let ((relation :is-a))
       (dolist (parent (if (eq relation :IS-A)
 			  (get-local-value schema :IS-A)
 			  (get-local-value schema relation)))
@@ -31,12 +32,10 @@
 
 (defun g-value-no-copy (schema slot &optional skip-local)
   (unless skip-local
-    ;; Is there a local value?
     (let ((value (slot-accessor schema slot)))
       (when value
 	(return-from g-value-no-copy (sl-value value)))))
-  ;; Now try inherited values.
-  (dolist (relation *inheritance-relations*)
+  (let ((relation :is-a))
     (dolist (*schema-self* (if (eq relation :IS-A)
 			       (get-local-value schema :IS-A)
 			       (get-local-value schema relation)))
@@ -206,7 +205,6 @@ the lisp predicate to test this ('NULL, 'KEYWORDP, etc....)"
 		    (declare #.*special-kr-optimization*)
 		    ,(make-lambda-body type)))))
 	    ((setq code (gethash (symbol-name type) types-table))
-	     ;; is this a def-kr-type?
 	     (code-to-type-fn code))
 	    (T
 	     `',(find-lisp-predicate type))))))
@@ -223,20 +221,18 @@ the lisp predicate to test this ('NULL, 'KEYWORDP, etc....)"
   "Return the next available type-code, and extend the type arrays
 if necessary."
   (let ((curlen (length types-array)))
-   (when (>= *next-type-code* curlen)
-    ;; out of room, allocate more space
-    (let ((newlen (+ curlen *types-array-inc*)))
-     (setf types-array     (copy-extend-array types-array     curlen newlen)
-           type-fns-array  (copy-extend-array type-fns-array  curlen newlen)
-           type-docs-array (copy-extend-array type-docs-array curlen newlen))))
-   ;; in any case, return current code, then add one to it
-   (prog1
-       *next-type-code*
-     (incf *next-type-code*))))
+    (when (>= *next-type-code* curlen)
+      ;; out of room, allocate more space
+      (let ((newlen (+ curlen *types-array-inc*)))
+	(setf types-array     (copy-extend-array types-array     curlen newlen)
+	      type-fns-array  (copy-extend-array type-fns-array  curlen newlen)
+	      type-docs-array (copy-extend-array type-docs-array curlen newlen))))
+    ;; in any case, return current code, then add one to it
+    (prog1
+	*next-type-code*
+      (incf *next-type-code*))))
 
 (defun add-new-type (typename type-body type-fn &optional type-doc)
-  "This adds a new type, if necessary
-Always returns the CODE of the resulting type (whether new or not)"
   (with-types-table-lock-held (types-table)
     (let ((code (gethash (or typename type-body) types-table)))
       (if code
@@ -283,7 +279,7 @@ Always returns the CODE of the resulting type (whether new or not)"
 
 (defun set-type-documentation (type string)
   "Add a human-readable description to a Lisp type."
-   (setf (aref type-docs-array (encode-type type)) string))
+  (setf (aref type-docs-array (encode-type type)) string))
 
 
 (defun get-type-documentation (type)
@@ -306,18 +302,18 @@ Always returns the CODE of the resulting type (whether new or not)"
   (let ((entry (slot-accessor schema slot)))
     (do-one-or-list (formula (slot-dependents entry) T)
       (if (and (not-deleted-p formula) (cache-is-valid formula))
-	(let* ((new-schema (on-schema formula))
-	       (new-slot (on-slot formula))
-	       (schema-ok (schema-p new-schema))
-	       (new-entry  NIL))
-	  (unless (and new-schema new-slot)
-	    (continue-out))
-	  (if schema-ok
-	      (setf new-entry (slot-accessor new-schema new-slot)))
-	  (set-cache-is-valid formula nil)
-	  (if (and schema-ok new-entry)
-	    (if (slot-dependents new-entry)
-	      (propagate-change new-schema new-slot))))))))
+	  (let* ((new-schema (on-schema formula))
+		 (new-slot (on-slot formula))
+		 (schema-ok (schema-p new-schema))
+		 (new-entry  NIL))
+	    (unless (and new-schema new-slot)
+	      (continue-out))
+	    (if schema-ok
+		(setf new-entry (slot-accessor new-schema new-slot)))
+	    (set-cache-is-valid formula nil)
+	    (if (and schema-ok new-entry)
+		(if (slot-dependents new-entry)
+		    (propagate-change new-schema new-slot))))))))
 
 (defun visit-inherited-values (schema a-slot function)
   (let* ((entry (slot-accessor schema a-slot))
@@ -416,7 +412,7 @@ Always returns the CODE of the resulting type (whether new or not)"
   value)
 
 (defun find-parent (schema slot)
-  (dolist (relation *inheritance-relations*)
+  (let ((relation :is-a))
     (dolist (a-parent (if (eq relation :is-a)
 			  (get-local-value schema :IS-A)
 			  (get-local-value schema relation)))
