@@ -98,8 +98,6 @@
 
 (ADD-NEW-TYPE "FIXNUM" '(SATISFIES SB-INT:FIXNUMP) 'SB-INT:FIXNUMP)
 
-(in-package "OPAL")
-
 (defstruct (update-info (:print-function update-info-print-function))
 	window
 	old-bbox

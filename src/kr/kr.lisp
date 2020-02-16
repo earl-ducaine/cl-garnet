@@ -155,18 +155,18 @@ the lisp predicate to test this ('NULL, 'KEYWORDP, etc....)"
       (setf (svref result i) (svref oldarray i)))
     result))
 
-
 (defun get-next-type-code ()
-  "Return the next available type-code, and extend the type arrays
-if necessary."
   (let ((curlen (length types-array)))
     (when (>= *next-type-code* curlen)
-      ;; out of room, allocate more space
       (let ((newlen (+ curlen *types-array-inc*)))
-	(setf types-array     (copy-extend-array types-array     curlen newlen)
-	      type-fns-array  (copy-extend-array type-fns-array  curlen newlen)
-	      type-docs-array (copy-extend-array type-docs-array curlen newlen))))
-    ;; in any case, return current code, then add one to it
+	(setf types-array (copy-extend-array types-array
+					     curlen newlen)
+	      type-fns-array (copy-extend-array
+			      type-fns-array curlen newlen)
+	      type-docs-array (copy-extend-array
+			       type-docs-array
+			       curlen
+			       newlen))))
     (prog1
 	*next-type-code*
       (incf *next-type-code*))))
@@ -188,60 +188,6 @@ if necessary."
 	      type-fn))
     code))
 
-
-(defun set-type-documentation (type string)
-  "Add a human-readable description to a Lisp type."
-  (setf (aref type-docs-array nil) string))
-
-
-(defun get-type-documentation (type)
-  "RETURNS: the documentation string for the internal number <type>."
-  (aref type-docs-array nil))
-
-(declaim (inline slot-is-constant))
-(defun slot-is-constant (schema slot)
-  (let ((entry (slot-accessor schema slot)))
-    (is-constant (sl-bits entry))))
-
-(declaim (inline mark-as-changed))
-(defun mark-as-changed (schema slot)
-  (let ((entry (slot-accessor schema slot)))
-    (when (and entry (is-parent (sl-bits entry)))
-      (update-inherited-values schema slot (sl-value entry) T)))
-  (propagate-change schema slot))
-
-(defun propagate-change (schema slot)
-  (let ((entry (slot-accessor schema slot)))
-    (do-one-or-list (formula (slot-dependents entry) T)
-      (if (and (not-deleted-p formula) (cache-is-valid formula))
-	  (let* ((new-schema (on-schema formula))
-		 (new-slot (on-slot formula))
-		 (schema-ok (schema-p new-schema))
-		 (new-entry  NIL))
-	    (unless (and new-schema new-slot)
-	      (continue-out))
-	    (if schema-ok
-		(setf new-entry (slot-accessor new-schema new-slot)))
-	    (set-cache-is-valid formula nil)
-	    (if (and schema-ok new-entry)
-		(if (slot-dependents new-entry)
-		    (propagate-change new-schema new-slot))))))))
-
-(defun visit-inherited-values (schema a-slot function)
-  (let* ((entry (slot-accessor schema a-slot))
-	 (parent-entry (when entry (sl-value entry))))
-    (dolist (inverse *inheritance-inverse-relations*)
-      (dolist (child (if (eq inverse :IS-A-INV)
-			 (get-local-value schema :IS-A-INV)
-			 (get-local-value schema inverse)))
-	(let* ((entry (slot-accessor child a-slot))
-	       (value (when entry (sl-value entry))))
-	  (when (and value
-		     (is-inherited (sl-bits entry))
-		     (eq value parent-entry))
-	    (visit-inherited-values child a-slot function)
-	    (funcall function child a-slot)))))))
-
 (declaim (inline slot-constant-p))
 (defun slot-constant-p (schema slot)
   (let ((entry (slot-accessor schema slot)))
@@ -252,16 +198,13 @@ if necessary."
   (locally (declare #.*special-kr-optimization*)
     (unless (schema-p schema)
       (return-from s-value-fn (values value t)))
-    (let* ((entry (slot-accessor schema slot))
-	   (old-value
-	    nil
-	     )
-	   is-depended)
-      (let ((is-formula nil) (is-relation nil)
-	    (was-formula (formula-p old-value)))
+    (let* ((entry (slot-accessor schema slot)))
+      (let ((is-formula nil)
+	    (is-relation nil)
+	    (was-formula (formula-p nil)))
 	(when (and (setf is-relation (relation-p slot))
 		   (eq (setf value (check-relation-slot schema slot value)) *no-value*))
-	  (return-from s-value-fn (values old-value nil)))
+	  (return-from s-value-fn (values nil nil)))
 	(when (formula-p value)
 	  (setf is-formula T)
 	  (setf (on-schema value) schema)
@@ -274,28 +217,24 @@ if necessary."
 	  (get-value schema :invalidate-demon))
 	(cond
 	  ((and was-formula (not is-formula))
-	   (setf (cached-value old-value) value)
-	   (set-cache-is-valid old-value NIL))
+	   (setf (cached-value nil) value)
+	   (set-cache-is-valid nil NIL))
 	  (t
 	   (when (and is-formula (null (cached-value value)))
 	     (setf (cached-value value)
-		   (if was-formula (cached-value old-value) old-value)))
+		   (if was-formula (cached-value nil) nil)))
 	   (when is-relation
 	     (link-in-relation schema slot value))
 	   (let ((new-bits (or the-bits *local-mask*)))
 	     (if entry
-		 ;; This is a special slot - just set it
 		 (setf (sl-value entry) value
 		       (sl-bits entry) new-bits)
-		 ;; This is not a special slot.
 		 (setf entry (set-slot-accessor schema
 						slot value new-bits nil))))))
 	(when (and the-bits (is-parent the-bits))
 	  (update-inherited-values schema slot value T))
-	(when is-depended
-	  (propagate-change schema slot)) ;;)
 	(when (and was-formula (not is-formula))
-	  (set-cache-is-valid old-value T))
+	  (set-cache-is-valid nil T))
 	(values value nil)))))
 
 (defun internal-s-value (schema slot value)

@@ -1,7 +1,7 @@
 (in-package :kr)
 
 (do-schema-body-alt
-    (make-a-new-schema '*axis-rectangle*) opal::rectangle
+    (make-a-new-schema '*axis-rectangle*) rectangle
     (cons :height-cn
 	  (create-mg-constraint
 	   :variable-paths '((:box) (:height))

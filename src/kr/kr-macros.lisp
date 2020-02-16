@@ -524,9 +524,9 @@ at slot ~S  (non-schema value is ~S, last schema was ~S)"
 	 ,override
 	 ,@(cdr slots)))))
 
-(defmacro create-prototype (name &rest slots)
-  "Creates a prototype; really just another name for create-schema."
-  `(create-schema ,name ,@slots))
+;; (defmacro create-prototype (name &rest slots)
+;;   "Creates a prototype; really just another name for create-schema."
+;;   `(create-schema ,name ,@slots))
 
 (defmacro create-instance (name class &body body)
   "If CLASS is not nil, creates a schema with an IS-A slot set to that class.
