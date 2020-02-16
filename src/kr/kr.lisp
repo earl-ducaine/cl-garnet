@@ -191,19 +191,13 @@ if necessary."
 (eval-when (:execute :compile-toplevel :load-toplevel)
   (defun encode-type (type)
     "Given a LISP type, returns its encoding."
+    (format t "encode-type: ~s~%" type)
     (let ((types-table *types-table*))
-      (cond ((gethash type *types-table*))
-	    ((and (listp type) (eq (car type) 'SATISFIES))
-	     ;; add new satisfies type
-	     (add-new-type NIL type (type-to-fn type)))
-	    ((symbolp type)
-	     (or (gethash (symbol-name type) *types-table*)
-		 (let ((predicate (find-lisp-predicate type)))
-		   (when predicate
-		     (add-new-type NIL type predicate)))
-		 nil
-		 ))
-	    (T)))))
+      (cond ((symbolp type)
+	     (format t "type is symbol~%")
+ 	     (or (gethash (symbol-name type) *types-table*)))))))
+
+
 
 (defun set-type-documentation (type string)
   "Add a human-readable description to a Lisp type."
