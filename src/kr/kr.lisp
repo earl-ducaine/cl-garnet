@@ -134,17 +134,6 @@ the lisp predicate to test this ('NULL, 'KEYWORDP, etc....)"
 		 (error "Could not find predicate for simple-type ~S~%"
 			simple-type))))))
 
-(defun make-lambda-body (complex-type)
-  (let (code)
-    (cond ((consp complex-type)	;; complex type (a list)
-	   (let ((fn   (first complex-type))
-		 (args (rest  complex-type)))
-))
-	  ((setq code (gethash (symbol-name complex-type) *types-table*))
-	   (make-lambda-body (code-to-type code)))
-	  (T
-	   (list (find-lisp-predicate complex-type) 'value)))))
-
 (defun type-to-fn (type)
   (let (code)
     (cond ((consp type)			; complex type
