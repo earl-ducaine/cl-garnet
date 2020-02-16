@@ -1,6 +1,6 @@
 
 
-(in-package :kr)
+;; (in-package :kr)
 
 (defvar *multi-garnet-version* "2.2")
 
@@ -8,7 +8,7 @@
   (defun get-save-fn-symbol-name (sym)
     (cond ((symbolp sym)
 	   (intern (concatenate 'string (symbol-name sym) "-SAVE-FN-SYMBOL")
-		   (find-package :kr)))
+		   (find-package :cl-user)))
 	  ((and (consp sym)
 		(eq :quote (first sym))
 		(symbolp (second sym)))
@@ -160,7 +160,7 @@
 (defun copy-down-mg-constraints (schema)
   (let ((parent (car (get-value schema :is-a))))
     (when parent
-      (let* ((local-only-slots-val (kr::g-value-no-copy parent :LOCAL-ONLY-SLOTS))
+      (let* ((local-only-slots-val (g-value-no-copy parent :LOCAL-ONLY-SLOTS))
 	     (local-only-slots (if (listp local-only-slots-val)
 				   local-only-slots-val
 				   (list local-only-slots-val))))
@@ -278,8 +278,8 @@
 		(eq :max (CN-strength cn))))))
   cn)
 
-(defvar *fn-to-hook-plist* '(kr::s-value-fn                   s-value-fn-hook
-			     kr::kr-init-method               kr-init-method-hook
+(defvar *fn-to-hook-plist* '(s-value-fn                   s-value-fn-hook
+			     kr-init-method               kr-init-method-hook
 			     ))
 
 (defun enable-multi-garnet ()

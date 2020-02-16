@@ -1,5 +1,5 @@
 
-(in-package :kr)
+;; (in-package :kr)
 
 
 (defvar *mark-counter* 0)

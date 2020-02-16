@@ -1,4 +1,4 @@
-(in-package :kr)
+;; (in-package :kr)
 
 (do-schema-body-alt
     (make-a-new-schema '*axis-rectangle*) rectangle
