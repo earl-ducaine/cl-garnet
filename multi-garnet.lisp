@@ -204,40 +204,28 @@
 (defun connect-constraint (cn)
   (let* ((cn-os (CN-os cn))
 	 (cn-var-paths (CN-variable-paths cn)))
-    (cond ((not (cn-connection-p cn :unconnected))
-	   (cerror "noop" "trying to connect constraint ~S with connection ~S"
-		   cn (CN-connection cn))
-	   nil)
-	  (t
-	   (let* ((root-obj (os-object cn-os))
-		  (cn-path-links nil)
-		  (paths-broken nil)
-		  var-os-list)
-	     (setf var-os-list
-		   (loop for path in cn-var-paths collect
-			(let ((obj root-obj))
-			  (loop for (slot next-slot) on path do
-			       (when (null next-slot)
-				 (return (os obj slot)))
-			       (set-object-slot-prop obj slot :sb-path-constraints
-						     (adjoin cn nil))
-			       (push (os obj slot) cn-path-links)
-			       (copy-down-slot-value obj slot)
-			       (setf obj (g-value obj slot))
-			       (when (not (schema-p obj))
-				 (setf paths-broken t)
-				 (return nil))
-			       ))))
-	     (setf (CN-path-slot-list cn) cn-path-links)
-	     (cond (paths-broken
-		    (setf (CN-variables cn) nil)
-		    (setf (CN-connection cn) :broken-path))
-		   (t
-		    (setf (CN-variables cn)
-			  (loop for var-os in var-os-list
-			     collect (create-object-slot-var (os-object var-os) (os-slot var-os))))
- 		    (init-method-outputs cn)
-		    (setf (CN-connection cn) :connected))))))))
+    (let* ((root-obj (os-object cn-os))
+	   (cn-path-links nil)
+	   (paths-broken nil)
+	   var-os-list)
+      (setf var-os-list
+	    (loop for path in cn-var-paths collect
+		 (let ((obj root-obj))
+		   (loop for (slot next-slot) on path do
+			(when (null next-slot)
+			  (return (os obj slot)))
+			(set-object-slot-prop obj slot :sb-path-constraints
+					      (adjoin cn nil))
+			(push (os obj slot) cn-path-links)
+			(copy-down-slot-value obj slot)
+			(setf obj (g-value obj slot))))))
+      (setf (CN-path-slot-list cn) cn-path-links)
+      (setf (CN-variables cn)
+	    (loop for var-os in var-os-list
+	       collect (create-object-slot-var
+			(os-object var-os) (os-slot var-os))))
+      (init-method-outputs cn)
+      (setf (CN-connection cn) :connected))))
 
 (defun set-object-slot-prop (obj slot prop val)
   (let* ((os-props (g-value-body OBJ :SB-OS-PROPS))
