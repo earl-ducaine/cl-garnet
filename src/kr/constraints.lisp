@@ -88,17 +88,15 @@
 		    (is-a-p parent type))
 	    (return T))))))
 
-(ADD-NEW-TYPE "KR-BOOLEAN" 'T 'T-P "Any value is legal")
+(ADD-NEW-TYPE "KR-BOOLEAN" 'T 'T-P)
 
 (ADD-NEW-TYPE "KNOWN-AS-TYPE" '(OR KEYWORD NULL)
               #'(LAMBDA (VALUE)
                   (DECLARE (OPTIMIZE (SPEED 3) (SAFETY 0) (SPACE 0) (DEBUG 0)))
-                  (OR (KEYWORDP VALUE) (NULL VALUE)))
-              "[keyword]")
+                  (OR (KEYWORDP VALUE) (NULL VALUE))))
 
 
-(ADD-NEW-TYPE "FIXNUM" '(SATISFIES SB-INT:FIXNUMP) 'SB-INT:FIXNUMP
-              "Potential efficiency hack.")
+(ADD-NEW-TYPE "FIXNUM" '(SATISFIES SB-INT:FIXNUMP) 'SB-INT:FIXNUMP)
 
 (in-package "OPAL")
 

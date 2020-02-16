@@ -110,19 +110,14 @@ an inherited formula."
 (defparameter type-docs-array NIL
   "Array used to decode a number into its corresponding documentation string.")
 
-(declaim (inline code-to-type code-to-type-fn code-to-type-doc check-kr-type))
+(declaim (inline code-to-type
+		 code-to-type-fn))
 
 (defun code-to-type (type-code)
   (svref types-array type-code))
 
 (defun code-to-type-fn (type-code)
   (svref type-fns-array type-code))
-
-(defun code-to-type-doc (type-code)
-  (svref type-docs-array type-code))
-
-(defun check-kr-type (value code)
-  (funcall (code-to-type-fn code) value))
 
 
 (declaim (inline find-lisp-predicate))
@@ -144,31 +139,7 @@ the lisp predicate to test this ('NULL, 'KEYWORDP, etc....)"
     (cond ((consp complex-type)	;; complex type (a list)
 	   (let ((fn   (first complex-type))
 		 (args (rest  complex-type)))
-	     (case fn
-	       ((OR AND NOT)
-		(cons fn (mapcar #'make-lambda-body args)))
-	       (MEMBER
-		`(memberq value ',args))
-	       ((IS-A-P IS-A)
-		`(is-a-p value ,(second complex-type)))
-	       (SATISFIES
-		`(,(second complex-type) value))
-	       ((INTEGER REAL)
-		(let* ((pred (find-lisp-predicate fn))
-		       (lo (first args))
-		       (lo-expr (when (and lo (not (eq lo '*)))
-				  (if (listp lo)
-				      `((< ,(car lo) value))
-				      `((<= ,lo value)))))
-		       (hi (second args))
-		       (hi-expr (when (and hi (not (eq hi '*)))
-				  (if (listp hi)
-				      `((> ,(car hi) value))
-				      `((>= ,hi value))))))
-		  (if (or lo-expr hi-expr)
-		      `(and (,pred value) ,@lo-expr ,@hi-expr)
-		      `(,pred value))))
-	       (T  (error "Unknown complex-type specifier: ~S~%" fn)))))
+))
 	  ((setq code (gethash (symbol-name complex-type) *types-table*))
 	   (make-lambda-body (code-to-type code)))
 	  (T
@@ -211,25 +182,16 @@ if necessary."
 	*next-type-code*
       (incf *next-type-code*))))
 
-(defun add-new-type (typename type-body type-fn &optional type-doc)
-  (let ((code (gethash (or typename type-body)  *types-table*)))
-    (if code
-	(if (equal (code-to-type code) type-body)
-	    (return-from add-new-type code)
-	    nil)
-	(progn
-	  (setq code (or (gethash type-body *types-table*)
-			 (get-next-type-code)))
-	  (setf (gethash typename *types-table*) code)))
-    (unless (gethash type-body *types-table*)
-      (setf (gethash type-body *types-table*) code))
+(defun add-new-type (typename type-body type-fn)
+  (let ((code (get-next-type-code)))
+    (setf (gethash typename *types-table*) code)
+    (setf (gethash type-body *types-table*) code)
     (setf (svref types-array code)
 	  (if typename
 	      (if (stringp typename)
 		  (intern typename (find-package "KR"))
 		  typename)
 	      type-body))
-    (setf (svref type-docs-array code) (or type-doc NIL))
     (setf (svref type-fns-array  code)
 	  (if (and (symbolp type-fn) ;; koz
 		   (fboundp type-fn))
