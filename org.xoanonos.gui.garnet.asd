@@ -5,5 +5,4 @@
   :description " GUI toolkit (c. 1990 look/feel)"
   :components
   ((:file "kr-macros")
-   (:file "kr")
-   (:file "sky-blue")))
+   (:file "kr")))
