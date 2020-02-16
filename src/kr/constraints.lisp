@@ -2,10 +2,10 @@
 (in-package :kr)
 
 
-(ADD-NEW-TYPE "KNOWN-AS-TYPE" '(OR KEYWORD NULL)
-              #'(LAMBDA (VALUE)
-                  (DECLARE (OPTIMIZE (SPEED 3) (SAFETY 0) (SPACE 0) (DEBUG 0)))
-                  (OR (KEYWORDP VALUE) (NULL VALUE))))
+(add-new-type "KNOWN-AS-TYPE" '(or keyword null)
+              #'(lambda (value)
+                  (declare (optimize (speed 3) (safety 0) (space 0) (debug 0)))
+                  (or (keywordp value) (null value))))
 
 
 (ADD-NEW-TYPE "FIXNUM" '(SATISFIES SB-INT:FIXNUMP) 'SB-INT:FIXNUMP)
