@@ -206,15 +206,15 @@
   "Member, but with a test of EQ.  Interestingly, if 'item' is a keyword,
 then it is faster to use the normal member fn!"
   (if (keywordp item)
-  `(member ,item ,list)
-  `(member ,item ,list :test #'eq)))
+      `(member ,item ,list)
+      `(member ,item ,list :test #'eq)))
 
 
 (defmacro assocq (item alist)
   "Assoc, but with a test of EQ."
   (if (keywordp item)
-  `(assoc ,item ,alist)
-  `(assoc ,item ,alist :test #'eq)))
+      `(assoc ,item ,alist)
+      `(assoc ,item ,alist :test #'eq)))
 
 
 (defmacro do-one-or-list ((var list &optional use-continue) &body body)
@@ -222,42 +222,42 @@ then it is faster to use the normal member fn!"
 <list> is a single value."
   `(let* ((do-one-list ,list)
 	  (,var (if (listp do-one-list) (car do-one-list) do-one-list)))
-    (block nil
-      (tagbody
-       again
-	 (if (null do-one-list)
-	     (return-from nil nil))
-	 ,@body
-       ,@(if use-continue
-	   '(endbody))
-	 (if (not (listp do-one-list))
-	     (return-from nil nil))
-	 (setq do-one-list (cdr do-one-list)
-	       ,var (car do-one-list))
-	 (go again)))))
+     (block nil
+       (tagbody
+	again
+	  (if (null do-one-list)
+	      (return-from nil nil))
+	  ,@body
+	  ,@(if use-continue
+		'(endbody))
+	  (if (not (listp do-one-list))
+	      (return-from nil nil))
+	  (setq do-one-list (cdr do-one-list)
+		,var (car do-one-list))
+	  (go again)))))
 
 
 (defmacro push-one-or-list (item accessor-form &optional check-new-p)
   `(let ((current ,accessor-form))
-    (if (null current)
-      (setf ,accessor-form ,item)
-      (if (listp current)
-	,@(if check-new-p
-	    `((if (not (member ,item current))
-	      (setf ,accessor-form (cons ,item current))))
-	    `((setf ,accessor-form (cons ,item current))))
-	,@(if check-new-p
-	    `((if (not (eq ,item current))
-		(setf ,accessor-form (list ,item current))))
-	    `((setf ,accessor-form (list ,item current))))))))
+     (if (null current)
+	 (setf ,accessor-form ,item)
+	 (if (listp current)
+	     ,@(if check-new-p
+		   `((if (not (member ,item current))
+			 (setf ,accessor-form (cons ,item current))))
+		   `((setf ,accessor-form (cons ,item current))))
+	     ,@(if check-new-p
+		   `((if (not (eq ,item current))
+			 (setf ,accessor-form (list ,item current))))
+		   `((setf ,accessor-form (list ,item current))))))))
 
 
 (defmacro delete-one-or-list (item accessor-form)
   `(let ((current ,accessor-form))
-    (if (listp current)
-      (setf ,accessor-form (delete ,item current))
-      (if (eq ,item current)
-	(setf ,accessor-form NIL)))))
+     (if (listp current)
+	 (setf ,accessor-form (delete ,item current))
+	 (if (eq ,item current)
+	     (setf ,accessor-form NIL)))))
 
 (defmacro continue-out ()
   "Allow the current iteration of do-one-or-list to be terminated
@@ -339,7 +339,7 @@ modified to be a full-slot structure."
   (if value
       `(set-formula-number ,thing (logior (a-formula-number ,thing) 1))
       `(set-formula-number ,thing
-	(logand (a-formula-number ,thing) ,(lognot 1)))))
+			   (logand (a-formula-number ,thing) ,(lognot 1)))))
 
 (defmacro cache-mark (thing)
   `(logand (a-formula-number ,thing) (lognot 1)))
@@ -349,7 +349,7 @@ modified to be a full-slot structure."
 
 (defmacro iterate-slot-value ((a-schema inherited everything check-formula-p)
 			      &body body)
-"Iterate the <body> for all the slots in the <schema>, with the variable
+  "Iterate the <body> for all the slots in the <schema>, with the variable
 <slot> bound to each slot in turn and the variable <value> bound to
 the <slot>'s value.
 If <everything> is T, even slots which contain *no-value* (but with same
@@ -379,7 +379,7 @@ bit set) are used."
 	 (schema-bins ,a-schema)))))
 
 (defmacro doslots ((slot-var a-schema &optional inherited) &body body)
-"Executes the <body> with <slot> bound in turn to each slot in the <schema>."
+  "Executes the <body> with <slot> bound in turn to each slot in the <schema>."
   `(iterate-slot-value (,a-schema ,inherited NIL NIL)
      (let ((,slot-var slot))
        ,@body)))
@@ -405,27 +405,27 @@ bit set) are used."
 	       (slot-accessor ,schema-form ,slot))
 		(,value (if ,entry
 			    ,@(progn
-				  `((if (is-inherited (sl-bits ,entry))
-					,@(progn
-					      `((if (a-formula-p (sl-value ,entry))
-						    (sl-value ,entry)))
-					      )
-					(sl-value ,entry))))
+				`((if (is-inherited (sl-bits ,entry))
+				      ,@(progn
+					  `((if (a-formula-p (sl-value ,entry))
+						(sl-value ,entry)))
+					  )
+				      (sl-value ,entry))))
 			    ,@(progn
-				  `(*no-value*)))))
+				`(*no-value*)))))
 	 (if (eq ,value *no-value*)
 	     ,@(cond
-		     (t
-		      `((if ,entry
-			    (setf ,value NIL)
-			    (if (not (formula-p (setf ,value
-						      (g-value-inherit-values ,schema-form ,slot))))
-				(setf ,value NIL)))))
-		     ))
+		 (t
+		  `((if ,entry
+			(setf ,value NIL)
+			(if (not (formula-p (setf ,value
+						  (g-value-inherit-values ,schema-form ,slot))))
+			    (setf ,value NIL)))))
+		 ))
 	 ,@(progn
-	       `((if (a-formula-p ,value)
-		     nil
-		     ,value)))))))
+	     `((if (a-formula-p ,value)
+		   nil
+		   ,value)))))))
 
 (defmacro get-value (schema slot)
   `(g-value-body ,schema ,slot))
@@ -433,7 +433,7 @@ bit set) are used."
 (defmacro g-value (schema &rest slots)
   (if slots
       nil
-    `(progn ,schema)))
+      `(progn ,schema)))
 
 (defun s-value-chain (schema &rest slots)
   (locally (declare #.*special-kr-optimization*)
@@ -447,7 +447,7 @@ bit set) are used."
 	 ((null (cddr s))
 	  (s-value-fn intermediate (first s) (second s)))
       (let ((new-schema nil
-			))
+	      ))
 	(if (null new-schema)
 	    (error
 	     "An intermediate schema is null:  slot ~S of object ~S has value
@@ -525,8 +525,6 @@ at slot ~S  (non-schema value is ~S, last schema was ~S)"
 	 ,@(cdr slots)))))
 
 (defmacro create-instance (name class &body body)
-  "If CLASS is not nil, creates a schema with an IS-A slot set to that class.
-   Otherwise, just creates a schema."
   (when (and (listp class)
 	     (eq (car class) 'QUOTE))
     ;; Prevent a common mistake.
@@ -548,6 +546,12 @@ at slot ~S  (non-schema value is ~S, last schema was ~S)"
 		    ,@(if class `((:is-a ,class)))
 		    ,@body)))
 
-
-
 (defsetf g-value s-value)
+
+(defun merge-declarations (declaration keyword output)
+  (let ((old (find keyword output :key #'second)))
+    (if old
+	(setf (cadr (third old)) (union (cdr declaration)
+					(cadr (third old))))
+	(push `(cons ,keyword ',(cdr declaration)) output)))
+  output)

@@ -11,7 +11,8 @@
    	    :components
 	    ((:file "kr-macros")
 	     (:file "kr")
-	     (:file "constraints" :depends-on (kr))))
+	     ;; (:file "constraints" :depends-on (kr))
+	     ))
    (:module multi-garnet
 	    :pathname "multi-garnet"
 	    :depends-on (kr)

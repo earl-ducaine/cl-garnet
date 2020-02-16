@@ -361,13 +361,6 @@ the expression ~S instead."
 				      bits))))
 		    (set-slot-accessor the-schema slot *no-value* bits NIL))))))))))
 
-(defun merge-declarations (declaration keyword output)
-  (let ((old (find keyword output :key #'second)))
-    (if old
-	(setf (cadr (third old)) (union (cdr declaration)
-					(cadr (third old))))
-	(push `(cons ,keyword ',(cdr declaration)) output)))
-  output)
 
 
 (eval-when (:execute :compile-toplevel :load-toplevel)
@@ -539,3 +532,15 @@ the expression ~S instead."
           "KR typechecking called on value ~S with no type"
           value)
   T)
+
+
+(create-instance 'graphical-object nil
+  :declare ((:type
+	     ((or (is-a-p line-style) null) :line-style)
+	     ((or (is-a-p filling-style) null) :filling-style))))
+
+(create-instance 'rectangle graphical-object
+  :declare ((:update-slots :fast-redraw-p)))
+
+(define-method :initialize graphical-object (gob)
+	       (S-VALUE-FN GOB :UPDATE-INFO 'A))
