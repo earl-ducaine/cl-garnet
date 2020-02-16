@@ -6,5 +6,4 @@
   :components
   ((:file "kr-macros")
    (:file "kr")
-   (:file "sky-blue")
-   (:file "multi-garnet")))
+   (:file "sky-blue")))
