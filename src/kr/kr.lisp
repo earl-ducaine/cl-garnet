@@ -3,46 +3,37 @@
 
 (defun g-value-inherit-values (schema slot)
   (declare (ftype (function (t &optional t) t) formula-fn))
-  (format t "*inheritance-relations* ~s~%" *inheritance-relations*)
-  (let (has-parents)
-    (let ((relation :is-a))
-      (dolist (parent (if (eq relation :IS-A)
-			  (get-local-value schema :IS-A)
-			  (get-local-value schema relation)))
-	(setf has-parents T)
-	(let ((entry (slot-accessor parent slot))
-	      (value *no-value*)
-	      bits
-	      (intermediate-constant NIL))
-	  (when entry
-	    (setf value (sl-value entry))
-	    (when (is-constant (sl-bits entry))
-	      (setf intermediate-constant T)))
-	  (if (eq value *no-value*)
-	      (multiple-value-setq (value bits)
-		(g-value-inherit-values parent slot))
-	      (setf bits (sl-bits entry)))
-	  (unless (eq value *no-value*)
-	    (return-from g-value-inherit-values (values value bits))))))
-    (set-slot-accessor schema slot
-		       nil
-		       *is-parent-mask*
-		       (slot-dependents nil))
-    *no-value*))
+  (dolist (parent (get-local-value schema :IS-A))
+    (let ((entry (slot-accessor parent slot))
+	  (value *no-value*)
+	  bits
+	  (intermediate-constant NIL))
+      (when entry
+	(setf value (sl-value entry))
+	(when (is-constant (sl-bits entry))
+	  (setf intermediate-constant T)))
+      (if (eq value *no-value*)
+	  (multiple-value-setq (value bits)
+	    (g-value-inherit-values parent slot))
+	  (setf bits (sl-bits entry)))
+      (unless (eq value *no-value*)
+	(return-from g-value-inherit-values (values value bits)))))
+  (set-slot-accessor schema slot
+		     nil
+		     *is-parent-mask*
+		     (slot-dependents nil))
+  *no-value*)
 
 (defun g-value-no-copy (schema slot &optional skip-local)
   (unless skip-local
     (let ((value (slot-accessor schema slot)))
       (when value
 	(return-from g-value-no-copy (sl-value value)))))
-  (let ((relation :is-a))
-    (dolist (*schema-self* (if (eq relation :IS-A)
-			       (get-local-value schema :IS-A)
-			       (get-local-value schema relation)))
-      (unless (eq *schema-self* schema)	; avoid infinite loops!
-	(let ((value (g-value-no-copy *schema-self* slot)))
-	  (when value
-	    (return-from g-value-no-copy value)))))))
+  (dolist (*schema-self* (get-local-value schema :IS-A))
+    (unless (eq *schema-self* schema)
+      (let ((value (g-value-no-copy *schema-self* slot)))
+	(when value
+	  (return-from g-value-no-copy value))))))
 
 (defun link-in-relation (schema slot values)
   (let ((inverse (if (eq slot :is-a)
@@ -412,37 +403,34 @@ if necessary."
   value)
 
 (defun find-parent (schema slot)
-  (let ((relation :is-a))
-    (dolist (a-parent (if (eq relation :is-a)
-			  (get-local-value schema :IS-A)
-			  (get-local-value schema relation)))
-      (when a-parent
-	(let ((value (LOCALLY
-			 (DECLARE (OPTIMIZE (SPEED 3) (SAFETY 0) (SPACE 0) (DEBUG 0)))
-		       (LET* ((.a-local-var-alt. (SLOT-ACCESSOR A-PARENT SLOT))
-			      (.a-local-var.
-			       (IF .a-local-var-alt.
-				   (IF (IS-INHERITED (SL-BITS .a-local-var-alt.))
-				       (IF (A-FORMULA-P (SL-VALUE .a-local-var-alt.))
-					   (SL-VALUE .a-local-var-alt.))
-				       (SL-VALUE .a-local-var-alt.))
-				   *NO-VALUE*)))
-			 (IF (EQ .a-local-var. *NO-VALUE*)
+  (dolist (a-parent (get-local-value schema :IS-A))
+    (when a-parent
+      (let ((value (LOCALLY
+		       (DECLARE (OPTIMIZE (SPEED 3) (SAFETY 0) (SPACE 0) (DEBUG 0)))
+		     (LET* ((.a-local-var-alt. (SLOT-ACCESSOR A-PARENT SLOT))
+			    (.a-local-var.
 			     (IF .a-local-var-alt.
-				 (SETF .a-local-var. NIL)
-				 (IF (NOT
-				      (FORMULA-P
-				       (SETF .a-local-var. (G-VALUE-INHERIT-VALUES A-PARENT SLOT))))
-				     (SETF .a-local-var. NIL))))
-			 (IF (A-FORMULA-P .a-local-var.)
-			     NIL
-			     .a-local-var.)))))
-	  (if value
-	      (return-from find-parent (values value a-parent))
-	      (multiple-value-bind (value the-parent)
-		  (find-parent a-parent slot)
-		(when value
-		  (return-from find-parent (values value the-parent))))))))))
+				 (IF (IS-INHERITED (SL-BITS .a-local-var-alt.))
+				     (IF (A-FORMULA-P (SL-VALUE .a-local-var-alt.))
+					 (SL-VALUE .a-local-var-alt.))
+				     (SL-VALUE .a-local-var-alt.))
+				 *NO-VALUE*)))
+		       (IF (EQ .a-local-var. *NO-VALUE*)
+			   (IF .a-local-var-alt.
+			       (SETF .a-local-var. NIL)
+			       (IF (NOT
+				    (FORMULA-P
+				     (SETF .a-local-var. (G-VALUE-INHERIT-VALUES A-PARENT SLOT))))
+				   (SETF .a-local-var. NIL))))
+		       (IF (A-FORMULA-P .a-local-var.)
+			   NIL
+			   .a-local-var.)))))
+	(if value
+	    (return-from find-parent (values value a-parent))
+	    (multiple-value-bind (value the-parent)
+		(find-parent a-parent slot)
+	      (when value
+		(return-from find-parent (values value the-parent)))))))))
 
 (defun kr-init-method (schema  &optional the-function )
   (if the-function
