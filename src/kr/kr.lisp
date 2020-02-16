@@ -212,9 +212,6 @@ the lisp predicate to test this ('NULL, 'KEYWORDP, etc....)"
 	  (unless (schema-name value)
 	    (incf *schema-counter*)
 	    (setf (schema-name value) *schema-counter*)))
-	(when (and (slot-accessor schema slot)
-		   (is-update-slot (sl-bits entry)))
-	  (get-value schema :invalidate-demon))
 	(cond
 	  ((and was-formula (not is-formula))
 	   (setf (cached-value nil) value)
@@ -508,7 +505,6 @@ the expression ~S instead."
 		      (set-slot-accessor schema slot *no-value* 33 nil)))
 		  (format t "*** ERROR - empty list of slots in type declaration ~
                           for object ~S:~%  ~S~%" schema (car type)))))
-	  ;; Process the constant declarations, and check the types.
 	  (process-constant-slots schema is-a nil (not (eq types :NONE)))
 	  (dolist (slot slot-specifiers)
 	    (when (and (listp slot)
