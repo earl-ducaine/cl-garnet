@@ -223,30 +223,16 @@
 	  (if entry
 	      (setf (sl-value entry) value
 		    (sl-bits entry) new-bits)
-	      (setf entry (LET* ((schema-bins (SCHEMA-BINS SCHEMA))
-				 (a-hash (GETHASH SLOT schema-bins))
-				 (dependants NIL))
-			    (IF a-hash
-				(PROGN
-				  (WHEN (AND dependants (NOT (FULL-SL-P a-hash)))
-				    (SETF (GETHASH SLOT schema-bins) (SETF a-hash (MAKE-FULL-SL)))
-				    (SETF (SL-NAME a-hash) SLOT))
-				  (SETF (SL-VALUE a-hash) VALUE)
-				  (SETF (SL-BITS a-hash) NEW-BITS)
-				  (WHEN dependants (SETF (FULL-SL-DEPENDENTS a-hash) dependants))
-				  a-hash)
-				(PROGN
-				  (SETF a-hash
-					(IF dependants
-					    (MAKE-FULL-SL)
-					    (MAKE-SL)))
-				  (SETF (SL-NAME a-hash) SLOT)
-				  (SETF (SL-VALUE a-hash) VALUE)
-				  (SETF (SL-BITS a-hash) NEW-BITS)
-				  (WHEN dependants (SETF (FULL-SL-DEPENDENTS a-hash) dependants))
-				  (SETF (GETHASH SLOT schema-bins) a-hash)))))))
+	      (setf entry
+		    (let* ((schema-bins (schema-bins schema))
+			   (a-hash (gethash slot schema-bins)))
+		      (setf a-hash (make-sl))
+		      (setf (sl-name a-hash) slot)
+		      (setf (sl-value a-hash) value)
+		      (setf (sl-bits a-hash) new-bits)
+		      (setf (gethash slot schema-bins) a-hash)))))
 	(when (and the-bits (is-parent the-bits))
-	  (update-inherited-values schema slot value T))
+	  (update-inherited-values schema slot value t))
 	(values value nil)))))
 
 (defun internal-s-value (schema slot value)
