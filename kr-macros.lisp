@@ -732,26 +732,27 @@ the lisp predicate to test this ('NULL, 'KEYWORDP, etc....)"
 (defun find-parent (schema slot)
   (dolist (a-parent (get-local-value schema :IS-A))
     (when a-parent
-      (let ((value (LOCALLY
-		       (DECLARE (OPTIMIZE (SPEED 3) (SAFETY 0) (SPACE 0) (DEBUG 0)))
-		     (LET* ((.a-local-var-alt. (SLOT-ACCESSOR A-PARENT SLOT))
-			    (.a-local-var.
-			     (IF .a-local-var-alt.
-				 (IF (IS-INHERITED (SL-BITS .a-local-var-alt.))
-				     (IF (A-FORMULA-P (SL-VALUE .a-local-var-alt.))
-					 (SL-VALUE .a-local-var-alt.))
-				     (SL-VALUE .a-local-var-alt.))
-				 *NO-VALUE*)))
-		       (IF (EQ .a-local-var. *NO-VALUE*)
-			   (IF .a-local-var-alt.
-			       (SETF .a-local-var. NIL)
-			       (IF (NOT
-				    (FORMULA-P
-				     (SETF .a-local-var. (G-VALUE-INHERIT-VALUES A-PARENT SLOT))))
-				   (SETF .a-local-var. NIL))))
-		       (IF (A-FORMULA-P .a-local-var.)
-			   NIL
-			   .a-local-var.)))))
+      (let ((value
+	     (locally
+		 (declare (optimize (speed 3) (safety 0) (space 0) (debug 0)))
+	       (let* ((.a-local-var-alt. (slot-accessor a-parent slot))
+		      (.a-local-var.
+		       (if .a-local-var-alt.
+			   (if (is-inherited (sl-bits .a-local-var-alt.))
+			       (if (a-formula-p (sl-value .a-local-var-alt.))
+				   (sl-value .a-local-var-alt.))
+			       (sl-value .a-local-var-alt.))
+			   *no-value*)))
+		 (if (eq .a-local-var. *no-value*)
+		     (if .a-local-var-alt.
+			 (setf .a-local-var. nil)
+			 (if (not
+			      (formula-p
+			       (setf .a-local-var. (g-value-inherit-values a-parent slot))))
+			     (setf .a-local-var. nil))))
+		 (if (a-formula-p .a-local-var.)
+		     nil
+		     .a-local-var.)))))
 	(if value
 	    (return-from find-parent (values value a-parent))
 	    (multiple-value-bind (value the-parent)
@@ -759,27 +760,22 @@ the lisp predicate to test this ('NULL, 'KEYWORDP, etc....)"
 	      (when value
 		(return-from find-parent (values value the-parent)))))))))
 
-(defun kr-init-method (schema  &optional the-function )
-  (if the-function
-      nil
-      (multiple-value-setq (the-function)
-	(find-parent schema :INITIALIZE)))
-  (when the-function
-    (funcall the-function schema)))
+(defun kr-init-method (schema)
+  (let ((the-function (find-parent schema :initialize)))
+    (when the-function
+      (funcall the-function schema))))
 
 (defun allocate-schema-slots (schema)
   (locally (declare #.*special-kr-optimization*)
     (setf (schema-bins schema)
-	  (make-hash-table :test #'eq
-			   )))
+	  (make-hash-table :test #'eq)))
   schema)
 
 (defun make-a-new-schema (name)
   (locally (declare #.*special-kr-optimization*)
     (eval `(defvar ,name))
     (let ((schema (make-schema)))
-      (allocate-schema-slots schema)
-      (set name schema))))
+      (allocate-schema-slots schema))))
 
 (defun process-constant-slots (the-schema parents constants do-types)
   (locally (declare #.*special-kr-optimization*)
@@ -790,7 +786,6 @@ the lisp predicate to test this ('NULL, 'KEYWORDP, etc....)"
 	    (set-slot-accessor the-schema slot *no-value*
 			       (set-is-update-slot *local-mask*)
 			       NIL))))
-    (dolist (parent parents))
     (when do-types
       (dolist (parent parents)
 	(locally
@@ -800,16 +795,14 @@ the lisp predicate to test this ('NULL, 'KEYWORDP, etc....)"
 	     #'(lambda (iterate-ignored-slot-name iterate-slot-value-entry)
 		 (declare (ignore iterate-ignored-slot-name))
 		 (let ((slot (sl-name iterate-slot-value-entry))
-		       (value (sl-value iterate-slot-value-entry)))
-		   value
-		   (let ((bits (sl-bits iterate-slot-value-entry)))
-		     (setf bits (logand bits *type-mask*))
-		     (unless (zerop bits)
-		       (let ((the-entry (slot-accessor the-schema slot)))
-			 (if the-entry
-			     (sl-bits the-entry)
-			     (set-slot-accessor the-schema slot *no-value* bits
-						nil)))))))
+		       (bits (logand (sl-bits iterate-slot-value-entry)
+				     *type-mask*)))
+		   (unless (zerop bits)
+		     (let ((the-entry (slot-accessor the-schema slot)))
+		       (if the-entry
+			   (sl-bits the-entry)
+			   (set-slot-accessor the-schema slot *no-value* bits
+					      nil))))))
 	     (schema-bins parent))))))))
 
 (defun do-schema-body (schema is-a generate-instance override types
