@@ -338,7 +338,6 @@ prematurely."
 (defun relation-p (slot)
   (assocq slot *relations*))
 
-
 (defmacro g-value (schema &rest slots)
   (if slots
       nil
@@ -355,17 +354,7 @@ prematurely."
 	  (intermediate schema))
 	 ((null (cddr s))
 	  (s-value-fn intermediate (first s) (second s)))
-      (let ((new-schema nil
-	      ))
-	(if (null new-schema)
-	    (error
-	     "An intermediate schema is null:  slot ~S of object ~S has value
-  NIL in (S-VALUE ~S~{ ~S~})"
-	     (car s) intermediate schema slots)
-	    (unless (schema-p new-schema)
-	      (error "An intermediate value is not a schema in (S-VALUE ~S~{ ~S~}),
-at slot ~S  (non-schema value is ~S, last schema was ~S)"
-		     schema slots (car s) new-schema intermediate)))
+      (let ((new-schema nil))
 	(setf intermediate new-schema)))))
 
 (defmacro s-value (schema &rest slots)
