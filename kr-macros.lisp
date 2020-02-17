@@ -652,26 +652,7 @@
       (setf (CN-connection cn) :connected))))
 
 (defun set-object-slot-prop (obj slot prop val)
-  (let* ((os-props (LOCALLY
-		       (DECLARE (OPTIMIZE (SPEED 3) (SAFETY 0) (SPACE 0) (DEBUG 0)))
-		     (LET* ((slot-accessor (SLOT-ACCESSOR OBJ :SB-OS-PROPS))
-			    (specific-slot-accessor
-			     (IF slot-accessor
-				 (IF (IS-INHERITED (SL-BITS slot-accessor))
-				     (IF (A-FORMULA-P (SL-VALUE slot-accessor))
-					 (SL-VALUE slot-accessor))
-				     (SL-VALUE slot-accessor))
-				 *NO-VALUE*)))
-		       (IF (EQ specific-slot-accessor *NO-VALUE*)
-			   (IF slot-accessor
-			       (SETF specific-slot-accessor NIL)
-			       (IF (NOT
-				    (FORMULA-P
-				     (SETF specific-slot-accessor (G-VALUE-INHERIT-VALUES OBJ :SB-OS-PROPS))))
-				   (SETF specific-slot-accessor NIL))))
-		       (IF (A-FORMULA-P specific-slot-accessor)
-			   NIL
-			   specific-slot-accessor))))
+  (let* (os-props
 	 (slot-props (getf os-props slot nil)))
     (setf (getf slot-props prop) val)
     (setf (getf os-props slot) slot-props)
