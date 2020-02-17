@@ -347,43 +347,6 @@ modified to be a full-slot structure."
 (defparameter iterate-slot-value-entry nil
   "Ugly")
 
-(defmacro iterate-slot-value ((a-schema inherited everything check-formula-p)
-			      &body body)
-  "Iterate the <body> for all the slots in the <schema>, with the variable
-<slot> bound to each slot in turn and the variable <value> bound to
-the <slot>'s value.
-If <everything> is T, even slots which contain *no-value* (but with same
-bit set) are used."
-  `(locally (declare ,*special-kr-optimization*)
-     (,@(if check-formula-p `(if (not (formula-p ,a-schema))) '(progn))
-	(maphash
-	 #'(lambda (iterate-ignored-slot-name iterate-slot-value-entry)
-	     (declare (ignore iterate-ignored-slot-name))
-	     (let ((slot (sl-name iterate-slot-value-entry)) ; name for the slot
-		   (value (sl-value iterate-slot-value-entry)))
-	       ;; This slot exists
-	       ,@(if inherited
-		     ;; Either local or inherited will do.
-		     (if everything
-			 ;; Execute on a no-value, too.
-			 body
-			 ;; Only execute on real values.
-			 `((unless (eq value *no-value*)
-			     ,@body)))
-		     ;; Make sure that the slot is not inherited.
-		     `((unless (is-inherited (sl-bits iterate-slot-value-entry))
-			 ,@(if everything
-			       body
-			       `((unless (eq value *no-value*)
-				   ,@body))))))))
-	 (schema-bins ,a-schema)))))
-
-(defmacro doslots ((slot-var a-schema &optional inherited) &body body)
-  "Executes the <body> with <slot> bound in turn to each slot in the <schema>."
-  `(iterate-slot-value (,a-schema ,inherited NIL NIL)
-     (let ((,slot-var slot))
-       ,@body)))
-
 (declaim (inline get-local-value))
 (defun get-local-value (schema slot)
   (locally (declare #.*special-kr-optimization*)
