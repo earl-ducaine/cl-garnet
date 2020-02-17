@@ -340,24 +340,29 @@ the expression ~S instead."
 		;; Avoid inheritance and set the slot to NIL.
 		(internal-s-value the-schema slot NIL))))))
     (when do-types
-      ;; Copy type declarations down from the parent(s), unless overridden
-      ;; locally.
       (dolist (parent parents)
-	(iterate-slot-value (parent T T nil)
-	  value						 ;; suppress warning
-	  (let ((bits (sl-bits iterate-slot-value-entry))) ; get parent's bits
-	    ;; keep only the type information
-	    (setf bits (logand bits *type-mask*))
-	    (unless (zerop bits)
-	      (let ((the-entry (slot-accessor the-schema slot)))
-		(if the-entry
-		    (let ((schema-bits (sl-bits the-entry)))
-		      (when (zerop (extract-type-code schema-bits))
-			;; Leave type alone, if one was declared locally.
-			(setf (sl-bits the-entry)
-			      (logior (logand schema-bits *all-bits-mask*)
-				      bits))))
-		    (set-slot-accessor the-schema slot *no-value* bits NIL))))))))))
+	(LOCALLY
+	    (DECLARE (OPTIMIZE (SPEED 3) (SAFETY 0) (SPACE 0) (DEBUG 0)))
+	  (PROGN
+	    (MAPHASH
+	     #'(LAMBDA (ITERATE-IGNORED-SLOT-NAME ITERATE-SLOT-VALUE-ENTRY)
+		 (DECLARE (IGNORE ITERATE-IGNORED-SLOT-NAME))
+		 (LET ((SLOT (SL-NAME ITERATE-SLOT-VALUE-ENTRY))
+		       (VALUE (SL-VALUE ITERATE-SLOT-VALUE-ENTRY)))
+		   VALUE
+		   (LET ((BITS (SL-BITS ITERATE-SLOT-VALUE-ENTRY)))
+		     (SETF BITS (LOGAND BITS *TYPE-MASK*))
+		     (UNLESS (ZEROP BITS)
+		       (LET ((THE-ENTRY (SLOT-ACCESSOR THE-SCHEMA SLOT)))
+			 (IF THE-ENTRY
+			     (LET ((SCHEMA-BITS (SL-BITS THE-ENTRY)))
+			       (WHEN (ZEROP (EXTRACT-TYPE-CODE SCHEMA-BITS))
+				 (SETF (SL-BITS THE-ENTRY)
+				       (LOGIOR (LOGAND SCHEMA-BITS *ALL-BITS-MASK*)
+					       BITS))))
+			     (SET-SLOT-ACCESSOR THE-SCHEMA SLOT *NO-VALUE* BITS
+						NIL)))))))
+	     (SCHEMA-BINS PARENT))))))))
 
 
 
@@ -413,8 +418,8 @@ the expression ~S instead."
        ((null slots)
 	(unless (eq types :NONE)
 	  (dolist (type types)
-	      (dolist (slot (cdr type))
-		(set-slot-accessor schema slot *no-value* 33 nil))))
+	    (dolist (slot (cdr type))
+	      (set-slot-accessor schema slot *no-value* 33 nil))))
 	(process-constant-slots schema is-a nil
 				(not (eq types :NONE)))
 	(kr-init-method schema))
@@ -556,16 +561,38 @@ the expression ~S instead."
 
 (defun kr-init-method-hook (schema)
   (let ((parent (car (get-value schema :is-a))))
-    (doslots (slot parent)
-      (let ((value (get-local-value parent slot)))
-	(s-value-fn-save-fn-symbol schema slot value))))
+    (LOCALLY
+	(DECLARE (OPTIMIZE (SPEED 3) (SAFETY 0) (SPACE 0) (DEBUG 0)))
+      (PROGN
+	(MAPHASH
+	 #'(LAMBDA (ITERATE-IGNORED-SLOT-NAME ITERATE-SLOT-VALUE-ENTRY)
+	     (DECLARE (IGNORE ITERATE-IGNORED-SLOT-NAME))
+	     (LET ((SLOT (SL-NAME ITERATE-SLOT-VALUE-ENTRY))
+		   (VALUE (SL-VALUE ITERATE-SLOT-VALUE-ENTRY)))
+	       (UNLESS (IS-INHERITED (SL-BITS ITERATE-SLOT-VALUE-ENTRY))
+		 (UNLESS (EQ VALUE *NO-VALUE*)
+		   (LET ((SLOT SLOT))
+		     (LET ((VALUE (GET-LOCAL-VALUE PARENT SLOT)))
+		       (S-VALUE-FN-SAVE-FN-SYMBOL SCHEMA SLOT VALUE)))))))
+	 (SCHEMA-BINS PARENT)))))
   (activate-new-instance-cns schema))
 
 (defun activate-new-instance-cns (schema)
-  (doslots (slot schema)
-    (let ((value (get-local-value schema slot)))
-      (if (constraint-p value)
-	  (add-constraint-to-slot schema slot value)))))
+  (LOCALLY
+      (DECLARE (OPTIMIZE (SPEED 3) (SAFETY 0) (SPACE 0) (DEBUG 0)))
+    (PROGN
+      (MAPHASH
+       #'(LAMBDA (ITERATE-IGNORED-SLOT-NAME ITERATE-SLOT-VALUE-ENTRY)
+	   (DECLARE (IGNORE ITERATE-IGNORED-SLOT-NAME))
+	   (LET ((SLOT (SL-NAME ITERATE-SLOT-VALUE-ENTRY))
+		 (VALUE (SL-VALUE ITERATE-SLOT-VALUE-ENTRY)))
+	     (UNLESS (IS-INHERITED (SL-BITS ITERATE-SLOT-VALUE-ENTRY))
+	       (UNLESS (EQ VALUE *NO-VALUE*)
+		 (LET ((SLOT SLOT))
+		   (LET ((VALUE (GET-LOCAL-VALUE SCHEMA SLOT)))
+		     (IF (CONSTRAINT-P VALUE)
+			 (ADD-CONSTRAINT-TO-SLOT SCHEMA SLOT VALUE))))))))
+       (SCHEMA-BINS SCHEMA)))))
 
 (defun connect-constraint (cn)
   (let* ((cn-var-paths (CN-variable-paths cn)))
