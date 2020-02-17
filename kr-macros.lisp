@@ -1,6 +1,4 @@
 
-;; (in-package :kr)
-
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defvar *special-kr-optimization*
     '(optimize
