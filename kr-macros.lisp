@@ -58,20 +58,6 @@
 (defvar *schema-slot* nil
   "The slot in *schema-self* being acted upon by the accessor functions.")
 
-(defvar *current-formula* nil)
-
-(defvar *last-formula* nil
-  "Similar to *current-formula*, used for debugging only.")
-
-(defvar *inheritance-inverse-relations* '()
-  "Inverses of all relations which perform inheritance.")
-
-(defvar *relations* '()
-  "An a-list of relations known to the system, with their inverse(s).
-   Used for the creation of automatic reverse-links.")
-
-(defvar *formula-pool* nil)
-
 (defvar *schema-is-new* nil
   "If non-nil, we are inside the creation of a new schema.  This guarantees
   that we do not have to search for inverse links when creating relations,
@@ -79,9 +65,6 @@
 
 (defvar *print-as-structure* T
   "If non-nil, schema names are printed as structure references.")
-
-(defvar *print-structure-slots* nil
-  "List of slots that should be printed when printing schemata as structures.")
 
 (defparameter *no-value* '(:no-value)
   "A cons cell which is used to mark the value of non-existent slots.")
@@ -99,12 +82,9 @@
   (defparameter *type-bits* 10)  ;; # of bits for encoding type
   (defparameter *type-mask* (1- (expt 2 *type-bits*))) ;; to extract type
   (defparameter *inherited-bit*          *type-bits*)
-  (defparameter *is-parent-bit*          (1+ *inherited-bit*))
+   (defparameter *is-parent-bit*          (1+ *inherited-bit*))
   (defparameter *is-constant-bit*        (1+ *is-parent-bit*))
-  (defparameter *is-update-slot-bit*     (1+ *is-constant-bit*))
-  (defparameter *is-local-only-slot-bit* (1+ *is-update-slot-bit*))
-  (defparameter *is-parameter-slot-bit*  (1+ *is-local-only-slot-bit*)))
-
+   (defparameter *is-update-slot-bit*     (1+ *is-constant-bit*)))
 
 (declaim (fixnum *local-mask* *constant-mask* *is-update-slot-mask*
 		 *inherited-mask* *is-parent-mask* *clear-slot-mask*
@@ -127,35 +107,19 @@
     (lognot (logior *is-parent-mask* *constant-mask*)))
   (defparameter *all-bits-mask* (lognot *type-mask*)))
 
-(defvar *check-constants* NIL)
-
-(defvar *is-constant* T)
-
-(defvar *accessed-slots* NIL)
-
-(defvar *create-schema-schema* nil
-  "Name of the current object being defined by Create-Instance.  Used for
-   debugging only.")
-
-(defmacro when-debug (&rest forms)
-  (declare (ignore forms))
-  nil)
-
 (declaim (inline
-	  deleted-p not-deleted-p is-inherited is-parent is-constant
-	  is-update-slot set-is-update-slot is-local-only is-parameter
-	  extract-type-code get-entry-type-code))
+	   is-inherited is-parent
+	  extract-type-code))
 
 (defun formula-p (thing)
   (a-formula-p thing))
 
-(defun deleted-p (schema)
-  (declare #.*special-kr-optimization*)
-  (null (schema-bins schema)))
 
-(defun not-deleted-p (schema)
-  (declare #.*special-kr-optimization*)
-  (schema-bins schema))
+
+
+
+
+
 
 (defun is-inherited (bits)
   (declare (fixnum bits))
@@ -165,100 +129,11 @@
   (declare (fixnum bits))
   (logbitp *is-parent-bit* bits))
 
-(defun is-constant (bits)
-  (declare (fixnum bits))
-  (logbitp *is-constant-bit* bits))
 
-(defun is-update-slot (bits)
-  (declare (fixnum bits))
-  (logbitp *is-update-slot-bit* bits))
 
 (defun set-is-update-slot (bits)
   (declare (fixnum bits))
   (logior *is-update-slot-mask* bits))
-
-(defun is-local-only (bits)
-  (declare (fixnum bits))
-  (logbitp *is-local-only-slot-bit* bits))
-
-(defun is-parameter (bits)
-  (declare (fixnum bits))
-  (logbitp *is-parameter-slot-bit* bits))
-
-(defun extract-type-code (bits)
-  (declare (fixnum bits))
-  (logand *type-mask* bits))
-
-(defun get-entry-type-code (entry)
-  (declare #.*special-kr-optimization*)
-  (extract-type-code (sl-bits entry)))
-
-(defmacro memberq (item list)
-  "Member, but with a test of EQ.  Interestingly, if 'item' is a keyword,
-then it is faster to use the normal member fn!"
-  (if (keywordp item)
-      `(member ,item ,list)
-      `(member ,item ,list :test #'eq)))
-
-
-(defmacro assocq (item alist)
-  "Assoc, but with a test of EQ."
-  (if (keywordp item)
-      `(assoc ,item ,alist)
-      `(assoc ,item ,alist :test #'eq)))
-
-
-(defmacro do-one-or-list ((var list &optional use-continue) &body body)
-  "Execute the <body> on each element of the <list>, or only once if the
-<list> is a single value."
-  `(let* ((do-one-list ,list)
-	  (,var (if (listp do-one-list) (car do-one-list) do-one-list)))
-     (block nil
-       (tagbody
-	again
-	  (if (null do-one-list)
-	      (return-from nil nil))
-	  ,@body
-	  ,@(if use-continue
-		'(endbody))
-	  (if (not (listp do-one-list))
-	      (return-from nil nil))
-	  (setq do-one-list (cdr do-one-list)
-		,var (car do-one-list))
-	  (go again)))))
-
-
-(defmacro push-one-or-list (item accessor-form &optional check-new-p)
-  `(let ((current ,accessor-form))
-     (if (null current)
-	 (setf ,accessor-form ,item)
-	 (if (listp current)
-	     ,@(if check-new-p
-		   `((if (not (member ,item current))
-			 (setf ,accessor-form (cons ,item current))))
-		   `((setf ,accessor-form (cons ,item current))))
-	     ,@(if check-new-p
-		   `((if (not (eq ,item current))
-			 (setf ,accessor-form (list ,item current))))
-		   `((setf ,accessor-form (list ,item current))))))))
-
-
-(defmacro delete-one-or-list (item accessor-form)
-  `(let ((current ,accessor-form))
-     (if (listp current)
-	 (setf ,accessor-form (delete ,item current))
-	 (if (eq ,item current)
-	     (setf ,accessor-form NIL)))))
-
-(defmacro continue-out ()
-  "Allow the current iteration of do-one-or-list to be terminated
-prematurely."
-  `(go endbody))
-
-
-(declaim (inline get-dependent-formula))
-(defun get-dependent-formula (dependency)
-  (car dependency))
 
 (declaim (inline slot-accessor))
 (defun slot-accessor (schema slot)
@@ -319,9 +194,8 @@ prematurely."
 	  (return-from g-value-no-copy value))))))
 
 (defun link-in-relation (schema slot values)
-  (let ((inverse (if (eq slot :is-a)
-		     :is-a-inv
-		     (cadr (assocq slot *relations*)))))
+  (let ((inverse (when (eq slot :is-a)
+		     :is-a-inv)))
     (when inverse
       (dolist (value values)
 	(let* ((entry (if (eq slot :is-a)
@@ -329,8 +203,7 @@ prematurely."
 			  (slot-accessor value inverse)))
 	       (previous-values (when entry (sl-value entry))))
 	  (if entry
-	      (if (or *schema-is-new*
-		      (not (memberq schema previous-values)))
+	      (if  *schema-is-new*
 		  (if (eq (sl-value entry) *no-value*)
 		      (setf (sl-value entry) (list schema))
 		      (push schema (sl-value entry))))
@@ -364,7 +237,7 @@ prematurely."
     (let* ((entry (slot-accessor schema slot)))
       (let ((is-formula nil)
 	    (is-relation nil)
-	    (was-formula (formula-p nil)))
+	    )
 	(when (formula-p value)
 	  (setf is-formula T)
 	  (unless (schema-name value)
@@ -555,8 +428,7 @@ prematurely."
   (unless (listp is-a)
     (setf is-a (list is-a)))
   (when is-a
-    (let ((*schema-is-new* T))
-      (set-is-a schema is-a)))
+    (set-is-a schema is-a))
   (do* ((slots slot-specifiers (cdr slots))
 	(slot (car slots) (car slots)))
        ((null slots)
@@ -602,10 +474,10 @@ prematurely."
 	  (process-constant-slots schema is-a nil (not (eq types :NONE)))
 	  (dolist (slot slot-specifiers)
 	    (when (and (listp slot)
-		       (memberq (car slot)
-				'(:ignored-slots :local-only-slots
-				  :maybe-constant :parameters :output
-				  :sorted-slots :update-slots)))))
+		       (MEMBER (CAR SLOT)
+        '(:IGNORED-SLOTS :LOCAL-ONLY-SLOTS :MAYBE-CONSTANT :PARAMETERS :OUTPUT
+          :SORTED-SLOTS :UPDATE-SLOTS)
+        :TEST #'EQ))))
 	  (kr-init-method schema)
 	  schema)
       (let ((slot-name (car slot))
