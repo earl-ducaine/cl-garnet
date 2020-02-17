@@ -401,148 +401,56 @@ the expression ~S instead."
 	       (push `'(,(car slot) . ,(cadr slot)) output)))))
       (cons is-a output))))
 
-(defun do-schema-body (schema is-a generate-instance override types &rest slot-specifiers)
-  (when (equal is-a '(nil))
-    (format
-     t
-     "*** (create-instance ~S) called with an illegal (unbound?) class name.~%"
-     schema)
-    (setf is-a NIL))
+(defun do-schema-body (schema is-a generate-instance override types
+		       &rest slot-specifiers)
   (unless (listp is-a)
     (setf is-a (list is-a)))
   (when is-a
     (let ((*schema-is-new* T))
       (set-is-a schema is-a)))
   (do* ((slots slot-specifiers (cdr slots))
-	(slot (car slots) (car slots))
-	(initialize-method NIL)
-	(constants NIL)
-	(had-constants NIL)
-	(cancel-constants (find '(:constant) slot-specifiers :test #'equal))
-	(parent (car is-a))
-	(slot-counter (if is-a 1 0)))
+	(slot (car slots) (car slots)))
        ((null slots)
 	(unless (eq types :NONE)
 	  (dolist (type types)
-	    (if (cdr type)
-		(let ((n nil))
-		  (dolist (slot (cdr type))
-		    (set-slot-accessor schema slot *no-value* 33 nil)))
-		(format t "*** ERROR - empty list of slots in type declaration ~
-                          for object ~S:~%  ~S~%" schema (car type)))))
-	(format t "had-constants: ~s; constants: ~s; formula-p: ~s~%" had-constants constants (formula-p constants))
-	(process-constant-slots
-	 schema is-a
-	 had-constants
-	 (not (eq types :NONE)))
-	(dolist (slot slot-specifiers)
-	  (when (and (listp slot)
-		     (memberq (car slot)
-			      '(:IGNORED-SLOTS :LOCAL-ONLY-SLOTS
-				:MAYBE-CONSTANT :PARAMETERS :OUTPUT
-				:SORTED-SLOTS :UPDATE-SLOTS)))
-	    ))
-	(when generate-instance
-	  (kr-init-method schema))
-	schema)
-    (cond ((eq slot :NAME-PREFIX)
-	   (pop slots))
-	  ((consp slot)
-	   (let ((slot-name (car slot))
-		 (slot-value (cdr slot)))
-	     (case slot-name
-	       (:INITIALIZE
-		(when slot-value
-		  (setf initialize-method slot-value)))
-	       (:CONSTANT
-		(setf constants (cdr slot))
-		(setf had-constants T)))
-	     ;; Check that the slot is not declared constant in the parent.
-	     (when (and (not cancel-constants) (not *constants-disabled*)
-			(not *redefine-ok*))
-	       (when (and parent (slot-constant-p parent slot-name))
-		 (cerror
-		  "If continued, the value of the slot will change anyway"
-		  "Slot ~S in ~S was declared constant in prototype ~S!~%"
-		  slot-name schema (car is-a))))
-	     (if override
-		 (s-value schema slot-name slot-value)
-		 (setf slot-counter
-		       (internal-s-value schema slot-name slot-value)))))
-	  (T
-	   (format t "Incorrect slot specification: object ~S ~S~%"
-		   schema slot)))))
+	      (dolist (slot (cdr type))
+		(set-slot-accessor schema slot *no-value* 33 nil))))
+	(process-constant-slots schema is-a nil
+				(not (eq types :NONE)))
+	(kr-init-method schema))
+    (let ((slot-name (car slot))
+	  (slot-value (cdr slot)))
+      (internal-s-value schema slot-name slot-value))))
 
 (defun do-schema-body-alt (schema is-a &rest slot-specifiers)
   (let ((types nil))
-    (unless (listp is-a)
-      (setf is-a (list is-a)))
-    (when is-a
-      (let ((*schema-is-new* T))
-	(set-is-a schema is-a)))
+    (setf is-a (list is-a))
+    (set-is-a schema is-a)
     (do* ((slots slot-specifiers (cdr slots))
-	  (slot (car slots) (car slots))
-	  (initialize-method NIL)
-	  (constants NIL)
-	  (had-constants NIL)
-	  (cancel-constants (find '(:constant) slot-specifiers :test #'equal))
-	  (slot-counter (if is-a 1 0)))
+	  (slot (car slots) (car slots)))
 	 ((null slots)
-	  (unless (eq types :NONE)
-	    (dolist (type types)
-	      (if (cdr type)
-		  (let ((n nil))
-		    (dolist (slot (cdr type))
-		      (set-slot-accessor schema slot *no-value* 33 nil)))
-		  (format t "*** ERROR - empty list of slots in type declaration ~
-                          for object ~S:~%  ~S~%" schema (car type)))))
 	  (process-constant-slots schema is-a nil (not (eq types :NONE)))
 	  (dolist (slot slot-specifiers)
 	    (when (and (listp slot)
 		       (memberq (car slot)
-				'(:IGNORED-SLOTS :LOCAL-ONLY-SLOTS
-				  :MAYBE-CONSTANT :PARAMETERS :OUTPUT
-				  :SORTED-SLOTS :UPDATE-SLOTS)))
-	      ))
+				'(:ignored-slots :local-only-slots
+				  :maybe-constant :parameters :output
+				  :sorted-slots :update-slots)))))
 	  (kr-init-method schema)
 	  schema)
-      (cond ((eq slot :NAME-PREFIX)
-	     (pop slots))
-	    ((consp slot)
-	     (let ((slot-name (car slot))
-		   (slot-value (cdr slot)))
-	       (case slot-name
-		 (:CONSTANT
-		  (setf constants (cdr slot))
-		  (setf had-constants T)))
-	       (internal-s-value schema slot-name slot-value)))
-	    (T
-	     (format t "Incorrect slot specification: object ~S ~S~%"
-		     schema slot))))))
+      (let ((slot-name (car slot))
+	    (slot-value (cdr slot)))
+	(internal-s-value schema slot-name slot-value)))))
 
-(defun T-P (value)
-  (declare #.*special-kr-optimization*
-	   (ignore value))
-  T)
+(do-schema-body (make-a-new-schema 'graphical-object) nil t nil
+                '(((or (is-a-p filling-style) null) :filling-style)
+                  ((or (is-a-p line-style) null) :line-style)))
 
-(defun no-type-error-p (value)
-  (cerror "Return T"
-          "KR typechecking called on value ~S with no type"
-          value)
-  T)
-
-
-(create-instance 'graphical-object nil
-  :declare ((:type
-	     ((or (is-a-p line-style) null) :line-style)
-	     ((or (is-a-p filling-style) null) :filling-style))))
-
-(create-instance 'rectangle graphical-object
-  :declare ((:update-slots :fast-redraw-p)))
+(do-schema-body (make-a-new-schema 'rectangle) graphical-object t nil nil
+                (cons :update-slots '(:fast-redraw-p)))
 
 (define-method :initialize graphical-object (gob)
-	       (S-VALUE-FN GOB :UPDATE-INFO 'A))
-
+	       (s-value-fn gob :update-info 'a))
 
 (defstruct (sb-constraint)
   variables
@@ -630,14 +538,12 @@ the expression ~S instead."
     (setf (cn-variable-paths cn) variable-paths)
     cn))
 
-(defsetf var-os (v) (val) `(set-sb-variable-slot ,v :mg-os ,val))
+(defsetf var-os (v) (val)
+  `(set-sb-variable-slot ,v :mg-os ,val))
 
-(defun create-mg-variable (&key (os nil))
-  (let* ((val (if (os-p os)
-		  (g-value (os-object os) (os-slot os))
-		  nil))
-	 (var (make-sb-variable)))
-    (setf (VAR-os var) os)
+(defun create-mg-variable ()
+  (let* ((var (make-sb-variable)))
+    (setf (VAR-os var) nil)
     var))
 
 (defun constraint-p (obj)

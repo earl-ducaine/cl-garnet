@@ -495,57 +495,6 @@ at slot ~S  (non-schema value is ~S, last schema was ~S)"
 	 ,@body)
        (s-value ,class ,name ',function-name))))
 
-(defmacro create-schema (name &rest rest)
-  (let ((prefix (memberq :NAME-PREFIX rest)))
-    (when prefix
-      (if name
-	  (progn
-	    (setf prefix nil))
-	  (progn
-	    (setf name (second prefix))
-	    (setf prefix NIL))))
-    (when (and (listp name) (eq (car name) 'QUOTE))
-      (proclaim `(special ,(eval name))))
-    (let* ((override (not (null (memberq :OVERRIDE rest))))
-	   (destroy (and name (not override)))
-	   (*create-schema-schema* name)
-	   (slots (process-slots rest))
-	   (generate-instance (not (null (memberq :generate-instance rest)))))
-      `(do-schema-body
-	   ,(if destroy
-		`(make-a-new-schema ,name)
-		(if (and (listp name)
-			 (eq (car name) 'QUOTE)
-			 (boundp (second name)))
-		    (eval name)
-		    `(make-a-new-schema ,name)))
-	 ,(car slots)
-	 ,generate-instance
-	 ,override
-	 ,@(cdr slots)))))
-
-(defmacro create-instance (name class &body body)
-  (when (and (listp class)
-	     (eq (car class) 'QUOTE))
-    ;; Prevent a common mistake.
-    (cerror
-     "Remove the quote and use the resulting object."
-     "  Quoted symbols cannot be used as prototypes: (create-instance ~S ~S)~%"
-     name class)
-    (setf class (eval (second class))))
-  (dolist (element body)
-    (when (and (listp element) (eq (car element) :IS-A))
-      (format
-       t
-       "CREATE-INSTANCE ~S ~S: do not specify the :IS-A slot!  Ignored.~%"
-       name class)
-      (setf body (remove (assocq :IS-A body) body))))
-  `(progn
-     (create-schema ,name :GENERATE-INSTANCE
-		    ;; class might be nil, which means no IS-A slot
-		    ,@(if class `((:is-a ,class)))
-		    ,@body)))
-
 (defsetf g-value s-value)
 
 (defun merge-declarations (declaration keyword output)
