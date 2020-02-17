@@ -137,25 +137,6 @@
 	`(s-value-chain ,schema ,@slots)
 	`(s-value-fn ,schema ,(first slots) ,(second slots)))))
 
-(defun g-value-inherit-values (schema slot)
-  (declare (ftype (function (t &optional t) t) formula-fn))
-  (dolist (parent (get-local-value schema :IS-A))
-    (let ((entry (slot-accessor parent slot))
-	  (value *no-value*)
-	  bits
-	  (intermediate-constant NIL))
-      (when entry
-	(setf value (sl-value entry))
-	(when (is-constant (sl-bits entry))
-	  (setf intermediate-constant T)))
-      (if (eq value *no-value*)
-	  (multiple-value-setq (value bits)
-	    (g-value-inherit-values parent slot))
-	  (setf bits (sl-bits entry)))
-      (unless (eq value *no-value*)
-	(return-from g-value-inherit-values (values value bits)))))
-  *no-value*)
-
 (defun g-value-no-copy (schema slot &optional skip-local)
   (unless skip-local
     (let ((value (slot-accessor schema slot)))
@@ -176,33 +157,14 @@
 			  (slot-accessor value :is-a-inv)
 			  (slot-accessor value inverse)))
 	       (previous-values (when entry (sl-value entry))))
-	  (if entry
-	      (if  *schema-is-new*
-		   (if (eq (sl-value entry) *no-value*)
-		       (setf (sl-value entry) (list schema))
-		       (push schema (sl-value entry))))
-	      (LET* ((schema-bins (SCHEMA-BINS VALUE))
-		     (a-hash (GETHASH INVERSE schema-bins))
-		     (dependants NIL))
-		(IF a-hash
-		    (PROGN
-		      (WHEN (AND dependants (NOT (FULL-SL-P a-hash)))
-			(SETF (GETHASH INVERSE schema-bins) (SETF a-hash (MAKE-FULL-SL)))
-			(SETF (SL-NAME a-hash) INVERSE))
-		      (SETF (SL-VALUE a-hash) (LIST SCHEMA))
-		      (SETF (SL-BITS a-hash) *LOCAL-MASK*)
-		      (WHEN dependants (SETF (FULL-SL-DEPENDENTS a-hash) dependants))
-		      a-hash)
-		    (PROGN
-		      (SETF a-hash
-			    (IF dependants
-				(MAKE-FULL-SL)
-				(MAKE-SL)))
-		      (SETF (SL-NAME a-hash) INVERSE)
-		      (SETF (SL-VALUE a-hash) (LIST SCHEMA))
-		      (SETF (SL-BITS a-hash) *LOCAL-MASK*)
-		      (WHEN dependants (SETF (FULL-SL-DEPENDENTS a-hash) dependants))
-		      (SETF (GETHASH INVERSE schema-bins) a-hash))))))))))
+	  (unless entry
+	    (let* ((schema-bins (schema-bins value))
+		   (a-hash (gethash inverse schema-bins)))
+	      (setf a-hash (make-sl))
+	      (setf (sl-name a-hash) inverse)
+	      (setf (sl-value a-hash) (list schema))
+	      (setf (sl-bits a-hash) *local-mask*)
+	      (setf (gethash inverse schema-bins) a-hash))))))))
 
 (defun s-value-fn (schema slot value)
   (locally (declare #.*special-kr-optimization*)
@@ -223,14 +185,13 @@
 	  (if entry
 	      (setf (sl-value entry) value
 		    (sl-bits entry) new-bits)
-	      (setf entry
-		    (let* ((schema-bins (schema-bins schema))
-			   (a-hash (gethash slot schema-bins)))
-		      (setf a-hash (make-sl))
-		      (setf (sl-name a-hash) slot)
-		      (setf (sl-value a-hash) value)
-		      (setf (sl-bits a-hash) new-bits)
-		      (setf (gethash slot schema-bins) a-hash)))))
+	      (let* ((schema-bins (schema-bins schema))
+		     (a-hash (gethash slot schema-bins)))
+		(setf a-hash (make-sl))
+		(setf (sl-name a-hash) slot)
+		(setf (sl-value a-hash) value)
+		(setf (sl-bits a-hash) new-bits)
+		(setf (gethash slot schema-bins) a-hash))))
 	(when (and the-bits (is-parent the-bits))
 	  (update-inherited-values schema slot value t))
 	(values value nil)))))
