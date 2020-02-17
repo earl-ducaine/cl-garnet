@@ -589,75 +589,6 @@ an inherited formula."
 (defun code-to-type-fn (type-code)
   (svref type-fns-array type-code))
 
-
-(declaim (inline find-lisp-predicate))
-(defun find-lisp-predicate (simple-type)
-  "Given simple type ('NULL, 'KEYWORD, etc...), returns the name of
-the lisp predicate to test this ('NULL, 'KEYWORDP, etc....)"
-  (let ((p-name (concatenate 'string (symbol-name simple-type) "P"))
-	(-p-name (concatenate 'string (symbol-name simple-type) "-P")))
-    (cond ((memberq simple-type '(NULL ATOM)) simple-type)
-	  (T (or (find-symbol p-name 'common-lisp)
-		 (find-symbol -p-name 'common-lisp)
-		 (find-symbol p-name)
-		 (find-symbol -p-name)
-		 (error "Could not find predicate for simple-type ~S~%"
-			simple-type))))))
-
-(defun type-to-fn (type)
-  (let (code)
-    (cond ((consp type)			; complex type
-	   (if (eq (car type) 'SATISFIES)
-	       (let ((fn-name (second type)))
-		 `',fn-name) ;; koz
-	       `(function (lambda (value)
-		  (declare #.*special-kr-optimization*)
-		  ,(make-lambda-body type)))))
-	  ((setq code (gethash (symbol-name type) *types-table*))
-	   (code-to-type-fn code))
-	  (T
-	   `',(find-lisp-predicate type)))))
-
-(declaim (inline copy-extend-array))
-(defun copy-extend-array (oldarray oldlen newlen)
-  (let ((result (make-array newlen)))
-    (dotimes (i oldlen)
-      (setf (svref result i) (svref oldarray i)))
-    result))
-
-(defun get-next-type-code ()
-  (let ((curlen (length types-array)))
-    (when (>= *next-type-code* curlen)
-      (let ((newlen (+ curlen *types-array-inc*)))
-	(setf types-array (copy-extend-array types-array
-					     curlen newlen)
-	      type-fns-array (copy-extend-array
-			      type-fns-array curlen newlen)
-	      type-docs-array (copy-extend-array
-			       type-docs-array
-			       curlen
-			       newlen))))
-    (prog1
-	*next-type-code*
-      (incf *next-type-code*))))
-
-(defun add-new-type (typename type-body type-fn)
-  (let ((code (get-next-type-code)))
-    (setf (gethash typename *types-table*) code)
-    (setf (gethash type-body *types-table*) code)
-    (setf (svref types-array code)
-	  (if typename
-	      (if (stringp typename)
-		  (intern typename (find-package "CL-USER"))
-		  typename)
-	      type-body))
-    (setf (svref type-fns-array  code)
-	  (if (and (symbolp type-fn) ;; koz
-		   (fboundp type-fn))
-	      (symbol-function type-fn)
-	      type-fn))
-    code))
-
 (declaim (inline slot-constant-p))
 (defun slot-constant-p (schema slot)
   (let ((entry (slot-accessor schema slot)))
@@ -732,27 +663,26 @@ the lisp predicate to test this ('NULL, 'KEYWORDP, etc....)"
 (defun find-parent (schema slot)
   (dolist (a-parent (get-local-value schema :IS-A))
     (when a-parent
-      (let ((value
-	     (locally
-		 (declare (optimize (speed 3) (safety 0) (space 0) (debug 0)))
-	       (let* ((.a-local-var-alt. (slot-accessor a-parent slot))
-		      (.a-local-var.
-		       (if .a-local-var-alt.
-			   (if (is-inherited (sl-bits .a-local-var-alt.))
-			       (if (a-formula-p (sl-value .a-local-var-alt.))
-				   (sl-value .a-local-var-alt.))
-			       (sl-value .a-local-var-alt.))
-			   *no-value*)))
-		 (if (eq .a-local-var. *no-value*)
-		     (if .a-local-var-alt.
-			 (setf .a-local-var. nil)
-			 (if (not
-			      (formula-p
-			       (setf .a-local-var. (g-value-inherit-values a-parent slot))))
-			     (setf .a-local-var. nil))))
-		 (if (a-formula-p .a-local-var.)
-		     nil
-		     .a-local-var.)))))
+      (let ((value (LOCALLY
+		       (DECLARE (OPTIMIZE (SPEED 3) (SAFETY 0) (SPACE 0) (DEBUG 0)))
+		     (LET* ((.a-local-var-alt. (SLOT-ACCESSOR A-PARENT SLOT))
+			    (.a-local-var.
+			     (IF .a-local-var-alt.
+				 (IF (IS-INHERITED (SL-BITS .a-local-var-alt.))
+				     (IF (A-FORMULA-P (SL-VALUE .a-local-var-alt.))
+					 (SL-VALUE .a-local-var-alt.))
+				     (SL-VALUE .a-local-var-alt.))
+				 *NO-VALUE*)))
+		       (IF (EQ .a-local-var. *NO-VALUE*)
+			   (IF .a-local-var-alt.
+			       (SETF .a-local-var. NIL)
+			       (IF (NOT
+				    (FORMULA-P
+				     (SETF .a-local-var. (G-VALUE-INHERIT-VALUES A-PARENT SLOT))))
+				   (SETF .a-local-var. NIL))))
+		       (IF (A-FORMULA-P .a-local-var.)
+			   NIL
+			   .a-local-var.)))))
 	(if value
 	    (return-from find-parent (values value a-parent))
 	    (multiple-value-bind (value the-parent)
@@ -760,22 +690,27 @@ the lisp predicate to test this ('NULL, 'KEYWORDP, etc....)"
 	      (when value
 		(return-from find-parent (values value the-parent)))))))))
 
-(defun kr-init-method (schema)
-  (let ((the-function (find-parent schema :initialize)))
-    (when the-function
-      (funcall the-function schema))))
+(defun kr-init-method (schema  &optional the-function )
+  (if the-function
+      nil
+      (multiple-value-setq (the-function)
+	(find-parent schema :INITIALIZE)))
+  (when the-function
+    (funcall the-function schema)))
 
 (defun allocate-schema-slots (schema)
   (locally (declare #.*special-kr-optimization*)
     (setf (schema-bins schema)
-	  (make-hash-table :test #'eq)))
+	  (make-hash-table :test #'eq
+			   )))
   schema)
 
 (defun make-a-new-schema (name)
   (locally (declare #.*special-kr-optimization*)
     (eval `(defvar ,name))
     (let ((schema (make-schema)))
-      (allocate-schema-slots schema))))
+      (allocate-schema-slots schema)
+      (set name schema))))
 
 (defun process-constant-slots (the-schema parents constants do-types)
   (locally (declare #.*special-kr-optimization*)
