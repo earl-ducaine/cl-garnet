@@ -32,14 +32,6 @@
 (defstruct (full-sl (:include sl))
   dependents)
 
-(defvar *schema-is-new* nil
-  "If non-nil, we are inside the creation of a new schema.  This guarantees
-  that we do not have to search for inverse links when creating relations,
-  and avoids the need to scan long is-a-inv lists.")
-
-(defvar *print-as-structure* T
-  "If non-nil, schema names are printed as structure references.")
-
 (defparameter *no-value* '(:no-value)
   "A cons cell which is used to mark the value of non-existent slots.")
 
@@ -52,6 +44,7 @@
 (declaim (fixnum *type-bits* *type-mask* *inherited-bit*
 		 *is-parent-bit* *is-constant-bit* *is-update-slot-bit*
 		 *is-local-only-slot-bit* *is-parameter-slot-bit*))
+
 (eval-when (:execute :compile-toplevel :load-toplevel)
   (defparameter *type-bits* 10)  ;; # of bits for encoding type
   (defparameter *type-mask* (1- (expt 2 *type-bits*))) ;; to extract type
@@ -61,7 +54,7 @@
   (defparameter *is-update-slot-bit*     (1+ *is-constant-bit*)))
 
 (declaim (fixnum *local-mask* *constant-mask* *is-update-slot-mask*
-		 *inherited-mask* *is-parent-mask* *clear-slot-mask*
+		 *inherited-mask* *is-parent-mask*
 		 *inherited-parent-mask* *not-inherited-mask*
 		 *not-parent-mask* *not-parent-constant-mask*
 		 *all-bits-mask*))
@@ -71,8 +64,6 @@
   (defparameter *is-update-slot-mask* (ash 1 *is-update-slot-bit*))
   (defparameter *inherited-mask* (ash 1 *inherited-bit*))
   (defparameter *is-parent-mask* (ash 1 *is-parent-bit*))
-  (defparameter *clear-slot-mask*
-    (logior *local-mask* *type-mask* *constant-mask* *is-update-slot-mask*))
   (defparameter *inherited-parent-mask*
     (logior *inherited-mask* *is-parent-mask*))
   (defparameter *not-inherited-mask* (lognot *inherited-mask*))
@@ -88,13 +79,6 @@
 (defun formula-p (thing)
   (a-formula-p thing))
 
-
-
-
-
-
-
-
 (defun is-inherited (bits)
   (declare (fixnum bits))
   (logbitp *inherited-bit* bits))
@@ -102,8 +86,6 @@
 (defun is-parent (bits)
   (declare (fixnum bits))
   (logbitp *is-parent-bit* bits))
-
-
 
 (defun set-is-update-slot (bits)
   (declare (fixnum bits))
@@ -114,7 +96,6 @@
   "Returns a slot structure, or NIL."
   (values (gethash slot (schema-bins schema))))
 
-
 (defparameter iterate-slot-value-entry nil
   "Ugly")
 
@@ -124,18 +105,6 @@
     (let ((entry (slot-accessor schema slot)))
       (if (if entry (not (is-inherited (sl-bits entry))))
 	  (sl-value entry)))))
-
-(defun s-value-chain (schema &rest slots)
-  (locally (declare #.*special-kr-optimization*)
-    (do* ((s slots (cdr s)))
-	 ((null (cddr s))
-	  (s-value-fn schema (first s) (second s))))))
-
-(defmacro s-value (schema &rest slots)
-  (when slots
-    (if (cddr slots)
-	`(s-value-chain ,schema ,@slots)
-	`(s-value-fn ,schema ,(first slots) ,(second slots)))))
 
 (defun g-value-no-copy (schema slot &optional skip-local)
   (unless skip-local
@@ -172,8 +141,7 @@
       (return-from s-value-fn (values value t)))
     (let* ((entry (slot-accessor schema slot)))
       (let ((is-formula nil)
-	    (is-relation nil)
-	    )
+	    (is-relation nil))
 	(when (formula-p value)
 	  (setf is-formula T)
 	  (unless (schema-name value)
@@ -225,11 +193,9 @@
 	(when value
 	  (return-from find-parent (values value the-parent)))))))
 
-(defun kr-init-method (schema  &optional the-function )
-  (if the-function
-      nil
-      (multiple-value-setq (the-function)
-	(find-parent schema :INITIALIZE)))
+(defun kr-init-method (schema &optional the-function)
+  (multiple-value-setq (the-function)
+    (find-parent schema :initialize))
   (when the-function
     (funcall the-function schema)))
 
@@ -254,27 +220,13 @@
 	(if entry
 	    (setf (sl-bits entry) (set-is-update-slot (sl-bits entry)))
 	    (let* ((schema-bins (schema-bins the-schema))
-		   (a-hash (gethash slot schema-bins))
-		   (dependants nil))
-	      (if a-hash
-		  (progn
-		    (when (and dependants (not (full-sl-p a-hash)))
-		      (setf (gethash slot schema-bins) (setf a-hash (make-full-sl)))
-		      (setf (sl-name a-hash) slot))
-		    (setf (sl-value a-hash) *no-value*)
-		    (setf (sl-bits a-hash) (set-is-update-slot *local-mask*))
-		    (when dependants (setf (full-sl-dependents a-hash) dependants))
-		    a-hash)
-		  (progn
-		    (setf a-hash
-			  (if dependants
-			      (make-full-sl)
-			      (make-sl)))
-		    (setf (sl-name a-hash) slot)
-		    (setf (sl-value a-hash) *no-value*)
-		    (setf (sl-bits a-hash) (set-is-update-slot *local-mask*))
-		    (when dependants (setf (full-sl-dependents a-hash) dependants))
-		    (setf (gethash slot schema-bins) a-hash)))))))
+		   (a-hash (gethash slot schema-bins)))
+	      (setf a-hash (make-sl))
+	      (setf (sl-name a-hash) slot)
+	      (setf (sl-value a-hash) *no-value*)
+	      (setf (sl-bits a-hash) (set-is-update-slot *local-mask*))
+	      (when dependants (setf (full-sl-dependents a-hash) dependants))
+	      (setf (gethash slot schema-bins) a-hash)))))
     (dolist (parent parents)
       (locally
 	  (declare (optimize (speed 3) (safety 0) (space 0) (debug 0)))
@@ -290,27 +242,13 @@
 		     (if the-entry
 			 (sl-bits the-entry)
 			 (let* ((schema-bins (schema-bins the-schema))
-				(a-hash (gethash slot schema-bins))
-				(dependants nil))
-			   (if a-hash
-			       (progn
-				 (when (and dependants (not (full-sl-p a-hash)))
-				   (setf (gethash slot schema-bins) (setf a-hash (make-full-sl)))
-				   (setf (sl-name a-hash) slot))
-				 (setf (sl-value a-hash) *no-value*)
-				 (setf (sl-bits a-hash) bits)
-				 (when dependants (setf (full-sl-dependents a-hash) dependants))
-				 a-hash)
-			       (progn
-				 (setf a-hash
-				       (if dependants
-					   (make-full-sl)
-					   (make-sl)))
-				 (setf (sl-name a-hash) slot)
-				 (setf (sl-value a-hash) *no-value*)
-				 (setf (sl-bits a-hash) bits)
-				 (when dependants (setf (full-sl-dependents a-hash) dependants))
-				 (setf (gethash slot schema-bins) a-hash)))))))))
+				(a-hash (gethash slot schema-bins)))
+			   (setf a-hash (make-sl))
+			   (setf (sl-name a-hash) slot)
+			   (setf (sl-value a-hash) *no-value*)
+			   (setf (sl-bits a-hash) bits)
+			   (when dependants (setf (full-sl-dependents a-hash) dependants))
+			   (setf (gethash slot schema-bins) a-hash)))))))
 	   (schema-bins parent)))))))
 
 (defun do-schema-body (schema is-a generate-instance override types
