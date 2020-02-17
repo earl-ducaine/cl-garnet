@@ -338,40 +338,6 @@ prematurely."
 (defun relation-p (slot)
   (assocq slot *relations*))
 
-(defmacro g-value-body (schema slot)
-  (let ((schema-form (if (symbolp schema) schema 'schema))
-	(entry (gensym))
-	(value (gensym)))
-    `(locally (declare ,*special-kr-optimization*)
-       (let* (,@(unless (symbolp schema) `((schema ,schema)))
-	      (,entry
-	       (slot-accessor ,schema-form ,slot))
-		(,value (if ,entry
-			    ,@(progn
-				`((if (is-inherited (sl-bits ,entry))
-				      ,@(progn
-					  `((if (a-formula-p (sl-value ,entry))
-						(sl-value ,entry)))
-					  )
-				      (sl-value ,entry))))
-			    ,@(progn
-				`(*no-value*)))))
-	 (if (eq ,value *no-value*)
-	     ,@(cond
-		 (t
-		  `((if ,entry
-			(setf ,value NIL)
-			(if (not (formula-p (setf ,value
-						  (g-value-inherit-values ,schema-form ,slot))))
-			    (setf ,value NIL)))))
-		 ))
-	 ,@(progn
-	     `((if (a-formula-p ,value)
-		   nil
-		   ,value)))))))
-
-(defmacro get-value (schema slot)
-  `(g-value-body ,schema ,slot))
 
 (defmacro g-value (schema &rest slots)
   (if slots
@@ -496,50 +462,6 @@ at slot ~S  (non-schema value is ~S, last schema was ~S)"
 		      (push schema (sl-value entry))))
 	      (set-slot-accessor value inverse (list schema) *local-mask* nil)))))))
 
-(defun check-relation-slot (schema slot values)
-  (unless (listp values)
-    (format
-     t "S-VALUE: relation ~s in schema ~S should be given a list of values!~%"
-     slot schema)
-    (if (schema-p values)
-	(setf values (list values))	; go ahead, use anyway.
-	(return-from check-relation-slot *no-value*)))
-  (dolist (value values)
-    (unless (is-schema value)
-      (when-debug
-       (format
-	t
-	"S-VALUE: value ~s for relation ~s in ~s is not a schema!  Ignored.~%"
-	value slot schema))
-      (return-from check-relation-slot *no-value*)))
-  (do ((value values (cdr value)))
-      ((null value))
-    (when (memberq (car value) (cdr value))
-      (format
-       t
-       "Trying to set relation slot ~S in schema ~S with duplicate value ~S!~%"
-       slot schema (car value))
-      (format t "  The slot was not set.~%")
-      (return-from check-relation-slot *no-value*)))
-  values)
-
-
-(declaim (inline inherited-p))
-(defun inherited-p (schema slot)
-  "Similar to HAS-SLOT-P, but when there is a formula checks whether this is
-an inherited formula."
-  (let ((entry (slot-accessor schema slot)))
-    (when entry
-      (or (is-inherited (sl-bits entry))
-	  (and (formula-p (sl-value entry))
-	       (formula-p (a-formula-is-a (sl-value entry))))))))
-
-;;; encode types
-(defparameter *types-table* (make-hash-table :test #'equal)
-  "Hash table used to look up a Lisp type and returns its code")
-
-(declaim (inline code-to-type-fn))
-
 (defun s-value-fn (schema slot value)
   (locally (declare #.*special-kr-optimization*)
     (unless (schema-p schema)
@@ -548,9 +470,6 @@ an inherited formula."
       (let ((is-formula nil)
 	    (is-relation nil)
 	    (was-formula (formula-p nil)))
-	(when (and (setf is-relation (relation-p slot))
-		   (eq (setf value (check-relation-slot schema slot value)) *no-value*))
-	  (return-from s-value-fn (values nil nil)))
 	(when (formula-p value)
 	  (setf is-formula T)
 	  (setf (on-schema value) schema)
@@ -558,22 +477,17 @@ an inherited formula."
 	  (unless (schema-name value)
 	    (incf *schema-counter*)
 	    (setf (schema-name value) *schema-counter*)))
-	(cond
-	  ((and was-formula (not is-formula))
-	   (setf (cached-value nil) value)
-	   (set-cache-is-valid nil NIL))
-	  (t
-	   (when (and is-formula (null (cached-value value)))
-	     (setf (cached-value value)
-		   (if was-formula (cached-value nil) nil)))
-	   (when is-relation
-	     (link-in-relation schema slot value))
-	   (let ((new-bits (or the-bits *local-mask*)))
-	     (if entry
-		 (setf (sl-value entry) value
-		       (sl-bits entry) new-bits)
-		 (setf entry (set-slot-accessor schema
-						slot value new-bits nil))))))
+	(when (and is-formula (null (cached-value value)))
+	  (setf (cached-value value)
+		(if was-formula (cached-value nil) nil)))
+	(when is-relation
+	  (link-in-relation schema slot value))
+	(let ((new-bits (or the-bits *local-mask*)))
+	  (if entry
+	      (setf (sl-value entry) value
+		    (sl-bits entry) new-bits)
+	      (setf entry (set-slot-accessor schema
+					     slot value new-bits nil))))
 	(when (and the-bits (is-parent the-bits))
 	  (update-inherited-values schema slot value T))
 	(when (and was-formula (not is-formula))
@@ -581,59 +495,21 @@ an inherited formula."
 	(values value nil)))))
 
 (defun internal-s-value (schema slot value)
-  (let ((is-formula (formula-p value))
-	(is-relation (relation-p slot)))
-    (when is-relation
-      (unless (listp value)
-	(setf value (list value)))
-      ;; Check for special cases in relation slots.
-      (when (eq (setf value (check-relation-slot schema slot value)) *no-value*)
-	(return-from internal-s-value NIL)))
-    (when is-formula
-      (setf (on-schema value) schema)
-      (setf (on-slot value) slot))
-    (set-slot-accessor schema slot value *local-mask* nil)
-    ;; Take care of relations.
-    (when is-relation
-      (link-in-relation schema slot value))
-    value))
+  (set-slot-accessor schema slot value *local-mask* nil)
+  value)
 
 (defun set-is-a (schema value)
-  (when (eq (setf value (check-relation-slot schema :is-a value)) *no-value*)
-    (return-from set-is-a NIL))
   (set-slot-accessor schema :IS-A value *local-mask* NIL)
   (link-in-relation schema :IS-A value)
   value)
 
 (defun find-parent (schema slot)
-  (dolist (a-parent (get-local-value schema :IS-A))
+  (dolist (a-parent (get-local-value schema :is-a))
     (when a-parent
-      (let ((value (LOCALLY
-		       (DECLARE (OPTIMIZE (SPEED 3) (SAFETY 0) (SPACE 0) (DEBUG 0)))
-		     (LET* ((.a-local-var-alt. (SLOT-ACCESSOR A-PARENT SLOT))
-			    (.a-local-var.
-			     (IF .a-local-var-alt.
-				 (IF (IS-INHERITED (SL-BITS .a-local-var-alt.))
-				     (IF (A-FORMULA-P (SL-VALUE .a-local-var-alt.))
-					 (SL-VALUE .a-local-var-alt.))
-				     (SL-VALUE .a-local-var-alt.))
-				 *NO-VALUE*)))
-		       (IF (EQ .a-local-var. *NO-VALUE*)
-			   (IF .a-local-var-alt.
-			       (SETF .a-local-var. NIL)
-			       (IF (NOT
-				    (FORMULA-P
-				     (SETF .a-local-var. (G-VALUE-INHERIT-VALUES A-PARENT SLOT))))
-				   (SETF .a-local-var. NIL))))
-		       (IF (A-FORMULA-P .a-local-var.)
-			   NIL
-			   .a-local-var.)))))
-	(if value
-	    (return-from find-parent (values value a-parent))
-	    (multiple-value-bind (value the-parent)
-		(find-parent a-parent slot)
-	      (when value
-		(return-from find-parent (values value the-parent)))))))))
+      (multiple-value-bind (value the-parent)
+	  (find-parent a-parent slot)
+	(when value
+	  (return-from find-parent (values value the-parent)))))))
 
 (defun kr-init-method (schema  &optional the-function )
   (if the-function
@@ -839,7 +715,26 @@ an inherited formula."
   (connect-constraint cn))
 
 (defun kr-init-method-hook (schema)
-  (let ((parent (car (get-value schema :is-a))))
+  (let ((parent (car (LOCALLY
+ (DECLARE (OPTIMIZE (SPEED 3) (SAFETY 0) (SPACE 0) (DEBUG 0)))
+ (LET* ((specific-slot-accessor (SLOT-ACCESSOR SCHEMA :IS-A))
+        (slot-accessor
+         (IF specific-slot-accessor
+             (IF (IS-INHERITED (SL-BITS specific-slot-accessor))
+                 (IF (A-FORMULA-P (SL-VALUE specific-slot-accessor))
+                     (SL-VALUE specific-slot-accessor))
+                 (SL-VALUE specific-slot-accessor))
+             *NO-VALUE*)))
+   (IF (EQ slot-accessor *NO-VALUE*)
+       (IF specific-slot-accessor
+           (SETF slot-accessor NIL)
+           (IF (NOT
+                (FORMULA-P
+                 (SETF slot-accessor (G-VALUE-INHERIT-VALUES SCHEMA :IS-A))))
+               (SETF slot-accessor NIL))))
+   (IF (A-FORMULA-P slot-accessor)
+       NIL
+       slot-accessor))))))
     (locally
 	(declare (optimize (speed 3) (safety 0) (space 0) (debug 0)))
       (progn
@@ -898,7 +793,26 @@ an inherited formula."
       (setf (CN-connection cn) :connected))))
 
 (defun set-object-slot-prop (obj slot prop val)
-  (let* ((os-props (g-value-body OBJ :SB-OS-PROPS))
+  (let* ((os-props (LOCALLY
+		       (DECLARE (OPTIMIZE (SPEED 3) (SAFETY 0) (SPACE 0) (DEBUG 0)))
+		     (LET* ((slot-accessor (SLOT-ACCESSOR OBJ :SB-OS-PROPS))
+			    (specific-slot-accessor
+			     (IF slot-accessor
+				 (IF (IS-INHERITED (SL-BITS slot-accessor))
+				     (IF (A-FORMULA-P (SL-VALUE slot-accessor))
+					 (SL-VALUE slot-accessor))
+				     (SL-VALUE slot-accessor))
+				 *NO-VALUE*)))
+		       (IF (EQ specific-slot-accessor *NO-VALUE*)
+			   (IF slot-accessor
+			       (SETF specific-slot-accessor NIL)
+			       (IF (NOT
+				    (FORMULA-P
+				     (SETF specific-slot-accessor (G-VALUE-INHERIT-VALUES OBJ :SB-OS-PROPS))))
+				   (SETF specific-slot-accessor NIL))))
+		       (IF (A-FORMULA-P specific-slot-accessor)
+			   NIL
+			   specific-slot-accessor))))
 	 (slot-props (getf os-props slot nil)))
     (setf (getf slot-props prop) val)
     (setf (getf os-props slot) slot-props)
