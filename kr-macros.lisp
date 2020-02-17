@@ -34,9 +34,6 @@
 (defstruct (full-sl (:include sl))
   dependents)
 
-(defvar *within-g-value* nil
-  "Set to non-nil within a sub-formula evaluation")
-
 (declaim (fixnum *sweep-mark*))
 (defvar *sweep-mark* 0
   "Used as a sweep mark to detect circularities")
@@ -297,33 +294,6 @@ prematurely."
 	       (setf (full-sl-dependents ,the-entry) ,the-dependents))
 	     (setf (gethash ,slot ,the-bins) ,the-entry))))))
 
-(defmacro a-formula-number (formula)
-  `(the (or null fixnum) (a-formula-bins ,formula)))
-
-(defmacro set-formula-number (formula value)
-  `(setf (a-formula-number ,formula) ,value))
-
-(defmacro on-schema (formula)
-  `(a-formula-schema ,formula))
-
-(defmacro on-slot (formula)
-  `(a-formula-slot ,formula))
-
-(defmacro cached-value (thing)
-  `(a-formula-cached-value ,thing))
-
-(defmacro cache-is-valid (thing)
-  `(logbitp 0 (a-formula-number ,thing)))
-
-(defmacro set-cache-is-valid (thing value)
-  (if value
-      `(set-formula-number ,thing (logior (a-formula-number ,thing) 1))
-      `(set-formula-number ,thing
-			   (logand (a-formula-number ,thing) ,(lognot 1)))))
-
-(defmacro cache-mark (thing)
-  `(logand (a-formula-number ,thing) (lognot 1)))
-
 (defparameter iterate-slot-value-entry nil
   "Ugly")
 
@@ -334,74 +304,17 @@ prematurely."
       (if (if entry (not (is-inherited (sl-bits entry))))
 	  (sl-value entry)))))
 
-(declaim (inline relation-p))
-(defun relation-p (slot)
-  (assocq slot *relations*))
-
-(defmacro g-value (schema &rest slots)
-  (if slots
-      nil
-      `(progn ,schema)))
-
 (defun s-value-chain (schema &rest slots)
   (locally (declare #.*special-kr-optimization*)
-    (if (null schema)
-	(error "S-VALUE on a null object:  (S-VALUE ~S~{ ~S~})" schema slots)
-	(unless (schema-p schema)
-	  (error "S-VALUE called with the non-object ~S :  (s-value ~S~{ ~S~})."
-		 schema schema slots)))
-    (do* ((s slots (cdr s))
-	  (intermediate schema))
+    (do* ((s slots (cdr s)))
 	 ((null (cddr s))
-	  (s-value-fn intermediate (first s) (second s)))
-      (let ((new-schema nil))
-	(setf intermediate new-schema)))))
+	  (s-value-fn schema (first s) (second s))))))
 
 (defmacro s-value (schema &rest slots)
   (when slots
     (if (cddr slots)
 	`(s-value-chain ,schema ,@slots)
 	`(s-value-fn ,schema ,(first slots) ,(second slots)))))
-
-(declaim (inline has-slot-p))
-(defun has-slot-p (schema slot)
-  (locally (declare #.*special-kr-optimization*)
-    (let ((entry (slot-accessor schema slot)))
-      (and entry
-	   (not (eq (sl-value entry) *no-value*))
-	   (not (is-inherited (sl-bits entry)))))))
-
-(defmacro kr-send (schema slot &rest args)
-  (let ((the-schema (gensym))
-	(the-function (gensym)))
-    `(let* ((,the-schema ,schema)
-	    (,the-function (g-value ,the-schema ,slot)))
-       (when ,the-function
-	 (funcall ,the-function ,@args)))))
-
-(defmacro define-method (name class arg-list &rest body)
-  (unless (keywordp name)
-    (setf name (intern (symbol-name name) (find-package "KEYWORD")))
-    (format t "DEFINE-METHOD takes a keyword as the method name - using ~S~%"
-	    name))
-  (let* ((function-name (intern (concatenate 'string
-					     (symbol-name name)
-					     "-METHOD-"
-					     (symbol-name class)))))
-    `(progn
-       (defun ,function-name ,arg-list
-	 ,@body)
-       (s-value ,class ,name ',function-name))))
-
-(defsetf g-value s-value)
-
-(defun merge-declarations (declaration keyword output)
-  (let ((old (find keyword output :key #'second)))
-    (if old
-	(setf (cadr (third old)) (union (cdr declaration)
-					(cadr (third old))))
-	(push `(cons ,keyword ',(cdr declaration)) output)))
-  output)
 
 (defun g-value-inherit-values (schema slot)
   (declare (ftype (function (t &optional t) t) formula-fn))
@@ -461,14 +374,9 @@ prematurely."
 	    (was-formula (formula-p nil)))
 	(when (formula-p value)
 	  (setf is-formula T)
-	  (setf (on-schema value) schema)
-	  (setf (on-slot value) slot)
 	  (unless (schema-name value)
 	    (incf *schema-counter*)
 	    (setf (schema-name value) *schema-counter*)))
-	(when (and is-formula (null (cached-value value)))
-	  (setf (cached-value value)
-		(if was-formula (cached-value nil) nil)))
 	(when is-relation
 	  (link-in-relation schema slot value))
 	(let ((new-bits (or the-bits *local-mask*)))
@@ -479,8 +387,6 @@ prematurely."
 					     slot value new-bits nil))))
 	(when (and the-bits (is-parent the-bits))
 	  (update-inherited-values schema slot value T))
-	(when (and was-formula (not is-formula))
-	  (set-cache-is-valid nil T))
 	(values value nil)))))
 
 (defun internal-s-value (schema slot value)
@@ -563,7 +469,28 @@ prematurely."
 	(unless (eq types :NONE)
 	  (dolist (type types)
 	    (dolist (slot (cdr type))
-	      (set-slot-accessor schema slot *no-value* 33 nil))))
+	      (LET* ((schema-bins (SCHEMA-BINS SCHEMA))
+		     (hash (GETHASH SLOT schema-bins))
+		     (dependants NIL))
+		(IF hash
+		    (PROGN
+		      (WHEN (AND dependants (NOT (FULL-SL-P hash)))
+			(SETF (GETHASH SLOT schema-bins) (SETF hash (MAKE-FULL-SL)))
+			(SETF (SL-NAME hash) SLOT))
+		      (SETF (SL-VALUE hash) *NO-VALUE*)
+		      (SETF (SL-BITS hash) 33)
+		      (WHEN dependants (SETF (FULL-SL-DEPENDENTS hash) dependants))
+		      hash)
+		    (PROGN
+		      (SETF hash
+			    (IF dependants
+				(MAKE-FULL-SL)
+				(MAKE-SL)))
+		      (SETF (SL-NAME hash) SLOT)
+		      (SETF (SL-VALUE hash) *NO-VALUE*)
+		      (SETF (SL-BITS hash) 33)
+		      (WHEN dependants (SETF (FULL-SL-DEPENDENTS hash) dependants))
+		      (SETF (GETHASH SLOT schema-bins) hash)))))))
 	(process-constant-slots schema is-a nil
 				(not (eq types :NONE)))
 	(kr-init-method schema))
@@ -598,8 +525,11 @@ prematurely."
 (do-schema-body (make-a-new-schema 'rectangle) graphical-object t nil nil
                 (cons :update-slots '(:fast-redraw-p)))
 
-(define-method :initialize graphical-object (gob)
-	       (s-value-fn gob :update-info 'a))
+
+ (defun initialize-method-graphical-object (gob)
+   (s-value-fn gob :update-info 'a))
+
+ (s-value graphical-object :initialize 'initialize-method-graphical-object)
 
 (defstruct (sb-constraint)
   variables
@@ -772,8 +702,8 @@ prematurely."
 			(set-object-slot-prop obj slot :sb-path-constraints
 					      (adjoin cn nil))
 			(push (os obj slot) cn-path-links)
-			(s-value-fn-save-fn-symbol obj slot (g-value obj slot))
-			(setf obj (g-value obj slot))))))
+			(s-value-fn-save-fn-symbol obj slot nil)
+			(setf obj nil)))))
       (setf (CN-variables cn)
 	    (loop for var-os in var-os-list
 	       collect (create-object-slot-var
@@ -810,7 +740,7 @@ prematurely."
 (defun create-object-slot-var (obj slot)
   (let ((var (create-mg-variable)))
     (set-object-slot-prop obj slot :sb-variable var)
-    (s-value-fn-save-fn-symbol obj slot (g-value obj slot))
+    (s-value-fn-save-fn-symbol obj slot nil)
     var))
 
 (eval-when (:load-toplevel :execute)
