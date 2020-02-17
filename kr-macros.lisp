@@ -838,45 +838,6 @@ the expression ~S instead."
 
 
 
-(eval-when (:execute :compile-toplevel :load-toplevel)
-  (defun process-slots (slots)
-    (let ((output nil)
-	  (is-a nil))
-      (do ((head slots (cdr head))
-	   (types nil)
-	   (had-types nil)
-	   slot)
-	  ((null head)
-	   (if types
-	       (push `(quote ,types) output)
-	       (if had-types
-		   (push :NONE output)
-		   (push NIL output))))
-	(setf slot (car head))
-	(cond
-	  ((keywordp slot)
-	   (when (eq slot :DECLARE)
-	     (pop head)
-	     (dolist (declaration (if (listp (caar head))
-				      (car head)
-				      (list (car head))))
-	       (format t "declaration ~s~%" declaration)
-	       (case (car declaration)
-		 (:TYPE
-		  (setf had-types T)
-		  (dolist (spec (cdr declaration))
-		    (push spec types)))
-		 ((:CONSTANT :IGNORED-SLOTS :LOCAL-ONLY-SLOTS
-			     :MAYBE-CONSTANT :PARAMETERS :OUTPUT
-			     :SORTED-SLOTS :UPDATE-SLOTS)
-		  (setf output (merge-declarations declaration
-						   (car declaration)
-						   output)))))))
-	  ((listp slot)
-	   (if (eq (car slot) :IS-A)
-	       (setf is-a (cadr slot))
-	       (push `'(,(car slot) . ,(cadr slot)) output)))))
-      (cons is-a output))))
 
 (defun do-schema-body (schema is-a generate-instance override types
 		       &rest slot-specifiers)
