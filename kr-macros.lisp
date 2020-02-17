@@ -34,30 +34,6 @@
 (defstruct (full-sl (:include sl))
   dependents)
 
-(declaim (fixnum *sweep-mark*))
-(defvar *sweep-mark* 0
-  "Used as a sweep mark to detect circularities")
-
-(defvar *constants-disabled* NIL
-  "May be bound to NIL to cause constant declarations to be ignore in
-  create-instance.")
-
-(defvar *redefine-ok* NIL
-  "May be bound to T to allow create-instance to redefine slots that were
-  declare constant in the prototype.")
-
-(defvar *pre-set-demon* nil
-  "May be bound to a function to be called as a slot is set in a schema
-  with the slots new-value.")
-
-(defvar *slot-setter-debug* nil)
-
-(defvar *schema-self* nil
-  "The schema being acted upon by the accessor functions.")
-
-(defvar *schema-slot* nil
-  "The slot in *schema-self* being acted upon by the accessor functions.")
-
 (defvar *schema-is-new* nil
   "If non-nil, we are inside the creation of a new schema.  This guarantees
   that we do not have to search for inverse links when creating relations,
