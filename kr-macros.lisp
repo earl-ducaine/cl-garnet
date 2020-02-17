@@ -497,7 +497,6 @@
      (setf (sb-constraint-variables cn) val)))
 
 (defstruct (sb-variable)
-  constraints
   other-slots
   set-slot-fn)
 
@@ -574,26 +573,20 @@
   (connect-constraint cn))
 
 (defun kr-init-method-hook (schema)
-  (let ((parent (car (LOCALLY
- (DECLARE (OPTIMIZE (SPEED 3) (SAFETY 0) (SPACE 0) (DEBUG 0)))
- (LET* ((specific-slot-accessor (SLOT-ACCESSOR SCHEMA :IS-A))
-        (slot-accessor
-         (IF specific-slot-accessor
-             (IF (IS-INHERITED (SL-BITS specific-slot-accessor))
-                 (IF (A-FORMULA-P (SL-VALUE specific-slot-accessor))
-                     (SL-VALUE specific-slot-accessor))
-                 (SL-VALUE specific-slot-accessor))
-             *NO-VALUE*)))
-   (IF (EQ slot-accessor *NO-VALUE*)
-       (IF specific-slot-accessor
-           (SETF slot-accessor NIL)
-           (IF (NOT
-                (FORMULA-P
-                 (SETF slot-accessor (G-VALUE-INHERIT-VALUES SCHEMA :IS-A))))
-               (SETF slot-accessor NIL))))
-   (IF (A-FORMULA-P slot-accessor)
-       NIL
-       slot-accessor))))))
+  (let ((parent (car
+		 (LOCALLY
+		     (DECLARE (OPTIMIZE (SPEED 3) (SAFETY 0) (SPACE 0) (DEBUG 0)))
+		   (LET* ((specific-slot-accessor (SLOT-ACCESSOR SCHEMA :IS-A))
+			  (slot-accessor
+			   (IF specific-slot-accessor
+			       (IF (IS-INHERITED (SL-BITS specific-slot-accessor))
+				   (IF (A-FORMULA-P (SL-VALUE specific-slot-accessor))
+				       (SL-VALUE specific-slot-accessor))
+				   (SL-VALUE specific-slot-accessor))
+			       *NO-VALUE*)))
+		     (IF (A-FORMULA-P slot-accessor)
+			 NIL
+			 slot-accessor))))))
     (locally
 	(declare (optimize (speed 3) (safety 0) (space 0) (debug 0)))
       (progn
@@ -613,19 +606,14 @@
 (defun activate-new-instance-cns (schema)
   (locally
       (declare (optimize (speed 3) (safety 0) (space 0) (debug 0)))
-    (progn
-      (maphash
-       #'(lambda (iterate-ignored-slot-name iterate-slot-value-entry)
-	   (declare (ignore iterate-ignored-slot-name))
-	   (let ((slot (sl-name iterate-slot-value-entry))
-		 (value (sl-value iterate-slot-value-entry)))
-	     (unless (is-inherited (sl-bits iterate-slot-value-entry))
-	       (unless (eq value *no-value*)
-		 (let ((slot slot))
-		   (let ((value (get-local-value schema slot)))
-		     (if (constraint-p value)
-			 (add-constraint-to-slot schema slot value))))))))
-       (schema-bins schema)))))
+    (maphash
+     #'(lambda (iterate-ignored-slot-name iterate-slot-value-entry)
+	 (declare (ignore iterate-ignored-slot-name))
+	 (let* ((slot (sl-name iterate-slot-value-entry))
+		(value (get-local-value schema slot)))
+	   (if (constraint-p value)
+	       (add-constraint-to-slot schema slot value))))
+     (schema-bins schema))))
 
 (defun connect-constraint (cn)
   (let* ((cn-var-paths (CN-variable-paths cn)))
