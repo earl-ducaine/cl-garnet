@@ -56,9 +56,9 @@
   (defparameter *type-bits* 10)  ;; # of bits for encoding type
   (defparameter *type-mask* (1- (expt 2 *type-bits*))) ;; to extract type
   (defparameter *inherited-bit*          *type-bits*)
-   (defparameter *is-parent-bit*          (1+ *inherited-bit*))
+  (defparameter *is-parent-bit*          (1+ *inherited-bit*))
   (defparameter *is-constant-bit*        (1+ *is-parent-bit*))
-   (defparameter *is-update-slot-bit*     (1+ *is-constant-bit*)))
+  (defparameter *is-update-slot-bit*     (1+ *is-constant-bit*)))
 
 (declaim (fixnum *local-mask* *constant-mask* *is-update-slot-mask*
 		 *inherited-mask* *is-parent-mask* *clear-slot-mask*
@@ -82,7 +82,7 @@
   (defparameter *all-bits-mask* (lognot *type-mask*)))
 
 (declaim (inline
-	   is-inherited is-parent
+	  is-inherited is-parent
 	  extract-type-code))
 
 (defun formula-p (thing)
@@ -169,7 +169,7 @@
 
 (defun link-in-relation (schema slot values)
   (let ((inverse (when (eq slot :is-a)
-		     :is-a-inv)))
+		   :is-a-inv)))
     (when inverse
       (dolist (value values)
 	(let* ((entry (if (eq slot :is-a)
@@ -178,31 +178,31 @@
 	       (previous-values (when entry (sl-value entry))))
 	  (if entry
 	      (if  *schema-is-new*
-		  (if (eq (sl-value entry) *no-value*)
-		      (setf (sl-value entry) (list schema))
-		      (push schema (sl-value entry))))
+		   (if (eq (sl-value entry) *no-value*)
+		       (setf (sl-value entry) (list schema))
+		       (push schema (sl-value entry))))
 	      (LET* ((schema-bins (SCHEMA-BINS VALUE))
-       (a-hash (GETHASH INVERSE schema-bins))
-       (dependants NIL))
-  (IF a-hash
-      (PROGN
-       (WHEN (AND dependants (NOT (FULL-SL-P a-hash)))
-         (SETF (GETHASH INVERSE schema-bins) (SETF a-hash (MAKE-FULL-SL)))
-         (SETF (SL-NAME a-hash) INVERSE))
-       (SETF (SL-VALUE a-hash) (LIST SCHEMA))
-       (SETF (SL-BITS a-hash) *LOCAL-MASK*)
-       (WHEN dependants (SETF (FULL-SL-DEPENDENTS a-hash) dependants))
-       a-hash)
-      (PROGN
-       (SETF a-hash
-               (IF dependants
-                   (MAKE-FULL-SL)
-                   (MAKE-SL)))
-       (SETF (SL-NAME a-hash) INVERSE)
-       (SETF (SL-VALUE a-hash) (LIST SCHEMA))
-       (SETF (SL-BITS a-hash) *LOCAL-MASK*)
-       (WHEN dependants (SETF (FULL-SL-DEPENDENTS a-hash) dependants))
-       (SETF (GETHASH INVERSE schema-bins) a-hash))))))))))
+		     (a-hash (GETHASH INVERSE schema-bins))
+		     (dependants NIL))
+		(IF a-hash
+		    (PROGN
+		      (WHEN (AND dependants (NOT (FULL-SL-P a-hash)))
+			(SETF (GETHASH INVERSE schema-bins) (SETF a-hash (MAKE-FULL-SL)))
+			(SETF (SL-NAME a-hash) INVERSE))
+		      (SETF (SL-VALUE a-hash) (LIST SCHEMA))
+		      (SETF (SL-BITS a-hash) *LOCAL-MASK*)
+		      (WHEN dependants (SETF (FULL-SL-DEPENDENTS a-hash) dependants))
+		      a-hash)
+		    (PROGN
+		      (SETF a-hash
+			    (IF dependants
+				(MAKE-FULL-SL)
+				(MAKE-SL)))
+		      (SETF (SL-NAME a-hash) INVERSE)
+		      (SETF (SL-VALUE a-hash) (LIST SCHEMA))
+		      (SETF (SL-BITS a-hash) *LOCAL-MASK*)
+		      (WHEN dependants (SETF (FULL-SL-DEPENDENTS a-hash) dependants))
+		      (SETF (GETHASH INVERSE schema-bins) a-hash))))))))))
 
 (defun s-value-fn (schema slot value)
   (locally (declare #.*special-kr-optimization*)
@@ -225,78 +225,78 @@
 		    (sl-bits entry) new-bits)
 	      (setf entry (LET* ((schema-bins (SCHEMA-BINS SCHEMA))
 				 (a-hash (GETHASH SLOT schema-bins))
-       (dependants NIL))
-  (IF a-hash
-      (PROGN
-       (WHEN (AND dependants (NOT (FULL-SL-P a-hash)))
-         (SETF (GETHASH SLOT schema-bins) (SETF a-hash (MAKE-FULL-SL)))
-         (SETF (SL-NAME a-hash) SLOT))
-       (SETF (SL-VALUE a-hash) VALUE)
-       (SETF (SL-BITS a-hash) NEW-BITS)
-       (WHEN dependants (SETF (FULL-SL-DEPENDENTS a-hash) dependants))
-       a-hash)
-      (PROGN
-       (SETF a-hash
-               (IF dependants
-                   (MAKE-FULL-SL)
-                   (MAKE-SL)))
-       (SETF (SL-NAME a-hash) SLOT)
-       (SETF (SL-VALUE a-hash) VALUE)
-       (SETF (SL-BITS a-hash) NEW-BITS)
-       (WHEN dependants (SETF (FULL-SL-DEPENDENTS a-hash) dependants))
-       (SETF (GETHASH SLOT schema-bins) a-hash)))))))
+				 (dependants NIL))
+			    (IF a-hash
+				(PROGN
+				  (WHEN (AND dependants (NOT (FULL-SL-P a-hash)))
+				    (SETF (GETHASH SLOT schema-bins) (SETF a-hash (MAKE-FULL-SL)))
+				    (SETF (SL-NAME a-hash) SLOT))
+				  (SETF (SL-VALUE a-hash) VALUE)
+				  (SETF (SL-BITS a-hash) NEW-BITS)
+				  (WHEN dependants (SETF (FULL-SL-DEPENDENTS a-hash) dependants))
+				  a-hash)
+				(PROGN
+				  (SETF a-hash
+					(IF dependants
+					    (MAKE-FULL-SL)
+					    (MAKE-SL)))
+				  (SETF (SL-NAME a-hash) SLOT)
+				  (SETF (SL-VALUE a-hash) VALUE)
+				  (SETF (SL-BITS a-hash) NEW-BITS)
+				  (WHEN dependants (SETF (FULL-SL-DEPENDENTS a-hash) dependants))
+				  (SETF (GETHASH SLOT schema-bins) a-hash)))))))
 	(when (and the-bits (is-parent the-bits))
 	  (update-inherited-values schema slot value T))
 	(values value nil)))))
 
 (defun internal-s-value (schema slot value)
   (LET* ((schema-bins (SCHEMA-BINS SCHEMA))
-       (a-hash (GETHASH SLOT schema-bins))
-       (dependants NIL))
-  (IF a-hash
-      (PROGN
-       (WHEN (AND dependants (NOT (FULL-SL-P a-hash)))
-         (SETF (GETHASH SLOT schema-bins) (SETF a-hash (MAKE-FULL-SL)))
-         (SETF (SL-NAME a-hash) SLOT))
-       (SETF (SL-VALUE a-hash) VALUE)
-       (SETF (SL-BITS a-hash) *LOCAL-MASK*)
-       (WHEN dependants (SETF (FULL-SL-DEPENDENTS a-hash) dependants))
-       a-hash)
-      (PROGN
-       (SETF a-hash
-               (IF dependants
-                   (MAKE-FULL-SL)
-                   (MAKE-SL)))
-       (SETF (SL-NAME a-hash) SLOT)
-       (SETF (SL-VALUE a-hash) VALUE)
-       (SETF (SL-BITS a-hash) *LOCAL-MASK*)
-       (WHEN dependants (SETF (FULL-SL-DEPENDENTS a-hash) dependants))
-       (SETF (GETHASH SLOT schema-bins) a-hash))))
+	 (a-hash (GETHASH SLOT schema-bins))
+	 (dependants NIL))
+    (IF a-hash
+	(PROGN
+	  (WHEN (AND dependants (NOT (FULL-SL-P a-hash)))
+	    (SETF (GETHASH SLOT schema-bins) (SETF a-hash (MAKE-FULL-SL)))
+	    (SETF (SL-NAME a-hash) SLOT))
+	  (SETF (SL-VALUE a-hash) VALUE)
+	  (SETF (SL-BITS a-hash) *LOCAL-MASK*)
+	  (WHEN dependants (SETF (FULL-SL-DEPENDENTS a-hash) dependants))
+	  a-hash)
+	(PROGN
+	  (SETF a-hash
+		(IF dependants
+		    (MAKE-FULL-SL)
+		    (MAKE-SL)))
+	  (SETF (SL-NAME a-hash) SLOT)
+	  (SETF (SL-VALUE a-hash) VALUE)
+	  (SETF (SL-BITS a-hash) *LOCAL-MASK*)
+	  (WHEN dependants (SETF (FULL-SL-DEPENDENTS a-hash) dependants))
+	  (SETF (GETHASH SLOT schema-bins) a-hash))))
   value)
 
 (defun set-is-a (schema value)
   (LET* ((schema-bins (SCHEMA-BINS SCHEMA))
-       (a-hash (GETHASH :IS-A schema-bins))
-       (dependants NIL))
-  (IF a-hash
-      (PROGN
-       (WHEN (AND dependants (NOT (FULL-SL-P a-hash)))
-         (SETF (GETHASH :IS-A schema-bins) (SETF a-hash (MAKE-FULL-SL)))
-         (SETF (SL-NAME a-hash) :IS-A))
-       (SETF (SL-VALUE a-hash) VALUE)
-       (SETF (SL-BITS a-hash) *LOCAL-MASK*)
-       (WHEN dependants (SETF (FULL-SL-DEPENDENTS a-hash) dependants))
-       a-hash)
-      (PROGN
-       (SETF a-hash
-               (IF dependants
-                   (MAKE-FULL-SL)
-                   (MAKE-SL)))
-       (SETF (SL-NAME a-hash) :IS-A)
-       (SETF (SL-VALUE a-hash) VALUE)
-       (SETF (SL-BITS a-hash) *LOCAL-MASK*)
-       (WHEN dependants (SETF (FULL-SL-DEPENDENTS a-hash) dependants))
-       (SETF (GETHASH :IS-A schema-bins) a-hash))))
+	 (a-hash (GETHASH :IS-A schema-bins))
+	 (dependants NIL))
+    (IF a-hash
+	(PROGN
+	  (WHEN (AND dependants (NOT (FULL-SL-P a-hash)))
+	    (SETF (GETHASH :IS-A schema-bins) (SETF a-hash (MAKE-FULL-SL)))
+	    (SETF (SL-NAME a-hash) :IS-A))
+	  (SETF (SL-VALUE a-hash) VALUE)
+	  (SETF (SL-BITS a-hash) *LOCAL-MASK*)
+	  (WHEN dependants (SETF (FULL-SL-DEPENDENTS a-hash) dependants))
+	  a-hash)
+	(PROGN
+	  (SETF a-hash
+		(IF dependants
+		    (MAKE-FULL-SL)
+		    (MAKE-SL)))
+	  (SETF (SL-NAME a-hash) :IS-A)
+	  (SETF (SL-VALUE a-hash) VALUE)
+	  (SETF (SL-BITS a-hash) *LOCAL-MASK*)
+	  (WHEN dependants (SETF (FULL-SL-DEPENDENTS a-hash) dependants))
+	  (SETF (GETHASH :IS-A schema-bins) a-hash))))
   (link-in-relation schema :IS-A value)
   value)
 
@@ -337,27 +337,27 @@
 	(if entry
 	    (setf (sl-bits entry) (set-is-update-slot (sl-bits entry)))
 	    (LET* ((schema-bins (SCHEMA-BINS THE-SCHEMA))
-       (a-hash (GETHASH SLOT schema-bins))
-       (dependants NIL))
-  (IF a-hash
-      (PROGN
-       (WHEN (AND dependants (NOT (FULL-SL-P a-hash)))
-         (SETF (GETHASH SLOT schema-bins) (SETF a-hash (MAKE-FULL-SL)))
-         (SETF (SL-NAME a-hash) SLOT))
-       (SETF (SL-VALUE a-hash) *NO-VALUE*)
-       (SETF (SL-BITS a-hash) (SET-IS-UPDATE-SLOT *LOCAL-MASK*))
-       (WHEN dependants (SETF (FULL-SL-DEPENDENTS a-hash) dependants))
-       a-hash)
-      (PROGN
-       (SETF a-hash
-               (IF dependants
-                   (MAKE-FULL-SL)
-                   (MAKE-SL)))
-       (SETF (SL-NAME a-hash) SLOT)
-       (SETF (SL-VALUE a-hash) *NO-VALUE*)
-       (SETF (SL-BITS a-hash) (SET-IS-UPDATE-SLOT *LOCAL-MASK*))
-       (WHEN dependants (SETF (FULL-SL-DEPENDENTS a-hash) dependants))
-       (SETF (GETHASH SLOT schema-bins) a-hash)))))))
+		   (a-hash (GETHASH SLOT schema-bins))
+		   (dependants NIL))
+	      (IF a-hash
+		  (PROGN
+		    (WHEN (AND dependants (NOT (FULL-SL-P a-hash)))
+		      (SETF (GETHASH SLOT schema-bins) (SETF a-hash (MAKE-FULL-SL)))
+		      (SETF (SL-NAME a-hash) SLOT))
+		    (SETF (SL-VALUE a-hash) *NO-VALUE*)
+		    (SETF (SL-BITS a-hash) (SET-IS-UPDATE-SLOT *LOCAL-MASK*))
+		    (WHEN dependants (SETF (FULL-SL-DEPENDENTS a-hash) dependants))
+		    a-hash)
+		  (PROGN
+		    (SETF a-hash
+			  (IF dependants
+			      (MAKE-FULL-SL)
+			      (MAKE-SL)))
+		    (SETF (SL-NAME a-hash) SLOT)
+		    (SETF (SL-VALUE a-hash) *NO-VALUE*)
+		    (SETF (SL-BITS a-hash) (SET-IS-UPDATE-SLOT *LOCAL-MASK*))
+		    (WHEN dependants (SETF (FULL-SL-DEPENDENTS a-hash) dependants))
+		    (SETF (GETHASH SLOT schema-bins) a-hash)))))))
     (when do-types
       (dolist (parent parents)
 	(locally
@@ -409,30 +409,29 @@
 	(unless (eq types :NONE)
 	  (dolist (type types)
 	    (dolist (slot (cdr type))
-	      (LET* ((schema-bins (SCHEMA-BINS SCHEMA))
-		     (hash (GETHASH SLOT schema-bins))
-		     (dependants NIL))
-		(IF hash
-		    (PROGN
-		      (WHEN (AND dependants (NOT (FULL-SL-P hash)))
-			(SETF (GETHASH SLOT schema-bins) (SETF hash (MAKE-FULL-SL)))
-			(SETF (SL-NAME hash) SLOT))
-		      (SETF (SL-VALUE hash) *NO-VALUE*)
-		      (SETF (SL-BITS hash) 33)
-		      (WHEN dependants (SETF (FULL-SL-DEPENDENTS hash) dependants))
+	      (let* ((schema-bins (schema-bins schema))
+		     (hash (gethash slot schema-bins))
+		     (dependants nil))
+		(if hash
+		    (progn
+		      (when (and dependants (not (full-sl-p hash)))
+			(setf (gethash slot schema-bins) (setf hash (make-full-sl)))
+			(setf (sl-name hash) slot))
+		      (setf (sl-value hash) *no-value*)
+		      (setf (sl-bits hash) 33)
+		      (when dependants (setf (full-sl-dependents hash) dependants))
 		      hash)
-		    (PROGN
-		      (SETF hash
-			    (IF dependants
-				(MAKE-FULL-SL)
-				(MAKE-SL)))
-		      (SETF (SL-NAME hash) SLOT)
-		      (SETF (SL-VALUE hash) *NO-VALUE*)
-		      (SETF (SL-BITS hash) 33)
-		      (WHEN dependants (SETF (FULL-SL-DEPENDENTS hash) dependants))
-		      (SETF (GETHASH SLOT schema-bins) hash)))))))
-	(process-constant-slots schema is-a nil
-				(not (eq types :NONE)))
+		    (progn
+		      (setf hash
+			    (if dependants
+				(make-full-sl)
+				(make-sl)))
+		      (setf (sl-name hash) slot)
+		      (setf (sl-value hash) *no-value*)
+		      (setf (sl-bits hash) 33)
+		      (when dependants (setf (full-sl-dependents hash) dependants))
+		      (setf (gethash slot schema-bins) hash)))))))
+	(process-constant-slots schema is-a nil t)
 	(kr-init-method schema))
     (let ((slot-name (car slot))
 	  (slot-value (cdr slot)))
@@ -445,13 +444,7 @@
     (do* ((slots slot-specifiers (cdr slots))
 	  (slot (car slots) (car slots)))
 	 ((null slots)
-	  (process-constant-slots schema is-a nil (not (eq types :NONE)))
-	  (dolist (slot slot-specifiers)
-	    (when (and (listp slot)
-		       (MEMBER (CAR SLOT)
-        '(:IGNORED-SLOTS :LOCAL-ONLY-SLOTS :MAYBE-CONSTANT :PARAMETERS :OUTPUT
-          :SORTED-SLOTS :UPDATE-SLOTS)
-        :TEST #'EQ))))
+	  (process-constant-slots schema is-a nil t)
 	  (kr-init-method schema)
 	  schema)
       (let ((slot-name (car slot))
@@ -465,18 +458,13 @@
 (do-schema-body (make-a-new-schema 'rectangle) graphical-object t nil nil
                 (cons :update-slots '(:fast-redraw-p)))
 
+(defun initialize-method-graphical-object (gob)
+  (s-value-fn gob :update-info 'a))
 
- (defun initialize-method-graphical-object (gob)
-   (s-value-fn gob :update-info 'a))
-
- (s-value graphical-object :initialize 'initialize-method-graphical-object)
+(s-value-fn graphical-object :initialize 'initialize-method-graphical-object)
 
 (defstruct (sb-constraint)
   variables
-  strength
-  methods
-  selected-method
-  mark
   other-slots
   set-slot-fn)
 
@@ -632,7 +620,7 @@
 			(push (os obj slot) cn-path-links)
 			(s-value-fn-save-fn-symbol obj slot nil)
 			(setf obj nil)))))
-      (setf (CN-variables cn)
+      (setf (cn-variables cn)
 	    (loop for var-os in var-os-list
 	       collect (create-object-slot-var
 			(os-object var-os)
