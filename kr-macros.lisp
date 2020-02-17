@@ -21,16 +21,10 @@
 	 T)))
 
 (defstruct (a-formula (:include schema))
-  depends-on
   schema
   slot
   cached-value
-  path
-  is-a
-  function
-  lambda
-  is-a-inv
-  meta)
+  is-a)
 
 (defstruct (sl)
   name
@@ -269,26 +263,12 @@ prematurely."
 (defun get-dependent-formula (dependency)
   (car dependency))
 
-
-(declaim (inline slot-dependents))
-(defun slot-dependents (slot-structure)
-  (declare #.*special-kr-optimization*)
-  ;; (let ((entry slot-structure))
-  ;;   (when (full-sl-p entry)
-  ;;     (full-sl-dependents entry)))
-  )
-
-
 (declaim (inline slot-accessor))
 (defun slot-accessor (schema slot)
   "Returns a slot structure, or NIL."
   (values (gethash slot (schema-bins schema))))
 
-
 (defmacro set-slot-accessor (schema slot value bits dependents)
-  "Returns the slot structure it created or modified.
-SIDE EFFECTS: if <dependents> is specified, the slot structure is
-modified to be a full-slot structure."
   (let ((the-bins (gensym))
 	(the-entry (gensym))
 	(the-dependents (gensym)))
@@ -468,9 +448,6 @@ at slot ~S  (non-schema value is ~S, last schema was ~S)"
 	(push `(cons ,keyword ',(cdr declaration)) output)))
   output)
 
-
-
-
 (defun g-value-inherit-values (schema slot)
   (declare (ftype (function (t &optional t) t) formula-fn))
   (dolist (parent (get-local-value schema :IS-A))
@@ -488,10 +465,6 @@ at slot ~S  (non-schema value is ~S, last schema was ~S)"
 	  (setf bits (sl-bits entry)))
       (unless (eq value *no-value*)
 	(return-from g-value-inherit-values (values value bits)))))
-  (set-slot-accessor schema slot
-		     nil
-		     *is-parent-mask*
-		     (slot-dependents nil))
   *no-value*)
 
 (defun g-value-no-copy (schema slot &optional skip-local)
@@ -565,35 +538,7 @@ an inherited formula."
 (defparameter *types-table* (make-hash-table :test #'equal)
   "Hash table used to look up a Lisp type and returns its code")
 
-(declaim (fixnum *types-array-inc*))
-(defparameter *types-array-inc* 255) ;; allocate in blocks of this size
-
-(declaim (fixnum *next-type-code*))
-(defparameter *next-type-code*  0)   ;; next code to allocate
-
-(defparameter types-array NIL
-  "Array used to decode a number into its corresponding Lisp type.")
-
-(defparameter type-fns-array NIL
-  "Array used to decode a number into its corresponding type-fn.")
-
-(defparameter type-docs-array NIL
-  "Array used to decode a number into its corresponding documentation string.")
-
-(declaim (inline code-to-type
-		 code-to-type-fn))
-
-(defun code-to-type (type-code)
-  (svref types-array type-code))
-
-(defun code-to-type-fn (type-code)
-  (svref type-fns-array type-code))
-
-(declaim (inline slot-constant-p))
-(defun slot-constant-p (schema slot)
-  (let ((entry (slot-accessor schema slot)))
-    (when entry
-      (is-constant (sl-bits entry)))))
+(declaim (inline code-to-type-fn))
 
 (defun s-value-fn (schema slot value)
   (locally (declare #.*special-kr-optimization*)
