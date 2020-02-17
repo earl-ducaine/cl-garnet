@@ -790,54 +790,27 @@ the lisp predicate to test this ('NULL, 'KEYWORDP, etc....)"
 	    (set-slot-accessor the-schema slot *no-value*
 			       (set-is-update-slot *local-mask*)
 			       NIL))))
-    (dolist (parent parents)
-      (dolist (local (g-value-no-copy parent :LOCAL-ONLY-SLOTS))
-	(unless (listp local)
-	  (cerror "Ignore the declaration"
-		  "create-instance (object ~S, parent ~S):  :local-only-slots
-declarations should consist of lists of the form (:slot T-or-NIL).  Found
-the expression ~S instead."
-		  the-schema parent local)
-	  (return))
-	;; Set the slots marked as local-only
-	(let ((slot (car local)))
-	  (unless (slot-accessor the-schema slot)
-	    (if (second local)
-		;; Copy down the parent value, once and for all.
-		(let* ((entry (slot-accessor parent slot))
-		       (value (if entry (sl-value entry))))
-		  (unless (formula-p value)
-		    ;; Prevent inheritance from ever happening
-		    (internal-s-value the-schema slot (g-value parent slot))))
-		;; Avoid inheritance and set the slot to NIL.
-		(internal-s-value the-schema slot NIL))))))
+    (dolist (parent parents))
     (when do-types
       (dolist (parent parents)
-	(LOCALLY
-	    (DECLARE (OPTIMIZE (SPEED 3) (SAFETY 0) (SPACE 0) (DEBUG 0)))
-	  (PROGN
-	    (MAPHASH
-	     #'(LAMBDA (ITERATE-IGNORED-SLOT-NAME ITERATE-SLOT-VALUE-ENTRY)
-		 (DECLARE (IGNORE ITERATE-IGNORED-SLOT-NAME))
-		 (LET ((SLOT (SL-NAME ITERATE-SLOT-VALUE-ENTRY))
-		       (VALUE (SL-VALUE ITERATE-SLOT-VALUE-ENTRY)))
-		   VALUE
-		   (LET ((BITS (SL-BITS ITERATE-SLOT-VALUE-ENTRY)))
-		     (SETF BITS (LOGAND BITS *TYPE-MASK*))
-		     (UNLESS (ZEROP BITS)
-		       (LET ((THE-ENTRY (SLOT-ACCESSOR THE-SCHEMA SLOT)))
-			 (IF THE-ENTRY
-			     (LET ((SCHEMA-BITS (SL-BITS THE-ENTRY)))
-			       (WHEN (ZEROP (EXTRACT-TYPE-CODE SCHEMA-BITS))
-				 (SETF (SL-BITS THE-ENTRY)
-				       (LOGIOR (LOGAND SCHEMA-BITS *ALL-BITS-MASK*)
-					       BITS))))
-			     (SET-SLOT-ACCESSOR THE-SCHEMA SLOT *NO-VALUE* BITS
-						NIL)))))))
-	     (SCHEMA-BINS PARENT))))))))
-
-
-
+	(locally
+	    (declare (optimize (speed 3) (safety 0) (space 0) (debug 0)))
+	  (progn
+	    (maphash
+	     #'(lambda (iterate-ignored-slot-name iterate-slot-value-entry)
+		 (declare (ignore iterate-ignored-slot-name))
+		 (let ((slot (sl-name iterate-slot-value-entry))
+		       (value (sl-value iterate-slot-value-entry)))
+		   value
+		   (let ((bits (sl-bits iterate-slot-value-entry)))
+		     (setf bits (logand bits *type-mask*))
+		     (unless (zerop bits)
+		       (let ((the-entry (slot-accessor the-schema slot)))
+			 (if the-entry
+			     (sl-bits the-entry)
+			     (set-slot-accessor the-schema slot *no-value* bits
+						nil)))))))
+	     (schema-bins parent))))))))
 
 (defun do-schema-body (schema is-a generate-instance override types
 		       &rest slot-specifiers)
