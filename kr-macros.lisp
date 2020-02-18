@@ -291,8 +291,10 @@
 	  (slot-value (cdr slot)))
       (internal-s-value schema slot-name slot-value))))
 
-(defun do-schema-body-alt (schema is-a &rest slot-specifiers)
-  (let ((types nil))
+(defun do-schema-body-alt (&rest slot-specifiers)
+  (let ((schema (make-a-new-schema '*axis-rectangle*))
+	(is-a rectangle)
+	(types nil))
     (setf is-a (list is-a))
     (set-is-a schema is-a)
     (do* ((slots slot-specifiers (cdr slots))
@@ -301,9 +303,12 @@
 	  (process-constant-slots schema is-a)
 	  (kr-init-method schema)
 	  schema)
-      (let ((slot-name (car slot))
-	    (slot-value (cdr slot)))
-	(internal-s-value schema slot-name slot-value)))))
+      (let ((a-hash (make-sl)))
+	  (setf (sl-name a-hash) (car slot))
+	  (setf (sl-value a-hash) (cdr slot))
+	  (setf (gethash (car slot) (schema-bins schema)) a-hash)
+	  (cdr slot)))))
+
 
 (do-schema-body (make-a-new-schema 'graphical-object) nil t nil
                 '(((or (is-a-p filling-style) null) :filling-style)
@@ -500,7 +505,6 @@
      do (install-hook fn hook-fn)))
 
 (do-schema-body-alt
-    (make-a-new-schema '*axis-rectangle*) rectangle
     (cons :height-cn
 	  (create-mg-constraint
 	   :variable-paths '((:box) (:height))
