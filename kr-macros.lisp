@@ -11,12 +11,12 @@
   name
   bins)
 
-(declaim (inline schema-p))
-(defun schema-p (obj)
-  (locally (declare #.*special-kr-optimization*)
-    (and (is-schema obj)
-	 (hash-table-p (schema-bins obj))
-	 T)))
+;; (declaim (inline schema-p))
+;; (defun schema-p (obj)
+;;   (locally (declare #.*special-kr-optimization*)
+;;     (and (is-schema obj)
+;; 	 (hash-table-p (schema-bins obj))
+;; 	 T)))
 
 (defstruct (a-formula (:include schema))
   schema
@@ -140,8 +140,6 @@
 
 (defun s-value-fn (schema slot value)
   (locally (declare #.*special-kr-optimization*)
-    (unless (schema-p schema)
-      (return-from s-value-fn (values value t)))
     (let* ((entry (slot-accessor schema slot)))
       (let ((is-formula nil)
 	    (is-relation nil))
@@ -382,11 +380,6 @@
 	       (symbol-function hook)))))
 
 (defmacro os (obj slot) `(cons ,obj ,slot))
-
-(defmacro os-p (os)
-  `(let ((os ,os))
-     (and (consp os)
-	  (schema-p (car os)))))
 
 (defmacro os-object (os) `(car ,os))
 (defmacro os-slot (os) `(cdr ,os))
