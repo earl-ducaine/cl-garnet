@@ -25,19 +25,6 @@
 (declaim (fixnum *schema-counter*))
 (defvar *schema-counter* 0)
 
-(declaim (fixnum
-		 *not-parent-mask* *not-parent-constant-mask*
-		 *all-bits-mask*))
-
-(eval-when (:execute :compile-toplevel :load-toplevel)
-  ;;(defparameter *inherited-mask* 1024)
-  ;; (defparameter *is-parent-mask* 2048)
-  ;; (defparameter *inherited-parent-mask* 3072)
-  ;; (defparameter *not-inherited-mask* (lognot 1024))
-  (defparameter *not-parent-mask* (lognot 2048))
-  (defparameter *not-parent-constant-mask*
-    (lognot (logior 2048 4096)))
-  (defparameter *all-bits-mask* (lognot (1- (expt 2 10)))))
 
 (declaim (inline
 	  is-inherited is-parent
