@@ -7,16 +7,9 @@
       (space 0)
       (debug 0))))
 
-(defstruct (schema (:predicate is-schema))
+(defstruct schema
   name
   bins)
-
-;; (declaim (inline schema-p))
-;; (defun schema-p (obj)
-;;   (locally (declare #.*special-kr-optimization*)
-;;     (and (is-schema obj)
-;; 	 (hash-table-p (schema-bins obj))
-;; 	 T)))
 
 (defstruct (a-formula (:include schema))
   schema
@@ -75,9 +68,6 @@
 (declaim (inline
 	  is-inherited is-parent
 	  extract-type-code))
-
-(defun formula-p (thing)
-  (a-formula-p thing))
 
 (defun is-inherited (bits)
   (declare (fixnum bits))
@@ -143,7 +133,7 @@
     (let* ((entry (slot-accessor schema slot)))
       (let ((is-formula nil)
 	    (is-relation nil))
-	(when (formula-p value)
+	(when nil
 	  (setf is-formula T)
 	  (unless (schema-name value)
 	    (incf *schema-counter*)
@@ -422,13 +412,16 @@
 			  (slot-accessor
 			   (IF specific-slot-accessor
 			       (IF (IS-INHERITED (SL-BITS specific-slot-accessor))
-				   (IF (A-FORMULA-P (SL-VALUE specific-slot-accessor))
+				   (when (A-FORMULA-P (SL-VALUE specific-slot-accessor))
 				       (SL-VALUE specific-slot-accessor))
 				   (SL-VALUE specific-slot-accessor))
 			       *NO-VALUE*)))
-		     (IF (A-FORMULA-P slot-accessor)
-			 NIL
-			 slot-accessor))))))
+		     (cond
+		       ((A-FORMULA-P slot-accessor)
+			(break)
+			NIL)
+		       (t
+			slot-accessor)))))))
     (locally
 	(declare (optimize (speed 3) (safety 0) (space 0) (debug 0)))
       (progn
