@@ -164,7 +164,7 @@
 	       (declare (ignore iterate-ignored-slot-name))
 	       (let ((slot (sl-name iterate-slot-value-entry))
 		     (bits (logand (sl-bits iterate-slot-value-entry)
-				   (1- (expt 2 10)))))
+				   1023)))
 		 (unless (zerop bits)
 		   (let ((the-entry (slot-accessor the-schema slot)))
 		     (if the-entry
@@ -212,14 +212,12 @@
 
 (defun do-schema-body-alt (&rest slot-specifiers)
   (let ((schema (make-a-new-schema '*axis-rectangle*))
-	(is-a rectangle)
 	(types nil))
-    (setf is-a (list is-a))
-    (set-is-a schema is-a)
+    (set-is-a schema (list rectangle))
     (do* ((slots slot-specifiers (cdr slots))
 	  (slot (car slots) (car slots)))
 	 ((null slots)
-	  (process-constant-slots schema is-a)
+	  (process-constant-slots schema (list rectangle))
 	  (kr-init-method schema)
 	  schema)
       (let ((a-hash (make-sl)))
@@ -227,18 +225,6 @@
 	  (setf (sl-value a-hash) (cdr slot))
 	  (setf (gethash (car slot) (schema-bins schema)) a-hash)
 	  (cdr slot)))))
-
-(do-schema-body (make-a-new-schema 'graphical-object) nil t nil
-                '(((or (is-a-p filling-style) null) :filling-style)
-                  ((or (is-a-p line-style) null) :line-style)))
-
-(do-schema-body (make-a-new-schema 'rectangle) graphical-object t nil nil
-                (cons :update-slots '(:fast-redraw-p)))
-
-(defun initialize-method-graphical-object (gob)
-  (s-value-fn gob :update-info 'a))
-
-(s-value-fn graphical-object :initialize 'initialize-method-graphical-object)
 
 (defstruct (sb-constraint)
   variables
@@ -281,7 +267,6 @@
   (defun get-save-fn-symbol-name (sym)
     (intern (concatenate 'string (symbol-name sym) "-SAVE-FN-SYMBOL"))))
 
-(defmacro os-slot (os) `(cdr ,os))
 (defmacro cn-os (v) `(get-sb-constraint-slot ,v :mg-os))
 (defmacro cn-connection (v) `(get-sb-constraint-slot ,v :mg-connection))
 (defmacro cn-variable-paths (c) `(get-sb-constraint-slot ,c :mg-variable-paths))
@@ -359,7 +344,7 @@
 	    (loop for var-os in var-os-list
 	       collect (create-object-slot-var
 			(car var-os)
-			(os-slot var-os))))
+			(cdr var-os))))
       (setf (CN-connection cn) :connected))))
 
 (defun set-object-slot-prop (obj slot prop val)
@@ -382,9 +367,22 @@
     (setf (symbol-function fn)
 	  (symbol-function hook))))
 
-(eval-when (:load-toplevel :execute)
-  (install-hook 's-value-fn 's-value-fn-save-fn-symbol)
-  (install-hook 'kr-init-method 'kr-init-method-hook))
+(defun initialize-method-graphical-object (gob)
+  (s-value-fn gob :update-info 'a))
+
+
+(do-schema-body (make-a-new-schema 'graphical-object) nil t nil
+                '(((or (is-a-p filling-style) null) :filling-style)
+                  ((or (is-a-p line-style) null) :line-style)))
+
+(do-schema-body (make-a-new-schema 'rectangle) graphical-object t nil nil
+                (cons :update-slots '(:fast-redraw-p)))
+
+(s-value-fn graphical-object
+	    :initialize 'initialize-method-graphical-object)
+
+(install-hook 's-value-fn 's-value-fn-save-fn-symbol)
+(install-hook 'kr-init-method 'kr-init-method-hook)
 
 (do-schema-body-alt
     (cons :height-cn
