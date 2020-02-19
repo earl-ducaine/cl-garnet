@@ -405,11 +405,7 @@
   (connect-constraint cn))
 
 (defun kr-init-method-hook (schema)
-  (let ((parent (car
-		 (locally
-		     (declare (optimize (speed 3) (safety 0) (space 0) (debug 0)))
-		   (let* ((specific-slot-accessor (slot-accessor schema :is-a)))
-		     (sl-value specific-slot-accessor))))))
+  (let ((parent (car (sl-value (slot-accessor schema :is-a)))))
     (locally
 	(declare (optimize (speed 3) (safety 0) (space 0) (debug 0)))
       (progn
