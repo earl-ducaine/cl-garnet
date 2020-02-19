@@ -406,22 +406,10 @@
 
 (defun kr-init-method-hook (schema)
   (let ((parent (car
-		 (LOCALLY
-		     (DECLARE (OPTIMIZE (SPEED 3) (SAFETY 0) (SPACE 0) (DEBUG 0)))
-		   (LET* ((specific-slot-accessor (SLOT-ACCESSOR SCHEMA :IS-A))
-			  (slot-accessor
-			   (IF specific-slot-accessor
-			       (IF (IS-INHERITED (SL-BITS specific-slot-accessor))
-				   (when (A-FORMULA-P (SL-VALUE specific-slot-accessor))
-				       (SL-VALUE specific-slot-accessor))
-				   (SL-VALUE specific-slot-accessor))
-			       *NO-VALUE*)))
-		     (cond
-		       ((A-FORMULA-P slot-accessor)
-			(break)
-			NIL)
-		       (t
-			slot-accessor)))))))
+		 (locally
+		     (declare (optimize (speed 3) (safety 0) (space 0) (debug 0)))
+		   (let* ((specific-slot-accessor (slot-accessor schema :is-a)))
+		     (sl-value specific-slot-accessor))))))
     (locally
 	(declare (optimize (speed 3) (safety 0) (space 0) (debug 0)))
       (progn
