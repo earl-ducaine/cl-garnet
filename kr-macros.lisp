@@ -28,24 +28,11 @@
   are created with (create-schema NIL).")
 
 
-(declaim (fixnum
-		 *is-parent-bit* *is-constant-bit* *is-update-slot-bit*
-		 *is-local-only-slot-bit* *is-parameter-slot-bit*))
-
-(eval-when (:execute :compile-toplevel :load-toplevel)
-  (defparameter *is-parent-bit*          11)
-  (defparameter *is-constant-bit*        (1+ 11))
-  (defparameter *is-update-slot-bit*     (1+ *is-constant-bit*)))
-
-(declaim (fixnum *local-mask* *constant-mask* *is-update-slot-mask*
-		 *inherited-mask* *is-parent-mask*
+(declaim (fixnum  *inherited-mask* *is-parent-mask*
 		 *inherited-parent-mask* *not-inherited-mask*
 		 *not-parent-mask* *not-parent-constant-mask*
 		 *all-bits-mask*))
 (eval-when (:execute :compile-toplevel :load-toplevel)
-  (defparameter *local-mask* 0)
-  (defparameter *constant-mask* (ash 1 *is-constant-bit*))
-  (defparameter *is-update-slot-mask* (ash 1 *is-update-slot-bit*))
   (defparameter *inherited-mask* (ash 1  10))
   (defparameter *is-parent-mask* 2048)
   (defparameter *inherited-parent-mask*
@@ -53,7 +40,7 @@
   (defparameter *not-inherited-mask* (lognot *inherited-mask*))
   (defparameter *not-parent-mask* (lognot *is-parent-mask*))
   (defparameter *not-parent-constant-mask*
-    (lognot (logior *is-parent-mask* *constant-mask*)))
+    (lognot (logior *is-parent-mask* 4096)))
   (defparameter *all-bits-mask* (lognot (1- (expt 2 10)))))
 
 (declaim (inline
@@ -66,11 +53,11 @@
 
 (defun is-parent (bits)
   (declare (fixnum bits))
-  (logbitp *is-parent-bit* bits))
+  (logbitp 11 bits))
 
 (defun set-is-update-slot (bits)
   (declare (fixnum bits))
-  (logior *is-update-slot-mask* bits))
+  (logior 8192 bits))
 
 (declaim (inline slot-accessor))
 (defun slot-accessor (schema slot)
@@ -116,7 +103,7 @@
 	      (setf a-hash (make-sl))
 	      (setf (sl-name a-hash) inverse)
 	      (setf (sl-value a-hash) (list schema))
-	      (setf (sl-bits a-hash) *local-mask*)
+	      (setf (sl-bits a-hash) 0)
 	      (setf (gethash inverse schema-bins) a-hash))))))))
 
 (defun s-value-fn (schema slot value)
@@ -131,7 +118,7 @@
 	    (setf (schema-name value) *schema-counter*)))
 	(when is-relation
 	  (link-in-relation schema slot value))
-	(let ((new-bits (or the-bits *local-mask*)))
+	(let ((new-bits (or the-bits 0)))
 	  (if entry
 	      (setf (sl-value entry) value
 		    (sl-bits entry) new-bits)
@@ -152,7 +139,7 @@
     (setf a-hash (make-sl))
     (setf (sl-name a-hash) :is-a)
     (setf (sl-value a-hash) value)
-    (setf (sl-bits a-hash) *local-mask*)
+    (setf (sl-bits a-hash) 0)
     (setf (gethash :is-a schema-bins) a-hash))
   (link-in-relation schema :is-a value)
   value)
@@ -196,7 +183,7 @@
 	      (setf a-hash (make-sl))
 	      (setf (sl-name a-hash) slot)
 	      (setf (sl-value a-hash) *no-value*)
-	      (setf (sl-bits a-hash) (set-is-update-slot *local-mask*))
+	      (setf (sl-bits a-hash) (set-is-update-slot 0))
 	      (setf (full-sl-dependents a-hash) dependants)
 	      (setf (gethash slot schema-bins) a-hash)))))
     (dolist (parent parents)
@@ -250,7 +237,7 @@
 	   (new-slot (make-sl)))
       (setf (sl-name new-slot) slot-name)
       (setf (sl-value new-slot) slot-value)
-      (setf (sl-bits new-slot) *local-mask*)
+      (setf (sl-bits new-slot) 0)
       (setf (gethash slot-name schema-bins) new-slot)
       slot-value)))
 
