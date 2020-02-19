@@ -99,6 +99,7 @@
 (defparameter iterate-slot-value-entry nil
   "Ugly")
 
+;; This must be the core of the bug
 (declaim (inline get-local-value))
 (defun get-local-value (schema slot)
   (locally (declare #.*special-kr-optimization*)
@@ -106,16 +107,18 @@
       (if (if entry (not (is-inherited (sl-bits entry))))
 	  (sl-value entry)))))
 
-(defun g-value-no-copy (schema slot &optional skip-local)
-  (unless skip-local
-    (let ((value (slot-accessor schema slot)))
-      (when value
-	(return-from g-value-no-copy (sl-value value)))))
-  (dolist (*schema-self* (get-local-value schema :IS-A))
-    (unless (eq *schema-self* schema)
-      (let ((value (g-value-no-copy *schema-self* slot)))
-	(when value
-	  (return-from g-value-no-copy value))))))
+(defun g-value-no-copy (schema)
+  (let ((value (slot-accessor schema :UPDATE-SLOTS)))
+    (cond
+      (value
+       (sl-value value))
+      (t
+       ;; note the following creates bug in SBCL that's not
+       ;; recreatatable without the dolist.
+       (let ((schema-self (get-local-value schema :IS-A)))
+	 (dolist (*schema-self* schema-self)
+	   (let ((value (g-value-no-copy *schema-self*)))
+	     (return-from g-value-no-copy value))))))))
 
 (defun link-in-relation (schema slot values)
   (let ((inverse (when (eq slot :is-a)
@@ -205,7 +208,7 @@
 
 (defun process-constant-slots (the-schema parents)
   (locally (declare #.*special-kr-optimization*)
-    (dolist (slot (g-value-no-copy the-schema :UPDATE-SLOTS))
+    (dolist (slot (g-value-no-copy the-schema))
       (let ((entry (slot-accessor the-schema slot)))
 	(if entry
 	    (setf (sl-bits entry) (set-is-update-slot (sl-bits entry)))
