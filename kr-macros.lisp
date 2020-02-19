@@ -21,18 +21,10 @@
 
 (defparameter *no-value* '(:no-value))
 
-
 (declaim (fixnum *schema-counter*))
 (defvar *schema-counter* 0)
 
-
-(declaim (inline
-	  is-inherited is-parent
-	  extract-type-code))
-
-(defun is-inherited (bits)
-  (declare (fixnum bits))
-  (logbitp 10 bits))
+(declaim (inline is-parent))
 
 (defun is-parent (bits)
   (declare (fixnum bits))
@@ -55,7 +47,7 @@
 (defun get-local-value (schema slot)
   (locally (declare #.*special-kr-optimization*)
     (let ((entry (slot-accessor schema slot)))
-      (if (if entry (not (is-inherited (sl-bits entry))))
+      (if (if entry (not (logbitp 10 (sl-bits entry))))
 	  (sl-value entry)))))
 
 (defun g-value-no-copy (schema)
@@ -159,16 +151,16 @@
   (locally (declare #.*special-kr-optimization*)
     (dolist (slot (g-value-no-copy the-schema))
       (let ((entry (slot-accessor the-schema slot)))
-	(if entry
-	    (setf (sl-bits entry) (set-is-update-slot (sl-bits entry)))
-	    (let* ((schema-bins (schema-bins the-schema))
+	(cond
+	  (t
+	   (let* ((schema-bins (schema-bins the-schema))
 		   (a-hash (gethash slot schema-bins)))
 	      (setf a-hash (make-sl))
 	      (setf (sl-name a-hash) slot)
 	      (setf (sl-value a-hash) *no-value*)
-	      (setf (sl-bits a-hash) (set-is-update-slot 0))
+	      (setf (sl-bits a-hash) 8192)
 	      (setf (full-sl-dependents a-hash) dependants)
-	      (setf (gethash slot schema-bins) a-hash)))))
+	      (setf (gethash slot schema-bins) a-hash))))))
     (dolist (parent parents)
       (locally
 	  (declare (optimize (speed 3) (safety 0) (space 0) (debug 0)))
