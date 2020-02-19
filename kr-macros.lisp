@@ -408,18 +408,13 @@
   (let ((parent (car (sl-value (slot-accessor schema :is-a)))))
     (locally
 	(declare (optimize (speed 3) (safety 0) (space 0) (debug 0)))
-      (progn
-	(maphash
-	 #'(lambda (iterate-ignored-slot-name iterate-slot-value-entry)
-	     (declare (ignore iterate-ignored-slot-name))
-	     (let ((slot (sl-name iterate-slot-value-entry))
-		   (value (sl-value iterate-slot-value-entry)))
-	       (unless (is-inherited (sl-bits iterate-slot-value-entry))
-		 (unless (eq value *no-value*)
-		   (let ((slot slot))
-		     (let ((value (get-local-value parent slot)))
-		       (s-value-fn-save-fn-symbol schema slot value)))))))
-	 (schema-bins parent)))))
+      (maphash
+       #'(lambda (iterate-ignored-slot-name iterate-slot-value-entry)
+	   (declare (ignore iterate-ignored-slot-name))
+	   (let ((slot (sl-name iterate-slot-value-entry))
+		 (value (get-local-value parent slot)))
+	       (s-value-fn-save-fn-symbol schema slot value)))
+       (schema-bins parent))))
   (activate-new-instance-cns schema))
 
 (defun activate-new-instance-cns (schema)
