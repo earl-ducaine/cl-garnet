@@ -28,16 +28,13 @@
   are created with (create-schema NIL).")
 
 
-(declaim (fixnum *type-bits* *type-mask* *inherited-bit*
+(declaim (fixnum
 		 *is-parent-bit* *is-constant-bit* *is-update-slot-bit*
 		 *is-local-only-slot-bit* *is-parameter-slot-bit*))
 
 (eval-when (:execute :compile-toplevel :load-toplevel)
-  (defparameter *type-bits* 10)  ;; # of bits for encoding type
-  (defparameter *type-mask* (1- (expt 2 *type-bits*))) ;; to extract type
-  (defparameter *inherited-bit*          *type-bits*)
-  (defparameter *is-parent-bit*          (1+ *inherited-bit*))
-  (defparameter *is-constant-bit*        (1+ *is-parent-bit*))
+  (defparameter *is-parent-bit*          11)
+  (defparameter *is-constant-bit*        (1+ 11))
   (defparameter *is-update-slot-bit*     (1+ *is-constant-bit*)))
 
 (declaim (fixnum *local-mask* *constant-mask* *is-update-slot-mask*
@@ -49,15 +46,15 @@
   (defparameter *local-mask* 0)
   (defparameter *constant-mask* (ash 1 *is-constant-bit*))
   (defparameter *is-update-slot-mask* (ash 1 *is-update-slot-bit*))
-  (defparameter *inherited-mask* (ash 1 *inherited-bit*))
-  (defparameter *is-parent-mask* (ash 1 *is-parent-bit*))
+  (defparameter *inherited-mask* (ash 1  10))
+  (defparameter *is-parent-mask* 2048)
   (defparameter *inherited-parent-mask*
     (logior *inherited-mask* *is-parent-mask*))
   (defparameter *not-inherited-mask* (lognot *inherited-mask*))
   (defparameter *not-parent-mask* (lognot *is-parent-mask*))
   (defparameter *not-parent-constant-mask*
     (lognot (logior *is-parent-mask* *constant-mask*)))
-  (defparameter *all-bits-mask* (lognot *type-mask*)))
+  (defparameter *all-bits-mask* (lognot (1- (expt 2 10)))))
 
 (declaim (inline
 	  is-inherited is-parent
@@ -65,7 +62,7 @@
 
 (defun is-inherited (bits)
   (declare (fixnum bits))
-  (logbitp *inherited-bit* bits))
+  (logbitp 10 bits))
 
 (defun is-parent (bits)
   (declare (fixnum bits))
@@ -211,7 +208,7 @@
 	       (declare (ignore iterate-ignored-slot-name))
 	       (let ((slot (sl-name iterate-slot-value-entry))
 		     (bits (logand (sl-bits iterate-slot-value-entry)
-				   *type-mask*)))
+				   (1- (expt 2 10)))))
 		 (unless (zerop bits)
 		   (let ((the-entry (slot-accessor the-schema slot)))
 		     (if the-entry
@@ -240,7 +237,6 @@
 	    (dolist (slot (cdr type))
 	      (let* ((schema-bins (schema-bins schema))
 		     (hash (gethash slot schema-bins)))
-		(break)
 		(setf hash (make-sl))
 		(setf (sl-name hash) slot)
 		(setf (sl-value hash) *no-value*)
