@@ -279,19 +279,8 @@
 
 (eval-when (:load-toplevel :compile-toplevel :execute)
   (defun get-save-fn-symbol-name (sym)
-    (cond ((symbolp sym)
-	   (intern (concatenate 'string (symbol-name sym) "-SAVE-FN-SYMBOL")
-		   (find-package :cl-user)))
-	  ((and (consp sym)
-		(eq :quote (first sym))
-		(symbolp (second sym)))
-	   (get-save-fn-symbol-name (second sym)))
-	  (t (cerror "cont" "get-save-fn-symbol-name: bad symbol ~S" sym)))))
+    (intern (concatenate 'string (symbol-name sym) "-SAVE-FN-SYMBOL"))))
 
-
-(defmacro os (obj slot) `(cons ,obj ,slot))
-
-(defmacro os-object (os) `(car ,os))
 (defmacro os-slot (os) `(cdr ,os))
 (defmacro cn-os (v) `(get-sb-constraint-slot ,v :mg-os))
 (defmacro cn-connection (v) `(get-sb-constraint-slot ,v :mg-connection))
@@ -321,7 +310,7 @@
        (not (null (CN-connection obj)))))
 
 (defun add-constraint-to-slot (obj slot cn)
-  (setf (CN-os cn) (os obj slot))
+  (setf (cn-os cn) (cons obj slot))
   (connect-constraint cn))
 
 (defun kr-init-method-hook (schema)
@@ -351,7 +340,7 @@
 
 (defun connect-constraint (cn)
   (let* ((cn-var-paths (CN-variable-paths cn)))
-    (let* ((root-obj (os-object (CN-os cn)))
+    (let* ((root-obj (car (CN-os cn)))
 	   (cn-path-links nil)
 	   (paths-broken nil)
 	   var-os-list)
@@ -360,16 +349,16 @@
 		 (let ((obj root-obj))
 		   (loop for (slot next-slot) on path do
 			(when (null next-slot)
-			  (return (os obj slot)))
+			  (return (cons obj slot)))
 			(set-object-slot-prop obj slot :sb-path-constraints
 					      (adjoin cn nil))
-			(push (os obj slot) cn-path-links)
+			(push (cons obj slot) cn-path-links)
 			(s-value-fn-save-fn-symbol obj slot nil)
 			(setf obj nil)))))
       (setf (cn-variables cn)
 	    (loop for var-os in var-os-list
 	       collect (create-object-slot-var
-			(os-object var-os)
+			(car var-os)
 			(os-slot var-os))))
       (setf (CN-connection cn) :connected))))
 
@@ -396,7 +385,6 @@
 (eval-when (:load-toplevel :execute)
   (install-hook 's-value-fn 's-value-fn-save-fn-symbol)
   (install-hook 'kr-init-method 'kr-init-method-hook))
-
 
 (do-schema-body-alt
     (cons :height-cn
