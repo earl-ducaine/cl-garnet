@@ -30,10 +30,6 @@
   (declare (fixnum bits))
   (logbitp 11 bits))
 
-(defun set-is-update-slot (bits)
-  (declare (fixnum bits))
-  (logior 8192 bits))
-
 (declaim (inline slot-accessor))
 (defun slot-accessor (schema slot)
   "Returns a slot structure, or NIL."
@@ -151,16 +147,14 @@
   (locally (declare #.*special-kr-optimization*)
     (dolist (slot (g-value-no-copy the-schema))
       (let ((entry (slot-accessor the-schema slot)))
-	(cond
-	  (t
-	   (let* ((schema-bins (schema-bins the-schema))
-		   (a-hash (gethash slot schema-bins)))
-	      (setf a-hash (make-sl))
-	      (setf (sl-name a-hash) slot)
-	      (setf (sl-value a-hash) *no-value*)
-	      (setf (sl-bits a-hash) 8192)
-	      (setf (full-sl-dependents a-hash) dependants)
-	      (setf (gethash slot schema-bins) a-hash))))))
+	(let* ((schema-bins (schema-bins the-schema))
+	       (a-hash (gethash slot schema-bins)))
+	  (setf a-hash (make-sl))
+	  (setf (sl-name a-hash) slot)
+	  (setf (sl-value a-hash) *no-value*)
+	  (setf (sl-bits a-hash) 8192)
+	  (setf (full-sl-dependents a-hash) dependants)
+	  (setf (gethash slot schema-bins) a-hash))))
     (dolist (parent parents)
       (locally
 	  (declare (optimize (speed 3) (safety 0) (space 0) (debug 0)))
@@ -234,7 +228,6 @@
 	  (setf (gethash (car slot) (schema-bins schema)) a-hash)
 	  (cdr slot)))))
 
-
 (do-schema-body (make-a-new-schema 'graphical-object) nil t nil
                 '(((or (is-a-p filling-style) null) :filling-style)
                   ((or (is-a-p line-style) null) :line-style)))
@@ -295,14 +288,6 @@
 	   (get-save-fn-symbol-name (second sym)))
 	  (t (cerror "cont" "get-save-fn-symbol-name: bad symbol ~S" sym)))))
 
-(defun install-hook (fn hook)
-  (if  (fboundp fn)
-       (let ((save-fn (get-save-fn-symbol-name fn)))
-	 (unless (fboundp save-fn)
-	   (setf (symbol-function save-fn)
-		 (symbol-function fn)))
-	 (setf (symbol-function fn)
-	       (symbol-function hook)))))
 
 (defmacro os (obj slot) `(cons ,obj ,slot))
 
@@ -401,10 +386,17 @@
     (s-value-fn-save-fn-symbol obj slot nil)
     var))
 
+(defun install-hook (fn hook)
+  (let ((save-fn (get-save-fn-symbol-name fn)))
+    (setf (symbol-function save-fn)
+	  (symbol-function fn))
+    (setf (symbol-function fn)
+	  (symbol-function hook))))
+
 (eval-when (:load-toplevel :execute)
-  (loop for (fn hook-fn) on '(s-value-fn s-value-fn-save-fn-symbol
-			      kr-init-method kr-init-method-hook) by #'CDDR
-     do (install-hook fn hook-fn)))
+  (install-hook 's-value-fn 's-value-fn-save-fn-symbol)
+  (install-hook 'kr-init-method 'kr-init-method-hook))
+
 
 (do-schema-body-alt
     (cons :height-cn
