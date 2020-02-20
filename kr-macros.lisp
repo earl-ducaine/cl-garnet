@@ -395,25 +395,16 @@
 	  (setf (gethash (caar slots) (schema-bins schema)) a-hash)
 	  (cdar slots)))))
 
-(defun create-mg-constraint (&key variable-paths)
+(defun create-mg-constraint (leaf)
   (let ((cn (make-sb-constraint))
-	(path (list '(:box)
-		    (car variable-paths))))
+	(path (list '(:box) leaf)))
     (setf (cn-connection cn) :unconnected)
     (format t "variable-paths ~s~%" path)
     (setf (cn-variable-paths cn) path)
     cn))
 
 (do-schema-body-alt
-    (cons :height-cn
-	  (create-mg-constraint
-	   :variable-paths '( (:height))))
-    (cons :width-cn
-	  (create-mg-constraint
-	   :variable-paths '( (:width))))
-    (cons :top-cn
-	  (create-mg-constraint
-	   :variable-paths '( (:top))))
-    (cons :left-cn
-	  (create-mg-constraint
-	   :variable-paths '( (:left)))))
+    (cons :height-cn (create-mg-constraint '(:height)))
+    (cons :width-cn (create-mg-constraint '(:width)))
+    (cons :top-cn (create-mg-constraint '(:top)))
+    (cons :left-cn (create-mg-constraint '(:left))))
