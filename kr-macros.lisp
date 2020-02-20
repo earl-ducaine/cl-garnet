@@ -130,11 +130,8 @@
     (funcall the-function schema)))
 
 (defun allocate-schema-slots (schema)
-  (locally (declare #.*special-kr-optimization*)
     (setf (schema-bins schema)
-	  (make-hash-table :test #'eq
-			   )))
-  schema)
+	  (make-hash-table :test #'eq)))
 
 (defun make-a-new-schema (name)
   (locally (declare #.*special-kr-optimization*)
@@ -211,20 +208,18 @@
       slot-value)))
 
 (defun do-schema-body-alt (&rest slot-specifiers)
-  (let ((schema (make-a-new-schema '*axis-rectangle*))
-	(types nil))
+  (let ((schema (make-a-new-schema '*axis-rectangle*)))
     (set-is-a schema (list rectangle))
-    (do* ((slots slot-specifiers (cdr slots))
-	  (slot (car slots) (car slots)))
+    (do* ((slots slot-specifiers (cdr slots)))
 	 ((null slots)
 	  (process-constant-slots schema (list rectangle))
 	  (kr-init-method schema)
 	  schema)
       (let ((a-hash (make-sl)))
-	  (setf (sl-name a-hash) (car slot))
-	  (setf (sl-value a-hash) (cdr slot))
-	  (setf (gethash (car slot) (schema-bins schema)) a-hash)
-	  (cdr slot)))))
+	  (setf (sl-name a-hash) (caar slots))
+	  (setf (sl-value a-hash) (cdar slots))
+	  (setf (gethash (caar slots) (schema-bins schema)) a-hash)
+	  (cdar slots)))))
 
 (defstruct (sb-constraint)
   variables
@@ -275,12 +270,6 @@
 
 (defsetf cn-variable-paths (c) (val)
   `(set-sb-constraint-slot ,c :mg-variable-paths ,val))
-
-(defun create-mg-constraint (&key variable-paths variable-names)
-  (let ((cn (make-sb-constraint)))
-    (setf (cn-connection cn) :unconnected)
-    (setf (cn-variable-paths cn) variable-paths)
-    cn))
 
 (defsetf var-os (v) (val)
   `(set-sb-variable-slot ,v :mg-os ,val))
@@ -370,13 +359,21 @@
 (defun initialize-method-graphical-object (gob)
   (s-value-fn gob :update-info 'a))
 
-
-(do-schema-body (make-a-new-schema 'graphical-object) nil t nil
-                '(((or (is-a-p filling-style) null) :filling-style)
-                  ((or (is-a-p line-style) null) :line-style)))
-
-(do-schema-body (make-a-new-schema 'rectangle) graphical-object t nil nil
-                (cons :update-slots '(:fast-redraw-p)))
+(let* ((graphical-object-schema-name 'graphical-object)
+       (rectangle-schema-name 'rectangle)
+       (graphical-object-schema (make-schema))
+       (rectangle-schema (make-schema)))
+  (eval `(defvar ,graphical-object-schema-name))
+  (eval `(defvar ,rectangle-schema-name))
+  (allocate-schema-slots graphical-object-schema)
+  (allocate-schema-slots rectangle-schema)
+  (set graphical-object-schema-name graphical-object-schema)
+  (set rectangle-schema-name rectangle-schema)
+  (do-schema-body graphical-object-schema nil t nil
+		  '(((or (is-a-p filling-style) null) :filling-style)
+		    ((or (is-a-p line-style) null) :line-style)))
+  (do-schema-body rectangle-schema graphical-object-schema t nil nil
+		  (cons :update-slots '(:fast-redraw-p))))
 
 (s-value-fn graphical-object
 	    :initialize 'initialize-method-graphical-object)
@@ -384,21 +381,39 @@
 (install-hook 's-value-fn 's-value-fn-save-fn-symbol)
 (install-hook 'kr-init-method 'kr-init-method-hook)
 
+(defun do-schema-body-alt (&rest slot-specifiers)
+  (let ((schema (make-a-new-schema '*axis-rectangle*)))
+    (set-is-a schema (list rectangle))
+    (do* ((slots slot-specifiers (cdr slots)))
+	 ((null slots)
+	  (process-constant-slots schema (list rectangle))
+	  (kr-init-method schema)
+	  schema)
+      (let ((a-hash (make-sl)))
+	  (setf (sl-name a-hash) (caar slots))
+	  (setf (sl-value a-hash) (cdar slots))
+	  (setf (gethash (caar slots) (schema-bins schema)) a-hash)
+	  (cdar slots)))))
+
+(defun create-mg-constraint (&key variable-paths)
+  (let ((cn (make-sb-constraint))
+	(path (list '(:box)
+		    (car variable-paths))))
+    (setf (cn-connection cn) :unconnected)
+    (format t "variable-paths ~s~%" path)
+    (setf (cn-variable-paths cn) path)
+    cn))
+
 (do-schema-body-alt
     (cons :height-cn
 	  (create-mg-constraint
-	   :variable-paths '((:box) (:height))
-	   :variable-names '(box height)))
+	   :variable-paths '( (:height))))
     (cons :width-cn
 	  (create-mg-constraint
-	   :variable-paths '((:box) (:width))
-	   :variable-names
-	   '(box width)))
+	   :variable-paths '( (:width))))
     (cons :top-cn
 	  (create-mg-constraint
-	   :variable-paths '((:box) (:top))
-	   :variable-names '(box top)))
+	   :variable-paths '( (:top))))
     (cons :left-cn
 	  (create-mg-constraint
-	   :variable-paths '((:box) (:left))
-	   :variable-names '(box left))))
+	   :variable-paths '( (:left)))))
