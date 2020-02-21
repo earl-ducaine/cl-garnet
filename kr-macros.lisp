@@ -370,22 +370,17 @@
 
 (defun call-set-slot-fn (fns obj slot val)
   (cond ((null fns)
-	 nil)
-	(t
-	 (funcall fns obj slot val))))
+	 nil)))
 
 (defun set-sb-constraint-slot (cn slot val)
-  (call-set-slot-fn (sb-constraint-set-slot-fn cn) cn slot val)
+  (sb-constraint-set-slot-fn cn)
   (setf (getf (sb-constraint-other-slots cn) slot nil) val)
   val)
 
 (defun create-mg-constraint (schema)
   (let* ((path (list '(:box) (list (gensym))))
-	 (cn (make-sb-constraint)))
-    (call-set-slot-fn (sb-constraint-set-slot-fn cn) cn :mg-connection :unconnected)
-    (call-set-slot-fn (sb-constraint-set-slot-fn cn) cn :mg-variable-paths path)
-    (setf (getf (sb-constraint-other-slots cn) :mg-connection nil) :unconnected)
-    (setf (getf (sb-constraint-other-slots cn) :mg-variable-paths nil) path)
+	 (cn (make-sb-constraint :other-slots (list :mg-connection :unconnected
+						:mg-variable-paths path))))
     (let* ((symbol (gensym))
 	   (sl (make-sl)))
       (setf (sl-name sl) symbol)
