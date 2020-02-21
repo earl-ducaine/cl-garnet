@@ -144,21 +144,6 @@
   other-slots
   set-slot-fn)
 
-(defun set-sb-variable-slot (var slot val)
-  (setf (getf (sb-variable-other-slots var) slot nil) val))
-
-(eval-when (:load-toplevel :compile-toplevel :execute)
-  (defun get-save-fn-symbol-name (sym)
-    (intern (concatenate 'string (symbol-name sym) "-SAVE-FN-SYMBOL"))))
-
-(defsetf var-os (v) (val)
-  `(set-sb-variable-slot ,v :mg-os ,val))
-
-(defun create-mg-variable ()
-  (let* ((var (make-sb-variable)))
-    (setf (VAR-os var) nil)
-    var))
-
 (defun constraint-p (obj)
   (and (sb-constraint-p obj)
        (not (null (GET-SB-CONSTRAINT-SLOT OBJ :MG-CONNECTION)))))
@@ -225,7 +210,7 @@
     val))
 
 (defun create-object-slot-var (obj slot)
-  (let ((var (create-mg-variable)))
+  (let ((var (make-sb-variable)))
     (set-object-slot-prop obj slot :sb-variable var)
     (s-value-fn obj slot nil)
     var))
@@ -249,10 +234,6 @@
       (setf (sl-value sl) cn)
       (setf (gethash symbol (schema-bins schema)) sl))))
 
-(defun allocate-schema-slots (schema)
-    (setf (schema-bins schema)
-	  (make-hash-table :test #'eq)))
-
 (defvar *graphical-object* (make-schema :bins (make-hash-table :test #'eq)))
 (defvar *rectangle* (make-schema :bins (make-hash-table :test #'eq)))
 
@@ -266,15 +247,12 @@
       (make-sl :name :line-style
 	       :bits 33))
 
-
-
 (kr-init-method *graphical-object*)
 
 (set-is-a *rectangle* (list *graphical-object*))
 
 (setf (gethash :update-slots (schema-bins *rectangle*))
       (make-sl :value '(:fast-redraw-p)))
-
 
 (kr-init-method *rectangle*)
 
@@ -301,7 +279,8 @@
 
 (defvar *axis-rectangle* (make-schema))
 
-(allocate-schema-slots *axis-rectangle*)
+(setf (schema-bins *axis-rectangle*) (make-hash-table :test #'eq))
+
 
 (set-is-a *axis-rectangle* (list *rectangle*))
 
