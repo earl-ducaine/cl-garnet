@@ -322,10 +322,6 @@
 ;; kr-init-method-hook caused the memorry error #0x rather than #5x
 (setf (symbol-function 'kr-init-method) #'kr-init-method-hook)
 
-(defun make-a-new-schema (name)
-    (let ((schema (make-schema)))
-      (allocate-schema-slots schema)
-      (set name schema)))
 
 (defvar *axis-rectangle* (make-schema))
 
