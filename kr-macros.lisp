@@ -126,7 +126,11 @@
 					       (get-sb-constraint-slot
 						cn :mg-os))
 					      slot))))
-			collect (create-object-slot-var (car var-os) (cdr var-os)))))
+			collect (let ((obj (car var-os))
+				      (slot (cdr var-os)))
+				  (s-value-fn obj slot nil)
+				  (make-sl))
+			  )))
 	       (let ((cn cn) (val new))
 		 (setf (sb-constraint-variables cn) val)))
 	     (sb-constraint-set-slot-fn cn)
@@ -135,16 +139,6 @@
 		   :connected))))
      (schema-bins schema))))
 
-(defun set-object-slot-prop (obj slot prop val)
-  (let* (os-props
-	 (slot-props (getf os-props slot nil)))
-    (setf (getf slot-props prop) val)
-    (setf (getf os-props slot) slot-props)
-    val))
-
-(defun create-object-slot-var (obj slot)
-    (s-value-fn obj slot nil)
-    (make-sl))
 
 (defstruct sb-constraint
   variables
