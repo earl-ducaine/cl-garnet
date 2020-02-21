@@ -305,13 +305,6 @@
     (s-value-fn-save-fn-symbol obj slot nil)
     var))
 
-(defun install-hook (fn hook)
-  (let ((save-fn (get-save-fn-symbol-name fn)))
-    (setf (symbol-function save-fn)
-	  (symbol-function fn))
-    (setf (symbol-function fn)
-	  (symbol-function hook))))
-
 (defun initialize-method-graphical-object (gob)
   (s-value-fn gob :update-info 'a))
 
@@ -359,7 +352,16 @@
     (process-constant-slots schema (list rectangle))
     (kr-init-method schema)))
 
-(install-hook 's-value-fn 's-value-fn-save-fn-symbol)
-(install-hook 'kr-init-method 'kr-init-method-hook)
+(let ((save-fn (get-save-fn-symbol-name 's-value-fn)))
+  (setf (symbol-function save-fn)
+	(symbol-function 's-value-fn))
+  (setf (symbol-function 's-value-fn)
+	(symbol-function 's-value-fn-save-fn-symbol)))
+
+(let ((save-fn (get-save-fn-symbol-name 'kr-init-method)))
+    (setf (symbol-function save-fn)
+	  (symbol-function 'kr-init-method))
+    (setf (symbol-function 'kr-init-method)
+	  (symbol-function 'kr-init-method-hook)))
 
 (do-schema-body-alt)
