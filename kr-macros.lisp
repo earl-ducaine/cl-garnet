@@ -158,13 +158,7 @@
 		       (loop for path in cn-var-paths collect
 			    (let ((obj root-obj))
 			      (loop for (slot next-slot) on path do
-				   (when (null next-slot)
-				     (return (cons obj slot)))
-				   (set-object-slot-prop obj slot :sb-path-constraints
-							 (adjoin cn nil))
-				   (push (cons obj slot) cn-path-links)
-				   (s-value-fn obj slot nil)
-				   (setf obj nil)))))
+				   (return (cons obj slot))))))
 		 (setf (cn-variables cn)
 		       (loop for var-os in var-os-list
 			  collect (create-object-slot-var
