@@ -275,11 +275,46 @@
 (setf (gethash :update-slots (schema-bins *rectangle*))
       (make-sl :value '(:fast-redraw-p)))
 
-(defun process-constant-slots (the-schema parents)
+
+(kr-init-method *rectangle*)
+
+(s-value-fn *graphical-object*
+	    :initialize 'initialize-method-graphical-object)
+
+(setf (gethash :fast-redraw-p (schema-bins *rectangle*))
+      (make-sl :name :fast-redraw-p
+	       :value *no-value*
+	       :bits 8192))
+
+(locally (declare (optimize (speed 3) (safety 0) (space 0) (debug 0)))
+  (maphash
+   #'(lambda (iterate-ignored-slot-name iterate-slot-value-entry)
+       (declare (ignore iterate-ignored-slot-name))
+       (let ((slot (sl-name iterate-slot-value-entry))
+	     (bits (logand (sl-bits iterate-slot-value-entry) 1023)))
+	 (unless (zerop bits)
+	   (format t "slot: ~s~%" slot)
+	   (setf (gethash slot (schema-bins *rectangle*))
+		 (make-sl :name slot
+			  :value *no-value*
+			  :bits bits)))))
+   (schema-bins *graphical-object*)))
+
+(defvar *axis-rectangle* (make-schema))
+
+(allocate-schema-slots *axis-rectangle*)
+
+(set-is-a *axis-rectangle* (list *rectangle*))
+
+(loop repeat 4
+   collect (create-mg-constraint *axis-rectangle*))
+
+(let (;;(the-schema *axis-rectangle*)
+       (parents (list *rectangle*)))
   (locally (declare #.*special-kr-optimization*)
-    (dolist (slot (g-value-no-copy the-schema))
-      (let ((entry (slot-accessor the-schema slot)))
-	(let* ((schema-bins (schema-bins the-schema))
+    (dolist (slot (g-value-no-copy *axis-rectangle*))
+      (let ((entry (slot-accessor *axis-rectangle* slot)))
+	(let* ((schema-bins (schema-bins *axis-rectangle*))
 	       (a-hash (gethash slot schema-bins)))
 	  (setf a-hash (make-sl))
 	  (setf (sl-name a-hash) slot)
@@ -298,10 +333,10 @@
 		     (bits (logand (sl-bits iterate-slot-value-entry)
 				   1023)))
 		 (unless (zerop bits)
-		   (let ((the-entry (slot-accessor the-schema slot)))
+		   (let ((the-entry (slot-accessor *axis-rectangle* slot)))
 		     (if the-entry
 			 (sl-bits the-entry)
-			 (let* ((schema-bins (schema-bins the-schema))
+			 (let* ((schema-bins (schema-bins *axis-rectangle*))
 				(a-hash (gethash slot schema-bins)))
 			   (setf a-hash (make-sl))
 			   (setf (sl-name a-hash) slot)
@@ -312,54 +347,6 @@
 			   (setf (gethash slot schema-bins) a-hash)))))))
 	   (schema-bins parent)))))))
 
-;;; (process-constant-slots *rectangle* (list *graphical-object*))
-
-
-
-
-
-(kr-init-method *rectangle*)
-
-(s-value-fn *graphical-object*
-	    :initialize 'initialize-method-graphical-object)
-
-
-(setf (gethash :fast-redraw-p (schema-bins *rectangle*))
-      (make-sl :name :fast-redraw-p
-	       :value *no-value*
-	       :bits 8192))
-
-(locally (declare (optimize (speed 3) (safety 0) (space 0) (debug 0)))
-  (maphash
-   #'(lambda (iterate-ignored-slot-name iterate-slot-value-entry)
-       (declare (ignore iterate-ignored-slot-name))
-       (let ((slot (sl-name iterate-slot-value-entry))
-	     (bits (logand (sl-bits iterate-slot-value-entry)
-			   1023)))
-	 (unless (zerop bits)
-	   (let* ((the-entry (slot-accessor *rectangle* slot))
-		  (schema-bins (schema-bins *rectangle*))
-		  (a-hash (make-sl :name slot
-				   :value *no-value*
-				   :bits bits)))
-	     ;; (setf (sl-name a-hash) slot)
-	     ;; (setf (sl-value a-hash) *no-value*)
-	     ;; (setf (sl-bits a-hash) bits)
-	     (when dependants
-	       (setf (full-sl-dependents a-hash) dependants))
-	     (setf (gethash slot schema-bins) a-hash)))))
-   (schema-bins *graphical-object*)))
-
-(defvar *axis-rectangle* (make-schema))
-
-(allocate-schema-slots *axis-rectangle*)
-
-(set-is-a *axis-rectangle* (list *rectangle*))
-
-(loop repeat 4
-   collect (create-mg-constraint *axis-rectangle*))
-
-(process-constant-slots *axis-rectangle* (list *rectangle*))
 
 ;; Note, eliminating this and change the corresponding call to
 ;; kr-init-method-hook caused the memorry error #0x rather than #5x
