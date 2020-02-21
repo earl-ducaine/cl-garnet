@@ -11,7 +11,7 @@
   name
   bins)
 
-(defstruct (sl)
+(defstruct sl
   name
   value
   (bits 0 :type fixnum))
@@ -140,7 +140,7 @@
 	 (val ,val))
      (setf (sb-constraint-variables cn) val)))
 
-(defstruct (sb-variable)
+(defstruct sb-variable
   other-slots
   set-slot-fn)
 
@@ -324,43 +324,34 @@
 	    :initialize 'initialize-method-graphical-object)
 
 
+(setf (gethash :fast-redraw-p (schema-bins *rectangle*))
+      (make-sl :name :fast-redraw-p
+	       :value *no-value*
+	       :bits 8192))
 
 (locally (declare (optimize (speed 3) (safety 0) (space 0) (debug 0)))
-  (dolist (slot (g-value-no-copy *rectangle*))
-    (let ((entry (slot-accessor *rectangle* slot)))
-      (let* ((schema-bins (schema-bins *rectangle*))
-	     (a-hash (gethash slot schema-bins)))
-	(setf a-hash (make-sl))
-	(setf (sl-name a-hash) slot)
-	(setf (sl-value a-hash) *no-value*)
-	(setf (sl-bits a-hash) 8192)
-	(setf (full-sl-dependents a-hash) dependants)
-	(setf (gethash slot schema-bins) a-hash))))
-  (let ((parent *graphical-object*))
-    (locally
-	(declare (optimize (speed 3) (safety 0) (space 0) (debug 0)))
-      (progn
-	(maphash
-	 #'(lambda (iterate-ignored-slot-name iterate-slot-value-entry)
-	     (declare (ignore iterate-ignored-slot-name))
-	     (let ((slot (sl-name iterate-slot-value-entry))
-		   (bits (logand (sl-bits iterate-slot-value-entry)
-				 1023)))
-	       (unless (zerop bits)
-		 (let ((the-entry (slot-accessor *rectangle* slot)))
-		   (if the-entry
-		       (sl-bits the-entry)
-		       (let* ((schema-bins (schema-bins *rectangle*))
-			      (a-hash (gethash slot schema-bins)))
-			 (setf a-hash (make-sl))
-			 (setf (sl-name a-hash) slot)
-			 (setf (sl-value a-hash) *no-value*)
-			 (setf (sl-bits a-hash) bits)
-			 (when dependants
-			   (setf (full-sl-dependents a-hash) dependants))
-			 (setf (gethash slot schema-bins) a-hash)))))))
-	 (schema-bins parent))))))
-
+  (maphash
+   #'(lambda (iterate-ignored-slot-name iterate-slot-value-entry)
+       (declare (ignore iterate-ignored-slot-name))
+       (let ((slot (sl-name iterate-slot-value-entry))
+	     (bits (logand (sl-bits iterate-slot-value-entry)
+			   1023)))
+	 (unless (zerop bits)
+	   (let ((the-entry (slot-accessor *rectangle* slot)))
+	     (cond
+	       (the-entry
+		(sl-bits the-entry))
+	       (t
+		 (let* ((schema-bins (schema-bins *rectangle*))
+			(a-hash (gethash slot schema-bins)))
+		   (setf a-hash (make-sl))
+		   (setf (sl-name a-hash) slot)
+		   (setf (sl-value a-hash) *no-value*)
+		   (setf (sl-bits a-hash) bits)
+		   (when dependants
+		     (setf (full-sl-dependents a-hash) dependants))
+		   (setf (gethash slot schema-bins) a-hash))))))))
+   (schema-bins *graphical-object*)))
 
 (defvar *axis-rectangle* (make-schema))
 
