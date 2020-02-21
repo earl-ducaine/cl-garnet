@@ -88,29 +88,6 @@
 	  (update-inherited-values schema slot value t))
 	(values value nil)))))
 
-(defun set-is-a (schema value)
-  (let* ((schema-bins (schema-bins schema))
-	 (a-hash (make-sl)))
-    (setf (sl-name a-hash) :is-a)
-    (setf (sl-value a-hash) value)
-    (setf (gethash :is-a schema-bins) a-hash))
-  (link-in-relation schema :is-a value)
-  value)
-
-(defun find-parent (schema slot)
-  (dolist (a-parent (get-local-value schema :is-a))
-    (when a-parent
-      (multiple-value-bind (value the-parent)
-	  (find-parent a-parent slot)
-	(when value
-	  (return-from find-parent (values value the-parent)))))))
-
-(defun kr-init-method (schema &optional the-function)
-  (multiple-value-setq (the-function)
-    (find-parent schema :initialize))
-  (when the-function
-    (funcall the-function schema)))
-
 (defun get-sb-constraint-slot (obj slot)
   (getf (sb-constraint-other-slots obj) slot nil))
 
@@ -132,21 +109,23 @@
 	 (let* ((cn (get-local-value schema
 				     (sl-name iterate-slot-value-entry))))
 	   (when (and (sb-constraint-p cn)
-		      (not (null (get-sb-constraint-slot
-				  cn
-				  :mg-connection))))
+		      (not (null
+			    (get-sb-constraint-slot
+			     cn
+			     :mg-connection))))
 	     (setf (getf (sb-constraint-other-slots cn) :mg-os nil)
 		   (cons schema (sl-name iterate-slot-value-entry)))
 	     (let* ((new1
-		     (loop for var-os in (loop for path in (get-sb-constraint-slot cn
-										   :mg-variable-paths)
-					    collect (loop for (slot next-slot) on path
-						       do (return
-							    (cons
-							     (car
-							      (get-sb-constraint-slot
-							       cn :mg-os))
-							     slot))))
+		     (loop for var-os in
+			  (loop for path in (get-sb-constraint-slot cn
+								    :mg-variable-paths)
+			     collect (loop for (slot next-slot) on path
+					do (return
+					     (cons
+					      (car
+					       (get-sb-constraint-slot
+						cn :mg-os))
+					      slot))))
 			collect (create-object-slot-var (car var-os) (cdr var-os)))))
 	       (let ((cn cn) (val new))
 		 (setf (sb-constraint-variables cn) val)))
@@ -189,7 +168,11 @@
 (defvar *graphical-object* (make-schema :bins (make-hash-table :test #'eq)))
 (defvar *rectangle* (make-schema :bins (make-hash-table :test #'eq)))
 
-(set-is-a *graphical-object* nil)
+(setf (gethash :is-a (schema-bins *graphical-object*))
+      (make-sl :name :is-a :value nil))
+
+(link-in-relation *graphical-object* :is-a nil)
+
 
 (setf (gethash :filling-style (schema-bins *graphical-object*))
       (make-sl :name :filling-style
@@ -199,14 +182,15 @@
       (make-sl :name :line-style
 	       :bits 33))
 
-(kr-init-method *graphical-object*)
 
-(set-is-a *rectangle* (list *graphical-object*))
+(setf (gethash :is-a (schema-bins *rectangle*))
+      (make-sl :name :is-a
+	       :value (list *graphical-object*)))
+
+(link-in-relation *rectangle* :is-a (list *graphical-object*))
 
 (setf (gethash :update-slots (schema-bins *rectangle*))
       (make-sl :value '(:fast-redraw-p)))
-
-(kr-init-method *rectangle*)
 
 (s-value-fn *graphical-object*
 	    :initialize 'initialize-method-graphical-object)
@@ -233,7 +217,10 @@
 (setf (schema-bins *axis-rectangle*) (make-hash-table :test #'eq))
 
 
-(set-is-a *axis-rectangle* (list *rectangle*))
+(setf (gethash :is-a (schema-bins *axis-rectangle*))
+      (make-sl :name :is-a :value (list *rectangle*)))
+
+(link-in-relation *axis-rectangle* :is-a (list *rectangle*))
 
 (loop repeat 4
    collect (create-mg-constraint *axis-rectangle*))
