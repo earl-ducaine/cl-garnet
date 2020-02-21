@@ -114,17 +114,6 @@
 (defun get-sb-constraint-slot (obj slot)
   (getf (sb-constraint-other-slots obj) slot nil))
 
-(defmacro cn-variables (cn) `(sb-constraint-variables ,cn))
-
-(defsetf cn-variables (cn) (val)
-  `(let ((cn ,cn)
-	 (val ,val))
-     (setf (sb-constraint-variables cn) val)))
-
-;; (defstruct sb-variable
-;;   other-slots
-;;   set-slot-fn)
-
 (defun kr-init-method-hook (schema)
   (let ((parent (car (sl-value (slot-accessor schema :is-a)))))
     (locally
@@ -148,24 +137,19 @@
 				  :mg-connection))))
 	     (setf (getf (sb-constraint-other-slots cn) :mg-os nil)
 		   (cons schema (sl-name iterate-slot-value-entry)))
-	     (setf (cn-variables cn)
-		   (loop for var-os in
-			(loop for path in (get-sb-constraint-slot
-					   cn
-					   :mg-variable-paths) collect
-			   ;; this loop always loops just once, so we
-			   ;; could just return (car path) buth that
-			   ;; produces a different error.
-			     (loop for (slot next-slot) on path do
-				  (return (cons
-					   (car
-					    (get-sb-constraint-slot
-					     cn
-					     :mg-os))
-					   slot))))
-		      collect (create-object-slot-var
-			       (car var-os)
-			       (cdr var-os))))
+	     (let* ((new1
+		     (loop for var-os in (loop for path in (get-sb-constraint-slot cn
+										   :mg-variable-paths)
+					    collect (loop for (slot next-slot) on path
+						       do (return
+							    (cons
+							     (car
+							      (get-sb-constraint-slot
+							       cn :mg-os))
+							     slot))))
+			collect (create-object-slot-var (car var-os) (cdr var-os)))))
+	       (let ((cn cn) (val new))
+		 (setf (sb-constraint-variables cn) val)))
 	     (sb-constraint-set-slot-fn cn)
 	     (setf (getf (sb-constraint-other-slots cn)
 			 :mg-connection nil)
