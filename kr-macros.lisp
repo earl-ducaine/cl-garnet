@@ -221,20 +221,10 @@
 	  (setf (gethash (caar slots) (schema-bins schema)) a-hash)
 	  (cdar slots)))))
 
-(defstruct (sb-constraint)
-  variables
-  other-slots
-  set-slot-fn)
-
 (defun get-sb-constraint-slot (obj slot)
   (getf (sb-constraint-other-slots obj) slot nil))
 
 (defmacro cn-variables (cn) `(sb-constraint-variables ,cn))
-
-(defun set-sb-constraint-slot (cn slot val)
-  (call-set-slot-fn (sb-constraint-set-slot-fn cn) cn slot val)
-  (setf (getf (sb-constraint-other-slots cn) slot nil) val)
-  val)
 
 (defsetf cn-variables (cn) (val)
   `(let ((cn ,cn)
@@ -249,14 +239,6 @@
 (defun set-sb-variable-slot (var slot val)
   (call-set-slot-fn (sb-variable-set-slot-fn var) var slot val)
   (setf (getf (sb-variable-other-slots var) slot nil) val))
-
-(defun call-set-slot-fn (fns obj slot val)
-  (cond ((null fns)
-	 nil)
-	((listp fns)
-	 (loop for fn in fns do (call-set-slot-fn fn obj slot val)))
-	(t
-	 (funcall fns obj slot val))))
 
 (eval-when (:load-toplevel :compile-toplevel :execute)
   (defun get-save-fn-symbol-name (sym)
@@ -381,16 +363,31 @@
 (install-hook 's-value-fn 's-value-fn-save-fn-symbol)
 (install-hook 'kr-init-method 'kr-init-method-hook)
 
+(defstruct sb-constraint
+  variables
+  other-slots
+  set-slot-fn)
+
+(defun call-set-slot-fn (fns obj slot val)
+  (cond ((null fns)
+	 nil)
+	(t
+	 (funcall fns obj slot val))))
+
+(defun set-sb-constraint-slot (cn slot val)
+  (call-set-slot-fn (sb-constraint-set-slot-fn cn) cn slot val)
+  (setf (getf (sb-constraint-other-slots cn) slot nil) val)
+  val)
 
 (defun create-mg-constraint (schema)
-  (let* ((cn (make-sb-constraint))
-	(path (list '(:box) (list (gensym)))))
-    (setf (cn-connection cn) :unconnected)
-    (setf (cn-variable-paths cn) path)
+  (let* ((path (list '(:box) (list (gensym))))
+	 (cn (make-sb-constraint)))
+    (call-set-slot-fn (sb-constraint-set-slot-fn cn) cn :mg-connection :unconnected)
+    (call-set-slot-fn (sb-constraint-set-slot-fn cn) cn :mg-variable-paths path)
+    (setf (getf (sb-constraint-other-slots cn) :mg-connection nil) :unconnected)
+    (setf (getf (sb-constraint-other-slots cn) :mg-variable-paths nil) path)
     (let* ((symbol (gensym))
-	   (sl (make-sl))
-	   ;; (constraint-slot (list symbol cn a-hash))
-	   )
+	   (sl (make-sl)))
       (setf (sl-name sl) symbol)
       (setf (sl-value sl) cn)
       (setf (gethash symbol (schema-bins schema)) sl))))
@@ -401,7 +398,6 @@
     (loop repeat 4
        collect (create-mg-constraint schema))
     (process-constant-slots schema (list rectangle))
-    (kr-init-method schema)
-    schema))
+    (kr-init-method schema)))
 
 (do-schema-body-alt)
