@@ -327,11 +327,15 @@
       (allocate-schema-slots schema)
       (set name schema)))
 
-(defvar *axis-rectangle*)
+(defvar *axis-rectangle* (make-schema))
 
-(let ((schema (make-a-new-schema '*axis-rectangle*)))
-  (set-is-a schema (list *rectangle*))
-  (loop repeat 4
-     collect (create-mg-constraint schema))
-  (process-constant-slots schema (list *rectangle*))
-  (kr-init-method-hook schema))
+(allocate-schema-slots *axis-rectangle*)
+
+(set-is-a *axis-rectangle* (list *rectangle*))
+
+(loop repeat 4
+   collect (create-mg-constraint *axis-rectangle*))
+
+(process-constant-slots *axis-rectangle* (list *rectangle*))
+
+(kr-init-method-hook *axis-rectangle*)
