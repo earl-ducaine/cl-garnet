@@ -286,19 +286,18 @@
 	       :value *no-value*
 	       :bits 8192))
 
-(locally (declare (optimize (speed 3) (safety 0) (space 0) (debug 0)))
-  (maphash
-   #'(lambda (iterate-ignored-slot-name iterate-slot-value-entry)
-       (declare (ignore iterate-ignored-slot-name))
-       (let ((slot (sl-name iterate-slot-value-entry))
-	     (bits (logand (sl-bits iterate-slot-value-entry) 1023)))
-	 (unless (zerop bits)
-	   (format t "slot: ~s~%" slot)
-	   (setf (gethash slot (schema-bins *rectangle*))
-		 (make-sl :name slot
-			  :value *no-value*
-			  :bits bits)))))
-   (schema-bins *graphical-object*)))
+(maphash
+ #'(lambda (iterate-ignored-slot-name iterate-slot-value-entry)
+     (declare (ignore iterate-ignored-slot-name))
+     (let ((slot (sl-name iterate-slot-value-entry))
+	   (bits (logand (sl-bits iterate-slot-value-entry) 1023)))
+       (unless (zerop bits)
+	 (format t "slot: ~s~%" slot)
+	 (setf (gethash slot (schema-bins *rectangle*))
+	       (make-sl :name slot
+			:value *no-value*
+			:bits bits)))))
+ (schema-bins *graphical-object*))
 
 (defvar *axis-rectangle* (make-schema))
 
@@ -309,29 +308,18 @@
 (loop repeat 4
    collect (create-mg-constraint *axis-rectangle*))
 
-(locally
-    (declare (optimize (speed 3) (safety 0) (space 0) (debug 0)))
-  (maphash
-   #'(lambda (iterate-ignored-slot-name iterate-slot-value-entry)
-       (declare (ignore iterate-ignored-slot-name))
-       (let ((slot (sl-name iterate-slot-value-entry))
-	     (bits (logand (sl-bits iterate-slot-value-entry)
-			   1023)))
-	 (unless (zerop bits)
-	   (break)
-	   (let ((the-entry (slot-accessor *axis-rectangle* slot)))
-	     (if the-entry
-		 (sl-bits the-entry)
-		 (let* ((schema-bins (schema-bins *axis-rectangle*))
-			(a-hash (gethash slot schema-bins)))
-		   (setf a-hash (make-sl))
-		   (setf (sl-name a-hash) slot)
-		   (setf (sl-value a-hash) *no-value*)
-		   (setf (sl-bits a-hash) bits)
-		   (when dependants
-		     (setf (full-sl-dependents a-hash) dependants))
-		   (setf (gethash slot schema-bins) a-hash)))))))
-   (schema-bins *rectangle*)))
+(maphash
+ #'(lambda (iterate-ignored-slot-name iterate-slot-value-entry)
+     (declare (ignore iterate-ignored-slot-name))
+     (let ((slot (sl-name iterate-slot-value-entry))
+	   (bits (logand (sl-bits iterate-slot-value-entry)
+			 1023)))
+       (unless (zerop bits)
+	 (setf (gethash slot (schema-bins *axis-rectangle*))
+	       (make-sl :name slot
+			:value *no-value*
+			:bits bits)))))
+ (schema-bins *rectangle*))
 
 
 ;; Note, eliminating this and change the corresponding call to
