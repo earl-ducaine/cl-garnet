@@ -106,11 +106,9 @@
 
 (defun set-is-a (schema value)
   (let* ((schema-bins (schema-bins schema))
-	 (a-hash (gethash :is-a schema-bins)))
-    (setf a-hash (make-sl))
+	 (a-hash (make-sl)))
     (setf (sl-name a-hash) :is-a)
     (setf (sl-value a-hash) value)
-    (setf (sl-bits a-hash) 0)
     (setf (gethash :is-a schema-bins) a-hash))
   (link-in-relation schema :is-a value)
   value)
@@ -207,19 +205,6 @@
       (setf (gethash slot-name schema-bins) new-slot)
       slot-value)))
 
-(defun do-schema-body-alt (&rest slot-specifiers)
-  (let ((schema (make-a-new-schema '*axis-rectangle*)))
-    (set-is-a schema (list rectangle))
-    (do* ((slots slot-specifiers (cdr slots)))
-	 ((null slots)
-	  (process-constant-slots schema (list rectangle))
-	  (kr-init-method schema)
-	  schema)
-      (let ((a-hash (make-sl)))
-	  (setf (sl-name a-hash) (caar slots))
-	  (setf (sl-value a-hash) (cdar slots))
-	  (setf (gethash (caar slots) (schema-bins schema)) a-hash)
-	  (cdar slots)))))
 
 (defun get-sb-constraint-slot (obj slot)
   (getf (sb-constraint-other-slots obj) slot nil))
@@ -229,7 +214,6 @@
 (defsetf cn-variables (cn) (val)
   `(let ((cn ,cn)
 	 (val ,val))
-     (call-set-slot-fn (sb-constraint-set-slot-fn cn) cn :variables val)
      (setf (sb-constraint-variables cn) val)))
 
 (defstruct (sb-variable)
@@ -237,7 +221,6 @@
   set-slot-fn)
 
 (defun set-sb-variable-slot (var slot val)
-  (call-set-slot-fn (sb-variable-set-slot-fn var) var slot val)
   (setf (getf (sb-variable-other-slots var) slot nil) val))
 
 (eval-when (:load-toplevel :compile-toplevel :execute)
@@ -351,17 +334,11 @@
 (s-value-fn graphical-object
 	    :initialize 'initialize-method-graphical-object)
 
-(install-hook 's-value-fn 's-value-fn-save-fn-symbol)
-(install-hook 'kr-init-method 'kr-init-method-hook)
 
 (defstruct sb-constraint
   variables
   other-slots
   set-slot-fn)
-
-(defun call-set-slot-fn (fns obj slot val)
-  (cond ((null fns)
-	 nil)))
 
 (defun create-mg-constraint (schema)
   (let* ((cn (make-sb-constraint
@@ -381,5 +358,8 @@
        collect (create-mg-constraint schema))
     (process-constant-slots schema (list rectangle))
     (kr-init-method schema)))
+
+(install-hook 's-value-fn 's-value-fn-save-fn-symbol)
+(install-hook 'kr-init-method 'kr-init-method-hook)
 
 (do-schema-body-alt)
