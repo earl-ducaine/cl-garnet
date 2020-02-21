@@ -121,9 +121,9 @@
 	 (val ,val))
      (setf (sb-constraint-variables cn) val)))
 
-(defstruct sb-variable
-  other-slots
-  set-slot-fn)
+;; (defstruct sb-variable
+;;   other-slots
+;;   set-slot-fn)
 
 (defun kr-init-method-hook (schema)
   (let ((parent (car (sl-value (slot-accessor schema :is-a)))))
@@ -180,9 +180,8 @@
     val))
 
 (defun create-object-slot-var (obj slot)
-  (let ((var (make-sb-variable)))
     (s-value-fn obj slot nil)
-    var))
+    (make-sl))
 
 (defun initialize-method-graphical-object (gob)
   (s-value-fn gob :update-info 'a))
