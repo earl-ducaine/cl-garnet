@@ -16,9 +16,6 @@
   value
   (bits 0 :type fixnum))
 
-(defstruct (full-sl (:include sl))
-  dependents)
-
 (defparameter *no-value* '(:no-value))
 
 (declaim (fixnum *schema-counter*))
@@ -45,19 +42,6 @@
     (let ((entry (slot-accessor schema slot)))
       (if (if entry (not (logbitp 10 (sl-bits entry))))
 	  (sl-value entry)))))
-
-(defun g-value-no-copy (schema)
-  (let ((value (slot-accessor schema :UPDATE-SLOTS)))
-    (cond
-      (value
-       (sl-value value))
-      (t
-       ;; note the following creates bug in SBCL that's not
-       ;; recreatatable without the dolist.
-       (let ((schema-self (get-local-value schema :IS-A)))
-	 (dolist (*schema-self* schema-self)
-	   (let ((value (g-value-no-copy *schema-self*)))
-	     (return-from g-value-no-copy value))))))))
 
 (defun link-in-relation (schema slot values)
   (let ((inverse (when (eq slot :is-a)
@@ -127,9 +111,6 @@
   (when the-function
     (funcall the-function schema)))
 
-
-
-
 (defun get-sb-constraint-slot (obj slot)
   (getf (sb-constraint-other-slots obj) slot nil))
 
@@ -194,9 +175,8 @@
       (maphash
        #'(lambda (iterate-ignored-slot-name iterate-slot-value-entry)
 	   (declare (ignore iterate-ignored-slot-name))
-	   (let ((slot (sl-name iterate-slot-value-entry))
-		 (value (get-local-value parent slot)))
-	       (s-value-fn schema slot value)))
+	   (s-value-fn schema (sl-name iterate-slot-value-entry)
+		       (get-local-value parent slot)))
        (schema-bins parent))))
   (activate-new-instance-cns schema))
 
