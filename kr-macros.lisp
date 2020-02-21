@@ -129,45 +129,6 @@
   (and (sb-constraint-p obj)
        (not (null (GET-SB-CONSTRAINT-SLOT OBJ :MG-CONNECTION)))))
 
-(defun connect-constraint (cn)
-  (let* ((cn-var-paths (GET-SB-CONSTRAINT-SLOT CN :MG-VARIABLE-PATHS)))
-    (let* ((root-obj (car (GET-SB-CONSTRAINT-SLOT CN :MG-OS)))
-	   (cn-path-links nil)
-	   (paths-broken nil)
-	   var-os-list)
-      (setf var-os-list
-	    (loop for path in cn-var-paths collect
-		 (let ((obj root-obj))
-		   (loop for (slot next-slot) on path do
-			(when (null next-slot)
-			  (return (cons obj slot)))
-			(set-object-slot-prop obj slot :sb-path-constraints
-					      (adjoin cn nil))
-			(push (cons obj slot) cn-path-links)
-			(s-value-fn obj slot nil)
-			(setf obj nil)))))
-      (setf (cn-variables cn)
-	    (loop for var-os in var-os-list
-	       collect (create-object-slot-var
-			(car var-os)
-			(cdr var-os))))
-        (sb-constraint-set-slot-fn cn)
-  (setf (getf (sb-constraint-other-slots cn) :MG-CONNECTION nil) :CONNECTED))))
-
-(defun activate-new-instance-cns (schema)
-  (locally
-      (declare (optimize (speed 3) (safety 0) (space 0) (debug 0)))
-    (maphash
-     #'(lambda (iterate-ignored-slot-name iterate-slot-value-entry)
-	 (declare (ignore iterate-ignored-slot-name))
-	 (let* ((slot (sl-name iterate-slot-value-entry))
-		(cn (get-local-value schema slot)))
-	   (when (constraint-p cn)
-	     (sb-constraint-set-slot-fn cn)
-	     (setf (getf (sb-constraint-other-slots cn) :mg-os nil) (cons schema slot))
-	     (connect-constraint cn))))
-     (schema-bins schema))))
-
 (defun kr-init-method-hook (schema)
   (let ((parent (car (sl-value (slot-accessor schema :is-a)))))
     (locally
@@ -178,9 +139,40 @@
 	   (s-value-fn schema (sl-name iterate-slot-value-entry)
 		       (get-local-value parent slot)))
        (schema-bins parent))))
-  (activate-new-instance-cns schema))
-
-
+  (locally
+      (declare (optimize (speed 3) (safety 0) (space 0) (debug 0)))
+    (maphash
+     #'(lambda (iterate-ignored-slot-name iterate-slot-value-entry)
+	 (declare (ignore iterate-ignored-slot-name))
+	 (let* ((cn (get-local-value schema
+				     (sl-name iterate-slot-value-entry))))
+	   (when (constraint-p cn)
+	     (setf (getf (sb-constraint-other-slots cn) :mg-os nil)
+		   (cons schema (sl-name iterate-slot-value-entry)))
+	     (let* ((cn-var-paths (GET-SB-CONSTRAINT-SLOT CN :MG-VARIABLE-PATHS)))
+	       (let* ((root-obj (car (GET-SB-CONSTRAINT-SLOT CN :MG-OS)))
+		      (cn-path-links nil)
+		      (paths-broken nil)
+		      var-os-list)
+		 (setf var-os-list
+		       (loop for path in cn-var-paths collect
+			    (let ((obj root-obj))
+			      (loop for (slot next-slot) on path do
+				   (when (null next-slot)
+				     (return (cons obj slot)))
+				   (set-object-slot-prop obj slot :sb-path-constraints
+							 (adjoin cn nil))
+				   (push (cons obj slot) cn-path-links)
+				   (s-value-fn obj slot nil)
+				   (setf obj nil)))))
+		 (setf (cn-variables cn)
+		       (loop for var-os in var-os-list
+			  collect (create-object-slot-var
+				   (car var-os)
+				   (cdr var-os))))
+		 (sb-constraint-set-slot-fn cn)
+		 (setf (getf (sb-constraint-other-slots cn) :MG-CONNECTION nil) :CONNECTED))))))
+     (schema-bins schema))))
 
 (defun set-object-slot-prop (obj slot prop val)
   (let* (os-props
