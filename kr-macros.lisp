@@ -125,10 +125,6 @@
   other-slots
   set-slot-fn)
 
-(defun constraint-p (obj)
-  (and (sb-constraint-p obj)
-       (not (null (GET-SB-CONSTRAINT-SLOT OBJ :MG-CONNECTION)))))
-
 (defun kr-init-method-hook (schema)
   (let ((parent (car (sl-value (slot-accessor schema :is-a)))))
     (locally
@@ -146,31 +142,34 @@
 	 (declare (ignore iterate-ignored-slot-name))
 	 (let* ((cn (get-local-value schema
 				     (sl-name iterate-slot-value-entry))))
-	   (when (constraint-p cn)
+	   (when (and (sb-constraint-p cn)
+		      (not (null (get-sb-constraint-slot
+				  cn
+				  :mg-connection))))
 	     (setf (getf (sb-constraint-other-slots cn) :mg-os nil)
 		   (cons schema (sl-name iterate-slot-value-entry)))
-	       (setf (cn-variables cn)
-		     (loop for var-os in
-			  (loop for path in (get-sb-constraint-slot
+	     (setf (cn-variables cn)
+		   (loop for var-os in
+			(loop for path in (get-sb-constraint-slot
+					   cn
+					   :mg-variable-paths) collect
+			   ;; this loop always loops just once, so we
+			   ;; could just return (car path) buth that
+			   ;; produces a different error.
+			     (loop for (slot next-slot) on path do
+				  (return (cons
+					   (car
+					    (get-sb-constraint-slot
 					     cn
-					     :mg-variable-paths) collect
-			     ;; this loop always loops just once, so
-			     ;; we could just return (car path) buth
-			     ;; that produces a different error.
-			       (loop for (slot next-slot) on path do
-				    (return (cons
-					     (car
-					      (get-sb-constraint-slot
-					       cn
-					       :mg-os))
-					     slot))))
-			collect (create-object-slot-var
-				 (car var-os)
-				 (cdr var-os))))
-	       (sb-constraint-set-slot-fn cn)
-	       (setf (getf (sb-constraint-other-slots cn)
-			   :mg-connection nil)
-		     :connected))))
+					     :mg-os))
+					   slot))))
+		      collect (create-object-slot-var
+			       (car var-os)
+			       (cdr var-os))))
+	     (sb-constraint-set-slot-fn cn)
+	     (setf (getf (sb-constraint-other-slots cn)
+			 :mg-connection nil)
+		   :connected))))
      (schema-bins schema))))
 
 (defun set-object-slot-prop (obj slot prop val)
@@ -182,7 +181,6 @@
 
 (defun create-object-slot-var (obj slot)
   (let ((var (make-sb-variable)))
-    (set-object-slot-prop obj slot :sb-variable var)
     (s-value-fn obj slot nil)
     var))
 
