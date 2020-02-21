@@ -146,9 +146,6 @@
     (s-value-fn obj slot nil)
     (make-sl))
 
-(defun initialize-method-graphical-object (gob)
-  (s-value-fn gob :update-info 'a))
-
 (defstruct sb-constraint
   variables
   other-slots
@@ -160,10 +157,10 @@
 	      (list :mg-connection :unconnected
 		    :mg-variable-paths (list '(:box) (list (gensym)))))))
     (let* ((symbol (gensym))
-	   (sl (make-sl)))
-      (setf (sl-name sl) symbol)
-      (setf (sl-value sl) cn)
-      (setf (gethash symbol (schema-bins schema)) sl))))
+	   (sl (make-sl :name symbol
+			:value cn)))
+      (setf (gethash symbol (schema-bins schema)) sl)
+      sl)))
 
 (defvar *graphical-object* (make-schema :bins (make-hash-table :test #'eq)))
 (defvar *rectangle* (make-schema :bins (make-hash-table :test #'eq)))
@@ -172,7 +169,6 @@
       (make-sl :name :is-a :value nil))
 
 (link-in-relation *graphical-object* :is-a nil)
-
 
 (setf (gethash :filling-style (schema-bins *graphical-object*))
       (make-sl :name :filling-style
@@ -193,7 +189,7 @@
       (make-sl :value '(:fast-redraw-p)))
 
 (s-value-fn *graphical-object*
-	    :initialize 'initialize-method-graphical-object)
+	    :initialize (lambda (gob) (s-value-fn gob :update-info 'a)))
 
 (setf (gethash :fast-redraw-p (schema-bins *rectangle*))
       (make-sl :name :fast-redraw-p
