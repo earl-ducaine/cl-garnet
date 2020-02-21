@@ -172,37 +172,6 @@
 			   (setf (gethash slot schema-bins) a-hash)))))))
 	   (schema-bins parent)))))))
 
-;; (defun do-schema-body (schema is-a generate-instance override types
-;; 		       &rest slot-specifiers)
-;;   (unless (listp is-a)
-;;     (setf is-a (list is-a)))
-;;   (set-is-a schema is-a)
-;;   (do* ((slots slot-specifiers (cdr slots))
-;; 	(slot (car slots) (car slots)))
-;;        ((null slots)
-;; 	(unless (eq types :NONE)
-;; 	  (dolist (type types)
-;; 	    (dolist (slot (cdr type))
-;; 	      (let* ((schema-bins (schema-bins schema))
-;; 		     (hash (gethash slot schema-bins)))
-;; 		(setf hash (make-sl))
-;; 		(setf (sl-name hash) slot)
-;; 		(setf (sl-value hash) *no-value*)
-;; 		(setf (sl-bits hash) 33)
-;; 		(setf (gethash slot schema-bins) hash)))))
-;; 	(process-constant-slots schema is-a)
-;; 	(kr-init-method schema))
-;;     (let* ((slot-name (car slot))
-;; 	   (slot-value (cdr slot))
-;; 	   (schema-bins (schema-bins schema))
-;; 	   (new-slot (make-sl)))
-;;       (setf (sl-name new-slot) slot-name)
-;;       (setf (sl-value new-slot) slot-value)
-;;       (setf (sl-bits new-slot) 0)
-;;       (setf (gethash slot-name schema-bins) new-slot)
-;;       slot-value)))
-
-
 (defun get-sb-constraint-slot (obj slot)
   (getf (sb-constraint-other-slots obj) slot nil))
 
@@ -321,14 +290,6 @@
       (setf (sl-value sl) cn)
       (setf (gethash symbol (schema-bins schema)) sl))))
 
-(defun do-schema-body-alt ()
-  (let ((schema (make-a-new-schema '*axis-rectangle*)))
-    (set-is-a schema (list *rectangle*))
-    (loop repeat 4
-       collect (create-mg-constraint schema))
-    (process-constant-slots schema (list *rectangle*))
-    (kr-init-method-hook schema)))
-
 (defun allocate-schema-slots (schema)
     (setf (schema-bins schema)
 	  (make-hash-table :test #'eq)))
@@ -340,15 +301,11 @@
 
 (setf (gethash :filling-style (schema-bins *graphical-object*))
       (make-sl :name :filling-style
-	       :value *no-value*
 	       :bits 33))
 
-(let* ((schema-bins (schema-bins *graphical-object*))
-       (hash (make-sl)))
-  (setf (sl-name hash) :line-style)
-  (setf (sl-value hash) *no-value*)
-  (setf (sl-bits hash) 33)
-  (setf (gethash :line-style schema-bins) hash))
+(setf (gethash :line-style (schema-bins *graphical-object*))
+      (make-sl :name :line-style
+	       :bits 33))
 
 (process-constant-slots *graphical-object* nil)
 
@@ -370,4 +327,9 @@
 ;; kr-init-method-hook caused the memorry error #0x rather than #5x
 (setf (symbol-function 'kr-init-method) #'kr-init-method-hook)
 
-(do-schema-body-alt)
+(let ((schema (make-a-new-schema '*axis-rectangle*)))
+  (set-is-a schema (list *rectangle*))
+  (loop repeat 4
+     collect (create-mg-constraint schema))
+  (process-constant-slots schema (list *rectangle*))
+  (kr-init-method-hook schema))
