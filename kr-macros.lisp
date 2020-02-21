@@ -338,17 +338,13 @@
 
 (set-is-a *graphical-object* nil)
 
-(let* ((schema-bins (schema-bins *graphical-object*))
-       (hash (make-sl)))
-  (setf sl (make-sl))
-  (setf (sl-name sl) :filling-style)
-  (setf (sl-value sl) *no-value*)
-  (setf (sl-bits sl) 33)
-  (setf (gethash :filling-style schema-bins) sl))
+(setf (gethash :filling-style (schema-bins *graphical-object*))
+      (make-sl :name :filling-style
+	       :value *no-value*
+	       :bits 33))
 
 (let* ((schema-bins (schema-bins *graphical-object*))
-       (hash (gethash :line-style schema-bins)))
-  (setf hash (make-sl))
+       (hash (make-sl)))
   (setf (sl-name hash) :line-style)
   (setf (sl-value hash) *no-value*)
   (setf (sl-bits hash) 33)
