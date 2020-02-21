@@ -129,42 +129,6 @@
 
 
 
-(defun process-constant-slots (the-schema parents)
-  (locally (declare #.*special-kr-optimization*)
-    (dolist (slot (g-value-no-copy the-schema))
-      (let ((entry (slot-accessor the-schema slot)))
-	(let* ((schema-bins (schema-bins the-schema))
-	       (a-hash (gethash slot schema-bins)))
-	  (setf a-hash (make-sl))
-	  (setf (sl-name a-hash) slot)
-	  (setf (sl-value a-hash) *no-value*)
-	  (setf (sl-bits a-hash) 8192)
-	  (setf (full-sl-dependents a-hash) dependants)
-	  (setf (gethash slot schema-bins) a-hash))))
-    (dolist (parent parents)
-      (locally
-	  (declare (optimize (speed 3) (safety 0) (space 0) (debug 0)))
-	(progn
-	  (maphash
-	   #'(lambda (iterate-ignored-slot-name iterate-slot-value-entry)
-	       (declare (ignore iterate-ignored-slot-name))
-	       (let ((slot (sl-name iterate-slot-value-entry))
-		     (bits (logand (sl-bits iterate-slot-value-entry)
-				   1023)))
-		 (unless (zerop bits)
-		   (let ((the-entry (slot-accessor the-schema slot)))
-		     (if the-entry
-			 (sl-bits the-entry)
-			 (let* ((schema-bins (schema-bins the-schema))
-				(a-hash (gethash slot schema-bins)))
-			   (setf a-hash (make-sl))
-			   (setf (sl-name a-hash) slot)
-			   (setf (sl-value a-hash) *no-value*)
-			   (setf (sl-bits a-hash) bits)
-			   (when dependants
-			     (setf (full-sl-dependents a-hash) dependants))
-			   (setf (gethash slot schema-bins) a-hash)))))))
-	   (schema-bins parent)))))))
 
 (defun get-sb-constraint-slot (obj slot)
   (getf (sb-constraint-other-slots obj) slot nil))
@@ -302,7 +266,7 @@
       (make-sl :name :line-style
 	       :bits 33))
 
-(process-constant-slots *graphical-object* nil)
+
 
 (kr-init-method *graphical-object*)
 
@@ -311,16 +275,91 @@
 (setf (gethash :update-slots (schema-bins *rectangle*))
       (make-sl :value '(:fast-redraw-p)))
 
-(process-constant-slots *rectangle* (list *graphical-object*))
+(defun process-constant-slots (the-schema parents)
+  (locally (declare #.*special-kr-optimization*)
+    (dolist (slot (g-value-no-copy the-schema))
+      (let ((entry (slot-accessor the-schema slot)))
+	(let* ((schema-bins (schema-bins the-schema))
+	       (a-hash (gethash slot schema-bins)))
+	  (setf a-hash (make-sl))
+	  (setf (sl-name a-hash) slot)
+	  (setf (sl-value a-hash) *no-value*)
+	  (setf (sl-bits a-hash) 8192)
+	  (setf (full-sl-dependents a-hash) dependants)
+	  (setf (gethash slot schema-bins) a-hash))))
+    (dolist (parent parents)
+      (locally
+	  (declare (optimize (speed 3) (safety 0) (space 0) (debug 0)))
+	(progn
+	  (maphash
+	   #'(lambda (iterate-ignored-slot-name iterate-slot-value-entry)
+	       (declare (ignore iterate-ignored-slot-name))
+	       (let ((slot (sl-name iterate-slot-value-entry))
+		     (bits (logand (sl-bits iterate-slot-value-entry)
+				   1023)))
+		 (unless (zerop bits)
+		   (let ((the-entry (slot-accessor the-schema slot)))
+		     (if the-entry
+			 (sl-bits the-entry)
+			 (let* ((schema-bins (schema-bins the-schema))
+				(a-hash (gethash slot schema-bins)))
+			   (setf a-hash (make-sl))
+			   (setf (sl-name a-hash) slot)
+			   (setf (sl-value a-hash) *no-value*)
+			   (setf (sl-bits a-hash) bits)
+			   (when dependants
+			     (setf (full-sl-dependents a-hash) dependants))
+			   (setf (gethash slot schema-bins) a-hash)))))))
+	   (schema-bins parent)))))))
+
+;;; (process-constant-slots *rectangle* (list *graphical-object*))
+
+
+
+
 
 (kr-init-method *rectangle*)
 
 (s-value-fn *graphical-object*
 	    :initialize 'initialize-method-graphical-object)
 
-;; Note, eliminating this and change the corresponding call to
-;; kr-init-method-hook caused the memorry error #0x rather than #5x
-(setf (symbol-function 'kr-init-method) #'kr-init-method-hook)
+
+
+(locally (declare (optimize (speed 3) (safety 0) (space 0) (debug 0)))
+  (dolist (slot (g-value-no-copy *rectangle*))
+    (let ((entry (slot-accessor *rectangle* slot)))
+      (let* ((schema-bins (schema-bins *rectangle*))
+	     (a-hash (gethash slot schema-bins)))
+	(setf a-hash (make-sl))
+	(setf (sl-name a-hash) slot)
+	(setf (sl-value a-hash) *no-value*)
+	(setf (sl-bits a-hash) 8192)
+	(setf (full-sl-dependents a-hash) dependants)
+	(setf (gethash slot schema-bins) a-hash))))
+  (let ((parent *graphical-object*))
+    (locally
+	(declare (optimize (speed 3) (safety 0) (space 0) (debug 0)))
+      (progn
+	(maphash
+	 #'(lambda (iterate-ignored-slot-name iterate-slot-value-entry)
+	     (declare (ignore iterate-ignored-slot-name))
+	     (let ((slot (sl-name iterate-slot-value-entry))
+		   (bits (logand (sl-bits iterate-slot-value-entry)
+				 1023)))
+	       (unless (zerop bits)
+		 (let ((the-entry (slot-accessor *rectangle* slot)))
+		   (if the-entry
+		       (sl-bits the-entry)
+		       (let* ((schema-bins (schema-bins *rectangle*))
+			      (a-hash (gethash slot schema-bins)))
+			 (setf a-hash (make-sl))
+			 (setf (sl-name a-hash) slot)
+			 (setf (sl-value a-hash) *no-value*)
+			 (setf (sl-bits a-hash) bits)
+			 (when dependants
+			   (setf (full-sl-dependents a-hash) dependants))
+			 (setf (gethash slot schema-bins) a-hash)))))))
+	 (schema-bins parent))))))
 
 
 (defvar *axis-rectangle* (make-schema))
@@ -333,5 +372,9 @@
    collect (create-mg-constraint *axis-rectangle*))
 
 (process-constant-slots *axis-rectangle* (list *rectangle*))
+
+;; Note, eliminating this and change the corresponding call to
+;; kr-init-method-hook caused the memorry error #0x rather than #5x
+(setf (symbol-function 'kr-init-method) #'kr-init-method-hook)
 
 (kr-init-method-hook *axis-rectangle*)
