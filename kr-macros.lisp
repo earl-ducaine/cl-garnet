@@ -373,36 +373,12 @@
 
 (set-is-a *rectangle* (list *graphical-object*))
 
-;; (do* ((slots (list (cons :update-slots '(:fast-redraw-p)))
-;; 	     (cdr slots))
-;;       (slot (car slots) (car slots)))
-;;      ((null slots)
-;;       (process-constant-slots *rectangle* (list *graphical-object*))
-;;       (kr-init-method *rectangle*))
-;;   (let* ((slot-name (car slot))
-;; 	 (slot-value (cdr slot))
-;; 	 (schema-bins (schema-bins *rectangle*))
-;; 	 (new-slot (make-sl)))
-;;     (setf (sl-name new-slot) slot-name)
-;;     (setf (sl-value new-slot) slot-value)
-;;     (setf (sl-bits new-slot) 0)
-;;     (setf (gethash slot-name schema-bins) new-slot)
-;;     slot-value))
+(setf (gethash :update-slots (schema-bins *rectangle*))
+      (make-sl :value '(:fast-redraw-p)))
 
+(process-constant-slots *rectangle* (list *graphical-object*))
 
-  (let* ((slot-name :UPDATE-SLOTS)
-	 (slot-value '(:FAST-REDRAW-P))
-	 (schema-bins (schema-bins *rectangle*))
-	 (new-slot (make-sl)))
-    (setf (sl-name new-slot) slot-name)
-    (setf (sl-value new-slot) slot-value)
-    (setf (sl-bits new-slot) 0)
-    (setf (gethash slot-name schema-bins) new-slot)
-    slot-value)
-  (process-constant-slots *rectangle* (list *graphical-object*))
-  (kr-init-method *rectangle*)
-
-
+(kr-init-method *rectangle*)
 
 (s-value-fn *graphical-object*
 	    :initialize 'initialize-method-graphical-object)
