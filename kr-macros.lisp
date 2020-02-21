@@ -323,10 +323,10 @@
 
 (defun do-schema-body-alt ()
   (let ((schema (make-a-new-schema '*axis-rectangle*)))
-    (set-is-a schema (list rectangle))
+    (set-is-a schema (list *rectangle*))
     (loop repeat 4
        collect (create-mg-constraint schema))
-    (process-constant-slots schema (list rectangle))
+    (process-constant-slots schema (list *rectangle*))
     (kr-init-method-hook schema)))
 
 (defun allocate-schema-slots (schema)
@@ -334,7 +334,7 @@
 	  (make-hash-table :test #'eq)))
 
 (defvar *graphical-object* (make-schema :bins (make-hash-table :test #'eq)))
-(defvar rectangle (make-schema :bins (make-hash-table :test #'eq)))
+(defvar *rectangle* (make-schema :bins (make-hash-table :test #'eq)))
 
 
 (defun do-schema-body (schema is-a generate-instance override types
@@ -371,8 +371,38 @@
 		'(((or (is-a-p filling-style) null) :filling-style)
 		  ((or (is-a-p line-style) null) :line-style)))
 
-(do-schema-body rectangle *graphical-object* t nil nil
-		(cons :update-slots '(:fast-redraw-p)))
+(set-is-a *rectangle* (list *graphical-object*))
+
+;; (do* ((slots (list (cons :update-slots '(:fast-redraw-p)))
+;; 	     (cdr slots))
+;;       (slot (car slots) (car slots)))
+;;      ((null slots)
+;;       (process-constant-slots *rectangle* (list *graphical-object*))
+;;       (kr-init-method *rectangle*))
+;;   (let* ((slot-name (car slot))
+;; 	 (slot-value (cdr slot))
+;; 	 (schema-bins (schema-bins *rectangle*))
+;; 	 (new-slot (make-sl)))
+;;     (setf (sl-name new-slot) slot-name)
+;;     (setf (sl-value new-slot) slot-value)
+;;     (setf (sl-bits new-slot) 0)
+;;     (setf (gethash slot-name schema-bins) new-slot)
+;;     slot-value))
+
+
+  (let* ((slot-name :UPDATE-SLOTS)
+	 (slot-value '(:FAST-REDRAW-P))
+	 (schema-bins (schema-bins *rectangle*))
+	 (new-slot (make-sl)))
+    (setf (sl-name new-slot) slot-name)
+    (setf (sl-value new-slot) slot-value)
+    (setf (sl-bits new-slot) 0)
+    (setf (gethash slot-name schema-bins) new-slot)
+    slot-value)
+  (process-constant-slots *rectangle* (list *graphical-object*))
+  (kr-init-method *rectangle*)
+
+
 
 (s-value-fn *graphical-object*
 	    :initialize 'initialize-method-graphical-object)
