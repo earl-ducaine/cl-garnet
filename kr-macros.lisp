@@ -127,9 +127,6 @@
   (when the-function
     (funcall the-function schema)))
 
-(defun allocate-schema-slots (schema)
-    (setf (schema-bins schema)
-	  (make-hash-table :test #'eq)))
 
 (defun make-a-new-schema (name)
   (locally (declare #.*special-kr-optimization*)
@@ -308,24 +305,6 @@
 (defun initialize-method-graphical-object (gob)
   (s-value-fn gob :update-info 'a))
 
-(let* ((graphical-object-schema-name 'graphical-object)
-       (rectangle-schema-name 'rectangle)
-       (graphical-object-schema (make-schema))
-       (rectangle-schema (make-schema)))
-  (eval `(defvar ,graphical-object-schema-name))
-  (eval `(defvar ,rectangle-schema-name))
-  (allocate-schema-slots graphical-object-schema)
-  (allocate-schema-slots rectangle-schema)
-  (set graphical-object-schema-name graphical-object-schema)
-  (set rectangle-schema-name rectangle-schema)
-  (do-schema-body graphical-object-schema nil t nil
-		  '(((or (is-a-p filling-style) null) :filling-style)
-		    ((or (is-a-p line-style) null) :line-style)))
-  (do-schema-body rectangle-schema graphical-object-schema t nil nil
-		  (cons :update-slots '(:fast-redraw-p))))
-
-(s-value-fn graphical-object
-	    :initialize 'initialize-method-graphical-object)
 
 
 (defstruct sb-constraint
@@ -351,6 +330,23 @@
        collect (create-mg-constraint schema))
     (process-constant-slots schema (list rectangle))
     (kr-init-method schema)))
+
+(defun allocate-schema-slots (schema)
+    (setf (schema-bins schema)
+	  (make-hash-table :test #'eq)))
+
+(defvar *graphical-object* (make-schema :bins (make-hash-table :test #'eq)))
+(defvar rectangle (make-schema :bins (make-hash-table :test #'eq)))
+
+(do-schema-body *graphical-object* nil t nil
+		'(((or (is-a-p filling-style) null) :filling-style)
+		  ((or (is-a-p line-style) null) :line-style)))
+
+(do-schema-body rectangle *graphical-object* t nil nil
+		(cons :update-slots '(:fast-redraw-p)))
+
+(s-value-fn *graphical-object*
+	    :initialize 'initialize-method-graphical-object)
 
 (let ((save-fn (get-save-fn-symbol-name 's-value-fn)))
   (setf (symbol-function save-fn)
