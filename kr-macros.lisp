@@ -244,15 +244,6 @@
   (defun get-save-fn-symbol-name (sym)
     (intern (concatenate 'string (symbol-name sym) "-SAVE-FN-SYMBOL"))))
 
-(defmacro cn-os (v) `(get-sb-constraint-slot ,v :mg-os))
-(defmacro cn-connection (v) `(get-sb-constraint-slot ,v :mg-connection))
-(defmacro cn-variable-paths (c) `(get-sb-constraint-slot ,c :mg-variable-paths))
-(defsetf cn-os (v) (val) `(set-sb-constraint-slot ,v :mg-os ,val))
-(defsetf cn-connection (v) (val) `(set-sb-constraint-slot ,v :mg-connection ,val))
-
-(defsetf cn-variable-paths (c) (val)
-  `(set-sb-constraint-slot ,c :mg-variable-paths ,val))
-
 (defsetf var-os (v) (val)
   `(set-sb-variable-slot ,v :mg-os ,val))
 
@@ -263,11 +254,7 @@
 
 (defun constraint-p (obj)
   (and (sb-constraint-p obj)
-       (not (null (CN-connection obj)))))
-
-(defun add-constraint-to-slot (obj slot cn)
-  (setf (cn-os cn) (cons obj slot))
-  (connect-constraint cn))
+       (not (null (GET-SB-CONSTRAINT-SLOT OBJ :MG-CONNECTION)))))
 
 (defun kr-init-method-hook (schema)
   (let ((parent (car (sl-value (slot-accessor schema :is-a)))))
@@ -290,13 +277,14 @@
 	 (declare (ignore iterate-ignored-slot-name))
 	 (let* ((slot (sl-name iterate-slot-value-entry))
 		(value (get-local-value schema slot)))
-	   (if (constraint-p value)
-	       (add-constraint-to-slot schema slot value))))
+	   (when (constraint-p value)
+	     (set-sb-constraint-slot value :mg-os (cons schema slot))
+	     (connect-constraint value))))
      (schema-bins schema))))
 
 (defun connect-constraint (cn)
-  (let* ((cn-var-paths (CN-variable-paths cn)))
-    (let* ((root-obj (car (CN-os cn)))
+  (let* ((cn-var-paths (GET-SB-CONSTRAINT-SLOT CN :MG-VARIABLE-PATHS)))
+    (let* ((root-obj (car (GET-SB-CONSTRAINT-SLOT CN :MG-OS)))
 	   (cn-path-links nil)
 	   (paths-broken nil)
 	   var-os-list)
@@ -316,7 +304,7 @@
 	       collect (create-object-slot-var
 			(car var-os)
 			(cdr var-os))))
-      (setf (CN-connection cn) :connected))))
+  (SET-SB-CONSTRAINT-SLOT CN :MG-CONNECTION :CONNECTED))))
 
 (defun set-object-slot-prop (obj slot prop val)
   (let* (os-props
