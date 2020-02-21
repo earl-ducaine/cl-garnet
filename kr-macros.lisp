@@ -276,10 +276,11 @@
      #'(lambda (iterate-ignored-slot-name iterate-slot-value-entry)
 	 (declare (ignore iterate-ignored-slot-name))
 	 (let* ((slot (sl-name iterate-slot-value-entry))
-		(value (get-local-value schema slot)))
-	   (when (constraint-p value)
-	     (set-sb-constraint-slot value :mg-os (cons schema slot))
-	     (connect-constraint value))))
+		(cn (get-local-value schema slot)))
+	   (when (constraint-p cn)
+	     (sb-constraint-set-slot-fn cn)
+	     (setf (getf (sb-constraint-other-slots cn) :mg-os nil) (cons schema slot))
+	     (connect-constraint cn))))
      (schema-bins schema))))
 
 (defun connect-constraint (cn)
@@ -304,7 +305,9 @@
 	       collect (create-object-slot-var
 			(car var-os)
 			(cdr var-os))))
-  (SET-SB-CONSTRAINT-SLOT CN :MG-CONNECTION :CONNECTED))))
+        (sb-constraint-set-slot-fn cn)
+  (setf (getf (sb-constraint-other-slots cn) :MG-CONNECTION nil) :CONNECTED))))
+
 
 (defun set-object-slot-prop (obj slot prop val)
   (let* (os-props
@@ -359,11 +362,6 @@
 (defun call-set-slot-fn (fns obj slot val)
   (cond ((null fns)
 	 nil)))
-
-(defun set-sb-constraint-slot (cn slot val)
-  (sb-constraint-set-slot-fn cn)
-  (setf (getf (sb-constraint-other-slots cn) slot nil) val)
-  val)
 
 (defun create-mg-constraint (schema)
   (let* ((cn (make-sb-constraint
