@@ -337,20 +337,17 @@
 	     (bits (logand (sl-bits iterate-slot-value-entry)
 			   1023)))
 	 (unless (zerop bits)
-	   (let ((the-entry (slot-accessor *rectangle* slot)))
-	     (cond
-	       (the-entry
-		(sl-bits the-entry))
-	       (t
-		 (let* ((schema-bins (schema-bins *rectangle*))
-			(a-hash (gethash slot schema-bins)))
-		   (setf a-hash (make-sl))
-		   (setf (sl-name a-hash) slot)
-		   (setf (sl-value a-hash) *no-value*)
-		   (setf (sl-bits a-hash) bits)
-		   (when dependants
-		     (setf (full-sl-dependents a-hash) dependants))
-		   (setf (gethash slot schema-bins) a-hash))))))))
+	   (let* ((the-entry (slot-accessor *rectangle* slot))
+		  (schema-bins (schema-bins *rectangle*))
+		  (a-hash (make-sl :name slot
+				   :value *no-value*
+				   :bits bits)))
+	     ;; (setf (sl-name a-hash) slot)
+	     ;; (setf (sl-value a-hash) *no-value*)
+	     ;; (setf (sl-bits a-hash) bits)
+	     (when dependants
+	       (setf (full-sl-dependents a-hash) dependants))
+	     (setf (gethash slot schema-bins) a-hash)))))
    (schema-bins *graphical-object*)))
 
 (defvar *axis-rectangle* (make-schema))
