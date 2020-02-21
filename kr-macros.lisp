@@ -150,22 +150,21 @@
 	     (setf (getf (sb-constraint-other-slots cn) :mg-os nil)
 		   (cons schema (sl-name iterate-slot-value-entry)))
 	     (let* ((cn-var-paths (GET-SB-CONSTRAINT-SLOT CN :MG-VARIABLE-PATHS)))
-	       (let* ((root-obj (car (GET-SB-CONSTRAINT-SLOT CN :MG-OS)))
-		      (cn-path-links nil)
-		      (paths-broken nil)
-		      var-os-list)
-		 (setf var-os-list
-		       (loop for path in cn-var-paths collect
-			    (let ((obj root-obj))
-			      (loop for (slot next-slot) on path do
-				   (return (cons obj slot))))))
-		 (setf (cn-variables cn)
-		       (loop for var-os in var-os-list
-			  collect (create-object-slot-var
-				   (car var-os)
-				   (cdr var-os))))
-		 (sb-constraint-set-slot-fn cn)
-		 (setf (getf (sb-constraint-other-slots cn) :MG-CONNECTION nil) :CONNECTED))))))
+	       (setf (cn-variables cn)
+		     (loop for var-os in
+			  (loop for path in cn-var-paths collect
+			     ;; this loop always loops just once, so we
+			     ;; could just return (car path) buth that
+			     ;; produces a different error.
+			       (loop for (slot next-slot) on path do
+				    (return (cons (car (GET-SB-CONSTRAINT-SLOT CN :MG-OS)) slot))))
+			collect (create-object-slot-var
+				 (car var-os)
+				 (cdr var-os))))
+	       (sb-constraint-set-slot-fn cn)
+	       (setf (getf (sb-constraint-other-slots cn)
+			   :MG-CONNECTION nil)
+		     :CONNECTED)))))
      (schema-bins schema))))
 
 (defun set-object-slot-prop (obj slot prop val)
@@ -236,7 +235,6 @@
      (let ((slot (sl-name iterate-slot-value-entry))
 	   (bits (logand (sl-bits iterate-slot-value-entry) 1023)))
        (unless (zerop bits)
-	 (format t "slot: ~s~%" slot)
 	 (setf (gethash slot (schema-bins *rectangle*))
 	       (make-sl :name slot
 			:value *no-value*
