@@ -378,9 +378,10 @@
   val)
 
 (defun create-mg-constraint (schema)
-  (let* ((path (list '(:box) (list (gensym))))
-	 (cn (make-sb-constraint :other-slots (list :mg-connection :unconnected
-						:mg-variable-paths path))))
+  (let* ((cn (make-sb-constraint
+	      :other-slots
+	      (list :mg-connection :unconnected
+		    :mg-variable-paths (list '(:box) (list (gensym)))))))
     (let* ((symbol (gensym))
 	   (sl (make-sl)))
       (setf (sl-name sl) symbol)
