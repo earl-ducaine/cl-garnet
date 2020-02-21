@@ -245,7 +245,7 @@
 	   (declare (ignore iterate-ignored-slot-name))
 	   (let ((slot (sl-name iterate-slot-value-entry))
 		 (value (get-local-value parent slot)))
-	       (s-value-fn-save-fn-symbol schema slot value)))
+	       (s-value-fn schema slot value)))
        (schema-bins parent))))
   (activate-new-instance-cns schema))
 
@@ -278,7 +278,7 @@
 			(set-object-slot-prop obj slot :sb-path-constraints
 					      (adjoin cn nil))
 			(push (cons obj slot) cn-path-links)
-			(s-value-fn-save-fn-symbol obj slot nil)
+			(s-value-fn obj slot nil)
 			(setf obj nil)))))
       (setf (cn-variables cn)
 	    (loop for var-os in var-os-list
@@ -299,7 +299,7 @@
 (defun create-object-slot-var (obj slot)
   (let ((var (create-mg-variable)))
     (set-object-slot-prop obj slot :sb-variable var)
-    (s-value-fn-save-fn-symbol obj slot nil)
+    (s-value-fn obj slot nil)
     var))
 
 (defun initialize-method-graphical-object (gob)
@@ -327,7 +327,7 @@
     (loop repeat 4
        collect (create-mg-constraint schema))
     (process-constant-slots schema (list rectangle))
-    (kr-init-method schema)))
+    (kr-init-method-hook schema)))
 
 (defun allocate-schema-slots (schema)
     (setf (schema-bins schema)
@@ -377,16 +377,8 @@
 (s-value-fn *graphical-object*
 	    :initialize 'initialize-method-graphical-object)
 
-(setf (symbol-function 'S-VALUE-FN-SAVE-FN-SYMBOL)
-      #'s-value-fn)
-
-;; (setf (symbol-function 's-value-fn)
-;;       #'s-value-fn)
-
-(let ((save-fn (get-save-fn-symbol-name 'kr-init-method)))
-    (setf (symbol-function save-fn)
-	  (symbol-function 'kr-init-method))
-    (setf (symbol-function 'kr-init-method)
-	  (symbol-function 'kr-init-method-hook)))
+;; Note, eliminating this and change the corresponding call to
+;; kr-init-method-hook caused the memorry error #0x rather than #5x
+(setf (symbol-function 'kr-init-method) #'kr-init-method-hook)
 
 (do-schema-body-alt)
