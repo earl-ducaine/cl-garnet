@@ -56,29 +56,20 @@
 (defun s-value-fn (schema slot value)
   (locally (declare #.*special-kr-optimization*)
     (let* ((entry (slot-accessor schema slot)))
-      (let ((is-formula nil)
-	    (is-relation nil))
-	(when nil
-	  (setf is-formula T)
-	  (unless (schema-name value)
-	    (incf *schema-counter*)
-	    (setf (schema-name value) *schema-counter*)))
-	(when is-relation
-	  (link-in-relation schema slot value))
-	(let ((new-bits (or the-bits 0)))
-	  (if entry
-	      (setf (sl-value entry) value
-		    (sl-bits entry) new-bits)
-	      (let* ((schema-bins (schema-bins schema))
-		     (a-hash (gethash slot schema-bins)))
-		(setf a-hash (make-sl))
-		(setf (sl-name a-hash) slot)
-		(setf (sl-value a-hash) value)
-		(setf (sl-bits a-hash) new-bits)
-		(setf (gethash slot schema-bins) a-hash))))
-	(when (and the-bits (is-parent the-bits))
-	  (update-inherited-values schema slot value t))
-	(values value nil)))))
+      (let ((new-bits (or the-bits 0)))
+	(cond
+	  (entry
+	   (setf (sl-value entry) value
+		 (sl-bits entry) new-bits))
+	  (t
+	   (let* (;; (schema-bins (schema-bins schema))
+		  (a-hash (make-sl :name slot
+				   :value value
+				   :bits new-bits)))
+	     (setf (gethash slot (schema-bins schema)) a-hash)))))
+      (when (and the-bits (is-parent the-bits))
+	(update-inherited-values schema slot value t))
+      (values value nil))))
 
 (defun get-sb-constraint-slot (obj slot)
   (getf (sb-constraint-other-slots obj) slot nil))
@@ -111,24 +102,24 @@
 		      (get-sb-constraint-slot cn :mg-connection))
 	     (setf (getf (sb-constraint-other-slots cn) :mg-os nil)
 		   (cons schema (sl-name iterate-slot-value-entry)))
-	     (let* ((new1
-		     (loop for var-os in
-			  (loop for path in (get-sb-constraint-slot
-					     cn
-					     :mg-variable-paths)
-			     collect (loop for (slot next-slot) on path
-					do (return
-					     (cons
-					      (car
-					       (get-sb-constraint-slot
-						cn :mg-os))
-					      slot))))
-			collect (let ((obj (car var-os))
-				      (slot (cdr var-os)))
-				  (s-value-fn obj slot nil)
-				  (make-sl))
-			  )))
-	       (setf (sb-constraint-variables cn) new))
+	     (let* ((constraint-slot
+		     (loop for path in (get-sb-constraint-slot
+					cn
+					:mg-variable-paths)
+			collect (loop for (slot next-slot) on path
+				   do (return
+					(cons
+					 (car
+					  (get-sb-constraint-slot
+					   cn :mg-os))
+					 slot))))))
+	       (let ((new1
+		      (loop for var-os in constraint-slot
+			 collect (let ((obj (car var-os))
+				       (slot (cdr var-os)))
+				   (s-value-fn obj slot nil)
+				   (make-sl)))))
+		 (setf (sb-constraint-variables cn) new)))
 	     (sb-constraint-set-slot-fn cn)
 	     (setf (getf (sb-constraint-other-slots cn)
 			 :mg-connection nil)
