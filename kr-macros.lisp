@@ -19,10 +19,10 @@
 (defparameter *graphical-object-hash-table*
   (make-hash-table :test #'eq))
 (defvar *graphical-object*
-  (make-schema :bins *graphical-object-hash-table*))
+  (make-schema :name :graphical-object :bins *graphical-object-hash-table*))
 
 (defparameter *rectangle-hash-table* (make-hash-table :test #'eq))
-(defvar *rectangle* (make-schema :bins *rectangle-hash-table* ))
+(defvar *rectangle* (make-schema :name :rectangle :bins *rectangle-hash-table* ))
 
 (setf (gethash :is-a *graphical-object-hash-table*)
       (make-sl :name :is-a :value nil))
@@ -62,12 +62,12 @@
 			:bits bits)))))
  *graphical-object-hash-table*)
 
-(defvar *axis-rectangle* (make-schema))
+(defparameter *axis-rectangle-hash-table* (make-hash-table :test #'eq))
+(defvar *axis-rectangle* (make-schema :name :axis-rectangle
+				      :bins *axis-rectangle-hash-table*))
 
 (defun create-error ()
-  (setf (schema-bins *axis-rectangle*) (make-hash-table :test #'eq))
-
-  (setf (gethash :is-a (schema-bins *axis-rectangle*))
+  (setf (gethash :is-a *axis-rectangle-hash-table*)
 	(make-sl :name :is-a :value (list *rectangle*)))
 
   (setf (gethash :is-a-inv *rectangle-hash-table*)
@@ -75,7 +75,7 @@
 
   (dotimes (i 4)
     (let* ((symbol (gensym)))
-      (setf (gethash symbol (schema-bins *axis-rectangle*))
+      (setf (gethash symbol *axis-rectangle-hash-table*)
 	    (make-sl
 	     :name symbol
 	     :value (make-sb-constraint
@@ -92,7 +92,7 @@
 	     (bits (logand (sl-bits iterate-slot-value-entry)
 			   1023)))
 	 (unless (zerop bits)
-	   (setf (gethash slot (schema-bins *axis-rectangle*))
+	   (setf (gethash slot *axis-rectangle-hash-table*)
 		 (make-sl :name slot
 			  :value '(:no-value)
 			  :bits bits)))))
@@ -102,10 +102,9 @@
    #'(lambda (iterate-ignored-slot-name iterate-slot-value-entry)
        (declare (ignore iterate-ignored-slot-name))
        (let ((slot (sl-name iterate-slot-value-entry)))
-	 (setf (gethash slot (schema-bins *axis-rectangle*))
+	 (setf (gethash slot *axis-rectangle-hash-table*)
 	       (make-sl :name slot :bits 0))))
-   (schema-bins (car (sl-value (gethash :is-a
-					(schema-bins *axis-rectangle*))))))
+   *rectangle-hash-table*)
 
   (locally
       (declare (optimize (safety 0)  (debug 3)))
@@ -115,7 +114,7 @@
 	 (let* ((cn
 		 (sl-value
 		  (gethash (sl-name iterate-slot-value-entry)
-			   (schema-bins *axis-rectangle*)))))
+			   *axis-rectangle-hash-table*))))
 	   (when (and (sb-constraint-p cn)
 		      (getf (sb-constraint-other-slots cn)
 			    :mg-connection nil))
@@ -135,11 +134,11 @@
 	       (loop for var-os in constraint-slot
 		  collect (let ((obj (car var-os))
 				(slot (cdr var-os)))
-			    (setf (gethash slot (schema-bins obj))
+			    (setf (gethash slot *axis-rectangle-hash-table*)
 				  (make-sl :name slot :bits 0))
 			    (make-sl))))
 	     (sb-constraint-set-slot-fn cn)
 	     (setf (getf (sb-constraint-other-slots cn)
 			 :mg-connection nil)
 		   :connected))))
-     (schema-bins *axis-rectangle*))))
+     *axis-rectangle-hash-table*)))
