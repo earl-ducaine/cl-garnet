@@ -1,12 +1,4 @@
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (defvar *special-kr-optimization*
-    '(optimize
-      (speed 3)
-      (safety 0)
-      (space 0)
-      (debug 0))))
-
 (defstruct schema
   name
   bins)
@@ -16,10 +8,10 @@
   value
   (bits 0 :type fixnum))
 
-(defparameter *no-value* '(:no-value))
-
-(declaim (fixnum *schema-counter*))
-(defvar *schema-counter* 0)
+(defstruct sb-constraint
+  variables
+  other-slots
+  set-slot-fn)
 
 (defparameter iterate-slot-value-entry nil
   "Ugly")
@@ -71,20 +63,15 @@
 		   :connected))))
      (schema-bins schema))))
 
-(defstruct sb-constraint
-  variables
-  other-slots
-  set-slot-fn)
-
-(defun create-mg-constraint (schema)
-  (let* ((cn (make-sb-constraint
+(defmacro create-mg-constraint (schema)
+  `(let* ((cn (make-sb-constraint
 	      :other-slots
 	      (list :mg-connection :unconnected
 		    :mg-variable-paths (list '(:box) (list (gensym)))))))
     (let* ((symbol (gensym))
 	   (sl (make-sl :name symbol
 			:value cn)))
-      (setf (gethash symbol (schema-bins schema)) sl)
+      (setf (gethash symbol (schema-bins ,schema)) sl)
       sl)))
 
 (defvar *graphical-object* (make-schema :bins (make-hash-table :test #'eq)))
@@ -115,7 +102,7 @@
 
 (setf (gethash :fast-redraw-p (schema-bins *rectangle*))
       (make-sl :name :fast-redraw-p
-	       :value *no-value*
+	       :value '(:no-value)
 	       :bits 8192))
 
 (maphash
@@ -126,7 +113,7 @@
        (unless (zerop bits)
 	 (setf (gethash slot (schema-bins *rectangle*))
 	       (make-sl :name slot
-			:value *no-value*
+			:value '(:no-value)
 			:bits bits)))))
  (schema-bins *graphical-object*))
 
@@ -140,8 +127,17 @@
 (setf (gethash :is-a-inv (schema-bins *rectangle*))
       (make-sl :name :is-a-inv))
 
-(loop repeat 4
-   collect (create-mg-constraint *axis-rectangle*))
+(dotimes (i 4)
+  (let* ((symbol (gensym)))
+    (setf (gethash symbol (schema-bins *axis-rectangle*))
+	  (make-sl
+	      :name symbol
+	      :value (make-sb-constraint
+		      :other-slots
+		      (list :mg-connection :unconnected
+			    :mg-variable-paths
+			    (list '(:box) (list (gensym)))))))))
+
 
 (maphash
  #'(lambda (iterate-ignored-slot-name iterate-slot-value-entry)
@@ -152,7 +148,7 @@
        (unless (zerop bits)
 	 (setf (gethash slot (schema-bins *axis-rectangle*))
 	       (make-sl :name slot
-			:value *no-value*
+			:value '(:no-value)
 			:bits bits)))))
  (schema-bins *rectangle*))
 
