@@ -95,8 +95,6 @@
 			:bits bits)))))
  (schema-bins *rectangle*))
 
-;;(kr-init-method-hook *axis-rectangle*)
-
 
 (maphash
  #'(lambda (iterate-ignored-slot-name iterate-slot-value-entry)
@@ -131,14 +129,12 @@
 					 (sb-constraint-other-slots cn)
 					 :mg-os nil))
 				       slot))))))
-	     (let ((new1
 		    (loop for var-os in constraint-slot
 		       collect (let ((obj (car var-os))
 				     (slot (cdr var-os)))
 				 (setf (gethash slot (schema-bins obj))
 				       (make-sl :name slot :bits 0))
-				 (make-sl)))))
-	       (setf (sb-constraint-variables cn) new)))
+				 (make-sl))))
 	   (sb-constraint-set-slot-fn cn)
 	   (setf (getf (sb-constraint-other-slots cn)
 		       :mg-connection nil)
