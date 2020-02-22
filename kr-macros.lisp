@@ -27,23 +27,18 @@
   (declare (fixnum bits))
   (logbitp 11 bits))
 
-(declaim (inline slot-accessor))
-(defun slot-accessor (schema slot)
-  "Returns a slot structure, or NIL."
-  (values (gethash slot (schema-bins schema))))
-
 (defparameter iterate-slot-value-entry nil
   "Ugly")
 
-(defun s-value-fn (schema slot)
-  (setf (gethash slot (schema-bins schema))
-	(make-sl :name slot :bits 0)))
+;; (defmacro s-value-fn (schema slot)
+;;   `(setf (gethash ,slot (schema-bins ,schema))
+;; 	(make-sl :name ,slot :bits 0)))
 
 (defun get-sb-constraint-slot (obj slot)
   (getf (sb-constraint-other-slots obj) slot nil))
 
 (defun kr-init-method-hook (schema)
-  (let ((parent (car (sl-value (slot-accessor schema :is-a)))))
+  (let ((parent (car (sl-value (gethash :is-a (schema-bins schema))))))
     (locally
 	(declare (optimize (speed 3) (safety 0) (space 0) (debug 0)))
       (maphash
@@ -59,9 +54,9 @@
      #'(lambda (iterate-ignored-slot-name iterate-slot-value-entry)
 	 (declare (ignore iterate-ignored-slot-name))
 	 (let* ((cn
-		 (sl-value (slot-accessor
-			    schema
-			    (sl-name iterate-slot-value-entry)))))
+		 (sl-value
+		  (gethash (sl-name iterate-slot-value-entry)
+			   (schema-bins schema)))))
 	   (when (and (sb-constraint-p cn)
 		      (get-sb-constraint-slot cn :mg-connection))
 	     (setf (getf (sb-constraint-other-slots cn) :mg-os nil)
@@ -81,7 +76,8 @@
 		      (loop for var-os in constraint-slot
 			 collect (let ((obj (car var-os))
 				       (slot (cdr var-os)))
-				   (s-value-fn obj slot)
+				   (setf (gethash slot (schema-bins obj))
+					 (make-sl :name slot :bits 0))
 				   (make-sl)))))
 		 (setf (sb-constraint-variables cn) new)))
 	     (sb-constraint-set-slot-fn cn)
@@ -129,8 +125,8 @@
 (setf (gethash :update-slots (schema-bins *rectangle*))
       (make-sl :value '(:fast-redraw-p)))
 
-(s-value-fn *graphical-object*
-	    :initialize)
+(setf (gethash :initialize (schema-bins *graphical-object*))
+      (make-sl :name :initialize :bits 0))
 
 (setf (gethash :fast-redraw-p (schema-bins *rectangle*))
       (make-sl :name :fast-redraw-p
