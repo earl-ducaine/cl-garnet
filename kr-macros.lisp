@@ -36,10 +36,9 @@
   "Ugly")
 
 (defun s-value-fn (schema slot)
-  (let* ((entry (slot-accessor schema slot)))
-    (setf (gethash slot (schema-bins schema))
-	  (make-sl :name slot
-		   :bits 0))))
+  (setf (gethash slot (schema-bins schema))
+	(make-sl :name slot
+		 :bits 0)))
 
 (defun get-sb-constraint-slot (obj slot)
   (getf (sb-constraint-other-slots obj) slot nil))
