@@ -21,6 +21,7 @@
   (make-schema :bins (make-hash-table :test #'eq)))
 
 (defvar *rectangle* (make-schema :bins (make-hash-table :test #'eq)))
+(defparameter *rectangle-hash-table* (schema-bins *rectangle*))
 
 (setf (gethash :is-a (schema-bins *graphical-object*))
       (make-sl :name :is-a :value nil))
@@ -33,17 +34,17 @@
       (make-sl :name :line-style
 	       :bits 33))
 
-(setf (gethash :is-a (schema-bins *rectangle*))
+(setf (gethash :is-a *rectangle-hash-table*)
       (make-sl :name :is-a
 	       :value (list *graphical-object*)))
 
-(setf (gethash :update-slots (schema-bins *rectangle*))
+(setf (gethash :update-slots *rectangle-hash-table*)
       (make-sl :value '(:fast-redraw-p)))
 
 (setf (gethash :initialize (schema-bins *graphical-object*))
       (make-sl :name :initialize :bits 0))
 
-(setf (gethash :fast-redraw-p (schema-bins *rectangle*))
+(setf (gethash :fast-redraw-p *rectangle-hash-table*)
       (make-sl :name :fast-redraw-p
 	       :value '(:no-value)
 	       :bits 8192))
@@ -54,7 +55,7 @@
      (let ((slot (sl-name iterate-slot-value-entry))
 	   (bits (logand (sl-bits iterate-slot-value-entry) 1023)))
        (unless (zerop bits)
-	 (setf (gethash slot (schema-bins *rectangle*))
+	 (setf (gethash slot *rectangle-hash-table*)
 	       (make-sl :name slot
 			:value '(:no-value)
 			:bits bits)))))
@@ -67,7 +68,7 @@
 (setf (gethash :is-a (schema-bins *axis-rectangle*))
       (make-sl :name :is-a :value (list *rectangle*)))
 
-(setf (gethash :is-a-inv (schema-bins *rectangle*))
+(setf (gethash :is-a-inv *rectangle-hash-table*)
       (make-sl :name :is-a-inv))
 
 (dotimes (i 4)
@@ -93,8 +94,7 @@
 	       (make-sl :name slot
 			:value '(:no-value)
 			:bits bits)))))
- (schema-bins *rectangle*))
-
+ *rectangle-hash-table*)
 
 (maphash
  #'(lambda (iterate-ignored-slot-name iterate-slot-value-entry)
@@ -102,7 +102,8 @@
      (let ((slot (sl-name iterate-slot-value-entry)))
        (setf (gethash slot (schema-bins *axis-rectangle*))
 	     (make-sl :name slot :bits 0))))
- (schema-bins (car (sl-value (gethash :is-a (schema-bins *axis-rectangle*))))))
+ (schema-bins (car (sl-value (gethash :is-a
+				      (schema-bins *axis-rectangle*))))))
 
 (locally
     (declare (optimize (speed 3) (safety 0) (space 0) (debug 0)))
