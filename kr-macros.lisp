@@ -21,27 +21,17 @@
 (declaim (fixnum *schema-counter*))
 (defvar *schema-counter* 0)
 
-(declaim (inline is-parent))
-
-(defun is-parent (bits)
-  (declare (fixnum bits))
-  (logbitp 11 bits))
-
 (defparameter iterate-slot-value-entry nil
   "Ugly")
 
-(defun get-sb-constraint-slot (obj slot)
-  (getf (sb-constraint-other-slots obj) slot nil))
-
 (defun kr-init-method-hook (schema)
-  (let ((parent (car (sl-value (gethash :is-a (schema-bins schema))))))
-    (maphash
-     #'(lambda (iterate-ignored-slot-name iterate-slot-value-entry)
-	 (declare (ignore iterate-ignored-slot-name))
-	 (let ((slot (sl-name iterate-slot-value-entry)))
-	   (setf (gethash slot (schema-bins schema))
-		 (make-sl :name slot :bits 0))))
-     (schema-bins parent)))
+  (maphash
+   #'(lambda (iterate-ignored-slot-name iterate-slot-value-entry)
+       (declare (ignore iterate-ignored-slot-name))
+       (let ((slot (sl-name iterate-slot-value-entry)))
+	 (setf (gethash slot (schema-bins schema))
+	       (make-sl :name slot :bits 0))))
+   (schema-bins (car (sl-value (gethash :is-a (schema-bins schema))))))
   (locally
       (declare (optimize (speed 3) (safety 0) (space 0) (debug 0)))
     (maphash
@@ -52,19 +42,20 @@
 		  (gethash (sl-name iterate-slot-value-entry)
 			   (schema-bins schema)))))
 	   (when (and (sb-constraint-p cn)
-		      (get-sb-constraint-slot cn :mg-connection))
+		      (getf (sb-constraint-other-slots cn)
+			    :mg-connection nil))
 	     (setf (getf (sb-constraint-other-slots cn) :mg-os nil)
 		   (cons schema (sl-name iterate-slot-value-entry)))
 	     (let* ((constraint-slot
-		     (loop for path in (get-sb-constraint-slot
-					cn
-					:mg-variable-paths)
+		     (loop for path in (getf (sb-constraint-other-slots cn)
+					     :mg-variable-paths nil)
 			collect (loop for (slot next-slot) on path
 				   do (return
 					(cons
 					 (car
-					  (get-sb-constraint-slot
-					   cn :mg-os))
+					  (getf
+					   (sb-constraint-other-slots cn)
+					   :mg-os nil))
 					 slot))))))
 	       (let ((new1
 		      (loop for var-os in constraint-slot
