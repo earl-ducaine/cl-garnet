@@ -24,14 +24,14 @@
 (defparameter *rectangle-hash-table* (make-hash-table :test #'eq))
 (defvar *rectangle* (make-schema :bins *rectangle-hash-table* ))
 
-(setf (gethash :is-a (schema-bins *graphical-object*))
+(setf (gethash :is-a *graphical-object-hash-table*)
       (make-sl :name :is-a :value nil))
 
-(setf (gethash :filling-style (schema-bins *graphical-object*))
+(setf (gethash :filling-style *graphical-object-hash-table*)
       (make-sl :name :filling-style
 	       :bits 33))
 
-(setf (gethash :line-style (schema-bins *graphical-object*))
+(setf (gethash :line-style *graphical-object-hash-table*)
       (make-sl :name :line-style
 	       :bits 33))
 
@@ -42,7 +42,7 @@
 (setf (gethash :update-slots *rectangle-hash-table*)
       (make-sl :value '(:fast-redraw-p)))
 
-(setf (gethash :initialize (schema-bins *graphical-object*))
+(setf (gethash :initialize *graphical-object-hash-table*)
       (make-sl :name :initialize :bits 0))
 
 (setf (gethash :fast-redraw-p *rectangle-hash-table*)
@@ -60,7 +60,7 @@
 	       (make-sl :name slot
 			:value '(:no-value)
 			:bits bits)))))
- (schema-bins *graphical-object*))
+ *graphical-object-hash-table*)
 
 (defvar *axis-rectangle* (make-schema))
 
