@@ -30,24 +30,18 @@
 (defparameter iterate-slot-value-entry nil
   "Ugly")
 
-;; (defmacro s-value-fn (schema slot)
-;;   `(setf (gethash ,slot (schema-bins ,schema))
-;; 	(make-sl :name ,slot :bits 0)))
-
 (defun get-sb-constraint-slot (obj slot)
   (getf (sb-constraint-other-slots obj) slot nil))
 
 (defun kr-init-method-hook (schema)
   (let ((parent (car (sl-value (gethash :is-a (schema-bins schema))))))
-    (locally
-	(declare (optimize (speed 3) (safety 0) (space 0) (debug 0)))
-      (maphash
-       #'(lambda (iterate-ignored-slot-name iterate-slot-value-entry)
-	   (declare (ignore iterate-ignored-slot-name))
-	   (let ((slot (sl-name iterate-slot-value-entry)))
-	     (setf (gethash slot (schema-bins schema))
-		   (make-sl :name slot :bits 0))))
-       (schema-bins parent))))
+    (maphash
+     #'(lambda (iterate-ignored-slot-name iterate-slot-value-entry)
+	 (declare (ignore iterate-ignored-slot-name))
+	 (let ((slot (sl-name iterate-slot-value-entry)))
+	   (setf (gethash slot (schema-bins schema))
+		 (make-sl :name slot :bits 0))))
+     (schema-bins parent)))
   (locally
       (declare (optimize (speed 3) (safety 0) (space 0) (debug 0)))
     (maphash
