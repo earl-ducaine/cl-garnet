@@ -35,14 +35,6 @@
 (defparameter iterate-slot-value-entry nil
   "Ugly")
 
-;; This must be the core of the bug
-(declaim (inline get-local-value))
-(defun get-local-value (schema slot)
-  (locally (declare #.*special-kr-optimization*)
-    (let ((entry (slot-accessor schema slot)))
-      (if (if entry (not (logbitp 10 (sl-bits entry))))
-	  (sl-value entry)))))
-
 (defun link-in-relation (schema slot values)
   (let ((inverse (when (eq slot :is-a)
 		   :is-a-inv)))
@@ -91,6 +83,12 @@
 (defun get-sb-constraint-slot (obj slot)
   (getf (sb-constraint-other-slots obj) slot nil))
 
+;; This must be the core of the bug
+(defun get-local-value (schema slot)
+  (let ((entry (slot-accessor schema slot)))
+    (if (if entry (not (logbitp 10 (sl-bits entry))))
+	(sl-value entry))))
+
 (defun kr-init-method-hook (schema)
   (let ((parent (car (sl-value (slot-accessor schema :is-a)))))
     (locally
@@ -106,19 +104,18 @@
     (maphash
      #'(lambda (iterate-ignored-slot-name iterate-slot-value-entry)
 	 (declare (ignore iterate-ignored-slot-name))
-	 (let* ((cn (get-local-value schema
-				     (sl-name iterate-slot-value-entry))))
+	 (let* ((cn (get-local-value
+		     schema
+		     (sl-name iterate-slot-value-entry))))
 	   (when (and (sb-constraint-p cn)
-		      (not (null
-			    (get-sb-constraint-slot
-			     cn
-			     :mg-connection))))
+		      (get-sb-constraint-slot cn :mg-connection))
 	     (setf (getf (sb-constraint-other-slots cn) :mg-os nil)
 		   (cons schema (sl-name iterate-slot-value-entry)))
 	     (let* ((new1
 		     (loop for var-os in
-			  (loop for path in (get-sb-constraint-slot cn
-								    :mg-variable-paths)
+			  (loop for path in (get-sb-constraint-slot
+					     cn
+					     :mg-variable-paths)
 			     collect (loop for (slot next-slot) on path
 					do (return
 					     (cons
@@ -131,14 +128,12 @@
 				  (s-value-fn obj slot nil)
 				  (make-sl))
 			  )))
-	       (let ((cn cn) (val new))
-		 (setf (sb-constraint-variables cn) val)))
+	       (setf (sb-constraint-variables cn) new))
 	     (sb-constraint-set-slot-fn cn)
 	     (setf (getf (sb-constraint-other-slots cn)
 			 :mg-connection nil)
 		   :connected))))
      (schema-bins schema))))
-
 
 (defstruct sb-constraint
   variables
