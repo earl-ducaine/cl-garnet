@@ -37,8 +37,7 @@
 
 (defun s-value-fn (schema slot)
   (setf (gethash slot (schema-bins schema))
-	(make-sl :name slot
-		 :bits 0)))
+	(make-sl :name slot :bits 0)))
 
 (defun get-sb-constraint-slot (obj slot)
   (getf (sb-constraint-other-slots obj) slot nil))
@@ -50,7 +49,9 @@
       (maphash
        #'(lambda (iterate-ignored-slot-name iterate-slot-value-entry)
 	   (declare (ignore iterate-ignored-slot-name))
-	   (s-value-fn schema (sl-name iterate-slot-value-entry)))
+	   (let ((slot (sl-name iterate-slot-value-entry)))
+	     (setf (gethash slot (schema-bins schema))
+		   (make-sl :name slot :bits 0))))
        (schema-bins parent))))
   (locally
       (declare (optimize (speed 3) (safety 0) (space 0) (debug 0)))
