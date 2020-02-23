@@ -54,7 +54,7 @@
 
 (defparameter *axis-rectangle-slot-4*
   (make-sl :name :axis-rectangle-slot-4
-	   :value *axis-rectangle-cn-4*))
+	   :value *axis-rectangle-cn-4* ))
 
 (defparameter *axis-rectangle-fast-redraw-p-sl*
   (make-sl :name :fast-redraw-p))
@@ -91,17 +91,13 @@
 (setf (gethash nil *axis-rectangle-hash-table*)
       *axis-rectangle-nil-sl*)
 
-(setf (gethash :is-a *axis-rectangle-hash-table*)
-      *axis-rectangle-is-a-sl*)
+(setf (gethash :is-a *axis-rectangle-hash-table*) t)
 
-(setf (gethash :fast-redraw-p *axis-rectangle-hash-table*)
-      *axis-rectangle-fast-redraw-p-sl*)
+(setf (gethash :fast-redraw-p *axis-rectangle-hash-table*) t)
 
-(setf (gethash :filling-style *axis-rectangle-hash-table*)
-      *axis-rectangle-filling-style-sl*)
+(setf (gethash :filling-style *axis-rectangle-hash-table*) t)
 
-(setf (gethash :line-style *axis-rectangle-hash-table*)
-      *axis-rectangle-line-style-sl*)
+(setf (gethash :line-style *axis-rectangle-hash-table*) t)
 
 
 
@@ -111,10 +107,10 @@
     (maphash
      #'(lambda (iterate-ignored-slot-name iterate-slot-value-entry)
 	 (declare (ignore iterate-ignored-slot-name))
-	 (let* ((cn
-		 (sl-value
-		  (gethash (sl-name iterate-slot-value-entry)
-			   *axis-rectangle-hash-table*))))
+	 (let* ((cn  (sl-value
+		      (gethash (sl-name iterate-slot-value-entry)
+			       *axis-rectangle-hash-table*))))
+	   (format t "cn: ~s~%iterate-slot-value-entry: ~s~%" cn iterate-slot-value-entry)
 	   (when (sb-constraint-p cn)
 	     (let ((slots (getf (sb-constraint-other-slots cn) :mg-variable-paths)))
 	     (setf (gethash (car slots) *axis-rectangle-hash-table*) nil)
