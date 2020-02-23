@@ -15,14 +15,21 @@
 (defparameter iterate-slot-value-entry nil
   "Ugly")
 
-(defparameter *graphical-object-hash-table*
-  (make-hash-table :test #'eq))
+(defparameter *graphical-object-hash-table* (make-hash-table :test #'eq))
+(defparameter *rectangle-hash-table* (make-hash-table :test #'eq))
+(defparameter *axis-rectangle-hash-table* (make-hash-table :test #'eq))
 
-(defvar *graphical-object*
+(defparameter *graphical-object*
   (make-schema :name :graphical-object))
 
-(defparameter *rectangle-hash-table* (make-hash-table :test #'eq))
-(defvar *rectangle* (make-schema :name :rectangle ))
+(defparameter *rectangle* (make-schema :name :rectangle ))
+(defparameter *axis-rectangle* (make-schema :name :axis-rectangle))
+
+(defparameter *axis-rectangle-is-a-sl*
+  (make-sl :name :is-a :value (list *rectangle*)))
+
+(defparameter *axis-rectangle-is-a-inv-sl*
+  (make-sl :name :is-a-inv))
 
 (setf (gethash :is-a *graphical-object-hash-table*)
       (make-sl :name :is-a :value nil))
@@ -60,20 +67,14 @@
 	       (make-sl :name :LINE-STYLE
 			:bits 33))
 
-(defparameter *axis-rectangle-hash-table* (make-hash-table :test #'eq))
-(defparameter *axis-rectangle* (make-schema :name :axis-rectangle))
+(setf (gethash :is-a-inv *rectangle-hash-table*)
+      *axis-rectangle-is-a-inv-sl*)
 
-(defparameter *axis-rectangle-is-a-sl*
-  (make-sl :name :is-a :value (list *rectangle*)))
 
-(defparameter *axis-rectangle-is-a--inv-sl*
-  (make-sl :name :is-a-inv))
 
 (setf (gethash :is-a *axis-rectangle-hash-table*)
       *axis-rectangle-is-a-sl*)
 
-(setf (gethash :is-a-inv *rectangle-hash-table*)
-      *axis-rectangle-is-a--inv-sl*)
 
 (defparameter *axis-rectangle-hash-table-cn-1*
   (make-sb-constraint :other-slots '(:mg-connection :unconnected
@@ -96,7 +97,6 @@
 				     ((:box) (:axis-rectangle-slot-4-box)))))
 
 (defun create-error ()
-
   (let* ((symbol :axis-rectangle-slot-1))
     (setf (gethash symbol *axis-rectangle-hash-table*)
 	  (make-sl
@@ -134,6 +134,7 @@
 	 (setf (gethash slot *axis-rectangle-hash-table*)
 	       (make-sl :name slot :bits 0))))
    *rectangle-hash-table*)
+
   (locally
       (declare (optimize (safety 0)  (debug 3)))
     (maphash
