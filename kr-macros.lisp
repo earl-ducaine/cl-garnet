@@ -157,29 +157,14 @@
 (setf (gethash :is-a *graphical-object-hash-table*)
       *graphical-object-is-a-sl*)
 
-(setf (gethash :filling-style *graphical-object-hash-table*)
-      *graphical-object-filling-style-sl*)
+;; (setf (gethash :filling-style *graphical-object-hash-table*)
+;;       *graphical-object-filling-style-sl*)
 
-(setf (gethash :line-style *graphical-object-hash-table*)
-      *graphical-object-line-style-sl*)
+;; (setf (gethash :line-style *graphical-object-hash-table*)
+;;       *graphical-object-line-style-sl*)
 
-(setf (gethash :initialize *graphical-object-hash-table*)
-      *graphical-object-initialize-sl*)
-
-(setf (gethash :is-a *rectangle-hash-table*)
-      *rectangle-is-a-sl*)
-
-(setf (gethash :update-slots *rectangle-hash-table*)
-      *rectangle-update-slots-sl*)
-
-(setf (gethash :fast-redraw-p *rectangle-hash-table*)
-      *rectangle-fast-redraw-p-sl*)
-
-(setf (gethash :filling-style *rectangle-hash-table*)
-      *rectangle-filling-style-sl*)
-
-(setf (gethash :line-style *rectangle-hash-table*)
-      *rectangle-line-style-sl*)
+;; (setf (gethash :initialize *graphical-object-hash-table*)
+;;       *graphical-object-initialize-sl*)
 
 
 (setf (gethash :is-a-inv *axis-rectangle-hash-table*)
@@ -212,15 +197,10 @@
 		 (sl-value
 		  (gethash (sl-name iterate-slot-value-entry)
 			   *axis-rectangle-hash-table*))))
-	   (when (and (sb-constraint-p cn)
-		      (getf (sb-constraint-other-slots cn)
-			    :mg-connection nil))
-	     (setf (getf (sb-constraint-other-slots cn) :mg-os nil)
-		   (cons *axis-rectangle* (sl-name iterate-slot-value-entry)))
-	     (let ((slots (getf (sb-constraint-other-slots cn) :mg-variable-paths nil)))
+	   (when (sb-constraint-p cn)
+	     (let ((slots (getf (sb-constraint-other-slots cn) :mg-variable-paths)))
 	     (setf (gethash (car slots) *axis-rectangle-hash-table*) nil)
 	     (setf (gethash (cadr slots) *axis-rectangle-hash-table*) nil))
-	   (sb-constraint-set-slot-fn cn)
 	   (setf (getf (sb-constraint-other-slots cn)
 		       :mg-connection nil)
 		 :connected))))
