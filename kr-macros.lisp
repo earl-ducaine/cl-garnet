@@ -35,6 +35,10 @@
       (make-sl :name :line-style
 	       :bits 33))
 
+(setf (gethash :initialize *graphical-object-hash-table*)
+      (make-sl :name :initialize :bits 0))
+
+
 (setf (gethash :is-a *rectangle-hash-table*)
       (make-sl :name :is-a
 	       :value (list *graphical-object*)))
@@ -42,27 +46,22 @@
 (setf (gethash :update-slots *rectangle-hash-table*)
       (make-sl :value '(:fast-redraw-p)))
 
-(setf (gethash :initialize *graphical-object-hash-table*)
-      (make-sl :name :initialize :bits 0))
 
 (setf (gethash :fast-redraw-p *rectangle-hash-table*)
       (make-sl :name :fast-redraw-p
 	       :value '(:no-value)
 	       :bits 8192))
 
-(maphash
- #'(lambda (iterate-ignored-slot-name iterate-slot-value-entry)
-     (declare (ignore iterate-ignored-slot-name))
-     (let ((slot (sl-name iterate-slot-value-entry))
-	   (bits (logand (sl-bits iterate-slot-value-entry) 1023)))
-       (unless (zerop bits)
-	 (setf (gethash slot *rectangle-hash-table*)
-	       (make-sl :name slot
-			:bits bits)))))
- *graphical-object-hash-table*)
+(setf (gethash :FILLING-STYLE *rectangle-hash-table*)
+	       (make-sl :name :FILLING-STYLE
+			:bits 33))
+
+(setf (gethash :LINE-STYLE *rectangle-hash-table*)
+	       (make-sl :name :LINE-STYLE
+			:bits 33))
 
 (defparameter *axis-rectangle-hash-table* (make-hash-table :test #'eq))
-(defvar *axis-rectangle* (make-schema :name :axis-rectangle))
+(defparameter *axis-rectangle* (make-schema :name :axis-rectangle))
 
 (defparameter *axis-rectangle-is-a-sl*
   (make-sl :name :is-a :value (list *rectangle*)))
@@ -75,7 +74,6 @@
 
 (setf (gethash :is-a-inv *rectangle-hash-table*)
       *axis-rectangle-is-a--inv-sl*)
-
 
 (defparameter *axis-rectangle-hash-table-cn-1*
   (make-sb-constraint :other-slots '(:mg-connection :unconnected
@@ -122,8 +120,6 @@
 	  (make-sl
 	   :name symbol
 	   :value *axis-rectangle-hash-table-cn-4*)))
-
-
 
   (setf (gethash :filling-style *axis-rectangle-hash-table*)
 	(make-sl :name :filling-style))
