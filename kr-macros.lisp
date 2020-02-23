@@ -123,18 +123,14 @@
 	   :name symbol
 	   :value *axis-rectangle-hash-table-cn-4*)))
 
-  (maphash
-   #'(lambda (iterate-ignored-slot-name iterate-slot-value-entry)
-       (declare (ignore iterate-ignored-slot-name))
-       (let ((slot (sl-name iterate-slot-value-entry))
-	     (bits (logand (sl-bits iterate-slot-value-entry)
-			   1023)))
-	 (unless (zerop bits)
-	   (setf (gethash slot *axis-rectangle-hash-table*)
-		 (make-sl :name slot
-			  :value '(:no-value)
-			  :bits bits)))))
-   *rectangle-hash-table*)
+
+
+  (setf (gethash :filling-style *axis-rectangle-hash-table*)
+	(make-sl :name :filling-style))
+
+  (setf (gethash :line-style *axis-rectangle-hash-table*)
+	(make-sl :name :line-style))
+
   (maphash
    #'(lambda (iterate-ignored-slot-name iterate-slot-value-entry)
        (declare (ignore iterate-ignored-slot-name))
