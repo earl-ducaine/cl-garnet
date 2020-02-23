@@ -204,28 +204,17 @@
 (setf (gethash nil *axis-rectangle-hash-table*)
       (make-sl :name nil :bits 0))
 
-(let ((slot :is-a))
-  (format t "slot: ~s~%" slot)
-  (setf (gethash slot *axis-rectangle-hash-table*)
-	(make-sl :name slot :bits 0)))
+(setf (gethash :is-a *axis-rectangle-hash-table*)
+      (make-sl :name :is-a :bits 0))
 
+(setf (gethash :fast-redraw-p *axis-rectangle-hash-table*)
+      (make-sl :name :fast-redraw-p :bits 0))
 
-(let ((slot :fast-redraw-p))
-  (format t "slot: ~s~%" slot)
-  (setf (gethash slot *axis-rectangle-hash-table*)
-	(make-sl :name slot :bits 0)))
+(setf (gethash :filling-style *axis-rectangle-hash-table*)
+      (make-sl :name :filling-style :bits 0))
 
-(let ((slot :filling-style))
-  (format t "slot: ~s~%" slot)
-  (setf (gethash slot *axis-rectangle-hash-table*)
-	(make-sl :name slot :bits 0)))
-
-
-(let ((slot :line-style))
-  (format t "slot: ~s~%" slot)
-  (setf (gethash slot *axis-rectangle-hash-table*)
-	(make-sl :name slot :bits 0)))
-
+(setf (gethash :line-style *axis-rectangle-hash-table*)
+      (make-sl :name :line-style :bits 0))
 
 
 
