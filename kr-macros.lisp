@@ -197,37 +197,31 @@
       *rectangle-line-style-sl*)
 
 
+(setf (gethash :is-a-inv *axis-rectangle-hash-table*)
+      (make-sl :name :is-a-inv :bits 0))
 
 
+(setf (gethash nil *axis-rectangle-hash-table*)
+      (make-sl :name nil :bits 0))
 
-(let ((slot :IS-A-INV))
-  (format t "slot: ~s~%" slot)
-  (setf (gethash slot *axis-rectangle-hash-table*)
-	(make-sl :name slot :bits 0)))
-
-(let ((slot nil))
-  (format t "slot: ~s~%" slot)
-  (setf (gethash slot *axis-rectangle-hash-table*)
-	(make-sl :name slot :bits 0)))
-
-(let ((slot :IS-A))
+(let ((slot :is-a))
   (format t "slot: ~s~%" slot)
   (setf (gethash slot *axis-rectangle-hash-table*)
 	(make-sl :name slot :bits 0)))
 
 
-(let ((slot :FAST-REDRAW-P))
+(let ((slot :fast-redraw-p))
   (format t "slot: ~s~%" slot)
   (setf (gethash slot *axis-rectangle-hash-table*)
 	(make-sl :name slot :bits 0)))
 
-(let ((slot :FILLING-STYLE))
+(let ((slot :filling-style))
   (format t "slot: ~s~%" slot)
   (setf (gethash slot *axis-rectangle-hash-table*)
 	(make-sl :name slot :bits 0)))
 
 
-(let ((slot :LINE-STYLE))
+(let ((slot :line-style))
   (format t "slot: ~s~%" slot)
   (setf (gethash slot *axis-rectangle-hash-table*)
 	(make-sl :name slot :bits 0)))
@@ -241,19 +235,6 @@
 
 
 (defun create-error ()
-
-
-
-  ;; NIL
-  ;; :IS-A
-  ;; :FAST-REDRAW-P
-  ;; :FILLING-STYLE
-  ;; :LINE-STYLE))
-
-
-
-
-
 
 
 
