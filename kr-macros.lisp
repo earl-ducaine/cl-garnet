@@ -198,17 +198,16 @@
 
 
 (setf (gethash :is-a-inv *axis-rectangle-hash-table*)
-      (make-sl :name :is-a-inv :bits 0))
-
+      *axis-rectangle-is-a-inv-sl*)
 
 (setf (gethash nil *axis-rectangle-hash-table*)
-      (make-sl :name nil :bits 0))
+      *axis-rectangle-nil-sl*)
 
 (setf (gethash :is-a *axis-rectangle-hash-table*)
-      (make-sl :name :is-a :bits 0))
+      *axis-rectangle-is-a-sl*)
 
 (setf (gethash :fast-redraw-p *axis-rectangle-hash-table*)
-      (make-sl :name :fast-redraw-p :bits 0))
+      *axis-rectangle-fast-redraw-p-sl*)
 
 (setf (gethash :filling-style *axis-rectangle-hash-table*)
       (make-sl :name :filling-style :bits 0))
