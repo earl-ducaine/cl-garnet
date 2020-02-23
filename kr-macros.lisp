@@ -12,26 +12,26 @@
   set-slot-fn)
 
 ;; Hash tables
-(defparameter *axis-rectangle-hash-table* (make-hash-table :test #'eq))
+(defparameter *hash-table* (make-hash-table :test #'eq))
 
 
 ;; Connections
-(defparameter *axis-rectangle-cn-1*
+(defparameter *constraint-1*
   (make-sb-constraint :other-slots '(:mg-connection :unconnected
 				     :mg-variable-paths
 				     ((:box) (:axis-rectangle-slot-1-box)))))
 
-(defparameter *axis-rectangle-cn-2*
+(defparameter *constraint-2*
   (make-sb-constraint :other-slots '(:mg-connection :unconnected
 				     :mg-variable-paths
 				     ((:box) (:axis-rectangle-slot-2-box)))))
 
-(defparameter *axis-rectangle-cn-3*
+(defparameter *constraint-3*
   (make-sb-constraint :other-slots '(:mg-connection :unconnected
 				     :mg-variable-paths
 				     ((:box) (:axis-rectangle-slot-3-box)))))
 
-(defparameter *axis-rectangle-cn-4*
+(defparameter *constraint-4*
   (make-sb-constraint :other-slots '(:mg-connection :unconnected
 				     :mg-variable-paths
 				     ((:box) (:axis-rectangle-slot-4-box)))))
@@ -42,41 +42,41 @@
 
 (defparameter *axis-rectangle-slot-1*
   (make-sl :name :axis-rectangle-slot-1
-		 :value *axis-rectangle-cn-1*))
+		 :value *constraint-1*))
 
 (defparameter *axis-rectangle-slot-2*
   (make-sl :name :axis-rectangle-slot-2
-	       :value *axis-rectangle-cn-2*))
+	       :value *constraint-2*))
 
 (defparameter *axis-rectangle-slot-3*
   (make-sl :name :axis-rectangle-slot-3
-	       :value *axis-rectangle-cn-3*))
+	       :value *constraint-3*))
 
 (defparameter *axis-rectangle-slot-4*
   (make-sl :name :axis-rectangle-slot-4
-	   :value *axis-rectangle-cn-4* ))
+	   :value *constraint-4* ))
 
 
 
 
-(setf (gethash :axis-rectangle-slot-1 *axis-rectangle-hash-table*)
+(setf (gethash :axis-rectangle-slot-1 *hash-table*)
 	*axis-rectangle-slot-1*)
 
-(setf (gethash :axis-rectangle-slot-2 *axis-rectangle-hash-table*)
+(setf (gethash :axis-rectangle-slot-2 *hash-table*)
       *axis-rectangle-slot-2*)
 
-(setf (gethash :axis-rectangle-slot-3 *axis-rectangle-hash-table*)
+(setf (gethash :axis-rectangle-slot-3 *hash-table*)
       *axis-rectangle-slot-3*)
 
-(setf (gethash :axis-rectangle-slot-4 *axis-rectangle-hash-table*)
+(setf (gethash :axis-rectangle-slot-4 *hash-table*)
       *axis-rectangle-slot-4*)
 
-(setf (gethash :1 *axis-rectangle-hash-table*) t)
-(setf (gethash :2 *axis-rectangle-hash-table*) t)
-(setf (gethash :3 *axis-rectangle-hash-table*) t)
-(setf (gethash :4 *axis-rectangle-hash-table*) t)
-(setf (gethash :5 *axis-rectangle-hash-table*) t)
-(setf (gethash :6 *axis-rectangle-hash-table*) t)
+(setf (gethash :1 *hash-table*) t)
+(setf (gethash :2 *hash-table*) t)
+(setf (gethash :3 *hash-table*) t)
+(setf (gethash :4 *hash-table*) t)
+(setf (gethash :5 *hash-table*) t)
+(setf (gethash :6 *hash-table*) t)
 
 
 
@@ -88,13 +88,13 @@
 	 (declare (ignore iterate-ignored-slot-name))
 	 (let* ((cn  (sl-value
 		      (gethash (sl-name iterate-slot-value-entry)
-			       *axis-rectangle-hash-table*))))
+			       *hash-table*))))
 	   (format t "cn: ~s~%iterate-slot-value-entry: ~s~%" cn iterate-slot-value-entry)
 	   (when (sb-constraint-p cn)
 	     (let ((slots (getf (sb-constraint-other-slots cn) :mg-variable-paths)))
-	     (setf (gethash (car slots) *axis-rectangle-hash-table*) nil)
-	     (setf (gethash (cadr slots) *axis-rectangle-hash-table*) nil))
+	     (setf (gethash (car slots) *hash-table*) nil)
+	     (setf (gethash (cadr slots) *hash-table*) nil))
 	   (setf (getf (sb-constraint-other-slots cn)
 		       :mg-connection nil)
 		 :connected))))
-    *axis-rectangle-hash-table*)))
+    *hash-table*)))
