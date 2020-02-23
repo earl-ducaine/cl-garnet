@@ -56,20 +56,6 @@
   (make-sl :name :axis-rectangle-slot-4
 	   :value *axis-rectangle-cn-4* ))
 
-(defparameter *axis-rectangle-fast-redraw-p-sl*
-  (make-sl :name :fast-redraw-p))
-
-(defparameter *axis-rectangle-filling-style-sl*
-  (make-sl :name :filling-style))
-
-(defparameter *axis-rectangle-line-style-sl*
-  (make-sl :name :line-style))
-
-(defparameter *axis-rectangle-is-a-inv-sl*
-  (make-sl :name :is-a-inv))
-
-(defparameter *axis-rectangle-nil-sl*
-  (make-sl :name nil))
 
 
 
@@ -85,11 +71,9 @@
 (setf (gethash :axis-rectangle-slot-4 *axis-rectangle-hash-table*)
       *axis-rectangle-slot-4*)
 
-(setf (gethash :is-a-inv *axis-rectangle-hash-table*)
-      *axis-rectangle-is-a-inv-sl*)
+(setf (gethash :is-a-inv *axis-rectangle-hash-table*) t)
 
-(setf (gethash nil *axis-rectangle-hash-table*)
-      *axis-rectangle-nil-sl*)
+(setf (gethash nil *axis-rectangle-hash-table*) t)
 
 (setf (gethash :is-a *axis-rectangle-hash-table*) t)
 
