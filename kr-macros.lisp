@@ -4,19 +4,15 @@
 
 (defstruct sl
   name
-  value)
-
-(defstruct sb-constraint
-  variables
-  other-slots
-  set-slot-fn)
+  value
+  other-slots)
 
 (defparameter *hash-table* (make-hash-table :test #'eq))
 
-(defparameter *constraint-1* (make-sb-constraint :other-slots :slot-1-box))
-(defparameter *constraint-2* (make-sb-constraint :other-slots :slot-2-box))
-(defparameter *constraint-3* (make-sb-constraint :other-slots :slot-3-box))
-(defparameter *constraint-4* (make-sb-constraint :other-slots :slot-4-box))
+(defparameter *constraint-1* (make-sl :other-slots :slot-1-box))
+(defparameter *constraint-2* (make-sl :other-slots :slot-2-box))
+(defparameter *constraint-3* (make-sl :other-slots :slot-3-box))
+(defparameter *constraint-4* (make-sl :other-slots :slot-4-box))
 
 (defparameter *slot-1* (make-sl :name :slot-1 :value *constraint-1*))
 (defparameter *slot-2* (make-sl :name :slot-2 :value *constraint-2*))
@@ -41,7 +37,7 @@
     (maphash
      #'(lambda (iterate-ignored-slot-name slot-value-entry)
 	 (declare (ignore iterate-ignored-slot-name))
-	 (let ((slot (sb-constraint-other-slots (sl-value
+	 (let ((slot (sl-other-slots (sl-value
 						 (gethash (sl-name slot-value-entry)
 							  *hash-table*)))))
 	   (setf (gethash :box *hash-table*) nil)
