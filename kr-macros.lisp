@@ -64,56 +64,64 @@
 (defparameter *axis-rectangle-hash-table* (make-hash-table :test #'eq))
 (defvar *axis-rectangle* (make-schema :name :axis-rectangle))
 
+(defparameter *axis-rectangle-is-a-sl*
+  (make-sl :name :is-a :value (list *rectangle*)))
+
+(defparameter *axis-rectangle-is-a--inv-sl*
+  (make-sl :name :is-a-inv))
+
 (setf (gethash :is-a *axis-rectangle-hash-table*)
-      (make-sl :name :is-a :value (list *rectangle*)))
+      *axis-rectangle-is-a-sl*)
 
 (setf (gethash :is-a-inv *rectangle-hash-table*)
-      (make-sl :name :is-a-inv))
+      *axis-rectangle-is-a--inv-sl*)
 
+
+(defparameter *axis-rectangle-hash-table-cn-1*
+  (make-sb-constraint :other-slots '(:mg-connection :unconnected
+				     :mg-variable-paths
+				     ((:box) (:axis-rectangle-slot-1-box)))))
+
+(defparameter *axis-rectangle-hash-table-cn-2*
+  (make-sb-constraint :other-slots '(:mg-connection :unconnected
+				     :mg-variable-paths
+				     ((:box) (:axis-rectangle-slot-2-box)))))
+
+(defparameter *axis-rectangle-hash-table-cn-3*
+  (make-sb-constraint :other-slots '(:mg-connection :unconnected
+				     :mg-variable-paths
+				     ((:box) (:axis-rectangle-slot-3-box)))))
+
+(defparameter *axis-rectangle-hash-table-cn-4*
+  (make-sb-constraint :other-slots '(:mg-connection :unconnected
+				     :mg-variable-paths
+				     ((:box) (:axis-rectangle-slot-4-box)))))
 
 (defun create-error ()
-
 
   (let* ((symbol :axis-rectangle-slot-1))
     (setf (gethash symbol *axis-rectangle-hash-table*)
 	  (make-sl
 	   :name symbol
-	   :value (make-sb-constraint
-		   :other-slots
-		   (list :mg-connection :unconnected
-			 :mg-variable-paths
-			 (list '(:box) (list (gensym))))))))
+	   :value *axis-rectangle-hash-table-cn-1*)))
 
   (let* ((symbol :axis-rectangle-slot-2))
     (setf (gethash symbol *axis-rectangle-hash-table*)
 	  (make-sl
 	   :name symbol
-	   :value (make-sb-constraint
-		   :other-slots
-		   (list :mg-connection :unconnected
-			 :mg-variable-paths
-			 (list '(:box) (list (gensym))))))))
+	   :value *axis-rectangle-hash-table-cn-2*)))
 
   (let* ((symbol :axis-rectangle-slot-3))
     (setf (gethash symbol *axis-rectangle-hash-table*)
 	  (make-sl
 	   :name symbol
-	   :value (make-sb-constraint
-		   :other-slots
-		   (list :mg-connection :unconnected
-			 :mg-variable-paths
-			 (list '(:box) (list (gensym))))))))
+	   :value *axis-rectangle-hash-table-cn-3*)))
 
   (let* ((symbol :axis-rectangle-slot-4))
     (setf (gethash symbol *axis-rectangle-hash-table*)
 	  (make-sl
 	   :name symbol
-	   :value (make-sb-constraint
-		   :other-slots
-		   (list :mg-connection :unconnected
-			 :mg-variable-paths
-			 (list '(:box) (list (gensym))))))))
-
+	   :value *axis-rectangle-hash-table-cn-4*)))
 
   (maphash
    #'(lambda (iterate-ignored-slot-name iterate-slot-value-entry)
