@@ -5,10 +5,10 @@
 
 (defparameter *hash-table* (make-hash-table :test #'eq))
 
-(defparameter *struct-1* (make-s :value :slot-1-box))
-(defparameter *struct-2* (make-s :value :slot-2-box))
-(defparameter *struct-3* (make-s :value :slot-3-box))
-(defparameter *struct-4* (make-s :value :slot-4-box))
+(defparameter *struct-1* (make-s :name :1 :value :slot-1-box))
+(defparameter *struct-2* (make-s :name :2 :value :slot-2-box))
+(defparameter *struct-3* (make-s :name :3 :value :slot-3-box))
+(defparameter *struct-4* (make-s :name :4 :value :slot-4-box))
 
 (defparameter *struct-a* (make-s :name :a :value *struct-1*))
 (defparameter *struct-b* (make-s :name :b :value *struct-2*))
@@ -28,14 +28,13 @@
 (setf (gethash :6 *hash-table*) (make-s))
 
 (defun create-error ()
-  (locally
-      (declare (optimize (safety 0)  (debug 3)))
-    (maphash
-     #'(lambda (iterate-ignored-slot-name slot-value-entry)
-	 (declare (ignore iterate-ignored-slot-name))
-	 (let ((slot (s-value (s-value
-			       (gethash (s-name slot-value-entry)
-					*hash-table*)))))
-	   (setf (gethash :box *hash-table*) nil)
-	   (setf (gethash slot *hash-table*) nil)))
-     *hash-table*)))
+  (declare (optimize (safety 0)  (debug 3)))
+  (maphash
+   #'(lambda (iterate-ignored-slot-name slot-value-entry)
+       (declare (ignore iterate-ignored-slot-name))
+       (let ((slot (s-value (s-value
+			     (gethash (s-name slot-value-entry)
+				      *hash-table*)))))
+	 (setf (gethash :box *hash-table*) nil)
+	 (setf (gethash slot *hash-table*) nil)))
+   *hash-table*))
