@@ -47,43 +47,6 @@
 				     :mg-variable-paths
 				     ((:box) (:axis-rectangle-slot-4-box)))))
 
-;; Slots -- grahical object
-
-(defparameter *graphical-object-is-a-sl*
-  (make-sl :name :is-a :value nil))
-
-(defparameter *graphical-object-filling-style-sl*
-  (make-sl :name :filling-style :bits 33))
-
-(defparameter *graphical-object-line-style-sl*
-  (make-sl :name :line-style :bits 33))
-
-(defparameter *graphical-object-initialize-sl*
-  (make-sl :name :initialize :bits 0))
-
-;; Slots rectangle
-
-(defparameter *rectangle-is-a-sl*
-  (make-sl :name :is-a :value (list *graphical-object*)))
-
-(defparameter *rectangle-update-slots-sl*
-  (make-sl :value '(:fast-redraw-p)))
-
-(defparameter *rectangle-is-a-sl*
-  (make-sl :name :is-a :value (list *graphical-object*)))
-
-(defparameter *rectangle-fast-redraw-p-sl*
-  (make-sl :name :fast-redraw-p :value '(:no-value) :bits 8192))
-
-(defparameter *rectangle-filling-style-sl*
-  (make-sl :name :filling-style :bits 33))
-
-(defparameter *rectangle-line-style-sl*
-  (make-sl :name :line-style :bits 33))
-
-(defparameter *rectangle-is-a-inv-sl*
-  (make-sl :name :line-style :bits 33))
-
 ;; Slots axis rectangle
 
 (defparameter *axis-rectangle-is-a-sl*
@@ -122,24 +85,6 @@
 
 
 
-
-
-
-(setf (gethash :is-a-inv *rectangle-hash-table*)
-      *axis-rectangle-is-a-inv-sl*)
-
-(setf (gethash nil *rectangle-hash-table*)
-      *axis-rectangle-nil-sl*)
-
-
-
-
-
-
-
-
-
-
 (setf (gethash :axis-rectangle-slot-1 *axis-rectangle-hash-table*)
 	*axis-rectangle-slot-1*)
 
@@ -151,21 +96,6 @@
 
 (setf (gethash :axis-rectangle-slot-4 *axis-rectangle-hash-table*)
       *axis-rectangle-slot-4*)
-
-
-
-(setf (gethash :is-a *graphical-object-hash-table*)
-      *graphical-object-is-a-sl*)
-
-;; (setf (gethash :filling-style *graphical-object-hash-table*)
-;;       *graphical-object-filling-style-sl*)
-
-;; (setf (gethash :line-style *graphical-object-hash-table*)
-;;       *graphical-object-line-style-sl*)
-
-;; (setf (gethash :initialize *graphical-object-hash-table*)
-;;       *graphical-object-initialize-sl*)
-
 
 (setf (gethash :is-a-inv *axis-rectangle-hash-table*)
       *axis-rectangle-is-a-inv-sl*)
