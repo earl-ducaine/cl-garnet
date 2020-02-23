@@ -87,10 +87,7 @@
 ;; Slots axis rectangle
 
 (defparameter *axis-rectangle-is-a-sl*
-  (make-sl :name :is-a :value (list *rectangle*)))
-
-(defparameter *axis-rectangle-is-a-inv-sl*
-  (make-sl :name :is-a-inv))
+  (make-sl :name :is-a :bits 0))
 
 (defparameter *axis-rectangle-slot-1*
   (make-sl :name :axis-rectangle-slot-1
@@ -105,20 +102,58 @@
 	       :value *axis-rectangle-hash-table-cn-3*))
 
 (defparameter *axis-rectangle-slot-4*
-(make-sl :name :axis-rectangle-slot-4
-	       :value *axis-rectangle-hash-table-cn-4*))
+  (make-sl :name :axis-rectangle-slot-4
+	   :value *axis-rectangle-hash-table-cn-4*))
+
+(defparameter *axis-rectangle-fast-redraw-p-sl*
+  (make-sl :name :fast-redraw-p :bits 0))
 
 (defparameter *axis-rectangle-filling-style-sl*
-  (make-sl :name :filling-style))
+  (make-sl :name :filling-style :bits 0))
 
 (defparameter *axis-rectangle-line-style-sl*
-  (make-sl :name :line-style))
+  (make-sl :name :line-style :bits 0))
 
-(defparameter *axis-rectangle-is-a-sl*
-  (make-sl :name :is-a-inv))
+(defparameter *axis-rectangle-is-a-inv-sl*
+  (make-sl :name :is-a-inv :bits 0))
+
+(defparameter *axis-rectangle-nil-sl*
+  (make-sl :name nil :bits 0))
+
+
+
+
+
+
+;; Slots axis rectangle cross referenced from rectangle
+
 
 (setf (gethash :is-a *axis-rectangle-hash-table*)
       *axis-rectangle-is-a-sl*)
+
+(setf (gethash :fast-redraw-p *axis-rectangle-hash-table*)
+      *axis-rectangle-fast-redraw-p-sl*)
+
+(setf (gethash :filling-style *axis-rectangle-hash-table*)
+      *axis-rectangle-filling-style-sl*)
+
+(setf (gethash :line-style *axis-rectangle-hash-table*)
+      *axis-rectangle-line-style-sl*)
+
+(setf (gethash :is-a-inv *rectangle-hash-table*)
+      *axis-rectangle-is-a-inv-sl*)
+
+(setf (gethash nil *rectangle-hash-table*)
+      *axis-rectangle-nil-sl*)
+
+
+
+
+
+
+
+
+
 
 (setf (gethash :axis-rectangle-slot-1 *axis-rectangle-hash-table*)
 	*axis-rectangle-slot-1*)
@@ -132,11 +167,7 @@
 (setf (gethash :axis-rectangle-slot-4 *axis-rectangle-hash-table*)
       *axis-rectangle-slot-4*)
 
-(setf (gethash :filling-style *axis-rectangle-hash-table*)
-      *axis-rectangle-filling-style-sl*)
 
-(setf (gethash :line-style *axis-rectangle-hash-table*)
-      *axis-rectangle-line-style-sl*)
 
 (setf (gethash :is-a *graphical-object-hash-table*)
       *graphical-object-is-a-sl*)
@@ -165,8 +196,45 @@
 (setf (gethash :line-style *rectangle-hash-table*)
       *rectangle-line-style-sl*)
 
-(setf (gethash :is-a-inv *rectangle-hash-table*)
-      *axis-rectangle-is-a-inv-sl*)
+
+
+
+
+(let ((slot :IS-A-INV))
+  (format t "slot: ~s~%" slot)
+  (setf (gethash slot *axis-rectangle-hash-table*)
+	(make-sl :name slot :bits 0)))
+
+(let ((slot nil))
+  (format t "slot: ~s~%" slot)
+  (setf (gethash slot *axis-rectangle-hash-table*)
+	(make-sl :name slot :bits 0)))
+
+(let ((slot :IS-A))
+  (format t "slot: ~s~%" slot)
+  (setf (gethash slot *axis-rectangle-hash-table*)
+	(make-sl :name slot :bits 0)))
+
+
+(let ((slot :FAST-REDRAW-P))
+  (format t "slot: ~s~%" slot)
+  (setf (gethash slot *axis-rectangle-hash-table*)
+	(make-sl :name slot :bits 0)))
+
+(let ((slot :FILLING-STYLE))
+  (format t "slot: ~s~%" slot)
+  (setf (gethash slot *axis-rectangle-hash-table*)
+	(make-sl :name slot :bits 0)))
+
+
+(let ((slot :LINE-STYLE))
+  (format t "slot: ~s~%" slot)
+  (setf (gethash slot *axis-rectangle-hash-table*)
+	(make-sl :name slot :bits 0)))
+
+
+
+
 
 
 
@@ -174,13 +242,20 @@
 
 (defun create-error ()
 
-  (maphash
-   #'(lambda (iterate-ignored-slot-name iterate-slot-value-entry)
-       (declare (ignore iterate-ignored-slot-name))
-       (let ((slot (sl-name iterate-slot-value-entry)))
-	 (setf (gethash slot *axis-rectangle-hash-table*)
-	       (make-sl :name slot :bits 0))))
-   *rectangle-hash-table*)
+
+
+  ;; NIL
+  ;; :IS-A
+  ;; :FAST-REDRAW-P
+  ;; :FILLING-STYLE
+  ;; :LINE-STYLE))
+
+
+
+
+
+
+
 
   (locally
       (declare (optimize (safety 0)  (debug 3)))
