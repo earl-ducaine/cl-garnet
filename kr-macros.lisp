@@ -71,17 +71,12 @@
 (setf (gethash :axis-rectangle-slot-4 *axis-rectangle-hash-table*)
       *axis-rectangle-slot-4*)
 
-(setf (gethash :is-a-inv *axis-rectangle-hash-table*) t)
-
-(setf (gethash nil *axis-rectangle-hash-table*) t)
-
-(setf (gethash :is-a *axis-rectangle-hash-table*) t)
-
-(setf (gethash :fast-redraw-p *axis-rectangle-hash-table*) t)
-
-(setf (gethash :filling-style *axis-rectangle-hash-table*) t)
-
-(setf (gethash :line-style *axis-rectangle-hash-table*) t)
+(setf (gethash :1 *axis-rectangle-hash-table*) t)
+(setf (gethash :2 *axis-rectangle-hash-table*) t)
+(setf (gethash :3 *axis-rectangle-hash-table*) t)
+(setf (gethash :4 *axis-rectangle-hash-table*) t)
+(setf (gethash :5 *axis-rectangle-hash-table*) t)
+(setf (gethash :6 *axis-rectangle-hash-table*) t)
 
 
 
