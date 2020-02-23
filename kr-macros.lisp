@@ -64,23 +64,55 @@
 (defparameter *axis-rectangle-hash-table* (make-hash-table :test #'eq))
 (defvar *axis-rectangle* (make-schema :name :axis-rectangle))
 
+(setf (gethash :is-a *axis-rectangle-hash-table*)
+      (make-sl :name :is-a :value (list *rectangle*)))
+
+(setf (gethash :is-a-inv *rectangle-hash-table*)
+      (make-sl :name :is-a-inv))
+
+
 (defun create-error ()
-  (setf (gethash :is-a *axis-rectangle-hash-table*)
-	(make-sl :name :is-a :value (list *rectangle*)))
 
-  (setf (gethash :is-a-inv *rectangle-hash-table*)
-	(make-sl :name :is-a-inv))
 
-  (dotimes (i 4)
-    (let* ((symbol (gensym)))
-      (setf (gethash symbol *axis-rectangle-hash-table*)
-	    (make-sl
-	     :name symbol
-	     :value (make-sb-constraint
-		     :other-slots
-		     (list :mg-connection :unconnected
-			   :mg-variable-paths
-			   (list '(:box) (list (gensym)))))))))
+  (let* ((symbol :axis-rectangle-slot-1))
+    (setf (gethash symbol *axis-rectangle-hash-table*)
+	  (make-sl
+	   :name symbol
+	   :value (make-sb-constraint
+		   :other-slots
+		   (list :mg-connection :unconnected
+			 :mg-variable-paths
+			 (list '(:box) (list (gensym))))))))
+
+  (let* ((symbol :axis-rectangle-slot-2))
+    (setf (gethash symbol *axis-rectangle-hash-table*)
+	  (make-sl
+	   :name symbol
+	   :value (make-sb-constraint
+		   :other-slots
+		   (list :mg-connection :unconnected
+			 :mg-variable-paths
+			 (list '(:box) (list (gensym))))))))
+
+  (let* ((symbol :axis-rectangle-slot-3))
+    (setf (gethash symbol *axis-rectangle-hash-table*)
+	  (make-sl
+	   :name symbol
+	   :value (make-sb-constraint
+		   :other-slots
+		   (list :mg-connection :unconnected
+			 :mg-variable-paths
+			 (list '(:box) (list (gensym))))))))
+
+  (let* ((symbol :axis-rectangle-slot-4))
+    (setf (gethash symbol *axis-rectangle-hash-table*)
+	  (make-sl
+	   :name symbol
+	   :value (make-sb-constraint
+		   :other-slots
+		   (list :mg-connection :unconnected
+			 :mg-variable-paths
+			 (list '(:box) (list (gensym))))))))
 
 
   (maphash
@@ -95,7 +127,6 @@
 			  :value '(:no-value)
 			  :bits bits)))))
    *rectangle-hash-table*)
-
   (maphash
    #'(lambda (iterate-ignored-slot-name iterate-slot-value-entry)
        (declare (ignore iterate-ignored-slot-name))
@@ -103,7 +134,6 @@
 	 (setf (gethash slot *axis-rectangle-hash-table*)
 	       (make-sl :name slot :bits 0))))
    *rectangle-hash-table*)
-
   (locally
       (declare (optimize (safety 0)  (debug 3)))
     (maphash
