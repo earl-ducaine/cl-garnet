@@ -1,7 +1,6 @@
 
 (defstruct schema
-  name
-  bins)
+  name)
 
 (defstruct sl
   name
@@ -18,11 +17,12 @@
 
 (defparameter *graphical-object-hash-table*
   (make-hash-table :test #'eq))
+
 (defvar *graphical-object*
-  (make-schema :name :graphical-object :bins *graphical-object-hash-table*))
+  (make-schema :name :graphical-object))
 
 (defparameter *rectangle-hash-table* (make-hash-table :test #'eq))
-(defvar *rectangle* (make-schema :name :rectangle :bins *rectangle-hash-table* ))
+(defvar *rectangle* (make-schema :name :rectangle ))
 
 (setf (gethash :is-a *graphical-object-hash-table*)
       (make-sl :name :is-a :value nil))
@@ -58,13 +58,11 @@
        (unless (zerop bits)
 	 (setf (gethash slot *rectangle-hash-table*)
 	       (make-sl :name slot
-			:value '(:no-value)
 			:bits bits)))))
  *graphical-object-hash-table*)
 
 (defparameter *axis-rectangle-hash-table* (make-hash-table :test #'eq))
-(defvar *axis-rectangle* (make-schema :name :axis-rectangle
-				      :bins *axis-rectangle-hash-table*))
+(defvar *axis-rectangle* (make-schema :name :axis-rectangle))
 
 (defun create-error ()
   (setf (gethash :is-a *axis-rectangle-hash-table*)
@@ -123,19 +121,10 @@
 	     (let* ((constraint-slot
 		     (loop for path in (getf (sb-constraint-other-slots cn)
 					     :mg-variable-paths nil)
-			collect (loop for (slot next-slot) on path
-				   do (return
-					(cons
-					 (car
-					  (getf
-					   (sb-constraint-other-slots cn)
-					   :mg-os nil))
-					 slot))))))
+			collect (cons *axis-rectangle* (car path)))))
 	       (loop for var-os in constraint-slot
-		  collect (let ((obj (car var-os))
-				(slot (cdr var-os)))
-			    (setf (gethash slot *axis-rectangle-hash-table*)
-				  (make-sl :name slot :bits 0))
+		  collect (let ()
+			    (setf (gethash (cdr var-os) *axis-rectangle-hash-table*) nil)
 			    (make-sl))))
 	     (sb-constraint-set-slot-fn cn)
 	     (setf (getf (sb-constraint-other-slots cn)
