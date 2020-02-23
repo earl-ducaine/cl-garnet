@@ -125,21 +125,6 @@
 
 
 
-;; Slots axis rectangle cross referenced from rectangle
-
-
-(setf (gethash :is-a *axis-rectangle-hash-table*)
-      *axis-rectangle-is-a-sl*)
-
-(setf (gethash :fast-redraw-p *axis-rectangle-hash-table*)
-      *axis-rectangle-fast-redraw-p-sl*)
-
-(setf (gethash :filling-style *axis-rectangle-hash-table*)
-      *axis-rectangle-filling-style-sl*)
-
-(setf (gethash :line-style *axis-rectangle-hash-table*)
-      *axis-rectangle-line-style-sl*)
-
 (setf (gethash :is-a-inv *rectangle-hash-table*)
       *axis-rectangle-is-a-inv-sl*)
 
@@ -210,22 +195,14 @@
       *axis-rectangle-fast-redraw-p-sl*)
 
 (setf (gethash :filling-style *axis-rectangle-hash-table*)
-      (make-sl :name :filling-style :bits 0))
+      *axis-rectangle-filling-style-sl*)
 
 (setf (gethash :line-style *axis-rectangle-hash-table*)
-      (make-sl :name :line-style :bits 0))
-
-
-
-
-
+      *axis-rectangle-line-style-sl*)
 
 
 
 (defun create-error ()
-
-
-
   (locally
       (declare (optimize (safety 0)  (debug 3)))
     (maphash
