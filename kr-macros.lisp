@@ -123,9 +123,7 @@
 					     :mg-variable-paths nil)
 			collect (cons *axis-rectangle* (car path)))))
 	       (loop for var-os in constraint-slot
-		  collect (let ()
-			    (setf (gethash (cdr var-os) *axis-rectangle-hash-table*) nil)
-			    (make-sl))))
+		  collect  (setf (gethash (cdr var-os) *axis-rectangle-hash-table*) nil)))
 	     (sb-constraint-set-slot-fn cn)
 	     (setf (getf (sb-constraint-other-slots cn)
 			 :mg-connection nil)
