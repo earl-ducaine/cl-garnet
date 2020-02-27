@@ -1,8 +1,16 @@
+
+
 P = /usr/amickish/doc
 VPATH = $(P)
 
+TEXINFO_FLAGS = -I .:./aggregadgets/:./kr/
+
+
 # Break the circularity of dependence between the manuals and the
 # pagenumbers file by not making the pagenumbers depend on the Hints
+
+
+
 
 OUTPUT_MINUS_HINTS = overview/overview.ps apps/apps.ps tour/tour.ps \
         tutorial/tutorial.ps \
@@ -12,12 +20,16 @@ OUTPUT_MINUS_HINTS = overview/overview.ps apps/apps.ps tour/tour.ps \
 	sampleprog/sampleprog.ps gilt/gilt-manual.ps c32/c32-manual.ps\
         lapidary/lapidary-manual.ps
 
-OUTPUT = $(OUTPUT_MINUS_HINTS) hints/hints.ps 
+OUTPUT = $(OUTPUT_MINUS_HINTS) hints/hints.ps
 
 
 manuals: $(OUTPUT)
 
 all: $(OUTPUT) scripts/pagenumbers-done index/index.ps refman/refman.ps
+
+garnet: elisp.texi
+	texi2pdf $(TEXINFO_FLAGS) elisp.texi
+
 
 pagenumbers.mss: # scripts/pagenumbers-done
 

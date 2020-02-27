@@ -23,11 +23,12 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defvar *special-kr-optimization*
     '(optimize
-      (speed 3)
-      #-allegro (safety 0) #+allegro (safety 1)
+      (speed 0)
+      (safety 3)
+      ;;#+allegro (safety 1)
       (space 0)
-      #-cmu (debug 0)
-      #+cmu (debug 0.5)
+      (debug 3)
+      ;;#+cmu (debug 0.5)
       )))
 
 ;; This enables the eager-evaluation version.
@@ -826,11 +827,10 @@ modified to be a full-slot structure."
 
 (defmacro iterate-slot-value ((a-schema inherited everything check-formula-p)
 			      &body body)
-"Iterate the <body> for all the slots in the <schema>, with the variable
-<slot> bound to each slot in turn and the variable <value> bound to
-the <slot>'s value.
-If <everything> is T, even slots which contain *no-value* (but with same
-bit set) are used."
+  "Iterate the <body> for all the slots in the <schema>, with the
+   variable <slot> bound to each slot in turn and the variable <value>
+   bound to the <slot>'s value.  If <everything> is T, even slots
+   which contain *no-value* (but with same bit set) are used."
   `(locally (declare ,*special-kr-optimization*)
      (,@(if check-formula-p `(if (not (formula-p ,a-schema))) '(progn))
 	(maphash
@@ -853,8 +853,54 @@ bit set) are used."
 			       body
 			       `((unless (eq value *no-value*)
 				   ,@body))))))))
-	 (schema-bins ,a-schema))
-	)))
+	 (schema-bins ,a-schema)))))
+
+(defmacro iterate-slot-value-test ((a-schema inherited everything check-formula-p)
+			      &body body)
+  "Iterate the <body> for all the slots in the <schema>, with the
+   variable <slot> bound to each slot in turn and the variable <value>
+   bound to the <slot>'s value.  If <everything> is T, even slots
+   which contain *no-value* (but with same bit set) are used."
+  `(locally (declare ,*special-kr-optimization*)
+     (,@(if check-formula-p `(if (not (formula-p ,a-schema))) '(progn))
+	;; It's possible that clients using iterate slot will insert
+	;; or delete items from the hashtable that underlies
+	;; doslots. To alow this we first collect slotes and values
+	;; and then mapcar over those. Since the list we're mapcar'ing
+	;; is protected, we don't have to worry about others modyfying
+	;; it, even if the logic to be prefored in body is
+	;; substantial.
+	(let (slot-hashes)
+	  (maphash (lambda (iterate-ignored-slot-name
+			    iterate-slot-value-entry)
+		     (push (cons iterate-ignored-slot-name
+				 iterate-slot-value-entry) slot-hashes))
+		   (schema-bins ,a-schema))
+	  (mapcar (lambda (slot-value-pair)
+		    (format t "slot-value-pair: ~s~%" slot-value-pair)
+		    (let ((iterate-ignored-slot-name (car slot-value-pair))
+			  (iterate-slot-value-entry) (cdr slot-value-pair))
+		      (declare (ignore iterate-ignored-slot-name))
+		      ;; name for the slot
+		      (let ((slot (sl-name iterate-slot-value-entry))
+			    (value (sl-value iterate-slot-value-entry)))
+			;; This slot exists
+			,@(if inherited
+			      ;; Either local or inherited will do.
+			      (if everything
+				  ;; Execute on a no-value, too.
+				  body
+				  ;; Only execute on real values.
+				  `((unless (eq value *no-value*)
+				      ,@body)))
+			      ;; Make sure that the slot is not inherited.
+			      `((unless (is-inherited
+					 (sl-bits iterate-slot-value-entry))
+				  ,@(if everything
+					body
+					`((unless (eq value *no-value*)
+					    ,@body)))))))))
+		  slot-hashes)))))
 
 
 ;; (defmacro iterate-slot-value ((a-schema inherited everything check-formula-p)
