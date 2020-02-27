@@ -1,0 +1,4066 @@
+@c -*-texinfo-*-
+@c This is part of the Garnet Reference Manual.
+@c See the file garnet.texi for copying conditions.
+@node KR: Constraint-Based Knowledge Representation
+@chapter KR: Constraint-Based Knowledge Representation
+@cindex kr
+@cindex Knowledge representation
+
+
+
+@titlepage
+@subtitle KR: Constraint-Based Knowledge Representation
+@subtitle For Garnet Version @value{GARNETVER}
+@ifset VERSION
+@subtitle Revision @value{VERSION}, @value{DATE}
+@end ifset
+
+@author by Dario Giuse
+
+@page
+@vskip 0pt plus 1filll
+@insertcopying
+
+@include creditetc.texi
+
+@end titlepage
+
+
+
+@menu
+
+* Float Basics::              Representation and range of floating point.
+
+@end menu
+
+@sp 0.3
+
+
+@chapter(Introduction)
+
+KR is a very efficient knowledge representation language implemented
+in Common Lisp.  It provides powerful frame-based knowledge
+representation with user-defined inheritance and relations, and an
+integrated object-oriented programming system.  In addition, the
+system supports a constraint maintenance mechanism which allows any
+value to be computed from a combination of other values.  KR is simple
+and compact and does not include some of the more complex
+functionality often found in other knowledge representation systems.
+Because of its simplicity, however, it is highly optimized and offers
+good performance.  These qualities make it suitable for many
+applications that require a mixture of good performance and flexible
+knowledge representation.
+
+
+
+This document is the reference manual for the KR system.  KR
+implements objects, also known as @emph{schemata}, which can contain any
+amount of information and which can be connected in arbitrary ways.
+All Garnet objects are implemented as KR schemata.  KR @cite{kr} can
+also be used as a very efficient frame-based representation system.
+Simplicity and efficiency are its main design goals and differentiate
+it sharply from more conventional frame systems, as discussed in
+@cite{KR-KER}.
+
+In addition to the basic representation of knowledge as a network of
+schemata, KR provides object-oriented programming and an integrated
+constraint maintenance system.  Constraint maintenance is implemented
+through @emph(formulas), which constrain certain values to
+combinations of other values.  The constraint system is closely
+integrated with the basic object system and is part of the same
+program interface.
+
+Close integration between objects and constraint maintenance yields
+several advantages.  First of all, constraint maintenance is seen as a
+natural extension of object representation; the same access functions
+work on regular values and on values constrained by a formula.
+Second, the full power of the representation language is available in
+the specification of constraints.  Third, since the two mechanisms are
+integrated at a fairly low level, the constraint maintenance system
+offers very good performance.  These advantages make the KR constraint
+maintenance system a practical tool for the development of
+applications that require flexibility, expressive power, and
+performance comparable to that obtained with conventional data
+structures.
+
+In addition to being one of the building blocks of the Garnet project,
+KR can be used as a self-contained knowledge representation system.
+Besides Garnet, KR is used in the Chinese Tutor @cite{CHINESE-TUTOR}
+@cite{CHINESE-TUTOR-SHANGHAI}, an intelligent tutoring system designed
+to teach Chinese to English speakers, and in speech understanding
+research @cite{MINDS} currently underway at Carnegie Mellon.
+
+This document describes version @value(version) of KR, which is part of
+release 2.2 of the Garnet system.  Several aspects of this version differ
+from previous versions of the system, such as the ones described in
+previous reports @cite{KRTR2} @cite{KR}.  The present document overrides
+all previous descriptions.
+
+The orientation of this manual is for users of KR as an object system.
+Users who are more interested in using KR as a knowledge representation
+system should consult a previous paper @cite{kr-ker}.  This manual begins
+with a description of the features of the system that beginners are most
+likely to need.  Some of the less common features are only presented near
+the end of the document, in order to avoid obscuring the description with
+irrelevant details.  Sections 6 and 7 contain the detailed description of
+the program interface of KR.  This is a complete description of the system
+and its features.  Most application programs will only need a small number
+of features, described in section 6.
+
+
+@node Structure of the System
+@section Structure of the System
+
+
+KR is an object system implemented in Common Lisp @cite{CommonLisp}.  It
+includes three closely integrated components: @emph{object-oriented}
+programming), @emph{constraint maintenance}, and @emph{knowledge representation}.
+
+The first component of KR is an object oriented programming system based on
+the prototype-instance paradigm.  Schemata can be used as objects, and
+inheritance can be used to determine their properties and behavior.
+Objects can be sent @emph{messages}, which are implemented as procedural
+attachments to certain slots; messages are inherited through the same
+mechanism as values.
+
+Instead of the class-instance paradigm, common in object-oriented
+programming languages, KR implements the more flexible prototype-instance
+paradigm @cite{liebermanprototypes}, which allows properties of instances
+to be determined dynamically by their prototypes.  This means that the
+class structure of a system can be modified dynamically as needed, without
+any need for recompilation.
+
+The second component of KR implements constraint maintenance.  Constraint
+maintenance is implemented through @emph{formulas}, which may be attached to
+slots and determine their values based on the values of other slots in the
+system.
+
+Constraint maintenance is closely integrated with the other components.
+The user, for example, does not need to know which slots in a schema
+contain ordinary values and which ones are constrained by a formula, since
+the same access primitives may be used in both cases.
+
+The third component, frame-based knowledge representation, stores knowledge
+as a network of chunks of information.  Networks in KR are built out of
+unstructured chunks, i.e., @emph{schemata}.  Each schema can store
+arbitrary pieces of information, and is not restricted to a particular
+format or data structure.  Information is encoded via attribute-value
+pairs.
+
+Values in a schema can be interpreted as links to other schemata.  This
+enables the system to support complex network structures, which can be
+freely extended and modified by application programs.  KR provides simple
+ways to specify the structure of a network and the relationship among its
+components.
+
+
+@node Basic Concepts
+@section Basic Concepts
+
+This section describes the basic elements of KR, i.e., objects.  More
+details about the design philosophy of the system and some of the
+internal implementation may be found in @cite{KR}, which describes a
+previous version of the system that did not support constraint
+maintenance.
+
+
+
+@node Main Concepts: Schema, Slot, Value
+@subsection Main Concepts: Schema, Slot, Value
+
+
+An object in KR is known as a @emph{schema}.  A schema  is the
+basic unit of representation and consists of an optional @emph{name}, a
+set of @emph{slots}, and a @emph{value} for each slot.  The user can
+assemble networks of schemata by placing a schema as the value in a slot of
+another schema; this causes the two schemata to become linked.
+
+@cindex{schema}
+
+A schema may be namedor unnamed.  Named schemata are readily
+accessible and are most useful for interactive situations or as the
+top levels of a hierarchy, since their names act as global handles.
+Unnamed schemata do not have meaningful
+external names.  They are, however, more compact than named schemata
+and account for the vast majority of schemata created by most
+applications.  Unnamed schemata are automatically garbage-collected
+when no longer needed, whereas named schemata have to be destroyed
+explicitly by the user.
+
+@cindex schema names
+@cindex named schemata
+@cindex unnamed schemata
+
+The name of a named schema is a symbol.  When a named schema is created, KR
+automatically creates a special variable by the same name  and assigns the schema itself as the value of the special
+variable.  This makes named schemata convenient to use.
+
+@cindex{schemata and variables}
+
+A schema may have any number of @emph{slots}, which are simply
+  attribute-value pairs.  The slot name indicates the
+attribute name; the slot value (if there is one) indicates its value.  Slot
+names  are keywords, and thus always begin with a
+colon.  All slots in a schema must have distinct names, but different
+schemata may very well have slots with the same name.
+
+@cindex{slot}
+@cindex{slot names}
+
+Each slot may contain only one value.
+A value  is the actual data item stored in the schema, and may
+be of any Lisp type.  KR provides functions to add, delete, and retrieve
+the value from a given slot in a schema.
+
+@cindex{value}
+
+The printed representation of a schema shows the schema name followed by
+slot/value pairs, each on a separate line.  The whole schema is surrounded
+by curly braces.  For example,
+@example
+{#k<fido>
+  :owner =  #k<john>
+  :color =  #k<brown>
+  :age =  5
+}
+@end example
+
+The schema is named FIDO and contains three slots named
+@code{:owner}, @code{:color}, and @code{:age}.  The slot @code{:age} contains one
+value, the integer 5.
+
+The default printed name of a schema is of the form @c(#k<name>), where
+@emph{name} is the actual name of the schema.  This representation makes it
+very easy to distinguish KR schemata from other objects.  Note, however,
+that this convention is only used when printing, and is not used when
+typing the name of a schema.
+
+
+
+In order to illustrate the main features of the system, we will repeatedly
+use a few schemata.  We present the definition of those schemata at this
+point and will later refer to them as needed.  These schemata might be part
+of some graphical package, and are used here purely for explanation
+purposes.  In practice, there is no need to define such schemata in a
+Garnet application, since the Opal component of Garnet (see the Opal
+manual) already provides a complete graphical object system.
+
+The following KR code is the complete definition of the example schemata:
+@anchor{kr-examples}
+
+@example
+ 
+(create-instance 'MY-GRAPHICAL-OBJECT NIL
+  (:color :blue))
+
+
+(create-instance 'BOX-OBJECT MY-GRAPHICAL-OBJECT
+  (:thickness 1))
+
+(create-instance 'RECTANGLE-1 BOX-OBJECT
+  (:x 10)
+  (:y 20))
+
+(create-instance 'RECTANGLE-2 BOX-OBJECT
+  (:x 34)
+  (:y (o-formula (+ (gvl :left-obj :y) 15)))
+  (:left-obj RECTANGLE-1))
+@end example
+
+@cindex rectangle-2
+@cindex rectangle-1
+@cindex box-object
+@cindex my-graphical-object
+
+The exact meaning of the expressions above will become clear after we
+describe the functional interface of the system.  Briefly, however,
+the example can be summarized as follows.  The schema
+@c(my-graphical-object) is at the top of a hierarchy of graphical
+objects.  The schema @c(box-object) represents an intermediate level
+in the hierarchy, and describes the general features of all graphical
+objects which are rectangular boxes.  @c(box-object) is placed below
+@c(my-graphical-object) in the hierarchy, and its @code{:is-a} slot
+points to the schema @c(my-graphical-object).  This is done
+automatically by the macro create-instance.
+
+Finally, two rectangles (@c(rectangle-1) and @c(rectangle-2)) are
+created and placed below @c(box-object) in the hierarchy.  @c(rectangle-1)
+defines the values of the two slots @code{:x} and @code{:y} directly, whereas
+@c(rectangle-2) uses a formula for its @code{:y} slot.  The formula states
+that the value of @code{:y} is constrained to be the @code{:y} value of another
+schema plus 15.  The other schema can be located by following the
+@code{:left-obj} slot of @c(rectangle-2), as specified in the formula, and
+initially corresponds to @c(rectangle-1).
+
+Figure @ref(all-schemata) shows the four schemata after the definitions
+above have been executed.  Relations are indicated by an arrow going from a
+schema to the ones to which it is related.
+
+@float Figure,fig:ex1
+@center @image {schemata}
+@c @center(@graphic(Postscript = "kr/schemata.ps",magnify=.75,boundingbox=File))
+@caption(The resulting network of schemata)
+
+@anchor{all-schemata}
+@end float
+
+
+Asking the system to print out the
+current status of schema @c(rectangle-2) would produce the following output:
+@example
+{#k<RECTANGLE-2>
+  :IS-A =  #k<BOX-OBJECT>
+  :LEFT-OBJ =  #k<RECTANGLE-1>
+  :Y =  #k<F2289>(NIL . NIL)
+  :X =  34
+}
+@end example
+
+Note that slot @code{:y} contains a formula, which is printed as
+"#k<F2289>(NIL . NIL)".  This is simply an internal representation for the
+formula and will yield the correct value of @code{:y} when needed.
+
+
+
+
+@node Inheritance
+@subsection Inheritance
+
+The primary function of values is to provide information about the object
+represented by a schema.  In the previous example, for instance, asking the
+system for the @code{:x} value of @c(rectangle-1) would simply return the
+value @code{10}.
+
+Values  can also perform another function,
+however: They can establish @emph{connections between schemata}.
+Consider the @code{:left-obj} slot in the example above: if we interpret
+@c(rectangle-1) as a schema name, then the slot tells us that the
+schema @c(rectangle-2) is somehow related to the schema
+@c(rectangle-1).  Graphically, this will mean that the position of
+@c(rectangle-2) is partially determined by that of @c(rectangle-1).
+
+@cindex{values as links}
+
+KR also makes it possible to use values to perform @emph{inheritance},
+ 
+i.e., to control the way information is inherited by a
+particular schema from other schemata to which it is connected.
+Inheritance allows information to be arranged in a hierarchical fashion,
+with lower-level schemata inheriting most of their general features from
+higher-level nodes and possibly providing local refinements or
+modifications.  A connection that enables inheritance of values is called an
+@emph{inheritance relation} .  Inheritance relations
+always contain a list of values;  in many cases, this is a list of
+only one value.
+
+@cindex{inheritance}
+@cindex{relation}
+
+The most common example of inheritance is provided by the @code{:is-a}
+relation .  If schema A is connected to schema B by the
+@code{:is-a} relation,@footnote{In other words, if schema B appears as a value
+in the @code{:is-a} slot of schema A.} then values that are not present in A
+may be inherited from B.
+
+@cindex{is-a relation}
+
+Consider the schema @c(rectangle-1) in our example.  If we were to ask
+"What is the color of @c(rectangle-1)?", we would not be able to find the
+answer by just looking at the schema itself.  But since we stated that
+@c(rectangle-1) is a box object, which is itself a graphical object,
+the value can be inherited from the schema @c(my-graphical-object)
+through two levels of @code{:is-a}.  The answer would thus be
+"@c(rectangle-1) is blue."  Inheritance is possible in this case because
+the slot @code{:is-a} is pre-defined by the system as a relation.
+
+
+
+
+
+@chapter(Object-Oriented Programming)
+@anchor{object-oriented-prog}
+
+
+This section describes the object-oriented programming component of KR.
+  This component entails two concepts:
+the concept of message sending, and the concept of prototype/instance.
+
+@cindex{object-oriented programming}
+
+@node Objects
+@subsection Objects
+
+
+The fundamental data structure in KR is the @emph{schema}, which is equivalently
+referred to as an @emph{object}.  Objects consist of data
+(represented by values in slots) and methods (represented by
+procedural attachments, again stored as values in slots).  Methods are
+similar to functions, except that a method can do something different
+depending on the object that it is called on.
+A procedural attachment is invoked by "sending  a
+message" to an  object; this means that a method by the
+appropriate name is sought and executed.  Different objects often
+provide different methods by the same name, and thus respond to the
+same message by performing different actions.
+
+@cindex{sending messages}
+@cindex{messages}
+
+The data and methods associated with an object can be either stored
+within the object or inherited.  This allows the behavior of objects
+to be built up from that of other objects.  The object-oriented
+component of KR allows some combination of methods , since a method is allowed to invoke the corresponding
+method from an ancestor schema and to explicitly refer to the object
+which is handling the message.  Method combination, however, is not as
+developed as in full-fledged object-oriented programming systems such
+as CLOS @cite{CLOS-X3J13}.
+
+@cindex{method combination}
+
+@node  Prototypes vs.Classes
+@subsection Prototypes vs. Classes
+
+
+The notion of  @emph{prototype} in KR is superficially similar to that of @emph{class} in
+conventional object-oriented programming languages, since a prototype
+object can be used to partially determine the behavior of other
+objects (its @emph{instances}) .  A prototype, however,
+plays a less restricting role than a class.  Unlike classes,
+prototypes simply provide a place from which the values of certain
+slots may be inherited.  The number and types of slots which actually
+appear in an instance is not in any way restricted by the
+prototype .  The same is true for
+methods, which are simply represented as values in a slot.
+
+@cindex{prototype/instance}
+@cindex{prototypes}
+@cindex{instance}
+@cindex{objects and inheritance}
+
+Prototypes in KR serve two specific functions: they provide an
+initialization method , and they provide
+default  constraints .
+When a KR schema is created via the function
+@code{create-instance} , and its prototype has an
+@code{:initialize}  method, the method is invoked
+on the instance itself.  This results in a uniform mechanism for handling
+object-dependent initialization tasks.
+
+@cindex{object initialization}
+@cindex{default constraints}
+@cindex{object constraints}
+@cindex{create-instance}
+@cindex{initialize method}
+
+@node  Inheritance ofFormulas
+@subsection Inheritance of Formulas
+
+@cindex Formulas
+@cindex Inheritance
+
+If a prototype provides a constraint for a certain slot, and the slot is
+not explicitly redefined in an instance, the formula  which implements the constraint is copied down and installed in
+the instance itself.  The formula, however, is not actually copied down until
+a value is requested for that slot (e.g., when @code{gv} is used).
+This is a convenient mechanism through which a
+prototype may partially determine the behavior of its instances.  Note that
+this behavior can be overridden both at instance-creation time (by
+explicitly specifying values for the instance) and at any later point in
+time.
+
+@cindex{inherited formulas}
+
+
+
+@chapter(Constraint Maintenance)
+
+
+This section describes the constraint maintenance component of KR.
+The purpose of constraint maintenance is to ensure that changes to a
+schema are automatically propagated to other schemata which depend on
+it.
+
+
+
+@node  ValuePropagation
+@subsection Value Propagation
+
+The KR constraint system  offers two distinct
+mechanisms to cause changes in a part of network to propagate to other
+parts of the network.  The first mechanism, @emph{value propagation}, ensures
+that the network is kept in a consistent state after a change.  The second
+mechanism, @emph{demon invocation}, allows certain actions to be triggered
+when parts of a network are modified.  Demons are described in section
+@ref(demons).
+
+@cindex{constraint maintenance}
+
+Value propagation is based on the notion of @emph{dependency} of a value
+on another.  Value dependencies are embodied in formulas.  Whenever a
+value in a slot is changed, all slots whose values depend on it are
+immediately invalidated, although not necessarily re-evaluated.  This
+strategy, known as lazy evaluation, does not immediately recompute the
+values in the dependent slots, and thus it typically does less
+work  than an
+eager  re-evaluation strategy.  The system simply
+guarantees that correct
+values are recomputed when actually needed.
+
+@cindex{lazy evaluation}
+@cindex{eager evaluation}
+
+@node Formulas
+@subsection Formulas
+
+@cindex{Formulas}
+
+Formulas represent one-directional connections between a
+@emph{dependent value} and any number of @emph{depended values}.  Formulas
+specify an expression which computes the dependent value based upon the
+depended values, as well as a permanent dependency which causes the
+dependent value to be recomputed whenever any of the other values change.
+
+Formulas can contain arbitrary Lisp expressions, which generally
+reference at least one particular depended value.  The Lisp
+expression is used to recompute the value of the formula whenever a
+change in one of the depended values makes it necessary.
+
+Formulas are not recomputed immediately  when one of
+the depended values changes.  This reduces the amount of unnecessary
+computation.  Moreover, formulas are not recomputed every time their value
+is accessed.  Each formula, instead, keeps a cache of the last value it
+computed.  Unless the formula is marked invalid, and thus needs to be
+recomputed, the cached value  is simply reused.  This
+factor causes a dramatic improvement in the performance of the constraint
+maintenance system, since under ordinary circumstances the rate of change
+is low and most changes are local in nature.
+
+@cindex{lazy evaluation}
+@cindex{cached values}
+
+@float Figure,fig:ex1
+
+@center @image {formulas}
+@c @center(@graphic(Postscript="kr/formulas.ps",magnify=.75,boundingbox=file))
+@caption(Successive changes in depended values)
+
+@anchor{formulas}
+@end float
+
+
+Figure @ref(formulas), part @b{(a)}, shows an example of a formula
+installed on slot @code{:y} of schema @c(point-2).  The formula depends on
+two values, i.e., the value of slots @code{:y1} and @code{:y2} in schema
+@c(point-1).  The formula specifies that slot @code{:y} is constrained to be
+the sum of the two values divided by 2, i.e., the average of the two
+values.  Figure @ref(formulas), part @b{(b)}, shows the internal state of
+the formula in a steady-state situation where the formula contains a valid
+cached value.  Under these circumstances, any request for the value of slot
+@code{:y} would simply return the cached value, without recomputing the
+formula.
+
+Parts @b{(c)} and @b{(d)} show the effects of changes to the depended
+values.  Changes  are illustrated by small
+rectangles surrounding the modified information.  The first change is to
+slot @code{:y1} and causes the value in the formula to be marked invalid.
+Note that the formula is not actually recomputed at this point, and the
+cached value is left untouched.  The second change is to slot @code{:y2} and
+does not cause any action to occur, since the formula is already marked
+invalid.
+
+@cindex{value propagation}
+
+Finally, part @b{(e)} shows what happens when the value in slot @code{:y} is
+eventually needed.  The value of the formula is recomputed and again cached
+locally; the cache is marked as valid.  The system is then back to steady
+state.  Note that the formula was recomputed only once, when needed, rather
+than eagerly after each value changed.
+
+
+
+@node Circular Dependencies
+@subsection Circular Dependencies
+
+Constraints may involve circular chains  of
+dependency.  Slot A, for instance, might depend on slot B, which in turn
+depends on slot A; see section @ref(degrees) for an example of a situation
+where this arises fairly naturally.  Circular dependencies may also be used to
+provide a limited emulation of two-way constraint maintenance.
+
+@cindex{circular constraints}
+
+KR is able to deal with circular dependencies without any trouble.  This is
+handled during formula evaluation; if a formula is evaluated and requests a
+value which depends of the formula itself, the cycle is broken and the
+cached value of the formula is used instead.  This algorithm guarantees
+that the network is left in a consistent state, even though the final
+result may of course depend on where evaluation started from.
+
+
+
+@node Dependency Paths
+@subsection Dependency Paths
+
+Typical formulas contain embedded references to other values and
+schemata.  The formula in Figure @ref(formulas), for example, contains
+an indirect reference to schema @c(point-1) through the contents of
+the @code{:other} slot.  Such references are known as
+dependency  paths .
+Whenever a formula is evaluated, its dependency paths are used to
+recompute the updated value.
+
+@cindex{dependency paths}
+@cindex{paths in formulas}
+
+It is possible for a dependency path to become temporarily unavailable.
+This would happen, for instance, if schema @c(point-1) in Figure
+@ref(formulas) was deleted, or if slot @code{:other} in schema
+@c(point-2) was temporarily set to @value(nil).  KR handles such
+situations automatically.  If a formula needs to be evaluated but one
+of its dependency paths is broken, the current cached value of the
+formula is simply reused.  This makes it completely safe to modify
+schemata that happen to be involved in a dependency path, since the
+system handles the situation gracefully.
+
+
+
+@node Constraints and Multiple Values
+@subsection Constraints and Multiple Values
+
+Unlike earlier versions of KR, version @value(version) supports constraints
+on multiple values  in a slot.  The functional
+interface, however, is not complete and therefore certain operations are
+not fully supported at the time of this writing.  Functions which support
+constraints on multiple values are easily identified because they accept a
+@emph{position} parameter which determines what value is affected.
+
+@cindex{multiple values}
+
+The interaction between constraints and multiple values will be completely
+specified in future versions of KR.  For the time being, most applications
+should simply be aware that constraints on the first value in a slot are
+supported universally, whereas some of the functionality may be unavailable
+for constraints on values other than the first one.
+
+
+
+
+
+
+@chapter(Functional Interface: Common Functions)
+
+
+This section contains a list of the more common functions and macros
+exported by the KR interface.  It includes the functionality that most
+Garnet users are likely to need and covers schema representation,
+object-oriented programming, and constraint maintenance.  Section
+@ref(additional-functions) describes parts of the system that are less
+commonly used.
+
+All functions and variables are defined and exported by the KR package.
+The easiest way to make them accessible to an application program is to
+execute the following line:
+@code{(use-package :kr)}
+
+Throughout this and the following section, we will use the schemata defined
+in section @ref(kr-examples) as examples.  All examples assume the initial
+state described there.
+
+
+
+@node  SchemaManipulation
+@subsection Schema Manipulation
+
+This group includes functions that create, modify, and delete whole
+schemata.
+
+@cindex{schema manipulation}
+
+@example
+kr:Create-Instance @emph{object-name prototype} &rest @emph{slot-definitions}@value(macro)
+   
+@end example
+
+@cindex{create-instance}
+@cindex{creating schemata}
+@cindex{creating objects}
+
+This macro creates an instance of the @emph{prototype} with certain slots
+filled in;  if @emph{prototype} is @value(nil), the instance will have no
+prototype.  The instance is named @emph{object-name}.  If @emph{object-name} is
+@value(nil), an unnamed object is created and returned.  If @emph{object-name}
+is a symbol, a special variable by that name is created and bound to the
+new object.
+
+The @emph{slot-definitions}, if present, are used to create initial slots and
+values for the object.  Each slot definition should be a list whose first
+element is the name of a slot, and whose second element is a value for that
+slot.
+
+In addition to this basic slot-filling behavior, this macro also performs
+three operations that are connected to inheritance and constraint
+maintenance.  First of all, create-instance links the newly created
+object to the @emph{prototype} via the @code{:is-a} link, thus making it
+an instance.
+
+Second, if the @emph{prototype} contains any slot with a formula, and the
+@emph{slot-definitions} do not redefine that slot, create-instance copies
+the formula down into the instance.  This means that the @emph{prototype} can
+conveniently provide default formulas  for any slot
+that is not explicitly defined by its instances.
+
+@cindex{default formulas}
+
+Third, if either the @emph{prototype} or the object itself defines the
+@code{:initialize} method , create-instance sends
+the newly created object the @code{:initialize} message.  This is done after
+all other operations have been completed, and provides an automatic way to
+perform object-dependent initializations.
+
+@cindex{initialize method}
+
+Example:
+@example
+(create-instance 'RECTANGLE-4 BOX-OBJECT (:x 14) (:y 15))
+@end example
+
+The following example  demonstrates the use of the
+@code{:initialize}
+method at the prototype  level@footnote{Defining methods
+on Garnet objects is seldom necessary in practice, since real Opal
+prototypes already have built-in @code{:initialize} methods.}:
+@example
+(define-method :initialize BOX-OBJECT (schema)
+   (s-value schema :color :RED)
+   (format t "~S initialized~%" schema))
+
+@cindex{defining methods}
+@cindex{prototypes}
+
+(create-instance 'RECTANGLE-4 BOX-OBJECT (:x 14) (:y 15))
+@emph{;; prints out:}
+#k<RECTANGLE-4> initialized
+@end example
+
+Create-instance understands the  @b(:override) keyword and the
+@b(:name-prefix) keyword; see @ref(create-options) for more details.
+The uniform declaration syntax with the @b(:declare) keyword is used
+to define "local only slots", constant slots, and many others (see section
+@ref(uniform-syntax)).
+
+
+@example
+kr:PS @emph{schema}@value(function)
+@end example
+
+@cindex{printing schemata}
+
+@cindex{ps}
+
+This function prints the contents of the @emph{schema}.  In its simplest form,
+described here, the function is called with the @emph{schema} as its sole
+argument, and prints out the contents of the schema in a standard format.
+Optional arguments also allow you to control precisely what is printed out; the
+more complicated form is described in section @ref(print-control-slots).
+
+The following example shows the simple form of @code{ps}:
+@example
+(ps RECTANGLE-1)
+@emph{;; prints out:}
+{#k<RECTANGLE-1>
+  :Y =  20
+  :X =  10
+  :IS-A =  #k<BOX-OBJECT>
+  }
+@end example
+
+
+
+@example
+kr:Schema-P @emph{thing}@value(function) 
+@end example
+
+@cindex{schema-p}
+
+This predicate returns @value(t) if @emph{thing} is a valid KR schema,
+@value(nil) otherwise.  It returns @value(nil) if @emph{thing} is a
+destroyed schema.  It also returns @value(nil) if @emph{thing} is a formula.
+
+@example
+(schema-p RECTANGLE-1) ==> T
+(schema-p 'random) ==> NIL
+@end example
+
+
+@example
+kr:Is-A-P @emph{schema} @emph{thing}@value(function)
+@end example
+@cindex is-a-p (function)
+
+This predicate returns @value(T) if @emph{schema} is related to @emph{thing}
+(another schema) via the @code{:is-a} relation, either directly or through an
+inheritance chain.  It returns @value(nil) otherwise.
+
+Note that @emph{thing} may have the special value @value(T), which is used as
+a "super-class" indicator; in this case, @code{is-a-p} returns @value(T) if
+@emph{schema} is any schema.  If the @emph{schema} is identical to the @emph{thing},
+@code{is-a-p} also returns @value(T).@* Examples:
+@example
+(is-a-p RECTANGLE-1 BOX-OBJECT) ==> T
+(is-a-p RECTANGLE-1 MY-GRAPHICAL-OBJECT) ==> T
+(is-a-p RECTANGLE-1 RECTANGLE-2) ==> NIL
+(is-a-p RECTANGLE-1 T) ==> T
+@end example
+
+
+
+@node  Slot and Value ManipulationFunctions
+@subsection Slot and Value Manipulation Functions
+
+This group includes the most commonly used KR functions, i.e., the ones
+that retrieve or modify the value in a slot.  This section presents KR value
+manipulation functions that deal with constraints.  A different
+set of primitive functions, which do not deal with constraints, is
+described in Section @ref(additional-functions).
+
+
+@node Getting Values with G-Value and GV
+@subsection Getting Values with G-Value and GV
+@anchor{g-value-and-gv}
+
+When called outside of a formula, @code{g-value} and @code{gv} behave identically.
+When used inside a formula, the function @code{gv} not only returns the value
+of a slot, but also establishes a dependency for the formula on the slot.
+This special property of @code{gv} is discussed in section @ref(gv-in-form).
+
+Novice Garnet users only need to learn about @code{gv}, but @code{g-value} is
+supplied for the rare case in which you want to retrieve a slot value from
+inside a formula without establishing a dependency.
+
+@example
+kr:Gv @emph{object} &rest @emph{slot-names}@value(macro)
+
+kr:G-Value @emph{object} &rest @emph{slot-names}@value(macro)
+@end example
+
+@cindex{g-value}
+
+These macros return the value in a slot of an object.  If the slot is
+empty or not present, they return @value(nil).  Inheritance may be used
+when looking for a value.  @code{G-value} and @code{gv} handle constraints
+properly:  If a formula is currently installed in the slot, the value is
+computed (if needed) and returned.  @code{G-value} will work in place of @code{gv}
+in any of the following examples:
+
+@example
+(gv RECTANGLE-1 :is-a) ==> #k<BOX-OBJECT>
+(gv RECTANGLE-1 :thickness) ==> 1   @emph{; inherited}
+(gv RECTANGLE-1 :color) ==> :BLUE
+(gv RECTANGLE-2 :y) ==> 35          @emph{; computed formula}
+@end example
+
+Although it is common to call @code{g-value} and @code{gv} with only one slot name,
+these macros may actually be given any number of @emph{slot-names}.  The macros
+expand into repeated calls to @code{g-value} and @code{gv}, where each slot is
+used to retrieve another object.  The given slot in the final object (which
+is, in general, different from the @emph{object}) is then
+accessed.  For example:
+@example
+(gv RECTANGLE-2 :left-obj :x)
+@end example
+is equivalent to
+@example
+(gv (gv RECTANGLE-2 :left-obj) :x)
+@end example
+
+Both expressions return the value of the @code{:x} slot of the object
+which is contained in the @code{:left-obj} slot of @c(RECTANGLE-2).  One can
+think of the slot @code{:left-obj} as providing the name of the place from which
+the next slot can be accessed.  Such a slot is often called a
+@emph{link}, since it provides a link to another object which can be used to
+compute values.
+
+
+@node Setting Values with S-Value
+@subsection Setting Values with S-Value
+
+@example
+kr:S-Value @emph{object slot} [@emph{more-slots}] @i[value]@value(function)
+@end example
+
+@cindex s-value
+
+This function is used to set a slot with a given value or formula.  The
+@emph{slot} in the @emph{object} is set to contain the @emph{value}.  Like with
+@code{g-value}
+and @code{gv}, @code{s-value} can be given multiple slots in argument list, when
+the slot to be set is several levels away from @emph{object}.  In the normal
+case, @emph{value} is an ordinary LISP value and simply supersedes any previous
+value in the slot.  If @emph{value} is a formula (i.e.  the result of a call
+to @code{o-formula} or @code{formula}), the formula is installed  in the @emph{slot} and internal bookkeeping information is set up
+appropriately.
+
+@cindex installing formulas
+
+If the @emph{slot} already contains a formula, the following two cases arise.
+If @emph{value} is also a formula, the old formula is replaced and any
+dependencies are removed.  If @emph{value} is not a formula, the
+old formula is kept in place, but the new @emph{value} is used as
+its new, temporary cached value.  This means that the @emph{slot} will keep
+the @emph{value} until such time as the old formula needs to be re-evaluated
+(because some of the values on which it depends are modified).
+
+@code{S-value} returns the new value of the @emph{slot}.
+
+Note that a @b(setf) form is defined for @code{gv} and @code{g-value}, and
+expands into
+@code{s-value}.  This allows a variety of LISP constructs to be
+used in combination with @code{gv} and @code{g-value}, such as the idiom 
+
+@code{(incf (gv object slot))}
+which increments the value of a slot in the object.  For example,
+
+@example
+@emph{;; Change value in depended slot from 20 to 21}
+(incf (gv RECTANGLE-1 :y))
+@emph{;; The constraint is propagated to RECTANGLE-2:}
+(gv RECTANGLE-2 :y) ==> 36          @emph{; recomputed}
+@end example
+
+Constraint propagation is fully enforced during this operation, just as it
+would be in the equivalent expression
+@example
+(s-value RECTANGLE-1 :y (1+ (gv RECTANGLE-1 :y)))
+@end example
+
+
+@node Formula and O-Formula
+@subsection Formula and O-Formula
+@anchor{formula-and-o-formula}
+
+@example
+kr:O-Formula @emph{form} &optional @emph{initial-value}@value(macro)
+@end example
+
+@cindex Formulas
+@cindex o-formula
+
+Given a @emph{form}, this macro returns a formula (formulas are internally
+represented by special structures).  The @emph{form} typically consists of Lisp
+expressions and @code{gv} or @code{gvl} references (see below).@*Examples:
+@example
+(o-formula (gvl :ABOVE-GADGET :x))
+(o-formula (min (gvl :ABOVE-GADGET :x)
+                (+ (gvl :OTHER-GADGET :width) 10)))
+@end example
+The first example  creates a formula which
+causes the slot on which it is installed to have the same value as slot
+@code{:x} of the object contained in slot @c(:above-gadget) of the current
+object.  The second formula is more complex and constrains the slot on
+which it is installed to have as its value the minimum of two values.  One
+value is computed as before, and the other is computed by adding 10 to the
+@code{:width} slot of the object contained in slot @c(:other-gadget) of the
+current object.
+
+@cindex expressions in formulas
+
+The @emph{form} can also be an existing formula, rather than a Lisp
+expression.  In this case, the new formula is linked to the
+existing formula, and inherits the expression from it.  No local state is
+shared by the two formulas.  This form of the call should be used as often
+as possible, since inherited formulas are smaller and more efficient than
+top-level formulas.
+An illustration of this case is given by the
+second call in the following example, which creates a new formula
+that inherits its expression from the first one:
+@example
+(setf f (o-formula (+ (gvl :ABOVE :y)
+                      (floor (gvl :ABOVE :height) 2))))
+(setf g (o-formula f))
+@end example
+
+@cindex Formulas
+@cindex Initial values
+If an @emph{initial-value} is specified, it
+is used as the initial cached value  for the formula.
+This cached value is recorded in the formula but marked invalid, and thus
+it is never used under normal circumstances.  The initial value is only
+used if the formula is part of a circular dependency, or if one of its
+dependency paths is invalid.  Most applications need not be concerned about
+this feature.
+
+@cindex{cached values}
+
+A reader macro has been defined to abbreviate the definition of o-formulas.
+Instead of typing @code{(o-formula (...))}, you could type @code{#f(...)}, which
+expands into a call to @code{o-formula}.  For example, one may write:
+@example
+   (s-value a :left #f(gvl :top))
+@end example
+instead of the equivalent expression
+@example
+   (s-value a :left (o-formula (gvl :top)))
+@end example
+
+@example
+kr:Formula @emph{form} &optional @emph{initial-value}@value(function)
+@end example
+@cindex Formula (function)
+
+Given a @emph{form}, this function returns a formula.  It is similar to
+@code{o-formula}, except that the code in @emph{form} is not compiled until
+run-time, when the @code{formula} call is actually executed.
+
+Code that can be compiled early should use @code{o-formula}, which
+yields more efficient formula evaluation and reduces the amount of storage.
+@code{Formula} might be required when local variables are used in @emph{form},
+and are not set until run-time.  See the "Hints and Caveats" section of
+the Tutorial for more discussion of when a
+formula created with @code{formula} might be needed.
+
+
+@example
+kr:Formula-P @emph{thing}@value(macro)
+@end example
+  
+
+@cindex formula-p
+@cindex predicates
+
+A predicate that returns @value(T) if the @emph{thing} (any Lisp object) is a
+formula created with @code{o-formula} or @code{formula}, @value(NIL) otherwise.
+
+
+@node GV and GVL in Formulas
+@subsection GV and GVL in Formulas
+@anchor{gv-in-form}
+
+@example
+kr:Gv @emph{object} &rest @emph{slot-names}@value(macro)
+@end example
+@cindex{gv}
+
+This macro, which we saw in section @ref(g-value-and-gv), serves a special
+purpose when used within formulas.
+
+In addition to returning a value like @code{g-value}, @code{gv} records the
+dependency  path and ensures that the formula in
+which it is embedded is recomputed whenever the dependency path or the
+value changes.
+
+@cindex{value dependency}
+@cindex @code{gv} in formulas
+
+Note that the @emph{object} can be any object, not just the one on
+which the formula containing @code{gv} is installed.  Specifying the reserved
+name @code{:self} for @emph{object} ensures that the path  starts from the object on which the formula is installed.  This
+can be achieved more simply via @code{gvl}, as explained below.
+
+@cindex{paths in formulas}
+
+The following examples show how to use @code{gv} within formulas:
+@example
+(o-formula (gv RECTANGLE-1 :y))
+(o-formula (+ (gv :self :x) 15))
+(o-formula (equal (gv :self :other :other :color)
+                  (gv :self :color)))
+
+@end example
+
+As a special case, the expression @code{(gv :self)} (without any slot name) may
+be used within a formula to refer to the object to which the formula is
+attached.  This is sometimes useful for formulas which need a way to
+explicitly reference the object on which they are currently installed.
+
+
+@example
+kr:Gvl @emph{slot} &rest @emph{more-slots}@value(macro)
+@end example
+
+@cindex{gvl}
+
+This is a useful shorthand notation for @code{(gv :self @emph{slot
+more-slots})}.  It may only be used within formulas, since it looks for
+@i[slot] in the object on which the surrounding formula is installed.  For
+example, the expression @code{(gvl :color)} returns the current value of the
+@code{:color} slot in the object which contains the formula, and
+is equivalent to the expression @code{(gv :self :color)}.
+
+
+
+@node  Object-OrientedProgramming
+@subsection Object-Oriented Programming
+
+
+This group includes functions which support objected-oriented
+programming  within KR.
+
+@cindex{object-oriented programming}
+
+@example
+kr:Define-Method @emph{slot-name object arg-list} &rest @emph{body}@value(macro)
+@end example
+
+@cindex{define-method}
+
+This macro defines a method  named @emph{slot-name} for the
+@emph{object}.  While @emph{object} can be any object, and in particular any
+instance, it is customary to define methods at the level of prototypes;
+this allows prototypes to provide methods for all their instances.
+
+@cindex{methods}
+
+The method is defined as a function whose argument list is @emph{arg-list} and
+whose body is given by the @emph{body}.  The method is installed on slot
+@emph{slot-name}, which is created if needed.  In order to facilitate debugging,
+the function which implements the method is given a meaningful name formed
+by concatenating the @emph{slot-name}, the string "-METHOD-", and the name of the
+@emph{object}.  Example:
+@example
+(define-method :print BOX-OBJECT (object)
+  (format t "A rectangle at (~D,~D).~%"
+    (gv object :x) (gv object :y)))
+@end example
+After this, the @code{:print} method can be inherited by any instance of
+@c(box-object).  Sending the message to @c(rectangle-2), for example, would
+cause the following to happen:
+@example
+(kr-send RECTANGLE-2 :print RECTANGLE-2)
+@emph{;; prints out:}
+A rectangle at (34,35).
+@end example
+The generated name of the @code{:print} method, in this example,
+would be @c(print-method-box-object).
+
+
+
+@example
+kr:KR-Send @emph{object} @emph{slot} &rest @emph{arguments}@value(macro)
+@end example
+
+@cindex{sending messages}
+@cindex{kr-send}
+
+This macro implements the primitive level of message sending.  The
+@emph{slot} in @emph{object} should yield a Lisp function
+ 
+object; the function is then called with the arguments specified in
+@emph{arguments}.  Note that the function may be local to the @emph{object}, or
+it may be inherited.
+
+@cindex{methods}
+
+If the function, i.e., the value of the expression @t{(g-value object
+slot)}, is @value(NIL), nothing happens and @code{kr-send} simply returns
+@value(NIL).  Otherwise, the function is invoked and the value(s) it
+returns are returned by @code{kr-send}.
+
+
+
+@example
+kr:Call-Prototype-Method &rest @emph{arguments}@value(macro)
+@end example
+
+@cindex{sending messages}
+@cindex{call-prototype-method}
+
+This macro can be used inside an object's method to invoke the method
+attached to the object's prototype.  It can only be used inside object
+methods.  If a prototype of the current object (i.e, the one which supplied
+the method currently being executed) also defines a method by the same
+name, the prototype's method is invoked with @emph{arguments} as the list of
+arguments.  For example,
+@example
+(define-method :notify A (object level)
+  ;; Execute object-specific code:
+  ;; ...
+  ;; Now invoke :notify method from prototype, if any:
+  (call-prototype-method object level))))
+
+(kr-send A :notify A 10)
+@end example
+First of all, @code{kr-send} invokes the method defined locally by object
+@c(a).  Since the method itself contains a call to
+@code{call-prototype-method}, the hierarchy is searched for a prototype
+of object @c(a) which also defines the @code{:notify} method.  If one exists,
+that method is invoked.
+
+A method is free to supply a prototype method with any parameters it
+wants; this can be accomplished simply by using different values in the
+call to @code{call-prototype-method}.  In the example above, for instance, we
+could have written @code{(call-prototype-method object (+ level 1))}.  It is
+customary, however, to invoke @code{call-prototype-method} with exactly the
+same parameters as the original call. 
+
+Note that the name of the original object and the message name are not
+specified in @code{call-prototype-method}.  KR automatically provides the
+right values.
+
+
+@example
+kr:Apply-Prototype-Method &rest @emph{args}@value(macro)
+@end example
+
+ 
+The macro @code{apply-prototype-method} is similar to
+@code{call-prototype-method}, but the method defined by the prototype is
+invoked using @code{apply} rather than @code{funcall}.  This macro may be
+useful for methods that take @code{&rest} arguments.
+@cindex{apply-prototype-method}
+
+
+@example
+kr:Method-Trace @emph{object message-name}@value(macro)
+@end example
+
+@cindex{methods}
+@cindex{apply-prototype-method}
+
+This macro can be used to trace method execution.  Trace information
+is printed every time an instance of the @emph{object} is sent the message
+named @emph{message-name}.  Since this expands into a call to the
+primitive macro @b(trace), the Lisp expression @b{(untrace)} may
+be used later to eliminate trace information.@*Example:
+@example
+(method-trace BOX-OBJECT :print)
+@end example
+
+
+@node  ReaderMacros
+@subsection Reader Macros
+
+
+@cindex{reader macros}
+
+A reader macro is defined by default for the @code{#k<...>} notation, which is
+produced by the functions @code{ps} and @code{gv} when the variable
+@code{kr::*print-as-structure*} is non-NIL.  This macro allows objects written
+with the @code{#k} notation to be read back in as a KR object.
+If necessary, this feature may be disabled by recompiling KR after
+pushing the keyword @code{:no-kr-reader} onto the @code{*features*} list.
+
+A second reader macro is defined for convenience, as discussed previously.
+This reader macro
+allows o-formulas to be entered using the @code{#f()} notation, which expands
+into a call to @code{o-formula}.  For example, one may write:
+@example
+   (s-value a :left #f(gvl :top))
+@end example
+instead of the equivalent expression
+@example
+   (s-value a :left (o-formula (gvl :top)))
+@end example
+
+
+@node The Type-Checking System
+@section The Type-Checking System
+@anchor{type-system}
+
+@cindex{type-checking}
+
+KR supports complete type-checking for slots.  Any
+slot in any object can be declared of a certain type.  Slots can
+be declared with one of the pre-defined types Garnet provides, which
+cover most of the commonly occurring situations, or new types may be
+created as needed using the macro @code{def-kr-type} (see section
+@ref[creating-types]).  Type
+expressions use the same syntax as in the Common Lisp type system.
+Type declarations are inherited, so it is generally not necessary to
+specify types for the slots of an instance (unless, of course, the
+instance is to behave differently from the prototype).
+
+Every time the value of a typed slot changes, KR checks that the new
+value is compatible with the declared type of the slot.  If not, a
+continuable error is generated.  More specifically, the type of a
+value is checked against the type specification for a slot under the
+following circumstances:
+
+@itemize @bullet
+
+@item
+when the slot is first created using @code{create-instance}: if a value
+is specified and the value is of the wrong type, an error is
+generated;
+
+@item
+when a slot is set to a certain value using @code{s-value};
+
+@item
+when the value in a slot is computed by a formula, and the formula is
+evaluated;
+
+@item
+when the type of a slot that already contains a value is changed using
+@code{s-type} (see below).
+@end itemize  
+
+This mechanism ensures that potential problems are detected
+immediately; without type-checking, it would be possible for a bad
+value in a slot to cause hard-to-track errors later on.  For example,
+if a slot in an object is supposed to contain an integer value, a
+formula in another object would typically assume that the value is
+correct, and compute an expression such as @code{(+ 10 (gv obj :left))}.
+If the value in the slot @code{:left} is incorrectly set to NIL, however,
+this would not cause an error until much later, when the formula is
+actually recomputed and the operator + is given a null value.  When
+type-checking is enabled, on the other hand, the user would see an
+error immediately when the value is set to NIL, because NIL does not
+meet the "integer" declaration.
+
+The KR type-checking mechanism is independent of the lisp type system.
+Even if a type is defined with lisp's @code{deftype}, another corresponding
+type must be defined with KR's @code{def-kr-type}.  The two types may have the
+same name.  The important thing is that the new type must be registered with
+KR's type system.
+
+Type-checking may be turned off completely, for maximum performance in
+finished systems, by setting the variable @code{kr::*types-enabled*} to
+NIL.  However, the performance overhead associated with type-checking
+is small, and we recommend that you always keep type-checking enabled.
+This ensures early detection of problems that might otherwise be
+difficult to track down.
+
+
+@node Creating Types
+@subsection Creating Types
+@anchor{creating-types}
+
+New types may be declared as needed with the macro @code{def-kr-type},
+which is exported from the KR package.  The syntax of the macro is as
+follows:
+
+
+@cindex{def-kr-type}
+@example
+kr:Def-KR-Type @i[name-or-type] &optional @i[args body doc-string] @value(macro)
+@end example
+
+This macro defines a new type for KR's type-checking mechanism.  Every
+type used in slot declarations must have been defined with
+@code{def-kr-type}.  However, Garnet already predefines the most common
+types, so you do not have to worry about those.
+
+The macro may be called in two different styles, one named, one
+unnamed.  The first style is used to define types that have a name; you
+may then use either the name or the corresponding expression in actual
+type declarations.  The second style simply defines a type expression,
+which is not named and hence must be used verbatim in type
+declarations.  Here are examples of the two styles:
+
+@sp 1
+@example
+  (def-kr-type my-type () '(or keyword null))
+
+  (def-kr-type '(or keyword null))
+@end example
+
+The first style uses the same syntax as Lisp's @code{deftype}; the
+@i[body] should be a type expression acceptable to @code{deftype}, and is
+used for typechecking when the name is used.  In the current
+implementation of the type system, the @emph{args} parameter should
+always be NIL.@footnote{The presence of the @emph{args} parameter is to maintain
+consistency of syntax with the standard lisp function @code{deftype}.  If you
+need to pass a parameter to your predicate, then define the predicate using
+@code{satisfies}.}  With either example
+above you could then specify some object's type to be @code{'(or keyword
+null)}.  With the first style, however, you could also specify the
+type to be @code{'my-type}, which may be more convenient and easier to
+maintain in the long run.
+
+The named style also allows a @i[doc-string] to be specified.  This is
+a human-readable documentation string that is associated with the
+type, and is useful for debugging purposes.  For example, the first
+call above could be written as:
+
+@sp 1
+@example
+@group
+  (def-kr-type my-type () '(or keyword null)
+     "Either NIL or a keyword")
+@end group
+@end example
+
+
+@node Declaring the Type of a Slot
+@subsection Declaring the Type of a Slot
+
+
+Types are associated with slots either statically or dynamically.  The
+former mechanism is by far the most common, and is done at object
+creation time using the @c[:declare] option in @code{create-instance}.
+For example, consider the following code:
+
+@sp 1
+@example
+(create-instance 'R1 opal:rectangle
+  :declare (:type (integer :left :top)
+		  ((integer 0) :width :height)
+		  ((or keyword null) :link-name))
+  (:link-name :PARENT)
+  (:left 10) (:height (+ 15 (o-formula (gvl :width)))))
+@end example
+
+The example declares that the values contained in slots @code{:left} and
+@code{:top} must be integers, the values in slots @code{:width} and
+@code{:height} must be positive integers, and the value in slot
+@code{:link-name} must be either a keyword or NIL.  Note that this
+declaration is legal, as the type @code{(or keyword null)} was declared
+above using @code{def-kr-type}.  Note also that the declarations for
+slots @code{:left}, @code{:top}, @code{:width}, and @code{:height} are, in fact,
+not necessary, as they would normally be inherited from the prototype.
+
+
+Types can also be associated with slots dynamically, i.e., after
+object creation time.  This is done with the function
+
+@cindex{s-type}
+@example
+kr:S-Type @i[object slot type] &optional (@i[check-p] T) @value(function)
+@end example
+
+This function changes the type declaration for the @i[slot] in the
+@i[object] to the given @i[type].  If @i[check-p] is non-NIL (the
+default), the function signals a continuable error if the value
+currently in the @i[slot] does not satisfy the new type.  Setting
+@i[check-p] to NIL disables the error; note that this should only be
+used with caution, as it may leave the system in an inconsistent state
+(i.e., the @i[slot] may in fact contain an illegal value).  The
+function returns the @i[type] it was given.
+
+
+The type associated with a slot can be retrieved by the function
+
+@cindex{g-type}
+@example
+kr:G-Type @i[object slot]	@value(function)
+@end example
+If a type is associated with the slot, it is returned (more precisely,
+if the type is named, the name is returned; otherwise, the type
+expression is returned).  If there is no type, the function returns
+NIL.
+
+@node Type Documentation Strings
+@subsection Type Documentation Strings
+
+
+Given a type (for example, something returned by @code{g-type}), its
+associated documentation string can be retrieved using:
+
+@cindex{get-type-documentation}
+@example
+kr:Get-Type-Documentation @i[type]	@value(function)
+@end example
+
+This function returns the human-readable type documentation string, or
+NIL if there is none.
+
+
+Given a type, it is also possible to modify its string documentation,
+using the function:
+
+@cindex{set-type-documentation}
+@example
+kr:Set-Type-Documentation @i[type doc-string]	@value(function)
+@end example
+
+This function associates the @i[doc-string] with the @i[type].  When
+an error message which concerns the type is printed, the documentation
+string is printed in addition to the raw type.
+
+
+@node  Retrieving the PredicateExpression
+@subsection Retrieving the Predicate Expression
+
+
+When types are named, @code{g-type} returns just the name of the type, rather
+than its associated expression.  Sometimes it is useful to retrieve the
+predicate of the type associated with the type name.  The following function
+serves this purpose:
+
+
+@cindex{get-type-definition}
+@example
+kr:Get-Type-Definition @i[type-name] @value(function)
+@end example
+
+Given a symbol which names a KR type (i.e., a named type defined with
+@code{def-kr-type}), this function returns the type expression that was used
+to define the type.  If no such expression is found, the function returns NIL.
+
+
+
+@node Explicit Type-Checking
+@subsection Explicit Type-Checking
+
+In addition to KR's built-in type checking, which happens when the
+value in a slot is changed, it is also possible to check whether a
+value is of the right type for a slot.  This can be done with
+the function:
+
+@cindex{check-slot-type}
+@example
+kr:Check-Slot-Type @i[object slot value] &optional (@i[error-p] T) @value(function)
+@end example
+
+The function checks whether the given @i[value] is of the right type
+for the @i[slot] in the @i[object].  If not, it raises a continuable
+error, unless @i[error-p] is set to NIL; in this case, it returns a
+string which describes the error.  This function is called
+automatically by KR any time a slot is modified, so you normally do
+not have to call it explicitly.
+
+
+@node Temporarily Disabling Types
+@subsection Temporarily Disabling Types
+
+It is possible to execute a piece of code with type-checking
+temporarily disabled, using the macro
+
+@cindex{with-types-disabled}
+@example
+kr:With-Types-Disabled &body @i[body] @value(macro)
+@end example
+This macro is similar to others, such as @code{with-constants-disabled}.
+During the execution of the @i[body], type-checking is disabled, and
+no errors are given if a value does not meet the type specification of
+its slot.  Just as with @code{with-constants-disabled}, this macro should
+only be used with caution, as it may leave the system in an
+inconsistent state.
+
+
+@subsection System-Defined Types
+@section System-Defined Types
+
+The following type predicate can be used to declare types:
+@cindex is-a-p (type predicate)
+
+@deffn {Type Predicate} kr:is-a-p @var{prototype}
+
+This is a type predicate, NOT a function or macro; it can only be
+used within type specifiers.  This predicate declares that the value
+in a slot should be an instance of the @i[prototype], either directly
+or indirectly.  The predicate is true of all objects for which a call
+to the function @code{kr:is-a} would return true.  For example, the
+following definition can be used as the type of all rectangles:
+
+@sp 1
+
+@example
+(def-kr-type rect-type () '(is-a-p opal:rectangle))
+@end example
+@sp 1
+
+@group
+Garnet defines a number of types, which cover the types of the most
+commonly used slots.  This is the list of pre-defined basic types:
+@begin[description, indent=-2]
+@cindex T (type)
+@c(T) - Any value satisfies this type.
+
+@cindex kr-boolean (type)
+@c(kr-boolean) - Same as @code{T}, but specifically intended for
+slots which take a NIL or non-NIL value, often used as boolean variables.
+
+@cindex null (type)
+@c(null) - Only the value NIL satisfies this type.
+
+@cindex string (type)
+@c(string) - Strings satisfy this type.
+
+@cindex keyword (type)
+@c(keyword) - All Lisp keywords satisfy this type.
+
+@cindex integer (type)
+@c(integer) - All integers (fixnums and bignums) satisfy this type.
+
+@cindex number (type)
+@c(number) - This type includes all numbers: integers, floating point,
+complex numbers, and fractions.
+
+@cindex list (type)
+@c(list) - Any list satisfies this type.
+
+@cindex cons (type)
+@c(cons) - Any cons cell (lists and dotted pairs) satisfies this type.
+
+@cindex schema (type)
+@c(schema) - Any non-destroyed KR object satisfies this type.
+@end[description]
+@end group
+@sp 1
+
+
+@group
+Garnet also defines many non-basic types, which are typically used
+by many objects throughout the system.  The following types do not have a
+name.  They are often used for slots in
+Opal fonts, line styles, etc.  Because they are predefined, you don't
+need to call @code{def-kr-type} for them.
+
+@sp 0.5
+
+@Begin(description, columns = 2, columnmargin = 0.33 in, linewidth = 3.33 in,
+       boxed, columnbalance=on, size=8, spread=0, indent=-2, FaceCode T)
+'(real 0 1)
+
+'(integer 0 1)
+
+'(integer 0)
+
+'(integer 1)
+
+'(integer 2)
+
+'(member 0 1 2 3)
+
+'(or null integer)
+
+'(or null (integer 0))
+
+'(or keyword (integer 0))
+
+'(or number null)
+
+'(member :even-odd :winding)
+
+'(or (member :below :left :right) list)
+
+'(or keyword character list)
+
+'(or list string)
+
+'(or list (member t))
+
+'(or list (satisfies schema-p))
+
+'(or string atom)
+
+'(or string (satisfies schema-p))
+
+'(or function symbol)
+
+'(or list integer function symbol)
+
+'(or null function symbol)
+
+'(or null keyword character)
+
+'(or null string)
+
+'(or null (satisfies schema-p))
+
+'(or null string keyword (satisfies schema-p))
+
+'(or string keyword (satisfies schema-p))
+
+@end(description)
+@end group
+
+
+
+
+
+@group
+The following non-basic types are named, and have associated documentation
+strings.  Users can reference these types anywhere in Garnet programs.
+To access each type's own documentation string, use
+@code{get-type-documentation}.
+
+@begin[description, indent=-2]
+
+@cindex known-as-type
+@c(known-as-type) - a keyword (this type is used in the @code{:known-as} slot)
+
+@cindex aggregate(-or-nil) type
+@c(aggregate) - an instance of @code{opal:aggregate}
+
+@c(aggregate-or-nil) - either an instance of @code{opal:aggregate} or NIL
+
+@cindex bitmap(-or-nil) type
+@c(bitmap) - an instance of @code{opal:bitmap}
+
+@c(bitmap-or-nil) - either an instance of @code{opal:bitmap} or NIL
+
+@cindex color(-or-nil) type
+@c(color) - an instance of @code{opal:color}
+
+@c(color-or-nil) - either an instance of @code{opal:color} or NIL
+
+@cindex font(-...) type
+@c(font) - either an instance of @code{opal:font} or @code{opal:font-from-file}
+
+@c(font-family) - one of @code{:fixed}, @code{:serif}, or @code{:sans-serif}
+
+@c(font-face) - one of @code{:roman}, @code{:bold}, @code{:italic}, or
+@code{:bold-italic}
+
+@c(font-size) - one of @code{:small}, @code{:medium}, @code{:large}, or
+@code{:very-large}
+
+@cindex filling-style(-or-nil) type
+@c(filling-style) - an instance of @code{opal:filling-style}
+
+@c(filling-style-or-nil) - either an instance of opal:filling-style or NIL
+
+@cindex line-style(-or-nil) type
+@c(line-style) - an instance of @code{opal:line-style}
+
+@c(line-style-or-nil) - either an instance of @code{opal:line-style} or NIL
+
+@cindex inter-window-type
+@c(inter-window-type) - a single @code{inter:interactor-window}, or a list of
+windows, or T, or NIL.
+
+@cindex window(or-nil) type
+@c(window) - an instance of @code{inter:interactor-window}
+
+@c(window-or-nil) - either an instance of @code{inter:interactor-window} or NIL
+
+@cindex fill-style type
+@c(fill-style) - one of @code{:solid}, @code{:stippled}, or @code{:opaque-stippled}
+
+@cindex draw-function type
+@c(draw-function) - one of @code{:copy, :xor, :no-op, :or, :clear, :set,
+:copy-inverted, :invert, :and, :equiv, :nand, :nor,
+:and-inverted, :and-reverse, :or-inverted, :or-reverse}
+
+@cindex h-align type
+@c(h-align) - one of @code{:left}, @code{:center}, or @code{:right}
+
+@cindex v-align type
+@c(v-align) - one of @code{:top}, @code{:center}, or @code{:bottom}
+
+@cindex direction(-or-nil) type
+@c(direction) - either @code{:vertical} or @code{:horizontal}
+
+@c(direction-or-nil) - either @code{:vertical}, @code{:horizontal}, or NIL
+
+@cindex items-type
+@c(items-type) - list of items: ("Label2"...)
+
+@cindex accelerators-type
+@c(accelerators-type) - list of lists: ((#\r "Alt-r" #\meta-r)...)
+
+@cindex filename-type
+@c(filename-type) - a string that represents a pathname
+
+@cindex priority-level type
+@c(priority-level) - an instance of @code{inter:priority-level}
+
+@end[description]
+@end group
+
+
+
+@node Functional Interface: Additional Topics
+@section Functional Interface: Additional Topics
+
+@anchor{additional-functions} This section describes features of KR that
+are seldom needed by casual Garnet users.  These features are useful for large
+application programs, especially ones which manipulate constraints
+directly, or for application programs which use the more advanced knowledge
+representation features of KR.
+
+
+@node  SchemaManipulation
+@subsection Schema Manipulation
+
+
+@example
+kr:Create-Schema @emph{object-name} &rest @emph{slot-definitions}@value(macro)
+@end example
+
+@cindex{create-schema}
+
+This macro  creates and returns a new object
+named @cindex{object names} @emph{object-name}.  It is much more primitive than
+create-instance, since it does not copy down formulas from a prototype
+and does not call the @code{:initialize} method.
+
+@cindex{creating schemata}
+
+If @emph{object-name} is @value(nil), an unnamed object is created and
+returned.  If @emph{object-name} is a symbol, a special variable by that name
+is created and bound to the new object.  The @emph{slot-definitions}, if
+present, are used to create initial slots and values for the object.  Each
+slot definition should be a list whose first element is the name of a slot,
+and whose second element is the value for that slot.
+
+@code{Create-schema} understands the @b(:override) keyword and the
+@b(:name-prefix) keyword; see @ref(create-options) for more details.
+
+Examples:
+@example
+(create-schema 'RECTANGLE-3 (:is-a BOX-OBJECT) (:x 70))
+(create-schema 'RECTANGLE-3 :override (:y 12))   @emph{; add a slot}
+(create-schema NIL (:is-a MY-GRAPHICAL-OBJECT))
+@end example
+
+
+
+@example
+kr:Create-Prototype @emph{object} &rest @emph{slot-definitions}@value(macro)
+@end example
+
+@cindex{create-prototype}
+@cindex{creating schemata}
+@cindex{creating objects}
+
+This macro is slightly more primitive than create-instance.  Unlike
+create-instance, it does not allow a prototype to be specified
+directly.  Moreover, it does not automatically send the @code{:initialize}
+message to the newly created @emph{object}.  Like create-instance, it
+copies formulas from any prototype into the newly created @emph{object}.
+
+The following two examples are roughly equivalent:
+@example
+(create-instance NIL BOX-OBJECT (:x 12))
+
+;;; The hard way to do the same thing
+(let ((a (create-prototype NIL
+	   (:is-a BOX-OBJECT) (:x 12))))
+  (kr-send a :initialize a))
+@end example
+
+Most applications will find create-instance much more convenient.  The
+only case when @code{create-prototype} should be used is when it is important
+that the @code{:initialize} message @emph{not} be sent to an object at creation
+time.
+
+@code{Create-prototype} also understands the  @b(:override) keyword and the
+@b(:name-prefix) keyword; see @ref(create-options) for more details.
+
+
+
+@example
+kr:Destroy-Schema @emph{object}@value(Function)
+@end example
+
+@cindex{destroy-schema}
+
+Destroys the @emph{object}.  Returns @value(T) if the object was destroyed,
+@value(nil) if it did not exist.  This function takes care of properly
+removing all constraint dependencies to and from the @emph{object}.  Any
+formula installed on any slot of the @emph{object} is also destroyed.
+
+Usually, Garnet users do not call this function directly.  Instead, they
+use @t{(opal:destroy object)}, which performs all necessary clean-up
+operations and eventually calls @code{destroy-schema}.
+
+
+
+@example
+kr:Destroy-Slot @emph{object slot}@value(Function)
+@end example
+
+@cindex{destroy-slot}
+
+Destroys the @emph{slot} from the @emph{object}.  The value previously stored in
+the slot, if there was one, is lost.  All constraints to and from @emph{object}
+are modified accordingly.  The invalidate demon is run on the slot before
+it is destroyed, ensuring that any changes caused by this action become
+visible to formulas that depend on the slot.  Using @code{destroy-slot} on slots
+that are declared constant gives a continuable error.  Continuing from the
+error causes the slot to be destroyed anyway.  This behavior can be overridden
+by using the macro @code{with-constants-disabled}.
+
+
+
+
+
+
+@example
+kr:Name-For-Schema @emph{object}@value(function)
+@end example
+
+@cindex{name-for-schema}
+@cindex{schema names}
+
+Given a @emph{object}, this function returns its name as a string.  The
+special notation @emph{#k<>} is never used, i.e., the name is the actual name
+of the object.  The return value should never be modified by the calling
+program.
+
+
+
+@node Uniform Declaration Syntax
+@subsection Uniform Declaration Syntax
+@anchor{uniform-syntax}
+
+@cindex{declare syntax}
+@cindex{uniform declaration syntax}
+
+@group
+
+One syntax can be used for all kinds of declarations
+associated with slots in an object.  Declarations are generally specified at
+object creation time.  In some
+cases (notably, in the case of types), it is also meaningful to
+modify declarations after an object has been created; in such cases, a
+separate function (such as @code{s-type}) is provided.  (For details on the
+type-checking mechanism, see Chapter @ref[type-system].)
+@end group
+
+@sp 1
+
+@group
+The general syntax for declarations in @code{create-instance} is as follows:
+@example
+(create-instance instance prototype
+  [:DECLARE ((declaration-1 [slot1 slot2 ...])
+             (declaration-2 [slot1 ...])
+             ...)]
+  [:DECLARE ((declaration-3 [slot1 ...])
+            ...)]
+  slot-specifiers ...)
+@end example
+@end group
+@sp 1
+
+The keyword @c[:declare] introduces a list of declarations.  The
+keyword may appear more than once, which allows separate groups of
+declarations.  Each group of declarations may contain one or more
+declarations; if there is only one, a level of parentheses may be
+omitted.  Each declaration in a list consists of a keyword, which
+specifies what property is being declared, followed by any number of
+slot names (including zero).  All slots are declared of the given
+property.
+
+Consider the following, rather complex example:
+@example
+(create-instance 'REC A
+  :declare ((:type (vector :BOX)
+		   (integer :LEFT :TOP)
+		   ((or (satisfies schema-p) null) :PARENT))
+	    (:type ((member :yes :no) :VALUE))
+	    (:update-slots :LEFT :TOP :WIDTH :HEIGHT :VALUE))
+  :declare (:type (list :IS-A-INV))
+
+  (:left (o-formula (+ (gvl :parent :left) (floor (gvl :width) 2))))
+  (:top 10))
+@end example
+
+The first declaration group defines types (in two separate lists) and
+the list of update-slots for the object.  Slot @code{:box} is declared as
+a Lisp vector; left and top are declared as integers; slot @code{:parent}
+must be either null or a valid KR object; and slot @code{:value} must
+contain either the value :yes or the value :no.  The second
+declaration group shows the simplified form, in which only one
+declaration is used and therefore the outside parentheses are dropped.
+
+@sp 1
+@group
+The following keywords can be used to declare different slot properties:
+
+@begin[description, indent=-2]
+@c(:constant) - The slots that follow are declared constant.  Note that (in
+this case only) the special value T indicates that the slots in the
+prototype's @code{:maybe-constant} slot should be used.  (See section
+@ref[constant-slots].)
+
+@c(:ignored-slots) - The slots that follow will not be printed by the
+function @code{ps}.  (See section @ref[print-control-slots].)
+
+@c(:local-only-slots) - The values that follow should be lists of the form
+@i[(slot-name  copy-down-p)].  The @emph{slot-name} specifies the name of a slot
+which should be treated as local-only, i.e., should not be inherited by the
+object's instances.  If @emph{copy-down-p} is NIL, the slot will have value NIL in
+the instances.  Otherwise, the value from the object will be copied
+down when instances are created and marked as local; this prevents
+further inheritance, even if the value in the prototype is changed.
+(See section @ref[local-only].)
+
+@c(:maybe-constant) - Specifies the list of slots that can be made constant
+in this object's instances simply by specifying the special value T.
+(See section @ref[constant-slots].)
+
+@c(:output) - Specifies the list of output slots for the object, i.e., the
+slots that are computed by formulas and may provide useful output
+values for communication with other objects.
+
+@c(:parameters) - Specifies the list of parameters for the object, i.e.,
+the slots designed to allow users to customize the appearance or
+behavior of the object.  This slot is used extensively in the Garnet Gadgets
+to indicate user-settable slots.
+
+@c(:sorted-slots) - Specifies the list of slots (in the appropriate order)
+that @code{ps} should always print first.
+(See section @ref[print-control-slots].)
+
+@c(:type) - Introduces type declarations for one or more slots.
+(See chapter @ref[type-system].)
+
+@c(:update-slots) - The list of update slots for the object, i.e., the
+slots that should trigger the @code{:invalidate-demon} when modified.
+(See section @ref[update-slots].)
+@end[description]
+@end group
+
+@node Declarations in Instances
+@subsection Declarations in Instances
+
+Most inherited declarations follow the standard KR scheme, where a
+@c(:maybe-constant) or @c(:update-slots) declaration in an instance
+will completely
+override the declaration in the prototype.  One important exception is
+the @c(:type) declaration, which is @emph{additive} from prototype to
+instance.  That is, all of the types declared in a prototype will be
+valid in its instances, along with any new type declarations in the
+instance.  So you do not need to repeat type declarations in the
+instances of an object.
+
+For other kinds of declarations besides @c(:type), a convenient syntax has
+been provided for specifying declarations in instances.  If you want all the
+declarations in a prototype to be inherited by the
+instance along with several new ones, you could either retype all the 
+declarations in the instance, or you could use the @code{T} and @code{:except}
+syntax.  For example, it is possible to write
+@example
+(create-instance 'REC A
+  :declare ((:output T :new-slot)
+	    (:parameters T :except :left)))
+@end[programexample]
+to indicate that object REC's list of output slots includes all the
+ones declared in object A, plus the @code{:new-slot}.  Also, the list of
+parameter slots is equal to the one in A, minus the slot @code{:left}.
+
+@sp 1
+@group
+Declarations made in a prototype can be eliminated with an empty
+declaration in an instance.  This may be particularly convenient for
+declarations such as @c[:maybe-constant].  For example, the expression
+@example
+  :declare ((:TYPE) (:MAYBE-CONSTANT))
+@end[programexample]
+in a call to @code{create-instance} would clear the @c(:maybe-constant)
+declarations from the prototype, and eliminate all type declarations.
+@end group
+@sp 1
+
+However, note that redefining the @c(:constant) declaration may
+not yield the expected results.  When a slot becomes constant in a
+prototype, that slot will be constant for all instances.  This makes
+sense because any formulas in the prototype that relied on the
+constant slot have been eliminated, and cannot be restored in the
+instance.  See section @ref(constant-slots) for an elaborate
+discussion of constant slots.
+
+@node Examining Slot Declarations
+@subsection Examining Slot Declarations
+
+The following functions may be used to determine what slot
+declarations are associated with a particular slot in an object, or to
+retrieve all slot declarations for an object.  Note that there is no
+function to alter the declaration on an object after the object has
+been created, as most properties can only be set meaningfully at
+object creation time.
+
+
+
+@cindex{get-declarations}
+@example
+kr:Get-Declarations @i[object selector]		@value(function)
+@end example
+
+Returns a list of all the slots in the @i[object] that have associated
+declarations of the type given by @i[selector], which should be one of
+the keywords listed above.  If @i[selector] is @code{:type}, the return value
+is a list of lists, such as
+@example
+((:left (or integer null)) (:top (or integer null)))
+@end[programexample]
+If @i[selector] is one of other keywords, the function returns a list of all
+the slots that have the corresponding declaration.
+
+
+
+@cindex{get-slot-declarations}
+@example
+kr:Get-Slot-Declarations @i[object slot]		@value(function)
+@end example
+
+This function returns a list of all the declarations associated with
+the @i[slot] in the @i[object].  The list consists of keywords, such
+as @c[:constant] and @c[:update-slot], or (in the case of type declarations)
+a list of the form @code{(:type @i{type-specification})}.
+
+
+
+@node  Relations andSlots
+@subsection Relations and Slots
+
+
+KR supports special slots called @i[relations].  Relations serve two
+purposes: allowing inheritance, and automatically creating inverse
+connections.  In addition to a handful of predefined relations,
+application programs can create new relations as needed via the
+function @code{create-relation} (see below).
+
+Slots such as @code{:is-a}, which enable knowledge to be inherited from
+other parts of a network, are called @emph{inheritance relations}.
+Inheritance along such relations proceeds depth-first
+  and may include any number of steps.  The
+search terminates if a value is found, or if no other object can be
+reached.
+
+@cindex{inheritance search}
+
+Any relation, including user-defined ones, may also be declared to have an
+inverse relation .  If this is the case, KR
+automatically generates an inverse link any time the relation is used to
+connect one object to another.  Imagine, for instance, that we defined
+@code{:part-of} to be a relation having @code{:has-parts} as its inverse.  Adding
+object A to the slot @code{:part-of} of object B would automatically add B to
+the slot @code{:has-parts} of object A, thereby creating a reverse link.
+
+@cindex{inverse relations}
+
+KR automatically maintains  all relations and
+inverse relations, and the application programmer does not
+have to worry about them.  In the example above, if slot @code{:part-of}
+in object B is deleted, the value B is also removed from the slot
+@code{:has-parts} of object A.  The same would happen is object B is deleted.
+This ensures that the state of the system is consistent at any
+point in time, independent of the particular sequence of operations.
+
+@cindex{relation maintenance}
+
+The following functions handle user-defined relations and slots:
+
+@example
+kr:Create-Relation @emph{name inherits-p} &rest @emph{inverses}@value(Macro)
+@end example
+
+@cindex{create-relation}
+
+Declares  the slot @emph{name} to be a
+relation.  The new relation will have @emph{inverses} (a possibly empty
+list of slot names)
+as its inverse  relations.  If @emph{inherits-p} is
+non-@value(nil), @emph{name} becomes a relation with inheritance, and
+values may be inherited through it.
+
+@cindex{relations}
+@cindex{inverse relations}
+
+The following form defines the non-inheritance relation
+@code{:has-parts} and its two inverses, @code{:part-of} and @code{:subsystem-of}:
+@example
+(create-relation :has-parts NIL :part-of :subsystem-of)
+@end example
+
+
+
+@example
+kr:Relation-P @emph{thing}@value(Macro)
+@end example
+
+@cindex{relation-p}
+
+This predicate returns @value(nil) if @emph{thing} is not a
+relation, or a non-@value(nil) value if it is the name of a relation slot.@*
+Examples:
+@example
+(relation-p :is-a) ==> non-NIL value
+(relation-p :color) ==> NIL
+@end example
+
+
+
+@example
+kr:Has-Slot-P @emph{object} @emph{slot}@value(function)
+@end example
+
+@cindex{has-slot-p}
+
+A predicate that returns @value(T) if the @emph{object} contains a slot named
+@emph{slot}, @value(NIL) otherwise.  Note that @emph{slot} must be local to the
+@emph{object}; inherited slots are not considered.@*
+Examples:
+@example
+(has-slot-p RECTANGLE-1 :is-a)  ==> T
+(has-slot-p RECTANGLE-1 :thickness) ==> NIL   @emph{; not local}
+@end example
+
+
+
+@example
+kr:DoSlots (@emph{slot-var object} &optional @emph{inherited}) &rest @emph{body}@value(Macro)
+@end example
+
+@cindex{doslots}
+
+Iterates   the @emph{body} over all the
+slots of the @emph{object}.  The @emph{slot-var} is bound to each slot in turn.
+The @emph{body} is executed purely for side effects, and @code{doslots} returns
+@value(NIL).  Example:
+
+@cindex{slot iterator}
+@cindex{iterators}
+
+@example 
+(doslots (slot RECTANGLE-1)
+  (format t "Slot ~S has value ~A~%"
+          slot (gv RECTANGLE-1 slot)))
+@emph{;; prints out:}
+Slot :Y has value 20
+Slot :X has value 10
+Slot :IS-A has value #k<BOX-OBJECT>
+@end example
+
+By default, @code{doslots} only iterates over the local slots of @emph{object}.
+But if the @emph{inherited} parameter is T, then all slots that have been
+inherited from the @emph{object}'s prototype will be iterated over as well.
+Note: Only those slots that have actually been inherited will be included
+in the list of inherited slots.  If they are merely defined in the prototype
+and have not been @code{gv}'d in the instance, then they will not be
+included in the iteration list.  See the description of the function @code{ps}
+in section @ref(print-control-slots) for a way to display all the slots that
+could possibly be inherited by the object.
+
+
+
+@node  ConstraintMaintenance
+@subsection Constraint Maintenance
+
+
+
+These functions are concerned with the constraint maintenance part of KR.
+
+
+@example
+kr:Change-Formula @emph{object slot} @emph{form}@value(function)
+@end example
+
+@cindex change-formula
+
+If the @emph{slot} in @emph{object} contains a formula, the formula is modified
+to contain the @emph{form} as its new function.  @code{change-formula} works
+properly on any formula, regardless of whether the old function was local
+or inherited from another formula.  If formula inheritance is involved,
+this function makes sure that all the links are modified as appropriate.
+If the @emph{slot} does not contain a formula, nothing happens.
+
+Note that this function cannot be used to install a fixed value on a slot
+where a formula used to be; @code{change-formula} only modifies the expression
+within a formula.
+
+
+
+@example
+kr:Recompute-Formula @emph{object slot}@value(function)
+@end example
+
+@cindex{recompute-formula}
+
+
+This function can be called to force a formula to be recalculated.  It may
+be used in situations where a formula depends on values which are outside
+of KR (such as application data, for example).  The formula stored in the
+@emph{slot} of the @emph{object} is recalculated.  Formulas which depend on the
+@emph{slot}, if any, are then marked invalid.
+
+
+
+@example
+kr:Mark-As-Changed @emph{object slot}@value(function)
+@end example
+
+@cindex{mark-as-changed}
+@cindex{value propagation}
+
+This function may be used to trigger constraint propagation for a
+@emph{object} whose @emph{slot} has been modified by means other than
+@code{s-value}.  Some applications may need to use destructive operations on
+the value in a slot, and then notify the system that certain values were
+changed.  @code{Mark-as-changed} is used for this purpose.
+
+
+@example
+kr:Copy-Formula @emph{formula}@value(function)
+@end example
+
+@cindex change-formula
+@cindex copy-formula
+
+This function returns a copy of the given @emph{formula}, which should be a
+formula object.  The copy shares the same prototype with the @emph{formula}, and
+its initial value is the current cached value of the @emph{formula}.
+
+
+@example
+kr:Move-Formula @emph{from-object from-slot to-object to-slot}@value(function)
+@end example
+
+@cindex{move-formula}
+
+This function takes a formula from a
+slot in an object and moves it to another slot in another object.  This
+function is needed because one cannot move a formula from one slot to
+another simply by storing the formula in some temporary variable (this
+creates potentially serious problems with formula dependencies).
+
+
+@example
+kr::Make-Into-O-Formula @i[formula] &optional @i[compile-p]  @value(function)
+@end example
+
+This function modifies formulas created using the
+function @code{formula} to behave as if they were created using
+@code{o-formula}.  This is useful for tools like Lapidary that need to
+construct formulas on the fly.  The converted formulas will be handled
+properly by
+functions such as @code{opal:write-gadget}.  It is also possible to specify that
+the formula's expression be compiled during the transformation.
+If @i[compile-p] is non-NIL, the
+@i[formula]'s expression is compiled in the process.
+
+
+@example
+kr:G-Cached-Value @emph{object slot}@value(function)
+@end example
+
+@cindex{g-cached-value}
+
+This function is similar to @code{gv} if the @emph{slot} contains an
+ordinary value.  If the @emph{slot} contains a formula, however, the cached
+value  of the formula is returned even if the formula
+is invalid; the formula itself is never re-evaluated.  Only advanced
+applications may need this function, which in some cases
+returns out-of-date values and therefore should be used with care.
+
+@cindex{cached values}
+
+
+
+@example
+kr:Destroy-Constraint @emph{object slot}@value(function)
+@end example
+
+@cindex{destroy-constraint}
+
+If the @emph{slot} of the @emph{object} contains a formula, the constraint is
+removed and replaced by the current value of the formula.  The formula is
+discarded and all dependencies are updated.  Dependent formulas are notified
+that the formula has been replaced by the formula's value, even if the actual
+value does not change.  If the @emph{slot} contains an ordinary value, this
+function has no effect.
+
+Note that the expression @t{(s-value object slot (gv object slot))}
+cannot be used to simulate @code{destroy-constraint}.  This is because
+@code{s-value} does not remove a formula when it sets a slot to an ordinary
+value, and thus the expression above would simply set the cached value of
+the formula without removing the formula itself.
+
+
+
+@cindex{with-dependencies-disabled}
+@example
+kr::With-Dependencies-Disabled &body @i[body] @value(macro)
+@end example
+This macro can be used to prevent the evaluation of @code{gv} and @code{gvl} inside
+formulas from setting up dependencies.  Inside the body of the macro, @code{gv}
+and @code{gvl}
+effectively behave (temporarily) exactly like @code{g-value}. 
+This macro should be used with great care, as it may cause formulas
+not to be re-evaluated if dependencies are not set up correctly.
+
+
+@node Constant Formulas
+@section Constant Formulas
+@anchor{constant-slots}
+
+@cindex{constant slots} 
+It is possible to declare that certain slots are constant, and
+cause all formulas that only depend on constant slots to be
+eliminated automatically.  The main advantage of this approach is 
+that it reduces storage and execution time.
+
+A slot in an object can be declared constant at object creation time.
+This guarantees that the application program will never change the
+value of the slot after the object is created.  When a formula is
+evaluated for the first time, KR checks whether it depends exclusively
+on constant slots.  If this is the case, the formula is eliminated and
+its storage is reused.  The slot on which the formula was originally
+installed takes the value that was computed by the formula.
+
+A slot can become constant in one of three ways.  First, the slot may
+be declared constant explicitly.  This is done by listing the name of
+the slot in the @code{:constant} slot of an object (see below for more
+details), or calling @code{declare-constant} on the slot after its object has
+already been created.  For example, adding the following code to
+@code{create-instance} for object @emph{A} will cause slots @code{:left} and
+@code{:top} to be declared constant in object @emph{A}: @w{@code{(:constant '(:left
+:top))}}.  Note that it is possible for the value of the @code{:constant}
+slot to be computed by a formula, which is evaluated once at object
+creation time.
+
+Second, a slot may become constant because it is declared constant in
+the object's prototype.  In the example above, if object @emph{B} is created
+with @emph{A} as its prototype, slots @code{:left} and @code{:top} will be declared
+constant in @emph{B}, even if they are not explicitly mentioned in object @i[B]'s
+@code{:constant} slot.
+
+Third, a slot may become constant because it contains a formula which
+depends exclusively on constant slots.  After the formula is removed,
+the slot on which it was installed is declared constant.  Thus,
+constants propagate recursively through formulas.@footnote{In the most elegant
+programming style, a minimum number of constants will be declared in an object,
+and formulas will be allowed to become constant because of their dependencies
+on the constant slots (rather than bluntly declaring the formulas constant).
+This is certaintly not a requirement of programming with constants, however.}
+If you cannot figure out why a formula is not being eliminated, the function
+@code{garnet-debug:why-not-constant} and related functions in the Debugging Tools
+Reference Manual may be useful.
+
+To facilitate the creation of the list of constant slots for an
+object, the syntax of the @code{:constant} slot is extended as follows.
+First, a prototype may specify a list of all the slots that its
+instances may choose to declare constant.  This is done by specifying
+a list of slot names in the prototype, using the slot
+@code{:maybe-constant}.  When this is done in the prototype, an instance
+may choose to declare all of those slots constants by simply adding
+the value @value(t) to its @code{:constant} slot.  Note that @value(t)
+does @emph{not} mean that @emph{all} slots are constant; it only means that
+all slots in the @code{:maybe-constant} list become constant.
+ 
+
+@cindex{maybe-constant}
+It is also possible for the
+instance to add more constant slots as necessary.  Consider the
+following example:
+@example
+(create-instance 'PROTO NIL (:maybe-constant '(:left :x1 :x2 :width)))
+(create-instance 'INST PROTO (:constant '(:top :height T)))
+@end example
+No slot is declared constant in the prototype, i.e., object PROTO,
+because the @code{:maybe-constant} slot does not act on the object
+itself.  However, because object INST includes the value @value(t) in its
+@code{:constant} slot, the list of constant slots in the instance is the
+union of the slots that are declared constant locally and the slots
+named in the @code{:maybe-constant} slot of the prototype.  Therefore,
+the following slots are constant in INST: @code{:left, :top, :width,
+:height, :x1,} and @code{:x2}.
+
+The slot @code{:maybe-constant} is typically used in prototypes to
+specify the list of all the parameters of the instances, i.e., the
+slots that an instance may customize to obtain gadgets with the
+desired appearance.  Consider, for example, the prototype of a gadget.
+If the application is such that a gadget instance will never be
+changed after it is created, the application programmer may simply
+specify @w{@code{(:constant '(T))}}.  This informs the system that all
+parameters declared by the creator of the prototype are, in fact,
+constant, and formulas that depend on them can be eliminated once the
+gadget is created.  All of the standard objects and gadgets supply a
+@code{:maybe-constant} slot.
+
+The syntax of the @code{:constant} slot also allows certain slots that
+appeared in the @code{:maybe-constant} list to be explicitly excluded from the
+constant slots in an object.  This can be done by using the marker
+@code{:except} in the @code{:constant} slot.  The slots following this marker
+are removed from the list that was specified by the prototype.  If a
+slot was not mentioned in the prototype's @code{:maybe-constant} slot,
+the @code{:except} marker has no effect on the slot.  The following is a
+comprehensive example of the syntax of the @code{:constant} slot:
+@example
+(create-instance 'INST-2 PROTO
+   (:CONSTANT '(:top :height T :EXCEPT :width :x2)))
+@end example
+
+As a result, these slots are declared constant in object
+INST-2: @code{:left, :top, :height,} and @code{:x1}.
+
+
+It is an error to set slots that have been declared constant.  This
+can happen in three cases: a slot may be set using @code{s-value} after
+having been declared constant, a call to @code{create-instance} may
+redefine in the instance a slot that was declared constant in the
+prototype, or @code{destroy-slot} may be used.  In all cases, a
+continuable error is signaled.  Note that 
+this behavior can be overridden by wrapping the code in the macro
+@code{with-constants-disabled} (see below).
+
+
+@example
+kr:Declare-Constant @emph{object slot}@value(function)
+@end example
+
+
+@cindex{declare-constant}
+The function @code{declare-constant} may be used to declare slots
+constant in an object after creation time.  The function takes an
+object and a slot, which is declared constant.  The behavior is the
+same as if the slot had been declared in the @code{:constant} slot at
+instance creation time, although of course the change does not affect
+formulas which have already been evaluated.  The @code{:constant} slot
+of the object is modified accordingly: the new slot is added, and it
+is removed from the @code{:except} portion if it was originally declared
+there.  As a special case, if the second argument is @value(t) all the
+slots that appear in the slot @code{:maybe-constant} (typically
+inherited from a prototype) are declared constant.  This is similar to
+specifying T in the @code{:constant} slot at instance creation time.
+
+If @code{declare-constant} is executed on a slot while constants are disabled
+(i.e., inside of a @code{with-constants-disabled} body), the call will have no
+effect and the slot will not become constant.
+
+
+@example
+kr:With-Constants-Disabled &body @i[body]@value(macro)
+@end example
+
+
+@cindex{with-constants-disabled}
+The macro @code{with-constants-disabled} may be used to cause all
+constant declarations to be temporarily ignored.  During the execution
+of the body, no error is given when slots are set that are declared
+constant.  Additionally, constant declarations have no effect when
+@code{create-instance} is executed inside this macro.  This macro,
+therefore, is intended for experienced users only.
+
+Several functions in the @code{garnet-debug} package (loaded with Garnet by
+default) can be helpful in determining which slots in your application should
+be declared constant for maximum benefit, and can help you determine why some
+slots are not becoming constant.  These functions are documented in the
+Debugging Tools Reference Manual, which starts on page @value(debug):
+
+@example
+gd:Record-From-Now@value(function)
+
+gd:Suggest-Constants @emph{object} &key @emph{max} (@i[recompute-p] T) (@i[level] 1)@value(function)
+
+gd:Explain-Formulas @emph{aggregate} &optional (@i[limit] 50) @i[eliminate-useless-p]@value(function)
+
+gd:Find-Formulas @emph{aggregate} &optional (@i[only-totals-p] T) (@i[limit] 50) @i[from]@value(function)
+
+gd:Count-Formulas @emph{object}@value[function]
+
+gd:Why-Not-Constant @emph{object  slot}@value[function]
+@end example
+
+
+@node  Efficient PathDefinitions
+@subsection Efficient Path Definitions
+
+
+
+@cindex{kr-path}
+The function @code{kr-path} can be used to improve the efficiency of
+formula access to slots that are obtained via indirect links.
+Inside formula expressions, macros such as @code{gv} are used to access a slot
+indirectly, traversing a number of objects until the last slot is
+obtained.  This is sometimes called a @i[link] or a @i[path].  For
+example, the expression @code{(gvl :parent :parent :left)} will access
+the @code{:left} slot in the parent's parent.  If the application program
+can guarantee that the intermediate path will not change, the
+function @code{kr-path} provides better performance.  The expression
+above could be written as:
+@example
+(gv (kr-path 0 :parent :parent) :left)
+@end example
+The call to @code{kr-path} computes the object's parent's parent
+only once, and stores the result as part of the formula.  Subsequent
+evaluations of the formula only need to access the @code{:left}
+slot of the target object.  The syntax is:
+@sp 0.5
+@example
+kr:KR-Path @emph{path-number} &rest @emph{slots}@>[@emph{Macro}]
+@end example
+@sp 0.5
+The path-number is a 0-based integer which indicates the number of
+this path within the formula expression.  In most cases, a formula
+contains only one call to @code{kr-path}, and path-number is 0.  If more
+than one path appears in a formula expression, different numbers
+should be used.  For example,
+
+@example
+(or (gv (kr-path 0 :parent :parent) :left)
+    (gv (kr-path 1 :alternate :parent) :left))
+@end example
+Note that @code{kr-path} can only be used inside a formula expression.
+
+
+
+@node Tracking Formula Dependencies
+@section Tracking Formula Dependencies
+
+@group
+The function @code{kr::i-depend-on} can be used to find out all the
+objects and slots upon which a certain formula depends directly.  The
+syntax is:
+
+
+@cindex{i-depend-on}
+@sp 0.5
+@example
+kr::I-Depend-On @i[object slot]  @value(function)
+@end example
+@end group
+@sp 0.5
+
+If the @i[slot] in the @i[object] does not contain a formula, this
+function returns NIL.  Otherwise, the function returns a list of
+dotted pairs of the form @code{(obj . slot)}, which contains all the slots
+upon which the formula depends.  Note that this is the list of only
+those slots that are used by the formula directly; if some of those
+slots contain other formulas, @code{kr::i-depend-on} does not pursue
+those additional formulas' dependencies.
+
+@sp 0.5
+@group
+Example:
+@example
+(create-instance 'A NIL (:left 7))
+(create-instance 'B A (:left 14) (:top #f(+ (gvl :left) (gv a :left))))
+(gv b :top)	; set up the dependencies
+
+(kr::i-depend-on B :top)
+    ==> ((B . :LEFT) (A . :LEFT))
+@end example
+@end group
+
+
+@node Formula Meta-Information
+@section Formula Meta-Information
+
+@cindex{meta-information}
+
+It is possible to associate arbitrary information (sometimes known
+as meta-information) with formulas, for example for documentation or
+debugging purposes.  Meta-information is internally represented by a
+KR object which is associated with the formula; this allows
+essentially any slot to be added to formulas.  Meta-information can be
+inherited from parent formulas, and is copied appropriately by
+functions such as @code{copy-formula}.
+
+In addition, it is possible to access built-in formula information
+(such as the lambda expression that was used to create the formula)
+using exactly the same mechanism that is used to access
+meta-information.  This provides a single, well-documented way to
+access all information associated with a formula.
+
+@node Creating Meta-Information
+@subsection Creating Meta-Information
+
+Meta-information can be specified statically at formula creation time,
+and also dynamically for already existing formulas.  Static
+meta-information is specified by additional parameters to the
+functions @code{formula} and @code{o-formula}.  The additional parameters
+are slot specifications, in the style of @code{create-instance} (except
+that, of course, special @code{create-instance} keywords such as
+@c[:declare] or @c[:override] are not supported).  For example, the
+expression:
+@example
+ (o-formula (gv a :top) 15
+   (:creator 'GILT) (:date "today"))
+@end example
+creates a new formula with initial value 15, and two meta-slots named
+@code{:creator} and @code{:date}.
+
+Note that in order to specify meta-information statically, one has to
+specify the default initial value for the formula, which is also an
+optional parameter.
+
+
+@cindex{s-formula-value}
+Meta-information may also be created dynamically, using the function
+@example
+kr:S-Formula-Value @i[formula slot value]		@value(function)
+@end example
+
+This function sets the value of the meta-slot @i[slot] in the
+@i[formula] to be the specified @i[value].  If the @i[formula] does
+not already have an associated meta-object, one is created.
+
+It is not possible to use this function to alter one of the built-in
+formula slots, such as the formula's lambda expression or its list of
+dependencies.
+
+
+@group
+
+@node Accessing Meta-Information
+@subsection Accessing Meta-Information
+
+@cindex{g-formula-value}
+
+Meta-information can be retrieved using the function
+@code{g-formula-value}.  In addition to slots that were specified
+explicitly, this function also makes it possible to retrieve the
+values of all the special formula slots, such as the formula's parent
+or its compiled expression.
+@example
+kr:G-Formula-Value @i[formula slot]		@value(function)
+@end example
+@end group
+
+The function returns the value of meta-slot @i[slot] for the @i[formula].
+If the latter is not a formula, or the meta-slot is not present, the
+function returns NIL.  If the @i[formula] inherits from some other
+formula, inheritance is used to find the meta-slot.
+
+@group
+As a convenience, @i[slot] can also be the name of an internal formula
+slot, i.e., one of the structure slots used by KR when handling
+formulas.  Such slots should be treated strictly as read-only, and should never
+be modified by application programs.  The built-in slot names are:
+
+@begin[description, indent=-2]
+@c(:depends-on) - returns the object, or list of objects, on which the
+formula depends.
+
+@c(:schema) - returns the object on which the formula is currently installed.
+
+@c(:slot) - returns the slot on which the formula is currently installed.
+
+@c(:cached-value) - returns the current cached value of the formula,
+whether or not the formula is currently valid.
+
+@c(:valid) - returns T if the formula is currently valid, NIL otherwise.
+
+@c(:path) - returns the path accessor associated with the formula, if any.
+
+@c(:is-a) - returns the parent formula, or NIL if none exists.
+
+@c(:function) - returns the compiled formula expression.
+
+@c(:lambda) - returns the original formula expression, as a lambda list.
+
+@c(:is-a-inv) - returns the list of formulas that inherit from the
+@i[formula], or NIL.  If there is only one such formula, a single value
+(not a list) is returned.
+
+@c(:number) - returns the internal field which encodes the valid/invalid
+bit, and the cycle counter.
+
+@c(:meta) - returns the entire meta-object associated with the formula, or
+NIL if none exists.
+@end[description]
+@end group
+@sp 1
+
+@group
+When the function @code{ps} is given a formula, it can print
+associated meta-information.  The latter is printed as an
+object, immediately after the formula itself.  For example:
+@example
+@b[lisp>] (create-instance 'A NIL
+        (:left (o-formula (gvl :parent :left) 100
+                          ;; Supply meta-information here
+                          (:name "Funny formula")
+                          (:creator "Application-1"))))
+#k<A>
+
+@b[lisp>] (ps (get-value A :left))           ; prints the following:
+{F8
+  lambda:        (gvl :parent :left)
+  cached value:  (100 . NIL)
+  on schema A, slot :LEFT
+  }
+  ---- meta information (S7):
+{S7
+  :NAME =  "Funny formula"
+  :CREATOR =  "Application-1"
+  }
+@end example
+@end group
+
+
+
+
+@node Demons
+@subsection Demons
+
+@anchor{demons}
+
+The demon mechanism allows an application program to perform a certain
+action when a value is modified.  This mechanism, which is totally
+controlled by the application program, is independent from value
+propagation.  Regular Garnet users do not need to know the contents of
+this section, since Garnet already defines all appropriate demons.
+Garnet applications should never modify the default demons, which are
+defined by Opal and automatically update the graphical representation
+of the application's objects.
+
+
+@node Overview of the Demon Mechanism
+@subsection Overview of the Demon Mechanism
+
+A demon is an application-defined 
+procedural attachment to a KR schema.  Demons are user-defined fragments
+of code which are invoked when certain actions are performed on a
+schema.  Whenever the value of a slot in a schema is modified (either
+directly or as the result of value propagation), KR checks whether a
+demon should be invoked.  This allows application programs to 
+be notified every time a change occurs.
+
+@cindex{procedural attachments}
+
+Two separate demons invoked at different times allow an application
+program to have fine control over the handling of value changes.
+These demons are only invoked on slots that are listed in the
+@c(:update-slots) list of a schema (see section @ref[update-slots]).
+
+The first demon is the @emph{invalidate demon} .  This
+demon is invoked every
+time a formula is invalidated.  At the time the demon is invoked, the
+formula has not yet been re-evaluated, and thus it contains the old cached
+value.  This demon is contained in the @code{:invalidate-demon} slot of
+an object.  This makes it possible for different objects to provide
+customized demons to handle slot invalidation.
+
+@cindex{invalidate demon}
+
+@cindex{pre-set demon}
+The second demon is the pre-set demon.  It is
+invoked immediately before the value in a formula is actually
+modified, and it is passed the new value.  This allows the pre-set
+demon to record the difference between the old and the new value, if
+needed.  This demon is stored in the variable
+  @code{kr::*PRE-SET-DEMON*}.  Garnet does not use
+the pre-set demon.
+
+@cindex{*pre-set-demon*}
+
+The relationship between value propagation and demon invocation is best
+illustrated by showing the complete sequence of events for the invalidate
+demon.  This is what
+happens when @code{s-value} is called to set slot @b(s) of schema S to value
+@b(v):
+@begin(enumerate)
+If slot @b(s) already contains value @b(v), nothing happens.
+
+Otherwise, if slot @b(s) should trigger demons, the demon is
+invoked.  The demon is called with schema S in its @emph{old} state,
+which means that slot @b(s) still contains its old value.
+
+The change is recursively propagated.  All slots whose value is a formula
+that depends on slot @b(s) are invalidated.  The process is similar to the
+one described in step 2, but there is no check corresponding to step 1 at
+this point.  Demons are invoked normally on any slot that is modified
+during this phase.
+
+The value of slot @b(s) is finally changed to @b(v).
+@end(enumerate)
+
+Both the invalidate demon and the pre-set demon should be functions of
+three arguments.  The first argument is the schema which is being modified.
+The second argument is the name of the slot which is being modified.  The
+third argument is always @value(nil) for the invalidate demon.  For the
+pre-set demon, the third argument is the new value which is about to be
+installed in the slot.  This allows the pre-set demon to examine both the
+old value (which is still in the slot) and the new value.
+
+
+@node The :Update-Slots List
+@subsection The :Update-Slots List
+@anchor{update-slots}
+
+@cindex{update-slots}
+
+The KR demons are only invoked on slots that are listed in the
+@c(:update-slots) list of the schema containing them.  For example,
+Garnet defines a particular demon that is responsible for redrawing the
+objects in a window as the values of their "interesting" slots change.
+These "interesting" slots are declared in each object's @c(:update-slots)
+declaration during @code{create-instance} (the declaration is usually inherited
+from the prototype, so that typical Garnet users will never see this
+declaration).  The @c(:update-slots) list contains all the slots in an object
+that should cause Opal's special demon to be invoked when they are modified.
+When an update-slot is modified, Opal's demon will "invalidate"
+the @u(object), causing it to be redrawn during the next pass of the update
+algorithm.
+
+The @c(:update-slots) list can only be set directly at @code{create-instance}
+time.  That is, after an object is created it is no longer sufficient to
+modify the value of the @code{:update-slots} slot to change whether a slot is an
+update-slot or not.  This is because update-slots are internally represented
+by a bit associated with the slot, which is set during the @code{create-instance}
+call.  Instead of setting the @code{:update-slots} slot, you must call the
+function:
+
+
+@cindex{add-update-slot}
+@example
+kr::Add-Update-Slot @i[object slot] &optional (@i[turn-off] NIL)  @value(function)
+@end example
+
+If @i[turn-off] is NIL (the default), the @i[slot] in the @i[object]
+is declared as an update-slot; if @i[turn-off] is non-NIL, the slot is
+no longer an update slot.  In addition to setting or resetting the
+internal bit, the function also modifies the @c[:update-slots] slot
+accordingly, by adding or removing the @i[slot] from the list.
+
+
+
+@node Examples of Demons
+@subsection Examples of Demons
+
+
+The following example shows how to define the invalidate demon for an
+object, and how the demon is invoked.
+
+@example
+;;; Define an invalidate demon
+;;;
+(defun inv-demon (schema slot v)
+  (declare (ignore v))     ; v is not used
+  (format t
+	  "schema ~s, slot ~s is being invalidated.~%"
+	  schema slot))
+
+(create-schema 'A (:left 10)
+  (:top (o-formula (1+ (gvl :left))))
+  (:update-slots '(:top))
+  (:invalidate-demon 'inv-demon))
+
+(gv A :top)  ==> 11
+(s-value A :left 1)
+;; prints out:
+schema #k<A>, slot :TOP is being invalidated.
+(gv A :top)  ==> 2
+@end example
+
+
+@node Enabling and Disabling Demons
+@subsection Enabling and Disabling Demons
+
+@example
+kr:With-Demons-Disabled &body @emph{body}@value(macro)
+@end example
+
+@cindex{with-demons-disabled}
+
+The @emph{body} of this macro is executed with demons disabled.  Constraints are
+propagated as usual, but demons are not invoked.
+
+This macro is often useful when making temporary changes  to schemata which have un update demon.  This happens,
+for instance, when a program is changing graphical objects but does
+not want to display the changes to the user, or when some of the
+intermediate states would be illegal and would cause an error if
+demons were to run.  Objects may be freely modified inside the
+@emph{body} of this macro without interference from the demons.
+
+@cindex{action propagation}
+
+@example
+kr:With-Demon-Disabled @emph{demon} &body @emph{body}@value(macro)
+@end example
+
+@cindex{with-demon-disabled}
+
+This is similar to @code{with-demons-disabled}, except that it allows a
+specific demon to be disabled.  Normally, when
+@code{with-demons-disabled} is used, all demons are disabled.  This
+macro allows all demons except a specific one to execute normally;
+only the specific demon is disabled. 
+
+The forms in the @i[body] are executed, but the
+given @i[demon] is not invoked.  For example, the following will
+selectively disable the invalidate demon provided by object FOO:
+@example
+(with-demon-disabled (gv FOO :invalidate-demon)
+  (s-value FOO :left 100))
+@end example
+While FOO's own demon is not
+executed, formulas in other objects which depend on FOO's
+@code{:left} slot will be invalidated, and the corresponding invalidate
+demons will be invoked normally.
+
+
+
+@example
+kr:With-Demon-Enabled @emph{demon} &body @emph{body}@value(macro)
+@end example
+
+@cindex{with-demon-enabled}
+
+This macro enables a particular demon if it had been disabled, either
+explicitly or with @code{with-demons-disabled}.
+
+
+
+
+
+@node  MultipleInheritance
+@subsection Multiple Inheritance
+
+
+KR supports multiple inheritance : a schema
+may inherit values from more than one direct ancestor.  This can be
+accomplished in two ways.  The first way is simply to connect the
+schema to more than one ancestor schema through a relation.  The
+relation slot, in other words, may contain a list of slots.  When
+performing inheritance, KR searches each ancestor slot in turn until a
+value is found.
+
+@cindex{multiple inheritance}
+
+The second way to achieve multiple inheritance is by using more than one
+relation with inheritance.  Any schema may have several slots defined as
+relations with inheritance; in this case, all relations are searched in
+turn until a value is found.  The two mechanisms may be combined, of
+course.
+
+Application programs should not rely on the order in which KR searches
+different relations.  The particular order is implementation-dependent.
+
+
+
+
+@begin(comment)
+@node Inheritance: Implementation Notes
+@subsection Inheritance: Implementation Notes
+
+KR uses a mechanism which enables inheritance to behave in the
+dynamic fashion describe above and, at the same time, to provide extremely
+efficient performance.  This mechanism is named @emph{eager
+inheritance} .
+
+@cindex{eager inheritance}
+
+Eager inheritance works as follows.  The first time the value of a slot is
+requested, but the value is not present locally, the value is obtained by
+inheritance as described above.  At this point, however, the value is also
+copied into the local schema (and in any intervening schema, if necessary)
+with a special marker which indicates that the value was inherited.
+
+The second time the value is requested, inheritance is no longer required
+and the value is immediately found locally.  This makes successive accesses
+to inherited values much faster, and causes inheritance to be essentially
+as efficient as local values, no matter how many levels of inheritance were
+originally used.
+
+It is vital that inherited values which were copied down into children
+schemata be kept up to date.  Any change in the upper portions
+of the schema hierarchy might change what values can be inherited by the
+lower levels, and inherited values which were copied down must be modified.
+KR performs this task immediately when a value which was inherited is
+changed, thus justifying the term @emph{eager inheritance}.  This technique
+ensures minimal overhead for both access and update of inherited values,
+and provides superior performance for the inheritance mechanism.
+@end(comment)
+
+
+@node  LocalValues
+@subsection Local Values
+
+
+This group contains functions which deal with local values in a slot.
+Some of these functions do not
+treat formulas as special objects, and thus can be used to access formulas
+stored in a slot (remember that functions like @code{gv}, for example,
+return the @emph{value} of a formula, rather than the formula object itself).
+
+
+@example
+kr:Get-Value @emph{object slot}@value(Macro)
+@end example
+
+@cindex{get-value}
+
+Returns the value in the @emph{slot} from @emph{object}.  If the slot is
+empty or not present, it returns @value(nil).  Inheritance may be used when
+looking for a value.  Given a slot that contains a formula, @code{get-value}
+returns the formula itself, rather than its value.  Therefore, its use is
+limited to applications that manipulate formulas explicitly.
+
+@begin(comment)
+(GET-VALUES @emph{object slot})@value(Macro)
+
+@cindex{get-values}
+
+This macro returns a list of all the values in the @emph{slot} of the
+@emph{object}.  If the @emph{slot} is empty or not present, it returns
+@value(nil).  Inheritance may be used when looking for values.  This macro
+does not deal with constraints, i.e., it does not cause formulas to be
+evaluated.@*Examples:
+@example
+(get-values my-graphical-object :is-a-inv) ==> 
+	 (#k<BOX-OBJECT>)
+(get-values box-object :is-a-inv) ==>
+	 (#k<RECTANGLE-2> #k<RECTANGLE-1>)
+@end example
+
+Since @code{get-values} does not deal with constraints, @code{dovalues} (see
+below) is the preferred way to access all values in a slot.  An additional
+advantage is that the expression
+@example
+(dovalues (item object slot) ...)
+@end example
+is potentially more efficient than the equivalent idiom
+@example
+(dolist (item (get-values object slot))  ...)
+@end example
+which may create garbage in some situations.
+
+A @b(setf)  form for @code{get-values} is defined for
+@code{get-values} and expands into a call to @code{set-values}.
+
+(SET-VALUES @emph{object slot values})@value(Function)
+
+@cindex{set-values}
+
+This function stores a list of values in the @emph{slot} of the @emph{object}.
+The entire list may subsequently be retrieved with @code{get-values}, or the
+first value may be retrieved with @code{g-value}.
+
+
+
+
+
+(DOVALUES (@emph{variable object slot} &key @emph{local result formulas in-formula}) &rest @emph{body})@value(macro)
+
+@cindex{dovalues}
+
+DOVALUES executes   the @emph{body} with
+the @emph{variable} bound in turn to each value in the @emph{slot} of the
+@emph{object}.  The @emph{body} is executed purely for side effects, and DOVALUES
+normally returns @value(nil); if the keyword argument @code{:result} is
+specified, however, the given value is returned.
+The @emph{body} of @code{dovalues} should never alter the contents of the
+@emph{slot}, since this may cause unpredictable results.
+
+@cindex{value iterator}
+@cindex{iterators}
+
+If @code{:local} (default @value(nil)) is non-@value(nil), DOVALUES only
+considers local values; otherwise, it iterates over inherited values
+if no local values are present.  If @b(:formulas) is @value(T) (the
+default), any value which is expressed by a formula is computed and
+returned; otherwise, the formula itself is returned.  The latter is
+only useful for more advanced applications.@*Examples:
+@example
+(set-values rectangle-1 :vertices '(3 6 72))
+
+(dovalues (v rectangle-1 :vertices)
+   (format t "rectangle-1 has vertex ~S~%" v))
+@emph{;; prints out:}
+rectangle-1 has vertex 3
+rectangle-1 has vertex 6
+rectangle-1 has vertex 72
+@end[example]
+
+@begin[example]
+(s-value-n rectangle-1 :vertices 2
+   (o-formula (+ (gvl :vertices) 15)))
+(dovalues (v rectangle-1 :vertices)
+   (format t "rectangle-1 has vertex ~S~%" v))
+@emph{;; prints out:}
+rectangle-1 has vertex 3
+rectangle-1 has vertex 6
+rectangle-1 has vertex 18
+
+;;; Example of :formulas NIL
+(dovalues (v rectangle-1 :vertices :formulas NIL)
+   (format t "rectangle-1 has vertex ~S~%" v))
+rectangle-1 has vertex 3
+rectangle-1 has vertex 6
+rectangle-1 has vertex #k<F2297>
+@end example
+
+@code{dovalues} may also be used inside formulas; in this case,
+@code{:in-formula} should be set to @value(T).  The surrounding formula
+is then re-evaluated when any of the values in the @emph{slot} is
+changed, or whenever a value is added or deleted.  @code{dovalues} with a
+non-@value(nil) @code{:in-formula} option, therefore, behaves more like @code{gv}
+than like @code{g-value}.  When @code{dovalues} is used in this fashion, the
+keyword @code{:self} may be used to stand for the object to which the
+formula is attached.
+
+The following is an example of a formula which uses @code{dovalues} and is
+re-evaluated when one of the values in the @code{:components} slot changes:@*
+@example
+(o-formula (let ((is-odd NIL))
+	    (dovalues (value :SELF :components 
+		       :in-formula T)
+	      (if (odd value) (setf is-odd T)))
+	    is-odd))
+@end example
+@end(comment)
+
+
+
+
+@example
+kr:Get-Local-Value @emph{object slot}@value(Macro)
+@end example
+
+@cindex{get-local-value}
+
+Returns the value in the @emph{slot} from @emph{object}.  If the slot is
+empty or not present, it returns @value(nil).  Inheritance is not used, and
+only local values are considered.  
+Given a slot that contains a formula, @code{get-local-value} returns the
+formula itself, rather than the formula's value.  Therefore, use of this
+macro is limited to applications that manipulate formulas explicitly.
+
+
+
+@begin(comment)
+(GET-LOCAL-VALUES @emph{object slot})@value(Macro)
+
+@cindex{get-local-values}
+@cindex{inheritance}
+@cindex{local values}
+
+Similar to GET-VALUES, but only local slots are examined and inheritance is
+never used.@*
+Examples:
+@example
+(get-values rectangle-1 :thickness) ==> (1)
+(get-local-values rectangle-1 :thickness) ==> NIL @emph{; not local}
+@end example
+
+This macro does not deal with constraints, i.e., it never causes formulas
+to be evaluated.
+@end(comment)
+
+
+
+@example
+kr:G-Local-Value @emph{object} @emph{slot} &rest @emph{other-slots}@value(macro)
+@end example
+
+@cindex{g-local-value}
+
+This macro is very similar to @code{g-value}, except that it only considers
+local values.  Inheritance is never used when looking for a value.
+
+
+
+@example
+kr:Gv-Local @emph{object slot} &rest @emph{more-slots}@value(macro)
+@end example
+
+@cindex{gv-local}
+
+This macro is similar to @code{gv}, except that it only considers local
+values, and it never returns an inherited value.  @code{Gv-local} should be 
+used in situations where it is important to only retrieve values that are
+local to the @emph{object}.
+
+
+
+@begin(comment)
+(APPEND-VALUE @emph{object slot value})@value(Function)
+
+@cindex{append-value}
+
+This function adds the @emph{value} to the end of the list of values in
+the @emph{slot} of the @emph{object}.
+
+
+
+(DELETE-VALUE-N @emph{object slot position})@value(Function)
+
+@cindex{delete-value-n}
+
+This function deletes the @emph{position}-th value from the @emph{slot} of the
+@emph{object}.  @emph{position} is a 0-based non-negative integer.  This function
+does not deal with constraints properly, and should not be used when the
+@emph{slot} may contain formulas.
+@end(comment)
+
+
+@node  Local-onlySlots
+@subsection Local-only Slots
+
+
+@anchor{local-only}
+There are cases when certain slots in an object should not be inherited by
+any instance of the object.  An example of this situation might be a slot
+which is used as a unique identifier; clearly, the slot should never be
+inherited, or else errors will occur.  Such slots are called @emph{local-only
+slots}.
+
+This effect can be achieved in KR by listing the names of all such slots in
+the prototype object.  The names are listed in the @c(:local-only-slots)
+declaration (the general declaration syntax is discussed in section
+@ref(uniform-syntax)).  This declaration should contain a list of two-element
+sub-lists.  The first element in each sub-list specifies the name of a
+local-only slot.  The second element can be @value(T) or @value(NIL).
+
+The value @value(NIL) specifies that the local-only slot is always
+initialized to @value(NIL) in any instance which does not define it
+explicitly.  The value @value(T), on the other hand, specifies that the
+current value of the local-only slot in the prototype will be used to
+initialize the slot in the instance.  The value, however, is physically copied
+down into the instance, and thus inheritance is no longer used for that
+instance. Modifying the value in the prototype, in particular, will have no
+effect on the instance.  This second option is used more rarely than
+@value(NIL).
+
+Note that none of the above applies to slots whose value (in the prototype) is
+a formula.  Slots which contain formulas are always inherited, independent
+of whether the slot is listed in @code{:local-only-slots}.
+
+
+
+@node  Schema CreationOptions
+@subsection Schema Creation Options
+
+
+Two special keywords can be used in the macros that create schemata.  These
+options are recognized by @code{create-instance}, @code{create-schema}, and
+@code{create-prototype}.  They @anchor{create-options}:
+
+@example{:OVERRIDE@value(keyword)}
+
+@cindex{override}
+
+If the @emph{object-name} in one of the object-creating macros names an
+existing object, that object is normally deleted, together with its
+instances, and replaced by a brand new object.  The default
+behavior may be modified by using the keyword @b(:override) as part of the
+@emph{slot-definitions}.  This keyword causes the existing object to be
+modified in place and contain the union of its previous slots and those
+specified by @code{create-schema}.  Previous slots that are not mentioned in the
+call retain whatever values they had before the operation.  For example,
+
+@example
+(create-schema 'RECTANGLE-1 :override (:color :magenta))
+@end example
+adds a slot to the object RECTANGLE-1 if it already exists.  Without
+the @code{:override} keyword, this would have destroyed the object and created
+a new one with a single slot.
+
+
+
+@example{:NAME-PREFIX @emph{string}@value(keyword)}
+
+@cindex{name-prefix}
+
+The keyword @b(:name-prefix)  may be used to
+specify a name prefix for unnamed objects.  Unnamed objects are normally
+named after the object they are an instance of; this option allows a
+specific string to be used as the name prefix.  The option, if specified,
+should be immediately followed by a string, which is used as the prefix.
+Example:
+@example
+(create-schema NIL :name-prefix "ORANGE"
+  (:left 34)) ==> #k<ORANGE-2261>
+@end example
+@cindex{name-prefix keyword}
+
+
+
+@node  PrintControl
+@subsection Print Control
+
+
+This section describes the slots that control what portions of an object are
+printed, and how they are printed.  The need for fine control over printing
+arises, for example, when certain slots contain very large data structures
+that take a long time to print.
+
+The print control slots are taken from the object which is specified as the
+@emph{print-control} in the complicated form of @code{ps}, described below.  In
+many cases, the slots are actually inherited by the object being printed.
+
+
+@example
+kr:PS @emph{object} &key @i{types-p  all-p} (@i{control} T) (@i{inherit} NIL) @value(function)
+                (@i{indent} 0) (@i{stream} *standard-output*)
+@end example
+
+@cindex{ps}
+@cindex{printing schemata}
+
+This form of @code{ps} prints the contents of the @emph{object}, and allows fine
+control over what to print and how.  A possible behavior is to print out
+all slots and all values in @emph{object}; this happens when the @emph{control}
+object is @value(nil).  It is possible, however, to cause @code{ps} to ignore
+certain slots and to specify that others should be printed in a given
+order.  It is also possible to limit the number of elements printed for list
+values, thus preventing annoyingly long lists of values.
+
+The function @code{ps} can print out type information, if desired.  This
+can be specified with a non-null value for the new keyword parameter
+@i[types-p] (the default value is NIL).  Type declarations are printed in
+square brackets.
+
+Supplying a non-NIL value for the @emph{all-p} parameter will cause @code{ps}
+to print out all slots of the @i{object}, including slots that do not currently
+have any value.  The default for @emph{all-p} is NIL.
+
+The value of @emph{control}  should be one of four
+things:
+@begin(enumerate)
+@value(NIL), which means that the @emph{object} is printed in its entirety.
+
+@cindex{controlling printing}
+
+@value(t), the default, which means that the @emph{object} itself is used as
+the control object.  In most cases, the control slots are inherited from an
+ancestor of the @emph{object}.  All Opal prototypes, for example, define
+appropriate slots which reduce the amount of information that is shown by
+@code{ps}.
+
+an object, which is used directly as the control object.
+
+the keyword @code{:default}, which indicates that the KR-supplied default
+print control object should be used.  The name of the default print control
+object is @c(print-schema-control)
+, an object
+in the KR package.  This default object limits the length of lists that
+are printed by @code{ps} to a maximum of ten for ordinary slots, and five for
+the @code{:is-a-inv} slot.
+@end(enumerate)
+
+@cindex{print-schema-control}
+
+If the @emph{inherit} option is @value(nil) (the default), only local slots
+are printed.  Otherwise, all inheritable values from all prototypes of
+@emph{object} are inherited and printed; inherited values are clearly indicated
+in the printout.  As discussed in Chapter @ref(object-oriented-prog), formulas
+are not copied down from prototypes until they are requested by @code{gv} or
+@code{g-value}.  Formulas that have not yet been copied down will not be shown
+by @code{ps}, unless the @emph{inherit} parameter is non-@value(nil).
+
+The @code{:indent} option is only used by debugging code which needs to
+specify an indentation level.  This option is not needed by regular
+application programs.
+
+@code{Ps} prints slots whose value is a formula in a special way.  Besides the
+name of the formula, the current cached value of the formula is
+printed in parentheses, followed by @value(t) if the cache is valid or
+@value(nil) otherwise.  Example:
+@example
+(create-schema 'A
+  (:left 10) (:right (o-formula (+ (gvl :left) 25))))
+(gv A :right)  ==> 35
+
+(ps A)
+@emph{;; prints out:}
+{#k<A>
+  :DEPENDED-SLOTS =  (:LEFT #k<F2285>)
+  :RIGHT =  #k<F2285>(35 . T)
+  :LEFT =  10
+}
+@end[programexample]
+
+@begin[programexample]
+(s-value A :left 50)
+(ps A)
+@emph{;; prints out:}
+{#k<A>
+  :DEPENDED-SLOTS =  (:LEFT #k<F2285>)
+  :RIGHT =  #k<F2285>(35 . NIL)
+  :LEFT =  50
+}
+@end example
+The cached value is not correct, of course, but it will be recomputed as
+soon as its value is requested because formula @code{F2285} is marked invalid.
+
+The function @code{ps} prints the expression of a formula, when given
+the formula as argument.  A formula is printed with three pieces
+of information: the expression, the cached value (which is printed as
+before), and the object and slot on which the formula is installed.
+
+If @emph{stream} is specified, it is used for printing to a stream other than
+standard output.
+
+
+@node Print Control Slots
+@subsection Print Control Slots
+@anchor{print-control-slots}
+
+If a control object is specified in a call to @code{ps}, it should contain (or
+inherit) six special slots.  These slots determine what @code{ps} does.  The
+meaning of the print control slots is as follows:
+
+@itemize @bullet
+
+@item
+@code{:sorted-slots}  contains a list of names
+of slots that should be printed before all other slots, in the desired
+order.
+
+@cindex{sorted-slots slot}
+
+@item
+@code{:ignored-slots}  contains a list of names of
+slots that should not be printed.  A summary printed at the end of the
+object indicates which slots were ignored.
+
+@cindex{ignored-slots slot}
+
+@item
+@code{:global-limit-values}  contains an
+integer, the maximum number of elements that should be printed for each list
+that is a value for a slot.
+If a list contains more than that many elements, ellipsis are printed after
+the given number to indicate that not all elements of the list were actually
+displayed.
+
+@cindex{global-limit-values slot}
+
+@item
+@code{:limit-values}  allows the same control on a
+slot-by-slot basis.  It should contain lists of the form @t{(slot number)}.
+If a slot name appears in one of these lists, the number specified there is
+used instead of the one specified in @code{:global-limit-values}.
+
+@cindex{limit-values slot}
+
+@item
+@code{:print-as-structure}  can be @value(t),
+in which case the #k<> notation is used when printing object names, or
+@value(nil), in which case only pure object names are printed.
+
+@cindex{print-as-structure slot}
+
+@item
+@code{:print-slots}  is a list of the slots that are
+printed as part of the @emph{#k<>} notation.  It is possible to cause @code{ps}
+to print a few slots from each object, inside the @emph{#k<>} printed
+representation; this may make it easier to identify different schemata.
+@code{:print-slots} should contain a list of the names of the slots which
+should be printed this way.  Note that this option has no effect if schema
+names are not being printed with the @emph{#k<>} notation.
+
+@cindex{print-slots slot}
+@end itemize
+
+The following is a rather comprehensive example of fine control over what
+@code{ps} prints.
+@example
+@emph{; Use top level of the hierarchy to control printing.}
+(create-schema 'TOP-OBJECT
+  (:ignored-slots :internal :width))
+
+(create-schema 'COLORED-THING (:color :blue) (:x 10)
+  (:is-a TOP-OBJECT) (:width 12.5) (:y 20) 
+  (:internal "Some information"))
+
+(dotimes (i 20) (create-instance NIL COLORED-THING))
+@end example
+Using @code{ps} with a null @emph{control} prints out the whole contents of
+the schema:
+@example
+(ps COLORED-THING :control NIL)
+@emph{;; prints out:}
+@end[programexample]
+@begin[programexample]
+{#k<COLORED-THING>
+  :IS-A-INV =  #k<COLORED-THING-2265> 
+    #k<COLORED-THING-2266> #k<COLORED-THING-2267>
+    #k<COLORED-THING-2268> #k<COLORED-THING-2269>
+    #k<COLORED-THING-2270> #k<COLORED-THING-2271>
+    #k<COLORED-THING-2272> #k<COLORED-THING-2273>
+    #k<COLORED-THING-2274> #k<COLORED-THING-2275>
+    #k<COLORED-THING-2276> #k<COLORED-THING-2277>
+    #k<COLORED-THING-2278> #k<COLORED-THING-2279>
+    #k<COLORED-THING-2280> #k<COLORED-THING-2281>
+    #k<COLORED-THING-2282> #k<COLORED-THING-2283>
+    #k<COLORED-THING-2284>
+  :INTERNAL =  "Some information"
+  :Y =  20
+  :X =  10
+  :COLOR =  :BLUE
+  :WIDTH =  12.5
+  :IS-A =  #k<TOP-OBJECT>
+}
+@end example
+Using the system-supplied default control object reduces the clutter in the
+@code{:is-a-inv} slot, and also eliminates printing of schemata with the
+special #k<> convention:
+@example
+(ps COLORED-THING :control :default)
+{COLORED-THING
+  :WIDTH =  12.5
+  :IS-A-INV =  COLORED-THING-2265 COLORED-THING-2266 
+     COLORED-THING-2267 COLORED-THING-2268
+     COLORED-THING-2269 ...
+  :INTERNAL =  "Some information"
+  :Y =  20
+  :X =  10
+  :COLOR =  :BLUE
+  :IS-A =  TOP-OBJECT
+}
+@end example
+We can make things even better by using the object itself to inherit the
+control slots.  We add sorting information and a global limit to the number
+of elements to be printed for each list.  We do this at the highest level in
+the hierarchy, so that every object can inherit the information:
+@example
+(s-value TOP-OBJECT :global-limit-values 3)
+(s-value TOP-OBJECT :sorted-slots 
+  '(:is-a :color :x :y))
+
+(ps COLORED-THING)
+@emph{;; prints out:}
+{COLORED-THING
+  :IS-A =  TOP-OBJECT
+  :COLOR =  :BLUE
+  :X =  10
+  :Y =  20
+  :IS-A-INV =  COLORED-THING-2265 COLORED-THING-2266
+     COLORED-THING-2267 ...
+  List of ignored slots:   WIDTH INTERNAL
+}
+@end example
+
+
+@node Slot Printing Functions
+@subsection Slot Printing Functions
+
+It is possible to use the basic mechanism used by the function
+@code{ps} to print or format objects in a customized way.  This facility
+is used by applications such as the @code{garnet-@|debug:Inspector},
+which need full control
+over how objects are displayed.  This mechanism is supported by the
+following function.
+
+
+@cindex{call-on-ps-slots}
+@example
+kr::Call-On-PS-Slots @i[object  function] &key (@i[control] T) @i[inherit] @value(function)
+                     (@i[indent] NIL) @i[types-p  all-p]
+@end example
+
+The @i[function] is called in turn on each slot that would be printed
+by @code{ps}.  The keyword arguments have exactly the same meaning as in
+@code{ps}.  The @i[function] should take nine arguments, as follows:
+@example
+(lambda (object slot formula is-inherited valid real-value types-p bits indent limits))
+@end example
+When the function is called, the first argument is the object being
+displayed; the second argument is bound to each slot in the object, in
+turn.  The @i[formula] is set to NIL (for slots that contain
+non-formula values), or to the actual formula in the @i[slot].  The
+parameter @i[is-inherited] is T if the value in the @i[slot] was
+inherited, NIL if the value was defined locally.  The parameter
+@i[valid] is NIL if the @i[slot] contains a formula whose cached value
+is invalid; it contains T if the slot contains a valid formula, or any
+non-formula value.  The parameter @i[real-value] is whatever g-value
+would actually return.  The parameter @i[types-p] is set to T if the
+@i[function] should process type information for the @i[slot]; its
+value simply reflects the value passed to @code{kr::call-on-ps-slot}.
+The parameter @i[bits] contains the internal bitwise representation of
+the slot's features and type, as an integer.  The parameter @i[indent]
+is the level of indentation.  The parameter
+@i[limits] is a number (the maximum number of values from the @i[slot]
+that are to be processed by the @i[function]), or NIL if all values in
+the slot should be processed.
+
+@sp 1
+@group
+
+@cindex{call-on-one-slot}
+A similar function is used when only one slot in an object is to be processed:
+@example
+kr::Call-On-One-Slot @i[object slot function]  @value(function)
+@end example
+
+This function returns T if the slot exists and
+the @i[function] was called, and NIL otherwise.
+@end group
+
+
+
+
+@node  ControlVariables
+@subsection Control Variables
+
+
+
+The following variable can be set globally to achieve the same effect as
+the slot @code{:print-as-structure} described above:
+
+kr::*PRINT-AS-STRUCTURE*@value(variable)
+
+@cindex{*print-as-structure*}
+@cindex{print-as-structure}
+
+This variable may be used to determine whether schema names are printed
+with the notation @c(#k<name>) (the default) or simply as @c(name).  The
+former notation is more perspicuous, since it makes it immediately clear
+which objects are KR schemata.  The second notation is more compact, and is
+obtained by setting kr::*PRINT-AS-STRUCTURE* to @value(nil).
+
+
+In addition to kr::*PRINT-AS-STRUCTURE*, other special variables
+can be used to control the behavior of the system.  The following
+variables are used to control what debugging information is printed.
+The default settings are such that very little debugging information
+is printed.
+
+
+kr::*PRINT-NEW-INSTANCES*@value(variable)
+
+@cindex{*print-new-instances*}
+@cindex{print-new-instances}
+
+This variable controls whether a notification is printed when
+@code{create-schema} or create-instance are compiled from a file.  The
+message is printed when kr::*PRINT-NEW-INSTANCES* is @value(t) (the
+default), and may be useful to determine how far into a file compilation
+has progressed.  Setting this variable to @value(nil) turns off the
+notification.
+
+
+kr::*WARNING-ON-NULL-LINK*@value(variable)
+
+@cindex{*warning-on-null-link*}
+@cindex{warning-on-null-link}
+
+This variable controls whether a notification is printed when a null link
+is encountered during the evaluation of a formula.  When the variable is
+@value(nil) (the default), the stale value of the formula is simply reused
+without any warning.  Setting the variable to @value(t) causes a
+notification describing the situation to be printed; the formula then
+returns the stale value, as usual.
+
+
+
+kr::*WARNING-ON-CIRCULARITY*@value(variable)
+
+@cindex{*warning-on-circularity*}
+@cindex{warning-on-circularity}
+
+This variable controls whether a notification is printed when a circularity
+is detected during formula evaluation.  When the variable is @value(nil)
+(the default), no warnings are generated.  Setting the variable to
+@value(t) causes a notification describing the situation to be printed.
+
+
+
+kr::*WARNING-ON-CREATE-SCHEMA*@value(variable)
+
+@cindex{warning, create-schema}
+
+@cindex{*warning-on-create-schema*}
+
+This variable controls whether a notification is printed when
+@code{create-instance} creates an object that has the same name as an old object,
+and the old object is destroyed.  If @value(t) (the default), then a
+warning will be printed when an object is redefined.
+
+
+kr::*WARNING-ON-EVALUATION*@value(variable)
+
+@cindex{*warning-on-evaluation*}
+
+This variable controls whether a warning is printed whenever a formula
+is evaluated.  If its value is non-@value(nil), then a warning will
+describe the object, slot, and name of any formula that is evaluated.
+This can be useful for debugging.
+
+
+kr::*STORE-LAMBDAS*@value(variable)
+
+@cindex{*store-lambdas*}
+
+@cindex{store-lambdas}
+
+The variable kr::*STORE-LAMBDAS* (default @value[t]) may be set
+to @value(nil) to prevent the expression of a formula from being stored in the
+formula itself.  This produces smaller run-time programs, but because
+the expression is lost it may be impossible to dump a set of objects
+to a file using @code{opal:write-gadget}.
+
+
+
+
+@node An Example
+@section An Example
+
+
+This section develops a more comprehensive example than the ones so far,
+and highlights the operations with which most users of the system should be
+familiar.  Note that this example does not use graphical operations at all;
+refer to the Opal manual for examples of graphical applications.
+
+We will first construct a simple example of constraints and show how
+constraints work.  The example uses constraints to compute the equivalence
+between a temperature expressed in degrees Celsius and in degrees
+Fahrenheit.  This first part also illustrates how KR deals with circular
+chains of constraints.
+
+The second part of the example shows simple object-oriented programming
+techniques, and illustrates many of the dynamic capabilities of KR.  Note
+that this example is purely indicative of a certain way to program in KR,
+and different programming styles would be possible even for such a simple
+task.
+
+@node  The DegreesSchema
+@subsection The Degrees Schema
+
+
+First of all, we will create the @c(degrees) schema  as a demonstration of constraints in KR.  This is a schema with two
+slots, namely, @code{:celsius} and @code{:fahrenheit}.  The schema can be created
+with the following call to @code{create-schema}:
+@example
+@anchor{degrees}
+(create-schema 'DEGREES
+  (:fahrenheit (o-formula (+ (* (gvl :celsius) 9/5) 32)
+                          32))
+  (:celsius (o-formula (* (- (gvl :fahrenheit) 32) 5/9)
+                       0)))
+@emph{;; and now:}
+(gv DEGREES :celsius)    ==> 0
+(gv DEGREES :fahrenheit) ==> 32
+
+
+
+@end example
+
+@cindex{degrees schema}
+
+Each of the two slots contains a formula.  The formula in the @code{:celsius}
+slot, for instance, indicates that the value is computed from the value in
+the @code{:fahrenheit} slot, using the appropriate expression.  The initial
+value, moreover, is 32.  The formula in the @code{:fahrenheit} slot,
+similarly, is constrained to be a function of the value in the @code{:celsius}
+slot and is initialized with the value 0.
+
+It is clear that this example involves a circular chain of constraints.
+The value of @code{:celsius} depends on the value of @code{:fahrenheit}, which
+itself depends on the value of @code{:celsius}.  This circularity, however, is
+not a problem for KR.  The system is able to detect such circularities and
+reacts appropriately by stopping value propagation when necessary.
+
+Consider, for instance, setting the value of the @code{:celsius} slot:
+@example
+(s-value DEGREES :celsius 20)
+(gv DEGREES :celsius)             ==> 20
+(gv DEGREES :fahrenheit)          ==> 68
+@end example
+
+As the example shows, KR propagates the change to the @code{:fahrenheit} slot,
+which is given the correct value.  Similarly, if we modify the value in the
+@code{:fahrenheit} slot, we have correct propagation in the opposite
+direction:
+@example
+(s-value DEGREES :fahrenheit 212)
+(gv DEGREES :celsius)             ==> 100
+(gv DEGREES :fahrenheit)          ==> 212
+@end example
+
+
+@node  The ThermometerExample
+@subsection The Thermometer Example
+
+
+Let us now build an example of a thermometer from which one can read the
+temperature in both degrees Celsius and Fahrenheit, and show a more
+extensive application of constraints.  This example also shows the role of
+inheritance in object-oriented programming, and a simple method
+combination.
+
+We begin with @c(temperature-device), a simple
+prototype  which contains a
+formula to translate degrees Celsius into Fahrenheit (the formula is the
+same we used in the previous example) and a @code{:print} method which prints
+out both values:
+@cindex{temperature-device schema}
+
+
+@example
+(create-schema 'TEMPERATURE-DEVICE
+  (:fahrenheit
+    (o-formula (+ (* (gvl :celsius) 9/5) 32) 32)))
+
+
+(define-method :print TEMPERATURE-DEVICE (schema)
+  (format t "Current temperature: ~,1F C (~,1F F)~%"
+	  (gv schema :celsius)
+	  (gv schema :fahrenheit)))
+@end example
+
+We now create two objects to hold the current temperature outdoors and
+indoors, and we create the schema @c(thermometer),
+ 
+which will be the basic building block for other
+thermometers:
+
+@cindex{thermometer schema}
+
+@example
+(create-schema 'OUTSIDE
+  (:celsius 10))
+
+(create-schema 'INSIDE
+  (:celsius 21))
+
+(create-instance 'THERMOMETER TEMPERATURE-DEVICE
+  (:celsius (o-formula (gvl :location :celsius))))
+@end example
+Note that @c(thermometer) can act as a prototype, since it provides a
+formula which constrains the value of the @code{:celsius} slot to follow the
+value of the @code{:celsius} slot of a particular location.  Thermometer
+schemata created as instances of @c(thermometer) will then simply track the
+value of temperature at the location with which they are associated.  Note
+that instances of @c(thermometer) inherit the @code{:print} method from
+@c(temperature-device).
+@example
+(create-instance 'TH1 THERMOMETER
+		 (:location outside))
+
+(create-instance 'TH2 THERMOMETER
+		 (:location inside))
+
+(kr-send TH2 :print TH2)
+@emph{;; prints out:}
+Current temperature: 21.0 C (69.8 F)
+
+(kr-send TH1 :print TH1)
+@emph{;; prints out:}
+Current temperature: 10.0 C (50.0 F)
+@end example
+Since the temperature in the @c(outside) schema is 10, and thermometer
+@c(th1) is associated with @c(outside), it prints out the current
+temperature outside.  Changing the slot @code{:location} of @c(th1) to
+@c(inside) would automatically change the temperature reading, because of
+the dependency built into the formula in that slot.
+
+We now want to specialize  the @c(thermometer) in order to
+provide a new kind of thermometer that keeps track of minimum and maximum
+temperature, as well as the current temperature.  We do this by creating an
+instance, @c(min-max-thermometer), which inherits all the features of
+@c(thermometer) and defines two new formulas for computing minimum and
+maximum temperatures.  Note the initial values in the formulas.  Also, we
+create an instance of @c(min-max-thermometer) named @c(min-max), and
+send it the @code{:print} message.
+
+@cindex{prototypes}
+
+@example
+(create-instance 'MIN-MAX-THERMOMETER THERMOMETER
+  (:min (o-formula (min (gvl :min)
+		        (gvl :location :celsius))
+		   100))
+  (:max (o-formula (max (gvl :max)
+		        (gvl :location :celsius))
+		   -100)))
+
+(create-instance 'MIN-MAX MIN-MAX-THERMOMETER
+   (:location outside))
+
+(kr-send MIN-MAX :print MIN-MAX)
+@emph{;; prints out:}
+Current temperature: 10.0 C (50.0 F)
+@end example
+The @code{:print} method inherited from @c(temperature-device) is not
+sufficient for our present purpose, since it does not show minimum and
+maximum temperatures.  We thus specialize  the
+@code{:print} method, but we still use the default @code{:print} method to print
+out the current values.  Let us specialize the method, print out the
+current status, change the temperature outside a few times, and then print
+out the status again:
+
+@cindex{combining methods}
+
+@example
+(define-method :print MIN-MAX-THERMOMETER (schema)
+  ;; print out temperature, as before
+  (call-prototype-method schema)
+  ;; print out minimum and maximum readings.
+  (format t "Minimum and maximum: ~,1F  ~,1F~%"
+	  (gv schema :min)
+	  (gv schema :max)))
+
+(kr-send MIN-MAX :print MIN-MAX)
+@emph{;; prints out:}
+Current temperature: 10.0 C (50.0 F)
+Minimum and maximum: 10.0  10.0
+
+(s-value OUTSIDE :celsius 14)
+(kr-send MIN-MAX :print MIN-MAX)
+@emph{;; prints out:}
+Current temperature: 14.0 C (57.2 F)
+Minimum and maximum: 10.0  14.0
+
+(s-value OUTSIDE :celsius 12)
+(kr-send MIN-MAX :print MIN-MAX)
+@emph{;; prints out:}
+Current temperature: 12.0 C (53.6 F)
+Minimum and maximum: 10.0  14.0
+@end example
+Note that the @code{:fahrenheit} slot in any of these schemata can be
+accessed normally, and the constraints keep it up to date at all times:
+@example
+(gv MIN-MAX :fahrenheit)  ==> 268/5 @i{(53.6)}
+@end example
+
+Finally, we can add a method to reset the minimum and maximum temperature,
+in order to start a new reading.  This is shown in the next fragment of
+code:
+@example
+(define-method :reset MIN-MAX-THERMOMETER (schema)
+  (s-value schema :min (gv schema :celsius))
+  (s-value schema :max (gv schema :celsius)))
+
+(kr-send MIN-MAX :reset MIN-MAX)  @emph{; reset min, max}
+
+(kr-send MIN-MAX :print MIN-MAX)
+@emph{;; prints out:}
+Current temperature: 12.0 C (53.6 F)
+Minimum and maximum: 12.0  12.0
+
+(s-value OUTSIDE :celsius 14)
+
+(kr-send MIN-MAX :print MIN-MAX)
+@emph{;; prints out:}
+Current temperature: 14.0 C (57.2 F)
+Minimum and maximum: 12.0  14.0
+@end example
+
+Other choices of programming style would have been possible, ranging from
+entirely object-oriented (i.e., without using constraints at all) to
+entirely demon-based.
+
+
+@node Summary
+@section Summary
+
+
+
+KR provides excellent performance and three powerful paradigms:
+object-oriented programming, knowledge representation, and constraint
+maintenance.  The system is designed for high performance and has a very
+simple program interface, which makes it easy to learn and easy to use.
+
+The object-oriented programming component of KR is based on the
+prototype-instance paradigm, which is more flexible than the class-instance
+paradigm.  Prototypes are simply
+objects from which other objects (called instances) may inherit values or
+methods.  This relationship is completely dynamic, and an object can be
+made an instance of a different prototype as needed.  Object methods are
+implemented as procedural attachments which are stored in an object's
+slots.  Methods are inherited through the usual mechanism.
+
+The knowledge representation component of KR offers
+multiple inheritance and user-defined relations.  This component provides
+completely dynamic specification of a network's characteristics:
+inheritance, for example, is determined through user-specified relations,
+which the user may modify at run-time as needed.  The performance of this
+component is very good and compares favorably with that of basic Lisp data
+structures.  Inheritance, in particular, is efficient enough to provide the
+basic building block across a wide variety of application programs.
+
+The constraint maintenance component of KR provides integrated, efficient
+constraint maintenance and is implemented through formulas, i.e,
+expressions which compute the value of a slot based on the values in other
+slots.  Constraint maintenance uses lazy evaluation and value caching
+to yield excellent performance in a completely transparent way.  Constraint
+maintenance is totally integrated with the rest of the system and can be
+used even without any knowledge of its internal details.  The same access
+functions, in particular, work on both regular values and on values which
+are constrained by formulas.
+
+In spite of its power, KR is small and simple.  This makes it easy to
+maintain and extend as needed, and also makes it ideally suited for
+experimentation on efficient knowledge representation.  The system is
+entirely written in portable Common Lisp and can run efficiently on any
+machine which supports the language.  These features make KR an attractive
+foundation for a number of applications which use a combination of
+frame-based knowledge representation, object-oriented programming, and
+constraint maintenance.
+
+
+@UnNumbered(References)
+@bibliography
+
