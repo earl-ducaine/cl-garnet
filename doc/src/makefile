@@ -28,7 +28,7 @@ manuals: $(OUTPUT)
 all: $(OUTPUT) scripts/pagenumbers-done index/index.ps refman/refman.ps
 
 garnet: elisp.texi
-	texi2pdf $(TEXINFO_FLAGS) garnet-manual.texi
+	texi2pdf $(TEXINFO_FLAGS) elisp.texi
 
 
 pagenumbers.mss: # scripts/pagenumbers-done
