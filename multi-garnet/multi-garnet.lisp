@@ -650,7 +650,66 @@
     (loop for cn in invalid-cns do (connect-add-constraint cn))
     ))
 
+
 (defun destroy-schema-hook (schema &optional (send-destroy-message NIL) recursive-p)
+  (let ((invalid-cns nil)
+	(invalid-vars nil))
+    (when (schema-p schema)
+      ;; remove constraints in slots in this obj
+      (LOCALLY
+ (DECLARE (OPTIMIZE (SPEED 0) (SAFETY 3) (SPACE 0) (DEBUG 3)))
+ (PROGN
+  (MAPHASH
+   #'(LAMBDA (KR::ITERATE-IGNORED-SLOT-NAME KR::ITERATE-SLOT-VALUE-ENTRY)
+       (DECLARE (IGNORE KR::ITERATE-IGNORED-SLOT-NAME))
+       (LET ((KR::SLOT (KR::SL-NAME KR::ITERATE-SLOT-VALUE-ENTRY))
+             (KR::VALUE (KR::SL-VALUE KR::ITERATE-SLOT-VALUE-ENTRY)))
+         (UNLESS (KR::IS-INHERITED (KR::SL-BITS KR::ITERATE-SLOT-VALUE-ENTRY))
+           (UNLESS (EQ KR::VALUE KR::*NO-VALUE*)
+             (LET ((SLOT KR::SLOT))
+               (LET ((VAL (GET-LOCAL-VALUE SCHEMA SLOT)))
+                 (WHEN
+                     (AND (CONSTRAINT-P VAL)
+                          (CONSTRAINT-IN-OBJ-SLOT VAL SCHEMA SLOT))
+                   (REMOVE-BAD-INV-OBJECTS SCHEMA)
+                   (REMOVE-CONSTRAINT-FROM-SLOT SCHEMA SLOT VAL))))))))
+   (KR::SCHEMA-BINS SCHEMA))))
+      ;; find all constraints that use slots in this object
+      (LOCALLY
+ (DECLARE (OPTIMIZE (SPEED 0) (SAFETY 3) (SPACE 0) (DEBUG 3)))
+ (PROGN
+  (MAPHASH
+   #'(LAMBDA (KR::ITERATE-IGNORED-SLOT-NAME KR::ITERATE-SLOT-VALUE-ENTRY)
+       (DECLARE (IGNORE KR::ITERATE-IGNORED-SLOT-NAME))
+       (LET ((KR::SLOT (KR::SL-NAME KR::ITERATE-SLOT-VALUE-ENTRY))
+             (KR::VALUE (KR::SL-VALUE KR::ITERATE-SLOT-VALUE-ENTRY)))
+         (UNLESS (KR::IS-INHERITED (KR::SL-BITS KR::ITERATE-SLOT-VALUE-ENTRY))
+           (UNLESS (EQ KR::VALUE KR::*NO-VALUE*)
+             (LET ((SLOT KR::SLOT))
+               (LET ((VAL (GET-LOCAL-VALUE SCHEMA SLOT)))
+                 (WHEN
+                     (AND (CONSTRAINT-P VAL)
+                          (CONSTRAINT-IN-OBJ-SLOT VAL SCHEMA SLOT))
+                   (REMOVE-BAD-INV-OBJECTS SCHEMA)
+                   (REMOVE-CONSTRAINT-FROM-SLOT SCHEMA SLOT VAL))))))))
+   (KR::SCHEMA-BINS SCHEMA))))
+      ;; remove invalid constraints
+      (loop for cn in invalid-cns do
+	    ;; make sure that :is-a-inv is good before changing any slots
+	   (remove-bad-inv-objects schema)
+	   (remove-disconnect-constraint cn))
+      ;; flush invalid vars
+      (loop for var in invalid-vars do
+	    (setf (VAR-os var) nil))
+      ;; actually destroy the schema
+      (call-hook-save-fn kr::destroy-schema schema send-destroy-message recursive-p)
+      ;; try reconnecting the invalid constraints
+      (loop for cn in invalid-cns do (connect-add-constraint cn))
+      )))
+
+
+
+(defun destroy-schema-hook-old (schema &optional (send-destroy-message NIL) recursive-p)
   (let ((invalid-cns nil)
 	(invalid-vars nil))
     (when (schema-p schema)
@@ -1402,7 +1461,7 @@
 			     kr::propagate-change             propagate-change-hook))
 
 (defun enable-multi-garnet ()
-  (loop for (fn hook-fn) on *fn-to-hook-plist* by #'CDDR
+  (loop for (fn hook-fn) on *fn-to-hook-plist* by #'cddr
 	do (install-hook fn hook-fn)))
 
 (defun disable-multi-garnet ()
@@ -1431,8 +1490,5 @@
 	))
     ))
 
-
-(eval-when (:load-toplevel :execute)
-  ;; This needs to be called after Garnet loads, do to concurency issues.
-  ;;(enable-multi-garnet))
-  )
+;; (eval-when (:load-toplevel :execute)
+;;   (enable-multi-garnet))
