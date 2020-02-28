@@ -10,7 +10,6 @@
   - Has its own object system distinct from CLOS and KR. gem-method is
     the key form of this fascility.
 
-  - 
 
 ** API
 
