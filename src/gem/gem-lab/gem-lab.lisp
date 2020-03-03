@@ -1,3 +1,8 @@
+
+
+(ql:quickload :clx)
+(ql:quickload :bordeaux-threads)
+
 (defpackage :gem-lab
   (:use common-lisp
 	;; gem
@@ -308,41 +313,51 @@
     (unless (eq selected-item :none)
       selected-item)))
 
+(defparameter *display* nil)
+(defparameter *screen* nil)
+(defparameter *a-menu* nil)
+
 (defun just-say-lisp (&optional host font-name)
-  (let* ((display
-	  (if host
-	      (open-display host)
-	      (xlib::open-default-display)))
-	 (screen
-	  (first (display-roots display)))
-	 (fg-color (screen-black-pixel screen))
-	 (bg-color (screen-white-pixel screen))
+  (setf *display*
+	(if host
+	    (open-display host)
+	    (xlib::open-default-display)))
+  (setf *screen* (first (display-roots *display*)))
+  (let* ((fg-color (screen-black-pixel *screen*))
+	 (bg-color (screen-white-pixel *screen*))
 	 ;; font-name used to have a default of "fg-16" But,
 	 ;; apperently, this is no longer commonly included in a basic
-	 ;; X11 installation. At least it was missing from Ubuntu 19.10.
-	 (nice-font (if font-name
-			(open-font display font-name)
-			(car (xlib:list-fonts
-			 (xlib::open-default-display)
-			 "*-adobe-times-medium-*34-240-*-170*-iso8859-1"))))
+	 ;; X11 installation. At least it was missing from Ubuntu
+	 ;; 19.10.
+	 (nice-font
+	  (if font-name
+	      (open-font *display* font-name)
+	      (car (xlib:list-fonts
+		    (xlib::open-default-display)
+		    "*-adobe-times-medium-*34-240-*-170*-iso8859-1")))))
 	 ;; Create a menu as a child of the root window.
-	 (a-menu
-	  (create-menu (screen-root screen)
-		       fg-color bg-color nice-font)))
-    (setf (menu-title a-menu) "please pick your favorite language:")
-    (menu-set-item-list a-menu "fortran" "apl" "forth" "lisp")
+    (setf *a-menu*
+	  (create-menu (screen-root *screen*)
+		       fg-color bg-color nice-font))
+    (setf (menu-title *a-menu*) "please pick your favorite language:")
+    (menu-set-item-list *a-menu* "fortran" "apl" "forth" "lisp")))
+
+(defun do-menu ()
     ;; Bedevil the user until he picks a nice programming language
-    ;; (unwind-protect
-    ;; 	 (loop
-    ;; 	    ;; Determine the current root window position of the pointer
-    ;; 	    (multiple-value-bind (x y)
-    ;; 		(query-pointer (screen-root screen))
-    	      (let ((choice (menu-choose a-menu 50 50)))
-    		;; (when (string-equal "lisp" choice)
-    		;;   (return))
-		)
-    ;;   (close-display display))
-    ))
+    (unwind-protect
+  ;;  	 (loop
+    	    ;; Determine the current root window position of the
+    	    ;; pointer
+	    (sleep 1)
+    	    ;; (multiple-value-bind (x y)
+    	    ;; 	(query-pointer (screen-root *screen*))
+    	    ;;   (let ((choice
+	    (menu-choose *a-menu* 50 50)))
+      ;; 	    ))
+      ;; 		(when (string-equal "lisp" choice)
+      ;; 		  (return)))))
+      ;; (close-display *display*)
+;;))
 
 (defun menu-unhighlight-item (menu position)
   ;; Draw a box in the menu background color
