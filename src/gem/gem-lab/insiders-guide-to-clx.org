@@ -1,0 +1,30 @@
+
+* Debugging
+
+  - X11 Misc
+    https://www.x.org/releases/individual/app/
+    https://www.x.org/wiki/guide/debugging/
+    https://gitlab.freedesktop.org/xorg/app/xscope
+    https://gitlab.freedesktop.org/xorg
+    
+  - Misc for building
+
+    sudo apt install xserver-xephyr-hwe-18.04
+    sudo apt-get install x11-utils
+    sudo apt-get build-dep x11-utils
+    
+
+  - Xephyr
+    Xephyr -ac -screen 1280x1024 -br -reset -terminate 2> /dev/null :1 &
+    https://www.x.org/archive/X11R7.5/doc/man/man1/Xephyr.1.html
+    apt-get update -y
+    sudo apt-get install -y xserver-xephyr
+
+  - xscope
+    find:
+    http://jklp.org/public/profession/papers/xscope/paper.htm
+    https://www.x.org/releases/X11R7.6/doc/man/man1/xscope.1.xhtml
+    
+    
+
+    
