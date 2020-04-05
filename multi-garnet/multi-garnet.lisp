@@ -1431,5 +1431,8 @@
 	))
     ))
 
+
 (eval-when (:load-toplevel :execute)
-  (enable-multi-garnet))
+  ;; This needs to be called after Garnet loads, do to concurency issues.
+  ;;(enable-multi-garnet))
+  )
