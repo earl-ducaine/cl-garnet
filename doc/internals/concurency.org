@@ -1,0 +1,97 @@
+
+
+
+* Concurrency
+
+  The current version of Garnett suffers from a fatal flaw with
+  respect to concurency: the CLX librabry is not thread safe and there
+  is no mechanism to broker interaction between the message pump and
+  the interactive shell.
+
+** Current state
+   Concurrency is supposed to be controled by the interaction of two
+   settings:
+   
+   1) The cmu feature, i.e. #+cmu and #-cmu
+
+   2) launch-process-p
+
+   If cmu is enabled, then CMU uses it's own multiprogramming mode to
+   interact with CLX. This is (apperently) a most single threaded
+   approach, but yeilds for certain io operations. The main entry
+   point for the message pump is:
+
+   #+BEGIN_SRC lisp :tangle start-swank-server.lisp
+     (ext:enable-clx-event-handling opal::*default-x-display*
+				    #'inter::default-event-handler)
+   #+END_SRC
+
+   For non-CMU lisps that support multi-processing, i.e. alegro and
+   lucid (we're talking early 90s here), the following is the
+   entrypoint: 
+
+   #+BEGIN_SRC lisp :tangle start-swank-server.lisp
+     (when user::launch-process-p
+       (opal:launch-main-event-loop-process))
+   #+END_SRC
+
+   That sets the special *main-event-loop-process* to the message pump
+   thread. The main event loop can be kill (semi-politely) using
+   kill-main-event-loop-process 
+
+   If launch-process-p is nil, then *main-event-loop-process* will
+   never be set. This changes the behavior of main-event-loop. If
+   *main-event-loop-process* is non-null, garnet has been started in
+   multi-process mode, and the call to main-event-loop is a no op,
+   (because the event loop is already running) However, if
+   *main-event-loop-process* is nil then a call to main-event-loop
+   will begin the message pump, blocking until the last window has
+   been killed.
+
+
+** Correct Approach
+
+   For Garnett to be multi-threaded there are three problems that need
+   to be overcome:
+
+   1) Access to CLX needs to be locked so that only one thread at a
+      time can use it. Since CLX itself is the source of messages,
+      this means that any time a thread calls into the library,
+      another thread isn't listening for events.
+
+   2) The underlying Garnet infrastructure needs to be made
+      multi-threaded. The class system is the most critical of these,
+      since creating new classes updates a database of classes that's
+      globally available.
+
+   3) Must of Common Lisp itself is not thread safe, there should be
+      clear conventions, and ideally programming constructs that
+      fascilitate syncranization.
+
+** Ideas
+   These are not trivial changes. Below are some ideas
+
+   - Review Haiku (the free version of the BeOS) operating system,
+     which is highly concurrent.
+
+   - In critical operations, espectially with CLX move to a message
+     passing form of interaction.
+
+   - Settle for 'partial' multithread, workers, application framework
+     in one thread, CLX interaction in another.
+
+   - Opt for a multi-process framework, where interaction occures
+     between seperate lisp images (and provide communications to make
+     such interactions convenient to use and well integrated with Garnett.)
+
+   - Maybe threading is foolish to address within the contex of
+     Garnett, i.e. performance is perfectly adequane with a single
+     thread and multi-processing is better handled within the
+     applicaiton domain.
+
+
+* Conclusion
+
+  threading is multi-threading is turned off by default, and can only
+  be considered a broken, legacy (mis)feature until the substatial
+  issues are resolved.
