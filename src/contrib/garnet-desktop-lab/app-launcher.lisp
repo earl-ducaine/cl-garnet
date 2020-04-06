@@ -19,16 +19,16 @@
 
 ;; Load multifont stuff.
 ;; (unless (get :garnet-modules :multifont)
-;;    (load (merge-pathnames "multifont-loader" common-lisp-user::Garnet-Opal-PathName)
+;;    (load (merge-pathnames "multifont-loader" Garnet-Opal-PathName)
 ;;          :verbose T))
 
 ;; (dolist (file '("x-buttons-loader"
 ;; 		"text-buttons-loader"
 ;; 		"scrolling-window-loader"
 ;; 		"mouseline-loader"))
-;;   (common-lisp-user::garnet-load (concatenate 'string "gadgets:" file)))
+;;   (garnet-load (concatenate 'string "gadgets:" file)))
 
-;; (common-lisp-user::garnet-load "demos:demo-logo")
+;; (garnet-load "demos:demo-logo")
 
 (defparameter *package-list*
   '(("xomax" xomax)
@@ -258,7 +258,7 @@ Click the button to start the demo."))
       (when (member (car objlist) *unloaded* :test #'string=)
             ;; (load
             ;;   (merge-pathnames
-	    ;;    (string-downcase package-name) common-lisp-user::Garnet-Demos-PathName))
+	    ;;    (string-downcase package-name) Garnet-Demos-PathName))
             (setq *unloaded* (remove (car objlist) *unloaded* :test #'string=)))
       (opal:set-text text (string-trim (list #\newline #\space)
        (with-output-to-string (*standard-output*)
@@ -298,7 +298,7 @@ Click the button to start the demo."))
         (stop (deselected objlist)))
       (setq *running* (copy-list objlist))))
 
-(defun common-lisp-user::garnet-note-quitted (package)
+(defun garnet-note-quitted (package)
   (let ((button-name NIL))
   (when (and (boundp 'win1) win1)
     (dolist (item *package-list*)

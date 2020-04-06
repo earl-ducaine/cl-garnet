@@ -655,7 +655,7 @@
   (when (and (null opal::*main-event-loop-process*)
 	     opal::*inside-main-event-loop*)
     (setq opal::*inside-main-event-loop* NIL)
-    (throw 'exit-main-loop-exception t)))
+    (throw 'opal::exit-main-loop-exception t)))
 
 (defvar opal::*exit-main-event-loop-function* #'exit-main-event-loop
   "This variable tells opal what function to call when you delete the
@@ -680,7 +680,7 @@ by the protected-eval code."
 	(loop			      ; in a loop in case event handler exits
 	   (Read-All-Transcript-Events)) ; read from transcript
 	;; else get event from event handler
-	(catch 'exit-main-loop-exception
+	(catch 'opal::exit-main-loop-exception
 	  (loop
 	     (default-event-handler
 		 (g-value gem:DEVICE-INFO :current-root)))
