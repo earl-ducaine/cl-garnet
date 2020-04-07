@@ -1,0 +1,150 @@
+
+* Gem Internals
+  
+  - Acts as an abstraction for underlying display and input device
+    systems.
+
+  - Originally support Apple (pre X) and xlib, but now only xlib (since I
+    gutted it)
+
+  - Has its own object system distinct from CLOS and KR. gem-method is
+    the key form of this fascility.
+
+** API
+
+*** Methods
+
+    :ALL-GARNET-WINDOWS
+    :BEEP
+    :BIT-BLIT
+    :BLACK-WHITE-PIXEL
+    :BUILD-PIXMAP
+    :CHARACTER-WIDTH
+    :CHECK-DOUBLE-PRESS
+    :CLEAR-AREA
+    :COLOR-TO-INDEX
+    :COLORMAP-PROPERTY
+    :COPY-TO-PIXMAP
+    :CREATE-CURSOR
+    :CREATE-IMAGE
+    :CREATE-IMAGE-ARRAY
+    :CREATE-PIXMAP
+    :CREATE-STATE-MASK
+    :CREATE-WINDOW
+    :DELETE-FONT
+    :DELETE-PIXMAP
+    :DELETE-WINDOW
+    :DEVICE-IMAGE
+    :DISCARD-MOUSE-MOVED-EVENTS
+    :DISCARD-PENDING-EVENTS
+    :DRAW-ARC
+    :DRAW-IMAGE
+    :DRAW-LINE
+    :DRAW-LINES
+    :DRAW-POINTS
+    :DRAW-RECTANGLE
+    :DRAW-ROUNDTANGLE
+    :DRAW-TEXT
+    :DRAWABLE-TO-WINDOW
+    :EVENT-HANDLER
+    :FLUSH-OUTPUT
+    :FONT-EXISTS-P
+    :FONT-MAX-MIN-WIDTH
+    :FONT-NAME-P
+    :FONT-TO-INTERNAL
+    :GET-CUT-BUFFER
+    :IMAGE-BIT
+    :IMAGE-FROM-BITS
+    :IMAGE-HOT-SPOT
+    :IMAGE-SIZE
+    :IMAGE-TO-ARRAY
+    :INITIALIZE-DEVICE
+    :INITIALIZE-WINDOW-BORDERS
+    :INJECT-EVENT
+    :MAKE-FONT-NAME
+    :MAP-AND-WAIT
+    :MAX-CHARACTER-ASCENT
+    :MAX-CHARACTER-DESCENT
+    :MOUSE-GRAB
+    :RAISE-OR-LOWER
+    :READ-AN-IMAGE
+    :REPARENT
+    :SET-CLIP-MASK
+    :SET-CUT-BUFFER
+    :SET-DEVICE-VARIABLES
+    :SET-DRAW-FUNCTION-ALIST
+    :SET-DRAW-FUNCTIONS
+    :SET-DRAWABLE-TO-WINDOW
+    :SET-INTEREST-IN-MOVED
+    :SET-SCREEN-COLOR-ATTRIBUTE-VARIABLES
+    :SET-WINDOW-PROPERTY
+    :STIPPLED-P
+    :TEXT-EXTENTS
+    :TEXT-WIDTH
+    :TRANSLATE-CHARACTER
+    :TRANSLATE-CODE
+    :TRANSLATE-COORDINATES
+    :TRANSLATE-MOUSE-CHARACTER
+    :WINDOW-DEBUG-ID
+    :WINDOW-DEPTH
+    :WINDOW-FROM-DRAWABLE
+    :WINDOW-HAS-GROWN
+    :WINDOW-TO-IMAGE
+    :WRITE-AN-IMAGE
+
+*** Objects
+    - root-window
+    - window
+    - source (drawable)
+    - font
+    - character
+    - state
+    - color
+    - property
+    - pixmap
+    - image
+    - event
+    - arc
+    - line
+    - point
+    - rectangle
+    - bit
+    - hot-spot
+    - device
+    - window-borders
+    - stipple
+
+
+*** Basics    
+
+    The gem system works in a similar way as CLX. The following is the
+    process for setting the system.
+
+    1. Specify the device. gem determins a default device. This may be
+       be overridden by the client. If now device is specified, the
+       ordinary X11 environment variables are used.
+    2. Open the device. At this point either a remote or a local
+       device can be used.
+    3. Open a screen on the device. Classically a screen was one of
+       the physical monitors of a display station. But modern X11
+       environments usually concatenate physical monitors into a
+       single virtual screen.
+    4. Open the root window of the screen. Each screen has a single
+       root window that serves as the ultimate parent of all windows
+       attached to that particular physical monitor or monitors.
+
+    After these steps the application creates the specific windows
+    that it needs dynamically. Roughly in this order:
+
+    1. Create and configure needed windows and graphic objects.
+    2. Map windows to make them visible.
+    3. listen for events
+
+    Shutting down is simpler, but more varied. The most involved
+    method is to close a window using the X11 window manager. X11
+    sends a message to the client say that the window is destroyed. If
+    the application doesn't handle the event, then the windows manager
+    may, at its descresion, destroy the window and the applications
+    X11 session. If the event is handled the application determins the
+    appropriate respons to closing the window.
+    
