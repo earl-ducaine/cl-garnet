@@ -432,6 +432,14 @@
 	     (:file "by-demo")
 	     (:file "interactors")
 	     (:file "interactors-menu")))
+   (:module contrib
+	    :pathname "src/contrib"
+	    :depends-on (:debug :lapidary)
+	    :components
+	    ((:file "aggretrees")
+	     (:file "plot-2d")
+	     (:file "plotxy")
+	     (:file "graph-editor/graph-editor")))
    (:module cl-processing
 	    :pathname "src/cl-processing"
 	    :depends-on (:debug :lapidary)
