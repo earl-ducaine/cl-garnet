@@ -666,8 +666,11 @@ this display."
 	    (xlib:make-wm-size-hints
 	     :width-inc 1
 	     :height-inc 1
-	     :x x
-	     :y y
+	     ;; wm-size-hints-y has been obsolete for several
+	     ;; decades. Apperently, at one time it was used instead
+	     ;; of ConfigureWindow?
+	     ;; :x x
+	     ;; :y y
 	     :min-width min-width
 	     :min-height min-height
 	     :max-width max-width
@@ -1007,8 +1010,6 @@ this display."
 
 (defun x-draw-text (window x y string font function
                     line-style &optional fill-background invert-p)
-  (declare (fixnum x y))
-  (declare (optimize (speed 3) (safety 0) (debug 0) (space 1)))
   (setf font (g-value font :xfont))
   (setf function (get function :x-draw-function))
   (let* ((display-info (g-value window :display-info))
@@ -1039,8 +1040,8 @@ this display."
 			  :foreground foreground)
 		  (set-gc line-style-gc xlib-gc-line
 			  :background background)))
-	      (xlib:draw-glyphs drawable xlib-gc-line x y string))))))
-
+	      (xlib:draw-glyphs drawable xlib-gc-line x y string
+				:translate #'translate-garnett-default))))))
 
 ;;; Given a drawable or pixmap, returns the associated Opal window.
 ;;;
@@ -1048,9 +1049,8 @@ this display."
   (declare (ignore root-window))
   (getf (xlib:drawable-plist drawable) :garnet))
 
-
-;;; From windows.lisp (eliminate the obsolete deleting-window-drop-events)
-;;;
+;;; From windows.lisp (eliminate the obsolete
+;;; deleting-window-drop-events)
 (defun destroy-notify-window (event-window)
   (let ((display (xlib:window-display event-window)))
     (xlib:display-finish-output display)
@@ -1067,7 +1067,6 @@ this display."
     #-cmu
     (xlib:discard-current-event display)
     t))
-
 
 (defun connected-window-p (event-window)
   (let ((a-window (getf (xlib:drawable-plist event-window) :garnet)))
@@ -2288,8 +2287,12 @@ integer.  We want to specify nice keywords instead of those silly
      (let* ((drawable (g-value window :drawable))
             (hints (xlib:wm-normal-hints drawable)))
        (setf (xlib:drawable-x drawable) value
-             (xlib:wm-size-hints-x hints) value
-             (xlib:wm-normal-hints drawable) hints))
+	     ;; wm-size-hints-y has been obsolete for several
+	     ;; decades. Apperently, at one time it was used instead
+	     ;; of ConfigureWindow?
+             ;; (xlib:wm-size-hints-x hints) value
+             ;; (xlib:wm-normal-hints drawable) hints
+	     ))
      nil)
     (:PARENT
      (let ((left (g-value window :left))
@@ -2332,8 +2335,12 @@ integer.  We want to specify nice keywords instead of those silly
      (let* ((drawable (g-value window :drawable))
             (hints (xlib:wm-normal-hints drawable)))
        (setf (xlib:drawable-y drawable) value
-             (xlib:wm-size-hints-y hints) value
-             (xlib:wm-normal-hints drawable) hints))
+	     ;; wm-size-hints-y has been obsolete for several
+	     ;; decades. Apperently, at one time it was used instead
+	     ;; of ConfigureWindow?
+             ;; (xlib:wm-size-hints-y hints) value
+             ;; (xlib:wm-normal-hints drawable) hints
+	     ))
      nil)
     (:VISIBLE
      (let* ((drawable (g-value window :drawable))
@@ -2376,7 +2383,8 @@ integer.  We want to specify nice keywords instead of those silly
    plus other information we do not use."
   (declare (ignore root-window))
   (if *x11-server-available*
-      (xlib:text-extents (g-value font :xfont) string)
+      (xlib:text-extents (g-value font :xfont) string
+			 :translate #'translate-garnett-default)
       (values 0
 	      0
 	      0
@@ -2601,3 +2609,42 @@ the X drawable."
 			       (+ top half-thickness)
 			       (- width thickness)
 			       (- height thickness) NIL)))))
+
+(defun translate-garnett-default (src src-start src-end font dst dst-start)
+  ;; Lightly modefied version from CLX. dst is guaranteed to have room
+  ;; for (- src-end src-start) integer elements, starting at
+  ;; dst-start; whether dst holds 8-bit or 16-bit elements depends on
+  ;; context.  font is the current font, if known.  The function
+  ;; should translate as many elements of src as possible into indexes
+  ;; in the current font, and store them into dst.
+  ;;
+  ;; The first return value should be the src index of the first
+  ;; untranslated element.  If no further elements need to be
+  ;; translated, the second return value should be nil.  If a
+  ;; horizontal motion is required before further translation, the
+  ;; second return value should be the delta in x coordinate.  If a
+  ;; font change is required for further translation, the second
+  ;; return value should be the new font.  If known, the pixel width
+  ;; of the translated text can be returned as the third value; this
+  ;; can allow for appending of subsequent output to the same protocol
+  ;; request, if no overall width has been specified at the higher
+  ;; level.
+  ;; (returns values: ending-index
+  ;;                  (OR null horizontal-motion font)
+  ;;                  (OR null translated-width))
+  (let ((min-char-index (and font (xlib:font-min-char font)))
+        (max-char-index (and font (xlib:font-max-char font))))
+    (if (stringp src)
+	(do ((i src-start (1+ i))
+	     (j dst-start (1+ j))
+	     (char))
+	    ((>= i src-end)
+	     i)
+	  (setf char (char-code (elt src i)))
+	  (cond
+	    ((and font (or (< char min-char-index) (> char max-char-index)))
+	     (format *error-output* "WARNING: char code ~s can't be found in font ~s. Using ~s~%"
+		     char font max-char-index)
+	     (setf (aref dst j) max-char-index))
+	    (t
+	     (setf (aref dst j) char)))))))

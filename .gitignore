@@ -5,6 +5,11 @@
 # *.[oa]
 # *~
 
+
+*.t2d
+*.toc
+*.fns
+*.fn
 *.log
 *.aux
 *.dvi

@@ -15,6 +15,10 @@
 ;; Hitting the key *garnet-break-key* will cause an exit from the
 ;; main-event-loop and exit from replaying a transcript.
 
+(defvar *launch-process-p* nil)
+
+
+
 ;;  Functions to deal with transcripts
 
 (defparameter *trans-from-file* NIL) ; file to read from
@@ -610,23 +614,39 @@
 	(bordeaux-threads:current-thread))
   (gem:event-handler root-window NIL))
 
+;;; launch-process-p used to be defined for non-CMUCL
+;;; lisps. Unfortunately this feature is badly broken from a thread
+;;; safty persected and shouldn't be used
+(when *launch-process-p*
+  (opal:launch-main-event-loop-process))
 
-(opal:launch-main-event-loop-process)
-
+;; All of Garnett needs just one main event loop, which blocks until
+;; cancelled or no windows are visible (if exit-when-no-window-visible
+;; has been enabled)
 (defun main-event-loop (&key (exit-when-no-window-visible :on))
-  "Event handler for the interactor windows"
+  "Event handler for the interactor windows. If
+   :exit-when-no-window-visible is set to :on we block until no
+   windows are visable, otherwise we block until a cancel key it sent"
+  ;; Note, the only time *main-event-loop-process* is non-nil is if
+  ;; multi-threading is enabled. Since multi-threading is badly
+  ;; broken, that should be never. Multi-threading code is currently
+  ;; being kept in place to fascilitate better insight into the
+  ;; orriginal architectural intent. But fixing it will most likely
+  ;; require a vast overhall.
   (unless opal::*main-event-loop-process*
     (if (and (eq exit-when-no-window-visible :on)
 	     (not (opal::any-top-level-window-visible)))
 	(format t "Cannot call main-event-loop when no window is visible~%")
-	;; else do real work
+	;; else do real work,
 	(unless opal::*inside-main-event-loop*
 	  (let ((root-window (g-value gem:device-info :current-root)))
 	    (if (eq exit-when-no-window-visible :on)
 		(setq opal::*inside-main-event-loop* t)
 		(setq opal::*inside-main-event-loop* :dont-care))
 ;;	    (opal::m-e-l-new)		; Defined in opal/process.lisp
-	    (opal::m-e-l)		; Defined in opal/process.lisp
+	    ;; Defined in opal/process.lisp
+	    ;; (opal::m-e-l)
+	    (opal::process-m-e-l)
 	    (setq opal::*inside-main-event-loop* NIL)
 	    (gem:discard-pending-events root-window 5))))))
 
@@ -635,7 +655,7 @@
   (when (and (null opal::*main-event-loop-process*)
 	     opal::*inside-main-event-loop*)
     (setq opal::*inside-main-event-loop* NIL)
-    (throw 'exit-main-loop-exception t)))
+    (throw 'opal::exit-main-loop-exception t)))
 
 (defvar opal::*exit-main-event-loop-function* #'exit-main-event-loop
   "This variable tells opal what function to call when you delete the
@@ -660,7 +680,7 @@ by the protected-eval code."
 	(loop			      ; in a loop in case event handler exits
 	   (Read-All-Transcript-Events)) ; read from transcript
 	;; else get event from event handler
-	(catch 'exit-main-loop-exception
+	(catch 'opal::exit-main-loop-exception
 	  (loop
 	     (default-event-handler
 		 (g-value gem:DEVICE-INFO :current-root)))
