@@ -15,9 +15,9 @@
 	   node-highlight-interactor link-highlight-interactor
 	   move-node-interactor delete-node-interactor delete-link-interactor
 	   node-select-link-origin-interactor node-select-link-dest-interactor
-	   graph-edit-agg 
+	   graph-edit-agg
 	   define-cursor
-	   menubar-menu-without-inverse graph-editor-menubar message-pane 
+	   menubar-menu-without-inverse graph-editor-menubar message-pane
 	   graph-editor graph-editor-graph-agg
 	   ged-delete-node ged-delete-link ged-add-link
 	   ged-double-click
@@ -127,20 +127,21 @@
 
 
 ;; Save load directory.
-(defparameter *loaded-from-pathname* ".")
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (setf *loaded-from-pathname* (print *load-pathname*)))
+(defparameter *loaded-from-pathname*
+  (merge-pathnames
+   #P"src/contrib/graph-editor/"
+   (asdf:system-source-directory :org.xoanonos.gui.garnet)))
+;; (eval-when (:compile-toplevel :load-toplevel :execute)
+;;   (setf *loaded-from-pathname* (asdf:system-source-directory :org.xoanonos.gui.garnet)))
 
-; convenient way to define a cursor with a mask
+;; Convenient way to define a cursor with a mask
 (defun define-cursor (name path mask-path)
   (create-instance name opal:bitmap
-    (:image (opal:read-image 
+    (:image (opal:read-image
 	     (merge-pathnames path *loaded-from-pathname*)))
     (:mask (create-instance nil opal:bitmap
 	     (:image (opal:read-image
-		      (merge-pathnames
-		       mask-path *loaded-from-pathname*)))))))
-
+		      (merge-pathnames mask-path *loaded-from-pathname*)))))))
 
 ;; define some cursors for this window
 
@@ -208,7 +209,7 @@
 	 (if whynot
 	   (kr-send graph :complaint graph whynot thing) ;print complaint
 	   (kr-send graph ,doit graph  thing))))) ;else doit
-		  
+
 (create-instance 'delete-node-interactor inter:menu-interactor
   (:window (o-formula (gv-local :self :operates-on :window)))
   (:start-where (o-formula (list :element-of (gvl :operates-on :nodes))))
@@ -254,7 +255,7 @@
   (declare (ignore opal-window))  )
 
 
- 
+
 ; displays the DAG, has a set of interactors to edit it.
 ; Switches interactors on and off depending on mode.
 ; There is no provision in THIS object for selecting the current mode,
@@ -320,7 +321,7 @@
   (s-value self :link-origin node)
   (when node
     (s-value node :interim-selected t)))
-    
+
 (define-method :restart-mode graph-edit-agg (self)
   ;; reset state.  This is probably only useful for the LINK mode which has two sub-states.
   (kr-send self :set-mode self (g-value self :mode)))
@@ -337,7 +338,7 @@
 
 ;; Functions called by the interactors to actually do the work
 ;; You will want to redefine them to add application-specific constraints
-;; and/or change your application data structures.  But note also that 
+;; and/or change your application data structures.  But note also that
 ;; if you want the ability to "revert" changes made in the editor, you
 ;; might want to defer actual changes to your data until the user
 ;; clicks on Save.
@@ -350,7 +351,7 @@
   (cond
    ((g-value self :read-only-p)
     "Read only")
-   (t 
+   (t
     nil)))
 
 (define-method :delete-node graph-edit-agg (self node)
@@ -370,7 +371,7 @@
   (cond
    ((g-value self :read-only-p)
     "Read only")
-   (t 
+   (t
     nil)))
 
 (define-method :select-link-origin  graph-edit-agg (self node)
@@ -412,7 +413,7 @@
   (cond
    ((g-value self :read-only-p)
     "Read only")
-   (t 
+   (t
     nil)))
 
 (define-method :delete-link graph-edit-agg (self link)
@@ -465,7 +466,7 @@
 				       :key #'(lambda (node) (g-value node :source-node))))
 			     source-roots)))
     (when (not (null nodes))
-      (cerror "Continue" 
+      (cerror "Continue"
 	      "Nodes ~S are in GRAPH-ROOTS but the corresponding ~
                SOURCE-NODE is not in SOURCE-ROOTS"
 	      nodes))
@@ -506,28 +507,28 @@
 (defparameter *graph-editor-menubar-items*
   `(
     ("Edit" nil
-     (("Undo" ,#'(lambda (menubar menu item) 
+     (("Undo" ,#'(lambda (menubar menu item)
 		(declare (ignore menu item))
 		(kr-send (g-value menubar :parent :graph) :UNDO
 			 (g-value menubar :parent :graph))))
-      ("Save" ,#'(lambda (menubar menu item) 
+      ("Save" ,#'(lambda (menubar menu item)
 		(declare (ignore menu item))
 		(kr-send (g-value menubar :parent)  :save (g-value menubar :parent))))
       ))
     ("Tools" nil
-     (("Move" ,#'(lambda (menubar menu item) 
+     (("Move" ,#'(lambda (menubar menu item)
 		(declare (ignore menu item))
 		(kr-send (g-value menubar :parent)
 			 :set-mode (g-value menubar :parent) :MOVE)))
-      ("Link" ,#'(lambda (menubar menu item) 
+      ("Link" ,#'(lambda (menubar menu item)
 		(declare (ignore menu item))
 		(kr-send (g-value menubar :parent)
 			 :set-mode (g-value menubar :parent) :LINK)))
-      ("Unlink" ,#'(lambda (menubar menu item) 
+      ("Unlink" ,#'(lambda (menubar menu item)
 		  (declare (ignore menu item))
 		  (kr-send (g-value menubar :parent)
 			   :set-mode (g-value menubar :parent) :UNLINK)))
-      ("Delete node" ,#'(lambda (menubar menu item) 
+      ("Delete node" ,#'(lambda (menubar menu item)
 		       (declare (ignore menu item))
 		       (kr-send (g-value menubar :parent)
 				:set-mode (g-value menubar :parent) :DELETE)))
@@ -638,7 +639,7 @@
     (:aggregate
      (let ((agg (create-instance nil graph-editor
 		  (:roots (list (pathname root)))
-		  (:parts 
+		  (:parts
 		   `(:menubar
 		     :divider1
 		     (:graph :modify
