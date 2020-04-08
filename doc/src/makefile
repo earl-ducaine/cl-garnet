@@ -27,9 +27,11 @@ manuals: $(OUTPUT)
 
 all: $(OUTPUT) scripts/pagenumbers-done index/index.ps refman/refman.ps
 
-garnet: elisp.texi
-	texi2pdf $(TEXINFO_FLAGS) garnet-manual.texi
+garnet: garnet-manual.texi garnetmanualdate
+	texi2pdf -I "./kr" $(TEXINFO_FLAGS) garnet-manual.texi
 
+.PHONY garnetmanualdate:
+	./generate-garnetmanualdate.sh
 
 pagenumbers.mss: # scripts/pagenumbers-done
 
@@ -128,21 +130,6 @@ index/index.ps: $(OUTPUT)
 	rm index.*
 
 clean:
-	/bin/rm -f aggregadgets/aggregadgets-manual.ps
-	/bin/rm -f debug/debug-manual.ps
-	/bin/rm -f demos/demoguide.ps
-	/bin/rm -f gadgets/gadgets-manual.ps
-	/bin/rm -f gilt/gilt-manual.ps
-	/bin/rm -f c32/c32-manual.ps
-	/bin/rm -f inter/inter-manual.ps
-	/bin/rm -f kr/kr-manual.ps
-	/bin/rm -f opal/opal-manual.ps
-	/bin/rm -f overview/overview.ps
-	/bin/rm -f apps/apps.ps
-	/bin/rm -f refman.ps
-	/bin/rm -f refman/refman.ps
-	/bin/rm -f sampleprog/sampleprog.ps
-	/bin/rm -f tour/tour.ps
-	/bin/rm -f tutorial/tutorial.ps
-	/bin/rm -f lapidary/lapidary-manual.ps
-	/bin/rm -f hints/hints.ps
+	rm -f garnetmanualdate.texi
+	rm -f *.fn *.fns *.log *.aux *.toc
+	rm -rf *.t2d

@@ -3,15 +3,13 @@
 
 @settitle Garnet Reference and User Manual
 
-@include garnetver.texi
-
 @c %**end of header
 
 @c See two-volume-cross-refs.txt.
 
 @include garnetver.texi
-
-
+@include garnetmanualver.texi
+@include garnetmanualdate.texi
 
 @c Combine indices.
 @synindex cp fn
@@ -27,16 +25,10 @@
 @c mainly to the published book sold by the FSF.
 
 @copying
-@ifset VERSION
-This is edition @value{VERSION} of the @cite{GNU Emacs Lisp Reference Manual},@*
-@end ifset
-@ifclear VERSION
-This is the @cite{Garnet Reference and User manual}
-@end ifclear
-corresponding to Emacs version @value{GARNETVER}.
+This is edition @value{VERSION} of the @cite{Garnet Reference and User Manual},@*
+corresponding to Garnet version @value{GARNETVER}.
 
 Copyright @copyright{} 19xx--2020
-Inc.
 
 @end copying
 
@@ -47,7 +39,7 @@ Inc.
 
 @titlepage
 @title Garnet Reference and User Manual
-@subtitle For Emacs Version @value{EMACSVER}
+@subtitle For Garnet Version @value{GARNETVER}
 @subtitle Revision @value{VERSION}, @value{DATE}
 
 @page
@@ -266,7 +258,7 @@ Object Internals
 
 @include kr-manual.texi
 
-@include aggregadgets-manual.texi
+@c @include aggregadgets-manual.texi
 @c @include objects.texi
 @c @include numbers.texi
 @c @include strings.texi
