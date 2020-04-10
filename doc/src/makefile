@@ -3,9 +3,6 @@
 P = /usr/amickish/doc
 VPATH = $(P)
 
-TEXINFO_FLAGS = -I .:./aggregadgets/:./kr/
-
-
 # Break the circularity of dependence between the manuals and the
 # pagenumbers file by not making the pagenumbers depend on the Hints
 
@@ -28,7 +25,7 @@ manuals: $(OUTPUT)
 all: $(OUTPUT) scripts/pagenumbers-done index/index.ps refman/refman.ps
 
 garnet: garnet-manual.texi garnetmanualdate
-	texi2pdf -I "./kr" $(TEXINFO_FLAGS) garnet-manual.texi
+	texi2pdf -I "./kr:./overview:./tutorial/:./opal/:./inter/:./aggregadgets/:./gadgets/:./debug/:./sampleprog/:./gilt/:./c32/:./lapidary/" garnet-manual.texi
 
 .PHONY garnetmanualdate:
 	./generate-garnetmanualdate.sh
