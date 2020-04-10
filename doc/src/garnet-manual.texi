@@ -19,11 +19,6 @@
 @c We use the "type index" to index new functions and variables.
 @c @syncodeindex tp fn
 
-@c When printing, define VERSION to be the printed edition number and
-@c DATE to be the printed edition's date.  E.g., run the shell command
-@c "texi2any -D 'VERSION 3.2' -D 'DATE 31 March 2020'".  This relates
-@c mainly to the published book sold by the FSF.
-
 @copying
 This is edition @value{VERSION} of the @cite{Garnet Reference and User Manual},@*
 corresponding to Garnet version @value{GARNETVER}.
@@ -256,7 +251,12 @@ Object Internals
 @end detailmenu
 @end menu
 
+@include overview.texi
 @include kr-manual.texi
+
+@c @include(overview/garnetpapers.mss)
+@c @include(creditetc.mss) x 12 (one for overview.texi, tour.texi, etc.)
+@c @bibliography x 12 (one for overview.texi, tour.texi, etc.)
 
 @c @include aggregadgets-manual.texi
 @c @include objects.texi
