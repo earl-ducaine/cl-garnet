@@ -1116,147 +1116,123 @@
 ;;; Test examples
 
 
-#|
 
 (defun plot-2d-do-go ()
-
-(create-instance 'SIMPLE-WIN inter:interactor-window
-   (:left 600)
-   (:top 100)
-   (:width 350)
-   (:height 200)
-   (:aggregate (create-instance NIL opal:aggregate)))
-
-(create-instance 'SIMPLE-DATA plot-2d:plot)
-
-(create-instance 'SIMPLE-DOTS plot-2d:data-points
-   (:plot SIMPLE-DATA))
-
-(opal:add-components (gv SIMPLE-WIN :aggregate)
-                     SIMPLE-DATA SIMPLE-DOTS)
-
-(opal:update SIMPLE-WIN)
-)
+  (create-instance 'simple-win inter:interactor-window
+    (:left 600)
+    (:top 100)
+    (:width 350)
+    (:height 200)
+    (:aggregate (create-instance nil opal:aggregate)))
+  (create-instance 'simple-data plot-2d:plot)
+  (create-instance 'simple-dots plot-2d:data-points
+    (:plot simple-data))
+  (opal:add-components (gv simple-win :aggregate)
+		       simple-data simple-dots)
+  (opal:update simple-win))
 
 (defun plot-2d-example ()
+  (create-instance 'data-win inter:interactor-window
+    (:left 600)
+    (:top 100)
+    (:width 350)
+    (:height 200)
+    (:background-color opal:motif-light-gray)
+    (:aggregate (create-instance nil opal:aggregate)))
+  (opal:update data-win)
+  (create-instance 'test-data plot-2d:plot
+					;   (:left 10) (:top 10)		;
+					;   (:width  (o-formula (- (gvl :window :width)  20))) ;
+					;   (:height (o-formula (- (gvl :window :height) 20))) ;
+    (:title "this is an example")
+					;   (:filling-style opal:motif-light-blue-fill) ;
+					;   (:boarder-style opal:default-line-style) ;
+    (:canvas-filling-style opal:blue-fill)
+    (:canvas-boarder-style opal:white-line)
+    (:axis-offset 10)
+    (:tic-size -3)
+    (:x-from 0) (:x-to 20)
+    (:y-from 0) (:y-to 10)
+    (:x-tic-values (o-formula
+		    (loop for x from (gvl :x-from) to (gvl :x-to) collect x)))
+    (:y-tic-values (o-formula
+		    (loop for y from (gvl :y-from) to (gvl :y-to) collect y)))
+    (:x-labels (o-formula
+		(loop for x from (gvl :x-from) to (gvl :x-to) collect
+		     (if (= (mod x 5) 0) (format nil "~s" x) ""))))
+    (:y-labels (o-formula
+		(loop for y from (gvl :y-from) to (gvl :y-to) collect
+		     (if (= (mod y 5) 0) (format nil "~s" y) ""))))
+    (:x-string "text on x")
+    (:y-string "text on y")
+    (:grid t)
+    (:description-p t))
+  (opal:add-component (gv data-win :aggregate) test-data)
+  (create-instance 'test-data-line plot-2d:data-line
+    (:plot test-data)
+    (:description "data line")
+    (:xs (o-formula (loop for x from (gvl :plot :x-from)
+		       to (gvl :plot :x-to) collect x)))
+    (:ys (o-formula (loop for x in (gvl :xs) collect (+ 6 (random 1.0)))))
+    (:line-style plot-2d:red-line))
+  (create-instance 'test-data-wave plot-2d:data-wave
+    (:plot test-data)
+    (:description "data wave")
+    (:zero-y 0)
+    (:xs (o-formula (loop for x from (gvl :plot :x-from)
+		       to (gvl :plot :x-to) collect x)))
+    (:ys (o-formula (loop for x in (gvl :xs) collect (random 3.0)))))
+  (create-instance 'test-points plot-2d:data-points
+    (:plot test-data)
+    (:description "bullets")
+    (:line-style opal:purple-line)
+    (:filling-style opal:yellow-fill)
+    (:bullet plot-2d:bullet)
+    (:size (o-formula (floor (plot-2d:nth-width) 2)))
+    (:xs (o-formula (loop for x from (gvl :plot :x-from)
+		       to (gvl :plot :x-to) collect x)))
+    (:ys (o-formula (loop for x in (gvl :xs) collect
+			 (+ 1 (* 0.2 x) (random 1.0))))))
+  (create-instance 'test-y-distr plot-2d:y-distr
+    (:plot test-data)
+    (:description "distribution of y")
+    (:line-style opal:green-line)
+    (:filling-style opal:white-fill)
+    (:bullet plot-2d:box)
+    (:bullet-size 5)
+    (:xs (o-formula (loop for x from (if (> (gvl :plot :x-from) 0)
+					 (gvl :plot :x-from) 0)
+		       to (gvl :plot :x-to) collect x)))
+    (:ys (o-formula (loop for x in (gvl :xs) collect (+ 5 (* -0.9 (log (1+ x)))
+							(random 1.0)))))
+    (:sds (o-formula (loop for x in (gvl :xs) collect 0.5))))
+  (create-instance 'test-histogram plot-2d:histogram
+    (:plot test-data)
+    (:description "histogram")
+    (:filling-style opal:motif-blue-fill)
+    (:size (o-formula (plot-2d:nth-width)))
+    (:zero-y 0)
+    (:x-offset (o-formula (round (plot-2d:nth-width) 2)))
+    (:xs (o-formula (loop for x from (gvl :plot :x-from)
+		       below (gvl :plot :x-to) collect x)))
+    (:ys (o-formula (loop for x in (gvl :xs) collect (random 3.0)))))
+  (create-instance 'test-function plot-2d:function-wave
+    (:plot test-data)
+    (:line-style opal:yellow-line)
+    (:description "function")
+    (:zero-y 0)
+    (:precision 1)
+    (:draw-function :xor)
+    (:function (lambda (x) (* 10 x (exp (- x)))))
+    (:domain (lambda (x) (> x 0))))
+  (opal:add-components
+   (gv data-win :aggregate)
+   test-data-line test-data-wave test-points
+   test-y-distr test-histogram test-function)
+  (opal:update data-win)
+  (s-value test-data :description :items
+	   (list test-data-line test-function test-points))
+  (opal:update data-win))
 
-(create-instance 'DATA-WIN inter:interactor-window
-   (:left 600)
-   (:top 100)
-   (:width 350)
-   (:height 200)
-   (:background-color opal:motif-light-gray)
-   (:aggregate (create-instance NIL opal:aggregate)))
-
-(opal:update DATA-WIN)
-
-(create-instance 'TEST-DATA plot-2d:plot
-;   (:left 10) (:top 10)
-;   (:width  (o-formula (- (gvl :window :width)  20)))
-;   (:height (o-formula (- (gvl :window :height) 20)))
-   (:title "This is an example")
-;   (:filling-style opal:motif-light-blue-fill)
-;   (:boarder-style opal:default-line-style)
-   (:canvas-filling-style opal:blue-fill)
-   (:canvas-boarder-style opal:white-line)
-   (:axis-offset 10)
-   (:tic-size -3)
-   (:x-from 0) (:x-to 20)
-   (:y-from 0) (:y-to 10)
-   (:x-tic-values (o-formula
-                   (loop for x from (gvl :x-from) to (gvl :x-to) collect x)))
-   (:y-tic-values (o-formula
-                   (loop for y from (gvl :y-from) to (gvl :y-to) collect y)))
-   (:x-labels (o-formula
-               (loop for x from (gvl :x-from) to (gvl :x-to) collect
-                     (if (= (mod x 5) 0) (format nil "~S" x) ""))))
-   (:y-labels (o-formula
-               (loop for y from (gvl :y-from) to (gvl :y-to) collect
-                     (if (= (mod y 5) 0) (format nil "~S" y) ""))))
-   (:x-string "text on x")
-   (:y-string "text on y")
-   (:grid t)
-   (:description-p t))
-
-(opal:add-component (gv DATA-WIN :aggregate) TEST-DATA)
-
-(create-instance 'TEST-DATA-LINE plot-2d:data-line
-   (:plot TEST-DATA)
-   (:description "Data line")
-   (:xs (o-formula (loop for x from (gvl :plot :x-from)
-                         to (gvl :plot :x-to) collect x)))
-   (:ys (o-formula (loop for x in (gvl :xs) collect (+ 6 (random 1.0)))))
-   (:line-style plot-2d:red-line))
-
-(create-instance 'TEST-DATA-WAVE plot-2d:data-wave
-   (:plot TEST-DATA)
-   (:description "Data wave")
-   (:zero-y 0)
-   (:xs (o-formula (loop for x from (gvl :plot :x-from)
-                         to (gvl :plot :x-to) collect x)))
-   (:ys (o-formula (loop for x in (gvl :xs) collect (random 3.0)))))
-
-(create-instance 'TEST-POINTS plot-2d:data-points
-   (:plot TEST-DATA)
-   (:description "Bullets")
-   (:line-style opal:purple-line)
-   (:filling-style opal:yellow-fill)
-   (:bullet plot-2d:bullet)
-   (:size (o-formula (floor (plot-2d:nth-width) 2)))
-   (:xs (o-formula (loop for x from (gvl :plot :x-from)
-                         to (gvl :plot :x-to) collect x)))
-   (:ys (o-formula (loop for x in (gvl :xs) collect
-                         (+ 1 (* 0.2 x) (random 1.0))))))
-
-(create-instance 'TEST-Y-DISTR plot-2d:y-distr
-   (:plot TEST-DATA)
-   (:description "Distribution of Y")
-   (:line-style opal:green-line)
-   (:filling-style opal:white-fill)
-   (:bullet plot-2d:box)
-   (:bullet-size 5)
-   (:xs (o-formula (loop for x from (if (> (gvl :plot :x-from) 0)
-                                        (gvl :plot :x-from) 0)
-                         to (gvl :plot :x-to) collect x)))
-   (:ys (o-formula (loop for x in (gvl :xs) collect (+ 5 (* -0.9 (log (1+ x)))
-                                                       (random 1.0)))))
-   (:sds (o-formula (loop for x in (gvl :xs) collect 0.5))))
-
-(create-instance 'TEST-HISTOGRAM plot-2d:histogram
-   (:plot TEST-DATA)
-   (:description "Histogram")
-   (:filling-style opal:motif-blue-fill)
-   (:size (o-formula (plot-2d:nth-width)))
-   (:zero-y 0)
-   (:x-offset (o-formula (round (plot-2d:nth-width) 2)))
-   (:xs (o-formula (loop for x from (gvl :plot :x-from)
-                         below (gvl :plot :x-to) collect x)))
-   (:ys (o-formula (loop for x in (gvl :xs) collect (random 3.0)))))
-
-(create-instance 'TEST-FUNCTION plot-2d:function-wave
-   (:plot TEST-DATA)
-   (:line-style opal:yellow-line)
-   (:description "Function")
-   (:zero-y 0)
-   (:precision 1)
-   (:draw-function :xor)
-   (:function (lambda (x) (* 10 x (exp (- x)))))
-   (:domain (lambda (x) (> x 0))))
-
-(opal:add-components
- (gv DATA-WIN :aggregate)
- TEST-DATA-LINE TEST-DATA-WAVE TEST-POINTS
- TEST-Y-DISTR TEST-HISTOGRAM TEST-FUNCTION)
-
-(opal:update DATA-WIN)
-
-(s-value TEST-DATA :description :items
-         (list TEST-DATA-LINE TEST-FUNCTION TEST-POINTS))
-
-(opal:update DATA-WIN)
-
-)
-
-(opal:destroy DATA-WIN)
-
-|#
+(defun do-stop ()
+  (opal:destroy data-win))
