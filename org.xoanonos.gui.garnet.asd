@@ -39,7 +39,7 @@
 	  :depends-on
 	  (opal inter ps aggregadgets gadgets debug protected-eval
 		gesture demos garnet-desktop-lab lapidary c32 gilt
-		multi-garnet lapidary cl-processing debug-clx))
+		multi-garnet lapidary cl-processing))
    (:file "package")
    (:file "clx-compatability" :depends-on (package))
    (:module utils
@@ -447,24 +447,28 @@
 	    ((:file "package")
 	     (:file "main")
 	     (:file "console")))
-   (:module debug-clx
+   (:module last
+	    :pathname ""
+	    :depends-on (:utils :kr :gem :opal :inter :ps :aggregadgets
+				:gadgets :debug :protected-eval :gesture
+				:demos :garnet-desktop-lab :lapidary2
+				:c32 :gilt :multi-garnet :lapidary
+				:cl-processing)
+	    :components
+	    ((:file "post-processing")))))
+
+(asdf:defsystem :org.xoanonos.gui.garnet/clx-debug
+  :depends-on (org.xoanonos.gui.garnet)
+  :license "MIT-ish (also public domain, see LICENSE)"
+  :author "CMU Garnet Team (plus various others, see LICENSE)"
+  :description "CLX debugging tools"
+  :components
+  ((:module debug-clx
 	    :pathname "debug"
-	    :depends-on (:debug :lapidary)
 	    :components
 	    ((:file "debug")
 	     (:file "describe")
 	     (:file "event-test")
 	     (:file "keytrans")
 	     (:file "trace")
-	     (:file "util")))
-   (:module last
-	    :pathname ""
-	    :depends-on (:utils :kr :gem :opal :inter :ps :aggregadgets
-				:gadgets :debug :protected-eval :gesture :demos
-				:garnet-desktop-lab :lapidary2
-;;				:build
-				:c32
-				:gilt :multi-garnet :lapidary :cl-processing
-				:debug-clx)
-	    :components
-	    ((:file "post-processing")))))
+	     (:file "util")))))

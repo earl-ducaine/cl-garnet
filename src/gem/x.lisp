@@ -1653,6 +1653,7 @@ this display."
   (declare (ignore root-window))
   (xlib:list-font-names *default-x-display* name))
 
+;; font-from-file is an Opal class
 (defun x-font-to-internal (root-window font-from-file)
   (let ((dx-plist (g-value font-from-file :display-xfont-plist))
         (display (the-display root-window)))
