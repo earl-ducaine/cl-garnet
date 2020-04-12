@@ -81,7 +81,7 @@
 (defun remove-from-demo-window (&rest objs)
   (apply #'opal:remove-components (g-value *demo-window* :aggregate) objs))
 
-#||
+;;;#||
 ;; all examples are commented out, so only the auxiliary fns are loaded
 ;; when this file is loaded
 
@@ -220,8 +220,7 @@
 					     (setf left (- center-x (truncate width 2)))
 					     (setf width (* 2 (- center-x left)))))
 		 ;; want stronger stay on width than on other slots
-		 (:width-stay-cn (m-stay-constraint :medium width))
-		 )
+		 (:width-stay-cn (m-stay-constraint :medium width)))
 (add-to-demo-window rect)
 (update)
 
@@ -246,9 +245,9 @@
 (with-stays ((rect :right)) (s-value rect :center-x 150))
 (with-stays ((rect :center-x)) (s-value rect :right 200))
 
-;; replacing the two :left-right-width-cn and :center-x-cn constraints with
-;; a single constraint (with multi-output methods) removes the poossible
-;; cycle.
+;; replacing the two :left-right-width-cn and :center-x-cn constraints
+;; with a single constraint (with multi-output methods) removes the
+;; possible cycle.
 (s-value rect :left-right-width-cn nil)
 (s-value rect :center-x-cn nil)
 (s-value rect :left-right-width-center-x-cn
@@ -1380,4 +1379,4 @@
 (run)
 
 
-||#
+;;||#

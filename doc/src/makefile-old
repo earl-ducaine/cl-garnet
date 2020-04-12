@@ -1,16 +1,8 @@
-
-
 P = /usr/amickish/doc
 VPATH = $(P)
 
-TEXINFO_FLAGS = -I .:./aggregadgets/:./kr/
-
-
 # Break the circularity of dependence between the manuals and the
 # pagenumbers file by not making the pagenumbers depend on the Hints
-
-
-
 
 OUTPUT_MINUS_HINTS = overview/overview.ps apps/apps.ps tour/tour.ps \
         tutorial/tutorial.ps \
@@ -20,18 +12,12 @@ OUTPUT_MINUS_HINTS = overview/overview.ps apps/apps.ps tour/tour.ps \
 	sampleprog/sampleprog.ps gilt/gilt-manual.ps c32/c32-manual.ps\
         lapidary/lapidary-manual.ps
 
-OUTPUT = $(OUTPUT_MINUS_HINTS) hints/hints.ps
+OUTPUT = $(OUTPUT_MINUS_HINTS) hints/hints.ps 
 
 
 manuals: $(OUTPUT)
 
 all: $(OUTPUT) scripts/pagenumbers-done index/index.ps refman/refman.ps
-
-garnet: garnet-manual.texi garnetmanualdate
-	texi2pdf -I "./kr" $(TEXINFO_FLAGS) garnet-manual.texi
-
-.PHONY garnetmanualdate:
-	./generate-garnetmanualdate.sh
 
 pagenumbers.mss: # scripts/pagenumbers-done
 
@@ -130,6 +116,21 @@ index/index.ps: $(OUTPUT)
 	rm index.*
 
 clean:
-	rm -f garnetmanualdate.texi
-	rm -f *.fn *.fns *.log *.aux *.toc
-	rm -rf *.t2d
+	/bin/rm -f aggregadgets/aggregadgets-manual.ps
+	/bin/rm -f debug/debug-manual.ps
+	/bin/rm -f demos/demoguide.ps
+	/bin/rm -f gadgets/gadgets-manual.ps
+	/bin/rm -f gilt/gilt-manual.ps
+	/bin/rm -f c32/c32-manual.ps
+	/bin/rm -f inter/inter-manual.ps
+	/bin/rm -f kr/kr-manual.ps
+	/bin/rm -f opal/opal-manual.ps
+	/bin/rm -f overview/overview.ps
+	/bin/rm -f apps/apps.ps
+	/bin/rm -f refman.ps
+	/bin/rm -f refman/refman.ps
+	/bin/rm -f sampleprog/sampleprog.ps
+	/bin/rm -f tour/tour.ps
+	/bin/rm -f tutorial/tutorial.ps
+	/bin/rm -f lapidary/lapidary-manual.ps
+	/bin/rm -f hints/hints.ps
