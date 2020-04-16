@@ -82,7 +82,7 @@
 				   (floor (gvl :width) 2))))
 	     (:top ,(o-formula (+ (gvl :parent :frame :top) 5)))))))
 
-@newpage()
+@page
 ;;;------------------------------------------------------------------------
 ;;;@emph{Create main menu object}
 ;;;------------------------------------------------------------------------
@@ -144,7 +144,7 @@
       (:start-where `(:list-element-of ,agg :menuobjs)))))
 
 
-@newpage()
+@page
 ;;@emph{This creates the menu of commands.  For now, it only has "delete" and "quit" in it.}
 ;;@emph{The menu is stored into the aggregate agg.  Returns the menu created.}
 (defun create-menu (agg)
@@ -204,7 +204,7 @@
 	       (User::Garnet-Note-Quitted "DEMO-EDITOR")))
 )
 
-@newpage()
+@page
 ;;;@emph{Create a new object.  Get the type of object to create from the interactor.}
 ;;;@emph{This procedure is called as the final-function of the two-point interactor.}
 (defun Create-New-Obj (inter point-list)
@@ -242,7 +242,7 @@
 	  (s-value textinter :obj-to-change (g-value new-box :label))
 	  (inter:start-interactor textinter)))))
 
-;;;@newpage()
+;;;@page
 ;;;********************************************************************
 ;;;@emph{Main procedures}
 ;;;********************************************************************
@@ -311,7 +311,7 @@
 		      (:start-where NIL) ;@emph{won't start by itself}
 		      (:stop-event '(#\return :any-mousedown)) ;@emph{either stops it}
 		      (:window work-win)))
-    ;;@emph{cont., next page...}@newpage()
+    ;;@emph{cont., next page...}@page
     ;;@emph{The next interactor edits the text when the user presses on a string.}
     (create-instance NIL Inter:Text-Interactor
       (:stop-event '(#\return :any-mousedown)) ;@emph{either stops it}
