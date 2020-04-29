@@ -6,17 +6,13 @@
 # *~
 
 
-*.t2d
-*.toc
-*.fns
-*.fn
-*.log
+#*
+*#
 *.aux
 *.dvi
-*#
-#*
-*~
-*.toc
-*.fns
 *.fn
+*.fns
+*.log
 *.t2d
+*.toc
+*~
