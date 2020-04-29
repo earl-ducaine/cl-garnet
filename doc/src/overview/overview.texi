@@ -33,14 +33,13 @@ the interface should look like.
 Garnet stands for @b{G}enerating an
 @b{A}malgam of @b{R}eal-time, @b{N}ovel @b{E}ditors and @b{T}oolkits.
 
-At the time of this writing, the Garnet toolkit is in use by about
-80 projects throughout the world.
-This document contains an overview, tutorial, and a full set of reference
-manuals for the Garnet System. 
+At the time of this writing, the Garnet toolkit is in use by about 80
+projects throughout the world.  This document contains an overview,
+tutorial, and reference for the Garnet System.
 
-@b[This manual describes version 3.0 of Garnet. It replaces all
+@b{This chapter describes version 3.0 of Garnet. It replaces all
 previous versions and the change documents for versions 1.3, 1.4, 2.0, 2.1,
-and 2.2.]
+and 2.2.}
 
 Garnet is written in Common Lisp and can be used with either Unix systems
 running X windows or on the Mac. Therefore,
@@ -217,19 +216,19 @@ Board game user interfaces, such as Chess.
 
 Figure @ref{toolkitpic} shows a simple Garnet application that
 was created from start to finish (including debugging) in three hours.
-The code for this application is shown in the sample program manual,
+The code for this application is shown in the sample program chapter,
 which begins on page @ref{fig:ex1}.
 
 @float Figure,fig:ex1
 @center @image{toolkitpic, 5.5in}
 @caption{A sample Garnet application. The code for this application is
-listed the "Sample Garnet Program" section of this manual, starting on
+listed the "Sample Garnet Program" section of this chapter, starting on
 page @ref{sampleprog-first-page.}}
 @end float
 @anchor{toolkitpic}
 
 Other examples of applications created using Garnet appear in the picture
-section of this manual, starting on page @ref{apps}.
+section of this chapter, starting on page @ref{apps}.
 
 
 @section Running Garnet From /afs
@@ -350,7 +349,7 @@ In the fresh lisp listener, load "Macintosh HD:Garnet:garnet-loader.lisp"
 (using whatever prefix is appropriate instead of "Macintosh HD:Garnet:").
 Garnet will inform you as it loads each module, and will finally return with
 a prompt. At this point, Garnet is fully loaded and you are ready to try
-the Tour or some demos as discussed later in this manual.
+the Tour or some demos as discussed later in this chapter.
 
 
 
@@ -700,7 +699,7 @@ the files
 and
 @code{multifont-textinter.lisp}
 which contain the default mappings of keyboard keys to text editing
-operations. The Interactors Manual contains full more information on how
+operations. The Interactors chapter contains full more information on how
 this works.
 
 @b[If you surround your changes to all these files with
@@ -753,7 +752,7 @@ LispWorks is the common lisp sold by Harlequin Ltd. There is one peculiarity
 about LispWorks that requires an additional step
 before executing the @code{main-event-loop} background process of Garnet
 (Garnet uses multiprocessing by default in LispWorks -- see the Interactors
-Manual, section "The Main Event Loop" for details). You need to perform this
+chapter, section "The Main Event Loop" for details). You need to perform this
 step both when @b{compiling} and @b{loading} Garnet (the appropriate steps
 are mentioned during the standard compile procedure in section
 @ref{retrieving}).
@@ -1084,7 +1083,7 @@ program loads the demos as requested.
 It is possible to save an image of lisp after loading Garnet, so that when
 you restart lisp, Garnet will already be loaded and you will not have to
 load @code{garnet-loader.lisp}. For details about making lisp images, see
-the function @code{opal:make-image} in the Opal manual.
+the function @code{opal:make-image} in the Opal chapter.
 
 
 @section Loader and Compiler Functions
@@ -1216,7 +1215,7 @@ Garnet is composed of a number of sub-systems, some of which can be loaded
 and used separately from the others. Most of the subsystems also have
 their own separate packages. The following list shows the components of
 Garnet, the package used by that component, and the page number of the
-corresponding section in this manual.
+corresponding section in this chapter.
 
 @itemize
 @code{KR} - Package @code{kr}. @cindex{kr (package)}  The object and constraint
@@ -1225,24 +1224,24 @@ system. @ref{kr}.
 @code{Gem} - Package @code{gem}. @cindex{gem (package)}  Low-level graphics
 routines that allow the system to run on the Mac or on X11. We do not
 support user code directly calling Gem, so it is not described further
-in this manual.
+in this chapter.
 
 @code{Opal} - Package @code{opal}. @cindex{opal (package)}
 The graphical object system. @ref{Opal}.
 
 @code{Interactors} - Package @code{inter}. @cindex{inter (package)} Handling of
 mouse and keyboard
-input. @ref{Inter}.
+input. @ref{inter}.
 
 @code{Gestures} - Package @code{inter}. Code to handle gesture recognition
-and training. Described in the interactors manual, @ref{Inter}.
+and training. Described in the interactors chapter, @ref{inter}.
 
 @code{Aggregadgets} - Package @code{opal}. Support for creating instances of
 collections of objects, and for rows or columns of objects. @ref{aggregadgets}.
 
 @code{AggreGraphs} - Package @code{opal}. Support for
 creating graphs and trees of objects. Also described in the
-aggregadgets manual, @ref{aggregadgets}.
+aggregadgets chapter, @ref{aggregadgets}.
 
 @code{Gadgets} - Package @code{garnet-gadgets}, nicknamed @code{gg}.
 @cindex{garnet-gadgets (package)} A collection of pre-defined
@@ -1274,19 +1273,23 @@ contact for help and more information.
 @section Overview of this Technical Report
 @node Overview of this Technical Report
 
-In addition to the reference manuals for all the parts of the Garnet
-toolkit listed above, this technical report also contains:
+In the programer's reference to all the parts of the Garnet toolkit
+listed above, this technical report also contains:
 @itemize
+@item
 A guided on-line tour of the Garnet system that will help you become
 familiar with a few of the features of the Garnet toolkit. @ref{tour}.
 
+@item
 A tutorial to teach you the basic things you need to know to use
 Garnet. @ref{tutorial}.
 
+@item
 The code for a simple graphical editor, as a sample of code written for
 Garnet. @ref{sampleprog}.
 
-The Hints manual starting on page @ref{hints} includes some suggestions
+@item
+The Hints chapter starting on page @ref{hints} includes some suggestions
 that have been collected from the experience of Garnet users for making
 Garnet programs run faster.
 If you have ideas for things to add to this section, let us know.
@@ -1302,17 +1305,17 @@ Therefore, there are many options and functions that you will probably not
 need to use.
 
 In fact, to run the @b{Tour} (page @ref{tour}), it is not
-necessary to read any of the reference manuals. The tour is
+necessary to read any of the programer's reference chapters. The tour is
 self-explanatory. 
 
 Next, you should probably read the @b{Tutorial} (page @ref{tutorial}), since
 it tries to provide enough information about most of Garnet so that you don't
-need the other manuals right away.
+need the other chapters right away.
 
 To run the Gilt Interface Builder, you do not need to know about the
-rest of the system either. The Gilt manual should be sufficient.
+rest of the system either. The Gilt chapter should be sufficient.
 When you are ready to set some properties of the gadgets, you will
-need to look up the particular gadget in the Gadgets manual to see
+need to look up the particular gadget in the Gadgets chapter to see
 what the properties do.
 
 Even when you are ready to start programming, you will still not need most
@@ -1326,45 +1329,45 @@ Run the tour, to get a feel for Garnet programming.
 Read the tutorial.
 
 You might try creating a few dialog boxes using Gilt. This will
-familiarize you with the Gadgets. See the Gilt manual (@ref{gilt}).
+familiarize you with the Gadgets. See the Gilt chapter (@ref{gilt}).
 
 After that, you can look at the sample program at the end of
 this technical report, to see what you need more information about.
 
 You could now try to start writing your own programs, and just use the rest
-of the manuals as reference when you need information.
+of the chapters as reference when you need information.
 
 Next, look at the introduction and the following functions in the KR
 document: @code{gv, gvl, s-value, formula, o-formula,} and
-@code{create-instance}. The KR manual documents the entire KR module, but
+@code{create-instance}. The KR chapter documents the entire KR module, but
 Garnet does not use every feature that KR provides. Some concepts (like
 demons), will never be used by the typical Garnet user. Once you have
 gained some familiarity with the system, you may want to return to the KR
-Manual and read about object-oriented programming, type-checking, and
+chapter and read about object-oriented programming, type-checking, and
 constants.
 
-Next, skim the first five chapters of the Opal manual, and look at the
+Next, skim the first five chapters of the Opal chapter, and look at the
 various graphical objects, so you know what kinds are provided. The primary
 functions you will use from Opal are: @code{add-component, update,} and
 @code{destroy}, as well as the various types of graphical objects
 (@code{rectangle, line, circle}, etc.), drawing styles (@code{thin-line,
 dotted-line, light-gray-fill}, etc.) and fonts.
 
-Next, in the Interactors manual, you will need to skim the first four
+Next, in the Interactors chapter, you will need to skim the first four
 chapters to see how interactors work, and then see which interactors there
 are in the next chapter. You will probably not need to take advantage of
 the full power provided by the interactors system.
 
 Aggregadgets and Aggrelists are very useful for handling collections of
-objects, so you should read their manual. They support creating instances
+objects, so you should read their chapter. They support creating instances
 of groups of objects.
 
-You should then look at the gadget manual to see all the built-in
+You should then look at the gadget chapter to see all the built-in
 components, so you do not have to re-invent what is already supplied.
 
 User interface code is often difficult to debug, so we have provided a
 number of helpful tools. The Inspector is mentioned briefly in the Tutorial,
-and it is discussed thoroughly in the debugging manual. You will probably
+and it is discussed thoroughly in the debugging chapter. You will probably
 find many debugging features very useful.
 
 The demo programs can be a good source of ideas and coding style, so the
@@ -1373,7 +1376,7 @@ document describing them might be useful.
 
 If all you want Garnet for is to display menus and gauges that are supplied
 in the gadget set, you can probably just read the KR, Gadgets and Gilt
-manuals, and skip the rest.
+chapters, and skip the rest.
 
 
 @section Planned Future Extensions
@@ -1418,7 +1421,7 @@ correspond to the Garnet bibliography citations.
 This document provides an on-line tour through some of the features of the
 Garnet toolkit. It serves as an introduction to the toolkit and how to
 program with it. This document and tour do @emph{not} assume that the reader
-has read the reference manuals. The tour only assumes that the reader is
+has read the reference chapters. The tour only assumes that the reader is
 familiar with Common Lisp and has loaded the Garnet software. 
 
 
@@ -1446,7 +1449,7 @@ expressions verbatim and get the correct results.
 
 Clearly, in this short tour, a great many parts of Garnet will not be
 covered, so the interested reader will need to refer to other parts of this
-manual for details.
+chapter for details.
 
 @section Getting Started
 @anchor{startlisp} 
@@ -1523,7 +1526,7 @@ the debugger, you will need to type the specific command for that version
 of Common Lisp (@code{q} on CMU Common Lisp, @code{:reset} in Allegro
 Common Lisp, and Command-period in MCL). For special instructions
 about the LispWorks debugger, see the section "LispWorks" in the
-Overview manual.
+Overview chapter.
 
 Often, you can just try whatever you were doing again. However, some
 errors might cause Garnet or even Lisp to get messed up. In order of
@@ -1578,7 +1581,7 @@ This is a debugging statement is you can just ignore it.
 
 There are a large number of debugging functions and techniques provided to
 help fix Garnet toolkit code, but these are not explained in this tour.
-See the debugging manual.
+See the debugging chapter.
 
 @verbatim
 *****************************
@@ -1646,7 +1649,7 @@ contains the functions @code{create-instance}, @code{gv}, @code{gvl},
 
 @code{Opal} - contains the graphical objects and some functions for them.
 
-@code{Inter} - contains the interactor objects for handling the mouse.
+@code{inter} - contains the interactor objects for handling the mouse.
 
 @code{Garnet-Gadgets} - (nicknamed @code{gg}) contains a collection of predefined
 "gadgets" like menus and scroll bars.
@@ -1674,8 +1677,8 @@ The @code{main-event-loop} background process starts without any special
 attention in most lisps, including Allegro, Lucid, CMUCL, and MCL. If
 you are running LispWorks, then there is an initialization procedure
 for multiprocessing that you must perform before loading Garnet.
-Please consult the "LispWorks" section of the Overview Manual, the
-first section in this Garnet Reference Manual.
+Please consult the "LispWorks" section of the Overview chapter, the
+first section in this Garnet programer's reference chapters.
 
 Unfortunately, if you are not running a recent version of Allegro,
 Lucid, CMUCL, MCL, or LispWorks, your Lisp may not support background
@@ -1688,7 +1691,7 @@ following into Lisp:
 * @samp{(inter:main-event-loop)}
 @end example
 This function loops forever, so you then have to hit the
-@code{F1} key while the cursor is in a Garnet window to exit
+@key{F1} key while the cursor is in a Garnet window to exit
 @code{main-event-loop}. Alternatively, you can type ^C or Command-period,
 or whatever your operating system break character is,
 in the Lisp window. Also, it is permissible (though unnecessary) to call
@@ -1934,7 +1937,7 @@ It is not necessary to call
 they are created. However, if you are not using a recent version of
 CMU, Allegro, LispWorks, Lucid, or MCL Common Lisp, interactors only run
 while the @code{main-event-loop} procedure is operating.
-@code{Main-Event-Loop} does not exit, so you will have to hit the @code{F1} key
+@code{Main-Event-Loop} does not exit, so you will have to hit the @key{F1} key
 while the cursor is in the Garnet window, or type ^C (or
 whatever your operating system break character is) while the cursor is in
 the Lisp window, to be able to type further Lisp expressions.
@@ -2388,10 +2391,10 @@ then kill the lisp process (or just log out).
 @section
 We hope you have enjoyed your tour through Garnet. There are, of course,
 many features and capabilities that have not been demonstrated. These are
-described fully in the various manuals and papers about the Garnet project
+described fully in the various chapters and papers about the Garnet project
 and its parts. The next step might be to run the Gilt interface
 builder, since it does not require that you learn much about how
-Garnet works. See the Gilt manual.
+Garnet works. See the Gilt chapter.
 
 @ref{Appendix: List of commands}
 This appendix lists all the commands that the tour has you type. This is
@@ -2879,12 +2882,12 @@ prototype, and it can be considered a default value.
 An important tool for examining properties of objects is the Inspector.
 This tool is loaded with Garnet by default, and resides in the package
 @code{garnet-debug}. The Inspector is described in detail in the Debugging
-Manual that starts on page @ref{debug} of this reference manual.
+chapter that starts on page @ref{debug} of this reference chapter.
 
 To run the inspector on our example of three rectangles, position the mouse
 over R3 (the black rectangle) in the window, and hit the HELP key. If your
 keyboard does not have a HELP key, or hitting it does not seem to do anything,
-you can start the Inspector manually by typing @code{(gd:Inspector R3)} into
+you can start the Inspector chapterly by typing @code{(gd:Inspector R3)} into
 the lisp listener. The Inspector window that appears will look like figure
 @ref{inspector}.
 
@@ -2929,7 +2932,7 @@ When you are finished with the Inspector, you can click on the "@code{Done}" or
 "@code{Done All}" buttons to make the Inspector windows disappear. 
 
 Significantly more detail about the Inspector is included in the Debugging
-Manual, including how to explore the Prototype/Instance hierarchy of objects,
+chapter, including how to explore the Prototype/Instance hierarchy of objects,
 and how to use the Inspector for debugging more compilcated examples.
 
 
@@ -2950,7 +2953,7 @@ be inherited from the prototype object.
 
 There are other slots that change when instances of @code{opal:rectangle} are
 added to a window, such as the @code{:window} and @code{:parent} slots, but these
-slots are not intended to be set manually. Since they are "read-only" slots,
+slots are not intended to be set chapterly. Since they are "read-only" slots,
 they are not included in the @code{:parameters} list.
 
 Several tools in Garnet rely heavily on the @code{:parameters} slot.
@@ -2959,13 +2962,13 @@ parameter slots in red, so that they are easily identified. The
 @code{gg:prop-sheet} gadget which is used in Gilt and Lapidary looks at the
 @code{:parameters} slot to determine which slots should be displayed for the
 user to customize. These objects are discussed thoroughly in later sections
-of this reference manual.
+of this reference chapter.
 
 The typical Garnet user will not have to worry much about the @code{:parameters}
-slot. All of the slots that are in the list are documented in this manual,
+slot. All of the slots that are in the list are documented in this chapter,
 so it is really just another way to access the same information about
 properties of objects. For details on defining @code{:parameters} slots for
-your own objects, see the KR Manual. Unless you are defining your own
+your own objects, see the KR chapter. Unless you are defining your own
 list for a special object, the @code{:parameters} slot should be considered
 read-only.
 
@@ -3075,10 +3078,10 @@ The Opal package provides different graphical shapes
 including circles, rectangles, roundtangles, and lines. There are
 also several different kinds of text, and some special objects like
 bitmaps and arrowheads. Each graphical object has special slots that
-determine its appearance, which are documented in the Opal manual.
+determine its appearance, which are documented in the Opal chapter.
 (For example, the line uses the slots @code{:x1}, @code{:y1}, @code{:x2},
 and @code{:y2}.)
-See the section  "Specific Graphical Objects" in the Opal manual for
+See the section  "Specific Graphical Objects" in the Opal chapter for
 details of how each object works. Examples of creating instances of
 graphical objects appear throughout this tutorial.
 
@@ -3151,7 +3154,7 @@ further in section @ref{aggregadgets}.
 The functions @code{add-component}, @code{remove-component},
 and @code{move-component} are used to manipulate the components of an
 aggregate. Descriptions of these and other functions for components
-may be found in the "Aggregate Objects" section of the Opal manual.
+may be found in the "Aggregate Objects" section of the Opal chapter.
 
 
 @section Aggregadgets, Aggrelists, and Aggregraphs
@@ -3169,7 +3172,7 @@ nodes and arcs that make up a graph. Figures @ref{opal-inheritance}
 and @ref{v-scroll-hierarchy} were created using Garnet aggregraphs.
 For several examples and a complete discussion of how to use
 aggregraphs, see the Aggregadgets, Aggrelists, and Aggregraphs
-Reference Manual.
+Reference chapter.
 
 
 @subsection Aggregadgets
@@ -3227,7 +3230,7 @@ references to be evaluated are the two graphical object prototypes (the
 qualities (@code{opal:dashed-line} and @code{opal:black-fill}).
 Commas are also used to evaluate the @code{o-formula} calls, which
 establish constraints among objects (constraints are discussed
-in Chapter @ref{constraints}). If the commas were not present inside
+in the chapter @ref{constraints}). If the commas were not present inside
 the @code{:parts} list, then the names of all the Garnet objects would not be
 dereferenced, and they would be treated as mere atoms, not objects.
 Similarly, the calls to @code{o-formula} would appear as simple quoted
@@ -3240,7 +3243,7 @@ is, if we created an instance of AGG, called AGG-INSTANCE, then
 AGG-INSTANCE would automatically have a circle and rectangle component
 just like AGG. In contrast, when you create an instance of an
 aggregate, the components are not automatically generated, and you
-would have to create and add them to the instance manually.
+would have to create and add them to the instance chapterly.
 
 Other examples of aggregadget definitions
 can be found in sections @ref{aggregadget-ex} and @ref{big-example} in
@@ -3267,7 +3270,7 @@ use the backquote syntax to define the item prototype. There are many
 customizable aspects of aggrelists, such as whether to orient the
 components vertically or horizontally, the distance between each
 object, etc. Since there are so many customizable slots, please see
-the Aggregadgets and Aggrelists Reference Manual for a discussion of
+the Aggregadgets and Aggrelists Reference chapter for a discussion of
 how to use aggrelists. Section @ref{big-example} in this tutorial
 includes an example of the definition of an aggrelist.
 
@@ -3309,7 +3312,7 @@ Style, and one modeled after the OSF/Motif style. Examples of how to
 use the gadgets are found in demonstration programs at the end of each
 of the gadget files, which can be executed by commands like
 @code{(garnet-gadgets:menu-go)}. For detailed descriptions of all the
-available gadgets, see the Gadgets Reference Manual.
+available gadgets, see the Gadgets Reference chapter.
 
 
 
@@ -3328,7 +3331,7 @@ Although all the examples in this section use constraints on the
 positions of objects, it should be clear that constraints can be
 defined for filling styles, strings, or any other property of a Garnet
 object. Many examples of constraints can be found in other sections
-of this tutorial. Additionally, much of the KR Reference Manual is
+of this tutorial. Additionally, much of the KR Reference chapter is
 devoted to the discussion of constraints among objects. The sections
 "Constraint Maintenance" and "Slot and Value Manipulation Functions"
 should be of particular interest.
@@ -3799,7 +3802,7 @@ conjunction with interactors. Section @ref{trace-inter} describes how
 to use an important debugging function for interactors called
 @code{trace-inter}. Although this tutorial only gives examples of
 using the @code{button-interactor} and @code{move-grow-interactor}, the
-Interactors Manual discusses and provides examples for all six types
+Interactors chapter discusses and provides examples for all six types
 of Garnet interactors.
 
 
@@ -3811,7 +3814,7 @@ are only a few kinds of behaviors that are typically used in graphical
 user interfaces. Currently, Garnet supports seven types of interactive
 behavior, which allows a wide variety of user actions in an interface.
 Below is a list of the available interactors, which are described in
-detail in the Interactors Manual.
+detail in the Interactors chapter.
 
 @vtable @code 
 @item @code{Menu-Interactor}
@@ -3853,7 +3856,7 @@ allowing rapid updating of graphics.
 
 There are also several interactors that work with the @code{multifont-text}
 object. This object and its associated interactors are discussed in
-the Opal manual.
+the Opal chapter.
 
 
 @section The Button Interactor
@@ -4496,7 +4499,7 @@ automatically for the instances.
 @anchor{several-buttons}
 @end float
 
-This feature of aggregadgets means that you do not need to manually
+This feature of aggregadgets means that you do not need to chapterly
 create objects individually and add them to the window. Instead, you
 can create a group of objects, and then create instances of the group.
 
@@ -4509,7 +4512,7 @@ objects from the window with @code{remove-components}.
 
 Even though instances of the aggregadget will automatically generate
 components, the instances BUTTON-1 and BUTTON-2 show that we still
-need to manually supply coordinates to the aggregadget in order to
+need to chapterly supply coordinates to the aggregadget in order to
 position it. When we create the finished text button panel in Figure
 @ref{text-buttons}, we don't want to calculate the position of each
 text button in the window. (Notice that this is similar to the
@@ -4551,7 +4554,7 @@ all the calculations for the buttons were handled internally.
 There are many customizable slots for aggrelists that change the
 appearance of the aggrelist -- like whether to make the panel
 horizontal or vertical, how much space to put between the items, etc.
-A list of these slots is in the Aggregadgets manual, which you can try
+A list of these slots is in the Aggregadgets chapter, which you can try
 out later.
 
 The next step in the development of our panel is to give each button
@@ -4793,7 +4796,7 @@ their generated names.
 @end float
 
 To clean up the windows generated from @code{Make-Win}, you could use
-@code{dolist} to destroy the whole list, or manually destroy the windows
+@code{dolist} to destroy the whole list, or chapterly destroy the windows
 individually while referring to their generated names.
 
 
@@ -4801,7 +4804,7 @@ individually while referring to their generated names.
 @section Hints and Caveats
 @node Hints and Caveats
 
-There is a small manual devoted to optimizations that can be added to your
+There is a small chapter devoted to optimizations that can be added to your
 Garnet programs that make them smaller and faster. This section lists a
 few suggestions that are sometimes @b{required} by Garnet programs, in
 addition to helping your programs be more efficient.
@@ -5017,7 +5020,7 @@ feedback object itself is not selectable.
 @section Debugging
 @node Debugging
 
-The Debugging Tools Reference Manual documents many functions that are
+The Debugging Tools Reference chapter documents many functions that are
 useful in answering the most common questions that users have when
 developing Garnet code. The functions will help you find objects, explain
 the values of particular slots, describe inheritance and aggregate
@@ -5050,7 +5053,7 @@ whose value is inherited from a prototype is not printed unless @code{gv}
 has already been called on that slot.
 
 The @code{ps} function resides in the KR package, and is fully documented
-in the KR manual. There are several switches and global variables that
+in the KR chapter. There are several switches and global variables that
 control the amount of information that @code{ps} prints.
 
 
@@ -5109,7 +5112,7 @@ Executing @code{untrace-inter} will turn off the tracing for interactors.
 
 @chapter Opal: The Garnet Graphical Object System
 @node Opal : The Garnet Graphical Object System
-
+@anchor{opalchapter}
 
 by Andrew Mickish, Brad A. Myers, David Kosbie, Richard McDaniel, Edward Pervin, Matthew Goldberg
 
@@ -5130,7 +5133,7 @@ changed.
 @section Introduction
 @node Introduction
 
-This document is the reference manual for the Opal graphical object
+This document is the reference chapter for the Opal graphical object
 system. Opal, which stands for the @b{O}bject @b{P}rogramming
 @b{A}ggregate @b{L}ayer, is being developed as part of the Garnet
 project @cite(garnet). The goal of Opal is to make it easy to create
@@ -5145,7 +5148,7 @@ handle the automatic update is documented in @cite{Vander Zanden
 declared once and automatically maintained by the system. An example
 of a constraint is that a line must stay attached to a
 rectangle. Constraints are discussed in @ref{Garnet Tutorial} and
-@ref{KR Manual}.
+@ref{KR chapter}.
 
 Opal is built on top of the @code{gem} module, which is the
 @b{G}raphics and @b{E}vents @b{M}odule that refers to machine-specific
@@ -5202,7 +5205,7 @@ on the screen (each pixel is one unit of the coordinate
 system). Garnet windows are discussed fully in section @ref{windows}.
 
 The basics of object-oriented programming are beyond the scope of this
-manual. The @emph{objects} in @emph{Opal} use the @emph{KR} object
+chapter. The @emph{objects} in @emph{Opal} use the @emph{KR} object
 system @cite{Giuse 89}, and therefore operate as a prototype-instance
 model. This means that each object can serve as a prototype (like a
 class) for any further instances; there is (almost) no distinction
@@ -5236,7 +5239,7 @@ shown in Figure @ref{ObjectSchemata}.
 @caption{The objects in Opal and their slots. Each object also inherits slots
 from its prototype (the object to its left). The default
 values for the slots are shown. Those with values like @code{#k<F21>} have
-formulas in them (@xref{Garnet Tutorial} and @ref{KR Manual}).}
+formulas in them (@xref{Garnet Tutorial} and @ref{KR chapter}).}
 @anchor{ObjectSchemata}
 @end float
 
@@ -5273,22 +5276,22 @@ covered and uncovered), you only need the following simple program:
 @example
 (use-package :kr)
 
-;;@i{Create a small window at the upper left corner of the screen}
+;; @i{Create a small window at the upper left corner of the screen}
 (create-instance 'win inter:interactor-window
   (:left 10)(:top 10)
   (:width 200)(:height 50))
 
-;;@i{create an aggregate for the window}
+;; @i{create an aggregate for the window}
 (s-value win :aggregate (create-instance 'agg opal:aggregate))
 
-;;@i{create the string}
+;; @i{create the string}
 (create-instance 'hello opal:text
   (:left 10)(:top 20)
   (:string "Hello World"))
 
-(opal:add-component agg hello) ;@i{add the string to the aggregate}
+(opal:add-component agg hello) ; @i{add the string to the aggregate}
 
-(opal:update win) ;@i{cause the window and string to be displayed}
+(opal:update win) ; @i{cause the window and string to be displayed}
 @end example
 
 Opal also strives to make it easy to change the picture. To change the
@@ -5297,9 +5300,9 @@ Opal also strives to make it easy to change the picture. To change the
 
 
 @example
-(s-value hello :left 50)  ;@i{change the position}
+(s-value hello :left 50)  ; @i{change the position}
 
-(opal:update win) ;@i{cause the change to be visible}
+(opal:update win) ; @i{cause the change to be visible}
 @end example
 
 Note that the programmer never calls @emph{``draw''} or
@@ -5320,7 +5323,7 @@ available in Opal.
 Objects are visible if and only if their @code{:visible} slot is
 non-@code{nil} and they are a component of a visible aggregate that
 (recursively) is attached to a window. (Aggregates are discussed in
-Chapter @ref{aggregates}.)  Therefore, to make a single object
+the chapter @ref{aggregates}.)  Therefore, to make a single object
 @b{in}visible, its @code{:visible} slot can be set to @code{nil}. To make it
 visible again, it is only necessary to set the @code{:visible} slot to
 @code{t}. Alternatively, the object can be removed from its aggregate to
@@ -5399,7 +5402,7 @@ There are many slots in graphical objects, windows, and interactors that are
 set internally by Garnet and should never be set by users. For example,
 the @code{:parent}, @code{:window}, and @code{:components} slots of graphical objects
 are set automatically whenever the objects are added to an aggregate using
-@code{opal:add-component}, and should not be set manually.
+@code{opal:add-component}, and should not be set chapterly.
 
 All public slots that are intended to be
 read-only are labeled as such in their object's definitions. Internal slots
@@ -5427,14 +5430,14 @@ An important difference among Lisp interpreters is the @code{main-event-loop}.
 In CMU Common Lisp, there is a process running in the background that
 allows interactors to always run with automatic refresh of Garnet
 windows.@footnote{Automatic refresh while an interactor is running is
-different from updating a window after you manually make a change with
+different from updating a window after you chapterly make a change with
 @code{s-value}. Unless changes are made by the interactors, you will
 still have to call @code{opal:update} to see the graphics change.}
 In Allegro, Lucid, and LispWorks, Garnet creates its own @code{main-event-loop}
 process in the background that does the same thing. Some Lisp
 interpreters have problems running this process in the background,
 and you may have to call @code{inter:main-event-loop} by hand in order
-to run the interactors. Consult the Interactors manual for directions
+to run the interactors. Consult the Interactors chapter for directions
 on how to control the @code{main-event-loop} process.
 
 
@@ -5477,7 +5480,7 @@ with a @code{:line-style} of @c[nil] will not have an outline. Those with a
 @code{:line-style} and @code{:filling-style} control various parameters of the
 outline and filling when the object is drawn.
 Appropriate values for the @code{:line-style} and @code{:filling-style} slots are
-described below in Chapter @ref{Graphic Qualities}.
+described below in the chapter @ref{Graphic Qualities}.
 
 @subsection Drawing function
 @node Drawing function
@@ -5515,7 +5518,7 @@ the region under the rectangle will appear in inverse video. This technique
 is used in the @code{gg:text-button}, and many other standard Garnet gadgets.
 
 A fundamental limitation of the PostScript language prevents it from
-rendering draw functions properly. If @code{opal:make-ps-file} (see Chapter
+rendering draw functions properly. If @code{opal:make-ps-file} (see chapter
 @ref{printing}) is used to generate a PostScript file from a Garnet window,
 the draw functions used in the window will be ignored in the printed image.
 Usually the graphics in the window can be reimplemented without using
@@ -5816,7 +5819,7 @@ shows the graphic qualities provided by Opal.
 The properties controlled by the @code{opal:line-style},
 @code{opal:filling-style}, and @code{opal:font} objects are similar to
 PostScript's graphics state (described in section 4.3 in the
-PostScript Language Reference Manual) or the XLIB graphics context
+PostScript Language Reference chapter) or the XLIB graphics context
 (described in the X Window System Protocol Manual). The Opal design is
 simpler since there are appropriate defaults for all values and you
 only have to set the ones you are interested in.  The
@@ -6160,16 +6163,15 @@ or dashed. Valid values are @code{:solid}, @code{:dash} or @code{:double-dash.} 
 dashes. With @code{:double-dash}, both on and off dashes are drawn; the
 on dashes are drawn with the foreground color (usually black) and the
 off dashes are drawn with the background color (usually white).
-@sp 1
+
 @cindex{dash-pattern}
 The @code{:dash-pattern} slot holds an (optionally empty) list of numbers
 corresponding to the pattern used when drawing dashes. Each pair of
 elements in the list refers to an on and an off dash. The numbers are
-pixel lengths for each dash. Thus a @code{:dash-pattern} of @w[(1 1 1 1 3 1)] is
+pixel lengths for each dash. Thus a @code{:dash-pattern} of @code{(1 1 1 1 3 1)} is
 a typical dot-dot-dash line. A list with an odd number of elements is
 equivalent to the list being appended to itself. Thus, the dash pattern
-@w[(3 2 1)] is equivalent to @w[(3 2 1 3 2 1)].
-@sp 1
+@code{(3 2 1)} is equivalent to @code{(3 2 1 3 2 1)}.
 
 Since Mac QuickDraw does not support drawing real dashed lines, Garnet
 simulates dashed lines on the Mac by drawing lines with a stippled pattern.
@@ -6578,7 +6580,7 @@ Most of the prototypes in this section have a list of slots in their
 @code{:maybe-constant} slot, which generally correspond to the
 customizable slots of the object. This is part of the @emph{constant
 slots} feature of Garnet which allows advanced users to optimize their
-Garnet objects by reusing storage space. Consult the KR manual for
+Garnet objects by reusing storage space. Consult the KR chapter for
 documentation about how to take advantage of constant slots.
 
 @b{HINT:} If you want a black-filled object, set the line-style to be
@@ -6787,7 +6789,7 @@ These slots are useful if the arrow is closed (see Figure
 If you want an arrowhead connected to a line, you might want to use the
 @code{arrow-line} object (with one arrowhead) or @code{double-arrow-line} (with
 arrow-heads optionally at either or both ends) supplied in the Garnet
-Gadget Set @cite{GarnetGadgetsManual}.
+Gadget Set @cite{GarnetGadgetsChapter}.
 
 @float Figure, fig:ex5
 @center @image{arrow-illus, 5.5in}
@@ -7315,7 +7317,7 @@ On the Mac, and in the
 usual case with X11, the @code{:image} slot contains a machine-dependent
 structure generated by the function @code{opal:read-image} (see below).
 Under X11, there are a variety of other CLX image objects that can be
-stored in this slot (consult your CLX manual for details on images). 
+stored in this slot (consult your CLX Manual for details on images). 
 
 Bitmaps can be any size. Opal provides a function to read in a bitmap
 image from a file:
@@ -7539,7 +7541,7 @@ utility.
 The @code{multifont-text} object is loaded by default, since it is used
 by the new @code{garnet-debug:Inspector}. If you are not already
 loading the @code{Inspector}, you can load @code{multifont-text} and all
-of its interactors with @w{@code{(garnet-load "opal:multifont-loader")}}.
+of its interactors with @code{(garnet-load "opal:multifont-loader")}.
 
 @sp 1
 
@@ -7965,7 +7967,7 @@ text that is in @code{:initial-text} slot format.
 The optional @emph{font} and @emph{color} parameters indicate the font and color
 of the new text. If any of these parameters are NIL, the newly added text
 will use the value of the @code{:current-font}, @code{:current-fcolor}, and/or
-@code{:current-bcolor} slots, which can be set manually or allowed to take on
+@code{:current-bcolor} slots, which can be set chapterly or allowed to take on
 the font and colors of the character over which the cursor last passed.
 
 The optional @emph{lisp-mode-p} argument indicates whether the interactors
@@ -8153,7 +8155,7 @@ Since the interactors mentioned here are integral to using the
 @code{opal:multifont-text} object, it was decided to include their description
 here, near the description of the @code{multifont-text}. If you are not
 familiar with the basic principles of interactors, you will be best served
-if you read the interactors manual first, particularly the parts about the
+if you read the interactors chapter first, particularly the parts about the
 @code{inter:text-interactor} and the slots of all interactors.
 
 There are three interactors for multifont-text objects. The
@@ -8191,7 +8193,7 @@ multifonts, just so long that it doesn't return other types of objects.
    (:match-parens-p NIL)          @emph{;  "        "          "} 
    (:match-obj ...)               @emph{;  "        "          "}
    (:drag-through-selection? T)   @emph{; See below}
-   (:button-outside-stop?    T)   @emph{; See the} text-interactor @emph{section of the Interactors Manual}
+   (:button-outside-stop?    T)   @emph{; See the} text-interactor @emph{section of the Interactors chapter}
    (:stop-action #'inter::MultiFont-Text-Int-Stop-Action)
    (:after-cursor-moves-func NIL) @emph{; (lambda (inter text-obj))}
    )
@@ -8615,7 +8617,7 @@ selection function takes the usual parameters (the gadget and its value), where
 the value is the pure text representation of the gadget's current string.
 
 There is a small demo of how to use the multifont text gadget in the
-gadget file. To run it, execute @w[@code{(garnet-gadgets:multifont-gadget-go)}].
+gadget file. To run it, execute @code{(garnet-gadgets:multifont-gadget-go)}.
 
 @section Aggregate objects
 @node Aggregate objects
@@ -8632,8 +8634,8 @@ instance of that aggregate afterwards does @emph{not} create instances of the
 children. If you use Aggregadgets instead, then you @emph{do} get copies
 of all the components. Aggregadgets also provide a convenient syntax for
 defining the components. Therefore, it is often more appropriate to use
-Aggregadgets than aggregates. See the Aggregadgets manual
-@cite{AggregadgetsManual}.
+Aggregadgets than aggregates. See the Aggregadgets chapter
+@cite{AggregadgetsChapter}.
 
 @subsection Class Description
 @node Class Description
@@ -8887,8 +8889,8 @@ the way to the leaves. For example:
 (create-instance OBJ2 ...)
 (opal:add-components MYAGG OBJ1 OBJ2)
 
-(opal:point-to-leaf TOP-AGG x y) ;@i{will return obj1, obj2, or NIL}
-(opal:point-to-leaf TOP-AGG x y :type MYAGGTYPE) ;@i{will return MYAGG or NIL}
+(opal:point-to-leaf TOP-AGG x y) ; @i{will return obj1, obj2, or NIL}
+(opal:point-to-leaf TOP-AGG x y :type MYAGGTYPE) ; @i{will return MYAGG or NIL}
 @end example
 
 @cindex{point-in-gob}
@@ -9227,7 +9229,7 @@ Graphical objects can only display themselves in a @emph{window}.
   (:aggregate NIL)
   (:parent NIL)
   (:visible ...)
-  (:modal-p NIL)               @emph{;; Whether to suspend input while visible. See the Interactors Manual.}
+  (:modal-p NIL)               @emph{;; Whether to suspend input while visible. See the Interactors chapter.}
   (:in-progress NIL)           @emph{;; Read by }opal:update-all@emph{. See section @ref{quarantine-slot}.}
   ...)
 @end example
@@ -9683,6 +9685,21 @@ full machine names). Assuming you are sitting at
 Create an extra Xterm (shell) window and use it to telnet to
 @code{OpalMachine.cs.edu} and then log in.
 
+@redtext{TODO: Slime makes this approach inconvenient, as you have to
+change the way that emacs launches Slime to set the environment
+variable before you start lisp. An easy approach is to use uiop, the
+cross platform utility functions provided by ASDF. If you had a second
+display running on local machine you could specify it using the
+following command:
+
+@example
+(setf (uiop:getenv "DISPLAY") ":1")
+@end example
+
+Then launch Garnet as usual. Unfortunately this is propably not 100%
+reliable accross platforms. Idealy the display that you want to
+connect to would be part of an initialization parameter you could pass.}
+
 
 Type the following to @code{OpalMachine.cs.edu} to tell Opal where the
 windows should go:
@@ -9736,7 +9753,7 @@ be updated.
 If @code{update} crashes into the debugger, this is usually because there is
 an object with an illegal value attached to the window. In this case, the
 debugging function @code{garnet-debug:fix-up-window} is very useful; see
-the Debugging Manual.
+the Debugging chapter.
 
 @end defmethod
 
@@ -9809,7 +9826,7 @@ erased and will be orphaned.
 The default is @code{orphans-only}. Another useful value is @code{:opal}. The
 other options are mainly useful when attempts to use these fail due to
 bugs. See also the function @code{Fix-Up-Window} in the Garnet Debugging
-Manual @cite{Garnetdebugmanual}.
+chapter @cite{Garnetdebugchapter}.
 
 @cindex{convert-coordinates}
 
@@ -9936,7 +9953,7 @@ Whether to draw the outline of the window (and subwindows,
 if any). The allowed values are @code{T}, @code{NIL},
 @code{:generic}, and @code{:motif}. The default value of @code{:motif} gives your
 image a simulated Motif window manager frame, like the picutres in the Gilt
-Reference Manual. The value of @code{:generic} puts a plain black frame around
+Reference chapter. The value of @code{:generic} puts a plain black frame around
 your printed image, with the title of the window centered in the title bar.
 The value @code{T} gives the image a thin black border, and @code{NIL} yields no
 border at all.
@@ -9964,7 +9981,7 @@ A list of screen-relative coordinates that
 describe absolute pixel positions for the printed window. This makes it
 possible to clip to a region when you are printing @emph{multiple} windows.
 Clip regions can be used to make multiple-page PostScript
-files -- you have to manually divide the image into its component regions,
+files -- you have to chapterly divide the image into its component regions,
 and generate one PostScript file for each region. In the future, we may
 attempt to automate the process of multiple-page printing.
 @end itemize
@@ -10052,7 +10069,7 @@ Allegro's @code{dumplisp} command, you can supply the keywords @code{:libfile}
 and @code{:flush-source-info?}. Since @code{opal:make-image} calls @code{dumplisp}
 for Allegro, you can supply the extra parameters to @code{opal:make-image} and
 they will be passed on to @code{dumplisp}. Therefore, it is not necessary to
-call your lisp's image-saving function manually; you can always pass the
+call your lisp's image-saving function chapterly; you can always pass the
 additional desired parameters to @code{opal:make-image}.
 
 When you restart the saved image, it will print a banner indicating the time
@@ -10060,7 +10077,7 @@ at which the image was saved, and will automatically call
 @code{opal:reconnect-garnet}. Some lisps (like Allegro) allow you to restart
 the saved image just by executing the binary file, while others (like CMUCL)
 require that the binary file is passed as an argument when the standard lisp
-image is executed. Consult your lisp's reference manual for instructions on
+image is executed. Consult your lisp's reference chapter for instructions on
 restarting your saved image.
 
 @end defun
@@ -10076,7 +10093,7 @@ image had been saved with @code{opal:make-image}.
 
 When you do not want to use the function @code{opal:make-image} to generate
 an executable lisp image, and instead want to perform the saving procedure
-manually, you can use the functions @code{opal:disconnect-garnet} and
+chapterly, you can use the functions @code{opal:disconnect-garnet} and
 @code{opal:reconnect-garnet}, along with your implementation-dependent
 function for saving lisp images.
 
@@ -10096,7 +10113,7 @@ While the connection to the X server is closed, you
 may save a core image of Garnet by calling the appropriate Lisp
 command. In Lucid Lisp the command is @code{(disksave)}, in
 Allegro Lisp it is @code{(excl:dumplisp)}, and in CMU Common Lisp
-it is @code{(ext:save-lisp)}. Consult your Common Lisp manual to
+it is @code{(ext:save-lisp)}. Consult your Common Lisp chapter to
 find the disk save command for your version of Common Lisp, as
 well as how to start up a saved Lisp core.
 
@@ -10109,7 +10126,7 @@ Allegro lisp whenever the saved lisp is restarted:
 (excl:dumplisp :name "garnet-image" :restart-function #'opal:reconnect-garnet)
 @end example
 
-Otherwise, you will need to call @code{opal:reconnect-garnet} manually when
+Otherwise, you will need to call @code{opal:reconnect-garnet} chapterly when
 the lisp image is restarted in order to restore the connection to the server
 and make all Garnet windows visible again.
 
@@ -10170,14 +10187,14 @@ its components once, and then when you create an instance, it creates all
 of the components automatically. Aggregadgets also allow lists of items to
 be created by simply giving a single prototype for all the list elements,
 and a controlling value that the list iterates through. Aggregadgets are
-described in their own manual @cite{AggregadgetsManual}. 
+described in their own chapter @cite{AggregadgetsChapter}. 
 
 @cindex{Interactors}
 @emph{Interactors} are used to handle all input from the user. Interactor
 objects control input and perform actions on Opal graphical objects.
 There are high-level interactor objects to
 handle all the common forms of mouse and keyboard input. Interactors are
-described in their own manual @cite{InterManual}.
+described in their own chapter @cite{InterChapter}.
 
 Together Opal and Interactors should hide all details of X and QuickDraw
 from the programmer. There should never be a need to reference any symbols in
@@ -10323,7 +10340,9 @@ screen. This is used most often with structure accessors to get
 information on values for the screen's white and black pixels, width and
 height in pixels or millimeters.
 
-@code{root-window} is the CLX window that corresponds to @code{@w{(xlib:screen-root @emph{screen})}} for use in calls to @code{xlib:create-window}.
+@code{root-window} is the CLX window that corresponds to
+@code{(xlib:screen-root @emph{screen})} for use in calls to
+@code{xlib:create-window}.
 
 @code{default-context} is a CLX graphical context structure used all drawing
 requests. Opal maintains a cache on this object, so it should not be
@@ -10379,12 +10398,12 @@ opal:Point-In-Gob @emph{graphical-object x y}@ref{method}
 @end example
 
 This method should be provided for all new objects. It is used by
-@code{point-to-component} and @code{point-to-leaf} to query an object for a hit.
-The method should return @c[t] if the object is under the point
-@w{(@emph{x,y})}. This function should also take into account the values in the
-@code{:hit-threshold}, @code{:select-outline-only}, and @code{:visible} slots of
-the object, as described in section @ref{stdfuncs}. Objects that are not
-visible should return @code{nil}.
+@code{point-to-component} and @code{point-to-leaf} to query an object
+for a hit.  The method should return @c[t] if the object is under the
+point @math{(x, y)}. This function should also take into account the
+values in the @code{:hit-threshold}, @code{:select-outline-only}, and
+@code{:visible} slots of the object, as described in section
+@ref{stdfuncs}. Objects that are not visible should return @code{nil}.
 
 @cindex{fix-properties}
 @example
@@ -10459,204 +10478,12 @@ These forms are commonly used like this:
 
 @ref{References}
 
-@chapter Gem: Low-level Graphics Library
-@node Low-level Graphics Library
-
-@section Creating New Graphics Backends
-@emph{<TODO>}
-
-@section Using the module directly
-@emph{<TODO>}
-
-@section Function Reference
-
-@defop {Gem Window} :all-garnet-windows root-window
-@end defop
-
-(gem-method :beep (root-window))
-
-(gem-method :bit-blit (window source s-x s-y width height destination d-x d-y))
-
-(gem-method :black-white-pixel (window))
-
-(gem-method :character-width (root-window font character))
-
-(gem-method :check-double-press (root-window state code time))
-
-(gem-method :clear-area (window &optional (x 0) (y 0) width height buffer-p))
-
-(gem-method :color-to-index (root-window a-color))
-
-(gem-method :colormap-property (root-window property &optional a b c))
-
-(gem-method :copy-to-pixmap (root-window to from width height))
-
-(gem-method :create-cursor (root-window source mask foreground background
-					from-font-p x y))
-
-(gem-method :create-image (root-window width height depth from-data-p
-				       &optional color-or-data properties
-				       bits-per-pixel left-pad data-array))
-
-(gem-method :create-image-array (root-window width height depth))
-
-(gem-method :create-pixmap (root-window width height depth
-					&optional image bitmap-p data-array))
-
-(gem-method :build-pixmap (window image width height bitmap-p))
-
-
-(gem-method :create-state-mask (root-window modifier))
-
-(gem-method :create-window
-	    (parent-window x y width height
-	     title icon-name background border-width
-	     save-under visible
-	     min-width min-height max-width max-height
-	     user-specified-position-p user-specified-size-p
-	     override-redirect))
-
-(gem-method :delete-font (root-window font))
-
-(gem-method :delete-pixmap (root-window pixmap &optional buffer-too))
-
-(gem-method :delete-window (root-window x-window))
-
-(gem-method :device-image (root-window index))
-
-(gem-method :discard-mouse-moved-events (root-window))
-
-(gem-method :discard-pending-events (root-window &optional timeout))
-
-(gem-method :draw-arc (window x y width height angle1 angle2 function
-			      line-style fill-style &optional pie-slice-p))
-
-(gem-method :draw-image (window left top width height image function fill-style))
-
-(gem-method :draw-line (window x1 y1 x2 y2 function line-style
-			       &optional drawable))
-
-(gem-method :draw-lines (window point-list function line-style fill-style))
-
-(gem-method :draw-points (window point-list function line-style))
-
-(gem-method :draw-rectangle (window x y width height function
-				    line-style fill-style))
-
-(gem-method :draw-roundtangle (window left top width height
-				      corner-width corner-height function
-				      line-style fill-style))
-
-(gem-method :draw-text (window x y string font function
-			       line-style &optional fill-background invert-p))
-
-(gem-method :drawable-to-window (root-window drawable))
-
-(gem-method :event-handler (root-window ignore-keys))
-
-(gem-method :flush-output (window))
-
-(gem-method :font-exists-p (root-window name))
-
-(gem-method :font-max-min-width (root-window font min-too))
-
-(gem-method :font-name-p (root-window arg))
-
-(gem-method :font-to-internal (root-window opal-font))
-
-(gem-method :get-cut-buffer (root-window))
-
-(gem-method :image-bit (root-window image x y))
-
-(gem-method :image-from-bits (root-window patterns))
-
-(gem-method :image-hot-spot (root-window image))
-
-;;; returns three values: width, height, depth
-(gem-method :image-size (a-window image))
-
-(gem-method :image-to-array (root-window image))
-
-(gem-method :initialize-device (root-window))
-
-(gem-method :initialize-window-borders (window drawable))
-
-(gem-method :inject-event (window index))
-
-(gem-method :make-font-name (root-window key))
-
-(gem-method :map-and-wait (a-window drawable))
-
-(gem-method :max-character-ascent (root-window font))
-
-(gem-method :max-character-descent (root-window font))
-
-(gem-method :mouse-grab (window grab-p want-enter-leave &optional owner-p))
-
-(gem-method :raise-or-lower (window raise-p))
-
-(gem-method :read-an-image (root-window pathname))
-
-(gem-method :reparent (window new-parent drawable left top))
-
-(gem-method :set-clip-mask (window clip-mask &optional lstyle-ogc fstyle-ogc))
-
-(gem-method :set-cut-buffer (root-window string))
-
-(gem-method :set-device-variables (root-window full-display-name))
-
-(gem-method :set-draw-function-alist (root-window))
-
-(gem-method :set-draw-functions (root-window))
-
-(gem-method :set-drawable-to-window (window drawable))
-
-(gem-method :set-interest-in-moved (window interestedp))
-
-(gem-method :set-screen-color-attribute-variables (root-window))
-
-(gem-method :set-window-property (window property value))
-
-(gem-method :stippled-p (root-window))
-
-(gem-method :text-extents (root-window opal-font string))
-
-(gem-method :text-width (root-window opal-font string))
-
-(gem-method :translate-character (window x y state code time))
-
-(gem-method :translate-code (window scan-code shiftp))
-
-(gem-method :translate-coordinates (root-window window x y &optional
-                                                other-window))
-
-(gem-method :translate-mouse-character (root-window button-code modifier-bits
-                                        event-key))
-
-(gem-method :window-debug-id (window))
-
-(gem-method :window-depth (window))
-
-(gem-method :window-from-drawable (root-window drawable))
-
-(gem-method :window-has-grown (window width height))
-
-(gem-method :window-to-image (window left top width height))
-
-(gem-method :write-an-image (root-window pathname image))
-
-
-
-@section Font Handling
-@emph{<TODO>}
-
 @chapter Interactors: Encapsulating Mouse and Keyboard Behaviors
 @node Interactors Reference: Encapsulating Mouse and Keyboard Behaviors
 
 
-@b{Brad A. Myers
-James A. Landay
-Andrew Mickish}
+by Brad A. Myers, James A. Landay, Andrew Mickish
+
 @value{DATE}
 
 @section Abstract
@@ -10672,30 +10499,28 @@ interaction techniques. These interactors form the basis for all
 interaction in the Garnet system.
 
 
-
-
 @section Introduction
 @node Introduction
 
-This document is the reference manual for the @emph{Interactors} system,
-which is part of the Garnet User Interface Development System
-@cite{GarnetCHI}.
-The Interactors module is responsible for handling all of the input
-from the user. Currently, this includes handling the mouse and
-keyboard.
+This document is the reference chapter for the @emph{Interactors}
+system, which is part of the Garnet User Interface Development System
+@cite{Myers, 1989a}.  The Interactors module is responsible for
+handling all of the input from the user. Currently, this includes
+handling the mouse and keyboard.
 
-The design of the Interactors is based on the observation that there are
-only a few kinds of behaviors that are typically used in graphical user
-interfaces. Examples of these behaviors are selecting one of a set (as in a
-menu), moving or growing with the mouse, accepting keyboard typing, etc.
-Currently, in Garnet, there are only nine types of interactive behavior,
-but these are all that is necessary for the interfaces that Garnet
-supports. These behaviors are provided in Interactor objects. When the
-programmer wants to make a graphical object (created using Opal; the
-Garnet graphics package) respond to input, an
-interactor object is created and attached to the graphical object. In
-general, the graphics and behavior objects are created and maintained
-separately, in order to make the code easier to create and maintain.
+The design of the Interactors is based on the observation that there
+are only a few kinds of behaviors that are typically used in graphical
+user interfaces. Examples of these behaviors are selecting one of a
+set (as in a menu), moving or growing with the mouse, accepting
+keyboard typing, etc.  Currently, in Garnet, there are only nine types
+of interactive behavior, but these are all that is necessary for the
+interfaces that Garnet supports. These behaviors are provided in
+interactor objects. When the programmer wants to make a graphical
+object (created using Opal; the Garnet graphics package) respond to
+input, an interactor object is created and attached to the graphical
+object. In general, the graphics and behavior objects are created and
+maintained separately, in order to make the code easier to create and
+maintain.
 
 This technique of having objects respond to inputs is quite novel, and
 different from the normal method in other graphical object systems. In
@@ -10709,27 +10534,33 @@ X11 and Macintosh QuickDraw. Interactors are set up to work with the Opal
 graphics package and the KR object and constraint systems, which are all
 part of Garnet.
 
-The motivation and an overview of the Interactors system is described in
-more detail in conference papers @cite{Interactors, InterTOIS}.
+The motivation and an overview of the Interactors system is described
+in more detail in conference papers @cite{Myers, 1989b}, @cite{Myers,
+1990}.
 
-Often, interactors will be included in the definition of Aggregadgets. See
-the Aggregadgets manual for a description of how this works.
+Often, interactors will be included in the definition of
+Aggregadgets. @xref{Aggregadgets, Aggrelists & Aggregraphs} for a
+description of how this works.
 
 @section Advantages of Interactors
 @node Advantages of Interactors
 
 The design for interactors makes creating graphical interfaces
 easier. Other advantages of the interactors are that:
-@itemize
+@itemize @bullet
+@item
 They are entirely ``look'' independent; any graphics can be attached to a
 particular ``feel.''
 
+@item
 They allow the details of the behavior of objects to be separated from the
 application and from the graphics, 
 which has long been a goal of user interface software design.
 
+@item
 They support multiple input devices operating in parallel.
 
+@item
 They simulate multiple processing. Different applications can be running
 in different windows, and the operations attached to objects in all the
 windows will execute whenever the mouse is pressed over them. The
@@ -10739,10 +10570,12 @@ correct procedures are called. If the application is written correctly
 (e.g., without global variables), multiple instantiations of the @emph{same}
 application can exist in the same process.
 
-All of the complexities of X and QuickDraw graphics and event handling
-are hidden by Opal and the Interactors package. This makes Garnet
-much easier to use than X or QuickDraw, and allows applications written in
-Garnet to be run on either Unix or Mac machines without modification.
+@item
+All of the complexities of @emph{X11} graphics and event handling are
+hidden by Opal and the Interactors package. This makes Garnet much
+easier to use than @emph{X11} directly, and allows applications
+written in Garnet to be run on anly platform that supports @emph{X11}
+without modification.
 @end itemize
 
 
@@ -10750,11 +10583,11 @@ Garnet to be run on either Unix or Mac machines without modification.
 @node Overview of Interactor Operation
 
 @cindex{Inter Package}
-The interactors sub-system resides in the @code{Inter} package. We
+The interactors sub-system resides in the @code{inter} package. We
 recommend that programmers explicitly reference names from the
-@code{Inter} package, for example: @code{Inter:Menu-Interactor}, but you
+@code{inter} package, for example: @code{inter:menu-interactor}, but you
 can also get complete access to all exported symbols by doing a
-@w[@code{(use-package :INTER)}]. All of the symbols referenced in this
+@code{(use-package :inter)}. All of the symbols referenced in this
 document are exported.
 
 In a typical mouse-based operation, the end user will press down on a mouse
@@ -10771,317 +10604,327 @@ stops running and goes back to waiting.
 In fact, interactors are somewhat more complicated because they can be
 aborted at any time and because there are often active regions of the
 screen outside of which the interactor does not operate. The full
-description of the operation is presented in section @ref{operation}.
+description of the operation is presented in section @ref{Operation}.
 
-@cindex{box (slot)}
-@cindex{Selected (slot)}
+@cindex{@code{box} (slot)}
+@cindex{@code{selected} (slot)}
 All the interactors operate by setting specific slots in the graphic
-objects.@footnote{``Slots'' are the ``instance variables'' of the objects.}
+objects. @footnote{``Slots'' are the ``instance variables'' of the objects.}
 For example, the menu interactor sets a slot called @code{:selected} to show
 which menu item is selected, and the moving and growing interactor sets a
 slot called @code{:box}. Typically, the objects will contain constraints
 that tie appropriate graphical properties to these special slots. For
 example, a movable rectangle would typically contain the following
 constraints so it will follow the mouse:
-@cindex{Moving-Rectangle}
+
+@cindex{@code{moving-rectangle}}
 
 @cindex{Examples}
-@cindex{Moving-Rectangle}
-@cindex{Examples}
-@cindex{Box (slot)}
+@cindex{@code{box} (slot)}
 @example
-(create-instance 'MOVING-RECTANGLE opal:rectangle
+(create-instance 'moving-rectangle opal:rectangle
    (:box '(80 20 100 150))
    (:left (o-formula (first (gvl :box))))
    (:top (o-formula (second (gvl :box))))
    (:width (o-formula (third (gvl :box))))
    (:height (o-formula (fourth (gvl :box)))))
 @end example
-The initial size and position for the rectangle are in the @code{:box} slot.
-When an interactor changed the box slot, the @code{:left, :top, :width,} and
-@code{:height} slots would change automatically based on constraints. 
 
-If the
-constraints (formulas) were @emph{not} there, the interactor would still
-change the @code{:box} slot, @emph{but nothing would change on the screen},
-since the rectangle's display is controlled by @code{:left, :top, :width,} and
-@code{:height}, not by @code{:box}.
-The motivation for setting this extra slot, is to allow application-specific
-filtering on the values. For example, if you do not want the object to
-move vertically, you can simply eliminate the formula in the @code{:top} slot.
+The initial size and position for the rectangle are in the @code{:box}
+slot.  When an interactor changes the box slot, the @code{:left, :top,
+:width,} and @code{:height} slots would change automatically based on
+constraints.
+
+If the constraints (formulas) were @emph{not} there, the interactor
+would still change the @code{:box} slot, @emph{but nothing would
+change on the screen}, since the rectangle's display is controlled by
+@code{:left, :top, :width,} and @code{:height}, not by @code{:box}.
+The motivation for setting this extra slot, is to allow
+application-specific filtering on the values. For example, if you do
+not want the object to move vertically, you can simply eliminate the
+formula in the @code{:top} slot.
 
 @section Simple Interactor Creation
 @node Simple Interactor Creation
 
-@cindex{create-instance}
-@cindex{Interactor-window}
-@cindex{window}
-To use interactors, you need to create @emph{interactor-windows} for the
-interactors to work in (windows are fully documented in the Opal Manual).
-To create an interactor-window, you use the standard KR
-@code{create-instance} function. For example:
+@cindex{@code{create-instance}}
+@cindex{@code{interactor-window}}
+@cindex{Window}
+To use interactors, you need to create @emph{interactor-window}s for
+the interactors to work in (windows are fully documented in
+@ref{opalchapter,,Opal: The Garnet Graphical Object System}.  To create an @code{interactor-window},
+you use the standard @emph{KR} @code{create-instance} function. For example:
+
 @cindex{Examples}
 @cindex{Window Creation}
-@cindex{Examples}
 @cindex{Creating Interactor Window}
 @example
-(create-instance 'MYWINDOW inter:interactor-window
+(create-instance 'mywindow inter:interactor-window
    (:left 100)(:top 10)
    (:width 400)(:height 500)
    (:title "My Window"))
-(opal:update MYWINDOW)
+
+(opal:update mywindow)
 @end example
 
 To create interactor objects, you also use the @code{create-instance}
 function. Each interactor has a large number of optional parameters, which are
-described in detail in the rest of this manual. It must be emphasized,
+described in detail in the rest of this chapter. It must be emphasized,
 however, that normally it is not necessary to supply very many of these.
 For example, the following code creates an interactor that causes the
-MOVING-RECTANGLE (defined above) to move around inside MYWINDOW:
+@code{moving-rectangle} (defined above) to move around inside @code{mywindow}:
+
 @cindex{Examples}
-@cindex{Mover for Moving-Rectangle}
+@cindex{Mover for @code{moving-rectangle}}
 @example
-(create-instance 'MYMOVER Inter:Move-Grow-Interactor
-   (:start-where (list :in MOVING-RECTANGLE))
-   (:window MYWINDOW))
+(create-instance 'mymover inter:move-grow-interactor
+   (:start-where (list :in moving-rectangle))
+   (:window mywindow))
 @end example
 
-This interactor will use the default start and stop events, which are the
-left mouse button down and up respectively. All the other aspects of the
-behavior also will use their default values (as described below).
+This interactor will use the default start and stop events, which are
+the left mouse button down and up respectively. All the other aspects
+of the behavior also will use their default values (as described
+below).
 
 Several implementations of lisp allow interactors to run automatically
-(see section @ref{notcmulisp}). If you are @emph{not} running in CMU,
-LispWorks, Allegro, Lucid, or MCL Commonlisp, then you need to execute the
-following function to make the interactor run:
+(see section @ref{notcmulisp,,The Main Event Loop}). If you are
+@emph{not} running in CMU, LispWorks, Allegro, Lucid, or MCL
+Commonlisp, then you need to execute the following function to make
+the interactor run:
+
 @example
 (inter:main-event-loop)
 @end example
-This function does not exit, so you have to type ^C (or whatever your
-operating system break character is) to the Lisp window when you are
-finished (or hit the @code{F1} key (or whatever your Garnet break key
-is, section @ref{Garnetbreakkey})).
 
-As another example, here is a complete, minimal ``Goodbye World'' program, that
+This function does not exit, so you have to type @key{^C} (or whatever your
+operating system break character is) to the Lisp window when you are
+finished (or press the @key{F1} key (or whatever your Garnet break key
+is, section @ref{garnetbreakkey,,@code{main-event-loop}})).
+
+As another example, here is a complete, minimal ``goodbye world'' program, that
 creates a window with a button that causes the window to go away (created
 from scratch, without using any predefined gadgets).
 
 @anchor{eventloopexample}
-@cindex{Goodbye World}
-@cindex{Example Program}
-@cindex{Examples}
-@cindex{Goodbye World}
-@cindex{Examples}
-@cindex{Complete Program}
+@cindex{goodbye world}
+@cindex{example program}
+@cindex{examples}
+@cindex{goodbye world}
+@cindex{examples}
+@cindex{complete program}
 @example
-;;;@emph{using the KR package, but no others, is the "Garnet style"}
-(use-package "KR")
-;;;@emph{first create the graphics; see the Opal manual for explanations}
-(create-instance 'MYWINDOW inter:interactor-window
+;;; @emph{using the kr package, but no others, is the "garnet style"}
+(use-package "kr")
+;;; @emph{first create the graphics; see the opal chapter for explanations}
+(create-instance 'mywindow inter:interactor-window
    (:left 100)(:top 10)
    (:width 125)(:height 25)
-   (:title "My Window"))
-(s-value MYWINDOW :aggregate (create-instance 'MYAGG opal:aggregate))
+   (:title "my window"))
+(s-value mywindow :aggregate (create-instance 'myagg opal:aggregate))
 
-(create-instance 'MYTEXT opal:text
-   (:string "Goodbye World")
+(create-instance 'mytext opal:text
+   (:string "goodbye world")
    (:left 2)(:top 5))
-(opal:add-component MYAGG MYTEXT)
-(opal:update MYWINDOW)
+(opal:add-component myagg mytext)
+(opal:update mywindow)
 
-;;;@emph{now add the interactor}
-(create-instance NIL Inter:Button-Interactor
-   (:window MYWINDOW)
-   (:start-where (list :in MYTEXT))
-   (:continuous NIL) ;@emph{happen immediately on the downpress}
+;;; @emph{now add the interactor}
+(create-instance nil inter:button-interactor
+   (:window mywindow)
+   (:start-where (list :in mytext))
+   (:continuous nil) ; @emph{happen immediately on the downpress}
    (:final-function #'(lambda (inter final-obj-over)
-                        (opal:destroy MYWINDOW)
-                        ;; @emph{the next line is needed unless you are running CMU Lisp}
+                        (opal:destroy mywindow)
+                        ;; @emph{the next line is needed unless you are running cmu lisp}
 			;; @emph{or you are running the main-event-loop process in the}
-                        ;; @emph{background in Allegro, Lucid, or LispWorks}
-			#-or cmu allegro lucid lispworks) (inter:exit-main-event-loop)))
-;;;@emph{If not CMU Lisp, or if not running the background main-event-loop process in}
-;;;@emph{Allegro, LispWorks, or Lucid Lisp, then the following is needed to run the interactor:}
+                        ;; @emph{background in allegro, lucid, or lispworks}
+			#-(or cmu allegro lucid lispworks) (inter:exit-main-event-loop)))
+;;; @emph{if not cmu lisp, or if not running the background main-event-loop process in}
+;;; @emph{allegro, lispworks, or lucid lisp, then the following is needed to run the interactor:}
 #-(or cmu allegro lucid lispworks) (inter:main-event-loop)
 @end example
 
 
+@section Overview of the Chapter
+@node Overview of the Chapter
 
-@section Overview of Manual
-@node Overview of Manual
+This chapter is organized as follows. Section @ref{notcmulisp,,The
+Main Event Loop} discusses the @code{main-event-loop}, which allows
+you to run interactors while automatically updating the appearance of
+the windows.  Section @ref{detailsofoper,,Operation} describes how
+interactors work in detail. Section @ref{accelerators-sec,, Mouse and
+Keyboard Accelerators} describes the definition and operation of
+global accelerators. Section @ref{interslots,,Slots of all
+Interactors} lists all the slots that are common to all interactors.
+section @ref{specificinters,,Specific Interactors} describes all the
+interactors that are provided.  Section
+@ref{transcripts-sec,,Transcripts} describes how to make transcripts
+of events.  Finally, section @ref{advancedfeatures,,Advanced Features}
+describes some advanced features.
 
-This manual is organized as follows. Section @ref{notcmulisp}
-discusses the @code{main-event-loop}, which allows you to run interactors
-while automatically updating the appearance of the windows.
-Section @ref{detailsofOper}
-describes how interactors work in detail. Section @ref{accelerators-sec}
-describes the definition and operation of global accelerators. Section
-@ref{interslots} lists all the slots that are common to all interactors.
-Section @ref{specificinters} describes all the interactors that are provided.
-Section @ref{transcripts-sec} describes how to make transcripts of events.
-Finally, section @ref{advancedfeatures} describes some advanced features.
-
-Normally, you will not need most of the information in this manual. To
-make an object respond to the mouse, look in section @ref{specificinters}
-to find the interactor you need, then check its introduction to see how to
-set up the constraints in your graphical objects so that they will respond
-to the interactor, and to see what parameters of the interactor you need to
-set. You can usually ignore the advanced customization sections.
+Normally, you will not need most of the information in this chapter. To
+make an object respond to the mouse, look in section
+@ref{specificinters,,Specific Interactors} to find the interactor you
+need, then check its introduction to see how to set up the constraints
+in your graphical objects so that they will respond to the interactor,
+and to see what parameters of the interactor you need to set. you can
+usually ignore the advanced customization sections.
 
 
-@section The Main Event Loop
-@node The Main Event Loop
+@section the main event loop
+@node the main event loop
 
-@cindex{Common Lisp}
-@cindex{Lucid}
-@cindex{CMU Common Lisp}
+@cindex{common lisp}
+@cindex{lucid}
+@cindex{cmu common lisp}
 @cindex{lispworks}
 @anchor{notcmulisp}
 
-CMU Common Lisp @cite{CMUCommon Lisp} supports sending events to the
-appropriate windows internally. Therefore, under CMU Common Lisp, the
+cmu common lisp @cite{cmucommon lisp} supports sending events to the
+appropriate windows internally. therefore, under cmu common lisp, the
 interactors begin to run immediately when they are created, and run
-continuously until they are terminated. While they are running, you can
-still type commands to the Lisp listener (the read-eval-print loop).
+continuously until they are terminated. while they are running, you can
+still type commands to the lisp listener (the read-eval-print loop).
 
-To get the same effect on other Lisps, Garnet uses the multiple process
-mechanism of Lucid, Allegro, LispWorks, and MCL Common Lisps. You
+to get the same effect on other lisps, garnet uses the multiple process
+mechanism of lucid, allegro, lispworks, and mcl common lisps. you
 usually do not need to worry about the information in this section if you are
-using CMU, Allegro, Lucid, or MCL Common Lisp, but you will probably need to go
-through an initialization phase for multiprocessing in LispWorks (see the
-section "LispWorks" in the Overview Manual).
+using cmu, allegro, lucid, or mcl common lisp, but you will probably need to go
+through an initialization phase for multiprocessing in lispworks (see the
+section "lispworks" in the overview chapter).
 
-Note: @code{Main-Event-Loop} also handles Opal window refreshing, so graphical
+note: @code{main-event-loop} also handles opal window refreshing, so graphical
 objects will not be redrawn automatically in other lisps unless this
 function is executing.
 
 
-@section Main-Event-Loop
-@node Main-Event-Loop
+@section main-event-loop
+@node main-event-loop
 
 @cindex{main-event-loop}
 @cindex{exit-main-event-loop}
-@cindex{Garnet-Break-Key}
-@cindex{*Garnet-Break-Key*}
-@cindex{F1}
-@anchor{Garnetbreakkey}
+@cindex{garnet-break-key}
+@cindex{*garnet-break-key*}
+@cindex{f1}
+@anchor{garnetbreakkey}
 
-Under other Common Lisps (like AKCL and CLISP), you need to explicitly
-start and stop the main loop that listens for X events. It is always
-OK to call the @code{main-event-loop} function, because it does nothing
-if it is not needed. Therefore, after
+under other common lisps (like akcl and clisp), you need to explicitly
+start and stop the main loop that listens for x events. it is always
+ok to call the @code{main-event-loop} function, because it does nothing
+if it is not needed. therefore, after
 all the objects and interactors have been created, and after the
 @code{opal:update} call has been made, you must call the
-@code{inter:main-event-loop} procedure. This loops waiting and handling X
-events until explicitly stopped by typing @code{^C} (or whatever is your
-operating system break character) to the Lisp listener window, or until you
-hit the Garnet break key while the mouse is in a Garnet window. This
+@code{inter:main-event-loop} procedure. this loops waiting and handling x
+events until explicitly stopped by typing @code{^c} (or whatever is your
+operating system break character) to the lisp listener window, or until you
+hit the garnet break key while the mouse is in a garnet window. this
 is defined by the global
-variable @code{inter:*Garnet-Break-Key*}, and is bound to @code{:F1} by
-default. You can simply setf @code{inter:*Garnet-Break-Key*} to some other
-character if you want to use @code{:F1} for something else.
+variable @code{inter:*garnet-break-key*}, and is bound to @code{:f1} by
+default. you can simply setf @code{inter:*garnet-break-key*} to some other
+character if you want to use @code{:f1} for something else.
 
-The other way for a program to exit @code{Main-Event-Loop} is for it to call
-the procedure @code{inter:exit-main-event-loop}. Typically,
+the other way for a program to exit @code{main-event-loop} is for it to call
+the procedure @code{inter:exit-main-event-loop}. typically,
 @code{inter:main-event-loop} will be called at the end of your set up
 routine, and @code{inter:exit-main-event-loop} will be called from your quit
 routine, as in the example of section @ref{eventloopexample}.
 
 @example
-inter:Main-Event-Loop &optional @emph{inter-window}@ref{function}
+inter:main-event-loop &optional @emph{inter-window}@ref{function}
 
-inter:Exit-Main-Event-Loop@ref{function}
+inter:exit-main-event-loop@ref{function}
 @end example
 
-The optional window to @code{Main-Event-Loop} is used to tell which display
-to use. If not supplied, it uses the default Opal display. You only need
-to supply a parameter if you have a single Lisp
+the optional window to @code{main-event-loop} is used to tell which display
+to use. if not supplied, it uses the default opal display. you only need
+to supply a parameter if you have a single lisp
 process talking to multiple displays.
 
 
-@section Main-Event-Loop Process
-@node Main-Event-Loop Process
-By default, Garnet spawns a background process in Allegro, Lucid, and
-LispWorks, which will run the interactor's main-event-loop while simultaneously
-allowing you to use the ordinary Lisp listener.
-This means that you can use the Lisp
-listener without having to hit the Garnet break key (usually @code{:F1}).
+@section main-event-loop process
+@node main-event-loop process
+by default, garnet spawns a background process in allegro, lucid, and
+lispworks, which will run the interactor's main-event-loop while simultaneously
+allowing you to use the ordinary lisp listener.
+this means that you can use the lisp
+listener without having to hit the garnet break key (usually @code{:f1}).
 
-Some programs seem to have trouble with this process. If your system doesn't
+some programs seem to have trouble with this process. if your system doesn't
 work, try killing the main-event-loop process and executing
-@code{(inter:main-event-loop)} explicitly. In MCL, the background
-process is controlled by MCL itself, and cannot be killed. However,
+@code{(inter:main-event-loop)} explicitly. in mcl, the background
+process is controlled by mcl itself, and cannot be killed. however,
 you might be able to break out of an infinite loop (or otherwise get
-MCL's attention) by executing the abort command (Control-comma) or the
-reset command (Control-period).
+mcl's attention) by executing the abort command (control-comma) or the
+reset command (control-period).
 
 
-@subsection Launching and Killing the Main-Event-Loop-Process
-@node Launching and Killing the Main-Event-Loop-Process
+@subsection launching and killing the main-event-loop-process
+@node launching and killing the main-event-loop-process
 @cindex{launch-main-event-loop-process}
 @cindex{kill-main-event-loop-process}
 
 @sp 1
 @example
-opal:Launch-Main-Event-Loop-Process @ref{function}
+opal:launch-main-event-loop-process @ref{function}
 
-opal:Kill-Main-Event-Loop-Process @ref{function}
+opal:kill-main-event-loop-process @ref{function}
 @end example
 
-These are the top-level functions used for starting and stopping the
+these are the top-level functions used for starting and stopping the
 main-event-loop process.
-You may need to call @code{launch-main-event-loop-process} if the
+you may need to call @code{launch-main-event-loop-process} if the
 process is killed explicitly or if the process crashes due to a bug.
 @sp 1
 
-While the main-event-loop background process is running, calling
-@code{(inter:main-event-loop)}, hitting the Garnet break key, and
+while the main-event-loop background process is running, calling
+@code{(inter:main-event-loop)}, hitting the garnet break key, and
 calling @code{launch-main-event-loop-process} all have no effect.
 
-You can kill the background main-event-loop process by executing
+you can kill the background main-event-loop process by executing
 @code{kill-main-event-loop-process}, but normally you should not
 have to, even if you encounter an error and are thrown in the debugger.
-If you call it when the main-event-loop process is not running, there
+if you call it when the main-event-loop process is not running, there
 is no effect.
 
-@code{Launch-main-event-loop-process} and @code{kill-main-event-loop-process}
-belong to the Opal package because @code{opal:reconnect-garnet} and
+@code{launch-main-event-loop-process} and @code{kill-main-event-loop-process}
+belong to the opal package because @code{opal:reconnect-garnet} and
 @code{opal:disconnect-garnet} need to call them.
 
 
-@subsection Launch-Process-P
-@node Launch-Process-P
+@subsection launch-process-p
+@node launch-process-p
 @cindex{launch-process-p}
-In the @code{garnet-loader}, there is a switch called @code{user::launch-process-p}
-which tells whether or not Garnet should automatically call
-@code{launch-main-event-loop-process} at load time. You can edit the
+in the @code{garnet-loader}, there is a switch called @code{user::launch-process-p}
+which tells whether or not garnet should automatically call
+@code{launch-main-event-loop-process} at load time. you can edit the
 @code{garnet-loader} to change the default value of this variable, or you
 can @code{setf} the variable before loading @code{garnet-loader}.
 
 
-@subsection Main-Event-Loop-Process-Running-P
-@node Main-Event-Loop-Process-Running-P
+@subsection main-event-loop-process-running-p
+@node main-event-loop-process-running-p
 @cindex{main-event-loop-process-running-p}
 
 @example
-opal:Main-Event-Loop-Process-Running-P @ref{function}
+opal:main-event-loop-process-running-p @ref{function}
 @end example
 
-This function tells you whether
+this function tells you whether
 the parallel main-event-loop process is running, and is not in the debugger.
 
 
 
-@section Operation
-@node Operation
+@section operation
+@node operation
 
-@anchor{detailsofOper}
+@anchor{detailsofoper}
 
 @section Creating and Destroying
 @node Creating and Destroying
 For interactors to be used, they must operate on objects that appear in
 Garnet windows. The @code{inter:interactor-window} prototype is described
-in the Opal Manual. To create an interactor window, use:
+in the Opal Chapter. To create an interactor window, use:
 
 @example
 (create-instance @emph{name} inter:interactor-window @emph{(slot value)(slot value)...})
@@ -11107,9 +10950,9 @@ To create an interactor, use:
 This creates an interactor named @emph{name} (which can be NIL if
 a system-supplied name is desired) that is an instance of @emph{InteractorType}
 (which will be one of the specific types described in section
-@ref{specificinters}, such as @code{button-interactor, menu-interactor,
+@ref{specificinters,,Specific Interactors}, such as @code{button-interactor, menu-interactor,
 etc.}  The slots and values are the other parameters to the new
-interactor, as described in the rest of this manual. The create-instance
+interactor, as described in the rest of this chapter. The create-instance
 call returns the interactor.
 
 @sp 1
@@ -11260,7 +11103,7 @@ keys in place of the buttons. By default, the keys are @code{F13},
 @code{F14}, and @code{F15} for the left, middle, and right mouse buttons,
 respectively. The real mouse button is also mapped to @code{:leftdown},
 so you can specify mouse events as usual on the Mac (e.g., @code{:rightdown}).
-The Overview section at the beginning of this manual provides
+The Overview section at the beginning of this chapter provides
 instructions for customizing the keys that simulate the mouse buttons,
 and provides instructions for a small utility that changes the keys to
 be used from function keys to arrow keys.
@@ -11372,10 +11215,10 @@ the Sun keyboard). On the Mac, some users prefer to change their
 arrow keys to generate mouse events (see section @ref{mac-keys}).
 To see what the Lisp character is for an event, turn on event tracing using
 @code{(Inter:Trace-Inter :event)} and then type the key in some interactor
-window, as described in the Garnet Debugging Manual.
+window, as described in the Garnet Debugging chapter.
 If you have keys on your keyboard that are not handled by Garnet, it is
 easy to add them. See the section on ``Keyboard Keys'' in the Overview
-Manual, and then please send the bindings to @code{garnet@@cs.cmu.edu}
+Chapter, and then please send the bindings to @code{garnet@@cs.cmu.edu}
 so we can add them to future versions of Garnet.
 
 @cindex{*ignore-undefined-keys*}
@@ -11400,7 +11243,7 @@ for (as in the @code{:start-event} slot):
 @cindex{Events}
 @example
    (:any-leftdown :any-rightdown)
-   (:any-mousedown #\RETURN)   ;;@emph{any mouse button down or the RETURN key}
+   (:any-mousedown #\RETURN)   ;; @emph{any mouse button down or the RETURN key}
    (:any-mousedown :except :leftdown :shift-leftdown)
    (:any-keyboard :any-rightdown :except #\b #\a #\r)
 @end example
@@ -11573,7 +11416,7 @@ and returned instead of a leaf. For example, if an object is defined as follows:
 (create-instance 'A2 MYAGGTYPE)
 (opal:add-components TOP-AGG A1 A2)
 
-;;@emph{now add some things to A1 and A2}
+;; @emph{now add some things to A1 and A2}
 @end example
 Then, the description @code{(:leaf-element-of ,TOP-AGG :type ,MYAGGTYPE)}
 will return @code{A1} or @code{A2} rather than the leaf elements of @code{A1} or
@@ -11585,7 +11428,7 @@ Another way to prevent the search from going all the way to the actual leaf
 objects is to set the @code{:pretend-to-be-leaf} slot of an intermediate
 object. Note that the
 @code{:pretend-to-be-leaf} slot is set in the Opal objects, not in the
-interactor, and it is more fully explained in the Opal manual.
+interactor, and it is more fully explained in the Opal chapter.
 
 @subsection Custom
 @node Custom
@@ -11625,16 +11468,16 @@ accessed from the aggregadget, the following could be used:
   (if (and (eq (gv obj :window)(inter:event-window event))   @emph{; have to check window}
 	   (> (inter:event-x event) (gv obj :left))
 	   .....)
-      obj  ;@emph{then return object}
-      NIL))  ;@emph{else return NIL}
+      obj  ; @emph{then return object}
+      NIL))  ; @emph{else return NIL}
 
 (create-instance NIL opal:aggregadget
-   ... ;@emph{various fields}
+   ... ; @emph{various fields}
   (:parameter-val 34)
   (:parts `((....)))
   (:interactors
    `((:start-it ,Inter:Button-Interactor
-	 ... ;@emph{all the usual fields}
+	 ... ; @emph{all the usual fields}
 	 (:start-where
 	  ,(o-formula (list :custom (gvl :operates-on)
 			    #'Check-If-Mouse-In-Obj
@@ -11839,7 +11682,7 @@ only notice the object when the mouse is directly over the outline. The
 @code{:hit-threshold} slot of Opal objects determines how close to the
 line or outline you must be (note that you usually have to set the
 @code{:hit-threshold} slot of the aggregate as well as for the
-individual objects.)  See the Opal manual for more information on these slots.
+individual objects.)  See the Opal chapter for more information on these slots.
 
 An important thing to note is that if you are using one of the @code{-leaf}
 forms, you need to set the @code{:hit-threshold} slot of @emph{all the
@@ -11879,7 +11722,7 @@ work of the interactor. These routines are supplied with each interactor,
 although the programmer is allowed to replace the routines to achieve
 customizations that would otherwise not be possible. The specifics of what
 the default routines do, and the parameters if the programmer wants to
-override them are discussed in section @ref{specificinters}.
+override them are discussed in section @ref{specificinters,,Specific Interactors}.
 
 The following table and figure illustrate the working of the state machine
 and when the various procedures are called.
@@ -11986,7 +11829,7 @@ By default, a number of @emph{global} accelerators are defined:
 
 The last three are processed @emph{before} Interactors, and are defined
 in the debugging file @code{inspector.lisp}.
-To change these, see the Debugging Reference Manual.
+To change these, see the Debugging Reference chapter.
 The first 7 are processed @emph{after} the interactors. To change these
 bindings, set the variable @code{*default-global-accelerators*}, which
 is initially defined as:
@@ -12326,7 +12169,7 @@ for this parameter is NIL. @B{This is not implemented yet.}
 This section describes the specific interactors that have been defined.
 Below is a list of the interactors, and then the following sections
 describe them in more detail. There are also several interactors defined for
-the @code{multifont-text} object. These are described in the Opal manual.
+the @code{multifont-text} object. These are described in the Opal chapter.
 
 @ftable @code
 @item @code{Inter:Menu-Interactor}
@@ -12415,7 +12258,7 @@ gadget set that will do most of this. See}
 @anchor{MENUINTER}
 @example
 (create-instance 'inter:Menu-Interactor inter:interactor
-  @emph{;; Slots common to all interactors (see section @ref{interslots})}
+  @emph{;; Slots common to all interactors (see section @ref{interslots,,Slots of All Interactors})}
   (:start-where NIL)
   (:window NIL)
   (:start-event :leftdown)
@@ -12447,7 +12290,7 @@ gadget set that will do most of this. See}
   (:start-char NIL)         @emph{; Read-only slot. The character or keyword of the start event.}
 
   @emph{; @b{Advanced feature:} Customizable action routines.}
-  @emph{; See sections @ref{interslots} and @ref{menucustomaction} for details about functions in these slots.}
+  @emph{; See sections @ref{interslots,,Slots of All Interactors} and @ref{menucustomaction} for details about functions in these slots.}
   (:start-action ...)       @emph{; (lambda (inter first-obj-under-mouse))}
   (:running-action ...)     @emph{; (lambda (inter prev-obj-over new-obj-over))}
   (:stop-action ...)        @emph{; (lambda (inter final-obj-over))}
@@ -12526,9 +12369,9 @@ rectangle as a feedback object:
 @cindex{Obj-Over (slot)}
 @example
 (create-instance 'FEEDBACK-RECT opal:rectangle
-   (:obj-over NIL) ;@i{set by the interactor}
-   (:visible (o-formula (gvl :obj-over))) ;@i{this rectangle is visible}
-                                          ;@i{only if over something}
+   (:obj-over NIL) ; @i{set by the interactor}
+   (:visible (o-formula (gvl :obj-over))) ; @i{this rectangle is visible}
+                                          ; @i{only if over something}
    (:left (o-formula (gvl :obj-over :left)))
    (:top (o-formula (gvl :obj-over :top)))
    (:width (o-formula (gvl :obj-over :width)))
@@ -12563,7 +12406,7 @@ over it. Here, you would have formulas that depended on the
 If there are separate objects associated with each menu item that will be
 the interim feedback, then their visibility slot can simply be tied to the
 @code{:interim-selected} slot. An example using an Aggregadget which is
-the item-prototype for an AggreList (see the Aggregadgets manual) with an
+the item-prototype for an AggreList (see the Aggregadgets chapter) with an
 embedded interactor is:
 @cindex{Aggregadget}
 @cindex{Aggrelist}
@@ -12587,7 +12430,7 @@ embedded interactor is:
                (:left ,(o-formula (gvl :parent :left)))
                (:top ,(o-formula (gvl :parent :top))))
          (:interim-feed ,opal:rectangle
-          ;;@emph{The next slot causes the feedback to go on at the right time}
+          ;; @emph{The next slot causes the feedback to go on at the right time}
                         (:visible ,(o-formula (gvl :parent :interim-selected)))
                         (:left ,(o-formula (gvl :parent :left)))
                         (:top ,(o-formula (gvl :parent :top)))
@@ -12711,7 +12554,7 @@ by a final-feedback object):
    ;; @emph{start when press on a final-feedback object of SELECT-INTER}
    (:start-where (formula `(list :list-element-of
                                  `,SELECT-INTER :final-feed-inuse)))
-   ;;@emph{actually move the object which the feedback objects are over.}
+   ;; @emph{actually move the object which the feedback objects are over.}
    (:obj-to-change (o-formula (gvl :first-obj-over :obj-over)))
    ..... ; @emph{all the other slots}
    )
@@ -12898,7 +12741,7 @@ selected object or a list of the selected objects.
 
 @example
 (create-instance 'inter:Button-Interactor inter:interactor
-  @emph{;; Slots common to all interactors (see section @ref{interslots})}
+  @emph{;; Slots common to all interactors (see section @ref{interslots,,Slots of All Interactors})}
   (:start-where NIL)
   (:window NIL)
   (:start-event :leftdown)
@@ -12935,7 +12778,7 @@ selected object or a list of the selected objects.
   (:start-char NIL)         @emph{; Read-only slot. The character or keyword of the start event.}
 
   @emph{; @b{Advanced feature:} Customizable action routines.}
-  @emph{; See sections @ref{interslots} and @ref{buttoncustomaction} for details about functions in these slots.}
+  @emph{; See sections @ref{interslots,,Slots of All Interactors} and @ref{buttoncustomaction} for details about functions in these slots.}
   (:start-action ...)       @emph{; (lambda (inter obj-under-mouse))}
   (:stop-action ...)        @emph{; (lambda (inter final-obj-over))}
   (:abort-action ...)       @emph{; (lambda (inter last-obj-over))}
@@ -13184,7 +13027,7 @@ down-press and there is no feedback object.
 
 @example
 (create-instance 'inter:Move-Grow-Interactor inter:interactor
-  @emph{;; Slots common to all interactors (see section @ref{interslots})}
+  @emph{;; Slots common to all interactors (see section @ref{interslots,,Slots of All Interactors})}
   (:start-where NIL)
   (:window NIL)
   (:start-event :leftdown)
@@ -13220,7 +13063,7 @@ down-press and there is no feedback object.
   (:start-char NIL)         @emph{; Read-only slot. The character or keyword of the start event.}
 
   @emph{; @b{Advanced feature:} Customizable action routines.}
-  @emph{; See sections @ref{interslots} and @ref{movegrowcustomaction} for details about functions in these slots.}
+  @emph{; See sections @ref{interslots,,Slots of All Interactors} and @ref{movegrowcustomaction} for details about functions in these slots.}
   (:start-action ...)       @emph{; (lambda (inter obj-being-changed first-points))}
   (:running-action ...)     @emph{; (lambda (inter obj-being-changed new-points))}
   (:stop-action ...)        @emph{; (lambda (inter obj-being-changed final-points))}
@@ -13275,7 +13118,7 @@ size with the mouse might have the following definition:
 @cindex{Box (slot)}
 @example
 (create-instance 'MOVING-RECTANGLE opal:rectangle
-   (:box (list 0 0 10 10))  ;@i{some initial values (x, y, width, height)}
+   (:box (list 0 0 10 10))  ; @i{some initial values (x, y, width, height)}
    (:left (o-formula (first (gvl :box))))
    (:top (o-formula (second (gvl :box))))
    (:width (o-formula (third (gvl :box))))
@@ -13289,7 +13132,7 @@ A movable line could be defined as:
 @cindex{Moving-Line}
 @example
 (create-instance 'MOVING-LINE opal:line
-   (:points (list 0 0 10 10))  ;@i{some initial values (x1 y1 x2 y2)}
+   (:points (list 0 0 10 10))  ; @i{some initial values (x1 y1 x2 y2)}
    (:x1 (o-formula (first (gvl :points))))
    (:y1 (o-formula (second (gvl :points))))
    (:x2 (o-formula (third (gvl :points))))
@@ -13319,14 +13162,14 @@ follows:
     `((:outline ,opal:rectangle
 		(:left 100)(:top 10)(:width 20)(:height 200))
       (:indicator ,opal:rectangle
-		  (:box (52 12 16 16)) ;;@i{only the second value is used}
+		  (:box (52 12 16 16)) ;; @i{only the second value is used}
 		  (:left ,(o-formula (+ 2 (gvl :parent :outline :left))))
-		  ;;@i{Clip-And-Map clips the first parameter to keep it}
-		  ;;@i{ between the other two parameters, see section @ref{clipandmap}}
+		  ;; @i{Clip-And-Map clips the first parameter to keep it}
+		  ;; @i{ between the other two parameters, see section @ref{clipandmap}}
 		  (:top ,(o-formula
 			  (Clip-And-Map (second (gvl :box))
-			    12  ;@i{Top of outline + 2}
-			    192 ;@i{Bottom of outline - indicator height - 2}
+			    12  ; @i{Top of outline + 2}
+			    192 ; @i{Bottom of outline - indicator height - 2}
 			    )))
 		  (:width 16)(:height 16)
 		  (:filling-style ,opal:gray-fill)
@@ -13724,7 +13567,7 @@ Examples:
 
 @example
 (create-instance 'inter:Two-Point-Interactor inter:interactor
-  @emph{;; Slots common to all interactors (see section @ref{interslots})}
+  @emph{;; Slots common to all interactors (see section @ref{interslots,,Slots of All Interactors})}
   (:start-where NIL)
   (:window NIL)
   (:start-event :leftdown)
@@ -13758,7 +13601,7 @@ Examples:
   (:start-char NIL)         @emph{; Read-only slot. The character or keyword of the start event.}
 
   @emph{; @b{Advanced feature:} Customizable action routines.}
-  @emph{; See sections @ref{interslots} and @ref{twopcustomaction} for details about functions in these slots.}
+  @emph{; See sections @ref{interslots,,Slots of All Interactors} and @ref{twopcustomaction} for details about functions in these slots.}
   (:start-action ...)       @emph{; (lambda (inter first-points))}
   (:running-action ...)     @emph{; (lambda (inter new-points))}
   (:stop-action ...)        @emph{; (lambda (inter final-points))}
@@ -13950,7 +13793,7 @@ slots, since to avoid consing, the interactor reuses the same list. Examples:}
 (defun Create-New-Object1 (an-interactor points-list)
   (when points-list
     (create-instance NIL opal:rectangle
-       (:left (first points-list)) ;@i{access the values in}
+       (:left (first points-list)) ; @i{access the values in}
        (:top (second points-list)) ; @i{the list individually}
        (:width (third points-list))
        (:height (fourth points-list)))))
@@ -13958,7 +13801,7 @@ slots, since to avoid consing, the interactor reuses the same list. Examples:}
 (defun Create-New-Object2 (an-interactor points-list)
   (when points-list
     (create-instance NIL opal:rectangle
-       (:box (copy-list points-list)) ;@i{copy the list}
+       (:box (copy-list points-list)) ; @i{copy the list}
        (:left (first box))
        (:top (second box))
        (:width (third box))
@@ -14019,13 +13862,13 @@ the right button is pressed.
   (when points-list
     (let (obj)
       (if (gv an-interactor :line-p)
-	  ;;@i{then create a line}
+	  ;; @i{then create a line}
 	  (setq obj (create-instance NIL opal:line
                        (:x1 (first points-list))
                        (:y1 (second points-list))
                        (:x2 (third points-list))
                        (:y2 (fourth points-list))))
-	  ;;@i{else create a rectangle}
+	  ;; @i{else create a rectangle}
 	  (setq obj (create-instance NIL opal:rectangle
                        (:left (first points-list))
                        (:top (second points-list))
@@ -14039,7 +13882,7 @@ the right button is pressed.
    (:start-event :middledown)
    (:start-where T)
    (:final-function #'Create-New-Object)
-   (:feedback-obj MOVING-RECTANGLE) ;@i{section @ref{howobjsdefined}} 
+   (:feedback-obj MOVING-RECTANGLE) ; @i{section @ref{howobjsdefined}} 
    (:min-width 20)
    (:min-height 20))
 (create-instance 'CREATELINE Inter:Two-Point-Interactor
@@ -14047,7 +13890,7 @@ the right button is pressed.
    (:start-event :rightdown)
    (:start-where T)
    (:final-function #'Create-New-Object)
-   (:feedback-obj MOVING-LINE) ;@i{section @ref{howobjsdefined}} 
+   (:feedback-obj MOVING-LINE) ; @i{section @ref{howobjsdefined}} 
    (:line-p T)
    (:min-length 20))
 @end example
@@ -14059,7 +13902,7 @@ the right button is pressed.
 
 @example
 (create-instance 'inter:Angle-Interactor inter:interactor
-  @emph{;; Slots common to all interactors (see section @ref{interslots})}
+  @emph{;; Slots common to all interactors (see section @ref{interslots,,Slots of All Interactors})}
   (:start-where NIL)
   (:window NIL)
   (:start-event :leftdown)
@@ -14089,7 +13932,7 @@ the right button is pressed.
   (:start-char NIL)         @emph{; Read-only slot. The character or keyword of the start event.}
 
   @emph{; @b{Advanced feature:} Customizable action routines.}
-  @emph{; See sections @ref{interslots} and @ref{anglecustomaction} for details about functions in these slots.}
+  @emph{; See sections @ref{interslots,,Slots of All Interactors} and @ref{anglecustomaction} for details about functions in these slots.}
   (:start-action ...)       @emph{; (lambda (inter obj-being-rotated first-angle))}
   (:running-action ...)     @emph{; (lambda (inter obj-being-rotated new-angle angle-delta))}
   (:stop-action ...)        @emph{; (lambda (inter obj-being-rotated final-angle angle-delta))}
@@ -14155,7 +13998,7 @@ the following definition:
 @cindex{Rotating Line}
 @example
 (create-instance 'ROTATING-LINE opal:line
-   (:angle (/ PI 4))  ;@i{initial value = 45 degrees up}
+   (:angle (/ PI 4))  ; @i{initial value = 45 degrees up}
    (:line-length 50)
    (:x1 70)
    (:y1 170)
@@ -14260,7 +14103,7 @@ set with the initial value, and the final-function
 
 @example
 (create-instance 'inter:Text-Interactor inter:interactor
-  @emph{;; Slots common to all interactors (see section @ref{interslots})}
+  @emph{;; Slots common to all interactors (see section @ref{interslots,,Slots of All Interactors})}
   (:start-where NIL)
   (:window NIL)
   (:start-event :leftdown)
@@ -14292,7 +14135,7 @@ set with the initial value, and the final-function
   (:start-char NIL)         @emph{; Read-only slot. The character or keyword of the start event.}
 
   @emph{; @b{Advanced feature:} Customizable action routines.}
-  @emph{; See sections @ref{interslots} and @ref{textcustomaction} for details about functions in these slots.}
+  @emph{; See sections @ref{interslots,,Slots of All Interactors} and @ref{textcustomaction} for details about functions in these slots.}
   (:start-action ...)       @emph{; (lambda (inter new-obj-over start-event))}
   (:running-action ...)     @emph{; (lambda (inter obj-over event))}
   (:stop-action ...)        @emph{; (lambda (inter obj-over stop-event))}
@@ -14305,7 +14148,7 @@ set with the initial value, and the final-function
 
 If you want to use multi-font, multi-line text objects, you will probably
 want to use the special interactors defined for them, which are described
-in the Opal manual.
+in the Opal chapter.
 
 The @code{text-interactor} will input a one-line or multi-line string of text,
 while allowing editing on the string. A fairly complete set of editing
@@ -14634,12 +14477,12 @@ interactor to edit it when the right mouse button is pressed.
     `((:txt ,opal:text
 	    (:left ,(o-formula (gvl :parent :left)))
 	    (:top ,(o-formula (gvl :parent :top)))
-	    (:string "Hello World")))) ;@i{default initial value}
+	    (:string "Hello World")))) ; @i{default initial value}
    (:interactors
     `((:editor ,Inter:Text-Interactor
 	       (:start-where ,(o-formula (list :in (gvl :operates-on :txt))))
 	       (:window ,(o-formula (gvl :operates-on :window)))
-	       (:stop-event (:any-mousedown #\RETURN)) ;@i{either}
+	       (:stop-event (:any-mousedown #\RETURN)) ; @i{either}
 	       (:start-event :rightdown)))))
 @end example
 
@@ -14667,9 +14510,9 @@ object the interactor starts over, is explained in section @ref{specialslots}.
    (:left (formula '(first (gvl :box))))
    (:top (formula '(second (gvl :box)))))
 
-;;;@i{Assume there is a top level aggregate in the window called} top-agg.
-;;;@i{Create an aggregate to hold all the strings. This aggregate must have a fixed}
-;;;@i{   size so user can press inside even when it does not contain any objects.}
+;;; @i{Assume there is a top level aggregate in the window called} top-agg.
+;;; @i{Create an aggregate to hold all the strings. This aggregate must have a fixed}
+;;; @i{   size so user can press inside even when it does not contain any objects.}
 (create-instance 'OBJECT-AGG opal:aggregate
    (:left 0)(:top 0)
    (:width (o-formula (gvl :window :width)))
@@ -14688,18 +14531,18 @@ object the interactor starts over, is explained in section @ref{specialslots}.
     (:start-where `(:element-of-or-none ,OBJECT-AGG))
     (:window MYWINDOW)
     (:start-event :any-rightdown)
-    (:stop-event '(:any-mousedown :control-\j)) ;@i{either one stops}
+    (:stop-event '(:any-mousedown :control-\j)) ; @i{either one stops}
     (:final-function
      #'(lambda (an-interactor obj-being-edited stop-event final-string x y)
 	 (declare (ignore an-interactor stop-event))
 	 (when (eq :none obj-being-edited)
-	   ;;@i{then create a new string and add to aggregate.}
-	   ;;@i{Note that it is important to copy the string.}
+	   ;; @i{then create a new string and add to aggregate.}
+	   ;; @i{Note that it is important to copy the string.}
 	   (let ((new-str (create-instance NIL opal:text
 			     (:string (copy-seq final-string))
 			     (:left x)(:top y))))
 	     (opal:add-component OBJECT-AGG new-str)
-	     (s-value THE-FEEDBACK-OBJ :string "") ;@i{so starts empty next time}
+	     (s-value THE-FEEDBACK-OBJ :string "") ; @i{so starts empty next time}
 	     )))))
 @end example
 
@@ -14810,18 +14653,18 @@ character'' operation from EMACS:
 @cindex{Examples}
 @cindex{Binding Keys}
 @example
-;;@i{first define the function}
-(defun flip (inter str event) ;@i{swap the two characters to the left of the cursor}
-  (let ((index (gv str :cursor-index)) ;@i{get the old values}
+;; @i{first define the function}
+(defun flip (inter str event) ; @i{swap the two characters to the left of the cursor}
+  (let ((index (gv str :cursor-index)) ; @i{get the old values}
 	(s (gv str :string)))
-    (when (> index 1)  ;@i{make sure there are 2 chars to the left of the cursor}
-      (let ((oldsecondchar (elt s (1- index)))) ;@i{do the swap in place in the str}
+    (when (> index 1)  ; @i{make sure there are 2 chars to the left of the cursor}
+      (let ((oldsecondchar (elt s (1- index)))) ; @i{do the swap in place in the str}
 	(setf (elt s (1- index)) (elt s (- index 2)))
 	(setf (elt s (- index 2)) oldsecondchar)
-	(mark-as-changed str :string ))))) ;@i{since we modified the string value} 
+	(mark-as-changed str :string ))))) ; @i{since we modified the string value} 
 				; @i{of the object in place, we have to let KR know}
 				; @i{it has been modified.}
-;;@i{now bind it to ^t for a particular text-interactor called} my-text-inter.
+;; @i{now bind it to ^t for a particular text-interactor called} my-text-inter.
 (inter:bind-key :control-\t #'flip MY-TEXT-INTER) ; lower case t
 @end example
 @end enumerate
@@ -14874,7 +14717,7 @@ the @code{event}, which is a Garnet event structure (section @ref{events}).
 
 @example
 (create-instance 'inter:Gesture-Interactor inter:interactor
-  @emph{;; Slots common to all interactors (see section @ref{interslots})}
+  @emph{;; Slots common to all interactors (see section @ref{interslots,,Slots of All Interactors})}
   (:start-where NIL)
   (:window NIL)
   (:start-event :leftdown)
@@ -14903,7 +14746,7 @@ the @code{event}, which is a Garnet event structure (section @ref{events}).
   (:start-char NIL)         @emph{; Read-only slot. The character or keyword of the start event.}
 
   @emph{; @b{Advanced feature:} Customizable action routines.}
-  @emph{; See sections @ref{interslots} and @ref{gestcustomaction} for details about functions in these slots.}
+  @emph{; See sections @ref{interslots,,Slots of All Interactors} and @ref{gestcustomaction} for details about functions in these slots.}
   (:start-action ...)       @emph{; (lambda (inter obj-under-mouse point))}
   (:running-action ...)     @emph{; (lambda (inter new-obj-over point))}
   (:stop-action ...)        @emph{; (lambda (inter final-obj-over point))}
@@ -15069,29 +14912,29 @@ access these attributes:
 @cindex{gest-attributes-abs-th}
 @cindex{gest-attributes-sharpness}
 @example
-(gest-attributes-startx attribs)        ;@i{first point}
+(gest-attributes-startx attribs)        ; @i{first point}
 (gest-attributes-starty attribs)
 
-(gest-attributes-initial-sin attribs)   ;@i{initial angle to the x axis}
+(gest-attributes-initial-sin attribs)   ; @i{initial angle to the x axis}
 (gest-attributes-initial-cos attribs)
 
-(gest-attributes-dx2 attribs)           ;@i{differences: endx - prevx}
-(gest-attributes-dy2 attribs)           ;@i{                   endy - prevy}
-(gest-attributes-magsq2 attribs)        ;@i{(dx2 * dx2) + (dy2 * dy2)}
+(gest-attributes-dx2 attribs)           ; @i{differences: endx - prevx}
+(gest-attributes-dy2 attribs)           ; @i{                   endy - prevy}
+(gest-attributes-magsq2 attribs)        ; @i{(dx2 * dx2) + (dy2 * dy2)}
 
-(gest-attributes-endx attribs)          ;@i{last point}
+(gest-attributes-endx attribs)          ; @i{last point}
 (gest-attributes-endy attribs)
 
-(gest-attributes-minx attribs)          ;@i{bounding box}
+(gest-attributes-minx attribs)          ; @i{bounding box}
 (gest-attributes-maxx attribs)
 (gest-attributes-miny attribs)
 (gest-attributes-maxy attribs)
 
-(gest-attributes-path-r attribs)        ;@i{total path length (in rads)}
-(gest-attributes-path-th attribs)       ;@i{total rotation (in rads)}
-(gest-attributes-abs-th attribs)        ;@i{sum of absolute values of path angles}
-(gest-attributes-sharpness attribs)     ;@i{sum of non-linear function of absolute values}
-                                        ;@i{of path angles counting acute angles heavier}
+(gest-attributes-path-r attribs)        ; @i{total path length (in rads)}
+(gest-attributes-path-th attribs)       ; @i{total rotation (in rads)}
+(gest-attributes-abs-th attribs)        ; @i{sum of absolute values of path angles}
+(gest-attributes-sharpness attribs)     ; @i{sum of non-linear function of absolute values}
+                                        ; @i{of path angles counting acute angles heavier}
 @end example
 
 The @code{points-array} will be set to an array (of the form
@@ -15346,7 +15189,7 @@ Demo-gesture allows you to draw rough approximations of circles and
 rectangles, which become perfect shapes in the window. Demo-unidraw is
 a gesture-based text editor which uses a gesture shorthand for entering
 characters. Both of these demos are discussed in the Demos section of
-this manual, starting on page @ref{demos-first-page}.
+this chapter, starting on page @ref{demos-first-page}.
 
 
 @section Animator-Interactor
@@ -15356,7 +15199,7 @@ this manual, starting on page @ref{demos-first-page}.
 
 @example
 (create-instance 'inter:Animator-Interactor inter:interactor
-  @emph{;; Slots common to all interactors (see section @ref{interslots})}
+  @emph{;; Slots common to all interactors (see section @ref{interslots,,Slots of All Interactors})}
   (:window NIL)
   (:active T)
 
@@ -16147,8 +15990,8 @@ aggregate called @code{all-object-agg}.
 @cindex{Special Slots}
 @example
 (create-instance 'MOVE-OR-GROWER Inter:Move-Grow-Interactor
-   (:start-event '(:leftdown :rightdown))  ;@i{either left or right}
-   (:grow-p (o-formula (eq :rightdown (gvl :start-char)))) ;@i{grow if right button}
+   (:start-event '(:leftdown :rightdown))  ; @i{either left or right}
+   (:grow-p (o-formula (eq :rightdown (gvl :start-char)))) ; @i{grow if right button}
    (:line-p (o-formula (is-a-p (gvl :first-obj-over) opal:line)))
    (:feedback-obj (o-formula
 		   (if (gvl :line-p)
@@ -16194,11 +16037,11 @@ Interactors supplies a pair of functions which can be used to suspend
 Lisp processing while waiting for the user to complete an action.
 It is a little complicated to do this at the Interactors level,
 but there is a convenient function for Gilt-created dialog boxes called
-@code{gilt:Show-In-Window-And-Wait} (see the Gilt manual). Also,
+@code{gilt:Show-In-Window-And-Wait} (see the Gilt chapter). Also,
 @code{garnet-gadgets:display-error-and-wait} and
 @code{garnet-gadgets:display-query-and-wait} can be used to pop up
 message windows and wait for the user's response (see the
-@code{error-gadget} in the Gadgets manual).
+@code{error-gadget} in the Gadgets chapter).
 
 @cindex{wait-interaction-complete}
 For other applications, you can call:
@@ -16270,7 +16113,7 @@ application notification if necessary.
 However, sometimes a programmer may find that special actions are required
 for one or more of the action routines. In this case, it is easy to
 override the default behavior and supply your own functions. As described
-in section @ref{interslots}, the action routines are:
+in section @ref{interslots,,Slots of All Interactors}, the action routines are:
 
 @table @code
 :stop-action
@@ -16760,7 +16603,7 @@ work is done by the function supplied in the @code{:timer-handler} slot.
 There are a number of useful functions that help the programmer debug
 interactor code. Since these are most useful in conjunction with the tools
 that help debug KR structures and Opal graphical objects, all of these are
-described in a separate Garnet Debugging Manual.
+described in a separate Garnet Debugging chapter.
 
 In summary, the functions provided include:
 
@@ -16851,8 +16694,8 @@ running-action and stop-action procedures.
 @ref{References}
 
 
-@chapter Aggregadgets, Aggrelists, & Aggregraphs
-@node Aggregadgets, Aggrelists, & Aggregraphs
+@chapter Aggregadgets, Aggrelists & Aggregraphs
+@node Aggregadgets, Aggrelists & Aggregraphs
 
 
 Andrew Mickish,
@@ -16893,7 +16736,7 @@ and aggrelists called @code{aggregadgets-loader.lisp}. Loading this file
 causes the KR, Opal, and Interactors files to be loaded also.
 
 Aggregadgets and aggrelists reside in the @code{Opal} package. 
-All identifiers in this manual are exported from the @code{Opal} package unless
+All identifiers in this chapter are exported from the @code{Opal} package unless
 another package name is explicitly given. These identifiers can be
 referenced by using the @code{opal} prefix, e.g. @code{opal:aggregadget};
 the package name may be dropped if the line
@@ -17124,7 +16967,7 @@ implementors of subclasses should override @code{destroy-me}.
 @cindex{constants in aggregadgets}
 @anchor{constants-and-aggregadgets}
 The ability to define constant slots is an advanced feature of Garnet that is
-discussed in detail in the KR manual. However, the aggregadgets use
+discussed in detail in the KR chapter. However, the aggregadgets use
 some of the features of constant slots by default.
 
 All aggregadgets created with an initial @code{:parts} list have
@@ -17153,7 +16996,7 @@ constant mechanism.
 
 If you really want to add another component to the aggregadget, you
 could use the macro @code{with-constants-disabled}, which is described
-in the KR Manual:
+in the KR chapter:
 @example
 (with-constants-disabled
   (opal:add-component MY-AGG (create-instance NIL opal:roundtangle
@@ -18096,7 +17939,7 @@ may choose to ignore most of the slots.
 @cindex{constants in aggrelists}
 The list in @code{:maybe-constant} contains those slots that will be
 declared constant in an aggrelist whose @code{:constant} slot contains T.
-That is, when you create an aggrelist with the slot @w{@code{(:constant T)}},
+That is, when you create an aggrelist with the slot @code{(:constant T)},
 then all of these slots are guaranteed not to change, and all formulas
 that depend on those slots will be removed and replaced by absolute
 values. This removal of formulas has the potential to save a large amount
@@ -18322,7 +18165,7 @@ able to automatically get rid of the greatest number of formulas possible.
 If you really want to add another item to a constant aggrelist, you
 could wrap a call to @code{add-item} in @code{with-constants-disabled},
 which disables the protective constant mechanism, and is described
-fully in the KR Manual. However, just as with aggregadgets (discussed
+fully in the KR chapter. However, just as with aggregadgets (discussed
 in section @ref{constants-and-aggregadgets}), this is discouraged
 due to the likelihood that the dimension formulas of the aggrelist
 will have already been evaluated and thrown away before the new item
@@ -18653,7 +18496,7 @@ labels for the visible instances.
 
 The gadgets that use aggrelists (like the button panels and menus) all
 use this feature, so you can have Garnet objects in the @code{:items}
-list of a gadget. See the Gadgets manual for further details.
+list of a gadget. See the Gadgets chapter for further details.
 
 
 @subsection Non-Itemized Aggrelists
@@ -18822,7 +18665,7 @@ accordingly.
 
 This function behaves just like the @code{add-component} method for
 aggregates (see the @emph{Opal Reference
-Manual}) except that, 
+Chapter}) except that, 
 @itemize
 if @emph{gadget} is a prototype, then instances of
 @emph{element} are also added to instances of @emph{gadget}. This is recursive
@@ -19358,7 +19201,7 @@ local @code{:do-not-dump-slots} information will be lost.
 @subsection Avoiding Deeply Nested Parts Slots
 @node Avoiding Deeply Nested Parts Slots
 One would expect an instance of a standard gadget (see the @emph{Garnet
-Gadgets Reference Manual}) to have a very concise output representation;
+Gadgets Reference chapter}) to have a very concise output representation;
 however, once the instance is manipulated, various slots are set
 by interactors. Often, these slots are deeply nested in the gadget
 structure, and the output has correspondingly deeply nested @code{:parts}
@@ -20595,7 +20438,7 @@ that the reader has some knowledge of KR, Opal, Interactors, and Aggregadgets.
 @section Current Gadgets
 @node Current Gadgets
 
-Most of the gadgets described in this manual are pictured in figures
+Most of the gadgets described in this chapter are pictured in figures
 @ref{scroll-group} through @ref{db-group}
 
 @float Figure, fig:ex2
@@ -20756,7 +20599,7 @@ be edited. (p. @ref{motif-scrolling-labeled-box})
 
 @code{multifont-gadget} - A text editing gadget that includes word wrap,
 text selection, and many functions that allow manipulation of the
-text. This gadget is discussed in the Opal manual. 
+text. This gadget is discussed in the Opal chapter. 
 
 @end vtable
 @end itemize
@@ -20902,7 +20745,7 @@ created, the instances inherit all of the slots and slot values from
 the prototype object except those slots which are specifically
 assigned values by the designer. The slot values in the prototype can
 thus be considered "default" values for the instances, which may be
-overridden when instances are created.@footnote{See the KR manual for a
+overridden when instances are created.@footnote{See the KR chapter for a
 more detailed discussion of inheritance.}  The designer may also add
 new slots not defined in the gadget prototype for use by special
 applications in the larger interface.
@@ -21154,7 +20997,7 @@ opal:Remove-Nth-Item @emph{gadget} @emph{n}@ref{method}
 opal:Change-Item @emph{gadget item n}@ref{method}
 @end example
 
-These methods are described in the Aggregadgets manual.
+These methods are described in the Aggregadgets chapter.
 @code{Add-item} will add @emph{item} to the @code{:items} list of @emph{gadget}, and
 will place it in the list according to the @emph{position}, @emph{locator}, and
 @emph{key} parameters.
@@ -21180,8 +21023,8 @@ with @code{s-value}, the components of the gadget
 (like the individual buttons in a button panel) will be adjusted during the
 next call to @code{opal:update}. If information about the gadget (like its new
 dimensions) is required @emph{before} the next update, the components can be
-adjusted manually with a call to @code{opal:notice-items-changed} with the
-gadget as a parameter. See the Aggregadgets Manual for more information about
+adjusted chapterly with a call to @code{opal:notice-items-changed} with the
+gadget as a parameter. See the Aggregadgets Chapter for more information about
 @code{opal:notice-items-changed}.
 
 Because of internal references to the @code{:items} slot, destructive
@@ -21223,7 +21066,7 @@ allows the value of the @code{:active-p} slot to change, and retains all
 the formulas that depend on it (so that the gadget will update its
 appearance correctly when the value is toggled).
 
-Constants are discussed in detail in the KR manual.
+Constants are discussed in detail in the KR chapter.
 
 
 @section Accessing the Gadgets
@@ -21404,7 +21247,7 @@ load the specific loader files:
 (garnet-load "gadgets:menu-loader")
 @end example
 For a discussion of the @code{garnet-load} function, see the Overview at the
-beginning of this reference manual.
+beginning of this reference chapter.
 
 @section Gadget Files
 @node Gadget Files
@@ -21414,7 +21257,7 @@ normally have names that are longer than 31 characters. Since the Mac
 restricts the length of filenames to 31 characters, some gadget files have
 their names truncated on the Mac. Mac users may
 continue to specify the full-length names of these files by using
-@code{user::garnet-load}, described in the Overview section of this manual,
+@code{user::garnet-load}, described in the Overview section of this chapter,
 which translates the regular names of the gadgets into their truncated
 31-character names so they can be loaded. It is recommended that
 @code{garnet-load} be used
@@ -21427,13 +21270,13 @@ pathnames can be abbreviated by a short prefix.
 Most gadgets have small demo functions that are loaded along with their
 schema definitions.@footnote{Unless the @code{:garnet-debug} key was removed from
 from the @code{*features*} list when the Garnet software was compiled or
-loaded (see the Hints manual).}  For example, after loading the
+loaded (see the Hints chapter).}  For example, after loading the
 @code{"v-slider-loader"}, you can do @code{gg:v-slider-go} to see a demo of the
 vertical slider.
 
 A complete list of all gadget demos is included in the Demonstration Programs
-section of this reference manual. The names of all gadget demos are also
-mentioned at the top of each section in this Gadget manual.
+section of this reference chapter. The names of all gadget demos are also
+mentioned at the top of each section in this Gadget chapter.
 
 
 
@@ -21686,7 +21529,7 @@ feedback box may be edited directly by the user by pressing in the
 text box with the left mouse button and entering a new
 number.@footnote{Backspace and several editing commands are provided
 through Interactors. See "Text-Interactor" in the Interactors
-Manual.}
+chapter.}
 
 The slots @code{:value}, @code{:val-1}, @code{:val-2}, @code{:scr-incr},
 @code{:page-incr}, @code{:scr-trill-p}, and @code{:page-trill-p} all have
@@ -21895,7 +21738,7 @@ The button objects all have several common features.
 When used as a panel, the buttons are implemented
 with aggrelists, so all slots that can be customized in an aggrelist
 can be customized in the button panels.@footnote{See the Aggregadgets
-manual for greater detail.}  These slots are:
+chapter for greater detail.}  These slots are:
 @cindex{aggrelists}
 @vtable @code
 @code{:direction} --- @code{:vertical} or @code{:horizontal} (default @code{:vertical})
@@ -22002,7 +21845,7 @@ to be executed each time it is pressed.
    (:font opal:default-font)
    (:final-feedback-p T)
    (:value (o-formula (if (gvl :selected) (gvl :string))))
-   (:selected (o-formula (gvl :value)))   ;@emph{ This slot is set by the interactor}
+   (:selected (o-formula (gvl :value)))   ; @emph{ This slot is set by the interactor}
    (:selection-function NIL)   @emph{; (lambda (gadget value))}
    )
 @end example
@@ -22337,7 +22180,7 @@ objects, pairs of strings and functions, etc.). See section @ref{items-slot}
 for more information.
 
 The @code{:v-spacing, :h-align,} and @code{:item-font} control the display
-of the menu items. See the Gadgets manual for menus for more information.
+of the menu items. See the Gadgets chapter for menus for more information.
 
 The @code{:min-menu-width} slot can contain a minimum width for the popup menu.
 You might use this to make the menu line up with a text entry field.
@@ -22678,7 +22521,7 @@ vertically arranged in an aggrelist within each @code{bar-item}.
 The programmer may approach the @code{menubar} from two perspectives:  the
 traditional Garnet way which involves setting the @code{:items} slot and allowing
 the gadget to maintain its own components, or from a bottom-up approach which
-involves creating the sub-objects and manually adding (and removing) them
+involves creating the sub-objects and chapterly adding (and removing) them
 from the @code{menubar} instance.
 
 Programmers who choose the Garnet approach can ignore most of the functions
@@ -22800,7 +22643,7 @@ parameter should be a sublist of a top-level items list,
 @* (e.g., @code{'("underline" NIL (("none") ("single") ("double")))}.
 The remaining
 optional parameters follow the standard @code{add-item} definition described in
-the Aggregadgets manual, and refer to the placement of the new submenu among
+the Aggregadgets chapter, and refer to the placement of the new submenu among
 the existing submenus. @emph{Locator} should be some element of the current
 @emph{:items} list, or may be the title of a submenu when the @emph{index-function}
 is @code{#'car} (see examples below).
@@ -23007,7 +22850,7 @@ Sets @emph{bar-item} to have @emph{submenu-items} in its submenu.
 The @emph{menubar}, @emph{bar-item}, and @emph{submenu-item} parameters above should be
 supplied with objects created by the functions in section
 @ref{creating-menubar-components}. The optional parameters follow the
-standard @code{add-item} definition described in the Aggregadgets manual, and
+standard @code{add-item} definition described in the Aggregadgets chapter, and
 refer to the placement of the new @code{bar-item} among the existing bar-items.
 @emph{Locator} may be either an existing @code{menubar} component,
 or some element of the @code{:items} list (like a submenu-title) used together
@@ -23206,12 +23049,12 @@ and the font of the inner text is in @code{:field-font}.
    (:maybe-constant '(:left :top :width :font :line-style :visible))
    (:left 0)
    (:top 0)
-   (:width 100) ;@i{ The width of the string area in pixels.}
-   (:value "Type here") ;@i{The string that will originally appear in the}
+   (:width 100) ; @i{ The width of the string area in pixels.}
+   (:value "Type here") ; @i{The string that will originally appear in the}
 			;@i{  box and that will be changed.}
    (:selection-function NIL) ; @i{Function to be executed after editing text}
    (:font opal:default-font) ; @i{**Must be fixed width**}
-   (:line-style opal:default-line-style)) ;@emph{line style can be used to set the color of the string}
+   (:line-style opal:default-line-style)) ; @emph{line style can be used to set the color of the string}
 @end example
 
 @center @image{scrolling-input, 5.5in}
@@ -23231,7 +23074,7 @@ left mouse button on the string. To stop, hit @code{return}. To abort, hit
 @code{^g}. If the string gets to be too large to fit into the
 specified width, then the string inside is scrolled left and right so
 the cursor is always visible. The cursor can be moved and text
-deleted with the usual editing commands (see the Interactors manual,
+deleted with the usual editing commands (see the Interactors chapter,
 page 170).
 
 The top level @code{:value} slot is set with the final value of the
@@ -23255,12 +23098,12 @@ needed).
    (:maybe-constant '(:left :top :width :label-offset :field-offset
 		      :label-string :field-font :label-font :visible))
    (:left 0) (:top 0)
-   (:width 130) ;@emph{The width of the entire area in pixels.}  @emph{This must be big enough}
- 	        ;@emph{for the label and at least a few characters of the string!}
-   (:value "Field") ;@i{The string that will originally appear in the}
-		    ;@i{  box and that will be changed.}
+   (:width 130) ; @emph{The width of the entire area in pixels.}  @emph{This must be big enough}
+ 	        ; @emph{for the label and at least a few characters of the string!}
+   (:value "Field") ; @i{The string that will originally appear in the}
+		    ; @i{  box and that will be changed.}
    (:selection-function NIL) ; @i{Function to be executed after editing text}
-   (:field-font opal:default-font) ;@emph{**Must be fixed width**}
+   (:field-font opal:default-font) ; @emph{**Must be fixed width**}
 
    (:label-string "Label:") ; @emph{The string that will appear beside the box}
    (:label-offset 5) ; @i{The distance between the label and the box}
@@ -23336,14 +23179,14 @@ other gadget. The objects in the interface that will be affected by the
 
 The @code{graphics-selection} gadget sets the @code{:box} slot of the object
 being moved or grown. This is consistent with the behavior of the
-@code{move-grow-interactor}, discussed in the Interactors manual. Therefore,
+@code{move-grow-interactor}, discussed in the Interactors chapter. Therefore,
 you should create your objects with @code{:left}, @code{:top}, @code{:width}, and
 @code{:height} formulas that reference the @code{:box} slot.
 
 The @code{:start-where} slot must be given a value to pass to an
 interactor to determine which items may be selected. The value must
 be one of the valid @code{...-or-none} forms for the interactors
-@code{:start-where} slot (see the Interactors Manual for a list of
+@code{:start-where} slot (see the Interactors chapter for a list of
 allowable values).
 
 The @code{:start-event} slot specifies the event that will cause an object
@@ -23352,7 +23195,7 @@ is clicked over an object in the @code{:start-where}, that object will
 become selected.
 
 The @code{:running-where} slot is the area in which the objects can move
-and grow (see the Interactors Manual for allowable values).
+and grow (see the Interactors chapter for allowable values).
 
 If the @code{:check-line} slot is non-NIL, then the
 @code{graphics-selection} gadget will check the @code{:line-p} slot in the
@@ -23570,7 +23413,7 @@ In summary, public slots of the @code{multi-graphics-selection} gadget are:
                            If NIL, then those handles don't appear.
 
    @code{:input-filter} - This is used by the move-grow-interactor for gridding.
-                        Consult the Interactors manual for a list of allowed
+                        Consult the Interactors chapter for a list of allowed
                         values.
 
    @code{:want-undo} - If T, then saves information (conses) so that you can call
@@ -23728,14 +23571,14 @@ be scrolled in is visible in the window.
    (:left 0)  ; @emph{left, top, width and height of window}
    (:top 0)
    (:position-by-hand NIL) ; @emph{if T, then left,top ignored and user asked for window position}
-   (:width 150) ;@i{width and height of inside of outer window}
+   (:width 150) ; @i{width and height of inside of outer window}
    (:height 150)
    (:border-width 2) ; @emph{of window}
    (:parent-window NIL) ; @emph{window this scrolling-window is inside of, or NIL if top level}
    (:double-buffered-p NIL)
    (:omit-title-bar-p NIL)
    (:title "Scrolling-Window")
-   (:icon-title (o-formula (gvl :title))) ;@emph{Default is the same as the title}
+   (:icon-title (o-formula (gvl :title))) ; @emph{Default is the same as the title}
    (:total-width 200)   ; @emph{total size of the scrollable area inside}
    (:total-height 200)   
    (:X-Offset 0)  ; @emph{offset in of the scrollable area}
@@ -23761,14 +23604,14 @@ be scrolled in is visible in the window.
    (:left 0)  ; @emph{left, top, width and height of outermost window}
    (:top 0)
    (:position-by-hand NIL) ; @emph{if T, then left,top ignored and user asked for window position}
-   (:width 150) ;@i{width and height of inside of outer window}
+   (:width 150) ; @i{width and height of inside of outer window}
    (:height 150)
    (:border-width 2) ; @emph{of outer window}
    (:parent-window NIL) ; @emph{window this scrolling-window is inside of, or NIL if top level}
    (:double-buffered-p NIL)
    (:omit-title-bar-p NIL)
    (:title "Scrolling-Window")
-   (:icon-title (o-formula (gvl :title))) ;@emph{Default is the same as the title}
+   (:icon-title (o-formula (gvl :title))) ; @emph{Default is the same as the title}
    (:total-width 200)   ; @emph{total size of the scrollable area inside}
    (:total-height 200)   
    (:X-Offset 0)  ; @emph{x offset in of the scrollable area. CANNOT BE A FORMULA}
@@ -23782,8 +23625,8 @@ be scrolled in is visible in the window.
    (:h-scroll-on-top-p NIL)  ; @emph{whether horiz scroll bar is on top or bottom}
    (:v-scroll-on-left-p T)   ; @emph{whether vert scroll bar is on left or right}
    (:min-scroll-bar-width 20) ; @emph{these control both scroll bars}
-   (:scr-trill-p T)  ;@emph{single-line increment arrow buttons visible?}
-   (:page-trill-p T) ;@emph{page jump arrow buttons visible?}
+   (:scr-trill-p T)  ; @emph{single-line increment arrow buttons visible?}
+   (:page-trill-p T) ; @emph{page jump arrow buttons visible?}
    (:h-scr-incr 10)  ; @emph{in pixels}
    (:h-page-incr (o-formula (- (gvl :width) 10))) ; @emph{default jumps one page minus 10 pixels}
    (:v-scr-incr 10)  ; @emph{in pixels}
@@ -23871,11 +23714,11 @@ As an example:
    @emph{;;note that the next two formulas must have initial values}
    (:total-width (o-formula (gvl :inner-aggregate :width) 200))
    (:total-height (o-formula (gvl :inner-aggregate :height) 200)))
-(opal:update MYSCROLL) ;@emph{Must update scrolling windows before using them.}
+(opal:update MYSCROLL) ; @emph{Must update scrolling windows before using them.}
 (opal:add-components (gv MYSCROLL :inner-aggregate)
 	    @emph{all the objects to be added to the scrolling window}
 	    )
-;;;@emph{create a scrolling window inside the other scrolling window, just for fun}
+;;; @emph{create a scrolling window inside the other scrolling window, just for fun}
 (create-instance 'SUB-SCROLLING-WINDOW garnet-gadgets:scrolling-window-with-bars
    (:left 15)(:top 15)(:width 150)(:height 150)
    (:parent-window (gv MYSCROLL :inner-window)))
@@ -23955,7 +23798,7 @@ slots may be formulas that depend on the value of slots in other
 Garnet objects. For example, if @code{:x2} and @code{:y2} depended on the
 @code{:left} and @code{:top} coordinates of some rectangle, then the arrow
 would point to the top, left corner of the rectangle regardless of the
-movement of the rectangle.@footnote{See the KR manual for a detailed
+movement of the rectangle.@footnote{See the KR chapter for a detailed
 discussion of constraints and formulas.}
 
 The appearance of the arrowheads themselves may also be customized.
@@ -23965,7 +23808,7 @@ pre-defined line styles, which must be preceded by the Opal package
 name, as in @code{opal:line-0}. Available line style classes are:
 @code{no-line, thin-line, line-0, line-1, line-2, line-4, line-8,
 dotted-line} and @code{dashed-line}. Other line style classes may also
-be defined (see the Opal Manual).
+be defined (see the Opal Chapter).
 
 The slot @code{:filling-style} determines the shade of gray that will
 appear inside the arrowheads. Pre-defined filling styles are exported
@@ -24401,7 +24244,7 @@ retained; otherwise, the item becomes the only item in the instance.
     (:polyline-being-edited NIL)        @emph{; read-only slot}
 
     @emph{; Return value}
-    (:value NIL) ;@emph{set with final point list}
+    (:value NIL) ; @emph{set with final point list}
 @end example
 
 The loader file for the @code{polyline-creator} gadget is
@@ -24447,7 +24290,7 @@ functions is called with the parameters
 where @emph{new-point-list} is of the form: @code{(x1 y1 x2 y2 x3 y3 ...)}.
 
 The @code{:input-filter} slot is used just as in the @code{move-grow-interactor}
-and the @code{two-point-interactor}, described in the Interactors manual.
+and the @code{two-point-interactor}, described in the Interactors chapter.
 
 The @code{:value} slot is also set by the gadget with the final point-list.
 Applications are not allowed to set this directly (there can be no default
@@ -25212,7 +25055,7 @@ to stop editing
 strings are allowed, then @code{return} goes to the next line, so you need to use
 @code{^j} or left button to stop editing). Pressing with any other button
 inside the string moves the cursor. Regular editing operations are
-supported (see the text-interactor in the Interactors manual). If you
+supported (see the text-interactor in the Interactors chapter). If you
 hit @code{tab}, the cursor will move to the next field.
 If label selection is enabled, then labels can be selected by pressing
 with any mouse button. If value selection is enabled, then values must be
@@ -25413,16 +25256,16 @@ many features in this prop-sheet.
 		       :type-gadgets :union? :error-gadget))
     (:left 5)
     (:top 5)
-    (:obj NIL)   ;@emph{ a single obj or a list of objects}
-    (:slots NIL) ;@emph{ list of slots to show. If NIL, get from :parameters}
-    (:union? T)  ;@emph{if slots is NIL and multiple objects, use union or intersection of :parameters?}
+    (:obj NIL)   ; @emph{ a single obj or a list of objects}
+    (:slots NIL) ; @emph{ list of slots to show. If NIL, get from :parameters}
+    (:union? T)  ; @emph{if slots is NIL and multiple objects, use union or intersection of :parameters?}
 
     (:eval-p T)  @emph{; if T, then evaluates what the user types. Use T for}
 		 @emph{; graphical objects. If NIL, then all the values will be strings.}
     (:set-immediately-p T) @emph{; if T then sets slots when user hits @code{return}, else doesn't}
 			   @emph{; ever set the slot.}
-    (:type-gadgets NIL) ;@emph{ descriptor of special handling for types}
-    (:error-gadget NIL) ;@emph{ an error gadget to use to report errors.}
+    (:type-gadgets NIL) ; @emph{ descriptor of special handling for types}
+    (:error-gadget NIL) ; @emph{ an error gadget to use to report errors.}
 
     ;; @emph{plus the rest of the slots also provided by prop-sheet}
 
@@ -25885,7 +25728,7 @@ The @code{pop-up-function} is called when the user presses with the left
 button and then releases over the icon. It is called as follows:
 @code{(lambda(pop-up-from-icon-gadget))}
 It should stuff its results into the @code{:value} field of that gadget.
-See the manual on Gilt for some functions that are useful for popping
+See the chapter on Gilt for some functions that are useful for popping
 up dialog boxes and menus.
 
 @subsection Property Sheet Examples
@@ -26483,7 +26326,7 @@ well as the mouse. In traditional Motif interfaces, the keyboard
 selection box is moved within each gadget with the arrow keys, and it
 is moved among gadgets with the tab key (i.e., one gadget's keyboard
 selection is activated while the previous gadget's keyboard selection
-is deactivated). The keyboard interface can be manually
+is deactivated). The keyboard interface can be chapterly
 activated by setting a Motif gadget's @code{:keyboard-selection-p} to T, but the
 bookkeeping becomes formidable when there are a large number of Motif
 gadgets on the screen and their keyboard status is changing.
@@ -28291,14 +28134,14 @@ The loader for @code{motif-prop-sheet-for-obj-with-done} is
    (:left 0)  ; @emph{left, top, width and height of outermost window}
    (:top 0)
    (:position-by-hand NIL) ; @emph{if T, then left,top ignored and user asked for window position}
-   (:width 150) ;@i{width and height of inside of outer window}
+   (:width 150) ; @i{width and height of inside of outer window}
    (:height 150)
    (:border-width 2) ; @emph{of outer window}
    (:parent-window NIL) ; @emph{window this scrolling-window is inside of, or NIL if top level}
    (:double-buffered-p NIL)
    (:omit-title-bar-p NIL)
    (:title "Motif-Scrolling-Window")
-   (:icon-title (o-formula (gvl :title))) ;@emph{Default is the same as the title}
+   (:icon-title (o-formula (gvl :title))) ; @emph{Default is the same as the title}
    (:total-width 200)   ; @emph{total size of the scrollable area inside}
    (:total-height 200)   
    (:X-Offset 0)  ; @emph{x offset in of the scrollable area. CANNOT BE A FORMULA}
@@ -28455,7 +28298,7 @@ since this would permanently override the formulas in the slots.
 The @code{:value} slot may be set with any of the items (or the first element in
 any of the item pairs) in the @code{:items} list
 of the button panel. The example below shows how buttons on a
-text-button-panel and an x-button-panel could be manually selected. In both
+text-button-panel and an x-button-panel could be chapterly selected. In both
 cases, the selected items (i.e., those appearing in the @code{:value} slot) will
 appear selected when the button panels are displayed in a window.
 
@@ -28526,8 +28369,8 @@ definition of the new schema, will accomplish this task:
 @end example
 
 
-@chapter Debugging Tools for Garnet Reference Manual
-@node Debugging Tools for Garnet Reference Manual
+@chapter Debugging Tools for Garnet Reference chapter
+@node Debugging Tools for Garnet Reference chapter
 
 by Roger B. Dannenberg,
 Andrew Mickish,
@@ -28549,16 +28392,16 @@ in Garnet-based systems.
 
 @section Introduction
 @node Introduction
-This manual is intended for users of the Garnet system and assumes that
-the reader is familiar with Garnet. Other reference manuals cover
+This chapter is intended for users of the Garnet system and assumes that
+the reader is familiar with Garnet. Other reference chapters cover
 the object and constraint system KR @cite{KRTR2}, 
-the graphics system Opal @cite{OpalMANUAL},
-Interactors @cite{InterMANUAL}
-for handling keyboard and mouse input, Aggregadgets @cite{AggregadgetsMANUAL}
+the graphics system Opal @cite{OpalCHAPTER},
+Interactors @cite{InterCHAPTER}
+for handling keyboard and mouse input, Aggregadgets @cite{AggregadgetsCHAPTER}
 for making instances of aggregates of Opal objects.
 
-@section Notation in this Manual
-@node Notation in this Manual
+@section Notation in this Chapter
+@node Notation in this Chapter
 
 In the examples that follow, user type-in follows the asterisk (@code{*}),
 which is the prompt character in CMU Common Lisp on the RT. 
@@ -28619,7 +28462,7 @@ also be loaded explicitly using @code{(garnet-load "debug:inspector")}
 The @code{Inspector} is in the @code{garnet-debug} package.
 
 An example of using the Inspector is included in the Tutorial at the beginning
-of this Reference Manual.
+of this Reference chapter.
 
 
 @subsection Invoking the Inspector
@@ -28851,7 +28694,7 @@ kr:PS @emph{object} &key @i{types-p  all-p} (@i{control} T) (@i{inherit} NIL) @r
                 (@i{indent} 0) (@i{stream} *standard-output*)
 @end example
 @cindex{ps}
-(All the nuances of this function are described in the KR manual.)
+(All the nuances of this function are described in the KR chapter.)
 
 @section Look, What, and Kids
 @node Look, What, and Kids
@@ -29370,7 +29213,7 @@ A "quarantine slot" named @code{:in-progress} exists in all Garnet windows.
 If there was a crash during the last update of the window, then the window
 will stop being updated automatically along with the other Garnet windows,
 until you can fix the problem and update the window successfully. The
-quarantine slot is discussed in detail in the Opal Manual.
+quarantine slot is discussed in detail in the Opal Chapter.
 
 There are several ways to proceed after an update failure.
 The first and easiest action is to run @code{opal:update} with
@@ -29722,7 +29565,7 @@ to show, and whether they are written with the latest style or not.
 
 @cindex{Compiling demos}
 If for some reason the demos were not compiled during the standard installation
-procedure discussed in the Overview Manual, you can compile just the demos
+procedure discussed in the Overview chapter, you can compile just the demos
 by executing (garnet-load "demos-src:demos-compiler"). This will generate
 new binaries for the demos, which will need to be copied from the
 @code{src/demos/} directory into your @code{bin/demos} directory.
@@ -29746,7 +29589,7 @@ The @code{demos-controller} application features the @code{gg:mouseline} gadget.
 When you keep the mouse still over one of the x-buttons for about 2 seconds,
 a window will pop up with a short description of the corresponding demo.
 For more information about this gadget, see the appropriate section of the
-Gadgets Manual.
+Gadgets Chapter.
 
 Using the @code{demos-controller} causes each demo file to be loaded as it is
 needed. If you wanted to load @emph{all} of the demos at once (whether you
@@ -30272,7 +30115,7 @@ scroll bars
 
 @end itemize
 Each of these has its own loader file, named something like
-@emph{xxx}@code{-loader} for gadget @emph{xxx}. See the Gadgets manual for a
+@emph{xxx}@code{-loader} for gadget @emph{xxx}. See the Gadgets chapter for a
 table of loader file names.
 
 
@@ -30320,7 +30163,7 @@ button.
 @cindex{windows}
 @cindex{demo-multiwin}
 @code{Demo-multiwin} shows how an interactor can be used to move objects
-from one window to another. For more information, see the Interactors manual.
+from one window to another. For more information, see the Interactors chapter.
 
 @subsection Modes
 @node Modes
@@ -30329,7 +30172,7 @@ from one window to another. For more information, see the Interactors manual.
 @cindex{modes}
 
 @code{Demo-mode} shows how you can use the @code{:active} slot of an interactor
-to implement different modes. For more information, see the Interactors manual.
+to implement different modes. For more information, see the Interactors chapter.
 
 @subsection Using Start-Interactor
 @node Using Start-Interactor
@@ -30341,7 +30184,7 @@ function to have one interactor start another interactor without waiting
 for the second one's start event. Another example of the use of
 @code{inter:start-interactor} is in @code{demo-editor} (section
 @ref{demoeditor}) to start editing the text label after drawing a box.
-For more information on @code{start-interactor}, see the Interactors manual.
+For more information on @code{start-interactor}, see the Interactors chapter.
 
 
 @chapter A Sample Garnet Program
@@ -30591,7 +30434,7 @@ look-and-feel gadgets and one for Motif look-and-feel gadgets.
 @node Introduction
 
 @cindex{Gilt}
-This document is the reference manual for the @emph{Gilt} tool, which
+This document is the reference chapter for the @emph{Gilt} tool, which
 is part of the Garnet User Interface Development System @cite{GarnetIEEE}.
 Gilt stands for the @b{G}arnet @b{I}nterface @b{L}ayout @b{T}ool, and is
 a simple interface builder for constructing dialog boxes. A dialog box is
@@ -30906,7 +30749,7 @@ appears from the @code{Properties} command.
 To edit string labels, simply click to select them, and then click
 again with the left button to begin editing. The fonts of
 multifont strings can be edited using the keyboard commands described
-in the "Multifont" section of the Opal Manual.
+in the "Multifont" section of the Opal Chapter.
 
 To edit the strings in a pop-up menu, like a menubar or an option
 button, click once with the left button to select the gadget, and then
@@ -31023,7 +30866,7 @@ objects with respect to the first of the objects selected.
 @end vtable
 
 Many of these commands are now implemented with the functions in the
-@code{Standard-Edit} mechanism, described in the Gadgets Manual.
+@code{Standard-Edit} mechanism, described in the Gadgets Chapter.
 
 
 @subsection To-Top and To-Bottom
@@ -31168,7 +31011,7 @@ the objects, and when you edit one and hit RETURN, that value is
 applied to all objects for which it is settable.
 
 For a complete explanation of what the fields of each
-gadget do, see the Gadgets Manual.
+gadget do, see the Gadgets Chapter.
 
 @float Figure, fig:ex2
 @center @image{giltpropsheet, 5.5in}
@@ -31318,7 +31161,7 @@ from the "Control" submenu in the Gilt menubar.
 These modules implement the ideas discussed in @cite[GiltDemo].
 The paper includes examples of how to use this feature, but
 a full set of documentation is still pending. If there is sufficient demand
-for documentation of this module, we will supply an addendum to this manual
+for documentation of this module, we will supply an addendum to this chapter
 (direct requests to @code{garnet@@cs.cmu.edu}).
 
 
@@ -31343,7 +31186,7 @@ leave run mode, simply press on the "Build" button.
 Gilt does not provide all options for all objects and gadgets. If you
 want to change other properties of objects that are not available from
 the property sheets, you could hit the HELP key while the mouse is positioned
-over the object to bring up the Inspector (see the Debugging manual, starting
+over the object to bring up the Inspector (see the Debugging chapter, starting
 on page @value{debug} for details).
 
 You can also access the selected object directly from
@@ -32291,7 +32134,7 @@ Text Editing (rightdown, *obj-creation-button*): The user can edit
 a selected text object by pointing at it and clicking with the object
 creation button. 
 The user can use any text editing command described in the interactors
-manual and clicks down on the mouse button to indicate that editing
+chapter and clicks down on the mouse button to indicate that editing
 is complete.
 
 @end itemize
@@ -32999,7 +32842,7 @@ behave strangely if it is inherited.
 The second change Lapidary makes is in copying formulas. Lapidary copies
 all the links that the formula references to the object which is receiving
 the copied formula. If the
-links should point to new objects, the user must manually change them
+links should point to new objects, the user must chapterly change them
 by selecting the @t(Show All Slots) option in C32 and editing the
 appropriate links (the names of the links that need to be modified can be
 found by looking at the formula).
@@ -33329,7 +33172,7 @@ The second change the constraint gadget makes
 is in copying formulas. The constraint gadget copies
 all the links that the formula references to the object which is receiving
 the copied formula. If the
-links should point to new objects, the user must manually change them
+links should point to new objects, the user must chapterly change them
 by selecting the @code{Show All Slots} option in C32 and editing the
 appropriate links (the names of the links that need to be modified can be
 found by looking at the formula).
@@ -34000,7 +33843,7 @@ Garnet already loaded. We have simplified this procedure by providing the
 function @code{opal:make-image}. If you want to make images by hand, you will
 have to use @code{opal:disconnect-garnet} and @code{opal:reconnect-garnet}
 to sever and restore lisp's connection with the X server. All of these
-functions are documented in the Opal manual.
+functions are documented in the Opal chapter.
 
 It may help to reboot your workstation every now and then. This will reset
 the swap file so that large applications (like Garnet) run faster.
@@ -34063,7 +33906,7 @@ default layout to individually place each button.
 The @code{fast-redraw} property of graphical objects can be set to make
 objects move and draw faster. This can be used in more cases than
 with previous versions of Garnet, but it is still restricted. See the
-fast-redraw section of the Opal manual.
+fast-redraw section of the Opal chapter.
 
 Aggrelists are quite general, and have a lot of flexibility. If you
 don't need this flexibility, for example, if your objects will always
@@ -34127,7 +33970,7 @@ to declare a formula prototype, and create instances of it. For
 example:
 @example
 (defparameter leftform (o-formula (+ 10 (first (gvl :box)))))
-;;@i{for every object}
+;; @i{for every object}
 (create-instance NIL @emph{<whatever>}
 		 ...
 		 (:left (formula leftform)))
@@ -34152,7 +33995,7 @@ startup, if you add all the objects to the top level aggregate
 The use of double-buffering doesn't make your applications
 run faster (they actually run a little slower), but it usually
 @emph{appears} faster due to the lack of flicker. See the section in the
-Opal manual on how to make a window be double-buffered.
+Opal chapter on how to make a window be double-buffered.
 @end itemize
 
 @section Making your Binaries Smaller
@@ -34175,7 +34018,7 @@ formulas, which saves a lot of run-time space. All the built-in objects and
 gadgets provide a @code{:maybe-constant} slot, which means that you can
 use @code{(:constant T)} to make all the slots constant. 
 The @code{:maybe-constant} will contain all of the slots discussed in the
-manual as parameters to the object or gadget. Of course, the slots
+chapter as parameters to the object or gadget. Of course, the slots
 that allow the widget to operate (e.g., the buttons to be pressed or
 the scroll-bar-indicator to move) are not declared constant. 
 Remember that only slots that don't change can be declared constant.
@@ -34189,9 +34032,9 @@ example:
   (:left 10)(:top 30)
   (:items '("Start" "Pause" "Quit")))
 @end example
-Several functions are discussed in the Debugging Manual (starting on page
+Several functions are discussed in the Debugging chapter (starting on page
 @value{debug}) that are very helpful in determining which slots should be
-declared constant. The KR Manual describes the fundamentals of
+declared constant. The KR chapter describes the fundamentals of
 constant declarations in detail.
 
 Don't load gadget files you don't need. Most Garnet applications
@@ -34207,6 +34050,196 @@ The variable @code{kr::store-lambdas} can be set to NIL to remove the
 storage of the lambda expressions for compiled formulas. This will
 save some storage, but it prevents objects from being stored to files.
 
-
 @end itemize
+
+@chapter Gem: Low-level Graphics Library
+@node Low-level Graphics Library
+
+@section Creating New Graphics Backends
+@emph{<TODO>}
+
+@section Using the module directly
+@emph{<TODO>}
+
+@section Function Reference
+
+@defop {Gem Window} :all-garnet-windows root-window
+@end defop
+
+(gem-method :beep (root-window))
+
+(gem-method :bit-blit (window source s-x s-y width height destination d-x d-y))
+
+(gem-method :black-white-pixel (window))
+
+(gem-method :character-width (root-window font character))
+
+(gem-method :check-double-press (root-window state code time))
+
+(gem-method :clear-area (window &optional (x 0) (y 0) width height buffer-p))
+
+(gem-method :color-to-index (root-window a-color))
+
+(gem-method :colormap-property (root-window property &optional a b c))
+
+(gem-method :copy-to-pixmap (root-window to from width height))
+
+(gem-method :create-cursor (root-window source mask foreground background
+					from-font-p x y))
+
+(gem-method :create-image (root-window width height depth from-data-p
+				       &optional color-or-data properties
+				       bits-per-pixel left-pad data-array))
+
+(gem-method :create-image-array (root-window width height depth))
+
+(gem-method :create-pixmap (root-window width height depth
+					&optional image bitmap-p data-array))
+
+(gem-method :build-pixmap (window image width height bitmap-p))
+
+
+(gem-method :create-state-mask (root-window modifier))
+
+(gem-method :create-window
+	    (parent-window x y width height
+	     title icon-name background border-width
+	     save-under visible
+	     min-width min-height max-width max-height
+	     user-specified-position-p user-specified-size-p
+	     override-redirect))
+
+(gem-method :delete-font (root-window font))
+
+(gem-method :delete-pixmap (root-window pixmap &optional buffer-too))
+
+(gem-method :delete-window (root-window x-window))
+
+(gem-method :device-image (root-window index))
+
+(gem-method :discard-mouse-moved-events (root-window))
+
+(gem-method :discard-pending-events (root-window &optional timeout))
+
+(gem-method :draw-arc (window x y width height angle1 angle2 function
+			      line-style fill-style &optional pie-slice-p))
+
+(gem-method :draw-image (window left top width height image function fill-style))
+
+(gem-method :draw-line (window x1 y1 x2 y2 function line-style
+			       &optional drawable))
+
+(gem-method :draw-lines (window point-list function line-style fill-style))
+
+(gem-method :draw-points (window point-list function line-style))
+
+(gem-method :draw-rectangle (window x y width height function
+				    line-style fill-style))
+
+(gem-method :draw-roundtangle (window left top width height
+				      corner-width corner-height function
+				      line-style fill-style))
+
+(gem-method :draw-text (window x y string font function
+			       line-style &optional fill-background invert-p))
+
+(gem-method :drawable-to-window (root-window drawable))
+
+(gem-method :event-handler (root-window ignore-keys))
+
+(gem-method :flush-output (window))
+
+(gem-method :font-exists-p (root-window name))
+
+(gem-method :font-max-min-width (root-window font min-too))
+
+(gem-method :font-name-p (root-window arg))
+
+(gem-method :font-to-internal (root-window opal-font))
+
+(gem-method :get-cut-buffer (root-window))
+
+(gem-method :image-bit (root-window image x y))
+
+(gem-method :image-from-bits (root-window patterns))
+
+(gem-method :image-hot-spot (root-window image))
+
+;;; returns three values: width, height, depth
+(gem-method :image-size (a-window image))
+
+(gem-method :image-to-array (root-window image))
+
+(gem-method :initialize-device (root-window))
+
+(gem-method :initialize-window-borders (window drawable))
+
+(gem-method :inject-event (window index))
+
+(gem-method :make-font-name (root-window key))
+
+(gem-method :map-and-wait (a-window drawable))
+
+(gem-method :max-character-ascent (root-window font))
+
+(gem-method :max-character-descent (root-window font))
+
+(gem-method :mouse-grab (window grab-p want-enter-leave &optional owner-p))
+
+(gem-method :raise-or-lower (window raise-p))
+
+(gem-method :read-an-image (root-window pathname))
+
+(gem-method :reparent (window new-parent drawable left top))
+
+(gem-method :set-clip-mask (window clip-mask &optional lstyle-ogc fstyle-ogc))
+
+(gem-method :set-cut-buffer (root-window string))
+
+(gem-method :set-device-variables (root-window full-display-name))
+
+(gem-method :set-draw-function-alist (root-window))
+
+(gem-method :set-draw-functions (root-window))
+
+(gem-method :set-drawable-to-window (window drawable))
+
+(gem-method :set-interest-in-moved (window interestedp))
+
+(gem-method :set-screen-color-attribute-variables (root-window))
+
+(gem-method :set-window-property (window property value))
+
+(gem-method :stippled-p (root-window))
+
+(gem-method :text-extents (root-window opal-font string))
+
+(gem-method :text-width (root-window opal-font string))
+
+(gem-method :translate-character (window x y state code time))
+
+(gem-method :translate-code (window scan-code shiftp))
+
+(gem-method :translate-coordinates (root-window window x y &optional
+                                                other-window))
+
+(gem-method :translate-mouse-character (root-window button-code modifier-bits
+                                        event-key))
+
+(gem-method :window-debug-id (window))
+
+(gem-method :window-depth (window))
+
+(gem-method :window-from-drawable (root-window drawable))
+
+(gem-method :window-has-grown (window width height))
+
+(gem-method :window-to-image (window left top width height))
+
+(gem-method :write-an-image (root-window pathname image))
+
+
+
+@section Font Handling
+@emph{<TODO>}
 
