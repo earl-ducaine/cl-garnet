@@ -159,7 +159,7 @@
 
 (define-method :show-points w1 (self list)
   (opal:add-component (g-value self :aggregate)
-		      (create-instance nil line-connected-data-points 
+		      (create-instance nil line-connected-data-points
 			  (:data-points list))))
 
 (defun sine-points (&key (res 36)
@@ -184,7 +184,7 @@
   (:start-where #f `(:in ,(gvl :operates-on)))
   (:start-event :leftdown)
   (:continuous nil)
-  (:final-function 
+  (:final-function
    #'(lambda (interactor pl)
        (format t "~&~D,~D -> ~,2f,~,2f~%"
 	       (first pl)
@@ -286,7 +286,7 @@
 ; Here, W means either X or Y (for horizontal axis, it is X, for vertical, Y)
 ; W-TO-LABEL is a function from a W to a string for a tick
 ; mark at that position.  The default function just calls FORMAT with
-; the value of :TICK-FORMAT, which defaults to a string which displays W 
+; the value of :TICK-FORMAT, which defaults to a string which displays W
 ; as a floating point.
 
 ; If you want plain integer labels, change tick-format to "~D".
@@ -390,7 +390,7 @@
     (s-value self :ticks (nreverse list))
     (dolist (tick  (g-value self :ticks))
       (opal:add-component self tick))))
-			       
+
 
 
 
@@ -449,7 +449,7 @@
      (:label :modify
 	     (:top ,#f  (truncate (gvl :parent :y1) 2))
 	     (:left 5)))))
-   
+
 
 
 ; A coordinate-transform window for use inside a larger aggregate
@@ -551,12 +551,12 @@
 
 ; It is safe to create the subwindow when the aggregate is created.
 ; But at initialize time, the container does not yet have a window,
-; so the :parent formula yields NIL.  Thus although the subwindow 
+; so the :parent formula yields NIL.  Thus although the subwindow
 ; eventually does get a parent, the parent does not know the child.
 
 (define-method :create-graph-subwindow graphing-aggregate (self)
   (let ((container self))
-    (s-value self :graph-subwindow 
+    (s-value self :graph-subwindow
 	     (create-instance nil (g-value self :graph-subwindow-prototype)
 	       (:aggregate (create-instance nil
 			       (g-value self :graph-subwindow-agg-prototype)))
@@ -579,7 +579,7 @@
 ; window is created, its container does not yet have a window.  So when
 ; the aggregate DOES get a window, that would be a good time to set
 ; the window for the subwindow.  But I can't find out when that happens.
-; Instead, I do it when the main window is updated.  
+; Instead, I do it when the main window is updated.
 
 #| ; I tried to make the window assignment happen when the aggregate
 ; was updates, but this does not work because the update function for window
@@ -603,14 +603,15 @@
 
 (export 'clwin)
 
-(when (or (not (boundp 'clwin))
-	  (not (schema-p clwin)))
-  (create-instance 'clwin  inter:interactor-window))
+(defun make-clwin ()
+  (when (or (not (boundp 'clwin))
+	    (not (schema-p clwin)))
+    (create-instance 'clwin  inter:interactor-window))
 
-(define-method :update clwin (a-window &optional (total-p NIL))
-  (when (g-value a-window :aggregate)
-    (ensure-subwindows-have-parents (g-value a-window :aggregate)))
-  (call-prototype-method a-window total-p))
+  (define-method :update clwin (a-window &optional (total-p NIL))
+		 (when (g-value a-window :aggregate)
+		   (ensure-subwindows-have-parents (g-value a-window :aggregate)))
+		 (call-prototype-method a-window total-p)))
 
 (defun ensure-subwindows-have-parents (aggregate)
   (when (and (g-value aggregate :graph-subwindow)
@@ -654,7 +655,7 @@
 
       (opal:add-component
        (g-value win :aggregate :graph-subwindow :aggregate)
-       (create-instance nil line-connected-data-points 
+       (create-instance nil line-connected-data-points
 	 (:line-style line-style)
 	 (:data-points #f (gvl :window :parent :window :data-points))))
 
@@ -675,7 +676,7 @@
 	     (+ (g-value sub :origin-x) pixels)
 	     (+ (g-value sub :origin-y) 0))))
 
-    
+
 #|
 (setf www (plot-points  '((1 1) (2 2) (4 5)  (8 10) (10 9))))
 
