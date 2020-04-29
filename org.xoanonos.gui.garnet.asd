@@ -360,7 +360,9 @@
 	     (:file "sky-blue")
 	     (:file "multi-garnet")
 	     (:file "scatterplot")
-	     (:file "examples")))
+	     ;; examples fires off the demo app.
+	     ;; (:file "examples")
+	     ))
    (:module lapidary
 	    :pathname "src/lapidary"
 	    :depends-on (lapidary2 gadgets gilt c32)
