@@ -64,7 +64,7 @@ megabytes). We find that performance of Garnet on MCL is acceptable
 on Quadra's, and fine on a Quadra 840 A/V. It is really too slow on a
 Mac II. To do anything useful, you probably need 12mb of memory. A
 PowerPC Mac does not work well for Lisp (see discussion on
-@code{comp.lang.lisp.mcl}).
+@code{comp.lang.lisp.MCL}).
 
 More details about Garnet are available in the Garnet FAQ:
 @code{ftp://a.gp.cs.cmu.edu/usr/garnet/garnet/FAQ}
@@ -331,7 +331,7 @@ from the MCL application will retain the new "Preferred size" value.
 Before loading Garnet, you will need to compile several MCL library files
 that are used by Garnet. A compiler script for this procedure is provided in
 the Garnet collection. In the fresh MCL listener, load the file "Macintosh
-HD:Garnet:compile-mcl-libraries.lisp" (replacing the hard drive prefix with
+HD:Garnet:compile-MCL-libraries.lisp" (replacing the hard drive prefix with
 whatever is appropriate for your machine). After the script is finished,
 quit MCL and then launch MCL again.
 
@@ -635,7 +635,7 @@ optimization flags, and @code{garnet-loader.lisp} provides values for
 Allegro, Lucid, CMUCL, LispWorks, and MCL that we have found work particularly
 well. You can override the default optimizations by defining the
 @code{*default-garnet-proclaim*} variable before loading
-@code{garnet-loader.lisp}. A value of NIL for this variable means that
+@code{garnet-loader.lisp}. A value of @code{nil} for this variable means that
 you want to maintain the declarations that are already in effect
 for your lisp.
 
@@ -748,7 +748,7 @@ correctly:
 @cindex{lispworks}
 @cindex{guarantee-processes}
 
-LispWorks is the common lisp sold by Harlequin Ltd. There is one peculiarity
+LispWorks is the Common Lisp sold by Harlequin Ltd. There is one peculiarity
 about LispWorks that requires an additional step
 before executing the @code{main-event-loop} background process of Garnet
 (Garnet uses multiprocessing by default in LispWorks -- see the Interactors
@@ -1022,7 +1022,7 @@ the result should be that all the files are compiled and loaded.
 (If there was a problem and you need to restart the compile procedure,
 please see below.)  The compiler scripts do @emph{not} check for compile errors.
 We have attempted to make Garnet compile without errors
-on all common lisps, but some lisps generate more warnings than others.
+on all Common Lisps, but some lisps generate more warnings than others.
 
 The compiler scripts compile the binaries into the same
 directories as the source files. For example, all the interactor binaries
@@ -1038,7 +1038,7 @@ directory. Note that this is typed to the shell, not to Lisp. Even if you
 normally run the "regular" (Bourne) shell (sh), the above command should work.
 
 To prevent certain parts of Garnet from being compiled, set
-@code{user::compile-}@emph{xxx}@code{-p} to NIL, where @emph{xxx} is replaced with the
+@code{user::compile-}@emph{xxx}@code{-p} to @code{nil}, where @emph{xxx} is replaced with the
 part you do not want to compile. See the comments at the top of the file
 @code{garnet-prepare-compile} for more information.
 
@@ -1047,7 +1047,7 @@ from scratch. If you have not yet moved the binary files out of the @code{src/}
 directory (i.e., you have not yet run @code{garnet-after-compile}), then you
 can use the files that have been compiled already instead of compiling them
 again. Restart lisp, and for each Garnet module that has been compiled,
-set the variable @code{user::compile-}@emph{xxx}@code{-p} to NIL to indicate that it
+set the variable @code{user::compile-}@emph{xxx}@code{-p} to @code{nil} to indicate that it
 should not be compiled
 again. Then load the three script files again in the usual order. Note:
 if a module has been only partially compiled, then you must recompile the
@@ -1073,7 +1073,7 @@ path of where it is located. It is usually in the top level
 @code{garnet} directory.)
 
 To prevent any of the Garnet sub-systems from being loaded, simply set the
-variable @code{user::load-}@emph{xxx}@code{-p} to NIL, where @emph{xxx} is replaced by
+variable @code{user::load-}@emph{xxx}@code{-p} to @code{nil}, where @emph{xxx} is replaced by
 whatever part you do not want to load. Normally, some parts of the system are
 not loaded, such as the gadgets and demos. This is because you normally do not
 want to load or use all of these in a session. Files that use gadgets will
@@ -2734,8 +2734,8 @@ is no value for the slot in the object, then the object looks to its
 prototype to see if it has a value for the slot. This search
 continues until either a value for the slot is found or the root
 object is reached. When no inherited or local value for the slot is
-found, the value NIL is returned (which, by the way, looks just the
-same as a user-defined local value of NIL for a slot).
+found, the value @code{nil} is returned (which, by the way, looks just the
+same as a user-defined local value of @code{nil} for a slot).
 
 Since we are now finished with the example of MY-WIN, let's destroy it
 so it does not interfere with future examples in this tutorial. Type
@@ -3037,7 +3037,7 @@ named objects we have created earlier in this tutorial.
 As an example, the following code creates an
 unnamed object and internally generates a unique variable name for it.
 Instead of supplying a quoted name to @code{create-instance}, we give it
-the value NIL.
+the value @code{nil}.
 
 @example
 (create-instance NIL opal:rectangle
@@ -3588,19 +3588,19 @@ following example.
 Suppose we want the selection box to become invisible if no object is
 currently selected. Using @code{s-value}, we can set the @code{:visible}
 slot of SEL-BOX to have a formula which will cause the box to
-disappear when its current selection is NIL. (We could have also
+disappear when its current selection is @code{nil}. (We could have also
 defined this formula in the @code{create-instance} call.)
 
 @example
 (s-value SEL-BOX :visible (o-formula (gvl :obj-over)))
 @end example
 
-Clearly, if @code{:obj-over} is set to NIL, then the value in the
-@code{:visible} slot will also become NIL, and the box will become
+Clearly, if @code{:obj-over} is set to @code{nil}, then the value in the
+@code{:visible} slot will also become @code{nil}, and the box will become
 invisible. When @code{:obj-over} is again set to be some object, then
 the @code{:visible} slot will have a non-NIL value, and the box will
 appear in the appropriate position. Previously, if we had set
-@code{:obj-over} to NIL, then updating the window would have caused an
+@code{:obj-over} to @code{nil}, then updating the window would have caused an
 error when the formulas tried to access the @code{:left}, @code{:top},
 @code{:width}, and @code{:height} of the non-existent selected object.
 
@@ -3925,7 +3925,7 @@ Lisp prompt.)
 @float Figure, fig:ex1
 @center @image{inter-white, 5.5in}
 @center @image{inter-black, 5.5in}
-@caption{The rectangle CHANGING-RECT when its @code{:selected} slot is NIL
+@caption{The rectangle CHANGING-RECT when its @code{:selected} slot is @code{nil}
 (the default), and when it is set to T by the interactor (when the
 mouse is clicked over it).}
 @end float
@@ -4023,7 +4023,7 @@ over the selected object. The reason is that the
 @code{button-interactor} sets the @code{:obj-over} slot of the feedback
 object. Since the interactor is a toggling
 interactor (according to its @code{:how-set} slot), the @code{:obj-over}
-slot will be reset to NIL when the selected object is clicked on again.
+slot will be reset to @code{nil} when the selected object is clicked on again.
 
 If you entered the @code{main-event-loop}, remember to hit the F1 key
 before typing in the next example.
@@ -4672,7 +4672,7 @@ now look at the @code{:interim-selected} slot of the button. When the
 mouse is clicked over a button, the button's @code{:interim-selected}
 slot will be set to T, causing the gray rectangle to be moved down and
 to the right. When the mouse is released, the @code{:interim-selected}
-slot will be set back to NIL, and the gray rectangle will return to
+slot will be set back to @code{nil}, and the gray rectangle will return to
 its normal position.
 
 If you refer back to the definitions of the other components, you will
@@ -6341,7 +6341,7 @@ Otherwise, these filling-styles are all identical to
 @cindex{stipple}
 The @code{:stipple} slot of a @code{filling-style} object is used to specify
 patterns for mixing the foreground and background colors. The @code{:stipple}
-slot is either NIL or an @code{opal:bitmap} object, whose image can be generated
+slot is either @code{nil} or an @code{opal:bitmap} object, whose image can be generated
 from the @code{/usr/misc/.X11/bin/bitmap} Unix program (see section
 @ref{bitmap-sec}). Alternatively, there is a Garnet
 function supplied for generating halftone bitmaps to get various gray
@@ -6716,7 +6716,7 @@ drawn between them, and the resulting polygon is filled.
 The @code{:point-in-gob} method for the @code{opal:polyline} actually
 checks whether the point is inside the polygon, rather than just
 inside the polygon's bounding box. If the @code{:hit-full-interior-p}
-slot of a @code{polyline} is NIL (the default), then the
+slot of a @code{polyline} is @code{nil} (the default), then the
 @code{:point-in-gob} method will use the "even-odd" rule to determine
 if a point is inside it. If the value of @code{:hit-full-interior-p}
 is T, the method will use the "winding" rule. The slot
@@ -7288,7 +7288,7 @@ anything.
 For an example of how the auto-scroll feature works, look at the code
 for Demo-Multifont. Try the demo with the
 @code{:auto-scroll-p} slot of the object @code{demo-multifont::text1} set to
-both T and NIL.
+both T and @code{nil}.
 
 Auto scroll does not keep track of changes in family, font, size, or
 when a segment is cut or pasted. The @code{:auto-scroll} method has to be
@@ -7538,13 +7538,6 @@ utility.
    (:show-marks NIL))
 @end example
 
-The @code{multifont-text} object is loaded by default, since it is used
-by the new @code{garnet-debug:Inspector}. If you are not already
-loading the @code{Inspector}, you can load @code{multifont-text} and all
-of its interactors with @code{(garnet-load "opal:multifont-loader")}.
-
-@sp 1
-
 @cindex{word wrap (in multifont-text)}
 The @code{opal:multifont-text} object is designed to allow users to create more
 complicated editing applications. The object is similar to the 
@@ -7587,15 +7580,14 @@ pointing to the character to which they are stuck. When @code{:show-marks} is
 NIL, the marks will be invisible.
 
 Along with the multi-font text object are a pair of special
-interactors that make them editable (see section
-@ref{multifontinters}). The font 
+interactors that make them editable
+(@xref{multifontinters,,Interactors for Multifont Text}). The font 
 object and the two interactors are combined into the
-@code{multifont-gadget} gadget for convenience (section
-@ref{multifontgadgetsec}).
+@code{multifont-gadget} gadget for convenience (@xref{multifontgadgetsec,,A Multifont Text Gadget}).
 
-There are two demos that show off multifont capabilities. @code{Demo-text}
+There are two demos that show off multifont capabilities. @code{demo-text}
 shows how to use the @code{multifont-text} object with the
-@code{multifont-text-interactor}. @code{Demo-multifont} shows how to use
+@code{multifont-text-interactor}. @code{demo-multifont} shows how to use
 multiple text fields in a single window with the
 @code{focus-multifont-textinter} and @code{selection-interactor}, and
 demonstrates the indentation and paren-matching features of lisp mode.
@@ -7609,14 +7601,14 @@ functions that can be called using the multifont object.
 
 In its simplest form, the @code{:initial-text} format can be a single
 string. In this form, the default font and colors are used.
-The simplest values for @code{:initial-text} are:
+
 
 @example
-"Here is my example string."
-
-"An example string
-with multiple lines."
-@end example
+(create-instance 'opal:Multifont-Text opal:aggregate
+   @math{...}
+   (:initial-text "Here is my example string.")
+   @math{...}
+ @end example
 
 All other formats require a list structure. The outermost list is the list of
 lines:  @code{(list line1 line2 ... )}. A line can either be a string in which
@@ -7630,17 +7622,22 @@ be placed in the window. A fragment is the unit that allows the user to enter
 font data into the @code{:initial-text} format. A fragment can be 
 one of the following:
 @itemize
+@item
 a string,  in which case the defaults are used.
 
-a "cons"ing of a string with a Garnet font:  @code{(cons "string" garnet-font)}.
+@item
+a "cons"ing of a string with a Garnet font:  @code{(cons "string" @var{garnet-font})}.
 
+@item
 a list of a string, font, foreground color, and background color:
-@code{(list "string" font f-color b-color)}. If @emph{font} or
-@emph{color} is NIL, the default will be used.
+@code{(list "string" @var{font} @var{f-color} @var{b-color})}. If @emph{font} or
+@emph{color} is @code{nil}, the default will be used.
 
-a @code{view-object} (see @ref{objects}).
+@item
+a @code{view-object} (@xref{objects,,Using @code{view-objects} as Text}).
 
-a mark, in the form @code{(list :mark sticky-left name info)} (see @ref{marks}).
+@item
+a mark, in the form @code{(list :mark sticky-left name info)} (@xref{marks,,Using Marks}).
 @end itemize
 
 Note that only the fragment level contains font or color information.
@@ -7648,43 +7645,49 @@ For instance, a single line in bold font may look like this:
 
 
 @example
- `((("Here is my example string" . ,(opal:get-standard-font :fixed :bold :medium))))
+`((,(cons "Here is my example string"
+          (opal:get-standard-font :fixed :bold :medium))))
 @end example
 
 Here is a set of sample values for the @code{:initial-text} slot. Each
-of these examples are pictured in Figure @ref{multifont-pix}. Details
+of these examples are pictured in @ref{fig:ex6}. Details
 on using fonts, colors, marks, and graphical objects are given in
-section @ref{multifont-fns}.
+section @ref{multifont-fns,,Functions on Multifont Text}.
 
 @example
-@emph{; Define some fonts for brevity, and a circle to use in a string.}
-(setf ITALIC (opal:get-standard-font :fixed :italic :medium))
-(setf BOLD   (opal:get-standard-font :fixed :bold :medium))
-(create-instance 'MY-CIRCLE opal:circle)
+@emph{;; Define some fonts for brevity, and a circle to use in a string.}
+(setf italic (opal:get-standard-font :fixed :italic :medium))
+(setf bold   (opal:get-standard-font :fixed :bold :medium))
+(create-instance 'my-circle opal:circle)
 
-@emph{; A pair of lines. Both lines are strings.}
+@emph{;; A pair of lines. Both lines are strings.}
 '("An example string" "with multiple lines")
 
-@emph{; Same pair of lines in italics.}
-`((("An example string" . ,ITALIC))
-  (("with multiple lines" . ,ITALIC)))
+@emph{;; Same pair of lines in italics.}
+`((("an example string" . ,italic))
+  (("with multiple lines" . ,italic)))
 
-@emph{; A single line with multiple fragments. Note fragments can be strings}
-@emph{; when default font is desired.}
-`(("Here " ("is" . ,ITALIC) " my " ("example" . ,BOLD) " string."))
+@emph{;; A single line with multiple fragments. Note fragments can be strings}
+@emph{;; when default font is desired.}
+`(("Here " ("is" . ,italic) " my " ("example" . ,bold) " string."))
 
-@emph{; A single line containing a graphical object}
-`(("Here is a circle:" ,MY-CIRCLE))
+@emph{;; A single line containing a graphical object}
+`(("Here is a circle:" ,my-circle))
 
-@emph{; A single line with colored fragments}
-`(("Here is " ("yellow" ,BOLD ,opal:yellow) " and " ("red" ,BOLD ,opal:red) " text"))
-
-@emph{; A single line with marks. Note: make marks visible by setting} :show-marks @emph{to} T.
-`(("The " (:mark NIL) "(parentheses)" (:mark T) " are marked")))
+@emph{;; A single line with colored fragments}
+`(("Here is "
+   ("yellow" ,bold ,opal:yellow)
+   " and "
+   ("red" ,bold ,opal:red)
+   " text"))
+   
+@emph{;; A single line with marks. Note: make marks visible by setting}
+@emph{;; @code{:show-marks} to @code{t}.}
+`(("The " (:mark nil) "(parentheses)" (:mark t) " are marked")))
 @end example
 
 @float Figure, fig:ex6
-@center @image{multifont-pix, 5.5in}
+@center @image{multifont-pix, 2.5in}
 @caption{Examples of the multifont-text object}
 @anchor{multifont-pix}
 @end float
@@ -7702,52 +7705,45 @@ multifont object.
 @subsection Functions that Manipulate the Cursor
 @node Functions that Manipulate the Cursor
 
-@cindex{set-cursor-visible}
-@example
-opal:Set-Cursor-Visible @emph{text-obj vis}@ref{function}
-@end example
+
+
+@defun opal:set-cursor-visible text-obj vis
+
 
 This makes the cursor of a @code{multifont-text} visible or invisible, depending
-on whether @emph{vis} is @code{t} or @code{nil}. Having a visible cursor is
+on whether @var{vis} is @code{t} or @code{nil}. Having a visible cursor is
 not required for entering text, but is recommended for situations
 requiring user feedback. This function does not return any useful value.
 
-@cindex{set-cursor-to-x-y-position}
-@cindex{set-cursor-to-line-char-position}
-@example
-opal:Set-Cursor-To-X-Y-Position @emph{text-obj x y}@ref{function}
+@end defun
 
-opal:Set-Cursor-To-Line-Char-Position @emph{text-obj line# char#}@ref{function}
-@end example
+
+@defun opal:set-cursor-to-x-y-position text-obj x y
+@defunx opal:set-cursor-to-line-char-position text-obj line-num char-num
 
 These move the cursor to a specific location in the @code{multifont-text}. The
 function @code{set-cursor-to-x-y-position} sets the cursor to the position
-nearest the <x, y> pixel location. The function
+nearest the @math{(x, y)} pixel location. The function
 @code{set-cursor-to-line-char-position} tries to place the cursor at the
 position indicated (zero-based). If the line or character
 position is not legal, it will
 try to find a reasonable approximation of the location given. Neither
 function returns any useful value.
 
-@cindex{go-to-next-char}
-@cindex{go-to-prev-char}
-@cindex{go-to-next-word}
-@cindex{go-to-prev-word}
-@cindex{go-to-next-line}
-@cindex{go-to-prev-line}
-@example
-opal:Go-To-Next-Char @emph{text-obj}@ref{function}
+@end defun
 
-opal:Go-To-Prev-Char @emph{text-obj}@ref{function}
+@defun opal:go-to-next-char text-obj
 
-opal:Go-To-Next-Word @emph{text-obj}@ref{function}
+@defunx opal:go-to-prev-char text-obj
 
-opal:Go-To-Prev-Word @emph{text-obj}@ref{function}
+@defunx opal:go-to-next-word text-obj
 
-opal:Go-To-Next-Line @emph{text-obj}@ref{function}
+@defunx opal:go-to-prev-word text-obj
 
-opal:Go-To-Prev-Line @emph{text-obj}@ref{function}
-@end example
+@defunx opal:go-to-next-line text-obj
+
+@defunx opal:go-to-prev-line text-obj
+
 
 These functions move the cursor relative to where it is currently located.
 The functions @code{go-to-next-char} and @code{go-to-prev-char} move the cursor one
@@ -7768,19 +7764,16 @@ consequence of being at the beginning or end of the text. The
 functions @code{go-to-next-line} and @code{go-to-prev-line} do not return
 useful values. 
 
-@cindex{go-to-beginning-of-line}
-@cindex{go-to-end-of-line}
-@cindex{go-to-beginning-of-text}
-@cindex{go-to-end-of-text}
-@example
-opal:Go-To-Beginning-Of-Line @emph{text-obj}@ref{function}
+@end defun
 
-opal:Go-To-End-Of-Line @emph{text-obj}@ref{function}
+@defun opal:Go-To-Beginning-Of-Line text-obj
 
-opal:Go-To-Beginning-Of-Text @emph{text-obj}@ref{function}
+@defunx opal:Go-To-End-Of-Line text-obj
 
-opal:Go-To-End-Of-Text @emph{text-obj}@ref{function}
-@end example
+@defunx opal:Go-To-Beginning-Of-Text text-obj
+
+@defunx opal:Go-To-End-Of-Text text-obj
+
 
 These functions move the cursor to a position at the beginning or end of
 something. The functions @code{go-to-beginning-of-line} and
@@ -7789,29 +7782,27 @@ line. The functions @code{go-to-beginning-of-text} and @code{go-to-end-of-text}
 move the cursor to the beginning or end of the entire document. None of these
 functions return a useful value.
 
+@end defun
 
 @subsection Functions for Text Selection
 @node Functions for Text Selection
 
-@cindex{toggle-selection}
-@example
-opal:Toggle-Selection @emph{text-obj mode}@ref{function}
-@end example
+
+@defun opal:toggle-selection text-obj mode
+
 
 This will turn off and on the selection mode. When selection mode is on,
 moving the cursor will drag the selection highlight to include characters
 that it passes over. Moving the cursor back over selected text will unselect
-and unhighlight the text. Setting @emph{mode} to @code{t} turns on
+and unhighlight the text. Setting @var{mode} to @code{t} turns on
 selection mode, and setting it to @code{nil} turns off selection mode.
 Turning off selection mode will unhighlight all highlighted text.
 
-@cindex{set-selection-to-x-y-position}
-@cindex{set-selection-to-line-char-position}
-@example
-opal:Set-Selection-To-X-Y-Position @emph{text-obj  x y}@ref{function}
+@end defun
 
-opal:Set-Selection-To-Line-Char-Position @emph{text-obj  line# char#}@ref{function}
-@end example
+@defun opal:set-selection-to-x-y-position text-obj x y
+@defunx opal:set-selection-to-line-char-position text-obj line-num char-num
+
 
 These functions are similar to the functions @code{set-cursor-to-x-y-position}
 and @code{set-cursor-to-line-char-position}. The selection highlight has two
@@ -7822,13 +7813,11 @@ functions. To move the selection end, use these two functions. The function
 position. The function @code{set-selection-to-line-char-position} is based on
 line and character position. Neither function returns a useful value.
 
-@cindex{copy-selected-text}
-@cindex{delete-selection}
-@example
-opal:Copy-Selected-Text @emph{text-obj}@ref{function}
+@end defun
 
-opal:Delete-Selection @emph{text-obj} &optional @emph{lisp-mode-p} @ref{function}
-@end example
+@defun opal:copy-selected-text text-obj
+
+@defunx opal:delete-selection text-obj &optional lisp-mode-p
 
 These functions are used to manipulate the selected text. The
 @code{copy-selected-text} function just returns the selected text without affecting
@@ -7840,17 +7829,18 @@ is done to keep track of parentheses and function names in lisp-mode, you must
 supply a value of T for @emph{lisp-mode-p} when the interactors currently working
 on the @emph{text-obj} are in lisp-mode.
 
-@cindex{change-font-of-selection}
-@example
-opal:Change-Font-Of-Selection @emph{text-obj  font} &key @emph{family size italic bold}@ref{function}
-@end example
+@end defun
+
+
+@defun opal:change-font-of-selection text-obj font &key family size italic bold
+
 
 The font of selected text can be updated using this function. There are two
 options. The new font can be given explicitly using the @emph{font} parameter,
 or it can be updated by setting @emph{font} to @code{nil} and using the key
 parameters. 
 
-Valid values for @emph{family} are:
+Valid values for @var{family} are:
 @itemize
 @code{:fixed} - makes font fixed width
 
@@ -7891,51 +7881,46 @@ of that character
 The function @code{change-font-of-selection} is also used to change the value
 of the slot @code{:current-font} even if there is no text selected.
 
+@end defun
 
-@cindex{change-color-of-selection}
-@example
-opal:Change-Color-Of-Selection @emph{text-obj  foreground-color background-color}@ref{function}
-@end example
+@defun opal:Change-Color-Of-Selection text-obj foreground-color background-color
 
-This function will change the color of the selected text. If only one of
-foreground-color and background-color needs to be changed, the other should
-be sent as NIL. This function also changes the values of the slots @code{:current-fcolor} and @code{:current-bcolor}.
 
+This function will change the color of the selected text. If only one
+of foreground-color and background-color needs to be changed, the
+other should be sent as @code{nil}. This function also changes the
+values of the slots @code{:current-fcolor} and @code{:current-bcolor}.
+
+@end defun
 
 @subsection Functions that Access the Text or Cursor
 @node Functions that Access the Text or Cursor
 
-@cindex{get-string}
-@cindex{get-text}
-@example
-opal:Get-String @emph{text-obj}@ref{function}
 
-opal:Get-Text @emph{text-obj}@ref{function}
-@end example
+@defun opal:get-string text-obj
+@defunx opal:get-text text-obj
+
 
 These functions return the entire contents of the @code{multifont-text} object.
 The function @code{get-string} returns the contents as a single string with
 @code{#\newline}s separating lines. The function @code{get-text} returns the
 contents in the @code{:initial-text} slot format.
 
-@cindex{get-cursor-line-char-position}
-@cindex{get-selection-line-char-position}
-@example
-opal:Get-Cursor-Line-Char-Position @emph{text-obj}@ref{function}
+@end defun
 
-opal:Get-Selection-Line-Char-Position @emph{text-obj}@ref{function}
-@end example
+
+@defun opal:get-cursor-line-char-position text-obj
+@defunx opal:get-selection-line-char-position text-obj
+
 
 These return the position of the cursor or the selection end of a highlight.
-The values are returned using multiple return values: (@emph{values line char}).
+The values are returned using multiple return values: (@var{values line char}).
 
-@cindex{fetch-next-char}
-@cindex{fetch-prev-char}
-@example
-opal:Fetch-Next-Char @emph{text-obj}@ref{function}
+@end defun
 
-opal:Fetch-Prev-Char @emph{text-obj}@ref{function}
-@end example
+@defun opal:fetch-next-char text-obj
+@defunx opal:fetch-prev-char text-obj
+
 
 These return the character before or after the cursor. The function
 @code{fetch-next-char} returns the character after the cursor, and
@@ -7944,52 +7929,41 @@ affects the text of the object. The functions will return @code{nil} if the curs
 is at the beginning or end of the text where there is no character before or
 after the cursor.
 
+@end defun
 
 @subsection Adding and Editing Text
 @node Adding and Editing Text
 
-@cindex{add-char}
-@cindex{insert-string}
-@cindex{insert-text}
-@example
-opal:Add-Char @emph{text-obj  char} &optional @emph{font  foreground-color  background-color lisp-mode-p}@ref{function}
+@defun opal:add-char text-obj  char &optional font  foreground-color  background-color lisp-mode-p
+@defunx opal:insert-string text-obj  string &optional font  foreground-color  background-color
+@defunx opal:insert-text text-obj  text
 
-opal:Insert-String @emph{text-obj  string} &optional @emph{font  foreground-color  background-color}@ref{function}
-
-opal:Insert-Text @emph{text-obj  text}@ref{function}
-@end example
 
 These functions are used to add text to a multifont object. The function
 @code{add-char} adds a single character, the function @code{insert-string} adds
 a whole string possibly including newline, and @code{insert-text} adds
 text that is in @code{:initial-text} slot format.
 
-The optional @emph{font} and @emph{color} parameters indicate the font and color
-of the new text. If any of these parameters are NIL, the newly added text
+The optional @var{font} and @var{color} parameters indicate the font and color
+of the new text. If any of these parameters are @code{nil}, the newly added text
 will use the value of the @code{:current-font}, @code{:current-fcolor}, and/or
 @code{:current-bcolor} slots, which can be set chapterly or allowed to take on
 the font and colors of the character over which the cursor last passed.
 
-The optional @emph{lisp-mode-p} argument indicates whether the interactors
+The optional @var{lisp-mode-p} argument indicates whether the interactors
 currently working on the multifont object are in lisp-mode. Extra operations
 are performed on the string to keep track of parentheses and function names
 when in lisp-mode, and this parameter is required to keep the bookkeeping
 straight.
 
+@end defun
 
-@cindex{delete-char}
-@cindex{delete-prev-char}
-@cindex{delete-word}
-@cindex{delete-prev-word}
-@example
-opal:Delete-Char @emph{text-obj}@ref{function}
 
-opal:Delete-Prev-Char @emph{text-obj}@ref{function}
+@defun opal:delete-char text-obj
+@defunx opal:delete-prev-char text-obj
+@defunx opal:delete-word text-obj
+@defunx opal:delete-prev-word text-obj
 
-opal:Delete-Word @emph{text-obj}@ref{function}
-
-opal:Delete-Prev-Word @emph{text-obj}@ref{function}
-@end example
 
 These functions are used to delete text from a multifont object. The functions
 @code{delete-char} and @code{delete-prev-char} delete a single character after
@@ -8001,13 +7975,12 @@ then deleting all non-whitespace up to the next whitespace character. The
 value returned by these functions is the characters deleted. @code{NIL} is returned
 if no characters are deleted.
 
-@cindex{delete-substring}
-@cindex{kill-rest-of-line}
-@example
-opal:Delete-Substring @emph{text-obj start-line# start-char# end-line# end-char#}@ref{function}
+@end defun
 
-opal:Kill-Rest-Of-Line @emph{text-obj}@ref{function}
-@end example
+
+@defun opal:delete-substring text-obj start-line-num start-char-num end-line-num end-char-num
+@defunx opal:kill-rest-of-line text-obj
+
 
 These functions are used to delete larger portions of text. The function
 @code{delete-substring} removes all characters within the given range. If the
@@ -8016,28 +7989,23 @@ start position is after the end position, nothing will happen. The function
 of the current line. When word wrap is on, the end of a wrapped line is where
 the wrap occurs. Both functions return the deleted text as a string.
 
-@cindex{set-text}
-@example
-opal:Set-Text @emph{text-obj  text}@ref{function}
-@end example
+@end defun
+
+@defun opal:set-text text-obj text
 
 This function is used to reset everything in the multifont object. All
-previous text is deleted and the new @emph{text} is put in its place. The
-@emph{text} parameter uses the @code{:initial-text} slot format. The new cursor
+previous text is deleted and the new @var{text} is put in its place. The
+@var{text} parameter uses the @code{:initial-text} slot format. The new cursor
 position will be at the beginning of the text. This function does not return
 a useful value.
 
+@end defun
 
 @subsection Operations on :initial-text Format Lists
 @node Operations on :initial-text Format Lists
 
-@cindex{text-to-pure-list}
-@cindex{pure-list-to-text}
-@example
-opal:Text-To-Pure-List @emph{text}@ref{function}
-
-opal:Pure-List-To-Text @emph{list}@ref{function}
-@end example
+@defun opal:text-to-pure-list text
+@defunx opal:pure-list-to-text list
 
 These functions converts text in the @code{:initial-text} slot format into a format
 that is similar but uses a list representation for fonts, colors,
@@ -8047,13 +8015,15 @@ text objects to files easier. To convert from @code{:initial-text}
 format to list use @code{text-to-pure-list} and to convert back use
 @code{pure-list-to-text}. 
 
-@cindex{text-to-string}
-@example
-opal:Text-To-String @emph{text}@ref{function}
-@end example
+@end defun
+
+
+@defun opal:text-to-string text
 
 This function converts text in the @code{:initial-text} format into a regular
 character string, losing all font, color, and mark information.
+
+@end defun
 
 @cindex{concatenate-text}
 @example
@@ -8109,7 +8079,7 @@ opal:Insert-Mark @emph{gob sticky-left} &key @emph{name info}@ref{function}
 
 The @emph{sticky-left} parameter should be T if the mark should stick to
 the character
-on its left, and NIL if it should stick to the one on its right. When
+on its left, and @code{nil} if it should stick to the one on its right. When
 a mark "sticks" to a character, the cursor cannot be inserted between
 the character and the mark. This makes the position of the mark
 equivalent to the position of the character, so it is easy to
@@ -8374,7 +8344,7 @@ This function changes the focus of a @code{focus-multifont-textinter} from one
 text object to another. The cursor of the newly activately text object will
 become visible indicating that it is ready to accept text. The cursor of the
 previous text object will become invisible and any selected text will become
-unselected. If the @emph{multifont-text} parameter is NIL, then the currently
+unselected. If the @emph{multifont-text} parameter is @code{nil}, then the currently
 selected text object will become unselected and no object will have the
 focus. This function does not return any useful value.
 
@@ -9563,7 +9533,7 @@ The @emph{cursor-list} argument is a pair or triplet that adheres to the syntax
 for the @code{:cursor} slot, discussed in the previous section. When
 @emph{window-list} is supplied, the cursor of each window is temporarily set
 with a cursor constructed out of the
-@emph{cursor-list} spec. When @emph{window-list} is NIL (the default), then @b{all}
+@emph{cursor-list} spec. When @emph{window-list} is @code{nil} (the default), then @b{all}
 Garnet windows are set with the temporary cursor. The value of the
 @code{:cursor} slot of
 each window remains unchanged, allowing the window's normal cursor to be
@@ -10746,10 +10716,10 @@ from scratch, without using any predefined gadgets).
 @end example
 
 
-@section Overview of the Chapter
-@node Overview of the Chapter
+@section Overview of the Section
+@node Overview of the Section
 
-This chapter is organized as follows. Section @ref{notcmulisp,,The
+This section is organized as follows. Section @ref{notcmulisp,,The
 Main Event Loop} discusses the @code{main-event-loop}, which allows
 you to run interactors while automatically updating the appearance of
 the windows.  Section @ref{detailsofoper,,Operation} describes how
@@ -10772,35 +10742,36 @@ and to see what parameters of the interactor you need to set. you can
 usually ignore the advanced customization sections.
 
 
-@section the main event loop
+@subsection the Main Event Loop
 @node the main event loop
 
-@cindex{common lisp}
+@cindex{Common Lisp}
 @cindex{lucid}
-@cindex{cmu common lisp}
+@cindex{cmu Common Lisp}
 @cindex{lispworks}
 @anchor{notcmulisp}
 
-cmu common lisp @cite{cmucommon lisp} supports sending events to the
-appropriate windows internally. therefore, under cmu common lisp, the
+CMU Common Lisp @cite{McDonald, 1987} supports sending events to the
+appropriate windows internally. Therefore, under cmu Common Lisp, the
 interactors begin to run immediately when they are created, and run
-continuously until they are terminated. while they are running, you can
-still type commands to the lisp listener (the read-eval-print loop).
+continuously until they are terminated. While they are running, you
+can still type commands to the lisp listener (the
+@code{read-eval-print} loop).
 
-to get the same effect on other lisps, garnet uses the multiple process
-mechanism of lucid, allegro, lispworks, and mcl common lisps. you
-usually do not need to worry about the information in this section if you are
-using cmu, allegro, lucid, or mcl common lisp, but you will probably need to go
-through an initialization phase for multiprocessing in lispworks (see the
-section "lispworks" in the overview chapter).
+To get the same effect on other lisps, Garnet uses the multiple
+process mechanism of Lucid, Allegro, Lispworks, and MCL Common
+Lisps. You usually do not need to worry about the information in this
+section if you are using CMU, Allegro, Lucid, or MCL Common Lisp, but
+you will probably need to go through an initialization phase for
+multiprocessing in Lispworks (@xref{lispworks,,Lispworks}.)
 
-note: @code{main-event-loop} also handles opal window refreshing, so graphical
-objects will not be redrawn automatically in other lisps unless this
-function is executing.
+Note: @code{main-event-loop} also handles Opal window refreshing, so
+graphical objects will not be redrawn automatically in other lisps
+unless this function is executing.
 
 
-@section main-event-loop
-@node main-event-loop
+@subsection @code{main-event-loop}
+@node @code{main-event-loop}
 
 @cindex{main-event-loop}
 @cindex{exit-main-event-loop}
@@ -10809,130 +10780,129 @@ function is executing.
 @cindex{f1}
 @anchor{garnetbreakkey}
 
-under other common lisps (like akcl and clisp), you need to explicitly
-start and stop the main loop that listens for x events. it is always
-ok to call the @code{main-event-loop} function, because it does nothing
-if it is not needed. therefore, after
-all the objects and interactors have been created, and after the
-@code{opal:update} call has been made, you must call the
-@code{inter:main-event-loop} procedure. this loops waiting and handling x
-events until explicitly stopped by typing @code{^c} (or whatever is your
-operating system break character) to the lisp listener window, or until you
-hit the garnet break key while the mouse is in a garnet window. this
-is defined by the global
-variable @code{inter:*garnet-break-key*}, and is bound to @code{:f1} by
-default. you can simply setf @code{inter:*garnet-break-key*} to some other
-character if you want to use @code{:f1} for something else.
+Under other Common Lisps (like AKCL and CLISP), you need to explicitly
+start and stop the main loop that listens for X11 events. it is always
+ok to call the @code{main-event-loop} function, because it does
+nothing if it is not needed. Therefore, after all the objects and
+interactors have been created, and after the @code{opal:update} call
+has been made, you must call the @code{inter:main-event-loop}
+procedure. This loops waiting and handling X11 events until explicitly
+stopped by typing @code{^c} (or whatever is your operating system
+break character) to the lisp listener window, or until you hit the
+garnet break key while the mouse is in a garnet window. This is
+defined by the global variable @code{inter:*garnet-break-key*}, and is
+bound to @key{F1} by default. you can simply setf
+@code{inter:*garnet-break-key*} to some other character if you want to
+use @key{f1} for something else.
 
-the other way for a program to exit @code{main-event-loop} is for it to call
-the procedure @code{inter:exit-main-event-loop}. typically,
+The other way for a program to exit @code{main-event-loop} is for it to call
+the procedure @code{inter:exit-main-event-loop}. Typically,
 @code{inter:main-event-loop} will be called at the end of your set up
 routine, and @code{inter:exit-main-event-loop} will be called from your quit
 routine, as in the example of section @ref{eventloopexample}.
 
-@example
-inter:main-event-loop &optional @emph{inter-window}@ref{function}
+@defun inter:main-event-loop &optional inter-window
 
-inter:exit-main-event-loop@ref{function}
-@end example
+@defunx inter:exit-main-event-loop
 
-the optional window to @code{main-event-loop} is used to tell which display
-to use. if not supplied, it uses the default opal display. you only need
+The optional window to @code{main-event-loop} is used to tell which display
+to use. If not supplied, it uses the default opal display. You only need
 to supply a parameter if you have a single lisp
 process talking to multiple displays.
 
+@end defun
 
-@section main-event-loop process
-@node main-event-loop process
-by default, garnet spawns a background process in allegro, lucid, and
-lispworks, which will run the interactor's main-event-loop while simultaneously
-allowing you to use the ordinary lisp listener.
-this means that you can use the lisp
-listener without having to hit the garnet break key (usually @code{:f1}).
+@subsection @code{main-event-loop} Process
+@node @code{main-event-loop} Process
 
-some programs seem to have trouble with this process. if your system doesn't
-work, try killing the main-event-loop process and executing
-@code{(inter:main-event-loop)} explicitly. in mcl, the background
-process is controlled by mcl itself, and cannot be killed. however,
+By default, garnet spawns a background process in Allegro, Lucid, and
+Lispworks, which will run the interactor's main-event-loop while
+simultaneously allowing you to use the ordinary lisp listener.  This
+means that you can use the lisp listener without having to hit the
+garnet break key (usually @key{f1}).
+
+Some programs seem to have trouble with this process. If your system
+doesn't work, try killing the main-event-loop process and executing
+@code{(inter:main-event-loop)} explicitly. in MCL, the background
+process is controlled by MCL itself, and cannot be killed. However,
 you might be able to break out of an infinite loop (or otherwise get
-mcl's attention) by executing the abort command (control-comma) or the
+MCL's attention) by executing the abort command (control-comma) or the
 reset command (control-period).
 
 
-@subsection launching and killing the main-event-loop-process
-@node launching and killing the main-event-loop-process
+@subsection Launching and Killing the @code{main-event-loop-process}
+@node Launching and Killing the @code{main-event-loop-process}
 @cindex{launch-main-event-loop-process}
 @cindex{kill-main-event-loop-process}
 
-@sp 1
-@example
-opal:launch-main-event-loop-process @ref{function}
 
-opal:kill-main-event-loop-process @ref{function}
-@end example
+@defun opal:launch-main-event-loop-process
 
-these are the top-level functions used for starting and stopping the
-main-event-loop process.
-you may need to call @code{launch-main-event-loop-process} if the
-process is killed explicitly or if the process crashes due to a bug.
-@sp 1
+@defunx opal:kill-main-event-loop-process
 
-while the main-event-loop background process is running, calling
+
+These are the top-level functions used for starting and stopping the
+@code{main-event-loop} process.  You may need to call
+@code{launch-main-event-loop-process} if the process is killed
+explicitly or if the process crashes due to a bug.
+
+While the main-event-loop background process is running, calling
 @code{(inter:main-event-loop)}, hitting the garnet break key, and
 calling @code{launch-main-event-loop-process} all have no effect.
 
-you can kill the background main-event-loop process by executing
+You can kill the background main-event-loop process by executing
 @code{kill-main-event-loop-process}, but normally you should not
 have to, even if you encounter an error and are thrown in the debugger.
-if you call it when the main-event-loop process is not running, there
+If you call it when the main-event-loop process is not running, there
 is no effect.
 
 @code{launch-main-event-loop-process} and @code{kill-main-event-loop-process}
 belong to the opal package because @code{opal:reconnect-garnet} and
 @code{opal:disconnect-garnet} need to call them.
 
+@end defun
 
-@subsection launch-process-p
-@node launch-process-p
+@subsection @code{launch-process-p}
+@node @code{launch-process-p}
 @cindex{launch-process-p}
-in the @code{garnet-loader}, there is a switch called @code{user::launch-process-p}
+
+In the @code{garnet-loader}, there is a switch called @code{user::launch-process-p}
 which tells whether or not garnet should automatically call
-@code{launch-main-event-loop-process} at load time. you can edit the
+@code{launch-main-event-loop-process} at load time. You can edit the
 @code{garnet-loader} to change the default value of this variable, or you
 can @code{setf} the variable before loading @code{garnet-loader}.
 
 
-@subsection main-event-loop-process-running-p
-@node main-event-loop-process-running-p
+@subsection @code{main-event-loop-process-running-p}
+@node @code{main-event-loop-process-running-p}
 @cindex{main-event-loop-process-running-p}
 
-@example
-opal:main-event-loop-process-running-p @ref{function}
-@end example
+@defun opal:main-event-loop-process-running-p
 
-this function tells you whether
-the parallel main-event-loop process is running, and is not in the debugger.
+This function tells you whether the parallel @code{main-event-loop} process
+is running, and is not in the debugger.
 
+@end defun
 
-
-@section operation
-@node operation
+@subsection Operation
+@node Operation
 
 @anchor{detailsofoper}
 
-@section Creating and Destroying
+@subsection Creating and Destroying
 @node Creating and Destroying
 For interactors to be used, they must operate on objects that appear in
 Garnet windows. The @code{inter:interactor-window} prototype is described
 in the Opal Chapter. To create an interactor window, use:
 
-@example
-(create-instance @emph{name} inter:interactor-window @emph{(slot value)(slot value)...})
-@end example
+
+@defun create-instance name inter:interactor-window (@var{slot} @var{value})(@var{slot} @var{value})@math{...}
+
 @cindex{create-instance}
 @cindex{Interactor-Window}
+
 This creates an interactor window named @var{name} (which will usually be a
-quoted symbol like @code{'MYWINDOW} or NIL). If @var{name} is NIL, then a
+quoted symbol like @code{'mywindow} or @code{nil}). If @var{name} is @code{nil}, then a
 system-supplied name is used. This returns the new
 window. The @code{:left}, @code{:top}, @code{:width}, and @code{:height} (and other
 parameters) are given just as for all objects.
@@ -10947,7 +10917,7 @@ To create an interactor, use:
 (create-instance @emph{name} Inter:@emph{InteractorType} @emph{(slot value) (slot value)...})
 @end example
 @cindex{create-instance}
-This creates an interactor named @emph{name} (which can be NIL if
+This creates an interactor named @emph{name} (which can be @code{nil} if
 a system-supplied name is desired) that is an instance of @emph{InteractorType}
 (which will be one of the specific types described in section
 @ref{specificinters,,Specific Interactors}, such as @code{button-interactor, menu-interactor,
@@ -10967,7 +10937,7 @@ opal:Destroy @emph{an-interactor-window} @value{method}
 
 Invoking this method destroys an interactor or window. If @emph{erase} is T,
 then the interactor is aborted and
-deallocated. If @emph{erase} is NIL, it is just destroyed. Use NIL
+deallocated. If @emph{erase} is @code{nil}, it is just destroyed. Use @code{nil}
 when the window the interactor is in is going to be destroyed anyway.
 Normally, it is not necessary to call this on interactors since they are
 destroyed automatically when the window they are associated with is destroyed.
@@ -10975,6 +10945,7 @@ destroyed automatically when the window they are associated with is destroyed.
 Invoking this method on a window destroys the window, all objects in it,
 and all interactors associated with it.
 
+@end defun
 
 @section Continuous
 @node Continuous
@@ -11023,7 +10994,7 @@ slot. If a graphical object is supplied as the value of this slot, then
 the interactor will modify this object while it is running, and only modify
 the ``real'' object when the interaction is complete (section @ref{where}
 discusses how the interactor finds the ``real'' object). If no value is
-supplied in this slot (or if NIL is specified), then the interactor will
+supplied in this slot (or if @code{nil} is specified), then the interactor will
 modify the actual object while it is running. In either case, the
 operation can still be aborted, since the interactor saves enough state to
 return the objects to their initial configuration if the user requests an
@@ -11249,16 +11220,16 @@ for (as in the @code{:start-event} slot):
 @end example
 
 
-@subsection Special Values T and NIL
-@node Special Values T and NIL
+@subsection Special Values T and @code{nil}
+@node Special Values T and @code{nil}
 
-Finally, the event specification can be T or NIL. T matches any event and
-NIL matches no event. Therefore, if NIL is used for the @code{:start-event},
+Finally, the event specification can be T or @code{nil}. T matches any event and
+NIL matches no event. Therefore, if @code{nil} is used for the @code{:start-event},
 then the interactor will never start by itself (which can be useful for
 interactors that are explicitly started by a programmer). If T is used for
 the @code{:start-event}, the interactor will start immediately when it is
 created, rather than waiting for an event. Similarly, if
-@code{stop-event} is NIL, the interactor will never stop by itself.
+@code{stop-event} is @code{nil}, the interactor will never stop by itself.
 
 
 @section Values for the ``Where'' slots
@@ -11449,7 +11420,7 @@ test. The calling sequence for the function is:
 The arguments are the values in the @code{-where} list, along with the
 interactor itself, and an event.
 The @code{event} is a Garnet event structure, defined in section @ref{Events}.
-This function should return NIL if the event does not pass (e.g., if it is
+This function should return @code{nil} if the event does not pass (e.g., if it is
 outside the object), or else the object that the interactor should start
 over (which will usually be obj itself or some child of obj). The
 implementor of this function should call @code{opal:point-to-leaf}, or
@@ -11549,7 +11520,7 @@ This uses the Opal message @code{point-to-leaf} on the aggregate.
 the mouse is over @code{<agg>}. If there is an object at the mouse, then it is
 returned (as with @code{:element-of}). If there is no object, then the special
 value @code{:none} is returned. If the mouse is not over
-the aggregate, then NIL is returned.
+the aggregate, then @code{nil} is returned.
 This uses the Opal message @code{point-to-component} on the aggregate.
 
 @item @code{(:leaf-element-of-or-none <agg> [:type <objtype>])}
@@ -11558,7 +11529,7 @@ returns leaf children like @code{:leaf-element-of}.
 If there is an object at the mouse, then it is
 returned. If there is no object, then the special
 value @code{:none} is returned. If the mouse is not over
-the aggregate, then NIL is returned.
+the aggregate, then @code{nil} is returned.
 This uses the Opal message @code{point-to-leaf} on the aggregate.
 
 @item @code{(:list-element-of <obj> <slot> [:type
@@ -11584,13 +11555,13 @@ Uses @code{point-in-gob} if the object is @emph{not} an aggregate, and uses
 <objtype>])}
 @cindex{list-element-of-or-none} - like @code{:list-element-of},
 except if the event isn't over an object, then returns the special value @code{:none}.
-Note that this never returns NIL.
+Note that this never returns @code{nil}.
 
 @item @code{(:list-leaf-element-of-or-none <obj> <slot> [:type
 <objtype>])}
 @cindex{list-leaf-element-of-or-none} - like @code{:list-leaf-element-of},
 except if the event isn't over an object, then returns the special value @code{:none}.
-Note that this never returns NIL.
+Note that this never returns @code{nil}.
 
 @item @code{(:check-leaf-but-return-element <agg> [:type
 <objtype>])}
@@ -11620,7 +11591,7 @@ returned.
 <objtype>])}
 @cindex{list-check-leaf-but-return-element-or...} - 
 This is like @code{:list-check-leaf-but-return-element} except that if nothing is
-found, @code{:none} is returned instead of NIL.
+found, @code{:none} is returned instead of @code{nil}.
 
 @item @code{(:custom <obj> 'function-name arg1 arg2 ....)}
 @cindex{custom} - 
@@ -11647,7 +11618,7 @@ form cannot be used for the @code{:start-where}.
 While the interactor is running, the mouse might be moved outside the area
 specified by the @code{:running-where} slot. The value of the interactor
 slot @code{:outside} determines what happens in this case. When
-@code{:outside} is NIL, which is the default, the interaction is
+@code{:outside} is @code{nil}, which is the default, the interaction is
 temporarily turned off until the mouse moves back inside.
 This typically will make the feedback be invisible. In this case, if the
 user gives the stop event while outside, the interactor will be aborted.
@@ -11760,14 +11731,14 @@ stop-action is called and the state returns to start.
 
 If the stop-event occurs while the mouse is @emph{outside}, then if the
 @code{:outside} field has the value @code{:last}, the the stop-action is called
-with the last legal value. If @code{:outside} is NIL, then the
+with the last legal value. If @code{:outside} is @code{nil}, then the
 abort-action is called. In either case, the state returns to start.
 Note: if @code{:outside = :last}, and there is no abort-event, then there is
 no way to abort an interaction once it has started.
 @end enumerate
 @end enumerate
 
-If a program changes the active state to NIL (not active) and the
+If a program changes the active state to @code{nil} (not active) and the
 interactor is running or outside, the interactor is immediately aborted (so
 the abort-action is called), and the interactor waits for a program to make
 it active again, at which point it is in the start state. (If the
@@ -11856,8 +11827,8 @@ inter:Add-Window-Accelerator @emph{win key fn} &key @emph{replace-existing? firs
 Will call the function @emph{fn} whenever @emph{key} is hit. If @emph{first?}
 then the accelerator will be tested before all interactors, otherwise
 it will be tested if no interactor uses @emph{key}.
-@emph{Replace-existing}, if non-NIL, will remove any other assignments
-for @emph{key}. By using the default NIL value, you can temporarily hide
+@emph{Replace-existing}, if non-@code{nil}, will remove any other assignments
+for @emph{key}. By using the default @code{nil} value, you can temporarily hide
 an accelerator binding.
 
 @sp 1
@@ -11917,9 +11888,9 @@ section @ref{where}.
 
 
 The following fields are optional. If they are not supplied, then the
-default value is used, as described below. Note that supplying NIL is
+default value is used, as described below. Note that supplying @code{nil} is
 @emph{not} the same as not supplying a value (since not supplying a value
-means to use the default, and NIL often means to not do something).
+means to use the default, and @code{nil} often means to not do something).
 
 @item @code{:window}
 @cindex{window}
@@ -11930,7 +11901,7 @@ that operate on multiple windows. See section @ref{multiwindow}.
 @item @code{:start-event}
 @cindex{start-event}
 - the event that causes the interactor to start
-working. The default value is @code{:leftdown}. NIL means the interactor
+working. The default value is @code{:leftdown}. @code{nil} means the interactor
 never starts by itself (see @ref{startinteractor}).
 Using @code{T} means no event, which
 means that the interactor is operating whenever the mouse is over
@@ -11940,13 +11911,13 @@ specification is described in section @ref{eventspec}.
 @item @code{:continuous}
 @cindex{continuous}
 - if this is T, then the interactor operates continuously
-from start-event until stop-event. If it is NIL, then the interactor
+from start-event until stop-event. If it is @code{nil}, then the interactor
 operates exactly once when start-event happens. The default value
 is @code{T}. See section @ref{continuous} for more explanation.
 
 @item @code{:stop-event}
 @cindex{stop-event}
-- This is not used if @code{:continuous} is NIL. If @code{:continuous} is T,
+- This is not used if @code{:continuous} is @code{nil}. If @code{:continuous} is T,
 @code{:stop-event} is the
 event that the interaction should stop on. If not supplied, and the
 start-event is a mouse down event (such as @code{:leftdown}), then
@@ -11965,8 +11936,8 @@ interactor never stops (unless it is turned off using @code{ChangeActive}).
 @item @code{:feedback-obj}
 @cindex{feedback-obj}
 - If supplied, then this is the object to be used to show the feedback while the
-interaction is running. If NIL, then typically the object itself will be
-modified. The default value is NIL. See the descriptions of the specific
+interaction is running. If @code{nil}, then typically the object itself will be
+modified. The default value is @code{nil}. See the descriptions of the specific
 interactors for more information.
 
 @item @code{:running-where}
@@ -11983,16 +11954,16 @@ See section @ref{where} for a complete discussion of this field.
 @cindex{outside}
 - Determines what to do when the mouse goes outside of running-where.
 Legal values are @code{:last}, which means to use the last value before the
-mouse went outside, or NIL which
+mouse went outside, or @code{nil} which
 means to return to the original value (before the interaction
-started). The default value is NIL.
+started). The default value is @code{nil}.
 See section @ref{outside} for more explanation.
 
 @item @code{:abort-event}
 @cindex{abort-event}
 - This is an event that causes the interaction to terminate prematurely.
-If abort-event is NIL, then there is no separate event to cause aborts.
-The default value is NIL. The form for abort-events is the same as for
+If abort-event is @code{nil}, then there is no separate event to cause aborts.
+The default value is @code{nil}. The form for abort-events is the same as for
 start-events (see section @ref{events}).
 
 @item @code{:waiting-priority}
@@ -12019,7 +11990,7 @@ specific to the particular type of the interactor.
 - This procedure is called once when the @code{:stop-event} happens,
 or if the interactor is @emph{not} continuous, then this procedure is called once
 when the @code{:start-event} happens. The form for the arguments is specific to the
-particular interactor sub-class. Specifying NIL means do no action.
+particular interactor sub-class. Specifying @code{nil} means do no action.
 Normally, the @code{stop-action} procedure (as well as the @code{start-action,
 running-action, etc. below} is @emph{not} provided by the programmer, but rather
 inherited. These functions provide the default behavior, such as turning
@@ -12035,11 +12006,11 @@ start-where
 @c that is called. If @code{:contininuous} is T (the default), then
 @c @code{:running-action}, @code{:stop-action}, etc. will be called afterwards.
 @c **}
-and continuous is T (if continuous is NIL, then @code{stop-action}
+and continuous is T (if continuous is @code{nil}, then @code{stop-action}
 is called when the start-event happens).
 The form for the arguments is specific to the
 particular interactor sub-class. 
-Specifying NIL means do no action. See section @ref{customroutines}.
+Specifying @code{nil} means do no action. See section @ref{customroutines}.
 
 @item @code{:running-action}
 @cindex{running-action}
@@ -12047,7 +12018,7 @@ Specifying NIL means do no action. See section @ref{customroutines}.
 repeatedly (typically for each incremental mouse movement) while the mouse
 is inside @code{:running-where} and between when @code{:start-event} and
 @code{:stop-event} happen. The form for the arguments is specific to the
-particular interactor sub-class. Specifying NIL means do no action.
+particular interactor sub-class. Specifying @code{nil} means do no action.
 See section @ref{customroutines}.
 
 @item @code{:abort-action}
@@ -12055,7 +12026,7 @@ See section @ref{customroutines}.
 - This procedure is called when the interaction is aborted, either by
 @code{:abort-event} or @code{:stop-event} while outside. 
 The form for the arguments is specific to the
-particular interactor sub-class. Specifying NIL means do no action. 
+particular interactor sub-class. Specifying @code{nil} means do no action. 
 See section @ref{customroutines}.
 
 @item @code{:outside-action}
@@ -12064,7 +12035,7 @@ See section @ref{customroutines}.
 @code{:running-where} to being outside. It is @emph{not} called repeatedly while
 outside (so it is different from @code{:running-action}).
 The form for the arguments is specific to the
-particular interactor sub-class. Specifying NIL means do no action.
+particular interactor sub-class. Specifying @code{nil} means do no action.
 See section @ref{customroutines}.
 
 @item @code{:back-inside-action}
@@ -12073,7 +12044,7 @@ See section @ref{customroutines}.
 @code{:running-where} to being inside. Note that
 @code{:running-action} is @emph{not} usually called on this point.
 The form for the arguments is specific to the
-particular interactor sub-class. Specifying NIL means do no action.
+particular interactor sub-class. Specifying @code{nil} means do no action.
 See section @ref{customroutines}.
 
 @item @code{:active}
@@ -12083,14 +12054,14 @@ from the time it is created until it is destroyed. However, it is
 sometimes convenient to make an interactor inactive, so it does not look
 for any events, for example, to have different modes in the interface.
 This can be achieved by setting the active field of the
-interactor. If the interactor is running, setting @code{:active} to NIL
+interactor. If the interactor is running, setting @code{:active} to @code{nil}
 causes it to abort, and if the interactor is
 not running, then this just keeps it from starting.
 This field can be set and changed at any time either using
 @code{s-value} or by having a formula in this slot, but it is safest to use
 the @code{Change-active} procedure, since this guarantees that the interactor
 will be aborted immediately if it is running. Otherwise, if it is running
-when the @code{active} field changes to NIL, then it will abort the next time
+when the @code{active} field changes to @code{nil}, then it will abort the next time
 there is an event (e.g., when the mouse moves). See section @ref{active}
 for more information.
 
@@ -12098,7 +12069,7 @@ for more information.
 @cindex{self-deactivate}
 - Normally, interactors are always active. If this field is @code{T}
 however, the interactor will become inactive after
-it runs once (it will set its own @code{:active} slot to NIL).
+it runs once (it will set its own @code{:active} slot to @code{nil}).
 The interactor will then not run again until the @code{:active}
 field is explicitly set to @code{T}. If this field is used, it is probably a
 bad idea to have a formula in the @code{:active} slot.
@@ -12120,8 +12091,8 @@ There are two procedures added for exceptions: @code{:over-illegal-item} and
 @code{:leave-illegal-item}, see below.
 Parameters to the exception-p procedure
 are @code{(an-interactor objUnderMouse)} and it should
-return T or NIL. Returning @code{T} means that the value is an exception (is
-illegal), and this is treated as if the mouse went outside. Returning NIL
+return T or @code{nil}. Returning @code{T} means that the value is an exception (is
+illegal), and this is treated as if the mouse went outside. Returning @code{nil}
 means the value is OK. The default is for there to be no illegal values.
 The default function for this parameter (use this by supplying T) checks the
 slot @code{:illegal} in the object under the mouse.
@@ -12147,16 +12118,16 @@ the mouse goes over. @B{This is not implemented yet.}
 - If non-NIL, then this interactor controls something that should pop-up
 (become visible) when the interactor starts, and become invisible when the
 interactor completes.
-If NIL, then object that the interactor refers to should be
+If @code{nil}, then object that the interactor refers to should be
 visible. If non-NIL, then the value of pop-up should be a procedure to
 cause the object to be displayed and erased. It is called with
 @code{(an-interactor visible-or-erase)}, where @code{visible-or-erase} is T to
-make it visible, and NIL to erase it.
+make it visible, and @code{nil} to erase it.
 The default procedure is to set
-the object's @code{:visible} slot to T, and to NIL for
+the object's @code{:visible} slot to T, and to @code{nil} for
 stop-action. If would be an error to have start-where be the object if it
 was a pop-up, since it would not be visible to press on. The default value
-for this parameter is NIL. @B{This is not implemented yet.}
+for this parameter is @code{nil}. @B{This is not implemented yet.}
 ************************** NIY **********************************
 @end verbatim
 
@@ -12184,7 +12155,7 @@ from menus is that when the mouse moves away, the item is deselected,
 rather than having a different item selected. Useful for sets of buttons
 like "radio buttons" and "check boxes", and also for single, stand-alone buttons.
 This can also be used just to select an object by making
-@code{:continuous} be NIL. 
+@code{:continuous} be @code{nil}. 
 
 @item @code{inter:move-grow-interactor}
 @cindex{Move-Grow-Interactor}
@@ -12237,7 +12208,7 @@ The following interactors are planned but not implemented yet.
 - This returns all of the points the mouse goes
 through between @code{start-event} and @code{stop-event}. This is useful for
 inking in a drawing program. Although this isn't implemented yet, it is
-trivial to use a gesture interactor with a @code{:classifier} of NIL.
+trivial to use a gesture interactor with a @code{:classifier} of @code{nil}.
 
 @item @code{inter:multi-point-interactor}
 @cindex{Multi-Point-Interactor}
@@ -12347,7 +12318,7 @@ interactor, then the @code{:obj-over} slot of the feedback object is set to
 the current menu item
 object. Also, the @code{:interim-selected} slot of the current menu item is
 set to T, and the  @code{:interim-selected} slots of all other items are set
-to NIL. Note: there is always at most one interim-selected object,
+to @code{nil}. Note: there is always at most one interim-selected object,
 independent of the value of the @code{:how-set} slot.
 
 This supports two different ways to handle interim feedback:
@@ -12359,7 +12330,7 @@ This supports two different ways to handle interim feedback:
 @cindex{Visible (slot)}
 This object should be supplied in the
 @code{:feedback-obj} slot of the interactor. The @code{:obj-over} slot of this
-object is set to the menu item that the feedback should appear over, or NIL
+object is set to the menu item that the feedback should appear over, or @code{nil}
 if there is no object. The following is an example of a typical reverse-video black
 rectangle as a feedback object:
 @cindex{feedback-rect}
@@ -12461,7 +12432,7 @@ ends up on.
 The Menu-Interactor supplies three ways to have graphics (or applications)
 depend on the final selection. Both the @code{:selected} slot of the
 individual item and the @code{:selected} slot of the aggregate
-the items are in are set. The item's @code{:selected} slot is set with T or NIL, as
+the items are in are set. The item's @code{:selected} slot is set with @code{t} or @code{nil}, as
 appropriate, and the aggregate's @code{:selected} slot is set with the
 particular item(s) selected. The number of items that are
 allowed to be selected is controlled by the @code{:how-set} slot of the
@@ -12469,7 +12440,7 @@ interactor, as described in section @ref{menuhowset}.
 
 Note that the aggregate's @code{:selected} slot often contains a list of
 object names, but the @code{:selected} slot in the individual items will
-always contain T or NIL.
+always contain @code{t} or @code{nil}.
 The programmer is responsible for setting up constraints so that the
 appropriate final feedback is shown based on the @code{:selected} field.
 
@@ -12608,11 +12579,11 @@ this object. The item's @code{:selected} slot is set with T.
 @item @code{:clear}
 @cindex{clear}
 - De-select the final item. At most one item is selectable at a time.
-The aggregate's @code{:selected} slot is set to NIL.
+The aggregate's @code{:selected} slot is set to @code{nil}.
 (If some item other than the final item used to be selected, then that
 other item becomes de-selected. I.e., using @code{:clear} always causes
 there to be no selected items.)
-The item's @code{:selected} slot is set to NIL. (This choice for how-set is
+The item's @code{:selected} slot is set to @code{nil}. (This choice for how-set is
 mainly useful when the menu item contains a single item that can be turned
 on and off by different
 interactors, e.g., left button turns it on and right button turns it
@@ -12642,14 +12613,14 @@ The item's @code{:selected} slot is set with T.
 @cindex{list-remove}
 - If in list of selected items, then remove it. Multiple
 items selectable at a time. The item is removed from the aggregate's
-@code{:selected} slot. The item's @code{:selected} slot is set with NIL.
+@code{:selected} slot. The item's @code{:selected} slot is set with @code{nil}.
 
 @item @code{:list-toggle}
 @cindex{list-toggle}
 - If in list of selected items, then remove it, otherwise
 add it. Multiple items are selectable at a time. The item is removed or
 added to the aggregate's @code{:selected} slot. The
-item's @code{selected} slot is set with T or NIL.
+item's @code{selected} slot is set with @code{t} or @code{nil}.
 
 <a number> @cindex{numbers (used in :how-set slot)}
 - Increment the @code{:selected} slot of the item by that amount
@@ -12730,7 +12701,7 @@ NIL is supplied for any slot name, then that slot isn't set by the
 interactor.
 
 The slots in the object are
-set with T or NIL, and the slot in the aggregate is set with the
+set with @code{t} or @code{nil}, and the slot in the aggregate is set with the
 selected object or a list of the selected objects.
 
 
@@ -12837,8 +12808,8 @@ menu interactor.
 As with menus, button-interactors set both the @code{:obj-over} slot of
 the object in the @code{:feedback-obj} slot, and the @code{:interim-selected}
 slot of the current button item. The @code{:obj-over} slot is set with the
-object that is under the mouse or NIL if none, and the
-@code{:interim-selected} slot is set with T or NIL. See section
+object that is under the mouse or @code{nil} if none, and the
+@code{:interim-selected} slot is set with T or @code{nil}. See section
 @ref{menuinterimfeedback} for more information.
 
 @subsection Final Feedback
@@ -12853,7 +12824,7 @@ Both the @code{:selected} slot of the
 individual item and the @code{:selected} slot of the aggregate
 the items are in are set, and the @code{:obj-over} slot of the object in the
 @code{:final-feedback-obj} slot (if any) is set.
-The item's @code{:selected} slot is set with T or NIL, as
+The item's @code{:selected} slot is set with @code{t} or @code{nil}, as
 appropriate, and the aggregate's @code{:selected} slot is set with the
 name(s) of the particular item(s) selected.
 
@@ -13141,7 +13112,7 @@ A movable line could be defined as:
 
 The slot @code{:line-p} tells the interactor whether to change the @code{:box}
 slot or the @code{:points} slot.
-If @code{:line-p} is NIL (the default), then the interactor changes the
+If @code{:line-p} is @code{nil} (the default), then the interactor changes the
 object by setting its
 @code{:box} slot to a list containing the new values for (left, top, width,
 height). If T, then the interactor changes the object by setting its
@@ -13184,7 +13155,7 @@ follows:
 @end example
 		
 This interactor will either change the position of the object (if
-@code{:grow-p} is NIL) or the size. For lines, (if @code{:line-p} is T),
+@code{:grow-p} is @code{nil}) or the size. For lines, (if @code{:line-p} is T),
 ``growing'' means changing a single end point to follow the mouse while the
 other stays fixed, and moving means changing both end points to follow the
 mouse so that the line keeps the same length and slope.
@@ -13207,7 +13178,7 @@ When the interaction is running, either the object itself or a separate
 should be specified in the @code{:feedback-obj} slot of the interactor, and
 it will need the same kinds of formulas on @code{:box} or @code{:points} as the
 actual object. If
-the object itself should change, then @code{:feedback-obj} should be NIL.
+the object itself should change, then @code{:feedback-obj} should be @code{nil}.
 If there is a feedback object, the interactor also sets its
 @code{:obj-over} field to the actual object that is being moved.
 This can be used, for example,
@@ -13215,45 +13186,45 @@ to control the visibility of the feedback object or its size.
 
 The object being changed is
 either gotten from the @code{:obj-to-change} slot of the interactor, or if
-that is NIL, then from the object returned from @code{:start-where}.
+that is @code{nil}, then from the object returned from @code{:start-where}.
 If the interactor is to work over
-multiple objects, then @code{:obj-to-change} should be NIL, and @code{:start-where}
+multiple objects, then @code{:obj-to-change} should be @code{nil}, and @code{:start-where}
 will be one of the forms that returns one of a set of objects (e.g., 
 @code{:element-of}).
 
-@subsection Attach-Point
-@node Attach-Point
+@subsection attach-point
+@node attach-point
 @anchor{attachpoint} 
 @cindex{attach-point}
-The @code{:attach-point} slot of interactors controls where the mouse will
-attach to the object. The legal choices
+the @code{:attach-point} slot of interactors controls where the mouse will
+attach to the object. the legal choices
 depend on @code{:line-p}.
 
-If @code{:line-p} is T (so the end-point of the line
+if @code{:line-p} is t (so the end-point of the line
 is changing), and the object is being grown, then legal choices are:
 
 @table @code
-@item @code{1}: Change the first endpoint of the line (x1, y1).
+@item @code{1}: change the first endpoint of the line (x1, y1).
 
-@item @code{2}: Change the second endpoint of the line (x2, y2).
+@item @code{2}: change the second endpoint of the line (x2, y2).
 
-@item @code{:where-hit}: Change which-ever end point is nearest the
+@item @code{:where-hit}: change which-ever end point is nearest the
 initial press.
 @end table
 
-If @code{:line-p} is T and the object is being moved, then legal choices are:
+if @code{:line-p} is t and the object is being moved, then legal choices are:
 
 @table @code
-@item @code{1}: Attach mouse to the first endpoint.
+@item @code{1}: attach mouse to the first endpoint.
 
-@item @code{2}: Attach mouse to the second endpoint.
+@item @code{2}: attach mouse to the second endpoint.
 
-@item @code{:center}: Attach mouse to the center of the line.
+@item @code{:center}: attach mouse to the center of the line.
 
-@item @code{:where-hit}: Attach mouse where pressed on the line.
+@item @code{:where-hit}: attach mouse where pressed on the line.
 @end table
 
-If @code{:line-p} is NIL (so the bounding box is changing, either moving or
+if @code{:line-p} is @code{nil} (so the bounding box is changing, either moving or
 growing) the choices are:
 
 @table @code 
@@ -13280,7 +13251,7 @@ wherever the mouse was first pressed inside the object.
 @end table
 
 The default value is @code{:where-hit} since this works for both @code{:line-p}
-T and NIL.
+T and @code{nil}.
 
 If growing and @code{:attach-point} is @code{:where-hit}, the object
 grows from the nearest side or corner (the object is implicitly divided into 9
@@ -13317,23 +13288,23 @@ The extra parameters are:
 @item @code{:line-p}
 @cindex{line-p}
 - This slot determines whether the object's bounding box or line end points
-are set. If @code{:line-p} is NIL, then the @code{:box} slot is set to a list
+are set. If @code{:line-p} is @code{nil}, then the @code{:box} slot is set to a list
 containing (left top width height) and if @code{:line-p} is T, then the
 @code{:points} slot is set with a list containing (x1 y1 x2 y2).
-The default is NIL.
+The default is @code{nil}.
 
 @item @code{:grow-p}
 @cindex{grow-p}
 - This slot determines whether the
 object moves or changes size. The
-default is NIL, which means to move. Non-NIL means to change size.
+default is @code{nil}, which means to move. Non-NIL means to change size.
 
 @item @code{:obj-to-change}
 @cindex{obj-to-change}
 - If an object is supplied as this parameter, then the interactor changes
 that object. Otherwise, the interactor changes the object returned from
 @code{:start-where}. If the interactor should
-change one of a set of objects, then @code{:obj-to-change} should be NIL and
+change one of a set of objects, then @code{:obj-to-change} should be @code{nil} and
 @code{:start-where} should be be a form that will return the object to change.
 The reason that there may need to be a separate object passed
 as the @code{:obj-to-change}
@@ -13348,16 +13319,16 @@ different from the one in the @code{:feedback-obj} since the object in the
 @cindex{attach-point}
 - This tells where the mouse will attach to the object. Values are
 @code{1, 2, :center} or @code{:where-hit} if @code{:line-p} is T, or @code{:N, :S, :E, :W,
-:NW, :NE, :SW, :SE, :center,} or @code{:where-hit} if @code{:line-p} is NIL.
+:NW, :NE, :SW, :SE, :center,} or @code{:where-hit} if @code{:line-p} is @code{nil}.
 The default value is @code{:where-hit}.
 See section @ref{attachpoint} for a full explanation.
 
 @item @code{:min-width}
 @cindex{min-width}
 - The @code{:min-width} and @code{:min-height} fields determine the minimum
-legal width and height of the object if @code{:line-p} is NIL and
+legal width and height of the object if @code{:line-p} is @code{nil} and
 @code{:grow-p} is T.
-Default is 0. If @code{:min-width} or @code{:min-height} is NIL, then there is no
+Default is 0. If @code{:min-width} or @code{:min-height} is @code{nil}, then there is no
 minimum width or height. In this case, the width and height of the object
 may become negative values which causes an error (so this is not recommended).
 Unlike the @code{two-point-interactor} (section @ref{twopoint}),
@@ -13371,7 +13342,7 @@ the @code{move-grow-interactor}.
 @item @code{:min-length}
 @cindex{min-length}
 - If @code{:line-p} is T, this specifies the minimum length for lines. The
-default is NIL, for no minimum. This slot is ignored if @code{:line-p} is NIL.
+default is @code{nil}, for no minimum. This slot is ignored if @code{:line-p} is @code{nil}.
 
 @item @code{:input-filter}
 @cindex{input-filter}
@@ -13396,7 +13367,7 @@ slot. This function is called with the following arguments:
 (lambda (an-interactor object-being-changed final-points))
 @end example
 @code{Final-points} is a list of four values, either the left, top, width and
-height if @code{:line-p} is NIL, or x1, y1, x2, and y2 if @code{:line-p} is T.
+height if @code{:line-p} is @code{nil}, or x1, y1, x2, and y2 if @code{:line-p} is T.
 
 @subsection Normal Operation
 @node Normal Operation
@@ -13405,7 +13376,7 @@ height if @code{:line-p} is NIL, or x1, y1, x2, and y2 if @code{:line-p} is T.
 If the value of @code{:continuous} is T,
 then when the start event happens, the interactor determines the object to
 be changed as
-either the value of the @code{:obj-to-change} slot, or if that is NIL, then
+either the value of the @code{:obj-to-change} slot, or if that is @code{nil}, then
 the object returned from the @code{:start-where}.
 The @code{:obj-over} slot of the object in
 the @code{:feedback-obj} slot of the interactor is set to the object being changed.
@@ -13420,20 +13391,20 @@ if there is no feedback object.
 If the mouse goes outside of @code{:running-where}, then if @code{:outside} is
 @code{:last}, nothing happens until the mouse comes back inside or the stop
 or abort events happen (the object stays at its last legal inside value).
-If @code{:outside} is NIL, then the feedback
-object's @code{:obj-over} slot is set to NIL (so there should be a formula in
+If @code{:outside} is @code{nil}, then the feedback
+object's @code{:obj-over} slot is set to @code{nil} (so there should be a formula in
 the feedback object's @code{:visible} slot that depends on @code{:obj-over}).
 If there is no feedback object and the mouse goes outside, then the object
 being changed is returned to its original size and position (before the
 interactor started).
 
 If the abort event happens, then the feedback
-object's @code{:obj-over} slot is set to NIL, or if there is no feedback
+object's @code{:obj-over} slot is set to @code{nil}, or if there is no feedback
 object, then the object being changed is returned to its original size and
 position (before the interactor started).
 
 When the stop event happens, the feedback object's @code{:obj-over} slot is
-set to NIL, and the @code{:box} or @code{:points} slot of the actual object are
+set to @code{nil}, and the @code{:box} or @code{:points} slot of the actual object are
 set with the last value, and the final-function
 (if any) is called.
 
@@ -13493,17 +13464,17 @@ same as @code{:box}. Note that the interactor ignores the
 actual value put in @code{:slots-to-set} and decides which to use based
 on the value of the @code{:line-p} slot of the object.
 
-@item a list of four T's and NILs (representing @code{(:left :top :width :height)}
+@item a list of four T's and @code{nil}s (representing @code{(:left :top :width :height)}
 or @code{(:x1 :y1 :x2 :y2)})
 In this case,
 the interactor sets the slots of the 
-object that have T's and doesn't set the slots that are NIL. For
-example, if @code{:slots-to-set} is @code{(T T NIL NIL)}, then the
+object that have T's and doesn't set the slots that are @code{nil}. For
+example, if @code{:slots-to-set} is @code{(T T @code{nil} @code{nil})}, then the
 interactor will set the @code{:x1} and @code{:y1} slots of objects that
 are @code{:line-p}, and the @code{:left} and @code{:top} slots of all other
 objects.
 
-@item a list of four slot names or NILs
+@item a list of four slot names or @code{nil}s
 In this case, the values are set
 into the specified slots of the object. Any NILs mean that slot isn't
 set. The specified slots are used whether the object is @code{:line-p} or
@@ -13523,7 +13494,7 @@ interactors package to help with this:
 inter:Clip-And-Map @emph{val  val-1  val-2} &optional @emph{target-val-1  target-val-2}@ref{function}
 @end example
 
-If @emph{target-val-1} or @emph{target-val-2} is NIL or not supplied, then this
+If @emph{target-val-1} or @emph{target-val-2} is @code{nil} or not supplied, then this
 function just clips @emph{val} to be between @emph{val-1} and @emph{val-2} (inclusive).
 
 If @emph{target-val-1} and @emph{target-val-2} are supplied, then this function 
@@ -13619,7 +13590,7 @@ probably use the @code{multi-point-interactor} instead, except that
 it is not implemented yet.
 
 Since lines and rectangles are defined differently, there are two modes for
-this interactor, determined by the @code{:line-p} slot. If @code{:line-p} is NIL, then
+this interactor, determined by the @code{:line-p} slot. If @code{:line-p} is @code{nil}, then
 rectangle mode is used, so the new object is defined by its left, top, width,
 and height. If @code{:line-p} is T, then the object is defined by two
 points: x1, y1, and x2, y2. Both of these are stored as a list of four values.
@@ -13656,7 +13627,7 @@ the @code{:left, :top, :width,} and @code{:height} slots or the @code{:x1, :y1,
 
 The slot @code{:line-p} tells the interactor whether to change the @code{:box}
 slot or the @code{:points} slot in the feedback object.
-If @code{:line-p} is NIL (the default), then the interactor changes the
+If @code{:line-p} is @code{nil} (the default), then the interactor changes the
 object by setting its
 @code{:box} slot to a list containing the new values for (left, top, width,
 height). If T, then the interactor changes the object by setting its
@@ -13673,14 +13644,14 @@ NIL (so the object is defined by its @code{:box}), and another if
 @code{:line-p} is T. 
 
 In both modes, the slot @code{:abort-if-too-small} determines what happens if
-the size is smaller than the defined minimum. The default is NIL, which
+the size is smaller than the defined minimum. The default is @code{nil}, which
 means to create the object with the minimum size. If
 @code{:abort-if-too-small} is T, however, then the feedback object will
 disappear if the size is too small, and if the mouse is released, the
 final-function will be called with an error value (NIL) so the application will
 know not to create the object.
 
-If @code{:line-p} is NIL, the slots @code{:min-width} and @code{:min-height}
+If @code{:line-p} is @code{nil}, the slots @code{:min-width} and @code{:min-height}
 define the minimum size of the object. If both of these are not set, zero is used
 as the minimum size (the two-point-interactor will not let the width or
 height get to be less than zero). If the user moves the mouse to the left
@@ -13689,7 +13660,7 @@ determines what happens. If @code{:flip-if-change-side} is T (the default),
 then the box will still be drawn from the initial point to the current
 mouse position, and the box will be flipped. The values put into the
 @code{:box} slot will always be the correct left, top, width and height. 
-If @code{:flip-if-change-side} is NIL, then the box will peg at its minimum
+If @code{:flip-if-change-side} is @code{nil}, then the box will peg at its minimum
 value.
 
 If @code{:line-p} is T, the slot @code{:min-length} determines the minimum
@@ -13708,16 +13679,16 @@ The extra parameters are:
 @item @code{:line-p}
 @cindex{line-p}
 - If T, the @code{:points} slot of the feedback object is set with the list
-@code{(x1 y1 x2 y2)}. If NIL, the @code{:box} slot of the feedback object is
+@code{(x1 y1 x2 y2)}. If @code{nil}, the @code{:box} slot of the feedback object is
 set with the list @code{(left top width height)}. The values in the list passed to the
 final-function is also determined by @code{:line-p}.
-The default is NIL (rectangle mode).
+The default is @code{nil} (rectangle mode).
 
 @item @code{:min-width}
 @cindex{min-width}
 - The @code{:min-width} and @code{:min-height} fields determine the minimum
-legal width and height of the rectangle or other object if @code{:line-p} is NIL.
-Default is NIL, which means use 0. Both
+legal width and height of the rectangle or other object if @code{:line-p} is @code{nil}.
+Default is @code{nil}, which means use 0. Both
 @code{min-width} and @code{min-height}
 must be non-NIL for this to take effect. @code{:min-width} and
 @code{:min-height} are ignored if @code{:line-p} is non-@code{NIL} (see @code{:min-length}).
@@ -13731,24 +13702,24 @@ must be non-NIL for this to take effect. @code{:min-width} and
 - If @code{:line-p} is non-@code{NIL}, then @code{:min-width} and
 @code{:min-height} are ignored, and the @code{:min-length} slot is used
 instead. This slot determines the minimum allowable length for a line (in
-pixels). If NIL (the default), then there is no minimum length.
+pixels). If @code{nil} (the default), then there is no minimum length.
 
 @item @code{:abort-if-too-small}
 @cindex{abort-if-too-small}
-- If this is NIL (the default), then if the size is smaller than the
+- If this is @code{nil} (the default), then if the size is smaller than the
 minimum, then the size is made bigger to be the minimum (this works for
-both @code{:line-p} T and NIL). If
+both @code{:line-p} T and @code{nil}). If
 @code{:abort-if-too-small} is T, then instead, no object is created and no
 feedback is shown if the size is smaller than @code{:min-width} and
 @code{:min-height} or @code{:min-length}.
 
 @item @code{:flip-if-change-side}
 @cindex{flip-if-change-side}
-- This only applies if @code{:line-p} is NIL (rectangle mode).
+- This only applies if @code{:line-p} is @code{nil} (rectangle mode).
 If @code{:flip-if-change-side} is T (the default), then if the user moves to
 the top or left of the original point, the rectangle will be ``flipped'' so
 its top or left is the new point and the width and height is based on the
-original point. If @code{:flip-if-change-side} is NIL, then the original
+original point. If @code{:flip-if-change-side} is @code{nil}, then the original
 point is always the top-left, and if the mouse goes above or to the left of
 that, then the minimum legal width or height is used.
 
@@ -13773,11 +13744,11 @@ and is called with the following arguments:
 The @code{final-point-list} will either be a list of the
 left top width, and height or the x and y of two points, depending on the
 setting of the @code{:line-p} slot. If the @code{:abort-if-too-small} slot is
-set (section @ref{Minimumsizes}), then the @code{final-point-list} will be NIL
+set (section @ref{Minimumsizes}), then the @code{final-point-list} will be @code{nil}
 if the user tries to create an object that is too small.
 
 Therefore, the function
-should check to see if @code{final-point-list} is NIL, and if so, not create
+should check to see if @code{final-point-list} is @code{nil}, and if so, not create
 the object. If you want to access the points anyway, the original point is
 available as the @code{:first-x} and @code{:first-y} slots of the interactor,
 and the final point is available in the @code{*Current-Event*} as described
@@ -13818,30 +13789,30 @@ If the value of @code{:continuous} is T,
 then when the start event happens, 
 if @code{:abort-if-too-small} is non-NIL, then nothing happens until the
 mouse moves so that the size is big enough. Otherwise,
-if @code{:line-p} is NIL, then the @code{:visible} slot of the
+if @code{:line-p} is @code{nil}, then the @code{:visible} slot of the
 @code{:feedback-obj} is set to T, and its @code{:box} or @code{:points} slot is
 set with the correct values for the minimum size rectangle or line. As the
 mouse moves, the @code{:box} or @code{:points} slot is set with the current
 size (or minimum size). If the size gets to be less than the minimum and 
 @code{:abort-if-too-small} is non-NIL, then the @code{:visible} field of the
-feedback object is set to NIL, and it is set to T again when the size gets
+feedback object is set to @code{nil}, and it is set to T again when the size gets
 equal or bigger than the minimum.
 
 If the mouse goes outside of @code{:running-where}, then if @code{:outside} is
 @code{:last}, nothing happens until the mouse comes back inside or the stop
 or abort events happen (the object stays at its last legal inside value).
-If @code{:outside} is NIL, then the feedback
-object's @code{:visible} slot is set to NIL.
+If @code{:outside} is @code{nil}, then the feedback
+object's @code{:visible} slot is set to @code{nil}.
 
 If the abort event happens, then the feedback
-object's @code{:visible} slot is set to NIL.
+object's @code{:visible} slot is set to @code{nil}.
 
 When the stop event happens, the feedback
-object's @code{:visible} slot is set to NIL and the final-function is called.
+object's @code{:visible} slot is set to @code{nil} and the final-function is called.
 
-If the value of @code{:continuous} is NIL, then the final-function is
+If the value of @code{:continuous} is @code{nil}, then the final-function is
 called immediately on the start event with the @code{final-point-list}
-parameter as NIL if @code{:abort-if-too-small} is non-NIL, or else a list
+parameter as @code{nil} if @code{:abort-if-too-small} is non-NIL, or else a list
 calculated based on the minimum size.
 
 
@@ -13984,11 +13955,11 @@ is @code{PI}, and straight down is @code{(* PI 1.5)}.
 
 The object being changed is
 either gotten from the @code{:obj-to-change} slot of the interactor, or if
-that is NIL, then from the object returned from @code{:start-where}.
+that is @code{nil}, then from the object returned from @code{:start-where}.
 
 The interactor needs to be told where the center of rotation should be.
 The slot @code{:center-of-rotation} can contain a point as a list of
-@code{(x y)}. If  @code{:center-of-rotation} is NIL (the default), then the
+@code{(x y)}. If  @code{:center-of-rotation} is @code{nil} (the default), then the
 center of the object being rotated is used.
 
 For example, a line that can be rotated around an endpoint might have 
@@ -14028,15 +13999,15 @@ The extra parameters are:
 @item @code{:obj-to-change}
 @cindex{obj-to-change}
 - If an object is supplied here, then the interactor modifies the
-@code{:angle} slot of that object. If @code{:obj-to-change} is NIL, then the
+@code{:angle} slot of that object. If @code{:obj-to-change} is @code{nil}, then the
 interactor operates on whatever is returned from @code{:start-where}.
-The default value is NIL.
+The default value is @code{nil}.
 
 @item @code{:center-of-rotation}
 @cindex{center-of-rotation}
 - This is the center of rotation for the interaction. It should be a list
-of @code{(x y)}. If NIL, then the center of the real object being rotated
-(note: @emph{not} the feedback object) is used. The default value is NIL.
+of @code{(x y)}. If @code{nil}, then the center of the real object being rotated
+(note: @emph{not} the feedback object) is used. The default value is @code{nil}.
 @end table
 
 @subsection Application Notification
@@ -14064,7 +14035,7 @@ slot. This function is called with the following arguments:
 If the value of @code{:continuous} is T,
 then when the start event happens, the interactor determines the object to
 be changed as
-either the value of the @code{:obj-to-change} slot, or if that is NIL, then
+either the value of the @code{:obj-to-change} slot, or if that is @code{nil}, then
 the object returned from the @code{:start-where}.
 The @code{:obj-over} slot of the object in
 the @code{:feedback-obj} slot of the interactor is set to the object being changed.
@@ -14076,19 +14047,19 @@ if there is no feedback object.
 If the mouse goes outside of @code{:running-where}, then if @code{:outside} is
 @code{:last}, nothing happens until the mouse comes back inside or the stop
 or abort events happen (the object stays at its last legal inside value).
-If @code{:outside} is NIL, then the feedback
-object's @code{:obj-over} slot is set to NIL.
+If @code{:outside} is @code{nil}, then the feedback
+object's @code{:obj-over} slot is set to @code{nil}.
 If there is no feedback object and the mouse goes outside, then the object
 being changed is returned to its original angle (before the
 interactor started).
 
 If the abort event happens, then the feedback
-object's @code{:obj-over} slot is set to NIL, or if there is no feedback
+object's @code{:obj-over} slot is set to @code{nil}, or if there is no feedback
 object, then the object being rotated is returned to its original angle
 (before the interactor started).
 
 When the stop event happens, the feedback object's @code{:obj-over} slot is
-set to NIL, and the @code{:angle} slot of the actual object is
+set to @code{nil}, and the @code{:angle} slot of the actual object is
 set with the last value, and the final-function
 (if any) is called.
 
@@ -14289,7 +14260,7 @@ strings as a result of the event.
 
 The object being changed is
 either gotten from the @code{:obj-to-change} slot of the interactor, or if
-that is NIL, then from the object returned from @code{:start-where}.
+that is @code{nil}, then from the object returned from @code{:start-where}.
 
 @subsection Multi-line text strings
 @node Multi-line text strings
@@ -14323,19 +14294,19 @@ If an object is supplied here, then the interactor modifies the
 
 @item @code{:string} and @code{:cursor-index}
 slots of that object. If
-@code{:obj-to-change} is NIL, then the
+@code{:obj-to-change} is @code{nil}, then the
 interactor operates on whatever is returned from @code{:start-where}. The
-default value is NIL.
+default value is @code{nil}.
 
 @item @code{:cursor-where-press}
 @cindex{cursor-where-press}
 If this slot is non-NIL, then the initial position of the
 text editing cursor is underneath the mouse cursor (i.e, the user begins
 editing the string on the character under where the mouse was pressed).
-This is the default. If @code{:cursor-where-press} is specified as NIL,
+This is the default. If @code{:cursor-where-press} is specified as @code{nil},
 however, the cursor always starts at the end of the string.
 This slot also controls whether the mouse is allowed to move the cursor
-while the string is being edited. If @code{:cursor-where-press} is NIL, then
+while the string is being edited. If @code{:cursor-where-press} is @code{nil}, then
 mouse presses are ignored while editing (unless they are the @code{:stop-} or
 @code{:abort-} events), otherwise, presses can be used to move the cursor.
 
@@ -14351,7 +14322,7 @@ done if text wasn't being edited. This means, for example, that you
 typically won't have to type RETURN before hitting the OK
 button, since the down press will stop editing @b{and} still operate the
 OK button. By default this feature is enabled, but you can turn
-it off by setting the @code{:button-outside-stop?} parameter to NIL.
+it off by setting the @code{:button-outside-stop?} parameter to @code{nil}.
 
 
 @end table
@@ -14396,7 +14367,7 @@ then when the start event happens, if there is a feedback object, then its
 @code{:start-where}. Its @code{:cursor-index} is set to the
 position of the start-event (if @code{:cursor-where-press} is T) or to the
 end of the string (so the cursor becomes visible). If there is no
-@code{:feedback-obj}, then the @code{:obj-to-change} or if that is NIL, then
+@code{:feedback-obj}, then the @code{:obj-to-change} or if that is @code{nil}, then
 the object returned from @code{:start-where} has its cursor turned on at the
 appropriate place. If the start event was a keyboard character, it is then
 edited into the string. Therefore, you can have a text interactor start on
@@ -14420,16 +14391,16 @@ object it started over.
 @cindex{visible (slot)}
 @cindex{cursor-index (slot)}
 If the abort event happens, then the feedback object's @code{:string} is set with
-its initial value, its @code{:cursor-index} is set to NIL, and its
-@code{:obj-over} is set to NIL. If there is no feedback object, then the main
+its initial value, its @code{:cursor-index} is set to @code{nil}, and its
+@code{:obj-over} is set to @code{nil}. If there is no feedback object, then the main
 object's @code{:string} is set to its original value and its
-@code{:cursor-index} is set to NIL.
+@code{:cursor-index} is set to @code{nil}.
 
 When the stop event happens, if there is a feedback object, then its
-@code{:visible} slot is set with NIL, the main object is set with
-feedback object's @code{:string}, and the @code{:cursor-index} is set to NIL.
+@code{:visible} slot is set with @code{nil}, the main object is set with
+feedback object's @code{:string}, and the @code{:cursor-index} is set to @code{nil}.
 If there is no feedback object, then the @code{:cursor-index} of the main
-object is set to NIL. Note that the stop event is @emph{not} edited into the
+object is set to @code{nil}. Note that the stop event is @emph{not} edited into the
 string. Finally, the final-function (if any) is called.
 
 If the interactor is @emph{not} continuous, when the start event happens, the
@@ -14818,7 +14789,7 @@ and erased when it is finished.
 @node Rejecting Gestures
 @anchor{rejecting-gestures}
 If the gesture-interactor is unable to classify the gesture, it will
-call the @code{final-function} with a value of NIL for the classified
+call the @code{final-function} with a value of @code{nil} for the classified
 gesture name. Often,
 the gesture will be ambiguous, in that it is similar to more than one
 known gesture. By setting the @code{:min-non-ambig-prob} slot, the
@@ -14846,20 +14817,20 @@ The extra parameters are:
 @item @code{:classifier}
 @cindex{classifier}
  - This field determines which classifier to use when recognizing
-gestures. If NIL (the default), the gesture-interactor will call the
-@code{final-function} with a result of NIL.
+gestures. If @code{nil} (the default), the gesture-interactor will call the
+@code{final-function} with a result of @code{nil}.
 
 @item @code{:show-trace}
 @cindex{show-trace}
  - If non-NIL (the default), the points making up the gesture are displayed in
-the supplied interactor window as the gesture is drawn. If NIL, no points
+the supplied interactor window as the gesture is drawn. If @code{nil}, no points
 are displayed.
 
 @item @code{:min-non-ambig-prob}
 @cindex{min-non-ambig-prob}
  - This field determines the minimum non-ambiguous probability below which
-gestures will be rejected. The default value of NIL causes the
-interactor to not make this calculation and pass NIL as the @code{nap}
+gestures will be rejected. The default value of @code{nil} causes the
+interactor to not make this calculation and pass @code{nil} as the @code{nap}
 parameter to @code{final-function}.
 
 @item @code{:max-dist-to-mean}
@@ -14867,8 +14838,8 @@ parameter to @code{final-function}.
  - This field determines the maximum distance to the classified
 gesture from the given gesture. Any gesture with a distance above
 this value will be rejected.
-The default value of NIL causes the interactor to not make this
-calculation and pass NIL as the @code{dist} parameter to @code{final-function}.
+The default value of @code{nil} causes the interactor to not make this
+calculation and pass @code{nil} as the @code{dist} parameter to @code{final-function}.
 @end table
 
 @subsection Application Notification
@@ -14888,7 +14859,7 @@ and is called with the following arguments:
 The @code{gesture-name} will be set to the name the drawn gesture was
 recognized as. These names are stored in the classifier as keyword
 parameters (e.g., @code{:circle}). If the gesture could not be recognized
-this will be set to NIL.
+this will be set to @code{nil}.
 
 The @code{attribs} will be set to a structure of gesture attributes that may
 be useful to the application. For example, the bounding box of the gesture
@@ -14939,7 +14910,7 @@ access these attributes:
 
 The @code{points-array} will be set to an array (of the form
 [x1 y1 x2 y2...]) containing the points in the gesture. This array can
-be used along with a NIL classifier to use the gesture-interactor as a
+be used along with a @code{nil} classifier to use the gesture-interactor as a
 trace-interactor. A trace-interactor returns all the points the
 mouse goes through between the @code{start-event} and the @code{stop-event}.
 This is useful for inking in a drawing program.
@@ -14953,10 +14924,10 @@ before they are used in any object slots. This is necessary because
 the interactor reuses the @code{attribs} structure and the @code{points-array}
 in order to avoid extra memory allocation.
 
-If @code{:min-non-ambig-prob} is not NIL, the @code{nap} parameter will be
+If @code{:min-non-ambig-prob} is not @code{nil}, the @code{nap} parameter will be
 set to the calculated non-ambiguous probability of the entered gesture.
 
-If @code{:max-dist-to-mean} is not NIL, the @code{dist} parameter will be
+If @code{:max-dist-to-mean} is not @code{nil}, the @code{dist} parameter will be
 set to the calculated distance of the entered gesture from the
 classification.
 
@@ -14966,7 +14937,7 @@ classification.
 @cindex{classifier (slot)}
 When the start event happens, if @code{:show-trace} is non-NIL, a trace
 following the mouse pointer will be displayed. If @code{:show-trace}
-is NIL, no trace will be seen.
+is @code{nil}, no trace will be seen.
 
 If the mouse goes outside of @code{:running-where}, then the system will
 beep and if @code{:show-trace} is non-NIL, the trace will be erased.
@@ -15005,7 +14976,7 @@ a circle is drawn.
         (:CIRCLE
             ; @i{create a circle with the same "radius" as the gesture and with the same upper left of the gesture}
             (opal:add-components SHAPE-AGG
-                (create-instance NIL opal:circle
+                (create-instance @code{nil} opal:circle
                    (:left (inter:gest-attributes-minx attribs))
                    (:top (inter:gest-attributes-miny attribs))
                    (:width (- (inter:gest-attributes-maxx attribs)
@@ -15016,7 +14987,7 @@ a circle is drawn.
         (:RECTANGLE
             ; @i{create a rectangle with the same height and width as the gesture and with the same upper left of the gesture}
             (opal:add-components SHAPE-AGG
-                (create-instance NIL opal:rectangle
+                (create-instance @code{nil} opal:rectangle
                    (:left (inter:gest-attributes-minx attribs))
                    (:top (inter:gest-attributes-miny attribs))
                    (:width (- (inter:gest-attributes-maxx attribs)
@@ -15200,11 +15171,11 @@ this chapter, starting on page @ref{demos-first-page}.
 @example
 (create-instance 'inter:Animator-Interactor inter:interactor
   @emph{;; Slots common to all interactors (see section @ref{interslots,,Slots of All Interactors})}
-  (:window NIL)
+  (:window @code{nil})
   (:active T)
 
   @emph{; Slots specific to the button-interactor (discussed in this section)}
-  (:timer-handler NIL)         @emph{; (lambda (inter))  ;; function to execute}
+  (:timer-handler @code{nil})         @emph{; (lambda (inter))  ;; function to execute}
   (:timer-repeat-wait 0.2)     @emph{; time in seconds}
 ...)
 @end example
@@ -15250,14 +15221,14 @@ built-in timer functions (so you don't have to supply the
   (:x-inc 2)
   (:y-inc 2)
   (:timer-repeat-wait 0.2)  @emph{; seconds}
-  (:obj-to-change NIL)      @emph{; fill this in}
+  (:obj-to-change @code{nil})      @emph{; fill this in}
   ...)
 
 (create-instance 'inter:Animator-Wrap inter:animator-interactor
   (:x-inc 2)
   (:y-inc 2)
   (:timer-repeat-wait 0.2) @emph{; seconds}
-  (:obj-to-change NIL)     @emph{; fill this in}
+  (:obj-to-change @code{nil})     @emph{; fill this in}
   ...)
 @end example
 
@@ -15334,7 +15305,7 @@ Events are then written to file @emph{filename}. The @emph{window-list} is a
 list of windows that events should be saved for. It is also allowed to be
 a single window. (Note: subwindows of windows on the window list are also
 handled automatically, and do @emph{not} have to be specified.)
-If the @code{:motion} parameter is specified as NIL, then
+If the @code{:motion} parameter is specified as @code{nil}, then
 mouse movement events are not saved to the file, which can significantly
 decrease the file size. The @code{:if-exists} parameter is used in the Lisp
 @code{open} command when opening a file, and takes the same values (see
@@ -15355,7 +15326,7 @@ inter:Transcript-Events-From-File @emph{filename window-list} &key (@emph{wait-e
 @end example
 The @emph{filename} is the file to read from. @emph{Wait-elapsed-time}
 determines if the replay should wait for the correct time so the replay
-goes about the same speed as the original user went, or else (if NIL)
+goes about the same speed as the original user went, or else (if @code{nil})
 whether the replay should just go as fast as possible. (Each event in the
 transcript has a timestamp in it.)
 
@@ -15504,14 +15475,14 @@ or modify this slot directly.}
 active. The default value is T.
 For an interactor to be usable, both the interactor's @code{:active}
 slot and the priority-level's @code{:active} slot must be non-NIL.
-If this slot is NIL, then this level is totally ignored, including its
+If this slot is @code{nil}, then this level is totally ignored, including its
 @code{:stop-when} field (see below). The value of the @code{:active} slot can
 be a formula, but
-if it changes to be NIL, the interactors will not be automatically aborted. Use
+if it changes to be @code{nil}, the interactors will not be automatically aborted. Use
 the @code{change-active} function to get the priority level and all its
 interactors to be aborted immediately (see section @ref{active}).
 Note: It is a really bad idea to make
-the @code{:active} slot of any @emph{running}-priority levels be NIL, since
+the @code{:active} slot of any @emph{running}-priority levels be @code{nil}, since
 interactors will start but never complete.
 
 @item :stop-when
@@ -15529,7 +15500,7 @@ with @code{:stop-when} as @code{:always} on the front of @code{:priority-level-l
 is a convenient way to set up a special mode where the interactors in the
 new priority level are processed and all other ones are ignored. The
 priority level can be popped or de-activated (by setting its @code{:active}
-slot to NIL) to turn this mode off.
+slot to @code{nil}) to turn this mode off.
 
 @item :if-any
 @cindex{if-any}
@@ -15541,7 +15512,7 @@ example, for the @code{:stop-when} of the default
 from starting a different interactor.
 
 @item nil
-- If @code{:stop-when} is NIL, then the events are always passed through.
+- If @code{:stop-when} is @code{nil}, then the events are always passed through.
 This might be useful if you want to control the order of interactors
 running, or if you want to set the @code{:active} slots of the priority
 levels independently.
@@ -15567,7 +15538,7 @@ defined with @code{:stop-when} as @code{:if-any}.
 @item inter:normal-priority-level
 @cindex{normal-priority-level}
 - The normal priority for use by interactors that are waiting to run.
-@code{:Stop-when} is NIL.
+@code{:Stop-when} is @code{nil}.
 @end vtable
 
 The initial value of @code{priority-level-list} is:
@@ -15576,7 +15547,7 @@ The initial value of @code{priority-level-list} is:
 @end example
 
 The programmer can create new priority levels (using
-@code{(create-instance NIL inter:priority-level ...)} and add them to this
+@code{(create-instance nil inter:priority-level ...)} and add them to this
 list (using the standard Common Lisp list manipulation routines).
 The new priorities can be at any level. Priorities can also be removed at
 any time, but @emph{do not remove the three default priority levels}. 
@@ -15643,7 +15614,7 @@ integer or float, negative or positive). The lowest numbered
 interactor runs first. Then, if that interactor has a value in its 
 @code{:exclusivity-value} slot, then no other interactor with the same value
 in that slot will be run, but interactors with a different value in
-that slot will be run in their sorted order. Interactors with NIL in
+that slot will be run in their sorted order. Interactors with @code{nil} in
 their @code{:sort-order} and/or @code{:exclusivity-value} slot will run after all
 other interactors are run. Note that multiple interactors with the
 same number in the @code{:sort-order} slot will run in an indeterminate order
@@ -15723,10 +15694,10 @@ inter:Change-Active @emph{an-interactor-or-priority-level new-value}@ref{functio
 @end example
 @cindex{Change-Active}
 This makes the interactor or priority-level be active (if @emph{new-value} is T)
-or inactive (if @emph{new-value} is NIL). When @code{change-active} makes a
+or inactive (if @emph{new-value} is @code{nil}). When @code{change-active} makes a
 priority level not active, then all interactors on the priority level will
 abort immediately. Interactors are not guaranteed to abort immediately
-if their priority level's @code{:active} slot is simply set to NIL.
+if their priority level's @code{:active} slot is simply set to @code{nil}.
 
 
 
@@ -15818,7 +15789,7 @@ char) are copied into the slots of the interactor (see section
 @node Example of using an event
 
 @cindex{selecting in a rectangle} 
-The two-point interactor calls the final-function with a NIL parameter if
+The two-point interactor calls the final-function with a @code{nil} parameter if
 the rectangle is smaller than a specified size (see section
 @ref{twopapplnotif}). This feature can be used to allow the end user to
 pick an object under the mouse if the user presses and releases, but to
@@ -15888,11 +15859,11 @@ the event parameter is T (the default), then the last event that
 was processed is re-used. The event is also used to calculate
 the appropriate default stop event (needed if the start-event is
 a list or something like @code{:any-mousedown} and the stop-event is not supplied).
-If the event is specified as NIL or the x and y in the event do not pass
+If the event is specified as @code{nil} or the x and y in the event do not pass
 @code{:start-where}, the interactor is still started, but the initial object
-will be NIL, which might be a problem (especially for button-interactors,
+will be @code{nil}, which might be a problem (especially for button-interactors,
 for example). NOTE: If you want the interactor to never start by itself,
-then its @code{:start-where} or @code{:start-event} can be set to NIL. 
+then its @code{:start-where} or @code{:start-event} can be set to @code{nil}. 
 
 Examples of using @code{start-interactor} are in the file @code{demo-sequence.lisp}.
 
@@ -16258,7 +16229,7 @@ This is called if the mouse moves outside of
 @example
 (lambda (an-interactor obj-over))
 @end example
-Obj-over will be the object originally pressed on, or NIL if outside
+Obj-over will be the object originally pressed on, or @code{nil} if outside
 when aborted.
 
 @end vtable
@@ -16351,7 +16322,7 @@ The parameters to the action routines of two-point interactors are:
 @end example
 The @code{first-points} is a list of the initial box or 2 points for the object
 (the form is determined by the @code{:line-p} parameter). If
-@code{:abort-if-too-small} is non-NIL, then @code{first-points} will be NIL.
+@code{:abort-if-too-small} is non-NIL, then @code{first-points} will be @code{nil}.
 Otherwise, the width and height of the object will be the @code{:min-width} and
 @code{:min-height} or 0 if there are no minimums.
 Note that @code{:running-action} is not
@@ -16363,7 +16334,7 @@ until the mouse moves to a new point.
 @example
 (lambda (an-interactor new-points))
 @end example
-@code{New-points} may be NIL if @code{:abort-if-too-small} and
+@code{New-points} may be @code{nil} if @code{:abort-if-too-small} and
 the size is too small.
 
 
@@ -16379,7 +16350,7 @@ the size is too small.
 (lambda (an-interactor outside-control new-inside-points))
 @end example
 Note that the running-action procedure is not called on the point passed to this
-procedure. @code{New-inside-points} may be NIL if @code{:abort-if-too-small}
+procedure. @code{New-inside-points} may be @code{nil} if @code{:abort-if-too-small}
 is non-NIL.
 
 
@@ -16389,7 +16360,7 @@ is non-NIL.
 @end example
 @code{:Running-action} was not
 necessarily called on the point passed to this procedure.
-@code{Final-points} may be NIL if @code{:abort-if-too-small} is non-NIL.
+@code{Final-points} may be @code{nil} if @code{:abort-if-too-small} is non-NIL.
 
 
 :abort-action
@@ -16498,7 +16469,7 @@ The parameters to the action routines of text interactors are:
 @end example
 @code{New-Obj-over} is the
 object to edit, either @code{:obj-to-change} if it is supplied, or if
-@code{:obj-to-change} is NIL, then the object returned from @code{:start-where}.
+@code{:obj-to-change} is @code{nil}, then the object returned from @code{:start-where}.
 The definition of @code{event}s is in section @ref{events}.
 
 @code{:Running-action} -
@@ -16581,7 +16552,7 @@ the classifier given by @code{:classifier}.
 (lambda (an-interactor))
 @end example
 This erases the trace if @code{:show-trace} is non-NIL and
-@code{:went-outside} is NIL.
+@code{:went-outside} is @code{nil}.
 
 @end vtable
 
@@ -16651,7 +16622,7 @@ inter:Reset-Inter-Levels &optional @emph{level}@ref{function}
 will remove @emph{all} the existing interactors by simply resetting the queues (it
 does not destroy the existing interactors, but they will never be
 executed). If a level is specified, then only interactors on that level
-are destroyed. If level is NIL (the default), then all levels are reset.
+are destroyed. If level is @code{nil} (the default), then all levels are reset.
 This procedure should not be used in applications, only for debugging.
 It is pretty drastic.
 @end itemize
@@ -16804,12 +16775,12 @@ The syntax of the @code{:parts} slot is a backquoted list of lists, where
 each inner list defines one component of the aggregadget.
 The definition of each component includes a keyword that will be used as a
 name for that part
-(or NIL if the part is to be unnamed), the prototype of that part, and a
+(or @code{nil} if the part is to be unnamed), the prototype of that part, and a
 set of slot definitions that customize the component from the prototype.
 
 The aggregadget will internally convert this list of parts into components of
 the aggregadget, with each part named by the keyword provided (or unnamed,
-if the keyword is NIL).
+if the keyword is @code{nil}).
 
 Everything inside the backquote that should be evaluated immediately must be
 preceded by a comma. Usually the following will need commas:
@@ -17201,7 +17172,7 @@ that the syntax for a part is
 @code{(@emph{name} @emph{prototype} {{@var{slot}  @var{value}}}@var{+[*]})}
 
 
-where @emph{name} is either a keyword or NIL, @emph{prototype} is a prototype
+where @emph{name} is either a keyword or @code{nil}, @emph{prototype} is a prototype
 for the part, and @emph{slots} is a list of local slot definitions. 
 If @emph{prototype} is an aggregadget, then @emph{slots} may contain
 another parts slot; thus, an entire aggregadget tree can be specified
@@ -17965,10 +17936,10 @@ description of a schema (see section @ref{the-i-p-slot}).
 
 @cindex{direction}
 @code{:direction} @ref{shortdash} Either :@code{horizontal},
-@code{:vertical} or NIL. If the value is either @code{:horizontal} or 
+@code{:vertical} or @code{nil}. If the value is either @code{:horizontal} or 
 @code{:vertical}, the system will install values in the @code{:left} and
 @code{:top} slots of each component, in order to lay out the
-list properly according to the direction. If the value is NIL, then the
+list properly according to the direction. If the value is @code{nil}, then the
 designer must provide formulas for the @code{:left} and @code{:top}
 slots of each component (default is @code{:vertical}).
 
@@ -17985,22 +17956,22 @@ slots of each component (default is @code{:vertical}).
 will be placed in fields of constant width. These fields will be of
 the size of the widest component, unless the slot
 @code{:fixed-width-size} is non-NIL, in which case it will default to
-the value stored there (default is NIL). 
+the value stored there (default is @code{nil}). 
 
 @cindex{fixed-width-size}
 @code{:fixed-width-size} @ref{shortdash} The width of all components,
-if @code{:fixed-width-p} is T (default is NIL).
+if @code{:fixed-width-p} is T (default is @code{nil}).
 
 @cindex{fixed-height-p}
 @code{:fixed-height-p} @ref{shortdash} If set to T, all the components
 will be placed in fields of constant height. These fields will be of
 the size of the tallest component, unless the slot
 @code{:fixed-height-size} is non-NIL, in which case it will default to
-the value stored there (default is NIL). 
+the value stored there (default is @code{nil}). 
 
 @cindex{fixed-height-size}
 @code{:fixed-height-size} @ref{shortdash} The height of all components, if
-@code{:fixed-width-p} is T (default is NIL).
+@code{:fixed-width-p} is T (default is @code{nil}).
 
 @cindex{h-align}
 @code{:h-align} @ref{shortdash} The type of horizontal alignment to use within
@@ -18015,13 +17986,13 @@ a field (only applicable is @code{fixed-height-p} is T). Allowed values are
 @cindex{rank-margin}
 @code{:rank-margin} @ref{shortdash} If non-NIL, then after this many
 components, a new row will be started for horizontal lists, or a new
-column for vertical lists (default is NIL).
+column for vertical lists (default is @code{nil}).
 
 @cindex{pixel-margin}
 @code{:pixel-margin} @ref{shortdash} If non-NIL, then this acts as an
 absolute position in pixels in the window; if adding the next component would
 result in extending beyond this value, then a new row or column is started
-(default is NIL).
+(default is @code{nil}).
 
 @cindex{indent}
 @code{:indent} @ref{shortdash} The amount to indent upon starting a new row/column (in pixels)
@@ -18798,7 +18769,7 @@ that have a @code{:known-as} slot that matches that of
 the @emph{component}. Components are removed with recursive calls to 
 @code{remove-component} to affect the entire instance tree.
 
-If @emph{destroy?} is not NIL (the default is NIL), then the removed objects
+If @emph{destroy?} is not @code{nil} (the default is @code{nil}), then the removed objects
 are destroyed.
 
 
@@ -18830,9 +18801,9 @@ an inconsistent gadget will result.
 is used to remove an interactor. The interactor @code{:operates-on}
 slot is destroyed, as is the link from @emph{gadget} to the @emph{interactor}
 (determined by the value of the @emph{interactor}'s @code{:known-as} slot).
-In addition, the @emph{interactor}'s @code{:active} slot is set to NIL.
+In addition, the @emph{interactor}'s @code{:active} slot is set to @code{nil}.
 The @emph{interactor} is also destroyed if the optional @emph{destroy?} 
-parameter is not NIL.
+parameter is not @code{nil}.
 
 Instances of @emph{interactor} that belong to instances of @emph{gadget}
 (as determined by the @code{:operates-on} slot) are recursively
@@ -18855,7 +18826,7 @@ the interactor is subsequently added to a gadget.
 This function removes a local component named by @emph{name}, e.g. @code{:box},
 and replaces it with an instance of the corresponding component in
 @emph{gadget}'s prototype. The removed component is destroyed if and only if
-the optional @emph{destroy} argument is not NIL.
+the optional @emph{destroy} argument is not @code{nil}.
 
 The placement of the new component is inherited as well as the component
 itself. As with @code{add-component}, ``inherited position'' is not
@@ -19051,7 +19022,7 @@ existing slots. The slots created or modified by @code{add-component} are:
 
 @vtable @code
 @code{:left, :top} @ref{shortdash} Unless the @code{:direction} slot of
-@emph{aggrelist} is NIL, the system will set these slots with integers that
+@emph{aggrelist} is @code{nil}, the system will set these slots with integers that
 arrange @emph{graphical-object} neatly in the layout of the aggrelist components.
 
 @code{:rank} @ref{shortdash} This slot is set with a number that indicates
@@ -19167,7 +19138,7 @@ is the file name (a string) to be written, or @code{t} to write
 to @code{*standard-output*}. If several calls are made to @code{write-gadget}
 to output a sequence of
 gadgets to the same stream, set the @emph{initialize?} flag
-to NIL after the first call. The default value of @emph{initialize?} is T.
+to @code{nil} after the first call. The default value of @emph{initialize?} is T.
 
 If the gadget has any references to
 gadgets that are not part of the standard set of Opal objects or
@@ -19319,7 +19290,7 @@ actually searches to see if a name is defined.
 @code{opal:*required-names*}@ref{variable}
 
 The variable @code{*required-names*} 
-is initialized to NIL when you call @code{write-gadget}.
+is initialized to @code{nil} when you call @code{write-gadget}.
 Whenever a name is written that is not on @code{*defined-names*}, it
 is pushed onto @code{*required-names*} and a warning is printed.
 Inspecting the value of @code{*required-names*} after calling
@@ -19328,7 +19299,7 @@ additional gadgets should be saved.
 
 The initialization of @code{*defined-names*} and @code{*required-names*}
 is suppressed when the @emph{initialize?} argument to @code{write-gadget}
-is set to NIL.
+is set to @code{nil}.
 
 
 @subsection References to Graphic Qualities
@@ -19785,7 +19756,7 @@ where @emph{depth} is a number maintained internally by aggregraphs that
 corresponds to the distance of the current node from the root,
 and @emph{source-node} is an
 object in the source graph to be expanded. The function should return a list
-of the children of @emph{source-node} in the source graph, or NIL to indicate the
+of the children of @emph{source-node} in the source graph, or @code{nil} to indicate the
 node either has no children or should not be expanded (when depth > 1, for
 example).
 
@@ -19920,7 +19891,7 @@ of the graph and a child-generating function.
 The generating function in the @code{:children-function} slot is defined to
 return the instances of a given schema until the aggregraph reaches a certain
 depth in the graph. In this case, if the function is given a node that is
-more than one link away from the root, then the function will return NIL.
+more than one link away from the root, then the function will return @code{nil}.
 
 The function in the @code{:info-function} slot returns the string name of
 a Garnet schema.
@@ -19990,7 +19961,7 @@ components of the @code{:nodes} aggregate in the top-level aggregraph.
 
 Aggregadget nodes can be moved easily with an @code{inter:move-grow-interactor}.
 By setting the @code{:slots-to-set} slot of the interactor to
-@code{(list T T NIL NIL)}, you can change the @code{:left} and @code{:top} of the
+@code{(list T T nil nil)}, you can change the @code{:left} and @code{:top} of the
 aggregraph nodes as you click and drag on them.
 
 
@@ -20034,7 +20005,7 @@ Features and operation of an Aggregraph
                 of the corresponding graph-node. The default node-prototype
                 expects a string to be returned.
 
-                @code{:add-back-pointer-to-nodes-function} -- A function or NIL.
+                @code{:add-back-pointer-to-nodes-function} -- A function or @code{nil}.
                 The function, if present, will be called on every
                 source-node graph-node pair. The result of the
                 function is ignored. This allows pointers to be
@@ -20141,7 +20112,7 @@ corresponding source-node is removed from @code{:source-roots}.
                 source-node, a list of
                 parent graph-nodes, and a list of children
                 graph-nodes. It creates a new graph node and places
-                it in the graph positioning it appropriately. Returns NIL.
+                it in the graph positioning it appropriately. Returns @code{nil}.
 
                 @code{:delete-link} -- Takes the graph object and a graph link
 and removes the link from the graph.
@@ -21401,7 +21372,7 @@ other.
 
 In fact, the designer may choose to leave the trill boxes out
 completely. The slots @code{:scr-trill-p} and @code{:page-trill-p} may be
-set to NIL in order to prevent the appearance of the scroll boxes or
+set to @code{nil} in order to prevent the appearance of the scroll boxes or
 page boxes, respectively.
 @cindex{scr-trill-p}
 @cindex{page-trill-p}
@@ -21410,7 +21381,7 @@ The indicator may also be moved directly by mouse movements. Dragging
 the indicator while the left mouse button is pressed will cause a
 thick lined box to follow the mouse. The indicator then moves to the
 position of this feedback box when the mouse button is released. If
-@code{:int-feedback-p} is set to NIL, the thick lined box will not
+@code{:int-feedback-p} is set to @code{nil}, the thick lined box will not
 appear, and the indicator itself will follow the mouse. A click of
 the left mouse button in the background of the scroll bar will cause
 the indicator to jump to the position of the mouse.
@@ -21420,18 +21391,18 @@ the indicator to jump to the position of the mouse.
 With each change of the indicator position, the @code{:value} slot is
 updated automatically to reflect the new position. The current value
 is reported as a text string inside the indicator unless the slot
-@code{:indicator-text-p} is set to NIL.
+@code{:indicator-text-p} is set to @code{nil}.
 
 Since the scroll bar must be wide enough to accommodate the widest
 text string in its range of values, the width of the vertical scroll
 bar (and similarly the height of the horizontal scroll bar) is the
 maximum of the width of the widest value and the @code{:min-width}. The
 @code{:min-width} will be used if there is no indicator text (i.e.,
-@code{:indicator-text-p} is NIL), or if the @code{:min-width} is greater
+@code{:indicator-text-p} is @code{nil}), or if the @code{:min-width} is greater
 than the width of the widest value.
 
 The slot @code{:scroll-p} is used to enable and disable the scrolling
-feature of the scroll bar. When @code{:scroll-p} is set to NIL, the
+feature of the scroll bar. When @code{:scroll-p} is set to @code{nil}, the
 trill boxes of the scroll bar become inactive and the background turns
 white. This ability to disable scrolling is useful in applications
 where the range of the scroll bar is not fixed. For example, in the
@@ -21542,7 +21513,7 @@ Tic-marks may be left out by setting the @code{:tic-marks-p} slot to
 NIL. If the slot @code{:enumerate-p} is set to T, then each tic-mark
 will be identified by its position in the range of allowed values.
 Also, numbers may appear without tic-marks marks by setting
-@code{:enumerate-p} to T and @code{:tic-marks-p} to NIL. The slot in
+@code{:enumerate-p} to T and @code{:tic-marks-p} to @code{nil}. The slot in
 which to specify the font for the tic-mark numbers is @code{:enum-font}.
 
 The slot @code{:shaft-width} in the vertical slider (analogously,
@@ -21553,13 +21524,13 @@ manipulate the indicator.
 
 The slot @code{:scroll-p} is used to enable and disable the scrolling
 feature of the sliders, just as in the scroll bars. When
-@code{:scroll-p} is set to NIL, the trill boxes of the slider become
+@code{:scroll-p} is set to @code{nil}, the trill boxes of the slider become
 inactive, and the indicator ceases to move.
 
 The font for the feedback of the current value (which appears at the
 end of the shaft) may be specified in @code{:value-feedback-font}. The
 value feedback may be left out completely by setting
-@code{:value-feedback-p} to NIL.
+@code{:value-feedback-p} to @code{nil}.
 
 The @code{:format-string} and @code{:enum-format-string} slots allow you to
 control the formatting of the text strings, in case the standard formatting
@@ -21607,11 +21578,11 @@ tic-mark features. As with sliders, the feedback value may be edited
 by the user.
 
 A unique feature of the trill box is that either or both @code{:val-1}
-or @code{:val-2} may be NIL, implying no lower or upper bound on the
+or @code{:val-2} may be @code{nil}, implying no lower or upper bound on the
 input value, respectively. If numerical values for both slots are
 supplied, then clipping of the input value into the specified range
 occurs as usual. Otherwise, @code{:val-1} is assumed to be the minimum
-value, and clipping will not occur at the NIL endpoints of the
+value, and clipping will not occur at the @code{nil} endpoints of the
 interval.
 
 The width of the trill device may be either static or dynamic. If
@@ -21691,13 +21662,13 @@ pressed. Text below the gauge reports the current value to which the
 needle is pointing.
 
 If the slot @code{:polygon-needle-p} is T, then the needle will be thick
-with a gray filling. If NIL, then the needle will be a bare arrow.
+with a gray filling. If @code{nil}, then the needle will be a bare arrow.
 
 If @code{:int-feedback-p} is T, then the needle will not follow the
 mouse directly, but instead a short line will appear and be rotated.
 When the mouse button is released, the large needle will swing over to
 rest at the new location. The needle will follow the mouse directly
-if @code{:int-feedback-p} is set to NIL.
+if @code{:int-feedback-p} is set to @code{nil}.
 
 The slots @code{:num-marks}, @code{:tic-marks-p}, @code{:enumerate-p}, @code{:val-1},
 @code{:val-2}, and @code{:enum-font} are implemented as in the sliders
@@ -21705,7 +21676,7 @@ The slots @code{:num-marks}, @code{:tic-marks-p}, @code{:enumerate-p}, @code{:va
 the right side of the gauge.
 
 The title of the gauge is specified in @code{:title}. No title will
-appear if @code{:title} is NIL. The fonts for the title of the gauge
+appear if @code{:title} is @code{nil}. The fonts for the title of the gauge
 and the current chosen value are specified in @code{:title-font} and
 @code{:value-font}, respectively.
 
@@ -21765,10 +21736,10 @@ Allowed values are @code{:left}, @code{:center}, or @code{:right}. (default
 text-buttons)
 
 @code{:rank-margin} --- after this many buttons, a new row (or column)
-will be started (default NIL)
+will be started (default @code{nil})
 
 @code{:pixel-margin} --- absolute position in pixels after which a new row
-(or column) will be started (default NIL)
+(or column) will be started (default @code{nil})
 
 @code{:indent} --- amount to indent the new row (or column) in pixels
 (default 0)
@@ -21959,7 +21930,7 @@ than a single string. Similarly, @code{:value-obj} is a list of
 objects.
 
 The slot @code{:text-on-left-p} specifies whether the text will appear
-on the right or left of the x-buttons. A NIL value indicates the text
+on the right or left of the x-buttons. A @code{nil} value indicates the text
 should appear on the right. When text appears on the right, the designer
 will probably want to set @code{:h-align} to @code{:left} in order to left-justify
 the text against the buttons.
@@ -22112,7 +22083,7 @@ The @code{:menu-h-align} slot should be either @code{:left}, @code{:center}, or
 If the @code{:keep-menu-in-screen-p} slot is T, then the menu will never pop
 out of the screen, i.e., the top of the menu will never be less than
 the screen's top, and the bottom of the menu will never be greater
-than the screen's bottom. If this slot is set to NIL, the menu may
+than the screen's bottom. If this slot is set to @code{nil}, the menu may
 pop out of the top or out of the bottom of the screen.
 NOTE: If the number of items in the menu makes it so that both the top
 of the menu and the bottom of the menu are out of the screen, this
@@ -22285,7 +22256,7 @@ The slot @code{:item-font} determines the font in which the items will
 appear.
 
 A title for the menu may be specified as a string in the @code{:title}
-slot. If @code{:title} is NIL, then no title will appear. The font in
+slot. If @code{:title} is @code{nil}, then no title will appear. The font in
 which the title should appear is specified in @code{:title-font}.
 
 
@@ -22418,11 +22389,11 @@ The justification of the items in the menu is determined by the slot
 
 If the value of @code{:multiple-p} is T, then the user may make multiple
 selections in the menu by clicking on items while holding down the
-shift key. If this slot is NIL, then only single selections are
+shift key. If this slot is @code{nil}, then only single selections are
 permitted.
 
 The @code{:toggle-p} slot specifies whether to toggle the current selection when
-it is clicked on again. If @code{:toggle-p} is NIL, then a selected item can
+it is clicked on again. If @code{:toggle-p} is @code{nil}, then a selected item can
 be clicked upon for any number of times and it will stay selected. If the
 @code{:toggle-p} slot is set to T (the default), clicking on an already selected
 item will cause the item to become unselected. NOTE: Clicking on a selected
@@ -22450,7 +22421,7 @@ The slot @code{:text-offset} determines the distance from each string to
 the menu frame.
 
 A title will appear above the menu if a title string is specified in
-@code{:title}. If @code{:title} is NIL, then no title will appear. The
+@code{:title}. If @code{:title} is @code{nil}, then no title will appear. The
 font of the title is in @code{:title-font}.
 
 The font of the items is in @code{:item-font}.
@@ -22579,7 +22550,7 @@ the list @code{("m1,1")} is required instead of just the string @code{"m1,1"}).
 
 In order to maintain the syntax of the sublists, the submenu functions
 (@emph{m1func} and @emph{m2func} above) must always be supplied.
-Thus, NIL should be placed in this position if no function is
+Thus, @code{nil} should be placed in this position if no function is
 to be executed for the submenu. The submenu-item functions (@emph{m1,1func} etc.
 above) are optional and may be omitted.
 
@@ -22990,7 +22961,7 @@ atom, suitable for putting in the @code{:items} slot. Returns @emph{string}.
 @end defun
 
 @defun gg:menubar-installed-p menubar-component
-Returns NIL if @emph{menubar-component} is not attached to a @code{menubar};
+Returns @code{nil} if @emph{menubar-component} is not attached to a @code{menubar};
 otherwise returns the object it is installed in (either a @code{menubar} or
 a @code{bar-item}.
 @end defun 
@@ -23206,18 +23177,18 @@ For other objects that should be selected as lines, the designer must set the
 @code{:line-p} slots explicitly (e.g., a composite object like an
 @code{arrow-line} is not really a line, though it should be treated like one).
 
-If @code{:movegrow-lines-p} is NIL, then the @code{graphics-selection}
+If @code{:movegrow-lines-p} is @code{nil}, then the @code{graphics-selection}
 object will not allow a user to drag the selection squares of a line,
 and a beep will be issued if the user clicks on a selection square of
 a line.
 
-If @code{:movegrow-boxes-p} is NIL, then the @code{graphics-selection
+If @code{:movegrow-boxes-p} is @code{nil}, then the @code{graphics-selection
 object} will not allow a user to drag the selection squares of a
 non-line, and a beep will be issued if the user clicks on a selection
 square of a non-line.
 
 The @code{graphics-selection} gadget will be active when the value of its
-@code{:active-p} slot is T. To turn off the gadget, set this slot to NIL.
+@code{:active-p} slot is T. To turn off the gadget, set this slot to @code{nil}.
 
 The @code{:selection-function} slot specifies a function to be executed
 upon the selection of any object by the user. This function must take
@@ -23225,7 +23196,7 @@ the parameters:
 @example
 (lambda (gadget-object new-selection))
 @end example
-The @code{new-selection} parameter may be NIL if no
+The @code{new-selection} parameter may be @code{nil} if no
 objects are selected (i.e., the user clicks in the background).
 
 The designer can supply a @code{:modify-function} that will be called
@@ -23325,9 +23296,9 @@ example of the parameter to @code{:start-where} is:
 @code{(list :element-of-or-none MYAGG)}
 
 The @code{:value} slot of the @code{multi-graphics-selection} object supplies
-the object(s) the user selects. If @code{:multiple-select-p} is NIL
-(the default), then it is a single object or NIL. If @code{:multiple-select-p}
-is T, then will always be a list or NIL (even if only one object is
+the object(s) the user selects. If @code{:multiple-select-p} is @code{nil}
+(the default), then it is a single object or @code{nil}. If @code{:multiple-select-p}
+is T, then will always be a list or @code{nil} (even if only one object is
 selected). Also, a @code{:selection-function} can be
 supplied and will be called each time the selection changes. It takes
 the parameters
@@ -23396,21 +23367,21 @@ In summary, public slots of the @code{multi-graphics-selection} gadget are:
 
    @code{:check-grow-p} - If T, then checks in each object to see if @code{:grow-p}
                         is T, and if so, then will grow, else won't.
-                        If NIL, then everything can grow. Default NIL.
+                        If @code{nil}, then everything can grow. Default @code{nil}.
 
    @code{:check-move-p} - If T, then checks in each object to see if @code{:move-p}
-                        is T, and if so, then will move, else won't. If NIL,
-                        then everything can move. Default NIL.
+                        is T, and if so, then will move, else won't. If @code{nil},
+                        then everything can move. Default @code{nil}.
 
    @code{:move-multiple-p} - If T, then if multiple items are selected and you
  			press on a move box, then moves all of the objects.
- 			If NIL, then just moves the object you point to.
+ 			If @code{nil}, then just moves the object you point to.
  			Default=T.
 
    @code{:grow-multiple-p} - If T, then when multiple items are selected, grow
                            boxes appear at the corners of the whole selection,
                            and pressing there will grow all the objects.
-                           If NIL, then those handles don't appear.
+                           If @code{nil}, then those handles don't appear.
 
    @code{:input-filter} - This is used by the move-grow-interactor for gridding.
                         Consult the Interactors chapter for a list of allowed
@@ -23470,7 +23441,7 @@ NIL. The default function calls @code{opal:point-to-component} directly.
 
 @vtable @code
    @code{:line-p} - this should be T if the object should be moved as a line,
-                  and NIL if as a rectangle
+                  and @code{nil} if as a rectangle
 
    @code{:group-p} - this should be T if the object is some instance of
                    opal:aggregate and all its components should be moved as
@@ -23482,7 +23453,7 @@ NIL. The default function calls @code{opal:point-to-component} directly.
    @code{:points} - if @code{:line-p} is T, then the @code{:points} slot of the
                   object is changed as the object is moved or grown.
 
-   @code{:box} - if @code{:line-p} is NIL, then the @code{:box} slot of the object is
+   @code{:box} - if @code{:line-p} is @code{nil}, then the @code{:box} slot of the object is
                changed as the object is moved or grown.
 
    @code{:grow-p} - if this object can be changed size
@@ -23503,7 +23474,7 @@ in is not damaged.
 
 @defun gg:undo-last-move-grow multi-graphics-selection-gadget
 
-When @code{:want-undo} is non-NIL (default is NIL), then calling this function
+When @code{:want-undo} is non-NIL (default is @code{nil}), then calling this function
 will undo the last move or grow and the selection will return to whatever it
 was when the objects were moved or grown. If you call @code{undo-last-move-grow}
 again, it undoes the undo (one-level undo). It is
@@ -24169,7 +24140,7 @@ parameters are
 where @emph{item} was just selected by the user. If
 the user presses over the previous additional selection, it will
 become deselected, and the
-@code{:additional-selection-function} will be called with NIL as the
+@code{:additional-selection-function} will be called with @code{nil} as the
 @emph{item} parameter.
 
 @subsection Manipulating the browser-gadget
@@ -24349,7 +24320,7 @@ to add a point.
 @end vtable
 
 There is a slot in the gadget called @code{:polyline-being-edited}. This
-slot will contain the polyline that is currently being edited, or NIL
+slot will contain the polyline that is currently being edited, or @code{nil}
 if no polyline is being edited.
 
 
@@ -24440,7 +24411,7 @@ hits the OK button. The return value of both functions is always T.
 
 When the error-gadget is associated with a parent window, the
 error window will appear centered inside of this window. If
-@code{:parent-window} is NIL, then the error window will appear at
+@code{:parent-window} is @code{nil}, then the error window will appear at
 coordinates (200,200), relative to the upper left corner of the
 screen.
 
@@ -24453,11 +24424,11 @@ should be centered in the window (allowed values are @code{:left},
 If the value of the @code{:modal-p} slot is T, then all interactors in
 the rest of the interface will be suspended, and the user will not be
 able to continue working until the "OK" button has been pressed. If
-@code{:modal-p} is NIL, then the interface will continue to function
+@code{:modal-p} is @code{nil}, then the interface will continue to function
 with the error window visible.
 
 If the @code{:beep-p} slot is T, then Garnet will sound a beep when the
-gadget becomes visible. To turn off the beep, set @code{:beep-p} to NIL.
+gadget becomes visible. To turn off the beep, set @code{:beep-p} to @code{nil}.
 
 The @code{:button-name} slot determines the label of the button. Since the
 @code{display-error} routines do @emph{not} take this as a parameter, it must
@@ -24516,7 +24487,7 @@ lisp error message that was generated, followed by the specified
 
 When the evaluation is successful, @code{gg:Careful-Eval} returns the evaluated
 value (which may be multiple values). If there was an error, then
-@code{Careful-Eval} returns two values: NIL and the error condition structure.
+@code{Careful-Eval} returns two values: @code{nil} and the error condition structure.
 (For a discussion of error conditions, see Chapter 29 of the Second Edition
 of Guy Steele's @emph{Common Lisp, the Language}.)
 
@@ -24551,7 +24522,7 @@ gg:Careful-Read-From-String @emph{string} &optional @emph{error-gadget  error-me
 
 @code{Careful-Read-From-String} will try to read a symbol or expression from the
 @emph{string} and return it if successful. If an error is encountered, then the
-@emph{error-gadget} will be raised and two values will be returned: NIL and the
+@emph{error-gadget} will be raised and two values will be returned: @code{nil} and the
 error condition. The message displayed in the error gadget will be a
 concatenation of the actual lisp error message followed by the
 @emph{error-message}.
@@ -24588,7 +24559,7 @@ the @emph{expr} contains @code{gvl} calls, which normally require that the @emph
 is already installed in an @code{o-formula} when it is evaluated.
 If the evaluation is successful, then the evaluated
 value is returned. If there was an error during the eval, then the
-@emph{error-gadget} is raised and two values are returned: NIL and the error
+@emph{error-gadget} is raised and two values are returned: @code{nil} and the error
 condition. The message displayed in the error gadget will be a
 concatenation of the actual lisp error message followed by the
 @emph{error-message}.
@@ -24845,7 +24816,7 @@ will pop up and ask for confirmation.
 
 @code{:query-message} - the string that will be used in the query
 gadget that pops up when you try to overwrite a file. If
-@code{:check-filenames-p} slot is NIL, this slot is ignored.
+@code{:check-filenames-p} slot is @code{nil}, this slot is ignored.
 
 @code{:selection-function} - as usual, the function called when the "Save"
 button is hit.
@@ -25162,17 +25133,17 @@ editing. See below. The default filter does nothing.
 @code{:pixel-margin} - Multiple-valued items are represented as an aggrelist,
 so this determines the maximum pixel value of an item, before
 wrapping to the next line. Note that this does @emph{not} affect single
-valued items. Default: NIL
+valued items. Default: @code{nil}
  
 @code{:rank-margin} - Same as @code{:pixel-margin}, but is a count of the number of
-values. Default: NIL
+values. Default: @code{nil}
 
 @code{:multi-line-p} - Whether the user can enter multi-line strings, 
 which means that @code{return} does not exit a field, but makes a new line.
-Default: NIL.
+Default: @code{nil}.
 
 @code{:select-label-p} - Whether pressing on the label (with any mouse
-button) causes the item to be selected. Default: NIL.
+button) causes the item to be selected. Default: @code{nil}.
 
 @code{:label-select-event} - If you want to make the labels selectable,
 you can specify which mouse event to use in the slot @code{:label-select-event}.
@@ -25182,7 +25153,7 @@ when a label is selected.
 
 @code{:select-value-p} - Whether pressing on the value (with the right button)
 causes the value to be selected. NOTE: Values which are specified as
-gadgets cannot be selected. Default: NIL.
+gadgets cannot be selected. Default: @code{nil}.
 
 @code{:value-selected-func} - Called when a value is selected with
 @emph{(gadget value-obj value label)} where label is the label of that
@@ -25191,7 +25162,7 @@ field.
 @code{:single-select-p} - Whether a single label or value can be
 selected (T) or multiple fields can be selected (NIL). This is only
 relevant if one or both of @code{:select-label-p} or
-@code{:select-value-p} is non-NIL. Default: NIL.
+@code{:select-value-p} is non-NIL. Default: @code{nil}.
 
 @end vtable
  
@@ -25314,7 +25285,7 @@ in this error gadget. If there is no error gadget, then the error
 message is simply not displayed, but a beep is sounded and the slot
 value is shown in italics.
 
-@code{:slots} - The list of slots of the object to view. Default value is NIL,
+@code{:slots} - The list of slots of the object to view. Default value is @code{nil},
 which means the prop-sheet should get the list of slots from the
 @code{:parameters} slot of the object being edited (see @code{:union?}).
 When relying on @code{:parameters}, the property sheet will use
@@ -25343,7 +25314,7 @@ it is shown in italics.
 A gadget, in which case the @code{:value} slot of the gadget is set with
 the old value, and the @code{:value} slot is queried to get the final value.
 If gadgets are used, then @code{:set-immediately-p} for the property
-sheet should be NIL. A useful gadget is
+sheet should be @code{nil}. A useful gadget is
 @code{Pop-Up-From-Icon}.
 @end itemize
 @end itemize
@@ -25351,12 +25322,12 @@ sheet should be NIL. A useful gadget is
 @code{:union?} - This affects which slots are shown for objects when their
 @code{:parameters} lists are being used. If there are multiple objects, then
 a value of T for this slot will display the slots that are in @emph{any} of
-the objects. If the value of this slot is NIL, then only those slots that
+the objects. If the value of this slot is @code{nil}, then only those slots that
 appear in @emph{all} of the @code{:parameters} lists (the intersection of the lists)
 will be displayed. The default is T, to show the union of all @code{:parameters}
 lists.
 
-@code{:eval-p} - If NIL, then the values set into the slots will be all strings.
+@code{:eval-p} - If @code{nil}, then the values set into the slots will be all strings.
 If T, then evaluates what the user types (using
 @code{Read-From-String}) and sets the result into the slot. Usually,
 you use T when displaying the graphical fields of graphical 
@@ -25364,7 +25335,7 @@ objects. Default=T. NOTE: Evaluating a slot may cause the
 interface to crash if the values are not valid.
 
 @code{:set-immediately-p} - If T, then as soon as the user types CR, the object's
-slot is set. If NIL, some external action must set the object's
+slot is set. If @code{nil}, some external action must set the object's
 slots (e.g., when using @code{prop-sheet-for-obj-with-OK}, the object's
 slots are not set until the OK button is hit). Default=T.
 
@@ -25597,7 +25568,7 @@ The loader for @code{prop-sheet-for-obj-with-OK} is "prop-sheet-win-loader".
 Given a list of slots for a KR object, displays the values and
 allows them to be edited. The labels and values can optionally be selectable.
 Sets the object's slot only when OK or Apply is hit. (So
-@code{:set-immediately-p} is always NIL).
+@code{:set-immediately-p} is always @code{nil}).
 
 @b{Customizable slots}
 
@@ -25949,12 +25920,12 @@ user might be able to get the parts of. True by default for
 @code{opal:aggregadget}s. If you allow high-level objects to be added
 in your editor (e.g., gadgets like buttons), and you supply the
 @code{Standard-Ungroup} command, you should set the @code{:group-p} slot
-of any objects you don't want the user to ungroup to be NIL. 
+of any objects you don't want the user to ungroup to be @code{nil}. 
 
 @code{:grow-p} - whether the object can change size or not.
 @end vtable
 
-If the object has @code{:line-p} and @code{:polygon-p} both NIL, then it
+If the object has @code{:line-p} and @code{:polygon-p} both @code{nil}, then it
 is assumed to be controlled by a @code{:box} slot.
 
 The various routines find information they need by looking in a
@@ -26105,7 +26076,7 @@ Pastes the objects in the clipboard into the window offset from where
 they were cut. Pasting the same objects multiple times
 will give multiple copies, each offset from the previous. The offset
 amount is determined by the @code{:x-inc-amt} and @code{:y-inc-amt} slots
-of the clipboard object, or, if NIL, then 10 is used. The new
+of the clipboard object, or, if @code{nil}, then 10 is used. The new
 objects will be selected.
 
 @cindex{Standard-Duplicate}
@@ -26114,7 +26085,7 @@ gg:Standard-Duplicate @emph{gadget} &rest @emph{args} @ref{function}
 @end example
 Makes a copy of the selected objects, and places them back into the
 window, offset from the previous objects by @code{:x-inc-amt} and
-@code{:y-inc-amt} (or 10 if these are NIL). The new
+@code{:y-inc-amt} (or 10 if these are @code{nil}). The new
 objects will be selected.
 
 @cindex{Standard-Group}
@@ -26137,7 +26108,7 @@ aggregate and adds the objects directly to the parent of the group.
 @code{:Group-p} is true by default for @code{opal:aggregadget}s. If you allow
 high-level objects to be added 
 in your editor (e.g., gadgets like buttons), and you supply the
-@code{Standard-Ungroup} command, you should set the @code{:group-p} slot to be NIL
+@code{Standard-Ungroup} command, you should set the @code{:group-p} slot to be @code{nil}
 for any objects you don't want the user to ungroup.
 
 @subsection Utility Procedures
@@ -26441,7 +26412,7 @@ then the appearance of the scroll bar will be updated accordingly.
 The trill boxes at each end of the scroll bar allow the user to
 increment and decrement @code{:value} by the amount specified in
 @code{:scr-incr}. The designer may choose to leave the trill boxes out
-by setting @code{:scr-trill-p} to NIL.
+by setting @code{:scr-trill-p} to @code{nil}.
 
 The indicator may also be moved directly by mouse movements. Dragging
 the indicator while the left mouse button is pressed will change the
@@ -26464,9 +26435,9 @@ indicator should correspond to one "page" of items in the menu (e.g., for
 three pages of items, set @code{:percent-visible} to .33).
 
 The slots @code{:scroll-p} and @code{:active-p} are used to enable and disable the
-scrolling feature of the scroll bar. When either is set to NIL, the
+scrolling feature of the scroll bar. When either is set to @code{nil}, the
 trill boxes of the scroll bar become inactive and the indicator cannot
-be moved. The difference is that when @code{:active-p} is set to NIL, then
+be moved. The difference is that when @code{:active-p} is set to @code{nil}, then
 the keyboard selection cannot be enabled.
 
 @section Motif Slider
@@ -26559,7 +26530,7 @@ the text to edit it.
 
 The slots @code{:val-1} and @code{:val-2} contain the upper and lower bounds for
 the value of the gadget. Either slot may be the minimum or maximum, and either
-slot may be NIL (indicating no boundary). If a value less than the minimum
+slot may be @code{nil} (indicating no boundary). If a value less than the minimum
 allowed value is entered,
 the value of the gadget will be set to the minimum, and analogously for the
 maximum. Clicking on the left trill box always moves the value closer to
@@ -26625,7 +26596,7 @@ sliders (see section @ref{sliders}). The value in @code{:val-1} corresponds to
 the right side of the gauge.
 
 The title of the gauge is specified in @code{:title}. No title will
-appear if @code{:title} is NIL. The fonts for the title of the gauge
+appear if @code{:title} is @code{nil}. The fonts for the title of the gauge
 and the current chosen value are specified in @code{:title-font} and
 @code{:value-font}, respectively.
 
@@ -26694,14 +26665,14 @@ The following slots provide additional functionality for the Motif buttons:
 
 @enumerate
 
-In single Motif buttons, if the @code{:active-p} slot is NIL, then the string of
+In single Motif buttons, if the @code{:active-p} slot is @code{nil}, then the string of
 the button appears in "grayed-out" text and the button is not user selectable.
 
 Analogously, the @code{:inactive-items} slot of the Motif button panels contains
 a list of strings or atoms corresponding to the members of the @code{:items}
 list. The text of each item listed in @code{:inactive-items} will appear
 "grayed-out" and those buttons will not be user selectable. If @code{:active-p}
-is set to NIL, then all items will appear "grayed-out".
+is set to @code{nil}, then all items will appear "grayed-out".
 
 @cindex{keyboard-selection}
 When the slot @code{:keyboard-selection-p} is T, the keyboard interface to the
@@ -26849,7 +26820,7 @@ once, the @code{:value} slot is a list of strings (or atoms), rather than a
 single string. Similarly, @code{:value-obj} contains a list of button objects.
 
 The slot @code{:text-on-left-p} specifies whether the text will appear on the
-right or left of the buttons. A NIL value indicates that the text should
+right or left of the buttons. A @code{nil} value indicates that the text should
 appear on the right. When text appears on the right, the designer will
 probably want to set @code{:h-align} to @code{:left} in order to left-justify the
 text against the buttons.
@@ -27410,7 +27381,7 @@ avoid the dereferencing).
 
 The submenu-items should always be described with lists, even if they
 have no functions (e.g., @code{("Slow")} instead of @code{"Slow"}). Also, the
-submenu function should either be NIL (as in the above example) or a function.
+submenu function should either be @code{nil} (as in the above example) or a function.
 As in the regular menubar, the item functions are optional and may be
 omitted.
 
@@ -27765,7 +27736,7 @@ The @code{:width} of the box is fixed, and the
 @code{:value} string will scroll inside the box if it is too long to be
 displayed.
 
-When the @code{:active-p} slot is set to NIL, both the label and the field will
+When the @code{:active-p} slot is set to @code{nil}, both the label and the field will
 appear "grayed-out" and the field will not be editable.
 
 
@@ -28331,7 +28302,7 @@ obtained using this method as were obtained in the above example.
 @end example
 
 The @code{:value} slot of a single button will either contain the @code{:string}
-of the button or NIL. Single buttons will appear selected when the @code{:value}
+of the button or @code{nil}. Single buttons will appear selected when the @code{:value}
 slot contains any non-NIL value.
 
 
@@ -28474,7 +28445,7 @@ like Figure @ref{inspectorfig}. If you want to use the @code{HELP}
 keyboard key for something else, you can set the variable
 @cindex{HELP key}
 @cindex{inspector-key}
-@code{garnet-debug:*inspector-key*} to a different key (or NIL for none)
+@code{garnet-debug:*inspector-key*} to a different key (or @code{nil} for none)
 @emph{before} loading the @code{Inspector}.
 
 @sp 1
@@ -29026,7 +28997,7 @@ all its children.
 out. The default is to print all potential constant slots that are found
 in @emph{object} and all its children.
 
-@emph{recompute-p} - Set this parameter to NIL if you do not need to reexamine
+@emph{recompute-p} - Set this parameter to @code{nil} if you do not need to reexamine
 all the objects and you trust what was computed earlier (the same information
 that was printed out before will be printed out again, without checking that
 it is still valid).
@@ -29073,8 +29044,8 @@ gd:Find-Formulas @emph{aggregate} &optional (@emph{only-totals-p} T) (@emph{limi
 If the function @code{find-formulas} is called with a non-NIL @emph{only-totals-p}
 option, it will print out the total number of formulas that have not
 been reevaluated since the last call to @code{record-from-now}.
-If @emph{only-totals-p} is NIL and @emph{limit} is specified,
-it will print out at most @emph{limit} formula names. If @emph{limit} is NIL,
+If @emph{only-totals-p} is @code{nil} and @emph{limit} is specified,
+it will print out at most @emph{limit} formula names. If @emph{limit} is @code{nil},
 all formula names will be printed out.
 
 You will seldom need to specify the @emph{from} parameter. This allows you
@@ -29151,7 +29122,7 @@ If an object is provided, then only notifies
 when a slot of that object is set. If no object is supplied, then
 notifies whenever @emph{any} object is set. If a slot is provided, then
 only notifies when that slot is set. If no slot is supplied, then
-notifies whenever @emph{any} slot is set. If object is NIL, then clears
+notifies whenever @emph{any} slot is set. If object is @code{nil}, then clears
 all breaks and notifies. If all parameters are missing, then shows
 current status. For example,
 @example
@@ -29162,7 +29133,7 @@ current status. For example,
 @end example
 
 Each call to @code{Notify-On-Slot-Set} adds to the previous list of
-breaks and notifies, unless the object is NIL. You can use
+breaks and notifies, unless the object is @code{nil}. You can use
 @code{clear-slot-set} to remove a break or notify (see below).
 
 @cindex{Break-On-Slot-Set}
@@ -29195,7 +29166,7 @@ and is the same value passed into @code{Call-Func-On-Slot-Set}.
 gd:Clear-Slot-Set &key @emph{object  slot  value} @ref{function}
 @end example
 Clear the break or notify for the object, slot and value. If nothing is
-specified or object is NIL, then clears all breaks and notifies.
+specified or object is @code{nil}, then clears all breaks and notifies.
 
 
 
@@ -29367,7 +29338,7 @@ a graphical object, to try to find all interactors that affect that object,
 @code{:next} to wait and describe the next interactor that runs
 @end itemize
 
-With no arguments (or NIL as an argument), @code{look-inter} will print all
+With no arguments (or @code{nil} as an argument), @code{look-inter} will print all
 active interactors
 (those with their @code{:active} and @code{:window} slots set to something)
 sorted by priority level @cindex{priority level}:
@@ -29468,7 +29439,7 @@ bytes. The size information @emph{does not} include any interactors
 because interactors can exist independent of the 
 aggregate hierarchy. 
 The optional @emph{verbose} flag defaults to @code{t}; setting
-it to nil will reduce the detail of the printed information.
+it to @code{nil} will reduce the detail of the printed information.
 
 @example
 gd:InterBytes &interactor @emph{window} @emph{verbose}@ref{function}
@@ -29481,7 +29452,7 @@ computed. (Use @code{objsize} for a single interactor.)  Note that
 an interactor may operate in more than one window and that interactors
 can follow objects from window to window. As with
 @code{aggbytes}, the @emph{verbose} flag defaults to @code{t}; setting
-it to nil will reduce the detail of the printed information.
+it to @code{nil} will reduce the detail of the printed information.
 
 @example
 gd:*Avoid-Shared-Values*@ref{variable}
@@ -29633,7 +29604,7 @@ these demos.
 
 All the demos can take advantage of the Opal feature for double-buffered
 windows. The @code{do-go} routine for each demo has an optional
-@code{:double-buffered-p} argument that defaults to NIL. For instance, to
+@code{:double-buffered-p} argument that defaults to @code{nil}. For instance, to
 run @code{demo-3d} on a double-buffered window, say:
 @code{(demo-3d:do-go :double-buffered-p T)}
 and to run it normally, say:
@@ -31279,7 +31250,7 @@ values of all the gadgets in the dialog box in the form of
 @end example
 where the keywords are the names (@code{:known-as} slot) of the gadgets.
 If the user hits Cancel, then @code{show-in-window-and-wait}
-returns NIL. Apply does not cause the dialog box to go away, so you
+returns @code{nil}. Apply does not cause the dialog box to go away, so you
 might want to supply an OK-Function for the dialog box.
 
 If selection functions were specified in the gadget's select-function
@@ -31486,7 +31457,7 @@ If <startup-objects> is specified, it should be a list of Garnet objects.
 When C32 is started, it creates a panel for each object in the list, plus
 the empty panel. If <test-p> is specified, a little test window is
 created with a few objects in it. C32 can then be used to edit the
-objects in the window. Setting <start-event-loop-p> to NIL cause C32 to
+objects in the window. Setting <start-event-loop-p> to @code{nil} cause C32 to
 start up with the main-event loop not running.
 @end defun
 
@@ -31553,7 +31524,7 @@ allows you to add a slot to the object, or to display a slot that is
 currently not shown. When you click, you start editing an (initially
 empty) slot name. If the slot is currently not shown, its current value
 is displayed. If the slot is not present, it is created. Its initial
-value is inherited, if possible; otherwise, it is set to NIL. You may
+value is inherited, if possible; otherwise, it is set to @code{nil}. You may
 then edit the value (in the right-hand side). As a special shortcut, it
 is also possible to enter a slot name and a value together; just type the
 slot name, a space, and then the value.
@@ -32896,7 +32867,7 @@ not take a list.
 
 @code{:top-level-agg} - The top level aggregate containing constrainable
 objects. If the aggregate associated with a window is
-the top level aggregate, this slot may be left NIL (the
+the top level aggregate, this slot may be left @code{nil} (the
 default). However, if, for example, the window contains an editor aggregate
 and a feedback aggregate, then the @code{:top-level-agg} slot should
 be set to the editor aggregate.
@@ -33050,7 +33021,7 @@ that depends on this slot. Required parameters are:
 
 		destroy-meta-info-p: If this parameter is true, the meta
 			slots :links, :offset, and :scale are destroyed in
-			the formula. This parameter defaults to nil.
+			the formula. This parameter defaults to @code{nil}.
 
 @end verbatim
 
@@ -33378,9 +33349,9 @@ the following slots in the original object and the copied object:
 @t{:left, :top, :width, :height, :visible, :draw-function,
 :font, :string, :line-style, :filling-style, :x1, :x2, :y1, :y2}.
 
-The last option the user can choose is @t(none) in which case nil will
+The last option the user can choose is @t(none) in which case @code{nil} will
 be stored in the @t(:feedback-obj) slot. This will not undo the effects
-of a by-demo operation since by-demo also places nil in the @t(:feedback-obj)
+of a by-demo operation since by-demo also places @code{nil} in the @t(:feedback-obj)
 slot.
 
 
@@ -33824,17 +33795,17 @@ PROCLAIM).
 
 Some Lisp applications will give you warnings or notes about Lisp
 constructs that are potentially inefficient. In CMU Common Lisp, for
-example, setting SPEED to 3 and COMPILATION-SPEED to 0 generates a
+example, setting @code{speed} to 3 and @code{compilation-speed} to 0 generates a
 number of messages about potentially inefficient constructs. Many
 such inefficiencies can be eliminated easily, for example by adding
 declarations to your code.
 
-Wrap all lambdas in #' rather than just ' (in CLtL2 the # is no longer
-optional). This 
-comes up in Garnet a lot in final-functions for interactors and
-selection-functions for gadgets. Note, in the @code{:parts} or
-@code{:interactors} parts of aggregadgets or aggrelists, use @code{,#'}
-(comma-number-quote) before lambdas and functions.
+Wrap all lambdas in @code{#'} rather than just @code{'} (in CLtL2 the # is no longer
+optional). This comes up in Garnet a lot in final-functions for
+interactors and selection-functions for gadgets. Note, in the
+@code{:parts} or @code{:interactors} parts of aggregadgets or
+aggrelists, use @code{,#'} (comma-number-quote) before lambdas and
+functions.
 
 You can save an enormous amount of time loading software if you make images
 of lisp with the software already loaded. For example, if you start lisp and
@@ -33842,13 +33813,12 @@ load Garnet, you can save an image of lisp that can be restarted later with
 Garnet already loaded. We have simplified this procedure by providing the
 function @code{opal:make-image}. If you want to make images by hand, you will
 have to use @code{opal:disconnect-garnet} and @code{opal:reconnect-garnet}
-to sever and restore lisp's connection with the X server. All of these
+to sever and restore lisp's connection with the @emph{X11} server. All of these
 functions are documented in the Opal chapter.
 
 It may help to reboot your workstation every now and then. This will reset
 the swap file so that large applications (like Garnet) run faster.
 @end itemize
-
 
 
 @section Making your Garnet Code Faster
@@ -33862,14 +33832,14 @@ The global switch @code{:garnet-debug} can be removed from the
 be ignored during compiling and loading. This will make Garnet slightly
 smaller and faster. The @code{:garnet-debug} keyword is pushed onto the
 @code{*features*} list by default in @code{garnet-loader.lisp}, but you can
-prevent this by setting @code{user::Garnet-Garnet-Debug} to NIL before compiling
+prevent this by setting @code{user::Garnet-Garnet-Debug} to @code{nil} before compiling
 and loading Garnet. Garnet will need to be recompiled with the new
 @code{*features*} list, so that the extra code will not even get into the
 compiled binaries. Of course, you will lose functions like
 @code{inter:trace-inter}.
 
 Turn off KR's type-checking by setting the variable @code{kr::*types-enabled*}
-to NIL. Note: the speed difference may be imperceptible, since the type
+to @code{nil}. Note: the speed difference may be imperceptible, since the type
 system has been implemented very efficiently (operations are only about 2%
 slower with type-checking).
 
@@ -33919,7 +33889,7 @@ around, and re-using them. Allocating memory in Lisp is fairly
 expensive.
 
 If you are deleting a number of objects at the same time, first set
-the window's @code{:aggregate} slot to NIL and update the window.
+the window's @code{:aggregate} slot to @code{nil} and update the window.
 Then, when you are done destroying, set the aggregate back and update
 again. For example, to destroy 220 rectangles on a Sparc, removing the
 aggregate reduced the time from 11.8 to 2.4 seconds (80%)!
@@ -34046,7 +34016,7 @@ Consider using @code{virtual-aggregates} if you have a lot of similar
 objects in an interface, such as lines in a map or dots on a graph.
 This will decrease storage requirements significantly. 
 
-The variable @code{kr::store-lambdas} can be set to NIL to remove the
+The variable @code{kr::store-lambdas} can be set to @code{nil} to remove the
 storage of the lambda expressions for compiled formulas. This will
 save some storage, but it prevents objects from being stored to files.
 

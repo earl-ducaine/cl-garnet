@@ -55,7 +55,7 @@ Mostly functional, complete (c. 1990) gui toolkit
       via Quicklisp, and run the demo or begin using the library.
 
       #+BEGIN_SRC lisp
-        (ql:quickload  :org.xoanonos.gui.garnet)
+        (ql:quickload  :garnet)
         (demos-controller::do-go)
       #+END_SRC
 

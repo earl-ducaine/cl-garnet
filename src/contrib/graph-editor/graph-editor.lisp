@@ -130,9 +130,9 @@
 (defparameter *loaded-from-pathname*
   (merge-pathnames
    #P"src/contrib/graph-editor/"
-   (asdf:system-source-directory :org.xoanonos.gui.garnet)))
+   (asdf:system-source-directory :garnet)))
 ;; (eval-when (:compile-toplevel :load-toplevel :execute)
-;;   (setf *loaded-from-pathname* (asdf:system-source-directory :org.xoanonos.gui.garnet)))
+;;   (setf *loaded-from-pathname* (asdf:system-source-directory :garnet)))
 
 ;; Convenient way to define a cursor with a mask
 (defun define-cursor (name path mask-path)

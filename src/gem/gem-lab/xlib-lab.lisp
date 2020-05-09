@@ -8,7 +8,7 @@
 
 
 ;; To Run
-;; (ql:quickload :xoanon.gui.garnet)
+;; (ql:quickload :garnet)
 ;; (load "/home/rett/dev/garnet/garnet/src/gem/gem-lab/xlib-lab.lisp")
 ;; (load "/home/rett/dev/garnet/garnet/src/gem/gem-lab/gem-pixmap-lab.lisp")
 ;; (in-package :xlib-lab)

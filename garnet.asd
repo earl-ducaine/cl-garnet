@@ -18,7 +18,7 @@
 (setf (get :garnet-modules :inter) t)
 (setf (get :garnet-modules :multifont) t)
 
-(asdf:defsystem :org.xoanonos.gui.garnet
+(asdf:defsystem :garnet
   :depends-on (alexandria
 	       uiop
 	       bordeaux-threads
@@ -459,8 +459,8 @@
 	    :components
 	    ((:file "post-processing")))))
 
-(asdf:defsystem :org.xoanonos.gui.garnet/clx-debug
-  :depends-on (org.xoanonos.gui.garnet)
+(asdf:defsystem :garnet/clx-debug
+  :depends-on (garnet)
   :license "MIT-ish (also public domain, see LICENSE)"
   :author "CMU Garnet Team (plus various others, see LICENSE)"
   :description "CLX debugging tools"
