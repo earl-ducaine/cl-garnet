@@ -645,6 +645,8 @@ this display."
   (when *x11-server-available*
     (let* ((display-info (g-value parent-window :display-info))
 	   (drawable (xlib:create-window
+		      :bit-gravity :north-west
+		      :backing-store :always
 		      :parent (g-value parent-window :drawable)
 		      :x x
 		      :y y
