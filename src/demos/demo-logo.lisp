@@ -12,7 +12,7 @@
 ;;;
 ;;; Garnet logo designed by MaryJo Dowling at CMU
 
-(in-package :DEMO-LOGO)
+(in-package :demo-logo)
 
 (declaim (special pantone192 pantone193 pantone194 pantone196
 		  mycolor1 mycolor2 mycolor3 mycolor4 mycolor5
@@ -59,10 +59,16 @@
   (:blue  0.84)
   (:green  0.84)
   (:red  1.0))
+
 (create-instance 'mycolor5 opal:color
   (:blue  0.5)
   (:green  0.5)
   (:red  1.0))
+
+(create-instance 'background-gray opal:color
+  (:blue (/ 164 256))
+  (:green (/ 164 256))
+  (:red (/ 164 256)))
 
 
 (create-instance 'pantone192-fill opal:filling-style
@@ -174,7 +180,7 @@
     (s-value pl :point-list (g-value pl :copy-point-list))))
 
 (defparameter *top-agg* nil)
-(defparameter font (opal:get-standard-font NIL :bold :very-large))
+(defparameter *font* (opal:get-standard-font nil :bold :very-large))
 
 (defparameter white-to-black NIL)
 (defparameter black-to-white NIL)
@@ -235,18 +241,19 @@
     (setq black-to-white l)
     (setq white-to-black (reverse l))))
 
-(defun Create-String-Objs (init-x init-y font agg)
+(defun create-string-objs (init-x init-y font agg)
   (let ((cur-y init-y)
 	*objs-list* obj)
     (dolist (s *string-list*)
       (setq obj
-	    (create-instance NIL opal:text (:string s)
-			     (:left (+ FirstLetterOffset init-x))
-			     (:top cur-y)
-			     (:font font)
-			     (:visible NIL)
-                             (:fast-redraw-p :redraw)
-                             (:fast-redraw-line-style opal:white-line)))
+	    (create-instance NIL opal:text
+	      (:string s)
+	      (:left (+ FirstLetterOffset init-x))
+	      (:top cur-y)
+	      (:font font)
+	      (:visible NIL)
+	      (:fast-redraw-p :redraw)
+	      (:fast-redraw-line-style opal:white-line)))
       (opal:add-component agg obj)
       (push obj *objs-list*)
       (incf cur-y maxwh))
@@ -372,10 +379,10 @@
 (defun do-go (&key (strings *garnet-string-list*)
 		   (numFades 17)
 		   dont-enter-main-event-loop
-		(double-buffered-p T))
+		(double-buffered-p t))
   ;; Convert string list into appropriate form
   (create-lists strings)
-  (setq *top-agg* (create-instance NIL opal:aggregate))
+  (setq *top-agg* (create-instance nil opal:aggregate))
   ;; Expand to fit contexnts of aggregate. Never shrink.
   (setq *win* (create-instance nil inter:interactor-window
 		      (:title "Garnet Logo")
@@ -386,8 +393,9 @@
 		      (:height (o-formula (max (+ (or (gv *top-agg* :height) 0) 6)
 					       (or (gv-local :self :height) 235))))
 		      (:double-buffered-p double-buffered-p)
+		      (:background-color background-gray)
 		      (:aggregate *top-agg*)))
-  (Create-Logo *top-agg*)
+  (create-logo *top-agg*)
   (opal:update *win*)
   (Create-Color-List numFades)
   (sleep 3)
@@ -397,9 +405,9 @@
   (setq *first-letter-objs* '())
   ;; will shrink
   (go-to-next-status)
-  (create-first-letter-objs *char-origin-x* *char-origin-y* font *top-agg*)
+  (create-first-letter-objs *char-origin-x* *char-origin-y* *font* *top-agg*)
   (setq *objs-list* (create-string-objs *char-origin-x* *char-origin-y*
-				      font *top-agg*))
+				      *font* *top-agg*))
   (unless (g-value opal:color :color-p)
     (create-instance 'Fader Opal:Rectangle
 		     (:visible NIL)

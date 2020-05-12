@@ -15,7 +15,7 @@
 
 
 
-(in-package :DEMOS-CONTROLLER)
+(in-package :demos-controller)
 
 (declaim (special WIN1 AGG1 BT QBT DEMOS-MOUSELINE WIN2 TEXT))
 
@@ -116,6 +116,11 @@ devised by David Goldberg at Xerox PARC.")
     ("virtual-agg" "Demonstrates virtual aggregates.")
     ))
 
+(create-instance 'background-gray opal:color
+  (:blue (/ 164 256))
+  (:green (/ 164 256))
+  (:red (/ 164 256)))
+
 (defun Do-Go ()
   (setq *running* NIL)
   (demo-logo:do-go :dont-enter-main-event-loop T)
@@ -128,6 +133,7 @@ devised by David Goldberg at Xerox PARC.")
     (:width 10)
     (:height 10)
     (:title "Demos Controller")
+    (:background-color background-gray)
     (:aggregate (create-instance 'agg1 opal:aggregate)))
 
   (create-instance 'bt garnet-gadgets:x-button-panel
@@ -179,6 +185,7 @@ devised by David Goldberg at Xerox PARC.")
 
   (create-instance 'text opal:multifont-text
     (:left 5)(:top 5)
+    (:background-color background-gray)
     (:initial-text "Hold mouse over a button for 2 seconds to see
 a description of the demo.  This demonstrates the mouseline gadget.
 
