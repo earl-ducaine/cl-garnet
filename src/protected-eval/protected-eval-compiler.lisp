@@ -36,21 +36,15 @@
 (eval-when (:execute :load-toplevel :compile-toplevel)
   (garnet-mkdir-if-needed Garnet-Protected-Eval-Pathname))
 
-(defvar Protected-Eval-Compile-Files
-  '(
-    ;; "error"
-    ;; "prompter"
-    ;; "protected-eval"
-    ;; "protected-process"
-    ;; "abstract-errors"
-    ;; "garnet-errors"
-    ))
+;; (defvar Protected-Eval-Compile-Files
+;;   '(
+;;     ))
 
-(with-compilation-unit ()
-  (dolist (file Protected-Eval-Compile-Files)
-    (let ((peval-str (concatenate 'string "protected-eval:" file)))
-      (garnet-compile peval-str)
-      (garnet-load peval-str))))
+;; (with-compilation-unit ()
+;;   (dolist (file Protected-Eval-Compile-Files)
+;;     (let ((peval-str (concatenate 'string "protected-eval:" file)))
+;;       (garnet-compile peval-str)
+;;       (garnet-load peval-str))))
 
 
 ;; (garnet-copy-files Garnet-Protected-Eval-Src Garnet-Protected-Eval-Pathname

@@ -96,12 +96,8 @@
 (defvar garnet-lib-pathname (append-directory org.xoanonos.asdf-app-config:*base-directory* "lib"))
 (defvar garnet-binary-pathname (get-garnet-binary-pathname))
 
-;; (defvar Garnet-Opal-Src
-;;   (append-directory Garnet-Src-Pathname "opal"))
-;; (defvar Garnet-Opal-Pathname
-;;   (append-directory Garnet-Binary-Pathname "opal"))
-(defvar Garnet-Truetype-Src
-  (append-directory Garnet-Src-Pathname "truetype"))
+;; (defvar Garnet-Truetype-Src
+;;   (append-directory Garnet-Src-Pathname "truetype"))
 (defvar Garnet-Truetype-Pathname
   (append-directory Garnet-Binary-Pathname "truetype"))
 (defvar Garnet-Inter-Src
@@ -118,8 +114,6 @@
   (append-directory Garnet-Binary-Pathname "aggregadgets"))
 (defvar Garnet-PS-Src
   (append-directory Garnet-Src-Pathname "ps"))
-;; (defvar Garnet-PS-Pathname
-;;   (append-directory Garnet-Binary-Pathname "ps"))
 (defvar Garnet-Gadgets-Src
   (append-directory Garnet-Src-Pathname "gadgets"))
 (defvar Garnet-Gadgets-Pathname
@@ -187,12 +181,10 @@
 ;;; Target directories (binarys)
   `(("gg"                 . ,Garnet-Gadgets-PathName)
     ("gadgets"            . ,Garnet-Gadgets-PathName)
-;;    ("opal"               . ,Garnet-Opal-Pathname)
     ("truetype"           . ,Garnet-Truetype-PathName)
     ("inter"              . ,Garnet-Inter-PathName)
     ("gesture"            . ,Garnet-Gesture-PathName)
     ("gestures"           . ,Garnet-Gesture-PathName)
-;;    ("ps"                 . ,Garnet-PS-PathName)
     ("aggregadgets"       . ,Garnet-Aggregadgets-PathName)
     ("debug"              . ,Garnet-Debug-PathName)
     ("demos"              . ,Garnet-Demos-PathName)

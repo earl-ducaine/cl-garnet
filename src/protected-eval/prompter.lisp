@@ -95,11 +95,6 @@
 
 (export '(PROMPTER-GADGET DISPLAY-PROMPT DISPLAY-PROMPT-AND-WAIT))
 
-;;;      (proclaim '(special ERROR-INPUT-PRIORITY-LEVEL))
-;;;      (user::garnet-load "gadgets:error-gadget-loader")
-;;;      (user::garnet-load "contrib:scrolling-unlabeled-box-loader")
-;;;      (user::garnet-load "contrib:protected-eval-loader")
-
 (defun prompter-accept-input (string-gadget value)
   (let ((prompter (g-value string-gadget :parent)))
     (s-value prompter :value value)
