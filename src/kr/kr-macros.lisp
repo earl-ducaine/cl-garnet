@@ -1339,7 +1339,7 @@ Note that <relation> should be a slot name, not a schema."
 	      (apply method ,@args)))))))))
 
 
-(defmacro define-method (name class arg-list &rest body)
+(defmacro define-method (name class arg-list &body body)
   (unless (keywordp name)
     (setf name (intern (symbol-name name) (find-package "KEYWORD")))
     (format t "DEFINE-METHOD takes a keyword as the method name - using ~S~%"
