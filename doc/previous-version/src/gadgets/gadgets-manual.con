@@ -1,0 +1,308 @@
+@Comment{CONTENTS of gadgets/gadgets-manual.mss by Scribe 7(1700) on 30 November 1994 at 21:30}
+@PrefaceSection(Table of Contents)
+@Set(Page=1)@Style(PageNumber <@i>)
+@define(foot,invisible)
+@begin(TC1)@rfstr(349)1.@ @$Introduction@end(TC1)
+
+@begin(TC2)@rfstr(349)1.1.@ @$Current Gadgets@end(TC2)
+
+@begin(TC2)@rfstr(353)1.2.@ @$Customization@end(TC2)
+
+@begin(TC2)@rfstr(353)1.3.@ @$Using Gadget Objects@end(TC2)
+
+@begin(TC2)@rfstr(354)1.4.@ @$Application Interface@end(TC2)
+
+@begin(TC3)@rfstr(354)1.4.1.@ @$The :value slot@end(TC3)
+
+@begin(TC3)@rfstr(355)1.4.2.@ @$The :selection-function slot@end(TC3)
+
+@begin(TC3)@rfstr(355)1.4.3.@ @$The :items slot@end(TC3)
+
+@begin(TC4)@rfstr(355)1.4.3.1.@ @$Item functions@end(TC4)
+
+@begin(TC4)@rfstr(356)1.4.3.2.@ @$Adding and removing items@end(TC4)
+
+@begin(TC2)@rfstr(357)1.5.@ @$Constants with the Gadgets@end(TC2)
+
+@begin(TC1)@rfstr(358)2.@ @$Accessing the Gadgets@end(TC1)
+
+@begin(TC2)@rfstr(358)2.1.@ @$Gadgets Modules@end(TC2)
+
+@begin(TC2)@rfstr(358)2.2.@ @$Loading the Gadgets@end(TC2)
+
+@begin(TC2)@rfstr(358)2.3.@ @$Gadget Demos@end(TC2)
+
+@begin(TC1)@rfstr(361)3.@ @$The Standard Gadget Objects@end(TC1)
+
+@begin(TC2)@rfstr(361)3.1.@ @$Scroll Bars@end(TC2)
+
+@begin(TC2)@rfstr(363)3.2.@ @$Sliders@end(TC2)
+
+@begin(TC2)@rfstr(365)3.3.@ @$Trill Device@end(TC2)
+
+@begin(TC2)@rfstr(366)3.4.@ @$Gauge@end(TC2)
+
+@begin(TC2)@rfstr(367)3.5.@ @$Buttons@end(TC2)
+
+@begin(TC3)@rfstr(368)3.5.1.@ @$Text Buttons@end(TC3)
+
+@begin(TC3)@rfstr(370)3.5.2.@ @$X Buttons@end(TC3)
+
+@begin(TC3)@rfstr(371)3.5.3.@ @$Radio Buttons@end(TC3)
+
+@begin(TC2)@rfstr(371)3.6.@ @$Option Button@end(TC2)
+
+@begin(TC2)@rfstr(373)3.7.@ @$Popup-Menu-Button@end(TC2)
+
+@begin(TC2)@rfstr(374)3.8.@ @$Menu@end(TC2)
+
+@begin(TC2)@rfstr(376)3.9.@ @$Scrolling Menu@end(TC2)
+
+@begin(TC3)@rfstr(377)3.9.1.@ @$Scroll Bar Control@end(TC3)
+
+@begin(TC3)@rfstr(377)3.9.2.@ @$Menu Control@end(TC3)
+
+@begin(TC2)@rfstr(378)3.10.@ @$Menubar@end(TC2)
+
+@begin(TC3)@rfstr(379)3.10.1.@ @$Item Selection Functions@end(TC3)
+
+@begin(TC3)@rfstr(379)3.10.2.@ @$Programming the Menubar in the Traditional Garnet Way@end(TC3)
+
+@begin(TC4)@rfstr(380)3.10.2.1.@ @$An example@end(TC4)
+
+@begin(TC4)@rfstr(380)3.10.2.2.@ @$Adding items to the menubar@end(TC4)
+
+@begin(TC4)@rfstr(381)3.10.2.3.@ @$Removing items from the menubar@end(TC4)
+
+@begin(TC3)@rfstr(381)3.10.3.@ @$Programming the Menubar with Components@end(TC3)
+
+@begin(TC4)@rfstr(381)3.10.3.1.@ @$An example@end(TC4)
+
+@begin(TC4)@rfstr(381)3.10.3.2.@ @$Creating components of the menubar@end(TC4)
+
+@begin(TC4)@rfstr(382)3.10.3.3.@ @$Adding components to the menubar@end(TC4)
+
+@begin(TC4)@rfstr(383)3.10.3.4.@ @$Removing components from the menubar@end(TC4)
+
+@begin(TC3)@rfstr(383)3.10.4.@ @$Finding Components of the Menubar@end(TC3)
+
+@begin(TC3)@rfstr(384)3.10.5.@ @$Enabling and Disabling Components@end(TC3)
+
+@begin(TC3)@rfstr(384)3.10.6.@ @$Other Menubar Functions@end(TC3)
+
+@begin(TC2)@rfstr(384)3.11.@ @$Labeled Box@end(TC2)
+
+@begin(TC2)@rfstr(385)3.12.@ @$Scrolling-Input-String@end(TC2)
+
+@begin(TC2)@rfstr(385)3.13.@ @$Scrolling-Labeled-Box@end(TC2)
+
+@begin(TC2)@rfstr(386)3.14.@ @$Graphics-Selection@end(TC2)
+
+@begin(TC2)@rfstr(388)3.15.@ @$Multi-Graphics-Selection@end(TC2)
+
+@begin(TC3)@rfstr(389)3.15.1.@ @$Programming Interface@end(TC3)
+
+@begin(TC3)@rfstr(391)3.15.2.@ @$End User Operation@end(TC3)
+
+@begin(TC2)@rfstr(391)3.16.@ @$Scrolling-Windows@end(TC2)
+
+@begin(TC2)@rfstr(395)3.17.@ @$Arrow-line and Double-Arrow-Line@end(TC2)
+
+@begin(TC3)@rfstr(395)3.17.1.@ @$Arrow-Line@end(TC3)
+
+@begin(TC3)@rfstr(396)3.17.2.@ @$Double-Arrow-Line@end(TC3)
+
+@begin(TC2)@rfstr(397)3.18.@ @$Browser Gadget@end(TC2)
+
+@begin(TC3)@rfstr(397)3.18.1.@ @$User Interface@end(TC3)
+
+@begin(TC3)@rfstr(398)3.18.2.@ @$Programming Interface@end(TC3)
+
+@begin(TC4)@rfstr(398)3.18.2.1.@ @$Overview@end(TC4)
+
+@begin(TC4)@rfstr(398)3.18.2.2.@ @$An example@end(TC4)
+
+@begin(TC3)@rfstr(399)3.18.3.@ @$Generating Functions for Items and Strings@end(TC3)
+
+@begin(TC3)@rfstr(399)3.18.4.@ @$Other Browser-Gadget Slots@end(TC3)
+
+@begin(TC3)@rfstr(400)3.18.5.@ @$The Additional Selection@end(TC3)
+
+@begin(TC3)@rfstr(400)3.18.6.@ @$Manipulating the browser-gadget@end(TC3)
+
+@begin(TC2)@rfstr(401)3.19.@ @$Polyline-Creator@end(TC2)
+
+@begin(TC3)@rfstr(402)3.19.1.@ @$Creating New Polylines@end(TC3)
+
+@begin(TC3)@rfstr(402)3.19.2.@ @$Editing Existing Polylines@end(TC3)
+
+@begin(TC3)@rfstr(403)3.19.3.@ @$Some Useful Functions@end(TC3)
+
+@begin(TC2)@rfstr(403)3.20.@ @$Error-Gadget@end(TC2)
+
+@begin(TC3)@rfstr(403)3.20.1.@ @$Programming Interface@end(TC3)
+
+@begin(TC3)@rfstr(404)3.20.2.@ @$Error-Checking and Careful Evaluation@end(TC3)
+
+@begin(TC4)@rfstr(405)3.20.2.1.@ @$Careful-Eval@end(TC4)
+
+@begin(TC4)@rfstr(405)3.20.2.2.@ @$Careful-Read-From-String@end(TC4)
+
+@begin(TC4)@rfstr(405)3.20.2.3.@ @$Careful-String-Eval@end(TC4)
+
+@begin(TC4)@rfstr(405)3.20.2.4.@ @$Careful-Eval-Formula-Lambda@end(TC4)
+
+@begin(TC2)@rfstr(406)3.21.@ @$Query-Gadget@end(TC2)
+
+@begin(TC2)@rfstr(407)3.22.@ @$Save Gadget@end(TC2)
+
+@begin(TC3)@rfstr(408)3.22.1.@ @$Programming Interface@end(TC3)
+
+@begin(TC3)@rfstr(409)3.22.2.@ @$Adding more gadgets to the save gadget@end(TC3)
+
+@begin(TC3)@rfstr(410)3.22.3.@ @$Hacking the Save Gadget@end(TC3)
+
+@begin(TC3)@rfstr(410)3.22.4.@ @$The Save-File-If-Wanted function@end(TC3)
+
+@begin(TC2)@rfstr(411)3.23.@ @$Load Gadget@end(TC2)
+
+@begin(TC2)@rfstr(411)3.24.@ @$Property Sheets@end(TC2)
+
+@begin(TC3)@rfstr(412)3.24.1.@ @$User Interface@end(TC3)
+
+@begin(TC3)@rfstr(412)3.24.2.@ @$Prop-Sheet@end(TC3)
+
+@begin(TC3)@rfstr(415)3.24.3.@ @$Prop-Sheet-For-Obj@end(TC3)
+
+@begin(TC3)@rfstr(417)3.24.4.@ @$Useful Functions@end(TC3)
+
+@begin(TC3)@rfstr(418)3.24.5.@ @$Prop-Sheet-With-OK@end(TC3)
+
+@begin(TC3)@rfstr(419)3.24.6.@ @$Prop-Sheet-For-Obj-With-OK@end(TC3)
+
+@begin(TC3)@rfstr(420)3.24.7.@ @$Useful Functions@end(TC3)
+
+@begin(TC3)@rfstr(420)3.24.8.@ @$Useful Gadgets@end(TC3)
+
+@begin(TC4)@rfstr(420)3.24.8.1.@ @$Horiz-Choice-List@end(TC4)
+
+@begin(TC4)@rfstr(420)3.24.8.2.@ @$Pop-Up-From-Icon@end(TC4)
+
+@begin(TC3)@rfstr(421)3.24.9.@ @$Property Sheet Examples@end(TC3)
+
+@begin(TC2)@rfstr(421)3.25.@ @$Mouseline@end(TC2)
+
+@begin(TC3)@rfstr(422)3.25.1.@ @$MouseLine gadget@end(TC3)
+
+@begin(TC3)@rfstr(422)3.25.2.@ @$MouseLinePopup gadget@end(TC3)
+
+@begin(TC2)@rfstr(423)3.26.@ @$Standard Edit@end(TC2)
+
+@begin(TC3)@rfstr(423)3.26.1.@ @$General Operation@end(TC3)
+
+@begin(TC3)@rfstr(423)3.26.2.@ @$The Standard-Edit Objects@end(TC3)
+
+@begin(TC3)@rfstr(424)3.26.3.@ @$Standard Editing Routines@end(TC3)
+
+@begin(TC3)@rfstr(425)3.26.4.@ @$Utility Procedures@end(TC3)
+
+@begin(TC1)@rfstr(426)4.@ @$The Motif Gadget Objects@end(TC1)
+
+@begin(TC2)@rfstr(426)4.1.@ @$Useful Motif Objects@end(TC2)
+
+@begin(TC3)@rfstr(426)4.1.1.@ @$Motif Colors and Filling Styles@end(TC3)
+
+@begin(TC3)@rfstr(427)4.1.2.@ @$Motif-Background@end(TC3)
+
+@begin(TC3)@rfstr(427)4.1.3.@ @$Motif-Tab-Inter@end(TC3)
+
+@begin(TC2)@rfstr(428)4.2.@ @$Motif Scroll Bars@end(TC2)
+
+@begin(TC2)@rfstr(430)4.3.@ @$Motif Slider@end(TC2)
+
+@begin(TC2)@rfstr(431)4.4.@ @$Motif-Trill-Device@end(TC2)
+
+@begin(TC2)@rfstr(432)4.5.@ @$Motif Gauge@end(TC2)
+
+@begin(TC2)@rfstr(433)4.6.@ @$Motif Buttons@end(TC2)
+
+@begin(TC3)@rfstr(434)4.6.1.@ @$Motif Text Buttons@end(TC3)
+
+@begin(TC3)@rfstr(435)4.6.2.@ @$Motif Check Buttons@end(TC3)
+
+@begin(TC3)@rfstr(436)4.6.3.@ @$Motif Radio Buttons@end(TC3)
+
+@begin(TC2)@rfstr(437)4.7.@ @$Motif Option Button@end(TC2)
+
+@begin(TC2)@rfstr(438)4.8.@ @$Motif Menu@end(TC2)
+
+@begin(TC3)@rfstr(438)4.8.1.@ @$Programming Interface@end(TC3)
+
+@begin(TC3)@rfstr(439)4.8.2.@ @$The Motif-Menu Accelerator Interactor@end(TC3)
+
+@begin(TC3)@rfstr(440)4.8.3.@ @$Adding Items to the Motif-Menu@end(TC3)
+
+@begin(TC2)@rfstr(440)4.9.@ @$Motif Scrolling Menu@end(TC2)
+
+@begin(TC2)@rfstr(441)4.10.@ @$Motif-Menubar@end(TC2)
+
+@begin(TC3)@rfstr(442)4.10.1.@ @$Selection Functions@end(TC3)
+
+@begin(TC3)@rfstr(443)4.10.2.@ @$Accelerators@end(TC3)
+
+@begin(TC3)@rfstr(443)4.10.3.@ @$Decorative Bars@end(TC3)
+
+@begin(TC3)@rfstr(443)4.10.4.@ @$Programming the Motif-Menubar the Traditional Garnet Way@end(TC3)
+
+@begin(TC4)@rfstr(444)4.10.4.1.@ @$An Example@end(TC4)
+
+@begin(TC4)@rfstr(444)4.10.4.2.@ @$Adding Items to the Motif-Menubar@end(TC4)
+
+@begin(TC4)@rfstr(445)4.10.4.3.@ @$Removing Items from the Motif-Menubar@end(TC4)
+
+@begin(TC3)@rfstr(446)4.10.5.@ @$Programming the Motif-Menubar with Components@end(TC3)
+
+@begin(TC4)@rfstr(446)4.10.5.1.@ @$An Example@end(TC4)
+
+@begin(TC4)@rfstr(446)4.10.5.2.@ @$Creating Components of the Motif-Menubar@end(TC4)
+
+@begin(TC4)@rfstr(447)4.10.5.3.@ @$Adding Components to the Motif-Menubar@end(TC4)
+
+@begin(TC4)@rfstr(447)4.10.5.4.@ @$Removing Components from the Menubar@end(TC4)
+
+@begin(TC3)@rfstr(448)4.10.6.@ @$Methods Shared with the Regular Menubar@end(TC3)
+
+@begin(TC2)@rfstr(448)4.11.@ @$Motif-Scrolling-Labeled-Box@end(TC2)
+
+@begin(TC2)@rfstr(448)4.12.@ @$Motif-Error-Gadget@end(TC2)
+
+@begin(TC2)@rfstr(449)4.13.@ @$Motif-Query-Gadget@end(TC2)
+
+@begin(TC2)@rfstr(450)4.14.@ @$Motif Save Gadget@end(TC2)
+
+@begin(TC2)@rfstr(451)4.15.@ @$Motif Load Gadget@end(TC2)
+
+@begin(TC2)@rfstr(452)4.16.@ @$Motif Property Sheets@end(TC2)
+
+@begin(TC3)@rfstr(452)4.16.1.@ @$Motif-Prop-Sheet-With-OK@end(TC3)
+
+@begin(TC3)@rfstr(453)4.16.2.@ @$Motif-Prop-Sheet-For-Obj-With-OK@end(TC3)
+
+@begin(TC2)@rfstr(454)4.17.@ @$Motif-Prop-Sheet-For-Obj-With-Done@end(TC2)
+
+@begin(TC2)@rfstr(455)4.18.@ @$Motif Scrolling Window@end(TC2)
+
+@begin(TC1)@rfstr(457)5.@ @$Using the Gadgets: Examples@end(TC1)
+
+@begin(TC2)@rfstr(457)5.1.@ @$Using the :value Slot@end(TC2)
+
+@begin(TC2)@rfstr(457)5.2.@ @$Using the :selection-function Slot@end(TC2)
+
+@begin(TC2)@rfstr(457)5.3.@ @$Using Functions in the :items Slot@end(TC2)
+
+@begin(TC2)@rfstr(458)5.4.@ @$Selecting Buttons@end(TC2)
+
+@begin(TC2)@rfstr(458)5.5.@ @$The :item-to-string-function Slot@end(TC2)
+
+@begin(TC1)@rfstr(459)Index@end(TC1)
+

@@ -349,9 +349,10 @@ through two levels of @code{:is-a}. The answer would thus be
 "@code{rectangle-1} is blue."  Inheritance is possible in this case because
 the slot @code{:is-a} is pre-defined by the system as a relation.
 
+@node Object-Oriented Programming
 @section Object-Oriented Programming
 @anchor{object-oriented-prog}
-@node Object-Oriented Programming
+
 
 This section describes the object-oriented programming component of
 KR. This component entails two concepts: the concept of message
@@ -443,19 +444,17 @@ values for the instance) and at any later point in time.
 @cindex{inherited formulas}
 
 
-
+@node Constraint Maintenance
 @section Constraint Maintenance
-
 
 This section describes the constraint maintenance component of KR.
 The purpose of constraint maintenance is to ensure that changes to a
 schema are automatically propagated to other schemata which depend on
 it.
 
-
-
-@node  ValuePropagation
 @subsection Value Propagation
+@node ValuePropagation
+
 
 The KR constraint system  offers two distinct
 mechanisms to cause changes in a part of network to propagate to other
@@ -611,9 +610,9 @@ should simply be aware that constraints on the first value in a slot are
 supported universally, whereas some of the functionality may be unavailable
 for constraints on values other than the first one.
 
-
-@chapter Functional Interface: Common Functions
 @node Functional Interface: Common Functions
+@section Functional Interface: Common Functions
+
 
 This section contains a list of the more common functions and macros
 exported by the KR interface. It includes the functionality that most

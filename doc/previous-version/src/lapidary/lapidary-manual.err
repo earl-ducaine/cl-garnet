@@ -1,0 +1,5 @@
+@Comment{ERRLOG of lapidary/lapidary-manual.mss by Scribe 7(1700) on 12 December 1994 at 13:34}
+
+Error in LIBRARYFILE command found while processing the manuscript.
+lapidary/lapidary-manual.mss, line 5:  @LibraryFile(Stable)
+The command LIBRARYFILE is allowed only at the beginning of a manuscript.

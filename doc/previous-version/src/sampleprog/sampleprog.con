@@ -1,0 +1,14 @@
+@Comment{CONTENTS of sampleprog/sampleprog.mss by Scribe 7(1700) on 30 November 1994 at 21:33}
+@PrefaceSection(Table of Contents)
+@Set(Page=1)@Style(PageNumber <@i>)
+@define(foot,invisible)
+@begin(TC1)@rfstr(493)1.@ @$Introduction@end(TC1)
+
+@begin(TC1)@rfstr(493)2.@ @$Loading the Editor@end(TC1)
+
+@begin(TC1)@rfstr(493)3.@ @$User Interface@end(TC1)
+
+@begin(TC1)@rfstr(495)4.@ @$Overview of How the Code Works@end(TC1)
+
+@begin(TC1)@rfstr(497)5.@ @$The Code@end(TC1)
+

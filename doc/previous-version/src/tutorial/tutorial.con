@@ -1,0 +1,118 @@
+@Comment{CONTENTS of tutorial/tutorial.mss by Scribe 7(1700) on 30 November 1994 at 21:39}
+@PrefaceSection(Table of Contents)
+@Set(Page=1)@Style(PageNumber <@i>)
+@define(foot,invisible)
+@begin(TC1)@rfstr(10)1.@ @$Setting Up@end(TC1)
+
+@begin(TC2)@rfstr(10)1.1.@ @$Take the Tour@end(TC2)
+
+@begin(TC2)@rfstr(10)1.2.@ @$Load Garnet@end(TC2)
+
+@begin(TC1)@rfstr(11)2.@ @$The Prototype-Instance System@end(TC1)
+
+@begin(TC2)@rfstr(11)2.1.@ @$Inheritance@end(TC2)
+
+@begin(TC2)@rfstr(12)2.2.@ @$Prototypes@end(TC2)
+
+@begin(TC2)@rfstr(14)2.3.@ @$Default Values@end(TC2)
+
+@begin(TC2)@rfstr(14)2.4.@ @$The Inspector@end(TC2)
+
+@begin(TC2)@rfstr(15)2.5.@ @$Parameters@end(TC2)
+
+@begin(TC2)@rfstr(16)2.6.@ @$Destroying Objects@end(TC2)
+
+@begin(TC2)@rfstr(16)2.7.@ @$Unnamed Objects@end(TC2)
+
+@begin(TC1)@rfstr(18)3.@ @$An Overview of the Objects@end(TC1)
+
+@begin(TC2)@rfstr(18)3.1.@ @$Lines, Rectangles, and Circles@end(TC2)
+
+@begin(TC2)@rfstr(18)3.2.@ @$Aggregates@end(TC2)
+
+@begin(TC2)@rfstr(19)3.3.@ @$Aggregadgets, Aggrelists, and Aggregraphs@end(TC2)
+
+@begin(TC3)@rfstr(20)3.3.1.@ @$Aggregadgets@end(TC3)
+
+@begin(TC3)@rfstr(20)3.3.2.@ @$Aggrelists@end(TC3)
+
+@begin(TC2)@rfstr(21)3.4.@ @$Windows@end(TC2)
+
+@begin(TC2)@rfstr(21)3.5.@ @$Gadgets@end(TC2)
+
+@begin(TC1)@rfstr(22)4.@ @$Constraints@end(TC1)
+
+@begin(TC2)@rfstr(22)4.1.@ @$Formulas@end(TC2)
+
+@begin(TC2)@rfstr(23)4.2.@ @$Cached Values@end(TC2)
+
+@begin(TC2)@rfstr(24)4.3.@ @$Formulas and s-value@end(TC2)
+
+@begin(TC2)@rfstr(24)4.4.@ @$Using the :obj-over Slot@end(TC2)
+
+@begin(TC2)@rfstr(25)4.5.@ @$Constraints in Aggregadgets@end(TC2)
+
+@begin(TC1)@rfstr(28)5.@ @$Interactors@end(TC1)
+
+@begin(TC2)@rfstr(28)5.1.@ @$Kinds of Interactors@end(TC2)
+
+@begin(TC2)@rfstr(29)5.2.@ @$The Button Interactor@end(TC2)
+
+@begin(TC2)@rfstr(30)5.3.@ @$A Feedback Object with the Button Interactor@end(TC2)
+
+@begin(TC2)@rfstr(31)5.4.@ @$The Move-Grow Interactor@end(TC2)
+
+@begin(TC2)@rfstr(32)5.5.@ @$A Feedback Object with the Move-Grow Interactor@end(TC2)
+
+@begin(TC1)@rfstr(33)6.@ @$Programming@end(TC1)
+
+@begin(TC2)@rfstr(33)6.1.@ @$Creating a Panel of Text Buttons@end(TC2)
+
+@begin(TC3)@rfstr(33)6.1.1.@ @$The Limitations of Aggregates@end(TC3)
+
+@begin(TC3)@rfstr(34)6.1.2.@ @$Using an Aggregadget for the Text Button@end(TC3)
+
+@begin(TC3)@rfstr(35)6.1.3.@ @$Defining Parts Using Prototypes@end(TC3)
+
+@begin(TC3)@rfstr(36)6.1.4.@ @$The Label of the Button@end(TC3)
+
+@begin(TC3)@rfstr(36)6.1.5.@ @$Instances of the Button Aggregadget@end(TC3)
+
+@begin(TC3)@rfstr(37)6.1.6.@ @$Making an Aggrelist of Text Buttons@end(TC3)
+
+@begin(TC3)@rfstr(39)6.1.7.@ @$Adding an Interactor@end(TC3)
+
+@begin(TC2)@rfstr(40)6.2.@ @$Referencing Objects in Functions@end(TC2)
+
+@begin(TC1)@rfstr(43)7.@ @$Hints and Caveats@end(TC1)
+
+@begin(TC2)@rfstr(43)7.1.@ @$Dimensions of Aggregates@end(TC2)
+
+@begin(TC3)@rfstr(43)7.1.1.@ @$Supply Your Own Formulas to Improve Performance@end(TC3)
+
+@begin(TC3)@rfstr(43)7.1.2.@ @$Ignore Feedback Objects in Dimension Formulas@end(TC3)
+
+@begin(TC3)@rfstr(43)7.1.3.@ @$Include All Components in the Aggregate's Bounding Box@end(TC3)
+
+@begin(TC2)@rfstr(43)7.2.@ @$Dimensions of Windows@end(TC2)
+
+@begin(TC2)@rfstr(43)7.3.@ @$Formulas@end(TC2)
+
+@begin(TC3)@rfstr(43)7.3.1.@ @$The Difference Between formula and o-formula@end(TC3)
+
+@begin(TC3)@rfstr(45)7.3.2.@ @$Avoid Real Number Divide@end(TC3)
+
+@begin(TC2)@rfstr(45)7.4.@ @$Feedback Objects@end(TC2)
+
+@begin(TC1)@rfstr(46)8.@ @$Debugging@end(TC1)
+
+@begin(TC2)@rfstr(46)8.1.@ @$The Inspector@end(TC2)
+
+@begin(TC2)@rfstr(46)8.2.@ @$PS@end(TC2)
+
+@begin(TC2)@rfstr(46)8.3.@ @$Flash@end(TC2)
+
+@begin(TC2)@rfstr(46)8.4.@ @$Ident@end(TC2)
+
+@begin(TC2)@rfstr(47)8.5.@ @$Trace-Inter@end(TC2)
+

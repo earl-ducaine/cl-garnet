@@ -16,7 +16,7 @@
 (add-component a r2)
 
 (create-instance 's1 text (:string "Hello World")(:left 250)(:top 20)
-		 (:font (create-instance NIL opal:font
+		 (:font (create-instance nil opal:font
 			  (:face :bold-italic)
 			  (:size :large))))
 
@@ -36,22 +36,22 @@
 		  (cddr point-list))
       (left (first point-list) (first point-list))
       (top (second point-list) (second point-list))
-      (obj (create-instance NIL opal:circle
+      (obj (create-instance nil opal:circle
 	     (:left left) (:top top)
 	     (:width 3) (:height 3)
 	     (:filling-style opal:black-fill))
-	   (create-instance NIL opal:circle
+	   (create-instance nil opal:circle
 	     (:left left) (:top top)
 	     (:width 3) (:height 3)
 	     (:filling-style opal:black-fill))))
-     ((null point-list) T)
+     ((null point-list) t)
   (opal:add-component a obj))
 
 
 
 (create-instance 'ml polyline
 		 (:point-list '(90 80 110 100 110 120 90 140 70 120 70 100 90 80))
-		 (:line-style NIL)
+		 (:line-style nil)
 		 (:filling-style (halftone 10)))
 
 (add-component a ml)
@@ -67,19 +67,19 @@
 
 (create-instance 'ci circle (:left 270)(:top 80)(:width 50)(:height 50)
 		 (:filling-style black-fill)
-		 (:line-style NIL))
+		 (:line-style nil))
 (add-component a ci)
 
-(create-instance 's2 multi-text (:string "Garnet supports
+(create-instance 's2 multi-text (:string "garnet supports
 multi-line
 text
 strings!")(:left 350)(:top 80)(:justification :center))
 (add-component a s2)
 
 (create-instance 'ac arc (:left 10)(:top 160)(:width 100)(:height 50)
-		 (:filling-style NIL)
+		 (:filling-style nil)
 		 (:angle1 0)
-		 (:angle2 PI)
+		 (:angle2 pi)
 		 (:line-style dashed-line))
 (add-component a ac)
 

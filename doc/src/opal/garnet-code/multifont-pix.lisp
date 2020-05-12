@@ -36,8 +36,8 @@
 
 (create-instance 'T6 opal:multifont-text
   (:left 20) (:top 190)
-  (:initial-text `(("The " #+comment(:mark NIL) "(parentheses)" #+comment(:mark T) " are marked")))
-  (:show-marks T))
+  (:initial-text `(("The " #+comment(:mark nil) "(parentheses)" #+comment(:mark t) " are marked")))
+  (:show-marks t))
 
-(opal:add-components TOP-AGG T1 T2 T3 T4 T5 T6)
-(opal:update WIN)
+(opal:add-components top-agg t1 t2 t3 t4 t5 t6)
+(opal:update win)

@@ -1,0 +1,669 @@
+
+@chapter Demonstration Programs for Garnet
+@node Demonstration Programs for Garnet
+
+by Brad A. Myers,
+Andrew Mickish
+
+@value{DATE}
+
+@section Abstract
+@node Abstract
+
+This file contains an overview of the demonstration programs distributed
+with the Garnet toolkit. These programs serve as examples of what Garnet
+can do, and also of how to write Garnet programs.
+
+
+
+
+@section Introduction
+@node Introduction
+Probably the best way to learn about how to code using the Garnet
+Toolkit is to look at example programs. Therefore, we have provided a
+number of them with the Toolkit release. In addition, you can load and run
+the demos to see what kinds of things Garnet can do. 
+
+The ``best'' example program is @code{demo-editor}, which is included in this
+technical report. The other example programs serve mainly to show how
+particular special features of Garnet can be used.
+
+Unfortunately, many of the demonstration programs were implemented before
+important parts of the Garnet Toolkit were implemented. For example, many
+of the demos do not use Aggregadgets and Aggrelists. These
+particular demos are
+@emph{not} good examples of how we would code today. Hopefully, we will soon
+re-code all of these old demos using the newest features, but for the time
+being, you will probably only want to look at the code of the newer demos.
+
+This document provides a guide to the demo programs, what they are supposed
+to show, and whether they are written with the latest style or not.
+
+
+@section Loading and Compiling Demos
+@node Loading and Compiling Demos
+@anchor{loadingandcompilingdemos}
+
+@cindex{Compiling demos}
+If for some reason the demos were not compiled during the standard installation
+procedure discussed in the Overview chapter, you can compile just the demos
+by executing (garnet-load "demos-src:demos-compiler"). This will generate
+new binaries for the demos, which will need to be copied from the
+@code{src/demos/} directory into your @code{bin/demos} directory.
+
+Normally, the demonstration programs are @emph{not} loaded by the standard
+Garnet loader. The best way to view the demos is to load the
+@code{garnet-loader} as usual and then load the Demos Controller:
+@example
+(garnet-load "demos:demos-controller")
+(demos-controller:do-go)
+@end example
+
+This will load the controller itself, but not any of the demos. It will
+display a window with a set of check buttons in it. Just click with the mouse
+on a button, and the corresponding demo will be loaded and started.
+Clicking on the check box again will stop the demo. Clicking again will
+restart it (but not re-load it). An instruction window will appear at the
+bottom of the screen with the instructions for the last demo started.
+
+The @code{demos-controller} application features the @code{gg:mouseline} gadget.
+When you keep the mouse still over one of the x-buttons for about 2 seconds,
+a window will pop up with a short description of the corresponding demo.
+For more information about this gadget, see the appropriate section of the
+Gadgets Chapter.
+
+Using the @code{demos-controller} causes each demo file to be loaded as it is
+needed. If you wanted to load @emph{all} of the demos at once (whether you
+eventually planned to use the @code{demos-controller} or not), you could set
+@code{user::load-demos-p} to be T before loading @code{garnet-loader}, or
+execute @code{load Garnet-Demos-Loader}.
+
+All of the demos described here are in the sub-directory @code{demos}.
+
+@section Running Demo Programs
+@node Running Demo Programs
+@cindex{running demos}
+@cindex{starting demos}
+@cindex{stopping demos}
+@cindex{do-go}
+@cindex{do-stop}
+
+To see a particular demo program, it is not necessary to use the Demos
+Controller described in section @ref{loadingandcompilingdemos}.
+Instead, the file can be loaded and executed by itself.
+
+Almost all of the demonstration programs operate the same way. Once a file
+@code{demo-}@emph{xxx} is loaded, it creates a package called @code{demo-}@emph{xxx}.
+In this package are two procedures -- @code{do-go} to start the demo and
+@code{do-stop} to stop it. Therefore, to begin a demo of @emph{xxx}, you would
+type: @code{(demo-@emph{xxx}:do-go)}. The @code{do-stop} procedure destroys the
+window that the demo is running in. You can load and start as many demos
+as you like at the same time. Each will run in its own separate window. 
+
+The @code{do-go} procedure will print instructions in the Lisp window about
+how to operate the demonstration program.
+
+Demos for the individual gadgets are all in the @code{garnet-gadgets} package
+and have unique names. Section @ref{gadgetdemos} describes how to see
+these demos.
+
+
+@section Double-Buffered Windows
+@node Double-Buffered Windows
+@cindex{double-buffered windows}
+
+All the demos can take advantage of the Opal feature for double-buffered
+windows. The @code{do-go} routine for each demo has an optional
+@code{:double-buffered-p} argument that defaults to @code{nil}. For instance, to
+run @code{demo-3d} on a double-buffered window, say:
+@code{(demo-3d:do-go :double-buffered-p T)}
+and to run it normally, say:
+@code{(demo-3d:do-go)}
+
+
+@section Best Examples
+@node Best Examples
+
+@subsection GarnetDraw
+@node GarnetDraw
+@cindex{Garnetdraw}
+@cindex{Drawing program}
+There a useful utility called @code{GarnetDraw} which is a
+relatively simple drawing program written using Garnet. Since the file format
+for storing the created objects is simply a Lisp file which creates
+aggregadgets, you might be able to use GarnetDraw to prototype
+application objects (but Lapidary is probably better for this).
+
+GarnetDraw uses many features of Garnet including gridding, PostScript
+printing, selection of all objects in a region, moving and growing of multiple
+objects, menubars, and the @code{save-gadget} and @code{load-gadget} dialog boxes.
+The editing functions like Cut, Copy, and Paste are
+implemented using the @code{Standard-Edit} module from @code{garnet-gadgets},
+and objects can be cut and pasted between @code{GarnetDraw} and @code{Gilt}
+(since they share the same clipboard). Accelerators are defined for the
+menubar commands, like @code{META-x} for Cut and
+@code{META-v} for Paste.
+
+GarnetDraw works like most Garnet programs: select in the palette
+with any button, draw in the main window with the right button, and select
+objects with the left button. Select multiple objects with shift-left or
+the middle mouse button. Change the size of objects by pressing on black
+handles and move them by pressing on
+white handles. The line style and color and filling color can be
+changed for the selected object and for further drawing by clicking on
+the icons at the bottom of the palette.
+You can also edit the shape of polylines:
+create a polyline, select it, and choose "Reshape" from the "Edit" menu.
+
+@subsection Demo-Editor
+@node Demo-Editor
+@anchor{demoeditor}
+@cindex{demo-editor}
+Probably the best example program is the sample graphics editor in the
+file @code{demo-editor.lisp}.
+It demonstrates many of the basic components when building a Garnet
+application. This demo automatically loads and uses the
+@code{text-button-panel}, @code{graphics-selection}, and @code{arrow-line}
+gadgets.
+
+
+@subsection Demo-Arith
+@node Demo-Arith
+@cindex{demo-arith}
+@cindex{Postscript in demo-arith}
+@cindex{Gestures in demo-arith}
+
+@code{Demo-arith} is a simple visual programming interface for constructing
+arithmetic expressions. It uses constraints to solve the expressions.
+There are buttons for producing PostScript output from the picture.
+Also, you can create new objects using gestures by dragging with the
+middle mouse button (rather than selecting them from the palette).
+The instructions are printed when the program is started.
+
+
+
+@subsection Demo-Grow
+@node Demo-Grow
+@anchor{demogrow}
+@cindex{demo-grow}
+@cindex{graphics-selection}
+@code{Demo-grow} shows how to use the @code{graphics-selection} gadget.
+It uses the same techniques as in @code{demo-editor} (section @ref{demoeditor}).
+
+
+@subsection Multifont and Multi-Line Text Input
+@node Multifont and Multi-Line Text Input
+@cindex{text-interactor}
+@cindex{multi-line text input}
+@cindex{multifont text input}
+@cindex{demo-text}
+
+@code{Demo-text} shows how multi-line, multi-font text input can be handled. 
+It does not use Aggregadgets or any gadgets, but none are necessary.
+
+
+@subsection Demo-Multifont
+@node Demo-Multifont
+@cindex{demo-multifont}
+
+To see how to effectively use the multifont text object, along with its
+interactors, examine the @code{demo-multifont} demo. Most of the code
+is actually a good demonstration of how to use the @code{menubar} and
+@code{motif-scrolling-window-with-bars} gadgets, but the
+@code{multifont-text} objects and interactors are in there. Features
+demonstrated include word wrap and how to changing the fonts with the special
+multifont accelerators.
+
+The @code{lisp-mode} feature of @code{multifont-text} is also shown in this
+demo. Select "Toggle Lisp Mode" from the "Edit" menu, and type in a lisp
+expression (like a @code{defun} definition). As you hit return, the next line
+will be automatically indented according to standard lisp conventions. Hitting
+the tab key will re-indent the current line.
+
+
+@subsection Creating New Objects
+@node Creating New Objects
+@cindex{creating new objects}
+@cindex{demo-twop}
+@cindex{two-point-interactor}
+
+@code{Demo-twop} shows how new lines and new rectangles can be input. It
+uses the same techniques as in @code{demo-editor} (section @ref{demoeditor}).
+
+@subsection Angles
+@node Angles
+@cindex{Angle-Interactor}
+@cindex{demo-angle}
+@cindex{gauge}
+There are two programs that demonstrate how to use the angle interactor.
+@code{Demo-angle} contains circular gauges (but see the @code{gauge}
+gadget, section @ref{gadgetdemos}), as
+well as a demonstration of how to use the ``angle-increment''
+parameter to the angle @code{:running-action} procedure.
+
+@cindex{demo-clock}
+@cindex{clock}
+@code{Demo-clock} shows a clock face with hands that can be rotated with the
+mouse.
+
+
+@subsection Aggregraphs
+@node Aggregraphs
+@cindex{aggregraphs}
+@cindex{demo-graph}
+The @code{demo-graph} file is an example of many features of Aggregraphs.
+
+
+@subsection Scroll Bars
+@node Scroll Bars
+@cindex{scroll bars}
+Although sliders and scroll bars are provided in the Garnet Gadget set
+(the @code{gadgets} subdirectory), the file @code{demo-scrollbar} contains
+some alternative scroll bar objects. The Macintosh scroll bar in this demo
+was written in the old Garnet style, but there are new versions of scroll bars
+in the OpenLook, Next, and Motif style.
+
+To see the demo of all four scroll bars, use the functions
+@code{demo-scrollbar:do-go} and @code{demo-scrollbar:do-stop} as usual. There
+are also functions that display the scroll bars individually called
+@code{mac-go}, @code{open-go}, @code{next-go}, and @code{motif-go}.
+
+
+@subsection Menus
+@node Menus
+@cindex{demo-menu}
+@code{Demo-menu} shows a number of different kinds of menus that can be
+created using Garnet. All of them were implemented using Aggregadgets and
+Aggrelists.
+
+
+@subsection Animation
+@node Animation
+@cindex{animation}
+
+@cindex{demo-animator}
+@code{Demo-animator} uses background animation processes to move several objects
+in a window. One of the objects is a walking figure which moves across the 
+screen by rapidly redrawing a pixmap.
+
+@cindex{demo-fade}
+@code{Demo-fade} shows a simple animation for the Garnet acronym.
+
+@code{Demo-logo} performs the same animation as @code{demo-fade}, but it
+also includes the Garnet logo.
+
+
+@subsection Garnet-Calculator
+@node Garnet-Calculator
+
+@cindex{garnet-calculator}
+@cindex{demo-calculator}
+@cindex{calculator}
+The @code{garnet-calculator} has the look and feel of @code{xcalc}, the calculator
+supplied by X windows, but it is more robust. The calculator is a
+self-contained tool, and can be integrated inside a larger Garnet application.
+
+You can load the demo with @code{(garnet-load "demos:garnet-calculator")}.
+To run it, execute @code{(garnet-calculator:do-go)}.
+@sp 1
+
+@cindex{start-calc}
+@cindex{stop-calc}
+@example
+garnet-calculator:Start-Calc &key @i{double-buffered-p} @ref{function}
+
+garnet-calculator:Stop-Calc @i{app-object} &optional (@i{destroy-app-object?} T) @ref{function}
+@end example
+
+The function @code{start-calc} creates and returns a calculator
+"application object" that can be used by a larger interface, and this object
+should be passed as the @emph{app-object} parameter to @code{stop-calc}.
+
+
+
+
+@subsection Browsers
+@node Browsers
+@cindex{browser-gadget}
+@cindex{demo-schema-browser}
+@cindex{demo-file-browser}
+The files @code{demo-schema-browser} and @code{demo-file-browser} show two
+uses of the @code{browser-gadget}.
+
+
+@subsection Demo-Virtual-Agg
+@node Demo-Virtual-Agg
+@cindex{Demo-Virtual-Agg}
+
+To show off an example of virtual-aggregates, load Demo-Virtual-Agg and say:
+
+@example
+(demo-virtual-agg:do-go :num-dots 1000)
+@end example
+
+@code{Demo-virtual-agg:do-go} takes a single optional keyed parameter
+@code{:num-dots} which tells how many circles should appear in a window.
+The default is 1000.
+
+The first 1000 circles are read in from circles.data in the
+@code{user::Garnet-DataFile-PathName} directory (because that's
+faster) and the rest are chosen randomly. A '.' is printed out for
+every ten circles.
+
+You will also see a little star in the upper left on the screen, in front
+of the @code{virtual-aggregate}, and a big gray rectangle underneath the
+@code{virtual-aggregate}. These are just to show that the update
+algorithm is working reasonably well.
+
+@vtable @code
+Clicking with the left button creates a new circle (of random radius and
+    color) where you clicked.
+
+Clicking with the right button "destroys" the top-most circle underneath
+    where you clicked, or beeps if there was nothing under there.
+
+Clicking on the little star and dragging moves the little star.
+
+Clicking shift-middle causes the circle underneath the cursor to change
+to a different random color. (This shows off @code{change-item}.)
+
+Clicking shift-right causes the entire @code{virtual-aggregate}
+to disappear or reappear.
+@end vtable
+
+
+@subsection Demo-Pixmap
+@node Demo-Pixmap
+@cindex{demo-pixmap}
+
+This new demo shows a two-dimensional @code{virtual-aggregate} in action.
+Here, the @code{virtual-aggregate} is a 50 X 50 array of 5 X 5 rectangles.
+Each rectangle can be colored from the color palette, and the pattern of
+colored rectangles is reflected in a pixmap.
+
+You can load a pixmap into the demo (e.g., from the directory
+@code{Garnet-Pixmap-PathName}), edit the pixmap with the color palette and
+virtual-aggregate, and then save the pixmap to a new file. You can also
+generate PostScript files from this demo, though you have to have a Level 2
+printer (that defines the PostScript function @code{colorimage}) to print
+a color pixmap image.
+
+
+
+@subsection Demo-Gesture
+@node Demo-Gesture
+@cindex{demo-gesture}
+@code{Demo-gesture} is an example of how the new gesture-interactor can be used
+in an interface. In this demo, you can create perfect circles and
+rectangles by drawing rough approximations with the mouse, which are
+interpreted by the gesture recognizer. Gestures may also be used to copy
+and delete the shapes you have created.
+
+@subsection Demo-Unidraw
+@node Demo-Unidraw
+@cindex{demo-unidraw}
+@code{Demo-Unidraw} is a gesture-based text editor, which allows you to enter
+characters with freehand drawing using the mouse. The gestures that
+this demo understands are comprised of a shorthand alphabet devised by
+David Goldberg at Xerox Parc. The gesture patterns are shown in the middle
+of the demo window, and the canvas for drawing gestures is at the bottom.
+As the demo recognizes the gestures you draw, it selects the corresponding
+gesture and puts the new character in the text window.
+
+
+@subsection Gadget Demos
+@node Gadget Demos
+@cindex{gadgets}
+@anchor{gadgetdemos}
+
+@cindex{demo-gadgets}
+@cindex{demo-motif}
+There are separate demo programs of some of the gadgets in the files
+@code{demo-gadgets} and @code{demo-motif}. Each of these packages export the
+usual @code{do-go} and @code{do-stop} procedures, and can be found in the
+@code{demos} directory.
+
+Other good examples are the Garnet Gadgets, stored in the @code{gadgets}
+sub-directory. These were @emph{all} written using the latest
+Garnet features. At the end of almost all gadget files is a small demo
+program showing how to use that gadget. Since all the gadgets are
+in the same package (@code{garnet-gadgets}), the gadget demos all have
+different names. They are:
+@itemize
+@code{Arrow-line-go, Arrow-line-stop}
+@cindex{arrow-line-go}
+- to demonstrate arrow-lines
+
+@code{Error-gadget-go, Error-gadget-stop}
+@cindex{error-gadget}
+@cindex{query-gadget}
+@cindex{error-gadget-go}
+- to demonstrate both the error gadget and the query gadget
+
+@code{Gauge-go, Gauge-stop}
+@cindex{gauge}
+@cindex{gauge-go}
+- to demonstrate circular gauges
+
+@code{H-scroll-go, H-scroll-stop}
+@cindex{H-scroll-go}
+- to demonstrate standard horizontal scroll bars
+
+@code{H-slider-go, H-slider-stop}
+@cindex{H-slider-go}
+- to demonstrate standard horizontal sliders
+
+@code{Labeled-box-go, Labeled-box-stop}
+@cindex{Labeled-Box-go}
+- to demonstrate labeled text-type-in objects
+
+@code{Menu-go, Menu-stop}
+@cindex{Menu-go}
+- to demonstrate a standard menu
+
+@code{Menubar-go, Menubar-stop}
+@cindex{Menubar-go}
+- to demonstrate pull-down menus
+
+@code{Motif-Check-Buttons-go, Motif-Check-Buttons-stop}
+@cindex{Motif-Check-Buttons-go}
+- to demonstrate Motif style check buttons
+
+@code{Motif-Error-Gadget-go, Motif-Error-Gadget-stop}
+@cindex{motif-error-gadget}
+@cindex{motif-query-gadget}
+@cindex{motif-error-gadget-go}
+- to demonstrate both the motif error gadget and the motif query gadget
+
+@code{Motif-Gauge-go, Motif-Gauge-stop}
+@cindex{Motif-Gauge-go}
+- to demonstrate the Motif style gauge
+
+@code{Motif-H-Scroll-go, Motif-H-Scroll-stop}
+@cindex{Motif-H-Scroll-go}
+- to demonstrate Motif style horizontal scroll bars
+
+@code{Motif-Menu-go, Motif-Menu-stop}
+@cindex{Motif-Menu-go}
+- to demonstrate the Motif style menus
+
+@code{Motif-Menubar-go, Motif-Menubar-stop}
+@cindex{Motif-Menubar-go}
+- to demonstrate the Motif style menubar, with accelerators
+
+@code{Motif-Option-Button-go, Motif-Option-Button-stop}
+@cindex{motif-option-button-go}
+- to demonstrate the Motif style version of this popup menu gadget, whose
+button changes labels according to the menu selection
+
+@code{Motif-Radio-Buttons-go, Motif-Radio-Buttons-stop}
+@cindex{Motif-Radio-Buttons-go}
+- to demonstrate Motif style radio buttons
+
+@code{Motif-Scrolling-Labeled-Box-go, Motif-Scrolling-Labeled-Box-stop}
+@cindex{Motif-Scrolling-Labeled-Box-go}
+- to demonstrate the Motif style text-type-in field
+
+@code{Motif-Scrolling-Window-With-Bars-go, Motif-Scrolling-Window-With-Bars-stop}
+@cindex{Motif-Scrolling-Window-go}
+- to demonstrate the Motif style scrolling window gadget
+
+@code{Motif-Slider-go, Motif-Slider-stop}
+@cindex{Motif-Slider-go}
+- to demonstrate the vertical Motif slider
+
+@code{Motif-Text-Buttons-go, Motif-Text-Buttons-stop}
+@cindex{Motif-Text-Buttons-go}
+- to demonstrate Motif style text buttons
+
+@code{Motif-Trill-go, Motif-Trill-stop}
+@cindex{motif-trill-go}
+- to demonstrate the Motif style trill device
+
+@code{Motif-V-Scroll-go, Motif-V-Scroll-stop}
+@cindex{Motif-V-Scroll-go}
+- to demonstrate the Motif vertical scroll bar
+
+@code{Mouseline-go, Mouseline-stop}
+@cindex{mouseline-go}
+- to demonstrate the mouseline and "balloon help" string
+
+@code{Multifont-Gadget-go, Multifont-Gadget-stop}
+@cindex{multifont-gadget-go}
+- to demonstrate the gadget which is a conglomeration of a multifont-text,
+a focus-multifont-textinter, and a selection-interactor
+
+@code{Option-Button-go, Option-Button-stop}
+@cindex{option-button-go}
+- to demonstrate this kind of popup menu gadget, whose button label changes
+according to the menu selection
+
+@code{Popup-Menu-Button-go, Popup-Menu-Button-stop}
+@cindex{popup-menu-button-go}
+- to demonstrate this kind of popup menu gadget, whose button label is fixed
+and may be a bitmap or other object
+
+@code{Prop-Sheet-For-Obj-go, Prop-Sheet-For-Obj-stop}
+@cindex{prop-sheet-for-obj-go}
+- to demonstrate how prop-sheets can be used to change slot values of Garnet
+objects
+
+@code{Radio-Buttons-go, Radio-Buttons-stop}
+@cindex{Radio-Buttons-go}
+- to demonstrate radio buttons
+
+@code{Scrolling-Input-String-go, Scrolling-Input-String-stop}
+@cindex{Scrolling-Input-String-go}
+- to demonstrate the scrolling input string gadget
+
+@code{Scrolling-Labeled-Box-go, Scrolling-Labeled-Box-stop}
+@cindex{Scrolling-Labeled-Box-go}
+- to demonstrate the standard scrolling labeled box
+
+@code{Scrolling-Menu-go, Scrolling-Menu-stop}
+@cindex{Scrolling-Menu-go}
+- to demonstrate the scrolling menu gadget
+
+@code{Scrolling-Window-go, Scrolling-Window-stop}
+@cindex{Scrolling-Window-go}
+- to demonstrate the standard scrolling window
+
+@code{Scrolling-Window-With-Bars-go, Scrolling-Window-With-Bars-stop}
+@cindex{Scrolling-Window-go}
+- to demonstrate the scrolling window with attached vertical and horizontal
+scroll bars
+
+@code{Text-Buttons-go, Text-Buttons-stop}
+@cindex{Text-Buttons-go}
+- to demonstrate buttons with labels inside
+
+@code{Trill-go, Trill-stop}
+@cindex{Trill-go}
+- to demonstrate the trill-device gadget
+
+@code{V-scroll-go, V-scroll-stop}
+@cindex{V-scroll-go}
+- to demonstrate standard vertical scroll bars
+
+@code{V-slider-go, V-slider-stop}
+@cindex{V-slider-go}
+- to demonstrate standard vertical sliders
+
+@code{X-Buttons-go, X-Buttons-stop}
+@cindex{X-Buttons-go}
+- to demonstrate X buttons
+
+
+@end itemize
+Each of these has its own loader file, named something like
+@emph{xxx}@code{-loader} for gadget @emph{xxx}. See the Gadgets chapter for a
+table of loader file names.
+
+
+
+@subsection Real-Time Constraints and Performance
+@node Real-Time Constraints and Performance
+The program @code{demo-manyobjs} was written as a test of how fast the
+system can evaluate constraints. The @code{do-go} procedure takes an
+optional parameter of how many boxes to create. Each box is composed of
+four Opal objects.
+
+
+@section Old Demos
+@node Old Demos
+
+@subsection Moving and Growing Objects
+@node Moving and Growing Objects
+
+The best example of moving and growing objects is @code{demo-grow} (section
+@ref{demogrow}).
+
+@cindex{demo-moveline}
+@cindex{move-grow-interactor}
+In addition, @code{demo-moveline} shows how the @code{move-grow-interactor} can
+be used to move either end of a line.
+
+@subsection Menus
+@node Menus
+
+@cindex{demo-3d}
+@code{Demo-3d} shows some menus and buttons where the item
+itself moves when the user presses over it, in order to simulate a floating
+button.
+
+
+
+@section Demos of Advanced Features
+@node Demos of Advanced Features
+
+@subsection Using Multiple Windows
+@node Using Multiple Windows
+
+@cindex{demo-multiwin}
+@cindex{Multiple Windows}
+@cindex{windows}
+@cindex{demo-multiwin}
+@code{Demo-multiwin} shows how an interactor can be used to move objects
+from one window to another. For more information, see the Interactors chapter.
+
+@subsection Modes
+@node Modes
+@cindex{Active slot}
+@cindex{demo-mode}
+@cindex{modes}
+
+@code{Demo-mode} shows how you can use the @code{:active} slot of an interactor
+to implement different modes. For more information, see the Interactors chapter.
+
+@subsection Using Start-Interactor
+@node Using Start-Interactor
+
+@cindex{demo-sequence}
+@cindex{start-interactor}
+@code{Demo-sequence} shows how to use the @code{inter:start-interactor}
+function to have one interactor start another interactor without waiting
+for the second one's start event. Another example of the use of
+@code{inter:start-interactor} is in @code{demo-editor} (section
+@ref{demoeditor}) to start editing the text label after drawing a box.
+For more information on @code{start-interactor}, see the Interactors chapter.
+

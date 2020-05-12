@@ -8,30 +8,30 @@
 ;;;  Designed by Brad A. Myers
 ;;;  Written by Andrew Mickish
 
-(in-package "ARROW" :use '("KR" "LISP"))
+(in-package "arrow" :use '("kr" "lisp"))
 
-(export '(Do-Go Do-Stop))
+(export '(do-go do-stop))
 
 (when (boundp 'vp) (opal:destroy vp))
 
-(defparameter top-agg NIL)
-(defparameter *FONT* (create-instance NIL opal:font
+(defparameter top-agg nil)
+(defparameter *font* (create-instance nil opal:font
 		       (:size :small)))
 
-(defparameter *LINE-STYLE* (create-instance NIL opal:line-style
+(defparameter *line-style* (create-instance nil opal:line-style
 			      (:line-thickness 30)))
 
-(defun Do-Go ()
+(defun do-go ()
 
-  (setf vp (create-instance NIL inter:interactor-window
+  (setf vp (create-instance nil inter:interactor-window
 	      (:left 600) (:top 10) (:width 400) (:height 400)))
 
   (s-value vp :aggregate
-	   (setf top-agg (create-instance NIL opal:aggregate
-			    (:overlapping NIL))))
+	   (setf top-agg (create-instance nil opal:aggregate
+			    (:overlapping nil))))
 
-  (create-instance 'ARROW-AGG opal:aggregadget
-     (:angle (/ PI 3.0))
+  (create-instance 'arrow-agg opal:aggregadget
+     (:angle (/ pi 3.0))
      (:x1 20)(:y1 280)(:x2 200)(:y2 75)
      (:length 125)(:diameter 175)
      (:parts
@@ -46,22 +46,22 @@
 	       (:from-y ,(formula '(gvl :parent :y1)))
 	       (:head-x ,(formula '(gvl :parent :x2)))
 	       (:head-y ,(formula '(gvl :parent :y2)))
-	       (:line-style ,*LINE-STYLE*)
+	       (:line-style ,*line-style*)
 	       (:length ,(formula `(gvl :parent :length)))
 	       (:diameter ,(formula `(gvl :parent :diameter)))
 	       (:open-p t)))))
 
-  (create-instance 'TINY-ARROWHEAD opal:arrowhead
+  (create-instance 'tiny-arrowhead opal:arrowhead
      (:draw-function :xor)
      (:from-x 150) (:from-y 150) (:head-x 200) (:head-y 200)
      (:length 6) (:diameter 9))
 
-  (create-instance 'DOT-CIRCLE opal:circle
+  (create-instance 'dot-circle opal:circle
       (:draw-function :xor)
       (:left 250)(:top 250)(:height 8)(:width 8)
       (:filling-style (opal:halftone 100)))
 
-  (create-instance 'POINTER-AGG opal:aggregadget
+  (create-instance 'pointer-agg opal:aggregadget
      (:x1 150)(:y1 150)(:x2 200)(:y2 200)
      (:parts
       `((:shaft ,opal:line
@@ -81,8 +81,8 @@
 		 (:head-x ,(formula `(gvl :parent :x1)))
 		 (:head-y ,(formula `(gvl :parent :y1)))))))
 
-  
-  (create-instance 'CROSS-BAR-AGG opal:aggregadget
+
+  (create-instance 'cross-bar-agg opal:aggregadget
      (:coords (formula `(get-points (gvl :parent :arrow :head))))
      (:x1 (formula `(first (gvl :coords))))
      (:y1 (formula `(second (gvl :coords))))
@@ -106,10 +106,10 @@
 					     :connect-x) 12)))
 		    (:top ,(formula `(+ (gvl :parent :parent :arrow :head
 					    :connect-y) 33)))
-		    (:font ,*FONT*)))))
+		    (:font ,*font*)))))
 
-	
-  (create-instance 'LENGTH-AGG opal:aggregadget
+
+  (create-instance 'length-agg opal:aggregadget
      (:x1 (formula `(gvl :parent :arrow :x2)))
      (:y1 (formula `(gvl :parent :arrow :y2)))
      (:x2 (formula `(gvl :parent :arrow :head :connect-x)))
@@ -135,10 +135,10 @@
 		      (:top ,(formula `(floor (+ (gvl :parent :y1)
 						 (gvl :parent :y2))
 					      2)))
-		      (:font ,*FONT*)))))
+		      (:font ,*font*)))))
 
 
-  (create-instance 'THICKNESS-AGG opal:aggregadget
+  (create-instance 'thickness-agg opal:aggregadget
      (:coords (formula `(get-points (gvl :parent :arrow :head))))
      (:x (formula `(third (gvl :coords))))
      (:y (formula `(fourth (gvl :coords))))
@@ -152,9 +152,9 @@
 		     (:string ":thickness")
 		     (:left ,(formula `(- (gvl :parent :x) 20)))
 		     (:top ,(formula `(+ (gvl :parent :y) 15)))
-		     (:font ,*FONT*)))))
+		     (:font ,*font*)))))
 
-  (create-instance 'FROM-AGG opal:aggregadget
+  (create-instance 'from-agg opal:aggregadget
      (:left (formula `(gvl :parent :arrow :x1)))
      (:top (formula `(gvl :parent :arrow :y1)))
      (:parts
@@ -162,13 +162,13 @@
 		    (:string "(:from-x, :from-y)")
 		    (:left ,(formula `(+ (gvl :parent :left) 2)))
 		    (:top ,(formula `(+ (gvl :parent :top) 4)))
-		    (:font ,*FONT*))
+		    (:font ,*font*))
 	(:dot ,dot-circle
 	      (:left ,(formula `(- (gvl :parent :left) 4)))
 	      (:top ,(formula `(- (gvl :parent :top) 4)))))))
 
 
-  (create-instance 'CONNECT-AGG opal:aggregadget
+  (create-instance 'connect-agg opal:aggregadget
      (:left (formula `(- (gvl :parent :arrow :head :connect-x) 90)))
      (:top (formula `(- (gvl :parent :arrow :head :connect-y) 17)))
      (:parts
@@ -176,28 +176,28 @@
 		   (:string "(:connect-x,")
 		   (:left ,(formula `(gvl :parent :left)))
 		   (:top ,(formula `(gvl :parent :top)))
-		   (:font ,*FONT*))
+		   (:font ,*font*))
 	(:bot-text ,opal:text
 		   (:string ":connect-y)")
 		   (:left ,(formula `(+ 20 (gvl :parent :left))))
 		   (:top ,(formula `(+ 12 (gvl :parent :top))))
-		   (:font ,*FONT*)))))
+		   (:font ,*font*)))))
 
-  (create-instance 'HEAD-TEXT opal:text
+  (create-instance 'head-text opal:text
      (:string "(:head-x, :head-y)")
      (:left (formula `(+ 20 (gvl :parent :arrow :x2))))
      (:top (formula `(- (gvl :parent :arrow :y2) 7)))
-     (:font *FONT*))
+     (:font *font*))
 
 
-  (create-instance 'ARROW-EX opal:aggregadget
+  (create-instance 'arrow-ex opal:aggregadget
      (:x1 50) (:y1 300)
      (:x2 (formula `(+ (gvl :x1) 30)))
      (:y2 (formula `(gvl :y1)))
      (:length 10)
      (:diameter 15)
      (:line-style opal:line-1)
-     (:open-p NIL)
+     (:open-p nil)
      (:parts
       `((:head ,opal:arrowhead
 	       (:from-x ,(formula '(gvl :parent :x1)))
@@ -211,7 +211,7 @@
 	       (:open-p ,(formula `(gvl :parent :open-p)))))))
 
 
-  (create-instance 'ARROW-SET opal:aggregadget
+  (create-instance 'arrow-set opal:aggregadget
      (:x1 (formula `(gvl :parent :arrow :x1)))
      (:y1 (formula `(+ 70 (gvl :parent :arrow :y1))))
      (:inc-by 50)
@@ -224,7 +224,7 @@
 		 (:x1 ,(formula `(+ (gvl :parent :x1)
 				    (gvl :parent :inc-by))))
 		 (:y1 ,(formula `(gvl :parent :y1)))
-		 (:open-p NIL))
+		 (:open-p nil))
 	(:arrow3 ,arrow-ex
 		 (:x1 ,(formula `(+ (gvl :parent :x1)
 				    (* 2 (gvl :parent :inc-by)))))
@@ -235,7 +235,7 @@
 		 (:x1 ,(formula `(+ (gvl :parent :x1)
 				    (* 3 (gvl :parent :inc-by)))))
 		 (:y1 ,(formula `(gvl :parent :y1)))
-		 (:open-p NIL)
+		 (:open-p nil)
 		 (:filling-style ,opal:light-gray-fill))
 	(:arrow5 ,opal:arrowhead
 		 (:from-x ,(formula `(+ (gvl :parent :x1)
@@ -246,11 +246,11 @@
 		 (:length 12)
 		 (:diameter 15)
 		 (:open-p t)
-		 (:line-style NIL)
+		 (:line-style nil)
 		 (:filling-style ,opal:light-gray-fill)))))
 
 
-  (create-instance 'UNIT opal:aggregadget
+  (create-instance 'unit opal:aggregadget
      (:parts
       `((:arrow ,arrow-agg)
 	;(:cross-bar ,cross-bar-agg)
@@ -261,21 +261,20 @@
 	(:head ,head-text)
 	(:set ,arrow-set))))
 
-  (opal:add-components top-agg (create-instance NIL unit))
+  (opal:add-components top-agg (create-instance nil unit))
 
   (opal:update vp)
 
   )
 
 ;; ** STOP **
-(defun Do-Stop ()
+(defun do-stop ()
   (opal:destroy vp))
 
 (format t "Enter (arrow:do-go) to begin.~%")
 (format t "Enter (arrow:do-stop) to quit.~%")
 
-
-(defun GET-POINTS (arrow-head)
+(defun get-points (arrow-head)
   (let* ((head-x (g-value arrow-head :head-x))
 	 (head-y (g-value arrow-head :head-y))
 	 (from-x (g-value arrow-head :from-x))
@@ -298,5 +297,3 @@
 	 (cx (round (+ bx (* radius uy))))
 	 (cy (round (- by (* radius ux)))))
     (list ax ay cx cy)))
-	 
-

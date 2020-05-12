@@ -1,4 +1,23 @@
 \input texinfo  @c -*-texinfo-*-
+
+@c Used for editorial markup.
+@rmacro redtext{text}
+@tex
+  \\def\\rgbMyRed{1 0 0}
+  \\def\\maincolor{\\rgbMyRed}
+  \\pdfsetcolor{\\maincolor}
+@end tex
+
+\text\
+
+@tex
+  \\def\\rgbMyBlack{0 0 0}
+  \\def\\maincolor{\\rgbMyBlack}
+  \\pdfsetcolor{\\maincolor}
+@end tex
+
+@end rmacro
+
 @c %**start of header
 
 @settitle Garnet Reference and User Manual
@@ -12,10 +31,10 @@
 @include garnetmanualdate.texi
 
 @c Combine indices.
-@synindex cp fn
-@syncodeindex vr fn
-@syncodeindex ky fn
-@syncodeindex pg fn
+@c @synindex cp fn
+@c @syncodeindex vr fn
+@c @syncodeindex ky fn
+@c @syncodeindex pg fn
 @c We use the "type index" to index new functions and variables.
 @c @syncodeindex tp fn
 
@@ -60,6 +79,8 @@ Copyright @copyright{} 19xx--2020
 @insertcopying
 @end ifnottex
 
+@c Note Texinfo menu system remains to be done.
+
 @menu
 * Introduction::            Introduction and conventions used.
 
@@ -70,52 +91,6 @@ Copyright @copyright{} 19xx--2020
 * Sequences Arrays Vectors::  Lists, strings and vectors are called sequences.
                                 Certain functions act on any kind of sequence.
                                 The description of vectors is here as well.
-* Records::                 Compound objects with programmer-defined types.
-* Hash Tables::             Very fast lookup-tables.
-* Symbols::                 Symbols represent names, uniquely.
-
-* Evaluation::              How Lisp expressions are evaluated.
-* Control Structures::      Conditionals, loops, nonlocal exits.
-* Variables::               Using symbols in programs to stand for values.
-* Functions::               A function is a Lisp program
-                              that can be invoked from other functions.
-* Macros::                  Macros are a way to extend the Lisp language.
-* Customization::           Making variables and faces customizable.
-
-* Loading::                 Reading files of Lisp code into Lisp.
-* Byte Compilation::        Compilation makes programs run faster.
-* Debugging::               Tools and tips for debugging Lisp programs.
-
-* Read and Print::          Converting Lisp objects to text and back.
-* Minibuffers::             Using the minibuffer to read input.
-* Command Loop::            How the editor command loop works,
-                              and how you can call its subroutines.
-* Keymaps::                 Defining the bindings from keys to commands.
-* Modes::                   Defining major and minor modes.
-* Documentation::           Writing and using documentation strings.
-
-* Files::                   Accessing files.
-* Backups and Auto-Saving:: Controlling how backups and auto-save
-                              files are made.
-* Buffers::                 Creating and using buffer objects.
-* Windows::                 Manipulating windows and displaying buffers.
-* Frames::                  Making multiple system-level windows.
-* Positions::               Buffer positions and motion functions.
-* Markers::                 Markers represent positions and update
-                              automatically when the text is changed.
-
-* Text::                    Examining and changing text in buffers.
-* Non-ASCII Characters::    Non-ASCII text in buffers and strings.
-* Searching and Matching::  Searching buffers for strings or regexps.
-* Syntax Tables::           The syntax table controls word and list parsing.
-* Abbrevs::                 How Abbrev mode works, and its data structures.
-
-* Threads::                 Concurrency in Emacs Lisp.
-* Processes::               Running and communicating with subprocesses.
-* Display::                 Features for controlling the screen display.
-* System Interface::        Getting the user id, system type, environment
-                              variables, and other such things.
-
 * Packaging::               Preparing Lisp code for distribution.
 
 Appendices
@@ -162,87 +137,6 @@ Property Lists
                               lists and association lists.
 * Plist Access::            Accessing property lists stored elsewhere.
 
-Sequences, Arrays, and Vectors
-
-* Sequence Functions::      Functions that accept any kind of sequence.
-* Arrays::                  Characteristics of arrays in Emacs Lisp.
-* Array Functions::         Functions specifically for arrays.
-* Vectors::                 Special characteristics of Emacs Lisp vectors.
-* Vector Functions::        Functions specifically for vectors.
-* Char-Tables::             How to work with char-tables.
-* Bool-Vectors::            How to work with bool-vectors.
-* Rings::                   Managing a fixed-size ring of objects.
-
-Records
-
-* Record Functions::        Functions for records.
-* Backward Compatibility::  Compatibility for cl-defstruct.
-
-Hash Tables
-
-* Creating Hash::           Functions to create hash tables.
-* Hash Access::             Reading and writing the hash table contents.
-* Defining Hash::           Defining new comparison methods.
-* Other Hash::              Miscellaneous.
-
-Symbols
-
-* Symbol Components::       Symbols have names, values, function definitions
-                              and property lists.
-* Definitions::             A definition says how a symbol will be used.
-* Creating Symbols::        How symbols are kept unique.
-* Symbol Properties::       Each symbol has a property list
-                              for recording miscellaneous information.
-
-Symbol Properties
-
-* Symbol Plists::           Accessing symbol properties.
-* Standard Properties::     Standard meanings of symbol properties.
-
-Lambda Expressions
-
-* Lambda Components::       The parts of a lambda expression.
-* Simple Lambda::           A simple example.
-* Argument List::           Details and special features of argument lists.
-* Function Documentation::  How to put documentation in a function.
-
-Advising Emacs Lisp Functions
-
-* Core Advising Primitives::  Primitives to manipulate advice.
-* Advising Named Functions::  Advising named functions.
-* Advice Combinators::        Ways to compose advice.
-* Porting Old Advice::        Adapting code using the old defadvice.
-
-Macros
-
-* Simple Macro::            A basic example.
-* Expansion::               How, when and why macros are expanded.
-* Compiling Macros::        How macros are expanded by the compiler.
-* Defining Macros::         How to write a macro definition.
-* Problems with Macros::    Don't evaluate the macro arguments too many times.
-                              Don't hide the user's variables.
-* Indenting Macros::        Specifying how to indent macro calls.
-
-Common Problems Using Macros
-
-* Wrong Time::             Do the work in the expansion, not in the macro.
-* Argument Evaluation::    The expansion should evaluate each macro arg once.
-* Surprising Local Vars::  Local variable bindings in the expansion
-                              require special care.
-* Eval During Expansion::  Don't evaluate them; put them in the expansion.
-* Repeated Expansion::     Avoid depending on how many times expansion is done.
-
-Customization Settings
-
-* Common Keywords::         Common keyword arguments for all kinds of
-                              customization declarations.
-* Group Definitions::       Writing customization group definitions.
-* Variable Definitions::    Declaring user options.
-* Customization Types::     Specifying the type of a user option.
-* Applying Customizations:: Functions to apply customization settings.
-* Custom Themes::           Writing Custom themes.
-
-
 Object Internals
 
 * Buffer Internals::        Components of a buffer structure.
@@ -252,62 +146,26 @@ Object Internals
 @end menu
 
 @include overview.texi
-@include kr-manual.texi
+@include tour.texi
+@include tutorial.texi
+@include kr.texi
+@include opal.texi
+@include inter.texi
+@include aggregadgets.texi
+@include gadgets.texi
+@include debug.texi
+@include demos.texi
+@include sampleprog.texi
+@include gilt.texi
+@include c32.texi
+@include lapidary.texi
+@include hints.texi
+@include gem.texi
+
 
 @c @include(overview/garnetpapers.mss)
 @c @include(creditetc.mss) x 12 (one for overview.texi, tour.texi, etc.)
 @c @bibliography x 12 (one for overview.texi, tour.texi, etc.)
-
-@c @include aggregadgets-manual.texi
-@c @include objects.texi
-@c @include numbers.texi
-@c @include strings.texi
-
-@c @include lists.texi
-@c @include sequences.texi
-@c @include records.texi
-@c @include hash.texi
-@c @include symbols.texi
-@c @include eval.texi
-
-@c @include control.texi
-@c @include variables.texi
-@c @include functions.texi
-@c @include macros.texi
-
-@c @include customize.texi
-@c @include loading.texi
-@c @include compile.texi
-
-@c This includes edebug.texi.
-@c @include debugging.texi
-@c @include streams.texi
-@c @include minibuf.texi
-@c @include commands.texi
-
-@c @include keymaps.texi
-@c @include modes.texi
-@c @include help.texi
-@c @include files.texi
-
-@c @include backups.texi
-
-
-
-@c @include buffers.texi
-@c @include windows.texi
-@c @include frames.texi
-
-@c @include positions.texi
-@c @include markers.texi
-@c @include text.texi
-@c @include nonascii.texi
-
-@c @include searching.texi
-@c @include syntax.texi
-@c @include abbrevs.texi
-@c @include threads.texi
-@c @include processes.texi
 
 @c @include display.texi
 @c @include os.texi
@@ -316,21 +174,9 @@ Object Internals
 
 @c appendices
 
-@c @include anti.texi
-@node GNU Free Documentation License
-@appendix GNU Free Documentation License
-@c @include doclicense.texi
-@node GPL
 @appendix GNU General Public License
-@c @include gpl.texi
-@c @include tips.texi
-@c @include internals.texi
-@c @include errors.texi
-@c @include maps.texi
-@c @include hooks.texi
 
 @include index.texi
-
 
 
 @ignore

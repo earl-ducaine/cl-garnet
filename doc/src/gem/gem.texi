@@ -1,0 +1,452 @@
+
+@chapter Gem: Low-level Graphics Library
+@node Low-level Graphics Library
+
+@section Creating New Graphics Backends
+@emph{<TODO>}
+
+@section Using the module directly
+@emph{<TODO>}
+
+@section Function Reference
+
+@defop {Gem Window} :all-garnet-windows root-window
+@end defop
+
+(gem-method :beep (root-window))
+
+(gem-method :bit-blit (window source s-x s-y width height destination d-x d-y))
+
+(gem-method :black-white-pixel (window))
+
+(gem-method :character-width (root-window font character))
+
+(gem-method :check-double-press (root-window state code time))
+
+(gem-method :clear-area (window &optional (x 0) (y 0) width height buffer-p))
+
+(gem-method :color-to-index (root-window a-color))
+
+(gem-method :colormap-property (root-window property &optional a b c))
+
+(gem-method :copy-to-pixmap (root-window to from width height))
+
+(gem-method :create-cursor (root-window source mask foreground background
+					from-font-p x y))
+
+(gem-method :create-image (root-window width height depth from-data-p
+				       &optional color-or-data properties
+				       bits-per-pixel left-pad data-array))
+
+(gem-method :create-image-array (root-window width height depth))
+
+(gem-method :create-pixmap (root-window width height depth
+					&optional image bitmap-p data-array))
+
+(gem-method :build-pixmap (window image width height bitmap-p))
+
+
+(gem-method :create-state-mask (root-window modifier))
+
+(gem-method :create-window
+	    (parent-window x y width height
+	     title icon-name background border-width
+	     save-under visible
+	     min-width min-height max-width max-height
+	     user-specified-position-p user-specified-size-p
+	     override-redirect))
+
+(gem-method :delete-font (root-window font))
+
+(gem-method :delete-pixmap (root-window pixmap &optional buffer-too))
+
+(gem-method :delete-window (root-window x-window))
+
+(gem-method :device-image (root-window index))
+
+(gem-method :discard-mouse-moved-events (root-window))
+
+(gem-method :discard-pending-events (root-window &optional timeout))
+
+(gem-method :draw-arc (window x y width height angle1 angle2 function
+			      line-style fill-style &optional pie-slice-p))
+
+(gem-method :draw-image (window left top width height image function fill-style))
+
+(gem-method :draw-line (window x1 y1 x2 y2 function line-style
+			       &optional drawable))
+
+(gem-method :draw-lines (window point-list function line-style fill-style))
+
+(gem-method :draw-points (window point-list function line-style))
+
+(gem-method :draw-rectangle (window x y width height function
+				    line-style fill-style))
+
+(gem-method :draw-roundtangle (window left top width height
+				      corner-width corner-height function
+				      line-style fill-style))
+
+(gem-method :draw-text (window x y string font function
+			       line-style &optional fill-background invert-p))
+
+(gem-method :drawable-to-window (root-window drawable))
+
+(gem-method :event-handler (root-window ignore-keys))
+
+(gem-method :flush-output (window))
+
+(gem-method :font-exists-p (root-window name))
+
+(gem-method :font-max-min-width (root-window font min-too))
+
+(gem-method :font-name-p (root-window arg))
+
+(gem-method :font-to-internal (root-window opal-font))
+
+(gem-method :get-cut-buffer (root-window))
+
+(gem-method :image-bit (root-window image x y))
+
+(gem-method :image-from-bits (root-window patterns))
+
+(gem-method :image-hot-spot (root-window image))
+
+;;; returns three values: width, height, depth
+(gem-method :image-size (a-window image))
+
+(gem-method :image-to-array (root-window image))
+
+(gem-method :initialize-device (root-window))
+
+(gem-method :initialize-window-borders (window drawable))
+
+(gem-method :inject-event (window index))
+
+(gem-method :make-font-name (root-window key))
+
+(gem-method :map-and-wait (a-window drawable))
+
+(gem-method :max-character-ascent (root-window font))
+
+(gem-method :max-character-descent (root-window font))
+
+(gem-method :mouse-grab (window grab-p want-enter-leave &optional owner-p))
+
+(gem-method :raise-or-lower (window raise-p))
+
+(gem-method :read-an-image (root-window pathname))
+
+(gem-method :reparent (window new-parent drawable left top))
+
+(gem-method :set-clip-mask (window clip-mask &optional lstyle-ogc fstyle-ogc))
+
+(gem-method :set-cut-buffer (root-window string))
+
+(gem-method :set-device-variables (root-window full-display-name))
+
+(gem-method :set-draw-function-alist (root-window))
+
+(gem-method :set-draw-functions (root-window))
+
+(gem-method :set-drawable-to-window (window drawable))
+
+(gem-method :set-interest-in-moved (window interestedp))
+
+(gem-method :set-screen-color-attribute-variables (root-window))
+
+(gem-method :set-window-property (window property value))
+
+(gem-method :stippled-p (root-window))
+
+(gem-method :text-extents (root-window opal-font string))
+
+(gem-method :text-width (root-window opal-font string))
+
+(gem-method :translate-character (window x y state code time))
+
+(gem-method :translate-code (window scan-code shiftp))
+
+(gem-method :translate-coordinates (root-window window x y &optional
+                                                other-window))
+
+(gem-method :translate-mouse-character (root-window button-code modifier-bits
+                                        event-key))
+
+(gem-method :window-debug-id (window))
+
+(gem-method :window-depth (window))
+
+(gem-method :window-from-drawable (root-window drawable))
+
+(gem-method :window-has-grown (window width height))
+
+(gem-method :window-to-image (window left top width height))
+
+(gem-method :write-an-image (root-window pathname image))
+
+
+
+@section Font Handling
+@emph{<TODO>}
+
+
+
+
+@b{BAM: I am not sure this section is correct.}
+
+@b{EED: This was moved from Opal to the Gem chapter where its
+discusion of low level graphics is perhaps more appropriate}
+
+Most users of Opal will only use the pre-defined graphical objects, and
+will combine them into aggregates and use formulas to attach them together.
+It will be rare to create new kinds of graphical objects. This should only
+be needed when new primitives are available, such as splines. 
+
+This chapter discusses how to create new types of graphical objects, should
+that be necessary.
+
+@section Internal slots in graphical objects
+@node Internal slots in graphical objects
+
+There are numerous extra slots in all graphical objects that are used
+internally by Opal. This section will attempt to describe these slots and
+their potential uses when designing new graphical objects.
+
+@subsection :update-slots
+@node :update-slots
+@anchor{opaldemons}
+
+@cindex{update-slots}
+The @code{:update-slots} slot contains an association list of all slots in
+the object that affect the output picture from the object.
+For example:
+
+@example
+* (gv opal:arc :update-slots)
+((:visible) (:line-style) (:filling-style) (:draw-function) (:left)
+ (:top) (:width) (:height) (:angle1) (:angle2))
+@end example
+
+If any of the values of these objects slots in an instance of an
+@code{opal:arc} object change, the instance will need to be redrawn at the
+next window update. 
+
+@cindex{demons}
+Anytime a slot on the @code{:update-slots} list is changed (either with
+@code{s-value} or by a formula being invalidated) the KR's invalidate demon
+is called with the object, the slot, and the slot's value on the association
+list.
+
+Opal doesn't use the second value of the association pair, so it should be
+left as @code{nil}.
+
+When creating an object that is a specialized instance of a prototype
+object, one should inherit all the slots on the @code{:update-slots}
+list, and then add any others as necessary. Commonly this is done by
+something of the form:
+
+@example
+(create-instance 'opal:arc opal:graphical-object
+  @dots{}
+  (:update-slots
+   (append (gv opal:graphical-object :update-slots)
+	   '((:left) (:top) (:width) (:height)
+	     (:angle1) (:angle2))))
+  @dots{})
+@end example
+
+By doing this, you insure that all the necessary slots are inherited, and
+add any new slots as necessary.
+
+@subsection :drawable
+@node :drawable
+
+@cindex{drawable}
+
+The @code{:drawable} slot contains a structure that is the CLX
+drawable object that the object is to display itself into when it is
+sent a @code{draw} message. This object may not be the physical window
+that the object is to be displayed into, it may be a pixmap that is
+double buffered onto the screen somewhere in the update algorithm. All
+objects should trust the value in this slot, even though is may not
+correspond to the drawable of their window. This slot may not contain
+a value until the object (or one of its parents) is placed in a Garnet
+window.
+
+@subsection :display-info
+@node :display-info
+@cindex{display-info}
+
+The @code{:display-info} slot holds information used by many of the
+CLX primitives for computation, and drawing. Once an object is placed
+in a window, this slot contains an opal structure:
+
+@example
+(defstruct (display-info 
+            (:print-function display-info-printer))
+  display
+  screen
+  root-window
+  default-gcontext)
+@end example
+
+The form @code{(display-info-@var{xxx} (gv @var{object} :display-info))}
+returns the @var{xxx} structure from @var{object}'s @code{:display-info} slot.
+These fields are useful as follows:
+
+@cindex{display-info-display}
+@cindex{display}
+@cindex{display-info-screen}
+@cindex{screen}
+@cindex{display-info-root-window}
+@cindex{root-window}
+@cindex{display-info-default-gcontext}
+@cindex{default-gcontext}
+
+@itemize
+
+@item @code{display} is the CLX structure corresponding to the current display
+connection to the X server. This is used in calls that affect or query the
+server directly, such as @t<xlib:open-font>, @code{xlib:display-force-output},
+and @t<xlib:global-pointer-position>.
+
+@item @code{screen} is the CLX structure containing information about the window's
+screen. This is used most often with structure accessors to get
+information on values for the screen's white and black pixels, width and
+height in pixels or millimeters.
+
+@item @code{root-window} is the CLX window that corresponds to
+@code{(xlib:screen-root @emph{screen})} for use in calls to
+@code{xlib:create-window}.
+
+@item @code{default-context} is a CLX graphical context structure used all drawing
+requests. Opal maintains a cache on this object, so it should not be
+changed. It is acceptable to use this structure in an
+@code{xlib:with-gcontext} form when it is necessary to modify a gcontext
+outside the bounds of @code{with-filling-styles @r[and ]with-line-styles}.
+
+@end itemize
+
+@subsection :x-tiles
+@node :x-tiles
+
+@cindex{x-tiles}
+The @code{x-tiles} slot contains a formula that computes a pixmap for use in drawing
+tiled lines, or pattern filled regions. The formula evaluates to a cons
+cell the car of which is the pixmap to use for tiling lines, and the cdr of
+which is a pixmap to use when drawing fillings. These are computed from
+values in the object's @code{:line-style} and @code{:filling-style} slots.
+
+@cindex{x-draw-function}
+
+@node @code{:x-draw-function}
+@subsection @code{:x-draw-function}
+
+This slot contains a formula that is used to compute the CLX drawing
+function from the @code{:draw-function} slot. It probably won't ever be
+necessary to change the formula in this slot.
+
+@section Methods on all graphical objects
+@node Methods on all graphical objects
+
+The following methods are defined on all graphical objects and may be
+specialized upon when creating new classes of graphical objects.
+
+@cindex{draw}
+@defmethod opal:draw graphical-object
+
+The @code{draw} method on a graphical object causes the object to display
+itself in the window of its aggregate. This is only called by the update
+methods, never directly by users of Opal.
+
+@end defmethod
+
+@cindex{initialize}
+@defmethod graphical-object initialize 
+
+This method is called immediately after an instance of an object is
+created. It is passed the new object as its only argument. 
+
+@end defmethod
+
+@defmethod graphical-object opal:point-in-gob  x y
+
+This method should be provided for all new objects. It is used by
+@code{point-to-component} and @code{point-to-leaf} to query an object
+for a hit.  The method should return @code{t} if the object is under the
+point @math{(x, y)}. This function should also take into account the
+values in the @code{:hit-threshold}, @code{:select-outline-only}, and
+@code{:visible} slots of the object, as described in section
+@ref{stdfuncs}. Objects that are not visible should return @code{nil}.
+
+@end defmethod
+
+@cindex{fix-properties}
+
+@defmethod graphical-object opal::fix-properties changed-slots
+
+This method is called on aggregates and windows at the time when the update
+algorithm passes them during an update. The method is called with an
+object, and a list of slots that have changed since it was last called.
+This function is often useful for calling functions that cannot
+easily be put into formulas.
+
+Currently @code{fix-properties} is not called on graphical objects, but this
+functionality can be added to Opal by talking to the maintainer.
+
+@end defmethod
+
+@section Draw Methods
+@node Draw Methods
+
+There are several things that are worthy of note when working on @code{draw}
+methods for new objects. 
+
+Objects @emph{must} draw entirely within their bounding box. The redisplay
+algorithm will not work properly if things are drawn outside of their
+bounding boxes.
+
+There are two macros for use in writing draw methods that prepare a
+gcontext from the gcontext cache that is appropriate for drawing outlines
+or fillings as described by the values in the @code{:line-style} and
+@code{:filling-style} slots of the object.
+
+@cindex{with-filling-styles}
+
+@defmac with-filling-styles (variable graphical-object) body
+
+This form executes the forms inside @var{body} with @var{variable} bound to a
+CLX gcontext structure suitable for drawing the filling of an object with
+respect to @var{graphical-object}'s filling style object in the slot
+@code{:filling-style}.
+
+@end defmac
+
+@cindex{with-line-styles}
+@defmac with-line-styles (variable graphical-object) body
+
+This form executes the forms inside @var{body} with @var{variable} bound to a
+CLX gcontext structure suitable for drawing the outline of an object with
+respect to @var{graphical-object}'s line style object in the slot
+@code{:line-style}.
+
+These forms are commonly used like this:
+
+@example
+(define-method :draw opal:polyline (polyline)
+  (let ((point-list (gv polyline :point-list))
+	(drawable (gv polyline :window :drawable)))
+    (with-filling-styles (gcontext polyline)
+      (xlib:draw-lines drawable gcontext
+	               point-list :fill-p t))
+    (with-line-styles (gcontext polyline)
+      (xlib:draw-lines drawable gcontext
+	               point-list))))
+@end example
+
+@end defmac
+
+@anchor{creating-new-gobs}
+
+

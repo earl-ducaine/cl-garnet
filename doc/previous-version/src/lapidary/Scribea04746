@@ -1,0 +1,5 @@
+@Comment{ERRLOG of lapidary-manual.mss by Scribe 7(1700) on 22 September 1993 at 20:44}
+
+Error in LIBRARYFILE(GARNET) command found while reading setup commands.
+lapidary-manual.mss, line 4:  @LibraryFile(Garnet)
+Database entry "GARNET" missing for device postscript.

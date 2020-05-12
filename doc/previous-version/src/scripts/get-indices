@@ -1,0 +1,25 @@
+#!/bin/csh -f
+
+set args = ( $argv )
+if ( $#args < 1) then
+  echo "usage:    get-indices  names-of-ps-files"
+  exit
+endif
+
+cat /dev/null > /tmp/index.mss
+foreach i ( $args )
+  scripts/get-index $i >> /tmp/index.mss
+end
+
+sort -n < /tmp/index.mss | \
+bawk 'BEGIN	{printf "@make(gmanual)\n@disable(figurecontents)\n"\
+		 printf "@LibraryFile(Garnet)\n@include(pagenumbers.mss)\n"\
+		 print "@String(TitleString = \"Garnet Toolkit\")"}\
+$1 != prev	{printf "@newpage\n@set(page = %s)\n", $1;\
+	 	 print "@newpage"; print $1; prev = $1}\
+/ iNDEXsEC /	{s = length($1) + 11; i = index($0," sECOND ")\
+		 printf "@IndexSecondary<Primary=\"%s\", Secondary=\"%s\">\n",\
+		 substr($0, s, i - s), substr($0,i+8); next}\
+	{print "@index<" substr($0,index($0," ")+1) ">"}\
+END	{print "last-page-before-index"\
+	 print "@set(page = GlobalIndex)"}' > index/index.mss

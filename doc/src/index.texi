@@ -18,9 +18,27 @@
 
 @c pindex is used for .el files and Unix programs
 
-@node Index
-@unnumbered Index
-
-@c Print the indices
+@node Function, Method and Message Index
+@unnumbered Function Index
 
 @printindex fn
+
+@node Variable Index
+@unnumbered Variable Index
+
+@printindex vr
+
+@node Slot Index
+@unnumbered Keyword Index
+
+@printindex ky
+
+@node Class, Object and Type Index
+@unnumbered Type Index
+
+@printindex tp
+
+@node Concept Index
+@unnumbered Concept Index
+
+@printindex cp

@@ -1,0 +1,18 @@
+# This script moves the contents page(s) of a .ps file to immediately after
+# the title page.  This is the order we want in Garnet documents.
+#
+# Created by: dzg	6-3-91
+
+awk '/^%%Page: i/,/^\(List of Figures\)SH$/ {if (a[1]) print a[1]\
+	for (i = 2; i <= 6; ++i) a[i-1] = a[i]\
+	a[6] = $0}' $1 > /tmp/mcp.tmp
+
+bawk '/^%%Page: [0-9]+ 2$/ {while (getline x < "/tmp/mcp.tmp" > 0) {\
+	++i; \
+	if (substr(x,1,8) == "%%Page: ") {\
+	  split (x, y); print y[1], y[2], ++page}\
+	else print x}}\
+/^%%Page: i/	{if (first == 0) {\
+	while (i >= 0) {getline; --i}; first = 1; next}}\
+/^%%Page: /	{print $1, $2, ++page; next}\
+	{print}' $1

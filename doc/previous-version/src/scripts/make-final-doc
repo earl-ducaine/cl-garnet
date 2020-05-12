@@ -1,0 +1,16 @@
+# This command file assembles the global title pages and the global index
+# from the file refman/refman.ps
+#
+# NOTE: page numbers for the global title pages are WIRED IN.
+
+# copy header from the refman file
+bawk '/^%%Page: 5 6$/ {exit} {print}' refman.ps > refman/refman.ps
+
+bawk 'BEGIN {page = 5}\
+/^%%Page: 353/	{while (getline) {\
+		  if ($0 == "(References)SH") ++on;\
+		  if (on == 2) {getline; break}}\
+		 while (getline > 0) {\
+		   if ($1 == "%%Page:") $3 = ++page;\
+		   else if ($1 == "%%Pages:") $2 = page;\
+		   print}}' refman.ps >> refman/refman.ps

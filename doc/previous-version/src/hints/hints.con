@@ -1,0 +1,12 @@
+@Comment{CONTENTS of hints/hints.mss by Scribe 7(1700) on 30 November 1994 at 21:37}
+@PrefaceSection(Table of Contents)
+@Set(Page=1)@Style(PageNumber <@i>)
+@define(foot,invisible)
+@begin(TC1)@rfstr(9)1.@ @$Introduction@end(TC1)
+
+@begin(TC1)@rfstr(9)2.@ @$General@end(TC1)
+
+@begin(TC1)@rfstr(10)3.@ @$Making your Garnet Code Faster@end(TC1)
+
+@begin(TC1)@rfstr(12)4.@ @$Making your Binaries Smaller@end(TC1)
+

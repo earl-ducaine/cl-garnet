@@ -68,7 +68,7 @@
   (:left (formula '(- (opal:gv-right r) (+ (gvl :width) 2))))
   (:top (formula '(- (opal:gv-bottom r) (+ (gvl :height) 2))))
   (:width (formula '(- (* 2 (gv r :radius)) 2)))
-  (:height (formula '(- (* 2 (gv r :radius)) 2)))  
+  (:height (formula '(- (* 2 (gv r :radius)) 2)))
   (:angle1 (/ Pi 4))
   (:angle2 Pi)
   (:line-style opal:dashed-line))
@@ -78,9 +78,9 @@
   (:top (formula '(- (opal:gv-bottom r) (+ (gvl :height) 2))))
   (:width (formula '(- (* 2 (gv r :radius)) 2)))
   (:height (formula '(- (* 2 (gv r :radius)) 2)))
-  (:angle1 (/ (* 5 Pi) 4))
-  (:angle2 Pi)
-  (:line-style (create-instance NIL opal:line-style
+  (:angle1 (/ (* 5 pi) 4))
+  (:angle2 pi)
+  (:line-style (create-instance nil opal:line-style
 		 (:foreground-color opal:white)
 		 (:background-color opal:black)
 		 (:line-style :dash)
@@ -131,5 +131,3 @@
    arc1 arc2)
 
 (opal:update w)
-
-				
