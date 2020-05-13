@@ -304,85 +304,87 @@
 	  (kr-send op-on :selection-function op-on real-string)))))
 
 (create-instance 'scrolling-input-string opal:aggregadget
-   :declare ((:parameters :left :top :width :value :font :line-style :active-p
-			  :visible)
-	     (:type (string :value)
-		    ((or (is-a-p opal:font) (is-a-p opal:font-from-file)) :font)
-		    ((or (is-a-p opal:line-style) null) :line-style)
-		    (kr-boolean :active-p)
-		    ((or null function symbol) :selection-function))
-	     (:maybe-constant :left :top :width :font :line-style :active-p
-			      :visible))
-   ;; customizable slots
-   (:left 0)
-   (:top 0)
-   (:width 100)
-   (:value "type here")
-   (:selection-function nil)
-   ;; **must be fixed width**
-   (:font opal:default-font)
-   (:active-p t)
-   (:line-style (o-formula (if (gvl :active-p)
-			       opal:default-line-style
-			       opal:gray-line)))
-   ; Generally non-customizable slots
-   (:field-char-width (o-formula (opal:string-width (gvl :font) "w")))
-   (:height (o-formula (opal:string-height (gvl :font) "x")))
-   (:parts
-    `((:string ,opal:cursor-text
-	       (:left ,(o-formula (+ (gvl :parent :left) *dot-dot-width*)))
-	       (:top ,(o-formula (gvl :parent :top)))
-	       (:max-width ,(o-formula (- (gvl :parent :width) (* 2 *dot-dot-width*))))
-	       (:font ,(o-formula (gvl :parent :font)))
-	       (:line-style ,(o-formula (gvl :parent :line-style)))
-	       ;; first-vis-char is the index into real-string of the
-	       ;; first visible set by interactor
-	       (:first-vis-char 0)
-	       ;; set by interactor
-	       (:cursor-index nil)
-	       ;; the number of characters that can be shown
-	       (:vis-length
-		,(o-formula (floor (gvl :max-width)
-				   (gvl :parent :field-char-width))))
-	       ;; the next one is also set by the interactor directly
-	       (:real-string ,(o-formula (gvl :parent :value)))
-	       ;; last-vis-char is the index into real-string of the last visible
-	       (:last-vis-char
-		,(o-formula (let ((real-len (length (gvl :real-string)))
-				  (first-vis (gvl :first-vis-char))
-				  (vis-len (gvl :vis-length)))
-			      ;; check in case someone sets the :value slot
-			      (when (> first-vis real-len)
-				(setq first-vis 0)
-				(s-value (gv :self) :first-vis-char first-vis))
-			      (if (< (- real-len first-vis) vis-len)
-				  (1- real-len)
-				  (+ first-vis vis-len -1)))))
-	       (:string ,(o-formula (let* ((last (gvl :last-vis-char))
-					   (first (gvl :first-vis-char)))
-				      ;; guarantee that last-vis asked before first,
-				      ;; because it may s-value first.
-				      (subseq (gvl :real-string)
-					    first (1+ last)))))
-               (:fast-redraw-p ,(o-formula (gvl :parent :fast-redraw-p)))
-               (:fast-redraw-filling-style ,(o-formula (gvl :parent :fast-redraw-filling-style))))
-      (:dot1 ,dot-dot-dot
-	     (:visible ,(o-formula
-			 (and (gvl :parent :visible)
-			      (/= 0 (gvl :parent :string :first-vis-char)))))
-	     (:left ,(o-formula (gvl :parent :left)))
-	     (:top ,(o-formula  (gvl :parent :top))))
-      (:dot2 ,dot-dot-dot
-	     (:visible ,(o-formula
-			 (and (gvl :parent :visible)
-			      (/= (gvl :parent :string :last-vis-char)
-				  (1- (length
-				       (gvl :parent :string :real-string)))))))
-	     (:left ,(o-formula (+ (gvl :parent :left)
-				   (- (gvl :parent :width) *dot-dot-width*))))
-	     (:top ,(o-formula (gvl :parent :top))))))
-   (:interactors
-    `((:text-edit ,scrolling-input-text-edit))))
+  :declare ((:parameters :left :top :width :value :font :line-style :active-p
+			 :visible)
+	    (:type (string :value)
+		   ((or (is-a-p opal:font) (is-a-p opal:font-from-file)) :font)
+		   ((or (is-a-p opal:line-style) null) :line-style)
+		   (kr-boolean :active-p)
+		   ((or null function symbol) :selection-function))
+	    (:maybe-constant :left :top :width :font :line-style :active-p
+			     :visible))
+  ;; customizable slots
+  (:left 0)
+  (:top 0)
+  (:width 100)
+  (:value "type here")
+  (:selection-function nil)
+  ;; **must be fixed width**
+  (:font opal:default-font)
+  (:active-p t)
+  (:line-style (o-formula (if (gvl :active-p)
+			      opal:default-line-style
+			      opal:gray-line)))
+					; Generally non-customizable slots
+  (:field-char-width (o-formula (opal:string-width (gvl :font) "w")))
+  (:height (o-formula (opal:string-height (gvl :font) "x")))
+  (:parts
+   `((:string ,opal:cursor-text
+	      (:left ,(o-formula (+ (gvl :parent :left) *dot-dot-width*)))
+	      (:top ,(o-formula (gvl :parent :top)))
+	      (:max-width ,(o-formula (let ((padding (* 2 *dot-dot-width*)))
+					(max (- (gvl :parent :width) padding)
+					     padding))))
+	      (:font ,(o-formula (gvl :parent :font)))
+	      (:line-style ,(o-formula (gvl :parent :line-style)))
+	      ;; first-vis-char is the index into real-string of the
+	      ;; first visible set by interactor
+	      (:first-vis-char 0)
+	      ;; set by interactor
+	      (:cursor-index nil)
+	      ;; the number of characters that can be shown
+	      (:vis-length
+	       ,(o-formula (floor (gvl :max-width)
+				  (gvl :parent :field-char-width))))
+	      ;; the next one is also set by the interactor directly
+	      (:real-string ,(o-formula (gvl :parent :value)))
+	      ;; last-vis-char is the index into real-string of the last visible
+	      (:last-vis-char
+	       ,(o-formula (let ((real-len (length (gvl :real-string)))
+				 (first-vis (gvl :first-vis-char))
+				 (vis-len (gvl :vis-length)))
+			     ;; check in case someone sets the :value slot
+			     (when (> first-vis real-len)
+			       (setq first-vis 0)
+			       (s-value (gv :self) :first-vis-char first-vis))
+			     (if (< (- real-len first-vis) vis-len)
+				 (1- real-len)
+				 (+ first-vis vis-len -1)))))
+	      (:string ,(o-formula (let* ((last (gvl :last-vis-char))
+					  (first (gvl :first-vis-char)))
+				     ;; guarantee that last-vis asked before first,
+				     ;; because it may s-value first.
+				     (subseq (gvl :real-string)
+					     first (1+ last)))))
+	      (:fast-redraw-p ,(o-formula (gvl :parent :fast-redraw-p)))
+	      (:fast-redraw-filling-style ,(o-formula (gvl :parent :fast-redraw-filling-style))))
+     (:dot1 ,dot-dot-dot
+	    (:visible ,(o-formula
+			(and (gvl :parent :visible)
+			     (/= 0 (gvl :parent :string :first-vis-char)))))
+	    (:left ,(o-formula (gvl :parent :left)))
+	    (:top ,(o-formula  (gvl :parent :top))))
+     (:dot2 ,dot-dot-dot
+	    (:visible ,(o-formula
+			(and (gvl :parent :visible)
+			     (/= (gvl :parent :string :last-vis-char)
+				 (1- (length
+				      (gvl :parent :string :real-string)))))))
+	    (:left ,(o-formula (+ (gvl :parent :left)
+				  (- (gvl :parent :width) *dot-dot-width*))))
+	    (:top ,(o-formula (gvl :parent :top))))))
+  (:interactors
+   `((:text-edit ,scrolling-input-text-edit))))
 
 
 ;;;  Demo function
