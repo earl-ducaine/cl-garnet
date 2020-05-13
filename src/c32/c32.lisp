@@ -31,8 +31,8 @@
 (in-package :c32)
 
 
-(eval-when (:execute :load-toplevel :compile-toplevel)
-  (export '()))
+;; (eval-when (:execute :load-toplevel :compile-toplevel)
+;;   (export '()))
 
 ;; Holds the feeback obj for the current selection
 (defparameter *current-selection-feedback* nil)
@@ -119,29 +119,31 @@
   (:left  (o-formula (+ 2 (gvl :parent :left))))
   (:top  (o-formula (gvl :parent :top)))
   (:font (o-formula (if (gvl :parent :inherited-p)
-			ital-font
-			reg-font)))
-  (:obj nil)
-  (:slot nil)
+		      ital-font
+		      reg-font))))
+
+(create-instance 'c32-item opal:aggregadget
+  (:obj NIL)
+  (:slot NIL)
   (:left 0)
   (:top 0)
-  (:width full-item-width)
-  (:height font-height)
+  (:width Full-Item-Width)
+  (:height Font-Height)
   (:visible
    (o-formula (let* ((min-val (gvl :parent :parent :scroll-bar :value))
-		     (max-val (+ -1 min-val scroll-panel-num-items))
+		     (max-val (+ -1 min-val Scroll-Panel-Num-Items))
 		     (index (position (gv :self) (gvl :parent :components))))
 		(and (>= index min-val)
 		     (<= index max-val))))
-   #+dzg (o-formula (let* ((min-val (gvl :parent :parent
+   #+DZG (o-formula (let* ((min-val (gvl :parent :parent
 					 :scroll-bar :value))
-			   (max-val (+ -1 min-val scroll-panel-num-items))
+			   (max-val (+ -1 min-val Scroll-Panel-Num-Items))
 			   (index (gvl :rank)))
 		      (and (>= index min-val)
 			   (<= index max-val)))))
   (:value (o-formula (let ((obj (gvl :obj))
 			   (slot (gvl :slot)))
-		       (when slot (gv obj slot)))))
+		       (if slot (gv obj slot)))))
   (:formula-p (o-formula (let ((obj (gvl :obj))
 			       (slot (gvl :slot)))
 			   (when slot
@@ -156,9 +158,9 @@
   (:parts
    `((:label ,c32-label)
      (:form-icon ,form-icon
-					; (:constant t)
+					; (:constant T)
 		 (:left ,(o-formula (+ (gvl :parent :left)
-				       label-width)))
+				       Label-Width)))
 		 (:top ,(o-formula (gvl :parent :top)))
 		 ;; draw it invisible if not a formula, but still have it there
 		 ;; so that it can be selected to create a formula.
@@ -166,34 +168,34 @@
 						 :copy
 						 :no-op))))
      (:inherited-icon ,inherited-icon
-					; (:constant t)
+					; (:constant T)
 		      (:left ,(o-formula
 			       (if (gvl :parent :formula-p)
 				   ;; then value is inherited so put next to form
-				   (+ (gvl :parent :left) label-width form-icon-width 1)
+				   (+ (gvl :parent :left) Label-Width form-icon-width 1)
 				   ;; else no formula, put icon at right
 				   (+ (gvl :parent :left) icon-at-right-offset))))
 		      (:top ,(o-formula (gvl :parent :top)))
 		      (:visible ,(o-formula (gvl :parent :inherited-p))))
-     (:value-str ,value-scrolling-string
-					; (:constant t)
-		 (:pretend-to-be-leaf t)
+     (:value-str ,Value-Scrolling-String
+					; (:constant T)
+		 (:pretend-to-be-leaf T)
 		 (:value ,(o-formula (if (gvl :parent :slot)
-					 (mk-string (gvl :parent :value))
+					 (Mk-String (gvl :parent :value))
 					 "")))
 		 ;; italic if value itself is inherited, so if no formula
 		 (:font ,(o-formula (if (and (gvl :parent :inherited-p)
 					     (not (gvl :parent :formula-p)))
 					ital-font
 					reg-font)))
-		 (:width ,max-value-width)
-		 (:selection-function value-edited-func)
+		 (:width ,Max-Value-Width)
+		 (:selection-function Value-Edited-Func)
 		 (:interactors ((:text-edit :omit)))
 		 (:left ,(o-formula (if (gvl :parent :slot)
-					;; normal slot; value is on the right.
-					(+ (gvl :parent :left) label-side-width)
-					;; last (empty) slot: string on the left, for add
-					;; slot command
+					;; Normal slot; value is on the right.
+					(+ (gvl :parent :left) Label-Side-Width)
+					;; Last (empty) slot: string on the left, for Add
+					;; Slot command
 					(gvl :parent :left))))
 		 (:top ,(o-formula (gvl :parent :top))))
      (:underline ,opal:line
