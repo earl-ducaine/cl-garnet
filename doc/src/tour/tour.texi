@@ -3,8 +3,6 @@
 
 by: Brad A. Myers
 
-@value{DATE}
-
 @section Abstract
 @node Abstract
 

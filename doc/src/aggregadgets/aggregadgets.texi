@@ -3,13 +3,12 @@
 @node Aggregadgets, Aggrelists & Aggregraphs
 
 
-Andrew Mickish,
+by Andrew Mickish,
 Roger B. Dannenberg,
 Philippe Marchal,
 David Kosbie,
 A. Bryan Loyall
 
-@value{DATE}
 
 @section Abstract
 @node Abstract

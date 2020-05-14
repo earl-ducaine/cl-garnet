@@ -2,10 +2,7 @@
 @chapter C32 Reference: A Constraint Editor
 @node C32 Reference: A Constraint Editor
 
-
 by Dario Giuse
-
-@value{DATE}
 
 @section Abstract
 @node Abstract

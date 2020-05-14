@@ -6,8 +6,6 @@ by Roger B. Dannenberg,
 Andrew Mickish,
 Dario Giuse
 
-@value{DATE}
-
 @section Abstract
 @node Abstract
 

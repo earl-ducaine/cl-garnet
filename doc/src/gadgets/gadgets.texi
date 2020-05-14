@@ -6,8 +6,6 @@ by Andrew Mickish,
 Brad A. Myers,
 Rajan Parthasarathy,
 
-@value{DATE}
-
 @section Abstract
 @node Abstract
 

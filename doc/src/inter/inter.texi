@@ -5,8 +5,6 @@
 
 by Brad A. Myers, James A. Landay, Andrew Mickish
 
-@value{DATE}
-
 @section Abstract
 @node Abstract
 

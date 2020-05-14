@@ -5,9 +5,6 @@
 
 by Andrew Mickish, Brad A. Myers, David Kosbie, Richard McDaniel, Edward Pervin, Matthew Goldberg
 
-@sp 1
-
-@value{DATE}
 
 @section Abstract
 @node Abstract
@@ -1073,6 +1070,8 @@ lines come together) are drawn for thick lines as part of poly-line,
 polygon, or rectangle kinds of objects. This does not affect
 individual lines (instances of @code{opal:line}) that are part of an
 aggregate, even if they happen to have the same endpoints.
+
+@sp 1
 
 @cindex{miter}
 @cindex{round}

@@ -2,10 +2,8 @@
 @chapter Gilt Reference: A Simple Interface Builder for Garnet
 @node Gilt Reference: A Simple Interface Builder for Garnet
 
-
 by Brad A. Myers
 
-@value{DATE}
 
 @section Abstract
 @node Abstract
@@ -14,8 +12,6 @@ Gilt is a simple interface layout tool that helps the user design dialog
 boxes. It allows the user to place pre-defined Garnet gadgets in a window
 and then save them to a file. There are two versions: one for Garnet
 look-and-feel gadgets and one for Motif look-and-feel gadgets.
-
-
 
 
 @section Introduction
