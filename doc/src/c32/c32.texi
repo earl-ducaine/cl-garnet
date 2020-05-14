@@ -92,7 +92,7 @@ panel for a @code{label-text} object and the empty panel. Each panel
 consists of a vertical scroller (using for displaying more slots), a
 title, and up to 12 rows. Each row displays the contents of a slot.
 
-@float Figure, fig:ex2
+@float Figure, fig:ex131
 @center @image{c32-spreadsheet, 5.5in}
 @caption{C32 Spreadsheet Window with two panels.}
 @anchor{c32-spreadsheet}
@@ -178,7 +178,7 @@ window. The header displays the name of the object and the slot upon
 which the formula is installed, and contains five buttons. The
 scroller allows you to examine different portions of long formulas.
 
-@float Figure, fig:ex2
+@float Figure, fig:ex132
 @center @image{c32-formula, 5.5in}
 @caption{The C32 formula window for the :left slot.}
 @anchor{c32-formula}
@@ -240,7 +240,7 @@ package that is used by C32 to interpret Lisp values and expressions (for
 example, when you type a value or a formula). The package can be changed
 by editing the string in the box.
 
-@float Figure, fig:ex2
+@float Figure, fig:ex133
 @center @image{c32-commands, 5.5in}
 @caption{The C32 Commands Window.}
 @anchor{c32-commands}

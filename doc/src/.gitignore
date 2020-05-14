@@ -1,2 +1,9 @@
+*.aux
+*.dvi
+*.fn
+*.fns
+*.log
+*.t2d
+*.toc
 *.tp
 *.tps

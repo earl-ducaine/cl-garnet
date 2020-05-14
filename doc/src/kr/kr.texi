@@ -2,10 +2,11 @@
 @c This is part of the Garnet Reference Manual.
 @c See the file garnet.texi for copying conditions.
 
-@node KR: Constraint-Based Knowledge Representation
-@chapter KR: Constraint-Based Knowledge Representation
 @cindex kr
 @cindex Knowledge representation
+
+@node KR: Constraint-Based Knowledge Representation
+@chapter KR: Constraint-Based Knowledge Representation
 
 KR is a very efficient knowledge representation language implemented
 in Common Lisp. It provides powerful frame-based knowledge
@@ -30,9 +31,8 @@ knowledge representation.
 @c Don't use this yet.
 @c @include kr-manual-header.texi
 
-
-@subsection KR: Introduction
 @node KR: Introduction
+@section KR: Introduction
 
 
 This document is the reference manual for the KR system. KR

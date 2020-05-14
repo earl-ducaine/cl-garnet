@@ -1,0 +1,67 @@
+#+TODO: TODO IN-PROGRESS | DONE CANCELED
+
+* Track progress latest revision
+
+** Revision Tracking
+
+*** Chapter 1: Overview
+
+*** Chapter 2: On-Line Tour Through Garnet
+
+*** Chapter 3: Garnet Tutorial
+
+*** Chapter 4: KR: Constraint-Based Knowledge Representation
+
+*** IN-PROGRESS Chapter 5: Opal: The Garnet Graphical Object System
+
+*** 5.1: Abstract
+
+*** 5.2: Introduction
+
+*** 5.3: Overview of Opal
+
+**** 5.3.1: Basic Concepts
+
+**** 5.3.2: The Opal Package
+
+**** 5.3.3: Simple Displays
+
+**** 5.3.4: Object visibility
+
+**** 5.3.5: View Objects
+
+**** 5.3.6: Read-Only Slots
+
+**** 5.3.7: Different Common Lisps
+
+*** 5.4: Slots of all Graphical Objects
+
+**** 5.4.1: Left, Top, Width, and Height
+
+**** 5.4.2: Line Style and Filling Style
+
+**** 5.4.3: Drawing function
+
+**** 5.4.4: select-outline-only, hit-threshhold, and pretend-to-be-leaf
+
+*** 5.5: Methods of all View Objects
+
+**** 5.5.1: Standard Functions
+
+**** 5.5.2: Extended Accessor Functions
+
+*** IN-PROGRESS 5.6: Graphic Quality
+
+**** IN-PROGRESS 5.6.1: Color
+
+**** IN-PROGRESS 5.6.2: line-style Class
+
+**** 5.6.3 Filling-Styles
+
+***** 5.6.3.1: Creating You're Own Filling Style
+
+***** 5.6.3.2: Fancy Stiple Patterns
+
+***** 5.6.3.3: Other Slots Affecting Stiple Patterns
+
+**** 5.6.4: Fast Redraw

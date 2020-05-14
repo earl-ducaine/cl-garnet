@@ -31,6 +31,10 @@ all: garnet
 garnet: garnet-manual.texi garnetmanualdate
 	texi2pdf -I $(TEXI_INCLUDES) garnet-manual.texi
 
+# Experimental output
+docbook: garnet-manual.texi garnetmanualdate
+	texi2any --docbook -I $(TEXI_INCLUDES) garnet-manual.texi
+
 .PHONY garnetmanualdate:
 	./generate-garnetmanualdate.sh
 
@@ -132,5 +136,6 @@ pagenumbers.mss: # scripts/pagenumbers-done
 
 clean:
 	rm -f garnetmanualdate.texi
-	rm -f *.fn *.fns *.log *.aux *.toc
+	rm -f *.fn *.fns *.log *.aux *.toc *.pdf *.cp *.cps *.tp *.tps *.vr
+	rm -f *.vrs
 	rm -rf *.t2d

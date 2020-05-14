@@ -80,7 +80,7 @@ debugging programs, and provides interfaces to many of the other
 debugging functions in Garnet. A view of an object being inspected in
 shown in Figure @ref{inspectorfig}.
 
-@float Figure, fig:ex2
+@float Figure, fig:ex91
 @center @image{inspectorfig, 5.5in}
 @caption{The Inspector showing a text object.}
 @anchor{inspectorfig}
@@ -202,7 +202,7 @@ technically not the @code{:parent} of the top-level aggregate). The
 final list is simply the list of objects that have been viewed in this
 window, which forms a simple history of views.
 
-@float Figure, fig:ex2
+@float Figure, fig:ex92
 @center @image{inspectorobjsfig, 5.5in}
 @caption{The Inspector showing the objects related to the text object
 of Figure @ref{inspectorfig}.}
@@ -223,7 +223,7 @@ then hit the "@code{Dependencies}" button, you get the view of Figure
 @ref{inspectordepfig}. This slows the slots used in calculating the
 value in the formula.
 
-@float Figure, fig:ex2
+@float Figure, fig:ex93
 @center @image{inspectordepfig, 5.5in}
 @caption{The Inspector showing the dependencies of the @code{:visible}
 slot of the object shown in Figure @ref{inspectorfig}.}

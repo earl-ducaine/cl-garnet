@@ -1,4 +1,5 @@
 \input texinfo  @c -*-texinfo-*-
+@c %**start of header
 
 @c Used for editorial markup.
 @rmacro redtext{text}
@@ -18,7 +19,8 @@
 
 @end rmacro
 
-@c %**start of header
+@paragraphindent 0
+
 
 @settitle Garnet Reference and User Manual
 

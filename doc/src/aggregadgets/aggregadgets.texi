@@ -132,7 +132,7 @@ A short example of an aggregadget definition
 is shown in figure @ref{check-mark}, and the picture of this
 aggregadget is in figure @ref{simple-expl-pict-ref}.
 
-@float Figure, fig:ex9
+@float Figure, fig:ex701
 @example
 (create-instance 'CHECK-MARK opal:aggregadget
    (:parts
@@ -151,7 +151,7 @@ aggregadget is in figure @ref{simple-expl-pict-ref}.
 @anchor{check-mark}
 @end float
 
-@float Figure, fig:ex10
+@float Figure, fig:ex702
 @center @image{agg-check-mark, 5.5in}
 
 @caption{The picture of the CHECK-MARK aggregadget.}
@@ -190,7 +190,7 @@ aggregadget as a slot name that points directly to the new component. The
 example at the end of section @ref{constants-and-aggregadgets} illustrates
 the idea of setting the @code{:known-as} slot.
 
-@float Figure, fig:ex11
+@float Figure, fig:ex703
 @example
 
 @b{lisp>} (ps CHECK-MARK)
@@ -216,7 +216,7 @@ NIL
 @cindex{components slot}
 
 
-@float Figure, fig:ex12
+@float Figure, fig:ex704
 @example
 
 @b[lisp>] (ps (gv CHECK-MARK :right-line))
@@ -394,7 +394,7 @@ can be defined in the @code{:right-line} object that cause its origin to always
 be the terminus of the @code{:left-line}. Figure @ref{modified-check-mark}
 shows the definition of this modified schema.
 
-@float Figure, fig:ex13
+@float Figure, fig:ex705
 @example
 (create-instance 'MODIFIED-CHECK-MARK opal:aggregadget
    (:parts
@@ -442,7 +442,7 @@ Aggregadgets can be used to define more complicated objects with a
 multi-level hierarchical structure. Consider the picture of a check-box
 shown in figure @ref{check-box-pict-ref}.
 
-@float Figure, fig:ex14
+@float Figure, fig:ex705
 @center @image{agg-check-box, 5.5in}
 @caption{A picture of a check-box.}
 @anchor{check-box-pict-ref}
@@ -452,7 +452,7 @@ The check-box can be considered a hierarchy of objects:  the CHECK-MARK
 object defined in figure @ref{check-mark}, and a box. This
 hierarchy is illustrated in figure @ref{check-box-hier-ref}.
 
-@float Figure, fig:ex15
+@float Figure, fig:ex706
 @example
 
                              check-box
@@ -478,7 +478,7 @@ figure @ref{custom-check-box1}. However, the CHECK-BOX definition
 presented here uses a modular approach that allows the reuse of the
 CHECK-MARK schema in other applications.
 
-@float Figure, fig:ex16
+@float Figure, fig:ex707
 @example
 (create-instance 'CHECK-BOX opal:aggregadget
    (:parts
@@ -515,7 +515,7 @@ by nested @code{:parts} slots.
 For example, figure @ref{x-box-fig} implements a box containing an X.
 Notice how the @code{:mark} part of X-BOX is an aggregadget containing
 its own parts.
-@float Figure, fig:ex17
+@float Figure, fig:ex708
 @center @image{xbox-fig, 5.5in}
 @example
 
@@ -576,7 +576,7 @@ aggregadget that are similar, but with different objects as parts.
 For example, the aggregadgets in figure @ref{single-part-fn} all have
 the same prototype.
 
-@float Figure, fig:ex18
+@float Figure, fig:ex709
 @center @image{single-part-fn, 5.5in}
 @caption{Aggregadgets that generate a part through a function.}
 @anchor{single-part-fn}
@@ -684,7 +684,7 @@ This feature is useful when the components of the aggregadget are related in
 some respect that is easily described by a function procedure, as in figure
 @ref{multi-line-pict-ref}.
 
-@float Figure, fig:ex19
+@float Figure, fig:ex710
 @center @image{agg-multi-line, 5.5in}
 @caption{The multi-line picture.}
 @anchor{multi-line-pict-ref}
@@ -715,7 +715,7 @@ of multiple lines, with the end-points of the lines given in the
 special slot @code{:line-end-points}. The figure creates the object on
 the left of figure @ref{multi-line-pict-ref}.
 
-@float Figure, fig:ex20
+@float Figure, fig:ex711
 @example
 (create-instance 'MULTI-LINE opal:aggregadget
    (:parts
@@ -747,7 +747,7 @@ In addition, this function returns the list of the names of
 the parts. Two instances of the aggregadget are created, with only one of
 these instances having names for the lines.
 
-@float Figure, fig:ex21
+@float Figure, fig:ex712
 @example
 (defun Make-Lines (lines-agg)
   (let ((lines NIL))
@@ -858,7 +858,7 @@ figure
 @ref{framed-text-pix}.
 @cindex{framed-text example}
 
-@float Figure, fig:ex22
+@float Figure, fig:ex713
 @example
 (create-instance 'FRAMED-TEXT opal:aggregadget
    (:left 0)      @emph{; Set these slots to determine}
@@ -889,7 +889,7 @@ figure
 @end float
 
 
-@float Figure, fig:ex23
+@float Figure, fig:ex714
 @example
 
 @b[lisp>] (ps FRAMED-TEXT)
@@ -921,7 +921,7 @@ NIL
 @end float
 
 
-@float Figure, fig:ex24
+@float Figure, fig:ex715
 @center @image{framed-text-pix, 5.5in}
 @caption{A picture of the FRAMED-TEXT aggregadget.}
 @anchor{framed-text-pix}
@@ -953,7 +953,7 @@ aggregate, as illustrated by the reference from C to D. Since D is external
 to the aggregate, there is no D', and the reference to D is inherited by C'.
 
 
-@float Figure, fig:ex25
+@float Figure, fig:ex716
 @center @image{instance-fig, 5.5in}
 @caption{A prototype aggregate and one instance. The dashed lines
 go from instances to their prototypes, solid lines 
@@ -1070,7 +1070,7 @@ aggregadget shown in figure @ref{x-box-fig}. In the instance named
 CIRCLE-X-BOX, a circle has been inserted between the box and the ``X''
 mark, and the box has a gray fill.
 
-@float Figure, fig:ex26
+@float Figure, fig:ex717
 @center @image{circle-xbox-fig, 5.5in}
 @example
 
@@ -1095,7 +1095,7 @@ of the X-BOX aggregadget.}
 In figure @ref{circle-box-fig}, the CIRCLE-X-BOX aggregadget is
 further modified by replacing the ``X'' with a circle.
 
-@float Figure, fig:ex27
+@float Figure, fig:ex718
 @center @image{circle-box-fig, 5.5in}
 @example
 
@@ -1142,7 +1142,7 @@ a rectangle. Since parts @code{:line1}
 and @code{:line2} are not mentioned, they are included in the @code{:mark} 
 part automatically.
 
-@float Figure, fig:ex28
+@float Figure, fig:ex719
 @center @image{x-sq-box-fig, 5.5in}
 @example
 
@@ -1551,7 +1551,7 @@ automatically.
       (:string ,(formula '(nth (gvl :rank) (gvl :parent :items)))))))
 @end example
 
-@float Figure, fig:ex29
+@float Figure, fig:ex720
 @center @image{agg-list-item, 5.5in}
 @caption{The picture of an itemized aggrelist.}
 @anchor{aggitem-expl-pict}
@@ -1565,7 +1565,7 @@ FRAMED-TEXT-LIST defined in figure @ref{framed-text-list}.
 A picture of the FRAMED-TEXT-LIST aggrelist appears in figure
 @ref{framed-text-list-pix}.
 
-@float Figure, fig:ex2
+@float Figure, fig:ex721
 @example
 (create-instance 'FRAMED-TEXT-LIST opal:aggrelist
    (:left 0) (:top 0)
@@ -1606,7 +1606,7 @@ A picture of the FRAMED-TEXT-LIST aggrelist appears in figure
 @anchor{framed-text-list}
 @end float
 
-@float Figure, fig:ex2
+@float Figure, fig:ex722
 @center @image{framed-text-list-pix, 5.5in}
 @caption{A picture of the FRAMED-TEXT-LIST aggrelist.}
 @anchor{framed-text-list-pix}
@@ -1690,7 +1690,7 @@ The @code{:item-prototype} for this aggrelist is an aggregadget with a
 part-generating function that determines its label. The definition of
 the aggrelist, along with its part-generating function appears below.
 
-@float Figure, fig:ex2
+@float Figure, fig:ex723
 @center @image{esp-cards-pix, 5.5in}
 @caption{An aggrelist that uses a part-generating function in its
 :item-prototype}
@@ -1814,7 +1814,7 @@ just as in aggregadgets, except aggrelists will automatically set the
 creates an aggrelist with three components, and a picture of this
 aggrelist is shown in figure @ref{agglist-expl-ref}.
 
-@float Figure, fig:ex2
+@float Figure, fig:ex724
 @example
 (create-instance 'MY-AGG opal:aggrelist 
   (:left 10) (:top 10)
@@ -1827,7 +1827,7 @@ aggrelist is shown in figure @ref{agglist-expl-ref}.
 @anchor{parts-list-fig}
 @end float
 
-@float Figure, fig:ex2
+@float Figure, fig:ex725
 @center @image{agg-list, 5.5in}
 @caption{The picture of an aggrelist with three components.}
 @anchor{agglist-expl-pict}
@@ -1890,7 +1890,7 @@ default.
 with FRAMED-TEXT-LIST. It is generally a good idea to specify
 the @code{:items} to avoid sharing.
 
-@float Figure, fig:ex2
+@float Figure, fig:ex726
 @center @image{boxed-text-list-pix, 5.5in}
 @example
 
@@ -2379,7 +2379,7 @@ figure @ref{agglist-expl-ref}. In each component of the aggrelist, the
 @code{:left} and @code{:top} slots have been left undefined. The aggrelist will
 fill these slots with the appropriate values automatically.
 
-@float Figure, fig:ex2
+@float Figure, fig:ex727
 @example
 (create-instance 'MY-AGG opal:aggrelist (:top 10) (:left 10))
 (create-instance 'MY-RECT opal:rectangle
@@ -2809,7 +2809,7 @@ default values for the coordinates and the second one using both default
 and custom coordinates. Both are pictured in figure
 @ref{example-1-pic}.
 
-@float Figure, fig:ex2
+@float Figure, fig:ex728
 @example
 (create-instance 'CHECK-BOX opal:aggregadget
    (:left 20)
@@ -2855,7 +2855,7 @@ and custom coordinates. Both are pictured in figure
 @anchor{example-1}
 @end float
 
-@float Figure, fig:ex2
+@float Figure, fig:ex729
 @center @image{agg-custom-cb, 5.5in}
 @caption{Instances of the customizable check-box.}
 @anchor{example-1-pic}
@@ -2873,7 +2873,7 @@ modularize the definition of the schema. The modular style allows for
 the reuse of previously defined code --- the @code{check-mark} schema
 may now be used for other applications as well.
 
-@float Figure, fig:ex2
+@float Figure, fig:ex730
 @example
 (create-instance 'CHECK-MARK opal:aggregadget
   (:parts
@@ -2932,13 +2932,13 @@ The figure @ref{menu-aggrelist2-ref} shows how to create an instance
 of the menu. A picture of these menus (the prototype and its instance)
 is shown in figure @ref{menu-aggitem-pict}.
 
-@float Figure, fig:ex2
+@float Figure, fig:ex731
 @center @image{agg-list-item-menu, 5.5in}
 @caption{The two menus (prototype and instance) made with itemized aggrelist.}
 @anchor{menu-aggitem-pict}
 @end float
 
-@float Figure, fig:ex2
+@float Figure, fig:ex732
 @example
 (defun my-cut () (format T "~%Function CUT called~%"))
 (defun my-copy () (format T "~%Function COPY called~%"))
@@ -2995,7 +2995,7 @@ is shown in figure @ref{menu-aggitem-pict}.
 @anchor{menu-aggrelist-ref}
 @end float
 
-@float Figure, fig:ex2
+@float Figure, fig:ex733
 @example
 (defun my-read () (format T "~%Function READ called~%"))
 (defun my-save () (format T "~%Function SAVE called~%"))
@@ -3211,7 +3211,7 @@ except as part of a customized layout function.
    (:source-roots (list opal:view-object)))
 @end example
 
-@float Figure, fig:ex2
+@float Figure, fig:ex734
 @center @image{schema-graph, 5.5in}
 @caption{Graph generated by SCHEMA-GRAPH}
 @anchor{schema-graph-pix}
@@ -3271,7 +3271,7 @@ a Garnet schema.
 	       (kr:ps source-node))))))))
 @end example
 
-@float Figure, fig:ex2
+@float Figure, fig:ex735
 @center @image{schema-graph-2, 5.5in}
 @caption{Graph generated by SCHEMA-GRAPH-2}
 @anchor{schema-graph-2-pix}
