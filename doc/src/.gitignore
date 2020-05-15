@@ -1,9 +1,15 @@
 *.aux
+*.cp
+*.cps
 *.dvi
 *.fn
 *.fns
 *.log
+*.pdf
 *.t2d
 *.toc
 *.tp
 *.tps
+*.vr
+*.vrs
+garnetmanualdate.texi
