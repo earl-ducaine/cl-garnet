@@ -2,68 +2,73 @@
 @chapter Garnet Gadgets
 @node Garnet Gadgets 
 
-by Andrew Mickish,
-Brad A. Myers,
-Rajan Parthasarathy,
+by Andrew Mickish, Brad A. Myers, Rajan Parthasarathy,
 
 @section Abstract
 @node Abstract
 
-The Garnet Gadget Set contains common user interface objects which can
+The Garnet Gadget set contains common user interface objects which can
 be customized for use in an interface. Because the objects
 are extremely versatile, they may be employed in a wide range of applications
 with a minimum of modification. Examples of provided gadgets include menus,
-buttons, scroll bars, sliders, and gauges.
-
-
-
+buttons, scrollbars, sliders, and gauges.
 
 
 @section Introduction
 @node Introduction
 
 Many user interfaces that span a wide variety of applications usually have
-several elements in common. Menus and scroll bars, for example, are used so
+several elements in common. Menus and scrollbars, for example, are used so
 frequently that an interface designer would waste considerable time and effort
 recreating those objects each time they were required in an application.
 
-The intent of the Garnet Gadget Set is to supply several frequently used objects
+The intent of the Garnet Gadget set is to supply several frequently used objects
 that can be easily customized by the designer. By importing these
 pre-constructed objects into a larger Garnet interface, the designer is able
 to specify in detail the desired appearance and behavior of the interface, while
 avoiding the programming that this specification would otherwise entail.
 
-This document is a guide to using the Gadget Set. The objects
-were constructed using the complete Garnet system, and their descriptions assume
-that the reader has some knowledge of KR, Opal, Interactors, and Aggregadgets.
+This document is a guide to using the Garnet Gadget set. The objects were
+constructed using the complete Garnet system, and their descriptions
+assume that the reader has some knowledge of KR, Opal, Interactors,
+and Aggregadgets.
 
 
-@section Current Gadgets
+@subsection Current Gadgets
 @node Current Gadgets
 
-Most of the gadgets described in this chapter are pictured in figures
-@ref{scroll-group} through @ref{db-group}
+Most of the gadgets described in this chapter are pictured in
+@ref{fig:ex801a} through @ref{fig:ex804}
 
-@float Figure, fig:ex2
-@center @image{scroll-group-pix, 5.5in}
-@center @image{motif-scroll-group-pix, 5.5in}
-@caption{The Garnet-style and Motif-style scroll bars, sliders, and gauges.
-@code{@b[(a)] v-scroll-bar},@*@code{@b[(b)] v-slider}, @code{@b[(c)] gauge},
-@code{@b[(d)] trill-device}, @code{@b[(e)] h-scroll-bar},
-@code{@b[(f)] h-slider},
-@*@code{@b[(g)] motif-v-scroll-bar}, @code{@b[(h)] motif-slider},
-@code{@b[(i)] motif-gauge}, @code{@b[(j)] motif-@*trill-device},
-@code{@b[(k)] motif-slider}}
-@anchor{scroll-group}
+@float Figure, fig:ex801a
+@center @image{scroll-groups, 3in}
+@shortcaption {The Garnet-style and Motif-style scrollbars, sliders, and
+gauges.}
+@caption {The Garnet-style and Motif-style scrollbars, sliders, and
+gauges.  (a) @code{v-scroll-bar}, (b) @code{v-slider}, (c)
+@code{gauge}, (d) @code{trill-device}, (e) @code{h-scroll-bar}, (f)
+@code{h-slider}, (g) @code{motif-v-scroll-bar}, (h)
+@code{motif-slider}, (i) @code{motif-gauge}, (j)
+@code{motif-trill-device}, (k) @code{motif-slider}}
 @end float
 
-0
+
+@c @caption{The Garnet-style and Motif-style scrollbars, sliders, and gauges.
+@c @code{@b[(a)] v-scroll-bar},@*@code{@b[(b)] v-slider}, @code{@b[(c)] gauge},
+@c @code{@b[(d)] trill-device}, @code{@b[(e)] h-scroll-bar},
+@c @code{@b[(f)] h-slider},
+@c @*@code{@b[(g)] motif-v-scroll-bar}, @code{@b[(h)] motif-slider},
+@c @code{@b[(i)] motif-gauge}, @code{@b[(j)] motif-@*trill-device},
+@c @code{@b[(k)] motif-slider}}
+@c @anchor{scroll-group}
+@c @end float
+
 @itemize
 @b{Gadgets used to choose a value from a range of values}
 @vtable @code
-@code{v-scroll-bar} -  Vertical scroll bar (p. @ref{scroll-bars})
+@code{v-scroll-bar} -  Vertical scrollbar (p. @ref{scroll-bars})
 
-@code{v-slider} -  Vertical slider (same idea as a scroll bar, but with a
+@code{v-slider} -  Vertical slider (same idea as a scrollbar, but with a
 tic-marked shaft rather than a rectangular bounding box) (p. @ref{sliders})
 
 @code{gauge} -  Semi-circular gauge (the needle on the gauge may be
@@ -72,13 +77,13 @@ moved to select a value) (p. @ref{gauge})
 @code{trill-device} -  Number input box with increment/decrement trill
 boxes (p. @ref{trill-device})
 
-@code{h-scroll-bar} -  Horizontal scroll bar (p. @ref{scroll-bars})
+@code{h-scroll-bar} -  Horizontal scrollbar (p. @ref{scroll-bars})
 
 @code{h-slider} -  Horizontal slider (p. @ref{sliders})
 
-@code{motif-v-scroll-bar} - Vertical scroll bar (p. @ref{motif-scroll-bars})
+@code{motif-v-scroll-bar} - Vertical scrollbar (p. @ref{motif-scroll-bars})
 
-@code{motif-slider} - Vertical slider (same idea as a scroll bar, but with text
+@code{motif-slider} - Vertical slider (same idea as a scrollbar, but with text
 beside the indicator showing the current value) (p. @ref{motif-slider})
 
 @code{motif-gauge} - Semi-circular gauge (p. @ref{motif-gauge})
@@ -86,7 +91,7 @@ beside the indicator showing the current value) (p. @ref{motif-slider})
 @code{motif-trill-device} - Number input with trill boxes
 (p. @ref{motif-trill-device})
 
-@code{motif-h-scroll-bar} - Horizontal scroll bar
+@code{motif-h-scroll-bar} - Horizontal scrollbar
 (p. @ref{motif-scroll-bars})
 
 @end vtable
@@ -94,7 +99,7 @@ beside the indicator showing the current value) (p. @ref{motif-slider})
 
 
 
-@float Figure, fig:ex2
+@float Figure, fig:ex802
 @center @image{menu-group-pix, 5.5in}
 @center @image{motif-menu-group-pix, 5.5in}
 @caption{The Garnet-style and Motif-style buttons and menus.
@@ -124,7 +129,7 @@ appearance of the button does not change with the selection.
 
 @code{menu} -  Vertical menu, single selection (p. @ref{menu})
 
-@code{scrolling-menu} -  A menu with a scroll bar on one side, which allows a
+@code{scrolling-menu} -  A menu with a scrollbar on one side, which allows a
 subset of all items in the menu to be viewed. (single or multiple selection)
 (p. @ref{scrolling-menu})
 
@@ -149,7 +154,7 @@ button. (p. @ref{option-button})
 
 @code{motif-menu} - Vertical menu, single selection  (p. @ref{motif-menu})
 
-@code{motif-scrolling-menu} - A menu with an attached scroll bar.
+@code{motif-scrolling-menu} - A menu with an attached scrollbar.
 (p. @ref{motif-scrolling-menu})
 
 @code{motif-text-buttons} - A panel of rectangular buttons, each with a
@@ -174,7 +179,7 @@ label of the button. (p. @ref{motif-option-button})
 
 
 
-@float Figure, fig:ex2
+@float Figure, fig:ex803
 @center @image{text-group-pix, 5.5in}
 @center @image{multifont-gadget-pix, 5.5in}
 @caption{Text gadgets. @b{(a)} @code{labeled-box},
@@ -209,7 +214,7 @@ text. This gadget is discussed in the Opal chapter.
 
 
 
-@float Figure, fig:ex2
+@float Figure, fig:ex804
 @center @image{dialog-box-pix, 5.5in}
 @caption{Garnet dialog boxes. @b{(a)} @code{motif-save-gadget},
 @b{(b)} @code{error-gadget},@*@b{(c)} @code{motif-query-gadget},
@@ -292,7 +297,7 @@ to display the slots in a Garnet object with attached OK-Cancel buttons.
 (p. @ref{scrolling-windows})
 
 
-@code{scrolling-window-with-bars} - Scrolling window complete with scroll bars.
+@code{scrolling-window-with-bars} - Scrolling window complete with scrollbars.
 (p. @ref{scrolling-windows})
 
 @code{motif-scrolling-window-with-bars} - Motif style scrolling window
@@ -329,11 +334,12 @@ and many other common editing functions. (p. @ref{standardeditsec})
 @end vtable
 @end itemize
 
+@cindex{customization}
 
-
-@section Customization
 @node Customization
-@cindex{customization} The most important feature of the Garnet Gadgets
+@subsection Customization
+
+The most important feature of the Garnet Gadgets
 is the ability to create a variety of interface styles from a small
 collection of prototype objects. Each gadget includes many parameters
 which may be customized by the designer, providing a great deal of
@@ -357,8 +363,9 @@ applications in the larger interface.
 Slot values may be changed after the instances are
 created by using the KR function @code{s-value}.
 
-@section Using Gadget Objects
 @node Using Gadget Objects
+@subsection Using Gadget Objects
+
 @cindex{garnet-gadgets package}
 @cindex{gg nickname}
 @cindex{use-package}
@@ -379,7 +386,7 @@ Since each top-level object is exported from the @code{GARNET-GADGETS}
 package, creating instances of gadget objects is as easy as
 instantiating any other Garnet objects. To use a gadget, an instance
 of the prototype must be defined and added to an interactor window.
-The following lines will display a vertical scroll bar in a window:
+The following lines will display a vertical scrollbar in a window:
 @example
 (create-instance 'MY-WIN inter:interactor-window
    (:left 0) (:top 0) (:width 300) (:height 500))
@@ -405,11 +412,11 @@ preceding example. The important difference will be in the
 instantiation of the gadget object (the fifth instruction above),
 where slots may be given values that override the default values
 defined in the gadget prototype. The following example illustrates
-such a customization of the vertical scroll bar.
+such a customization of the vertical scrollbar.
 
-Suppose that we would like to create a vertical scroll bar whose
+Suppose that we would like to create a vertical scrollbar whose
 values span the interval [0..30], with its upper-left coordinate at
-(25,50). This vertical scroll bar may be created by:
+(25,50). This vertical scrollbar may be created by:
 @example
 (create-instance 'CUSTOM-BAR garnet-gadgets:v-scroll-bar
    (:left 25)
@@ -419,23 +426,24 @@ values span the interval [0..30], with its upper-left coordinate at
 @end example
 @cindex{customization} This instruction creates an object called
 CUSTOM-BAR which is an instance of @code{v-scroll-bar}. The
-vertical scroll bar CUSTOM-BAR has inherited all of the slots
+vertical scrollbar CUSTOM-BAR has inherited all of the slots
 that were declared in the @code{v-scroll-bar} prototype along with their
 default values, except for the coordinate and range values which have
 been specified in this schema definition (see section
-@ref{scroll-bars} for a list of customizable slots in the scroll bar
+@ref{scroll-bars} for a list of customizable slots in the scrollbar
 objects).
 
 
-@section Application Interface
 @node Application Interface
+@subsection Application Interface
 
 There are several ways that the gadgets can interface with your
 application. This section describes several ways the you can get the
 gadgets to "do something" to your application.
 
-@subsection The :value slot
-@node The :value slot
+@node The @code{:value} slot
+@subsubsection The @code{:value} slot
+
 @cindex{value slot}
 @anchor{value-slot}
 In most gadgets, there is a top-level @code{:value}
@@ -466,10 +474,13 @@ then use @code{s-value} to set the slot to the desired initial value.
 See sections @ref{use-value} and @ref{sel-buttons} for examples of the
 @code{:value} slot in use.
 
-@subsection The :selection-function slot
-@node The :selection-function slot
-@anchor{sel-fn}
 @cindex{selection-function}
+
+@subsubsection The @code{:selection-function} slot
+@node The @code{:selection-function} slot
+
+@anchor{sel-fn}
+
 In most gadgets there is a
 @code{:selection-function} slot which holds the name of a function to be
 called whenever the @code{:value} slot changes due to action by the user
@@ -482,7 +493,7 @@ application. By supplying a gadget with a selection function, then
 the gadget can execute some application-specific procedure when the
 user operates it.
 
-In the scroll bars, sliders, trill device, and gauge, this function is
+In the scrollbars, sliders, trill device, and gauge, this function is
 called after the user changes the value by moving the indicator or
 typing in a new value (the function is called repeatedly while the
 user drags an indicator). In buttons and menus, it is called when the
@@ -496,7 +507,7 @@ object.
 
 In the scrolling menu gadget, there are two selection functions, named
 @code{:scroll-selection-function} and @code{:menu-selection-function}
-which are called independently when the user moves the scroll bar or
+which are called independently when the user moves the scrollbar or
 selects a menu item, respectively.
 
 The function must take two parameters: the top-level gadget itself and the
@@ -512,9 +523,9 @@ gadgets will have only a single number or string as their @code{value}.
 
 An example use of @code{:selection-function} is in section @ref{use-selection}.
 
+@node The @code{:items} slot
+@subsubsection The @code{:items} slot
 
-@subsection The :items slot
-@node The :items slot
 @cindex{items slot}
 @anchor{items-slot}
 The button and menu gadgets are built up from items supplied by the designer.
@@ -523,10 +534,11 @@ These items are supplied as a list in the @code{:items} slot of the gadgets.
 a new list using @code{list} or copy the old value with @code{copy-list} and
 modify the copy.
 
-@subsection Item functions
-@node Item functions
 @cindex{item functions}
 @cindex{atoms}
+
+@subsubheading Item functions
+
 There are several ways to specify items:
 
 @itemize
@@ -579,8 +591,8 @@ Section @ref{use-item-fn} shows an example implementation of item
 functions.
 
 
-@subsection Adding and removing items
-@node Adding and removing items
+@subsubheading Adding and removing items
+
 @cindex{Add-item",Secondary="Gadgets}
 @cindex{notice-items-changed}
 There are two ways to add and remove items from a button or menu gadget:
@@ -636,8 +648,9 @@ in the @code{:items} slot, you should create a new list (e.g., with @code{list})
 or use @code{copy-list} on the original, and destructively modify the copy.
 
 
-@section Constants with the Gadgets
 @node Constants with the Gadgets
+@subsection Constants with the Gadgets
+
 @cindex{Constants", Secondary="Gadgets}
 @cindex{maybe-constant}
 At the top of most gadget definitions, there is a slot called
@@ -671,25 +684,25 @@ appearance correctly when the value is toggled).
 
 Constants are discussed in detail in the KR chapter.
 
-
-@section Accessing the Gadgets
 @node Accessing the Gadgets
+@section Accessing the Gadgets
 
 @anchor{accessing}
 
-@section Gadgets Modules
-@node Gadgets ModulesThe schemata definitions in the gadgets
+@node Gadgets Modules
+@subsection Gadgets Modules
+
+The schemata definitions in the gadgets
 package are modularized so that one schema may be used by several
 objects. For example, trill boxes with arrows pointing to the left
-and right are used in the horizontal scroll bar, the horizontal
+and right are used in the horizontal scrollbar, the horizontal
 slider, and the trill device. As a result, all of the code for the
 gadget objects has a consistent style, and the gadgets themselves have
 a uniform look and feel.
 @cindex{modules}
 
-
-@section Loading the Gadgets
 @node Loading the Gadgets
+@subsection Loading the Gadgets
 
 Since much of the gadget code is shared
 by the top-level objects, a set of "parts" modules must be loaded
@@ -702,7 +715,7 @@ gadgets and loader files appear in figure
 "xxx-loader" files multiple times, they will not re-load the
 objects the second time.@cindex{loader files}
 
-@float Figure, fig:ex2
+@float Figure, fig:ex805
 @vtable @code
 @code{arrow-line} - "arrow-line-loader"
 
@@ -786,7 +799,7 @@ objects the second time.@cindex{loader files}
 @end float
 
 
-@float Figure, fig:ex2
+@float Figure, fig:ex806
 @vtable @code
 
 @code{motif-check-button} - "motif-check-buttons-loader"
@@ -852,8 +865,8 @@ load the specific loader files:
 For a discussion of the @code{garnet-load} function, see the Overview at the
 beginning of this reference chapter.
 
-@section Gadget Files
 @node Gadget Files
+@subsection Gadget Files
 
 There are several gadgets files that
 normally have names that are longer than 31 characters. Since the Mac
@@ -867,8 +880,8 @@ which translates the regular names of the gadgets into their truncated
 whenever any Garnet file is loaded, so that typically long and cumbersome
 pathnames can be abbreviated by a short prefix.
 
-@section Gadget Demos
 @node Gadget Demos
+@subsection Gadget Demos
 
 Most gadgets have small demo functions that are loaded along with their
 schema definitions.@footnote{Unless the @code{:garnet-debug} key was removed from
@@ -883,14 +896,14 @@ mentioned at the top of each section in this Gadget chapter.
 
 
 
-@section The Standard Gadget Objects
 @node The Standard Gadget Objects
+@section The Standard Gadget Objects
 
 @anchor{Standard-Gadgets}
 
 Each of the objects in the Gadget Set is an interface mechanism
 through which the designer obtains chosen values from the user. The
-scroll bars, sliders, gauge, and trill device all have a "continuous"
+scrollbars, sliders, gauge, and trill device all have a "continuous"
 flavor, and are used to obtain values between maximum and minimum
 allowed values. The buttons and menus are more "discrete", and allow
 the selection of a single choice from several alternatives.
@@ -904,8 +917,9 @@ be used.
 Each description begins with a list of the customizable slots and
 default values for the gadget object.
 
-@section Scroll Bars
-@node Scroll Bars
+@node Scrollbars
+@subsection Scrollbars
+
 @anchor{scroll-bars}
 @cindex{v-scroll-bar}
 @cindex{h-scroll-bar}
@@ -963,35 +977,35 @@ default values for the gadget object.
    )
 @end example
 
-@float Figure, fig:ex2
+@float Figure, fig:ex807
 @center @image{scroll-pix, 5.5in}
-@caption{Vertical and horizontal scroll bars}
+@caption{Vertical and horizontal scrollbars}
 @end float
 
 The loader file for the @code{v-scroll-bar} is "v-scroll-loader". The
 loader file for the @code{h-scroll-bar} is "h-scroll-loader".
 
-The scroll bar is a common interface object used to specify a desired
+The scrollbar is a common interface object used to specify a desired
 position somewhere in a range of possible values. The distance of the
 indicator from the top and bottom of its bounding box is a graphical
 representation of the currently chosen value, relative to the minimum
 and maximum allowed values.
 
-The scroll bars in the Gadget Set, @code{v-scroll-bar} and
+The scrollbars in the Gadget Set, @code{v-scroll-bar} and
 @code{h-scroll-bar}, allow the interface designer to specify the minimum
 and maximum values of a range, while the @code{:value} slot is a report
 of the currently chosen value in the range. The interval is
 determined by the values in @code{:val-1} and @code{:val-2}, and either
 slot may be the minimum or maximum of the range. The value in
-@code{:val-1} will correspond to the top of the vertical scroll bar and
-the left of the horizontal scroll bar. The @code{:value} slot may be
+@code{:val-1} will correspond to the top of the vertical scrollbar and
+the left of the horizontal scrollbar. The @code{:value} slot may be
 accessed directly by some function in the larger interface, and other
 formulas in the interface may depend on it. If the @code{:value} slot
-is set directly, then the appearance of the scroll bar will be updated
+is set directly, then the appearance of the scrollbar will be updated
 accordingly.
 
 
-The trill boxes at each end of the scroll bar allow the user to
+The trill boxes at each end of the scrollbar allow the user to
 increment and decrement @code{:value} by precise amounts. The intent of
 the two sets of boxes is to give the user a choice between increment
 values -- either a conventional scroll of @code{:scr-incr} in the single
@@ -1015,7 +1029,7 @@ thick lined box to follow the mouse. The indicator then moves to the
 position of this feedback box when the mouse button is released. If
 @code{:int-feedback-p} is set to @code{nil}, the thick lined box will not
 appear, and the indicator itself will follow the mouse. A click of
-the left mouse button in the background of the scroll bar will cause
+the left mouse button in the background of the scrollbar will cause
 the indicator to jump to the position of the mouse.
 @cindex{indicator}
 @cindex{int-feedback-p}
@@ -1025,28 +1039,28 @@ updated automatically to reflect the new position. The current value
 is reported as a text string inside the indicator unless the slot
 @code{:indicator-text-p} is set to @code{nil}.
 
-Since the scroll bar must be wide enough to accommodate the widest
+Since the scrollbar must be wide enough to accommodate the widest
 text string in its range of values, the width of the vertical scroll
-bar (and similarly the height of the horizontal scroll bar) is the
+bar (and similarly the height of the horizontal scrollbar) is the
 maximum of the width of the widest value and the @code{:min-width}. The
 @code{:min-width} will be used if there is no indicator text (i.e.,
 @code{:indicator-text-p} is @code{nil}), or if the @code{:min-width} is greater
 than the width of the widest value.
 
 The slot @code{:scroll-p} is used to enable and disable the scrolling
-feature of the scroll bar. When @code{:scroll-p} is set to @code{nil}, the
-trill boxes of the scroll bar become inactive and the background turns
+feature of the scrollbar. When @code{:scroll-p} is set to @code{nil}, the
+trill boxes of the scrollbar become inactive and the background turns
 white. This ability to disable scrolling is useful in applications
-where the range of the scroll bar is not fixed. For example, in the
-@code{scrolling-menu} gadget, the scroll bar is disabled there are not
+where the range of the scrollbar is not fixed. For example, in the
+@code{scrolling-menu} gadget, the scrollbar is disabled there are not
 enough items to fill the entire menu.
 
 The font in which @code{:value} is reported in the indicator may be set
 in the slot @code{:indicator-font}.
 
-
-@section Sliders
 @node Sliders
+@subsection Sliders
+
 @anchor{sliders}
 @cindex{v-slider}
 @cindex{h-slider}
@@ -1120,12 +1134,12 @@ The loader file for the @code{h-slider} is "h-slider-loader".
 @sp 1
 
 The @code{v-slider} and @code{h-slider} gadgets have the same
-functionality as scroll bars, but they are used when the context
+functionality as scrollbars, but they are used when the context
 requires a different style. The slider is comprised of a shaft with
 perpendicular tic-marks and an indicator which points to the current
 chosen value. Optional trill boxes appear at each end of the slider,
 and the indicator can be moved with the same mouse commands as the
-scroll bar. The vertical slider has an optional feedback box above
+scrollbar. The vertical slider has an optional feedback box above
 the shaft where the current value is displayed (this box is to the
 left of the horizontal slider). The value that appears in the
 feedback box may be edited directly by the user by pressing in the
@@ -1136,7 +1150,7 @@ chapter.}
 
 The slots @code{:value}, @code{:val-1}, @code{:val-2}, @code{:scr-incr},
 @code{:page-incr}, @code{:scr-trill-p}, and @code{:page-trill-p} all have
-the same functionality as in scroll bars (see section @ref{scroll-bars}).
+the same functionality as in scrollbars (see section @ref{scroll-bars}).
 
 The designer may specify the number of tic-marks to appear on the
 shaft in the slot @code{:num-marks}. This number includes the tic-marks
@@ -1155,7 +1169,7 @@ dimensions of the (invisible) bounding box for the interactors which
 manipulate the indicator.
 
 The slot @code{:scroll-p} is used to enable and disable the scrolling
-feature of the sliders, just as in the scroll bars. When
+feature of the sliders, just as in the scrollbars. When
 @code{:scroll-p} is set to @code{nil}, the trill boxes of the slider become
 inactive, and the indicator ceases to move.
 
@@ -1170,8 +1184,10 @@ is not appropriate. This is mainly useful for floating point numbers.
 The slots should each contain a string that can be passed to the lisp function
 @code{format}. The default string is @code{"~a"}.
 
-@section Trill Device
+
 @node Trill Device
+@subsection Trill Device
+
 @anchor{trill-device}
 @cindex{trill-device}
 @cindex{Number input}
@@ -1203,7 +1219,7 @@ The slots should each contain a string that can be passed to the lisp function
 The loader file for the @code{trill-device} is "trill-device-loader".
 
 The @code{trill-device} is a compact gadget which allows a value to be
-incremented and decremented over a range as in the scroll bars and
+incremented and decremented over a range as in the scrollbars and
 sliders, but with only the numerical value as feedback. All slots
 function exactly as in horizontal sliders, but without the shaft and
 tic-mark features. As with sliders, the feedback value may be edited
@@ -1244,8 +1260,9 @@ default string is @code{"~a"}. For example:
 @end example
 
 
-@section Gauge
 @node Gauge
+@subsection Gauge
+
 @anchor{gauge}
 @cindex{Circular gauge}
 
@@ -1285,7 +1302,7 @@ default string is @code{"~a"}. For example:
 The loader file for the @code{gauge} is "gauge-loader".
 
 The @code{gauge} object is a semi-circular meter with tic-marks around
-the perimeter. As with scroll bars and sliders, this object allows
+the perimeter. As with scrollbars and sliders, this object allows
 the user to specify a value between minimum and maximum values. A
 needle points to the currently chosen value, and may either be a bare
 arrow or a thick, arrow-shaped polygon with a gray filling. The
@@ -1323,10 +1340,9 @@ is not appropriate. This is mainly useful for floating point numbers.
 The slots should each contain a string that can be passed to the lisp function
 @code{format}. The default string is @code{"~a"}.
 
-
-
-@section Buttons
 @node Buttons
+@section Buttons
+
 @cindex{buttons}
 @anchor{buttons}
 
@@ -1423,15 +1439,16 @@ button is selected the first time, it is always selected (though its
 to be executed each time it is pressed.
 @end enumerate
 
-@float Figure, fig:ex2
+@float Figure, fig:ex808
 @center @image{button-pix, 5.5in}
 @caption{Text buttons, radio buttons, and x-buttons}
 @anchor{button-pix}
 @end float
 @cindex{buttons}
 
-@subsection Text Buttons
 @node Text Buttons
+@subsubsection Text Buttons
+
 @anchor{text-buttons}
 @cindex{text-button}
 @example
@@ -1492,8 +1509,9 @@ edge of the button frame is specified in @code{:text-offset}. The value
 in @code{:text-offset} will affect the height and width of every button
 when specified.
 
-@subsection X Buttons
 @node X Buttons
+@subsubsection X Buttons
+
 @anchor{x-buttons}
 @cindex{x-button}
 @example
@@ -1574,8 +1592,9 @@ The slots @code{:button-width} and @code{:button-height} specify the width
 and height of the x-buttons. The "X" will stretch to accommodate
 these dimensions.
 
-@subsection Radio Buttons
 @node Radio Buttons
+@subsubsection Radio Buttons
+
 @anchor{radio-buttons}
 @cindex{radio-button}
 @example
@@ -1632,8 +1651,9 @@ inverse circle indicating the currently selected button. A
 @code{radio-button} is a single button.
 
 
-@section Option Button
 @node Option Button
+@subsection Option Button
+
 @anchor{option-button}
 @cindex{option-button}
 
@@ -1660,7 +1680,7 @@ inverse circle indicating the currently selected button. A
   ...)
 @end example
 
-@float Figure, fig:ex2
+@float Figure, fig:ex809
 @center @image{option-button-normal, 5.5in}
 
 @center @image{option-button-pressed, 5.5in}
@@ -1723,8 +1743,9 @@ slot will be disregarded.
 
 
 
-@section Popup-Menu-Button
-@node Popup-Menu-Button
+@node @code{popup-menu-button}
+@subsection @code{popup-menu-button}
+
 @anchor{popup-menu-button}
 @cindex{popup-menu-button}
 @center @image{popupmenubutton, 5.5in}
@@ -1822,8 +1843,9 @@ screen edges.
 
 
 
-@section Menu
 @node Menu
+@subsection Menu
+
 @anchor{menu}
 @cindex{Menu}
 @example
@@ -1915,8 +1937,9 @@ coerces it into a string if it was an atom. See section @ref{sm-ex}
 for an example where the @code{:items} list is composed of Garnet
 schemas.
 
-@section Scrolling Menu
 @node Scrolling Menu
+@subsection Scrolling Menu
+
 @anchor{scrolling-menu}
 @cindex{Scrolling menu}
 @center @image{scrolling-menu-pix, 5.5in}
@@ -1932,7 +1955,7 @@ schemas.
                       :title :title-font :visible))
    (:left 0) (:top 0)
 
-   @emph{;; Scroll bar slots}
+   @emph{;; scrollbar slots}
    (:scroll-on-left-p T)
    (:min-scroll-bar-width 20)
    (:scr-trill-p T)
@@ -1978,36 +2001,40 @@ The loader file for the @code{scrolling-menu} gadget is "scrolling-menu-loader".
 The @code{scrolling-menu} object is a combination of a vertical scroll
 bar and a menu which allows the user to only see a subset of the
 available choices in a menu at one time. The set of visible choices
-is changed by moving the scroll bar, which causes the choices to
+is changed by moving the scrollbar, which causes the choices to
 scroll up or down in the menu.
 
-@subsection Scroll Bar Control
-@node Scroll Bar ControlIf the slot @code{:scroll-on-left-p} is
-T, then the scroll bar will appear on the left side of the menu.
-Otherwise, the scroll bar will be on the right.
+@node Scrollbar Control
+@subsubsection Scrollbar Control
+
+If the slot @code{:scroll-on-left-p} is
+T, then the scrollbar will appear on the left side of the menu.
+Otherwise, the scrollbar will be on the right.
 
 The slot @code{:min-scroll-bar-width} determines the minimum width of
-the scroll bar. The scroll bar will be wider than this width only if
+the scrollbar. The scrollbar will be wider than this width only if
 the indicator text is too wide to fit into this width.
 
-The interim feedback of the scroll bar is controlled by the slot
+The interim feedback of the scrollbar is controlled by the slot
 @code{:int-scroll-feedback-p}. If this slot is set to T, then a
 thick-lined box will follow the mouse when the user drags the
 indicator. Otherwise, the indicator will follow the mouse directly.
 
 A function may be specified in @code{:scroll-selection-function} to be
-executed whenever the user changes the scroll bar, either by clicking
+executed whenever the user changes the scrollbar, either by clicking
 on the trill boxes or by dragging the indicator. The function takes
 the same parameters as the usual selection function described in
 section @ref{sel-fn}.
 
 The slots @code{:scr-trill-p}, @code{:page-trill-p}, @code{:scr-incr},
 @code{:page-incr}, @code{:indicator-text-p}, and @code{:indicator-font} are
-all used for the scroll bar in the scrolling menu in the same way as
-the vertical scroll bar described in section @ref{scroll-bars}.
+all used for the scrollbar in the scrolling menu in the same way as
+the vertical scrollbar described in section @ref{scroll-bars}.
 
-@subsection Menu Control
-@node Menu ControlThe minimum width of the scrolling menu
+@node Menu Control
+@subsubsection Menu Control
+
+The minimum width of the scrolling menu
 frame is determined by @code{:min-frame-width}. The scrolling menu will
 appear wider than this value only if the title or the longest item
 string will not fit in a menu of this width.
@@ -2081,8 +2108,9 @@ can be obtained through the @code{:item} slot of the
 @end example
 
 
-@section Menubar
 @node Menubar
+@subsection Menubar
+
 @anchor{menubar}
 @cindex{pull-down menus}
 @cindex{menubar}
@@ -2099,7 +2127,7 @@ can be obtained through the @code{:item} slot of the
    )
 @end example
 
-@float Figure, fig:ex2
+@float Figure, fig:ex810
 @center @image{menubar-pix, 5.5in}
 @caption{Picture of a pull-down menu (an instance of @code{menubar})}
 @anchor{menubar-pix-1}
@@ -2134,8 +2162,9 @@ requires creating instances of @code{bar-item} and @code{submenu-item} gadgets
 and adding them as components to a @code{menubar} using the support functions.
 
 
-@subsection Item Selection Functions
 @node Item Selection Functions
+@subsubsection Item Selection Functions
+
 @anchor{item-selection-functions}
 
 There are three levels of functions in the @code{menubar} gadget that may be
@@ -2159,8 +2188,9 @@ called, then the submenu-item function is called, and finally the
 
 
 
-@subsection Programming the Menubar in the Traditional Garnet Way
 @node Programming the Menubar in the Traditional Garnet Way
+@subsubsection Programming the Menubar in the Traditional Garnet Way
+
 @anchor{garnet-menubar-programming}
 
 The @code{:items} slot of the @code{menubar} is a complicated list with the
@@ -2191,10 +2221,9 @@ in inverse video, and the @code{:item-font} is the font for the
 @code{submenu-item} objects arranged vertically in the pop-up menus.
 
 
-@subsection An example
-@node An example
+@subsubheading An example
 
-@float Figure, fig:ex2
+@float Figure, fig:ex811
 @example
 
 (create-instance 'WIN inter:interactor-window
@@ -2230,10 +2259,11 @@ The code in Figure @ref{menubar-code-1} creates the @code{menubar} picture
 shown in Figure @ref{menubar-pix-1}. It illustrates the Garnet method for
 handling the @code{menubar} gadget.
 
-@subsection Adding items to the menubar
-@node Adding items to the menubar
 @cindex{Add-item", Secondary="Menubar}
 @cindex{add-submenu-item}
+
+@subsubheading Adding items to the menubar
+
 
 There are two types of items that can be added to a @code{menubar}:  an entire
 submenu can be added to the top-level @code{menubar}, or single submenu-item can
@@ -2283,11 +2313,11 @@ DEMO-MENUBAR in Figure @ref{menubar-code-1}:
 As shown in the second example, the @emph{position} and @emph{locator} parameters
 should correspond to existing submenu items.
 
-
-@subsection Removing items from the menubar
-@node Removing items from the menubar
 @cindex{remove-item}
 @cindex{remove-submenu-item}
+
+@subsubheading Removing Items From the Menubar
+
 
 Just as submenus and submenu-items can be added to the @code{menubar}, these
 two types of items can be removed. 
@@ -2315,9 +2345,8 @@ The following function is used to remove submenu-items from a @code{menubar}:
 For example,
 @code{(garnet-gadgets:remove-submenu-item DEMO-MENUBAR "size" "small")}
 
-
-@subsection Programming the Menubar with Components
 @node Programming the Menubar with Components
+@subsubsection Programming the Menubar with Components
 
 In the bottom-up approach to programming the @code{menubar}, the user must
 create components of the @code{menubar} (i.e., instances of @code{bar-item} and
@@ -2330,10 +2359,10 @@ for creating the components are described in section
 the @code{menubar}.
 
 
-@subsection An example
-@node An example
+@subsubheading An Example
 
-@float Figure, fig:ex2
+
+@float Figure, fig:ex812
 @example
 
 (create-instance 'WIN inter:interactor-window
@@ -2378,8 +2407,9 @@ be initialized with the proper main window before new submenu windows are
 added.
 
 
-@subsection Creating components of the menubar
-@node Creating components of the menubar
+@subsubheading Creating Components of the Menubar
+
+
 @anchor{creating-menubar-components}
 
 The functions in this section are used to create the three types of components
@@ -2418,8 +2448,8 @@ The default for @emph{enabled} is T.
 
 @end defun
 
-@subsection Adding components to the menubar
-@node Adding components to the menubar
+@subsubheading Adding Components to the Menubar
+
 @anchor{adding-menubar-components}
 
 Just as with the traditional Garnet approach, the two types of components
@@ -2488,9 +2518,10 @@ submenu-items are attached to it using @code{add-item}:
 @end example
 @end defmethod
 
-@subsection Removing components from the menubar
-@node Removing components from the menubar
 @cindex{remove-item}
+
+@subsubheading Removing Components from the Menubar
+
 
 The @code{bar-item} and @code{submenu-item} components can be removed from the
 @code{menubar} with the @code{remove-item} method:
@@ -2510,8 +2541,8 @@ existing @code{submenu-item} that was added to MAC-BAR):
 @end defmethod
 
 
-@subsection Finding Components of the Menubar
 @node Finding Components of the Menubar
+@subsubsection Finding Components of the Menubar
 
 
 @defun gg:Menubar-Components menubar
@@ -2547,8 +2578,8 @@ in @emph{submenu-title}.
 
 @end defun
 
-@subsection Enabling and Disabling Components
 @node Enabling and Disabling Components
+@subsubsection Enabling and Disabling Components
 
 @cindex{menubar-disable-component}
 @defun gg:menubar-disable-component menubar-component
@@ -2572,8 +2603,9 @@ Returns T if the @emph{menubar-component} is enabled. @emph{Menubar-component} i
 an instance of @code{bar-item} or @code{submenu-item}.
 @end defun
 
-@subsection Other Menubar Functions
 @node Other Menubar Functions
+@subsubsection Other Menubar Functions
+
 
 @cindex{menubar-get-title}
 @defun gg:menubar-get-title menubar-component
@@ -2599,8 +2631,9 @@ a @code{bar-item}.
 @end defun 
 
 
-@section Labeled Box
+@subsection Labeled Box
 @node Labeled Box
+
 @anchor{labeled-box}
 @cindex{Box}
 @cindex{Labeled box}
@@ -2642,10 +2675,12 @@ distance from the label to the left side of the box is specified in
 The distance from the box to the inner text is in @code{:field-offset},
 and the font of the inner text is in @code{:field-font}.
 
-@section Scrolling-Input-String
-@node Scrolling-Input-String
-@anchor{scrolling-input-string}
 @cindex{Scrolling-Input-String}
+
+@node @code{scrolling-input-string}
+@subsection @code{scrolling-input-string}
+
+@anchor{scrolling-input-string}
 
 @example
 (create-instance 'gg:Scrolling-Input-String opal:aggregadget
@@ -2691,10 +2726,12 @@ string will not appear exactly at the @code{:left} or extend the full
 @code{:width} (since room is left for the ...'s even when they are not
 needed).
 
-@section Scrolling-Labeled-Box
-@node Scrolling-Labeled-Box
-@anchor{scrolling-labeled-box}
 @cindex{Scrolling-Labeled-Box}
+
+@node @code{scrolling-labeled-box}
+@subsection @code{scrolling-labeled-box}
+
+@anchor{scrolling-labeled-box}
 
 @example
 (create-instance 'gg:Scrolling-Labeled-Box opal:aggregadget
@@ -2725,12 +2762,13 @@ This is a combination of the @code{scrolling-input} gadget and the
 @code{labeled-box} gadget. It has a label and a box around the text. It
 operates just like the @code{scrolling-input-string}.
 
-
-@section Graphics-Selection
-@node Graphics-Selection
-@anchor{graphics-selection}
 @cindex{graphics selection}
 @cindex{Selection}
+
+@node @code{graphics-selection}
+@subsection @code{graphics-selection}
+
+@anchor{graphics-selection}
 
 @example
 (create-instance 'gg:Graphics-Selection opal:aggregadget
@@ -2747,7 +2785,7 @@ operates just like the @code{scrolling-input-string}.
    )
 @end example
 
-@float Figure, fig:ex2
+@float Figure, fig:ex813
 @center @image{select-rect-pix, 5.5in}
 @center @image{select-line-pix, 5.5in}
 @caption{Selection of a rectangle and a line with
@@ -2839,11 +2877,12 @@ after an object is modified. It takes these parameters:
 The @code{new-points} will be a list of 4 numbers,
 either @code{left,top,width,height} or @code{x1,y1,x2,y2}.
 
-
-@section Multi-Graphics-Selection
-@node Multi-Graphics-Selection
-@anchor{multi-gs}
 @cindex{multi-graphics-selection}
+
+@node @code{multi-graphics-selection}
+@subsection @code{multi-graphics-selection}
+
+@anchor{multi-gs}
 
 @example
 (create-instance 'gg:Multi-Graphics-Selection opal:aggregadget
@@ -2917,8 +2956,8 @@ This gadget exhibits the following features:
 @end itemize
 
 
-@subsection Programming Interface
 @node Programming Interface
+@subsubsection Programming Interface
 
 Create an instance of the @code{gg:multi-graphics-selection} gadget
 and supply the @code{:start-where} slot with a valid list that can be passed to
@@ -3120,8 +3159,8 @@ responsibility to keep track of what the last operation was and undo it.}
 @end defun
 
 
-@subsection End User Operation
 @node End User Operation
+@subsubsection End User Operation
 
 The user can press on any object with the left button, and it will
 become selected. Pressing on the background, causes no object to be
@@ -3151,8 +3190,9 @@ all objects inside the rectangle will be toggled in the selection set
 (added if not there, removed if there).
 
 
-@section Scrolling-Windows
-@node Scrolling-Windows
+@node @code{scrolling-windows}
+@subsection @code{scrolling-windows}
+
 @anchor{scrolling-windows}
 
 There are two scrolling-window gadgets which have the standard Garnet
@@ -3162,8 +3202,8 @@ These windows are based on the design from Roderick J. Williams at
 the University of Leeds for the Garnet contest. The
 @code{scrolling-window} gadget allows you to do your own scrolling. The
 @code{scrolling-window-with-bars} gadget comes with a horizontal and
-vertical scroll bar, which you can have on either side (and can turn
-off explicitly). Each scroll bar will go blank if the entire area to
+vertical scrollbar, which you can have on either side (and can turn
+off explicitly). Each scrollbar will go blank if the entire area to
 be scrolled in is visible in the window.
 
 @center @image{scrolling-window-gadget, 5.5in}
@@ -3221,13 +3261,13 @@ be scrolled in is visible in the window.
    (:Y-Offset 0)  ; @emph{CANNOT BE A FORMULA}
    (:visible T)  ; @emph{whether the window and bars are visible (mapped)}
 
-   (:h-scroll-bar-p T)  ; @emph{Is there a horizontal scroll bar?}
-   (:v-scroll-bar-p T)  ; @emph{Is there a vertical scroll bar?}
+   (:h-scroll-bar-p T)  ; @emph{Is there a horizontal scrollbar?}
+   (:v-scroll-bar-p T)  ; @emph{Is there a vertical scrollbar?}
 
-   ;; @emph{Scroll Bar slots}
-   (:h-scroll-on-top-p NIL)  ; @emph{whether horiz scroll bar is on top or bottom}
-   (:v-scroll-on-left-p T)   ; @emph{whether vert scroll bar is on left or right}
-   (:min-scroll-bar-width 20) ; @emph{these control both scroll bars}
+   ;; @emph{Scrollbar slots}
+   (:h-scroll-on-top-p NIL)  ; @emph{whether horiz scrollbar is on top or bottom}
+   (:v-scroll-on-left-p T)   ; @emph{whether vert scrollbar is on left or right}
+   (:min-scroll-bar-width 20) ; @emph{these control both scrollbars}
    (:scr-trill-p T)  ; @emph{single-line increment arrow buttons visible?}
    (:page-trill-p T) ; @emph{page jump arrow buttons visible?}
    (:h-scr-incr 10)  ; @emph{in pixels}
@@ -3279,10 +3319,10 @@ negative width and height, so the
 zero.}
 
 The width and height specified for the window is the inside of the
-outer window, not counting the scroll bars. For
+outer window, not counting the scrollbars. For
 @code{scrolling-windows}, this will usually be the same as the size of
 the visible region. For @code{Scrolling-Window-With-Bars}, the visible
-portion is smaller by the size of the scroll bars, which is usually
+portion is smaller by the size of the scrollbars, which is usually
 the value of the @code{:min-scroll-bar-width} slot (unless you turn on
 indicator text).
 
@@ -3332,7 +3372,7 @@ you can explicitly set the @code{:X-offset} and
 @code{:Y-Offset} fields using @code{s-value} to adjust the position of the
 contents. For @code{Scrolling-windows-with-Bars}, you must use the following
 procedures to have your application program scroll the window. This
-is necessary to get the scroll bars to be updated correctly to show the
+is necessary to get the scrollbars to be updated correctly to show the
 window position. These procedures also work with @code{Scrolling-Windows}.
 
 @b{Useful functions:}
@@ -3369,8 +3409,9 @@ bottom and/or the rightmost parts of the box may remain hidden.
 
 
 
-@section Arrow-line and Double-Arrow-Line
-@node Arrow-line and Double-Arrow-Line
+@subsection @code{arrow-line} and @code{double-arrow-line}
+@node @code{arrow-line} and @code{double-arrow-line}
+
 @cindex{arrow-line}
 @cindex{double-arrow-line}
 @center @image{arrow-pix, 5.5in}
@@ -3380,8 +3421,9 @@ of a line and one or more arrowheads, effectively forming a single- or
 double-headed arrow. These objects are provided since the standard
 @code{opal:arrowhead} does not have an attached line.
 
-@subsection Arrow-Line
-@node Arrow-Line
+@node @code{arrow-line}
+@subsubsection @code{arrow-line}
+
 @anchor{arrow-line}
 @example
 (create-instance 'gg:Arrow-Line opal:aggregadget
@@ -3441,9 +3483,9 @@ The same customization may also be implemented when the instance is created:
                                (:diameter 20)))))
 @end example
 
+@node @code{double-arrow-line}
+@subsubsection @code{double-arrow-line}
 
-@subsection Double-Arrow-Line
-@node Double-Arrow-Line
 @anchor{double-arrow-line}
 @example
 (create-instance 'gg:Double-Arrow-Line opal:aggregadget
@@ -3482,8 +3524,9 @@ The arrowheads may be further customized as in the @code{arrow-line}
 object. The arrowheads are available in the slots @code{:arrowhead1}
 and @code{:arrowhead2}.
 
-@section Browser Gadget
 @node Browser Gadget
+@subsection Browser Gadget
+
 @anchor{browser-gadget}
 @cindex{browser gadget}
 
@@ -3538,8 +3581,10 @@ interface. With the schema browser, the user may examine the
 inheritance and aggregate hierarchies of Garnet, while the file
 browser can be used to examine the file hierarchy of Unix directories.
 
-@subsection User Interface
-@node User InterfaceAn instance of the @code{browser-gadget} may
+@node User Interface
+@subsubsection User Interface
+
+An instance of the @code{browser-gadget} may
 initially appear in a window with an item already displayed in the
 first menu. (Alternatively, the designer may provide a mechanism such
 as a @code{labeled-box} gadget through which the user initializes a
@@ -3559,30 +3604,30 @@ one for all of the menus in the @code{browser-gadget}.
 The choices that are visible in each menu are controlled by the scroll
 bars appearing on the sides of the menus. If there are more menu
 selections derived from the title item than can be shown in a menu,
-then the background of the scroll bar will be gray and a white
+then the background of the scrollbar will be gray and a white
 indicator box will appear. Clicking the left mouse button on the
-trill boxes at the top and bottom of the scroll bars will "scroll"
+trill boxes at the top and bottom of the scrollbars will "scroll"
 more selections into the menu. Clicking on the single arrow trill
 boxes causes the visible selections to scroll one at a time, and
 clicking on the double arrow trill boxes will cause an entire "page"
 of new selections to appear (one page is equal to the number of items
 visible in the menu). The user may also drag the indicator of a
-scrolling menu scroll bar to adjust the visible selections.
+scrolling menu scrollbar to adjust the visible selections.
 
-Analogously, the horizontal scroll bar appearing below the menus may
+Analogously, the horizontal scrollbar appearing below the menus may
 be adjusted to change which menus are displayed. When there are more
 menus to show than are allowed at one time, then the trill boxes can
 be clicked to scroll either one menu at a time or a whole "screen" of
-menus. Dragging the indicator in this scroll bar will cause a black
+menus. Dragging the indicator in this scrollbar will cause a black
 rectangle to follow the mouse, rather than the indicator box itself.
 When the user releases the black rectangle, the indicator will jump to
 the position where it was released.
 
-@subsection Programming Interface
 @node Programming Interface
+@subsubsection Programming Interface
 
-@subsection Overview
-@node Overview
+@subsubheading Overview
+
 It is important to note that the programming
 interface to the @code{browser-gadget} is different than in other Garnet
 gadgets. Due to the complexity of the gadget, this section is
@@ -3618,8 +3663,8 @@ first menu with all of its children. Other functions used to
 manipulate the @code{browser-gadget} are discussed in section
 @ref{manipulating}.
 
-@subsection An example
-@node An example
+@subsubheading An example
+
 @anchor{browser1-example} Suppose that we want to define an instance of
 the @code{browser-gadget} to look at the inheritance hierarchy of Garnet
 schemas. First, create an instance called BROWSER-1 with the
@@ -3670,10 +3715,11 @@ of its instances. The "Rectangle" selection under the
 "Graphical-Object" title will be highlighted, since it was matched
 with the title of the second menu.
 
-
-@subsection Generating Functions for Items and Strings
-@node Generating Functions for Items and Strings
 @anchor{gen-fns}
+
+@node Generating Functions for Items and Strings
+@subsubsection Generating Functions for Items and Strings
+
 
 @cindex{menu-items-generating-function} The slot
 @code{:menu-items-generating-function} contains a function which
@@ -3706,15 +3752,17 @@ strings for the titles of the blank menus.
 
 
 
-@subsection Other Browser-Gadget Slots
-@node Other Browser-Gadget Slots
-The number of menus to be
-displayed horizontally in the @code{browser-gadget} is determined by the
-slot @code{:num-menus}. Since the set of menus in the gadget is
-implemented with an aggrelist, the menu objects will be adjusted automatically
-to correspond with the new value during the next call to @code{opal:update}.
-Analogously, the slot @code{:num-rows} determines the number of vertical
-selections to appear at one time in each scrolling menu.
+@node Other @code{browser-gadget} Slots
+@subsubsection Other @code{browser-gadget} Slots
+
+The number of menus to be displayed horizontally in the
+@code{browser-gadget} is determined by the slot
+@code{:num-menus}. Since the set of menus in the gadget is implemented
+with an aggrelist, the menu objects will be adjusted automatically to
+correspond with the new value during the next call to
+@code{opal:update}.  Analogously, the slot @code{:num-rows} determines
+the number of vertical selections to appear at one time in each
+scrolling menu.
 
 The slots @code{:title-font} and @code{:item-font} control the fonts for
 the titles of the menus and the menu selections, respectively.
@@ -3731,8 +3779,9 @@ function is executed after some internal bookkeeping is performed to
 update the @code{browser-gadget}.
 
 
-@subsection The Additional Selection
 @node The Additional Selection
+@subsubsection The Additional Selection
+
 @anchor{additional}
 @cindex{gray feedback object}
 @cindex{additional-selection} When the user presses the middle mouse
@@ -3775,8 +3824,9 @@ become deselected, and the
 @code{:additional-selection-function} will be called with @code{nil} as the
 @emph{item} parameter.
 
-@subsection Manipulating the browser-gadget
-@node Manipulating the browser-gadget
+@node Manipulating the @code{browser-gadget}
+@subsubsection Manipulating the @code{browser-gadget}
+
 @anchor{manipulating}
 
 @cindex{set-first-item} Once an instance of the @code{browser-gadget} has
@@ -3820,11 +3870,13 @@ highlighted, then all of the menus to the right of the selection are
 retained; otherwise, the item becomes the only item in the instance.
 @end defun
 
-@section Polyline-Creator
-@node Polyline-Creator
-@anchor{polyline-creator}
 @cindex{Polyline-Creator}
 @cindex{polyline editing}
+
+@subsection @code{polyline-creator}
+@node @code{polyline-creator}
+
+@anchor{polyline-creator}
 
 @center @image{polyline-creator, 5.5in}
 
@@ -3862,8 +3914,8 @@ This gadget allows the user to enter new polylines (lists of points), while
 providing feedback. It also supports polyline editing, meaning that
 you can add, remove, and move points of a polyline with the mouse.
 
-@subsection Creating New Polylines
 @node Creating New Polylines
+@subsubsection Creating New Polylines
 
 The user interface for creating polylines is as follows:  The user presses a
 button (specified in
@@ -3900,8 +3952,8 @@ Applications are not allowed to set this directly (there can be no default
 value for this gadget).
 
 
-@subsection Editing Existing Polylines
 @node Editing Existing Polylines
+@subsubsection Editing Existing Polylines
 
 
 @cindex{toggle-polyline-handles}
@@ -3956,8 +4008,8 @@ slot will contain the polyline that is currently being edited, or @code{nil}
 if no polyline is being edited.
 
 
-@subsection Some Useful Functions
 @node Some Useful Functions
+@subsubsection Some Useful Functions
 
 
 @defun gg:stop-polyline-creator gadget
@@ -3969,16 +4021,15 @@ this even if the gadget is not operating.
 @end defun
 
 
-
 @defun gg:abort-polyline-creator gadget
 
 This aborts the gadget without creating the polyline.
 @end defun
 
 
+@node @code{error-gadget}
+@subsection @code{error-gadget}
 
-@section Error-Gadget
-@node Error-Gadget
 @anchor{error-gadget}
 @cindex{error-gadget}
 @center @image{error-gadget-pix, 5.5in}
@@ -4019,8 +4070,8 @@ The instance of the error-gadget should @b{not} be added to an aggregate.
 @end itemize
 
 
-@subsection Programming Interface
 @node Programming Interface
+@subsubsection Programming Interface
 
 In order to associate an error window with an application, an instance
 of the @code{error-gadget} should be created with the
@@ -4075,8 +4126,9 @@ Otherwise, they are relative to the full screen.
 @end defun
 
 
-@subsection Error-Checking and Careful Evaluation
-@node Error-Checking and Careful Evaluation
+@node @code{error-checking} and Careful Evaluation
+@subsection @code{error-checking} and Careful Evaluation
+
 @anchor{top-careful-eval}
 @cindex{error-checking}
 
@@ -4103,10 +4155,9 @@ These functions were inspired by the @code{protected-eval} module in the
 Garnet @code{contrib} directory, created by Russell G. Almond.
 
 
-@subsection Careful-Eval
-@node Careful-Eval
-@cindex{careful-eval}
+@subsubheading @code{careful-eval}
 
+@cindex{careful-eval}
 
 @defmac gg:careful-eval form &optional error-gadget error-message
 
@@ -4144,8 +4195,9 @@ NIL
 @end defmac
 
 
-@subsection Careful-Read-From-String
-@node Careful-Read-From-String
+@subsubheading @code{careful-read-from-string}
+
+
 @cindex{careful-read-from-string}
 
 @example
@@ -4159,10 +4211,9 @@ error condition. The message displayed in the error gadget will be a
 concatenation of the actual lisp error message followed by the
 @emph{error-message}.
 
-
-@subsection Careful-String-Eval
-@node Careful-String-Eval
 @cindex{careful-string-eval}
+@subsubheading @code{careful-string-eval}
+
 
 @example
 gg:Careful-String-Eval @emph{string} &optional @emph{error-gadget  error-message} @ref{function}
@@ -4175,10 +4226,10 @@ or eval, then the @emph{error-gadget} is raised and two values are returned:
 NIL and the error condition. The message displayed in the error gadget will
 be a concatenation of the actual lisp error message and the @emph{error-message}.
 
-
-@subsection Careful-Eval-Formula-Lambda
-@node Careful-Eval-Formula-Lambda
 @cindex{careful-eval-formula-lambda}
+
+@subsubheading @code{careful-eval-formula-lambda}
+
 
 @example
 gg:Careful-Eval-Formula-Lambda @emph{expr  error-gadget  error-message} @ref{function}
@@ -4217,11 +4268,9 @@ Object R
 @end example
 
 
+@node @code{query-gadget}
+@subsection @code{query-gadget}
 
-
-
-@section Query-Gadget
-@node Query-Gadget
 @anchor{query-gadget}
 @cindex{query-gadget}
 @example
@@ -4269,11 +4318,13 @@ when the dialog box appears, @code{display-query-and-wait} does not
 return until the user hits one of the buttons. The return value
 @code{display-query-and-wait} is the label of the selected button.
 
-
-@section[Save Gadget]
-@anchor{save-gadget}
 @cindex{save-gadget}
 @cindex{saving Garnet objects}
+
+@subsection Save Gadget
+@node Save Gadget
+
+@anchor{save-gadget}
 
 @example
 (create-instance 'gg:Save-Gadget opal:aggregadget  
@@ -4307,7 +4358,7 @@ return until the user hits one of the buttons. The return value
   ...)
 @end example
 
-@float Figure, fig:ex2
+@float Figure, fig:ex814
 @center @image{save-gadget, 5.5in}
 @caption{A save-gadget showing the contents of directory @code{/usr0/rajan/}}
 @anchor{save-gadget-tag}
@@ -4335,7 +4386,7 @@ The instance of the save-gadget should @b{not} be added to an aggregate.
 @end itemize
 
 
-@subsection Programming Interface
+@subsubsection Programming Interface
 @node Programming Interface
 
 When a save gadget is created, it does not appear automatically.
@@ -4469,8 +4520,8 @@ when the directory is being fetched.
 @end vtable
 @end defun
 
-@subsection Adding more gadgets to the save gadget
-@node Adding more gadgets to the save gadget
+@subsubsection Adding More Gadgets to the Save Gadget
+@node Adding More Gadgets to the Save Gadget
 
 It is possible to add more gadgets, such as extra buttons, etc. to the
 save gadget. To do this, you simply add more components to the @code{:parts}
@@ -4503,7 +4554,7 @@ desire the buttons at the bottom of the gadget. If this is not
 desired, you can modify the @code{:top} slot of the @code{:OK-cancel-buttons}.
 
 
-@subsection Hacking the Save Gadget
+@subsubsection Hacking the Save Gadget
 @node Hacking the Save Gadget
 
 The slots described above should be enough to customize most
@@ -4528,8 +4579,9 @@ gadget then would look like:
 
 
 
-@subsection The Save-File-If-Wanted function
-@node The Save-File-If-Wanted function
+@subsubsection The @code{save-file-if-wanted} function
+@node The @code{save-file-if-wanted} function
+
 @anchor{save-file-if-wanted-fn}
 
 If you are using a menubar with a "File" menu, you might want to use the
@@ -4633,9 +4685,9 @@ load function, it is important to put the name corresponding to the
 "Load" button as the first element of the @code{:button-panel-items} list.
 @end defun
 
-
-@section Property Sheets
 @node Property Sheets
+@subsection Property Sheets
+
 @anchor{propertysheets}
 @cindex{Property sheets}
 
@@ -4648,8 +4700,8 @@ feel). Similarly, the @code{motif-prop-sheet-with-OK} and
 @code{motif-prop-sheet-for-obj-with-OK} combine a property sheet with
 buttons, but use the Motif look and feel (see section @ref{motif-prop-sheets}).
 
-@subsection User Interface
 @node User Interface
+@subsubsection User Interface
 
 Press on the value of a slot with the left button to begin typing. Press with
 the left button again (anywhere) or hit @code{return} or @code{^j}
@@ -4665,8 +4717,9 @@ with any mouse button. If value selection is enabled, then values must be
 selected with the @emph{right} button while they are not being edited. Selected
 labels or values are displayed in bold.
 
-@subsection Prop-Sheet
-@node Prop-Sheet
+@node @code{prop-sheet}
+@subsubsection @code{prop-sheet}
+
 @anchor{propsheetsec}
 
 @cindex{prop-sheet}
@@ -4698,7 +4751,7 @@ labels or values are displayed in bold.
     (:changed-values NIL)) @emph{; only the values that have changed}
 @end example
 
-@float Figure, fig:ex2
+@float Figure, fig:ex815
 @center @image{propplain, 5.5in}
 @caption{Example of a property sheet with an embedded gadget.}
 @anchor{plainproppix}
@@ -4838,8 +4891,9 @@ expands or corrects the typed value).
 
 An example of a custom filter function is shown in section @ref{propexample}.
 
-@subsection Prop-Sheet-For-Obj
-@node Prop-Sheet-For-Obj
+@node @code{prop-sheet-for-obj}
+@subsubsection @code{prop-sheet-for-obj}
+
 @anchor{propsheetforobj}
 @cindex{Prop-Sheet-For-Obj}
 
@@ -4891,7 +4945,7 @@ many features in this prop-sheet.
 @end example
  
 
-@float Figure, fig:ex2
+@float Figure, fig:ex816
 @center @image{propforobj, 5.5in}
 @caption{Example of a property sheet for an object (the object is
 shown at the upper left).}
@@ -5021,8 +5075,8 @@ the @code{prop-sheet} gadget.
 
 
 
-@subsection Useful Functions
 @node Useful Functions
+@subsubsection Useful Functions
 
 @cindex{ReUsePropSheet}
 
@@ -5065,8 +5119,9 @@ property-sheet to represent the field.
 @end defun
 
 
-@subsection Prop-Sheet-With-OK
-@node Prop-Sheet-With-OK
+@node @code{prop-sheet-with-ok}
+@subsubsection @code{prop-sheet-with-ok}
+
 @anchor{propsheetwithok}
 @cindex{Prop-Sheet-With-OK}
 
@@ -5144,8 +5199,9 @@ have to worry about the window.
  
 The rest of the slots are the same as for @code{prop-sheet}.
 
-@subsection Prop-Sheet-For-Obj-With-OK
-@node Prop-Sheet-For-Obj-With-OK
+@node @code{prop-sheet-for-obj-with-ok}
+@subsubsection @code{prop-sheet-for-obj-with-ok}
+
 @anchor{propsheetforobjwithok}
 @cindex{Prop-Sheet-for-obj-With-OK}
 
@@ -5227,11 +5283,8 @@ rarely need to supply a function here.
 
 @end vtable
 
-
-
-@subsection Useful Functions
 @node Useful Functions
-
+@subsubsection Useful Functions
 
 @defun gg:pop-up-win-for-prop prop-gadget-with-ok left top title &optional modal-p
 
@@ -5273,17 +5326,20 @@ changing the @emph{obj} and
 @emph{slot} fields, you can simply pass it to @code{Pop-Up-Win-For-Prop}.
 @end defun
 
-@subsection Useful Gadgets
 @node Useful Gadgets
+@subsubsection Useful Gadgets
+
 @anchor{propusefulgadgets}
 
 This section describes two gadgets that are useful in property sheet
 fields as the values. Both of these gadgets are shown in Figure
 @ref{motifpropfix}.
 
-@subsection Horiz-Choice-List
-@node Horiz-Choice-List
 @cindex{horiz-choice-list}
+
+
+@subsubheading @code{horiz-choice-list}
+
 The @code{horiz-choice-list} displays the choices and allows the user to
 pick one with the left mouse button. The choices can be strings or
 atoms.
@@ -5307,9 +5363,11 @@ The @code{Horiz-Choice-List} is automatically used when you list a set
 of legal values for the display parameter for a
 @code{prop-sheet-for-obj}.
 
-@subsection Pop-Up-From-Icon
-@node Pop-Up-From-Icon
 @cindex{Pop-Up-From-Icon}
+
+
+@subsubheading @code{pop-up-from-icon}
+
 The @code{Pop-Up-From-Icon} displays a small icon, and if the user hits
 on it, then a function is called which can pop-up a dialog box or
 menu to make the choice.
@@ -5334,8 +5392,9 @@ It should stuff its results into the @code{:value} field of that gadget.
 See the chapter on Gilt for some functions that are useful for popping
 up dialog boxes and menus.
 
-@subsection Property Sheet Examples
 @node Property Sheet Examples
+@subsubsection Property Sheet Examples
+
 @anchor{propexample}
 
 First, an example filter function, which checks if value is a number,
@@ -5393,8 +5452,9 @@ or Apply is hit. The resulting window is shown in Figure
 
 
 
-@section Mouseline
 @node Mouseline
+@subsection Mouseline
+
 @cindex{MouseLine}
 @cindex{Balloon Help}
 @cindex{Documentation Line}
@@ -5428,8 +5488,8 @@ If this proves to be a big problem in practice, please let us know.
 Note 2: the delay feature is implemented with multiple processes, which
 are only supported in Allegro and Lucid lisp.
 
-@subsection MouseLine gadget
 @node MouseLine gadget
+@subsubsection MouseLine gadget
 
 @example
 (create-instance 'gg:MouseLine opal:aggregadget
@@ -5474,9 +5534,10 @@ string is displayed. This feature relies on the @code{animation-interactor}
 which uses the multi-process mechanism in Lisp, @b{so the @code{:wait-amount} is
 only currently available in Lucid, Allegro, and LispWorks.}
 
-@subsection MouseLinePopup gadget
-@node MouseLinePopup gadget
 @cindex{MouseLinePopup}
+
+@node MouseLinePopup gadget
+@subsubsection MouseLinePopup gadget
 
 @example
 (create-instance 'gg:MouseLinePopup opal:aggregadget
@@ -5496,13 +5557,12 @@ in seconds you must keep the mouse over the object before the window
 appears.
 
 
-
-
-
-@section Standard Edit
-@node Standard Edit
-@anchor{standardeditsec}
 @cindex{Standard Edit}
+
+@node Standard Edit
+@subsection Standard Edit
+
+@anchor{standardeditsec}
 
 There are a number of editing functions that are
 shared by most graphical editors. The file @code{standard-edit.lisp}
@@ -5522,8 +5582,8 @@ it to be useful to your application, let us know.)
 The @code{standard-edit} routines can be loaded using
 @code{(garnet-load "gg:standard-edit-loader")}.
 
-@subsection General Operation
 @node General Operation
+@subsubsection General Operation
 
 The @code{standard-edit} routines assume that the graphical objects that
 are to be edited are all in a single aggregate in a single window
@@ -5566,8 +5626,8 @@ routines must be invoked from the same gadget set, for example, the
 same @code{menubar} or @code{motif-button-panel}.
 
 
-@subsection The Standard-Edit Objects
-@node The Standard-Edit Objects
+@node The @code{standard-edit} Objects
+@subsubsection The @code{standard-edit} Objects
 
 The @code{gg:Clipboard-Object} holds the last object that was cut or
 copied. It also contains some parameters used for pasting and
@@ -5595,8 +5655,8 @@ The @code{Default-Global-Clipboard} is used by default, and allows
 objects to be copied from one Garnet application to another.
 
 
-@subsection Standard Editing Routines
 @node Standard Editing Routines
+@subsubsection Standard Editing Routines
 
 @cindex{Standard-Initialize-Gadget}
 @example
@@ -5743,8 +5803,8 @@ in your editor (e.g., gadgets like buttons), and you supply the
 @code{Standard-Ungroup} command, you should set the @code{:group-p} slot to be @code{nil}
 for any objects you don't want the user to ungroup.
 
-@subsection Utility Procedures
 @node Utility Procedures
+@subsubsection Utility Procedures
 
 @cindex{sort-objs-display-order}
 @example
@@ -5776,8 +5836,8 @@ This procedure is safe even if the Motif gadgets have not been loaded.
 
 
 
-@section The Motif Gadget Objects
 @node The Motif Gadget Objects
+@section The Motif Gadget Objects
 
 @anchor{Motif-Gadgets}
 
@@ -5801,7 +5861,7 @@ on a color screen, and it is ignored on a black-and-white screen. Figure
 @ref{color-and-bw-motif} shows how a few of the Motif gadgets look on each
 type of screen.
 
-@float Figure, fig:ex2
+@float Figure, fig:ex817
 @center @image{color-motif-pix, 5.5in}
 @center @image{bw-motif-pix, 5.5in}
 @caption{Motif style gadgets on color and black-and-white screens}
@@ -5809,8 +5869,8 @@ type of screen.
 @end float
 
 
-@section Useful Motif Objects
 @node Useful Motif Objects
+@subsection Useful Motif Objects
 
 In order to facilitate the construction of interfaces containing Motif
 gadgets, Garnet exports some miscellaneous objects that are commonly
@@ -5819,8 +5879,8 @@ the "motif-parts" file (automatically loaded with all Garnet Motif-style
 "-loader" files).
 
 
-@subsection Motif Colors and Filling Styles
 @node Motif Colors and Filling Styles
+@subsubsection Motif Colors and Filling Styles
 
 @cindex{Motif colors}
 @cindex{Motif filling styles}
@@ -5876,8 +5936,8 @@ ignore the @code{:foreground-color} slot and internally compute reasonable
 filling-styles that are black, white, or Opal halftones.
 
 
-@subsection Motif-Background
-@node Motif-Background
+@node @code{motif-background}
+@subsubsection @code{motif-background}
 
 @example
 (create-instance 'gg:Motif-Background opal:rectangle
@@ -5906,9 +5966,10 @@ Of course, the @code{:foreground-color} of the @code{motif-background}
 instance or the @code{:background-color} of the window
 should be the same as the colors of all the Motif gadgets in the window.
 
-@subsection Motif-Tab-Inter
-@node Motif-Tab-Inter
 @cindex{Motif-tab-inter}
+
+@node @code{motif-tab-inter}
+@subsubsection @code{motif-tab-inter}
 
 @example
 (create-instance 'gg:Motif-Tab-Inter inter:button-interactor
@@ -5950,7 +6011,7 @@ If the result is T, then that object's @code{:keyboard-selection-p} slot is
 set to T. Otherwise, the @code{:rank} is incremented again and the next object
 is checked.
 
-The @code{:active-p} slots of the "continuous" Motif gadgets -- the scroll bars,
+The @code{:active-p} slots of the "continuous" Motif gadgets -- the scrollbars,
 slider, and gauge -- all default to T, while the @code{:active-p} slots of the
 Motif buttons and menu depend on the items in the @code{:inactive-items} list.
 
@@ -5969,11 +6030,13 @@ Examples of the @code{motif-tab-inter} in use may be found in demo-motif
 and in all three Motif button demos.
 
 
-@section Motif Scroll Bars
-@node Motif Scroll Bars
-@anchor{motif-scroll-bars}
 @cindex{Motif-v-scroll-bar}
 @cindex{Motif-h-scroll-bar}
+
+@node Motif Scrollbars
+@subsection Motif Scrollbars
+
+@anchor{motif-scroll-bars}
 
 @example
 (create-instance 'gg:Motif-V-Scroll-Bar gg:motif-gadget-prototype
@@ -6030,18 +6093,18 @@ The loader file for the
 @code{motif-v-scroll-bar} is "motif-v-scroll-loader". The loader file
 for the @code{motif-h-scroll-bar} is "motif-h-scroll-loader".
 
-The Motif scroll bars allow the specification of the minimum and maximum
+The Motif scrollbars allow the specification of the minimum and maximum
 values of a range, while the @code{:value} slot is a report of the
 currently chosen value in the range. The interval is determined by
 the values in @code{:val-1} and @code{:val-2}, and either slot may be the
 minimum or maximum of the range. The value in @code{:val-1} will
-correspond to the top of the vertical scroll bar and to the left of the
-horizontal scroll bar. The @code{:value} slot may be accessed directly
+correspond to the top of the vertical scrollbar and to the left of the
+horizontal scrollbar. The @code{:value} slot may be accessed directly
 by some function in the larger interface, and other formulas in the
 interface may depend on it. If the @code{:value} slot is set directly,
-then the appearance of the scroll bar will be updated accordingly.
+then the appearance of the scrollbar will be updated accordingly.
 
-The trill boxes at each end of the scroll bar allow the user to
+The trill boxes at each end of the scrollbar allow the user to
 increment and decrement @code{:value} by the amount specified in
 @code{:scr-incr}. The designer may choose to leave the trill boxes out
 by setting @code{:scr-trill-p} to @code{nil}.
@@ -6049,12 +6112,12 @@ by setting @code{:scr-trill-p} to @code{nil}.
 The indicator may also be moved directly by mouse movements. Dragging
 the indicator while the left mouse button is pressed will change the
 @code{:value} accordingly. A click of the left mouse button in the
-background trough of the scroll bar will cause the @code{:value} to increase or
+background trough of the scrollbar will cause the @code{:value} to increase or
 decrease by @code{:page-incr}, depending on the location of the
 indicator relative to the mouse click.
 
 When @code{:keyboard-selection-p} is T, then a black-selection box is
-drawn around the scroll bar and the indicator can be moved with the
+drawn around the scrollbar and the indicator can be moved with the
 arrow keys (uparrow and downarrow for the @code{motif-v-scroll-bar},
 leftarrow and rightarrow for the @code{motif-h-scroll-bar}).
 
@@ -6067,13 +6130,14 @@ indicator should correspond to one "page" of items in the menu (e.g., for
 three pages of items, set @code{:percent-visible} to .33).
 
 The slots @code{:scroll-p} and @code{:active-p} are used to enable and disable the
-scrolling feature of the scroll bar. When either is set to @code{nil}, the
-trill boxes of the scroll bar become inactive and the indicator cannot
+scrolling feature of the scrollbar. When either is set to @code{nil}, the
+trill boxes of the scrollbar become inactive and the indicator cannot
 be moved. The difference is that when @code{:active-p} is set to @code{nil}, then
 the keyboard selection cannot be enabled.
 
-@section Motif Slider
 @node Motif Slider
+@subsection Motif Slider
+
 @anchor{Motif-Slider}
 
 @example
@@ -6127,11 +6191,12 @@ if @code{:indicator-text-p} is T. The font of the indicator text is in
 @code{:indicator-font}. The distance from the indicator text to the
 trough is in @code{:text-offset}.
 
-
-@section Motif-Trill-Device
-@node Motif-Trill-Device
-@anchor{motif-trill-device}
 @cindex{motif-trill-device}
+
+@node @code{motif-trill-device}
+@subsection @code{motif-trill-device}
+
+@anchor{motif-trill-device}
 
 @center @image{motif-trill-pix, 5.5in}
 		
@@ -6177,11 +6242,12 @@ section @ref{trill-device} for more information.
 
 The @code{:foreground-color} slot specifies the color of the object.
 
-
-@section Motif Gauge
-@node Motif Gauge
-@anchor{motif-gauge}
 @cindex{Motif-gauge}
+
+@node Motif Gauge
+@subsection Motif Gauge
+
+@anchor{motif-gauge}
 
 @example
 (create-instance 'gg:Motif-Gauge gg:motif-gadget-prototype
@@ -6216,7 +6282,7 @@ The @code{:foreground-color} slot specifies the color of the object.
 @center @image{motif-gauge-pix, 5.5in}
 
 The @code{motif-gauge} is a semi-circular meter with tic-marks around the
-perimeter. As with scroll bars and sliders, this object allows the user to
+perimeter. As with scrollbars and sliders, this object allows the user to
 specify a value between minimum and maximum values. An arrow-shaped polygon
 points to the currently chosen value, and may be rotated either by dragging
 it with the mouse or by the arrow keys when keyboard selection is activated.
@@ -6249,13 +6315,12 @@ change the value of the gauge. The increment by which the value of the gauge
 changes during each press of an arrow key is in @code{:scr-incr}.
 
 
-
-
-@section Motif Buttons
 @node Motif Buttons
+@subsection Motif Buttons
+
 @anchor{motif-buttons}
 
-@float Figure, fig:ex2
+@float Figure, fig:ex818
 @center @image{motif-buttons-pix, 5.5in}
 @caption{Motif Text Buttons, Check Buttons, and Radio Buttons}
 @end float
@@ -6325,10 +6390,12 @@ select buttons, while the return key is used to select items in the
 @code{motif-menu}.
 @end enumerate
 
-@subsection Motif Text Buttons
-@node Motif Text Buttons
-@anchor{motif-text-buttons}
 @cindex{Motif-text-buttons}
+
+@node Motif Text Buttons
+@subsubsection Motif Text Buttons
+
+@anchor{motif-text-buttons}
 
 @example
 (create-instance 'gg:Motif-Text-Button gg:motif-gadget-prototype
@@ -6387,10 +6454,12 @@ is released only if @code{:final-feedback-p} is T.
 The distance from the beginning of the longest label to the inside edge of the
 button frame is specified in @code{:text-offset}.
 
-@subsection Motif Check Buttons
-@node Motif Check Buttons
-@anchor{motif-check-buttons}
 @cindex{Motif-check-buttons}
+
+@node Motif Check Buttons
+@subsubsection Motif Check Buttons
+
+@anchor{motif-check-buttons}
 
 @example
 (create-instance 'gg:Motif-Check-Button gg:motif-gadget-prototype
@@ -6462,10 +6531,12 @@ The distance from the labels to the buttons is specified in @code{:text-offset}.
 The slot @code{:button-width} specifies the height and width of each button
 square.
 
-@subsection Motif Radio Buttons
-@node Motif Radio Buttons
-@anchor{motif-radio-buttons}
 @cindex{Motif-radio-buttons}
+
+@node Motif Radio Buttons
+@subsubsection Motif Radio Buttons
+
+@anchor{motif-radio-buttons}
 
 @example
 (create-instance 'gg:Motif-Radio-Button gg:motif-gadget-prototype
@@ -6525,8 +6596,9 @@ of @code{:button-width}, @code{:text-on-left-p} and @code{:text-offset} is ident
 to the motif check buttons). Only one button may be selected at a time.
 
 
+@node Motif Option Button
+@subsection Motif Option Button
 
-@section[Motif Option Button]
 @anchor{motif-option-button}
 @cindex{motif-option-button}
 
@@ -6553,7 +6625,7 @@ to the motif check buttons). Only one button may be selected at a time.
   ...)
 @end example
 
-@float Figure, fig:ex2
+@float Figure, fig:ex819
 @center @image{motif-option-button-normal, 5.5in}
 
 @center @image{motif-option-button-pressed, 5.5in}
@@ -6580,11 +6652,12 @@ does not have a @code{:button-shadow-offset} slot and adds a
 is named "motif-option-button-loader".
 
 
-
-@section Motif Menu
-@node Motif Menu
-@anchor{motif-menu}
 @cindex{Motif-menu}
+
+@node Motif Menu
+@subsection Motif Menu
+
+@anchor{motif-menu}
 
 @example
 (create-instance 'gg:Motif-Menu gg:motif-gadget-prototype
@@ -6627,8 +6700,8 @@ is named "motif-option-button-loader".
 The loader file for the @code{motif-menu} is "motif-menu-loader".
 
 
-@subsection Programming Interface
 @node Programming Interface
+@subsubsection Programming Interface
 
 The @code{motif-menu} is analogous to the @code{menu} from the standard Gadget
 Set, with the addition of an @code{:accelerators} slot which facilitates the
@@ -6698,8 +6771,8 @@ The fonts in which to display the items and the accelerator strings are in
 @code{:item-font} and @code{:accel-font}, respectively.
 
 
-@subsection The Motif-Menu Accelerator Interactor
-@node The Motif-Menu Accelerator Interactor
+@node The @code{motif-menu} Accelerator Interactor
+@subsubsection The @code{motif-menu} Accelerator Interactor
 
 @example
 (create-instance 'gg:Motif-Menu-Accelerator-Inter inter:button-interactor
@@ -6731,8 +6804,8 @@ An example of the @code{motif-menu-accelerator-inter} may be found in demo-motif
 and in the @code{motif-menu} demo.
 
 
-@subsection Adding Items to the Motif-Menu
-@node Adding Items to the Motif-Menu
+@node Adding Items to the @code{motif-menu}
+@subsubsection Adding Items to the @code{motif-menu}
 
 The @code{add-item} method for the @code{motif-menu} is similar to the standard
 method, except that the programmer may supply an accelerator to be added
@@ -6769,7 +6842,7 @@ automatically removed from the @code{:accelerators} list (if there is one).
    (:left 0) (:top 0)
    (:active-p T)
 
-   ;; Scroll bar slots
+   ;; scrollbar slots
    (:scroll-on-left-p T)
    (:scr-incr 1)
    (:page-incr (o-formula (gvl :num-visible)))
@@ -6819,12 +6892,13 @@ Also, the @code{motif-scrolling-menu} has a slot @code{:foreground-color}, which
 absent in the standard @code{scrolling-menu}.
 
 
-@section Motif-Menubar
-@node Motif-Menubar
+@node @code{motif-menubar}
+@subsection @code{motif-menubar}
+
 @anchor{motif-menubar}
 @cindex{motif-menubar}
 
-@float Figure, fig:ex2
+@float Figure, fig:ex820
 @center @image{motif-menubar-pix, 5.5in}
 @caption{An instance of the @t[motif-menubar] gadget}
 @anchor{motif-menubar-pix}
@@ -6864,8 +6938,9 @@ the bar). This feature is useful when you want the menubar to extend across
 the top of the entire window, as in Figure @ref{motif-menubar-pix}.
 
 
-@subsection Selection Functions
 @node Selection Functions
+@subsubsection Selection Functions
+
 @anchor{mmbar-sel-fns}
 
 Like in the standard @code{menubar}, there is no @code{:value} slot for this
@@ -6910,8 +6985,9 @@ function is called, then the submenu function, and then the top-level
 which the functions for the regular menubar are called.
 
 
-@subsection Accelerators
 @node Accelerators
+@subsubsection Accelerators
+
 @anchor{mmbar-accelerators}
 
 Since the @code{motif-menubar} uses actual instances of the @code{motif-menu}
@@ -6963,8 +7039,8 @@ reason, you should put a list of all your application's windows in this
 slot, if you always want the accelerator to activate the menubar.
 
 
-@subsection Decorative Bars
 @node Decorative Bars
+@subsubsection Decorative Bars
 
 The "bars" feature of the @code{motif-menu} can also be used in the
 @code{motif-menubar} gadget. The @code{:bar-above-these-items} slot specifies
@@ -6983,8 +7059,8 @@ pictured in Figure @ref{motif-menubar-pix}, there is a bar above third item
 in the last submenu.
 
 
-@subsection Programming the Motif-Menubar the Traditional Garnet Way
-@node Programming the Motif-Menubar the Traditional Garnet Way
+@node Programming the @code{motif-menubar} the Traditional Garnet Way
+@subsubsection Programming the @code{motif-menubar} the Traditional Garnet Way
 
 There are two approaches to programming a @code{motif-menubar}. The first,
 discussed in this section, is the Garnet way, where all the @code{:items}
@@ -7018,9 +7094,7 @@ As in the regular menubar, the item functions are optional and may be
 omitted.
 
 
-
-@subsection An Example
-@node An Example
+@subsubheading An Example
 
 The following example creates the @code{motif-menubar} pictured in Figure
 @ref{motif-menubar-pix}. Note the behavior of the META-f accelerator and the
@@ -7062,8 +7136,7 @@ location of the bar.
 @end example
 
 
-@subsection Adding Items to the Motif-Menubar
-@node Adding Items to the Motif-Menubar
+@subsubheading Adding Items to the @code{motif-menubar}
 
 Adding items to the @code{motif-menubar} is very similar to adding items to
 the regular @code{menubar}, with the additional ability to add accelerators
@@ -7114,9 +7187,7 @@ submenu named "Volume", and its accelerator will be META-q:
 @end example
 
 
-
-@subsection Removing Items from the Motif-Menubar
-@node Removing Items from the Motif-Menubar
+@subsubheading Removing Items from the @code{motif-menubar}
 
 An item is removed from a @code{motif-menubar} in exactly the same way as
 from a regular menubar. To remove an entire submenu, use:
@@ -7144,8 +7215,9 @@ The following will remove the @code{:small} item from the submenu, @code{:size}.
 @code{(gg:remove-submenu-item MY-MOTIF-MENUBAR :size '(:small))}
 
 
-@subsection Programming the Motif-Menubar with Components
-@node Programming the Motif-Menubar with Components
+@node Programming the @code{motif-menubar} with Components
+@subsubsection Programming the @code{motif-menubar} with Components
+
 @anchor{mmbar-components}
 
 The designer may also choose a bottom-up way of programming the
@@ -7153,8 +7225,8 @@ The designer may also choose a bottom-up way of programming the
 individually using the functions described in this section, and then attach
 them to a menubar.
 
-@subsection An Example
-@node An Example
+
+@subsubheading An Example
 
 This example creates a @code{motif-menubar} and several components, and
 attaches them together. 
@@ -7196,8 +7268,8 @@ a submenu item to a bar item that has already been added to a menubar.
 That is, you cannot add an accelerator to a submenu that has not been attached
 to a menubar yet.
 
-@subsection Creating Components of the Motif-Menubar
-@node  Creating Components of the Motif-Menubar
+
+@subsubheading Creating Components of the @code{motif-menubar}
 
 A @code{motif-menubar} is essentially the same as a menubar in that there are
 three components - the menubar itself, bar items containing submenus,
@@ -7225,8 +7297,7 @@ actually a @code{motif-menu-item}, since each motif-submenu is just a
 @code{'("Italic")} or @code{'("Italic" italic-fn)}). The default for enabled is T.
 @end defun
 
-@subsection Adding Components to the Motif-Menubar
-@node Adding Components to the Motif-Menubar
+@subsubheading Adding Components to the @code{motif-menubar}
 
 Two types of components that can be added to the @code{motif-menubar} are
 bar-items and submenu-items. The @code{add-item} method can be used to add
@@ -7294,8 +7365,7 @@ This sequence shows how submenu-items can be attached to bar-items:
 @end example
 
 
-@subsection Removing Components from the Menubar
-@node Removing Components from the Menubar
+@subsubheading Removing Components from the Menubar
 
 Bar-items and submenu-items can be removed from the menubar with the
 @code{remove-item} method.
@@ -7310,8 +7380,8 @@ And to remove the @code{bar1} itself:
 @code{(opal:remove-item MY-MOTIF-MENUBAR bar1)}
 
 
-@subsection Methods Shared with the Regular Menubar
 @node Methods Shared with the Regular Menubar
+@subsubsection Methods Shared with the Regular Menubar
 
 The following methods have the same effect on the @code{motif-menubar} as
 they have on the standard @code{menubar}. Please see section @ref{menubar}
@@ -7332,11 +7402,11 @@ gg:Menubar-Installed-P @i<motif-menubar-component> @ref{method}
 @end example
 
 
-
-@section Motif-Scrolling-Labeled-Box
-@node Motif-Scrolling-Labeled-Box
-@anchor{motif-scrolling-labeled-box}
 @cindex{motif-scrolling-labeled-box}
+@node @code{motif-scrolling-labeled-box}
+@subsection @code{motif-scrolling-labeled-box}
+
+@anchor{motif-scrolling-labeled-box}
 
 @example
 (create-instance 'gg:Motif-Scrolling-Labeled-Box motif-gadget-prototype
@@ -7372,11 +7442,13 @@ When the @code{:active-p} slot is set to @code{nil}, both the label and the fiel
 appear "grayed-out" and the field will not be editable.
 
 
-
-@section Motif-Error-Gadget
-@node Motif-Error-Gadget
-@anchor{motif-error-gadget}
 @cindex{motif-error-gadget}
+
+@node @code{motif-error-gadget}
+@subsection @code{motif-error-gadget}
+
+@anchor{motif-error-gadget}
+
 @center @image{motif-error-gadget-pix, 5.5in}
 
 @example
@@ -7404,12 +7476,13 @@ There is an additional slot provided in the @code{motif-error-gadget} which
 determines the color of the dialog box. The @code{:foreground-color} slot may
 contain any instance of @code{opal:color}.
 
-
-
-@section Motif-Query-Gadget
-@node Motif-Query-Gadget
-@anchor{motif-query-gadget}
 @cindex{motif-query-gadget}
+
+@node @code{motif-query-gadget}
+@subsection @code{motif-query-gadget}
+
+@anchor{motif-query-gadget}
+
 @example
 (create-instance 'gg:Motif-Query-Gadget gg:motif-error-gadget
    (:string "Is that OK?")
@@ -7441,7 +7514,7 @@ The additional @code{:foreground-color} slot may contain any instance of
 
 @section[Motif Save Gadget]
 @anchor{motif-save-gadget}
-@float Figure, fig:ex2
+@float Figure, fig:ex821
 @center @image{motif-save-gadget, 5.5in}
 @caption{An instance of the Motif save gadget. "/usr0/rajan" is the
 current directory.}
@@ -7537,18 +7610,19 @@ The only difference is that the motif gadget has an additional
 
 
 
-@section Motif Property Sheets
 @node Motif Property Sheets
+@subsection Motif Property Sheets
+
 @anchor{motif-prop-sheets}
 
 The following property sheets are similar to the standard property sheets,
 except that they use the Motif look and feel. For a complete discussion of
 the use of property sheets, see section @ref{propertysheets}.
 
-
-@subsection Motif-Prop-Sheet-With-OK
-@node Motif-Prop-Sheet-With-OK
 @cindex{Motif-Prop-Sheet-With-OK}
+
+@node @code{motif-prop-sheet-with-ok}
+@subsubsection @code{motif-prop-sheet-with-ok}
 
 @example
 (create-instance 'gg:Motif-Prop-Sheet-With-OK opal:aggregadget
@@ -7590,11 +7664,12 @@ This is the same as @code{Prop-Sheet-With-OK} (described in section
 @ref{propsheetwithok} except that it uses the
 Motif look-and-feel, and you can set the foreground color.
 
-
-@subsection Motif-Prop-Sheet-For-Obj-With-OK
-@node Motif-Prop-Sheet-For-Obj-With-OK
-@anchor{motif-prop-sheet-for-obj-with-ok}
 @cindex{Motif-Prop-Sheet-for-obj-With-OK}
+
+@node @code{motif-prop-sheet-for-obj-with-ok}
+@subsubsection @code{motif-prop-sheet-for-obj-with-ok}
+
+@anchor{motif-prop-sheet-for-obj-with-ok}
 
 @example
 (create-instance 'Motif-Prop-Sheet-For-Obj-With-OK Motif-Prop-Sheet-With-OK
@@ -7640,7 +7715,7 @@ Motif look-and-feel, and you can set the foreground color.
     (:changed-values NIL)) @emph{; only the values that have changed}
 @end example
 
-@float Figure, fig:ex2
+@float Figure, fig:ex822
 @center @image{motifpropforobj, 5.5in}
 @caption{An example of @code{motif-prop-sheet-for-obj-with-OK}
 containing some gadgets. The code to create this is shown in section
@@ -7657,9 +7732,11 @@ section @ref{propsheetforobjwithok} with the exception
 that the @code{:foreground-color} slot may be set to any @code{opal:color} object.
 
 
-@section Motif-Prop-Sheet-For-Obj-With-Done
-@node Motif-Prop-Sheet-For-Obj-With-Done
 @cindex{motif-prop-sheet-for-obj-with-done}
+
+@node @code{motif-prop-sheet-for-obj-with-done}
+@subsection @code{motif-prop-sheet-for-obj-with-done}
+
 
 There is a new gadget that displays a property sheet for an object and
 a ``Done'' button. When a slot value is edited, the slot is set
@@ -7717,14 +7794,13 @@ which is called with the property sheet as a parameter.
 The loader for @code{motif-prop-sheet-for-obj-with-done} is
 "motif-prop-sheet-win-loader".
 
-
-
-
-@section Motif Scrolling Window
-@node Motif Scrolling Window
-@anchor{motif-scrolling-window}
 @cindex{motif-scrolling-window}
 @cindex{motif-scrolling-window-with-bars}
+
+@node Motif Scrolling Window
+@subsection Motif Scrolling Window
+
+@anchor{motif-scrolling-window}
 
 @example
 (create-instance 'gg:Motif-Scrolling-Window-With-Bars opal:aggregadget
@@ -7752,12 +7828,12 @@ The loader for @code{motif-prop-sheet-for-obj-with-done} is
    (:visible T)  ; @emph{whether the window and bars are visible (mapped)}
    (:foreground-color opal:motif-gray)
 
-   (:h-scroll-bar-p T)  ; @emph{Is there a horizontal scroll bar?}
-   (:v-scroll-bar-p T)  ; @emph{Is there a vertical scroll bar?}
+   (:h-scroll-bar-p T)  ; @emph{Is there a horizontal scrollbar?}
+   (:v-scroll-bar-p T)  ; @emph{Is there a vertical scrollbar?}
 
-   ;; @emph{Scroll Bar slots}
-   (:h-scroll-on-top-p NIL)  ; @emph{whether horiz scroll bar is on top or bottom}
-   (:v-scroll-on-left-p T)   ; @emph{whether vert scroll bar is on left or right}
+   ;; @emph{Scrollbar slots}
+   (:h-scroll-on-top-p NIL)  ; @emph{whether horiz scrollbar is on top or bottom}
+   (:v-scroll-on-left-p T)   ; @emph{whether vert scrollbar is on left or right}
    (:h-scr-incr 10)  ; @emph{in pixels}
    (:h-page-incr (o-formula (- (gvl :width) 10))) ; @emph{default jumps one page minus 10 pixels}
    (:v-scr-incr 10)  ; @emph{in pixels}
@@ -7810,13 +7886,14 @@ T
 @end example
 
 
-@section Using the Gadgets: Examples
 @node Using the Gadgets: Examples
+@section Using the Gadgets: Examples
 
 @anchor{Examples}
 
-@section Using the :value Slot
-@node Using the :value Slot
+@node Using the @code{:value} Slot
+@subsection Using the @code{:value} Slot
+
 @anchor{use-value}
 In order to use the value returned by a gadget,
 we have to access the top level @code{:value} slot.
@@ -7842,8 +7919,9 @@ The formula in the @code{:diameter} slot of the circle uses the KR function
                (:height ,(o-formula (gvl :diameter)))))))
 @end example
 
-@section Using the :selection-function Slot
-@node Using the :selection-function Slot
+@node Using the @code{:selection-function} Slot
+@subsection Using the @code{:selection-function} Slot
+
 @anchor{use-selection}
 In order to execute a function whenever any new value or item is selected
 (i.e., when the @code{:value} slot changes), that function must be specified in
@@ -7866,9 +7944,9 @@ panel can be created with the definitions below.
 @end example
 
 
+@node Using Functions in the @code{:items} Slot
+@subsection Using Functions in the @code{:items} Slot
 
-@section Using Functions in the :items Slot
-@node Using Functions in the :items Slot
 @anchor{use-item-fn}
 In order to execute a specific function when a specific menu item (or button)
 is selected, the desired function must be paired with its associated string
@@ -7887,8 +7965,9 @@ item strings appears below. Only one function
   (format t "Function CUT called~%~%"))
 @end example
 
-@section Selecting Buttons
 @node Selecting Buttons
+@subsection Selecting Buttons
+
 @anchor{sel-buttons}
 @cindex{initial value}
 In order to directly select a button in a button panel (rather than allowing
@@ -7938,8 +8017,9 @@ of the button or @code{nil}. Single buttons will appear selected when the @code{
 slot contains any non-NIL value.
 
 
-@section The :item-to-string-function Slot
-@node The :item-to-string-function Slot
+@node The @code{:item-to-string-function} Slot
+@subsection The @code{:item-to-string-function} Slot
+
 @anchor{sm-ex}
 @cindex{Item-to-string-function}
 The @code{:items} slot of the scrolling menu may be a list of any objects at all,
