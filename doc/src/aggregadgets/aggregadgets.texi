@@ -73,7 +73,7 @@ objects and interactors under a single prototype (class) name. The defined
 prototype may be used repeatedly to create more instances of the defined
 group. To illustrate this feature of aggregadgets, consider the schemata
 shown below:
-@example
+@smallexample
 (create-instance 'MY-GROUP opal:aggregadget
    (:parts
            ...)       @emph{; some group of graphical objects}
@@ -84,7 +84,7 @@ shown below:
 
 (create-instance 'GROUP-2 MY-GROUP
    ...)               @emph{; definition of more slots}
-@end example
+@end smallexample
 
 The schema MY-GROUP defines a set of associated graphical objects and
 interactors using an instance of the @code{opal:aggregadget} object. The
@@ -132,7 +132,7 @@ is shown in figure @ref{check-mark}, and the picture of this
 aggregadget is in figure @ref{simple-expl-pict-ref}.
 
 @float Figure, fig:ex701
-@example
+@smallexample
 (create-instance 'CHECK-MARK opal:aggregadget
    (:parts
     `((:left-line ,opal:line
@@ -145,7 +145,7 @@ aggregadget is in figure @ref{simple-expl-pict-ref}.
                    (:y1 70)
                    (:x2 120)
                    (:y2 30)))))
-@end example
+@end smallexample
 @caption{A simple CHECK-MARK aggregadget.}
 @anchor{check-mark}
 @end float
@@ -190,7 +190,7 @@ example at the end of section @ref{constants-and-aggregadgets} illustrates
 the idea of setting the @code{:known-as} slot.
 
 @float Figure, fig:ex703
-@example
+@smallexample
 
 @b{lisp>} (ps CHECK-MARK)
 
@@ -208,7 +208,7 @@ the idea of setting the @code{:known-as} slot.
 }
 NIL
 @b{lisp>}
-@end example
+@end smallexample
 @caption{The printout of the CHECK-MARK aggregadget.}
 @anchor{agg-ps-ref}
 @end float
@@ -216,7 +216,7 @@ NIL
 
 
 @float Figure, fig:ex704
-@example
+@smallexample
 
 @b[lisp>] (ps (gv CHECK-MARK :right-line))
 
@@ -233,7 +233,7 @@ NIL
 NIL
 @b[lisp>] 
 
-@end example
+@end smallexample
 @caption{The @code{:right-line} component of CHECK-MARK.}
 @anchor{part-ps-ref}
 @end float
@@ -285,14 +285,14 @@ to automatically get rid of the greatest number of formulas possible,
 thereby freeing up memory for other objects.
 
 For example, given the following instance of an @code{aggregadget},
-@example
+@smallexample
 (create-instance 'MY-AGG opal:aggregadget
   (:parts
    `((:obj1 ,opal:rectangle
             (:left 20) (:top 40))
      (:obj2 ,opal:circle
             (:left 50) (:top 10)))))
-@end example
+@end smallexample
 the slots @code{:components}, @code{:obj1}, and @code{:obj2} will be
 constant in MY-AGG. The result is that you cannot remove components
 or add new components to this aggregadget without disabling the
@@ -301,12 +301,12 @@ constant mechanism.
 If you really want to add another component to the aggregadget, you
 could use the macro @code{with-constants-disabled}, which is described
 in the KR chapter:
-@example
+@smallexample
 (with-constants-disabled
   (opal:add-component MY-AGG (create-instance NIL opal:roundtangle
                                (:known-as :obj3)  @emph{; will become a constant slot}
                                (:left 40) (:top 20))))
-@end example
+@end smallexample
 Adding components to a constant aggregadget is discouraged because
 the aggregadget's dimension formulas that
 were already thrown away (if they were evaluated) will not be updated with the
@@ -322,7 +322,7 @@ non-constant aggregadget to begin with. Since only aggregadgets that
 are created with a @code{:parts} slot are constant, you should start with an
 aggregadget without a @code{:parts} list, and add your components using
 @code{add-component}. Thus, the better way to build the aggregadet above is:
-@example
+@smallexample
 (create-instance 'MY-AGG opal:aggregadget)
 (opal:add-components MY-AGG (create-instance NIL opal:rectangle
                               (:known-as :obj1)
@@ -334,7 +334,7 @@ aggregadget without a @code{:parts} list, and add your components using
 (opal:add-component MY-AGG (create-instance NIL opal:roundtangle
                              (:known-as :obj3)
                              (:left 40) (:top 20)))
-@end example
+@end smallexample
 Note that you will have to supply your own @code{:known-as} slots in the
 components if you want the aggregadet to have slots referring to those
 components.
@@ -394,7 +394,7 @@ be the terminus of the @code{:left-line}. Figure @ref{modified-check-mark}
 shows the definition of this modified schema.
 
 @float Figure, fig:ex705
-@example
+@smallexample
 (create-instance 'MODIFIED-CHECK-MARK opal:aggregadget
    (:parts
     `((:left-line ,opal:line
@@ -407,7 +407,7 @@ shows the definition of this modified schema.
                    (:y1 ,(o-formula (gvl :parent :left-line :y2)))
                    (:x2 120)
                    (:y2 30)))))
-@end example
+@end smallexample
 @caption{A modified CHECK-MARK schema.}
 @anchor{modified-check-mark}
 @end float
@@ -428,9 +428,9 @@ the sibling components of an aggregadget:
 For example, the @code{:x1} slot of the @code{:right-line} object in figure
 @ref{modified-check-mark} may be
 given the equivalent value
-@example
+@smallexample
 ,(o-formula (opal:gvl-sibling :left-line :x2))
-@end example
+@end smallexample
 
 @end defmac
 
@@ -452,7 +452,7 @@ object defined in figure @ref{check-mark}, and a box. This
 hierarchy is illustrated in figure @ref{check-box-hier-ref}.
 
 @float Figure, fig:ex706
-@example
+@smallexample
 
                              check-box
                                /  \
@@ -461,7 +461,7 @@ hierarchy is illustrated in figure @ref{check-box-hier-ref}.
                                     /  \
                                    /    \
                             left-line   right-line
-@end example
+@end smallexample
 @caption{The hierarchical structure of a check-box.}
 @anchor{check-box-hier-ref}
 @end float
@@ -478,7 +478,7 @@ presented here uses a modular approach that allows the reuse of the
 CHECK-MARK schema in other applications.
 
 @float Figure, fig:ex707
-@example
+@smallexample
 (create-instance 'CHECK-BOX opal:aggregadget
    (:parts
     `((:box ,opal:rectangle
@@ -487,7 +487,7 @@ CHECK-MARK schema in other applications.
             (:width 50)
             (:height 50))
       (:mark ,CHECK-MARK))))
-@end example
+@end smallexample
 @caption{The definition of a check-box.}
 @anchor{check-box-def-ref}
 @end float
@@ -516,7 +516,7 @@ Notice how the @code{:mark} part of X-BOX is an aggregadget containing
 its own parts.
 @float Figure, fig:ex708
 @center @image{xbox-fig, 5.5in}
-@example
+@smallexample
 
 ;;; compute vertical position in :box according to a proportion
 (defun vert-prop (frac) 
@@ -554,7 +554,7 @@ its own parts.
 		       (:x2 ,(o-formula (horiz-prop 0.3)))
 		       (:y2 ,(o-formula (vert-prop 0.7)))))))))))
 
-@end example
+@end smallexample
 @caption{A box with an X, illustrating nested parts.}
 @anchor{x-box-fig}
 @end float
@@ -606,7 +606,7 @@ object to check if it is already part of another aggregadget. The
 following code, which generates the figure in @ref{single-part-fn},
 takes this multiple usage of an object into consideration.
 
-@example
+@smallexample
 (defun Get-Label (agg)
   (let* ((item (gv agg :item))
          @emph{;; Item may be an object or a string}
@@ -657,7 +657,7 @@ takes this multiple usage of an object into consideration.
 (create-instance 'AGG3 AGG-PROTO
   (:left 170)
   (:item "W"))
-@end example
+@end smallexample
 
 Some of the functionality provided by a part-generating function is
 overlapped by the customization syntax for aggregadget instances
@@ -715,7 +715,7 @@ special slot @code{:line-end-points}. The figure creates the object on
 the left of figure @ref{multi-line-pict-ref}.
 
 @float Figure, fig:ex711
-@example
+@smallexample
 (create-instance 'MULTI-LINE opal:aggregadget
    (:parts
     `(,#'(lambda (self)
@@ -732,7 +732,7 @@ the left of figure @ref{multi-line-pict-ref}.
 			(10 100 100 10)
 			(55 10 55 100)
 			(10 55 100 55))))
-@end example
+@end smallexample
 
 @caption{An aggregadget with a function to create the parts.}
 @anchor{multi-line1-ref}
@@ -747,7 +747,7 @@ the parts. Two instances of the aggregadget are created, with only one of
 these instances having names for the lines.
 
 @float Figure, fig:ex712
-@example
+@smallexample
 (defun Make-Lines (lines-agg)
   (let ((lines NIL))
     (dolist (line-ends (gv lines-agg :lines-end-points))
@@ -773,7 +773,7 @@ these instances having names for the lines.
    (:lines-end-points '((120 100 170 10)
                         (170 10 220 100)
                         (220 100 150 100))))
-@end example
+@end smallexample
 
 @caption{An aggregadget with a function to create named parts.}
 @anchor{multi-line2-ref}
@@ -832,9 +832,9 @@ In most cases, the window for the interactor will be found in
 the @code{:window} slot of the aggregadget, which is internally
 maintained by aggregates. Hence, the following slot definition should be
 included in all interactors defined in an aggregadget:
-@example
+@smallexample
 (:window ,(o-formula (gv-local :self :operates-on :window)))
-@end example
+@end smallexample
 @emph{Note:} in this formula, @code{gv-local} is used to follow local
 links @code{:operates-on} and @code{:window}. Using @code{gv-local} instead of
 @code{gv} or @code{gvl} when referring to these slots helps avoid accidental
@@ -858,7 +858,7 @@ figure
 @cindex{framed-text example}
 
 @float Figure, fig:ex713
-@example
+@smallexample
 (create-instance 'FRAMED-TEXT opal:aggregadget
    (:left 0)      @emph{; Set these slots to determine}
    (:top 0)       @emph{; the position of the aggregadget.} 
@@ -882,14 +882,14 @@ figure
                           (list :in (gvl :operates-on :text))))
           (:abort-event #\control-\g)
           (:stop-event (:leftdown #\RETURN))))))
-@end example
+@end smallexample
 @caption{Definition of an aggregadget with a built-in interactor.}
 @anchor{framed-text}
 @end float
 
 
 @float Figure, fig:ex714
-@example
+@smallexample
 
 @b[lisp>] (ps FRAMED-TEXT)
 {#k<FRAMED-TEXT>
@@ -914,7 +914,7 @@ NIL
 NIL
 @b[lisp>] 
 
-@end example
+@end smallexample
 @caption{The printouts of an aggregadget and its attached interactor.}
 @anchor{agg-inter-ps-ref}
 @end float
@@ -983,9 +983,9 @@ explained further in section @ref{more-syntax-sec}:
 @enumerate
 If the entire @code{:parts} slot is omitted, then the components are
 instantiated in the default manner described above. For example,
-@example
+@smallexample
 (create-instance 'NEW-X-BOX X-BOX (:left 100))
-@end example
+@end smallexample
 will instantiate the @code{:box} and @code{:mark} parts of @code{x-box}
 by default.
 
@@ -994,20 +994,20 @@ The keyword must name a component of the prototype, and an instance
 of that component is created. Parts are always added in the order
 they are listed, regardless of their order in the prototype.
 For example:
-@example
+@smallexample
 (:parts `(:shadow :box :feedback))
-@end example
+@end smallexample
 
 @cindex{omit (keyword in aggregadgets)}
 Any element in the list of parts may be a list of the form
 @code{(@emph{name} :omit)}, where @emph{name} is the name of a component
 in the prototype, and @code{:omit} indicates that an instance of that
 part is not included in the instance aggregadget. For example:
-@example
+@smallexample
 (:parts `((:shadow :omit)
 	  :box
 	  :feedback))
-@end example
+@end smallexample
 
 @cindex{modify (keyboard in aggregadgets)}
 Any element in the list of parts may be a list of the form
@@ -1022,11 +1022,11 @@ parts if you are changing any of them.]
 If the object is an aggregadget, then one of the
 slots may be a @code{:parts} list to further specify components.
 For example:
-@example
+@smallexample
 (:parts `((:shadow :modify (:offset 5))
 	  :box
 	  :feedback))
-@end example
+@end smallexample
 
 Any element of the list of parts may be a list of the form
 @code{(@emph{name} @emph{prototype} @emph{slots})}, as described in section
@@ -1052,13 +1052,13 @@ top level in the @emph{slots} list, then the next element of @emph{slots}
 must be a list of slot names. All the slots not mentioned in the
 @code{:inherit} clause are inherited from the new prototype (the circle in
 the example below). For example:
-@example
+@smallexample
 (:parts `((:shadow ,opal:circle
 	    (:offset 5)
 	    :inherit (:left :top :width :height :filling-style))
 	  :box
 	  :feedback))
-@end example
+@end smallexample
 
 
 @subsection Instance Examples
@@ -1071,7 +1071,7 @@ mark, and the box has a gray fill.
 
 @float Figure, fig:ex717
 @center @image{circle-xbox-fig, 5.5in}
-@example
+@smallexample
 
 (create-instance 'CIRCLE-X-BOX X-BOX
    (:left 150)
@@ -1085,7 +1085,7 @@ mark, and the box has a gray fill.
 	       (:height ,(o-formula (- (gvl :parent :height) 4)))
 	       (:filling-style ,opal:white-fill))
       :mark))))
-@end example
+@end smallexample
 @caption{Adding a circle and changing the filling style in an instance
 of the X-BOX aggregadget.}
 @anchor{circle-x-box-fig}
@@ -1096,7 +1096,7 @@ further modified by replacing the ``X'' with a circle.
 
 @float Figure, fig:ex718
 @center @image{circle-box-fig, 5.5in}
-@example
+@smallexample
 
 (defun circle-box-test ()
   (create-instance 'CIRCLE-BOX CIRCLE-X-BOX
@@ -1111,7 +1111,7 @@ further modified by replacing the ``X'' with a circle.
 	     (:top ,(o-formula (+ (gvl :parent :top) 10)))
 	     (:width ,(o-formula (- (gvl :parent :width) 20)))
 	     (:height ,(o-formula (- (gvl :parent :height) 20))))))))
-@end example
+@end smallexample
 @caption{Omitting the ``X'' and adding an inner circle to the
 CIRCLE-X-BOX aggregadget.}
 @anchor{circle-box-fig}
@@ -1143,7 +1143,7 @@ part automatically.
 
 @float Figure, fig:ex719
 @center @image{x-sq-box-fig, 5.5in}
-@example
+@smallexample
 
 (defun x-sq-box-test ()
   (create-instance 'X-SQ-BOX X-BOX
@@ -1161,7 +1161,7 @@ part automatically.
 	      (:top ,(o-formula (vert-prop 0.2)))
 	      (:height ,(o-formula (- (vert-prop 0.8) 
 				      (vert-prop 0.2))))))))))))
-@end example
+@end smallexample
 @caption{Extending the x-box prototype with a new rectangle in the mark
 part.}
 @anchor{x-sq-box-fig}
@@ -1201,7 +1201,7 @@ implement interactors in aggregadgets (section @ref{agg-interactors}).
 The definition of the @code{aggrelist} prototype in Opal is:
 @sp 1
 
-@example
+@smallexample
 (create-instance 'opal:aggrelist opal:aggregate
  (:maybe-constant '(:left :top :width :height :direction :h-spacing :v-spacing
 		    :indent :h-align :v-align :max-width :max-height
@@ -1231,7 +1231,7 @@ The definition of the @code{aggrelist} prototype in Opal is:
  (:item-prototype NIL)        @emph{; Specification of prototype of the items (when itemized)}
  (:item-prototype-object NIL) @emph{; The actual object, set internally (read-only slot)}
  ...)
-@end example
+@end smallexample
 
 Aggrelists are easily customized by providing values for the controlling
 slots. Any slot listed below may be given a value during the definition
@@ -1362,17 +1362,17 @@ this object in the @code{:item-prototype-object} slot of the aggrelist.
 The prototype may be any Garnet object, including
 aggregadgets, and may be given either as an existing schema name 
 or as a quoted list holding an object definition, as in
-@example
+@smallexample
 (:item-prototype `(,opal:rectangle (:width 100)
                                    (:height 50)))
-@end example
+@end smallexample
 The keyword @code{:modify}
 @cindex{modify (keyword)}
 may be used to indicate changes to an inherited item prototype, as in
-@example
+@smallexample
 (:item-prototype `(:modify (:width 100)
                            (:height 50)))
-@end example
+@end smallexample
 The prototype for the @code{:item-prototype-object} in this case will be 
 the @code{:item-prototype-object}
 of the prototype of the aggrelist being specified.
@@ -1401,9 +1401,9 @@ strings from the @code{:items} list according to their @code{:rank}. The
 following slot 
 definition, to be included in the @code{:item-prototype}, would yield this
 functionality:
-@example
+@smallexample
 @code{(:string (o-formula (nth (gvl :rank) (gvl :parent :items))))}
-@end example
+@end smallexample
 This formula assigns the @emph{n}th string in the @code{:items} list to the
 @emph{n}th component of the aggrelist.
 
@@ -1414,11 +1414,11 @@ of a menu are characterized both by a label and a function (to be called
 when the item is selected), the @code{:item} slot of the menu will be a list
 of pairs '((@emph{label} @emph{function}) ...), and the components will
 access their strings and associated functions with formulas such as:
-@example
+@smallexample
 (:string (o-formula (first (nth (gvl :rank) (gvl :parent :items)))))
 (:function (o-formula (second (nth (gvl :rank)
                                    (gvl :parent :items)))))
-@end example
+@end smallexample
 
 The list in the @code{:items} list may not be destructively modified. If you
 need to modify the current value of the slot, you should create a new list
@@ -1540,7 +1540,7 @@ figure @ref{aggitem-expl-pict}. Note that the @code{:left} and
 The aggrelist will fill these slots with the appropriate values
 automatically. 
 
-@example
+@smallexample
 (create-instance 'MY-AGG opal:aggrelist
    (:left 10) (:top 10)
    (:direction :horizontal)
@@ -1548,7 +1548,7 @@ automatically.
    (:item-prototype
     `(,opal:text
       (:string ,(formula '(nth (gvl :rank) (gvl :parent :items)))))))
-@end example
+@end smallexample
 
 @float Figure, fig:ex720
 @center @image{agg-list-item, 5.5in}
@@ -1565,7 +1565,7 @@ A picture of the FRAMED-TEXT-LIST aggrelist appears in figure
 @ref{framed-text-list-pix}.
 
 @float Figure, fig:ex721
-@example
+@smallexample
 (create-instance 'FRAMED-TEXT-LIST opal:aggrelist
    (:left 0) (:top 0)
    (:items '("An aggrelist" "using an" "aggregate" 
@@ -1600,7 +1600,7 @@ A picture of the FRAMED-TEXT-LIST aggrelist appears in figure
 		   (change-item (gv elem :parent)
 				string
 				(gv elem :rank))))) ))))))
-@end example
+@end smallexample
 @caption{An aggrelist using an aggregadget as the @code{:item-prototype}.}
 @anchor{framed-text-list}
 @end float
@@ -1642,7 +1642,7 @@ displayed.
 Since the aggregadget defined here is similar to the
 FRAMED-TEXT schema defined in figure @ref{framed-text}, the
 @code{:item-prototype} slot definition could be replaced with
-@example
+@smallexample
 (:item-prototype 
  `(,FRAMED-TEXT
    (:parts
@@ -1658,7 +1658,7 @@ FRAMED-TEXT schema defined in figure @ref{framed-text}, the
 			  (change-item (gv elem :parent)
 				       string
 				       (gv elem :rank))))))))))
-@end example
+@end smallexample
 provided that the definition for the FRAMED-TEXT schema preceded the
 FRAMED-TEXT-LIST definition.
 
@@ -1696,7 +1696,7 @@ the aggrelist, along with its part-generating function appears below.
 @anchor{esp-cards}
 @end float
 
-@example
+@smallexample
 (defun Get-Label-In-Aggrelist (agg)
   (let ((alist (gv agg :parent)))
     (if alist  @emph{;; The item-prototype has no parent}
@@ -1723,9 +1723,9 @@ the aggrelist, along with its part-generating function appears below.
 	  new-label)
         ;; Give the item-prototype a bogus part
         (create-instance NIL opal:null-object))))
-@end example
+@end smallexample
 
-@example
+@smallexample
 (create-instance 'CIRCLE-LABEL opal:circle
   (:width 30) (:height 30)
   (:line-style NIL)
@@ -1735,9 +1735,9 @@ the aggrelist, along with its part-generating function appears below.
   (:width 30) (:height 30)
   (:line-style NIL)
   (:filling-style opal:black-fill))
-@end example
+@end smallexample
 
-@example
+@smallexample
 (create-instance 'PLUS-LABEL opal:aggregadget
   (:width 30) (:height 30)
   (:parts
@@ -1751,9 +1751,9 @@ the aggrelist, along with its part-generating function appears below.
       (:top ,(o-formula (+ 10 (gvl :parent :top))))
       (:width 30) (:height 10)
       (:line-style NIL) (:filling-style ,opal:black-fill)))))
-@end example
+@end smallexample
 
-@example
+@smallexample
 (create-instance 'STAR-LABEL opal:polyline
   (:width 30) (:height 30)
   (:point-list (o-formula
@@ -1765,9 +1765,9 @@ the aggrelist, along with its part-generating function appears below.
 		       (y3 (+ y1 height)))
 		  (list x3 y1  x2 y3  x5 y2  x1 y2  x4 y3  x3 y1))))
   (:line-style opal:line-2))
-@end example
+@end smallexample
 
-@example
+@smallexample
 (create-instance 'ALIST opal:aggrelist
   (:left 10) (:top 20)
   (:items (list CIRCLE-LABEL SQUARE-LABEL "W" PLUS-LABEL STAR-LABEL))
@@ -1783,7 +1783,7 @@ the aggrelist, along with its part-generating function appears below.
 	       (:width ,(o-formula (gvl :parent :width)))
 	       (:height ,(o-formula (gvl :parent :height))))
        (:label ,#'Get-Label-In-Aggrelist))))))
-@end example
+@end smallexample
 
 The parts-generating function Get-Label-In-Aggrelist takes into
 account the aggregadget that will be generated for the
@@ -1814,14 +1814,14 @@ creates an aggrelist with three components, and a picture of this
 aggrelist is shown in figure @ref{agglist-expl-ref}.
 
 @float Figure, fig:ex724
-@example
+@smallexample
 (create-instance 'MY-AGG opal:aggrelist 
   (:left 10) (:top 10)
   (:parts
    `((:obj1 ,opal:rectangle (:width 60) (:height 30))
      (:obj2 ,opal:oval (:width 60) (:height 30))
      (:obj3 ,opal:roundtangle (:width 60) (:height 30)))))
-@end example
+@end smallexample
 @caption{Example of an aggrelist with a parts slot.}
 @anchor{parts-list-fig}
 @end float
@@ -1841,11 +1841,11 @@ prototype. The only way to inherit these components is to
 name them in the prototype and to list each name as one of the instance's
 @code{:parts}. For example, the following instance of MY-AGG (defined
 above) will inherit the parts defined in the prototype:
-@example
+@smallexample
 (create-instance 'MY-INST MY-AGG
   (:left 100)
   (:parts '(:obj1 :obj2 :obj3)))
-@end example
+@end smallexample
 
 Note that this syntax is consistent with the rules for customizing the
 parts of aggregadgets described in section @ref{agg-insts}.
@@ -1891,7 +1891,7 @@ the @code{:items} to avoid sharing.
 
 @float Figure, fig:ex726
 @center @image{boxed-text-list-pix, 5.5in}
-@example
+@smallexample
 
 (create-instance 'BOXED-TEXT-LIST FRAMED-TEXT-LIST
    (:items '("An aggrelist" "using an" "inherited"
@@ -1917,7 +1917,7 @@ the @code{:items} to avoid sharing.
 	(:text :modify  ; move the text to allow for the border
 	   (:left ,(o-formula (+ (gvl :parent :left) 8)))
 	   (:top ,(o-formula (+ (gvl :parent :top) 8)))))))))
-@end example
+@end smallexample
 @caption{An aggrelist that overrides parts of an inherited
 @code{:item-prototype}. The prototype FRAMED-TEXT-LIST was defined in
 figure @ref{framed-text-list}.}
@@ -2009,11 +2009,11 @@ or any of the following aliases:
 @end table
 
 The keyword @code{:where} is optional; for example, 
-@example
+@smallexample
 (add-component aggrelist new-component :where :head)
 
 (add-component aggrelist new-component :head)
-@end example
+@end smallexample
 are valid and equivalent calls to @code{add-component}.
 The default value for @code{:where} is @code{:tail}
 (add to the end of the list, which is graphically 
@@ -2228,9 +2228,9 @@ with respect to @emph{locator}.
 For example, the following line will add a new item to the aggrelist
 defined in section @ref{aggitem-expl-ref}:
 
-@example
+@smallexample
 (opal:add-item MY-AGG "really" :after "is")
-@end example
+@end smallexample
 
 The string "really" will be added to @code{my-agg} with the resulting
 aggrelist appearing as "This is really an example".
@@ -2240,14 +2240,14 @@ function-name} can be used to match @emph{locator} only with the result
 of @emph{function-name} applied to each element of @code{:items}.
 For example, if the @code{:items} slot of @code{an-aggrelist} is
 @code{(("foo" 4) ("bar" 2) ("foo" 7))},
-@example
+@smallexample
 (add-item an-aggrelist '("foobar" 3) :after "foo" :key #'car)
-@end example
+@end smallexample
 compare "foo" only to the @code{car}s of the list, and therefore will add
 the new item as the second element of the list. The line
-@example
+@smallexample
 (add-item an-aggrelist '("barfoo" 5) :before 7 :key #'cadr)
-@end example
+@end smallexample
 will add the new item just before the last one.
 
 @emph{Note:} @code{add-item} will add the item at the most reasonable position
@@ -2272,13 +2272,13 @@ can be used to specify to try to match @emph{item} only with the result
 of @emph{function-name} applied to each element of @code{:items}.
 For example, if the @code{:items} slot of @code{an-aggrelist} is
 @code{(("foo" 4) ("bar" 2) ("foo" 7))},
-@example
+@smallexample
 (remove-item AN-AGGRELIST "foo" :key #'car)
-@end example
+@end smallexample
 removes the first item, while
-@example
+@smallexample
 (remove-item AN-AGGRELIST '("foo" 7))
-@end example
+@end smallexample
 removes the last one.
 
 @subsection Remove-Nth-Item
@@ -2379,7 +2379,7 @@ figure @ref{agglist-expl-ref}. In each component of the aggrelist, the
 fill these slots with the appropriate values automatically.
 
 @float Figure, fig:ex727
-@example
+@smallexample
 (create-instance 'MY-AGG opal:aggrelist (:top 10) (:left 10))
 (create-instance 'MY-RECT opal:rectangle
    (:width 100) (:height 30))
@@ -2389,7 +2389,7 @@ fill these slots with the appropriate values automatically.
    (:width 100) (:height 30))
 (add-components MY-AGG MY-RECT MY-OVAL MY-ROUND)
  
-@end example
+@end smallexample
 @caption{Example of an aggrelist built using add-component.}
 @anchor{agglist-expl-ref}
 @end float
@@ -2477,10 +2477,10 @@ If the gadget has any references to
 gadgets that are not part of the standard set of Opal objects or
 Interactors, then a warning is printed. @emph{Note:} @emph{gadget}
 must not be a symbol or list of symbols:
-@example
+@smallexample
 (write-gadget (list BUTTON SLIDER) "misc.lisp")  @!@emph{; RIGHT!}
 (write-gadget '(BUTTON SLIDER) "misc.lisp")@/@emph{; WRONG!}
-@end example
+@end smallexample
 
 Slots that are ordinarily created automatically are not written
 by @code{write-gadget}. For example, the @code{:is-a-inv} slot 
@@ -2491,11 +2491,11 @@ by Opal) are not written. The slots to ignore are found in the
 cases, it may be desirable to suppress the output of certain slots,
 e.g. bookkeeping information, and this can be done by setting
 @code{:do-not-dump-slots} as follows:
-@example
+@smallexample
 (s-value @emph{my-proto}
          :do-not-dump-slots
          (append @emph{list-of-slots} (gv @emph{my-proto} :do-not-dump-slots)))
-@end example
+@end smallexample
 Do not destructively modify @code{:do-not-dump-slots}!  Putting
 the slot name @code{:do-not-dump-slots} on the list will prevent the
 @code{:do-not-dump-slots} slot from being written. This is probably
@@ -2575,7 +2575,7 @@ but it is sometimes desirable to write a header to a file and perhaps
 embed code written by @code{write-gadget} into a function definition.
 This is done by temporarily re-binding @code{*standard-output*} as in the
 following example:
-@example
+@smallexample
 (with-open-file (*standard-output* "my-file.lisp"
 		 :direction :output :if-exists :supersede)
     @emph{;; write header to standard output:}
@@ -2584,7 +2584,7 @@ following example:
     (write-gadget my-gadget t)
     @emph{;; if there are more gadgets, call with initialize? set to NIL:}
     (write-gadget another-gadget T NIL))
-@end example
+@end smallexample
 
 @subsection References to External Objects
 @node References to External Objects
@@ -2657,7 +2657,7 @@ undefined when the file is loaded.
 
 For example, here is a rectangle with a special color, and the output
 generated by @code{write-gadget}:
-@example
+@smallexample
 (create-instance 'MY-RED RED
    (:red 0.5))
 
@@ -2670,7 +2670,7 @@ generated by @code{write-gadget}:
               (:BLUE 0.0)
 	      (:GREEN 0.0)
 	      (:RED 0.5))))
-@end example
+@end smallexample
 
 
 @subsection Saving References From Within Formulas
@@ -2679,10 +2679,10 @@ Writing direct references from within @code{o-formula}'s
 to other objects is not possible (in a lisp implementation-independent
 way) because @code{o-formula} builds a closure, and bindings within the
 closure are not externally visible. For example, in
-@example
+@smallexample
 (let ((thermometer THERMOMETER-1))
   (o-formula (gv thermometer :temperature)))
-@end example
+@end smallexample
 the variable @emph{thermometer} is bound inside the @code{let} and is not
 accessible to any routine that would write the formula. Even though
 the expression @code{(gv thermometer :temperature)} is saved
@@ -2703,9 +2703,9 @@ Use @code{formula} instead of @code{o-formula}. The @code{formula} function
 interprets its expression, so expressions with embedded references
 can be constructed at run-time. For example, the thermometer example
 could be written as:
-@example
+@smallexample
 (formula `(gv ',thermometer :temperature))
-@end example
+@end smallexample
 embedding the actual reference directly into the expression. This
 expression can be written and read back in without problems.
 However, since formula expressions are interpreted, re-evaluation of the 
@@ -2715,9 +2715,9 @@ Put the object reference into a slot, avoiding direct references altogether.
 For example, to create a dependency on the @code{:temperature} slot of object 
 THERMOMETER-1, set the @code{:thermometer} slot of the gadget to
 THERMOMETER-1, and reference the slot from the formula:
-@example
+@smallexample
 (o-formula (gvl :thermometer :temperature))
-@end example
+@end smallexample
 Since the reference to THERMOMETER-1 is now a slot value rather
 than a hidden binding in a closure, it can be written and read back in
 without problems. The only performance penalty of this approach
@@ -2744,13 +2744,13 @@ will return a formula. The expression is retained so that the
 original @code{e-formula} expression can be reconstructed when the
 formula is written to a file. Returning once again to the thermometer
 example, here is how the problem would be solved using @code{e-formula}:
-@example
+@smallexample
 (defun temperature-formula (thermometer)
    (o-formula (gv thermometer :temperature)))
 
 (create-instance 'DISPLAY-1 DISPLAY
    (:value (e-formula `(temperature-formula ',THERMOMETER-1)))
-@end example
+@end smallexample
 The first expression defines
 an auxiliary (compiled) function @code{temperature-formula}.
 The second expression creates an instance of the prototype
@@ -2758,9 +2758,9 @@ The second expression creates an instance of the prototype
 the desired formula.
 
 When the @code{e-formula} expression is evaluated, the argument,
-@example
+@smallexample
 (temperature-formula '#k<THERMOMETER-1>)
-@end example
+@end smallexample
 is evaluated. The @code{temperature-formula} function in turn produces
 an @code{o-formula} in which the reference to @code{#k<thermometer-1>} is
 captured by a compiled closure. Because the @code{o-formula} is based
@@ -2770,14 +2770,14 @@ it.
 
 When @code{display-1} is written to a file, @code{write-gadget} will
 write
-@example
+@smallexample
 (e-formula `(temperature-formula ',THERMOMETER-1))
-@end example
+@end smallexample
 which is the same expression used to create the original formula.
 A warning will be issued when the THERMOMETER-1 is written:
-@example
+@smallexample
 Warning: non-standard schema written as THERMOMETER-1
-@end example
+@end smallexample
 to warn that a direct reference to THERMOMETER-1 was written
 and must be defined when the schema is reloaded.
 In order to reload this formula, the function @code{temperature-formula}
@@ -2809,7 +2809,7 @@ and custom coordinates. Both are pictured in figure
 @ref{example-1-pic}.
 
 @float Figure, fig:ex728
-@example
+@smallexample
 (create-instance 'CHECK-BOX opal:aggregadget
    (:left 20)
    (:top 20)
@@ -2849,7 +2849,7 @@ and custom coordinates. Both are pictured in figure
 (create-instance 'CB1 CHECK-BOX)
 
 (create-instance 'CB2 CHECK-BOX (:left 90) (:width 100) (:height 60))
-@end example
+@end smallexample
 @caption{The definition of a customizable check-box.}
 @anchor{example-1}
 @end float
@@ -2873,7 +2873,7 @@ the reuse of previously defined code --- the @code{check-mark} schema
 may now be used for other applications as well.
 
 @float Figure, fig:ex730
-@example
+@smallexample
 (create-instance 'CHECK-MARK opal:aggregadget
   (:parts
    `((:left-line ,opal:line
@@ -2907,7 +2907,7 @@ may now be used for other applications as well.
       (:width ,(o-formula (gvl :parent :width)))
       (:height ,(o-formula (gvl :parent :height))))
      (:mark ,check-mark))))
-@end example
+@end smallexample
 @caption{A hierarchical implementation of a customizable check-box.}
 @anchor{example-2}
 @end float
@@ -2938,7 +2938,7 @@ is shown in figure @ref{menu-aggitem-pict}.
 @end float
 
 @float Figure, fig:ex732
-@example
+@smallexample
 (defun my-cut () (format T "~%Function CUT called~%"))
 (defun my-copy () (format T "~%Function COPY called~%"))
 (defun my-paste () (format T "~%Function PASTE called~%"))
@@ -2989,13 +2989,13 @@ is shown in figure @ref{menu-aggitem-pict}.
 	(:final-function 
 	  ,#'(lambda (interactor final-obj-over)
 		(eval (gv final-obj-over :action))))))))
-@end example
+@end smallexample
 @caption{Definition of a menu with built-in interactor and itemized aggrelist.}
 @anchor{menu-aggrelist-ref}
 @end float
 
 @float Figure, fig:ex733
-@example
+@smallexample
 (defun my-read () (format T "~%Function READ called~%"))
 (defun my-save () (format T "~%Function SAVE called~%"))
 (defun my-cancel () (format T "~%Function CANCEL called~%"))
@@ -3004,7 +3004,7 @@ is shown in figure @ref{menu-aggitem-pict}.
    (:left 100) (:top 20) 
    (:items '(("Read" (my-read)) ("Save" (my-save))
              ("Cancel" (my-cancel)))))
-@end example
+@end smallexample
 @caption{Creation of an instance of MENU.}
 @anchor{menu-aggrelist2-ref}
 @end float
@@ -3144,11 +3144,11 @@ the aggregraph. The aggregates in the @code{:nodes} and @code{:links} slots of
 the top-level aggregraph have the nodes and links as their components. To
 access the individual links and nodes, look at the
 @code{:components} slot of these aggregates. For example, the instruction
-@example
+@smallexample
 (opal:do-components (gv graph :nodes)
                     #'(lambda (node)
                         (format T "~A~%" (gv node :info))))
-@end example
+@end smallexample
 will print out the names of all the nodes in the graph.
 
 @cindex{back-pointer}
@@ -3198,7 +3198,7 @@ except as part of a customized layout function.
 @node A Simple Example
 @sp 1
 
-@example
+@smallexample
 (create-instance 'SCHEMA-GRAPH opal:aggregraph
    (:children-function #'(lambda (source-node depth)
 			   (if (> depth 1)
@@ -3208,7 +3208,7 @@ except as part of a customized layout function.
 		       (string-capitalize
 			(kr:name-for-schema source-node))))
    (:source-roots (list opal:view-object)))
-@end example
+@end smallexample
 
 @float Figure, fig:ex734
 @center @image{schema-graph, 5.5in}
@@ -3232,11 +3232,12 @@ a Garnet schema.
 
 @subsection An Example With an Interactor
 @node An Example With an Interactor
-@anchor{aggregraph-with-interactor}
-@sp 1
 
-@example
-(create-instance 'SCHEMA-GRAPH-2 opal:aggregraph
+@anchor{aggregraph-with-interactor}
+
+
+@smallexample
+(create-instance 'schema-graph-2 opal:aggregraph
    (:children-function #'(lambda (source-node depth)
 			   (when (< depth 1)
 			     (gv source-node :is-a-inv))))
@@ -3244,8 +3245,8 @@ a Garnet schema.
 		       (string-capitalize
 			(kr:name-for-schema source))))
    (:source-roots (list opal:view-object))
-   @emph{; Change the node prototype so that it will go black}
-   @emph{; when the interactor sets} :interim-selected @emph{to T}
+   @emph{;; Change the node prototype so that it will go black}
+   @emph{;; when the interactor sets} :interim-selected @emph{to t}
    (:node-prototype
     (create-instance NIL opal:aggregraph-node-prototype
        (:interim-selected NIL)  @emph{; Set by interactor}
@@ -3256,7 +3257,7 @@ a Garnet schema.
 					   opal:white-fill)))
 	   (:draw-function :xor) (:fast-redraw-p T))
 	  :text-al))))
-   @emph{; Now define an interactor to work on all nodes of the graph}
+   @emph{;; Now define an interactor to work on all nodes of the graph}
    (:interactors
     `((:press ,inter:menu-interactor
        (:window ,(o-formula (gv-local :self :operates-on :window)))
@@ -3268,18 +3269,19 @@ a Garnet schema.
 		    (source-node (gv node :source-node)))
 	       (format T "~%~% ***** Clicked on ~S *****~%" source-node)
 	       (kr:ps source-node))))))))
-@end example
+@end smallexample
 
 @float Figure, fig:ex735
-@center @image{schema-graph-2, 5.5in}
+@center @image{schema-graph-2, 3in}
 @caption{Graph generated by SCHEMA-GRAPH-2}
 @anchor{schema-graph-2-pix}
 @end float
 
-The graph of figure @ref{schema-graph-2-pix} comes from the definition of
-SCHEMA-GRAPH-2. This aggregraph models the same Garnet hierarchy as in the
-previous example, but it also modifies the node-prototype for the
-aggregraph and adds an interactor to operate on the graph.
+The graph of figure @ref{schema-graph-2-pix} comes from the definition
+of @code{schema-graph-2}. This aggregraph models the same Garnet
+hierarchy as in the previous example, but it also modifies the
+node-prototype for the aggregraph and adds an interactor to operate on
+the graph.
 
 The @code{:node-prototype} slot must contain a Garnet object that can be used
 to display the nodes of the graph. In this case, the customized
