@@ -63,8 +63,6 @@ Copyright @copyright{} 19xx--2020
 @insertcopying
 
 @sp 2
-
-@sp 2
 @end titlepage
 
 
@@ -147,6 +145,7 @@ Object Internals
 @end detailmenu
 @end menu
 
+
 @include overview.texi
 @include tour.texi
 @include tutorial.texi
@@ -179,6 +178,10 @@ Object Internals
 @appendix GNU General Public License
 
 @include index.texi
+
+@heading List of Figures
+
+@listoffloats Figure
 
 
 @ignore
