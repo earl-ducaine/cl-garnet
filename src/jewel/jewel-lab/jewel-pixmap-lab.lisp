@@ -36,7 +36,8 @@
   (trace xlib::get-put-items)
   (trace xlib::put-raw-image :break t)
   (run-draw-triangle-on-window)
-  (sb-ext:exit)
+  ;; (sb-ext:exit)
+  (cl::quit)
   (run-draw-triangle-on-window))
 
 (defun generate-polygon-sides (points)

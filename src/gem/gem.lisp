@@ -64,7 +64,29 @@
 	(setf pos (1- (length *method-names*))))
       pos)))
 
-
+(defun key&optional-args->list (args)
+  "convert the section of args after first arg to a list.
+e.g. below call's section after gem-method arg
+(gem-method (:CREATE-PIXMAP (root-window width height depth &optional image bitmap-p data-array))"
+  (do ((head args (cdr head))
+       (in-key NIL)
+       (final nil))
+      ((null head)
+       (nreverse final))
+    (case (car head)
+      ((&optional &rest))
+      (&key
+       (setf in-key T))
+      (T
+       (let ((symbol (car head)))
+         (if (listp symbol)
+             (setf symbol (car symbol)))
+         (if in-key
+             (push (intern (symbol-name symbol)
+                           (find-package "KEYWORD"))
+                   final))
+         (push symbol final))))))
+  
 ;; The name is determined by the <method-name> (which should be a
 ;; keyword).  The <args> are used for the macro definition.  The first
 ;; of the <args> must be a window, which determines the device (and
@@ -92,31 +114,12 @@
 	   (aref (g-value ,(car args) :METHODS)
 		 ,(find-or-create-name method-name))
 	   ,@(if (or has-rest (intersection '(&key &optional) args))
-		 ;; We must manipulate the arguments list.
-		 (do ((head args (cdr head))
-		      (in-key NIL)
-		      (final nil))
-		     ((null head)
-		      (nreverse final))
-		   (case (car head)
-		     ((&optional &rest))
-		     (&key
-		      (setf in-key T))
-		     (T
-		      (let ((symbol (car head)))
-			(if (listp symbol)
-			    (setf symbol (car symbol)))
-			(if in-key
-			    (push (intern (symbol-name symbol)
-					  (find-package "KEYWORD"))
-				  final))
-			(push symbol final)))))
-		 ;; Arguments list is OK as is.
-		 args)))
+                 (key&optional-args->list args)
+               args)))
        ;; Export the interface function from the Gem package.
        (eval-when (:execute :load-toplevel :compile-toplevel) (export ',function-name)))))
 
-;; Same, generates a function instead of a macro.
+;; Same, generates a macro instead of a function.
 #-(and)
 (defmacro gem-method (method-name (&rest args))
   (let ((macro-name (intern (symbol-name method-name) (find-package "GEM")))
@@ -128,27 +131,8 @@
 	   (list 'aref (list 'g-value ,(car args) :METHODS)
 		 ,(find-or-create-name method-name))
 	   ,@(if (or has-rest (intersection '(&key &optional) args))
-		 ;; We must manipulate the arguments list.
-		 (do ((head args (cdr head))
-		      (in-key NIL)
-		      (final nil))
-		     ((null head)
-		      (nreverse final))
-		   (case (car head)
-		     ((&optional &rest))
-		     (&key
-		      (setf in-key T))
-		     (T
-		      (let ((symbol (car head)))
-			(if (listp symbol)
-			    (setf symbol (car symbol)))
-			(if in-key
-			    (push (intern (symbol-name symbol)
-					  (find-package "KEYWORD"))
-				  final))
-			(push symbol final)))))
-		 ;; Arguments list is OK as is.
-		 args)))
+                 (key&optional-args->list args)
+               args)))
        (export ',macro-name))))
 
 #-(and)

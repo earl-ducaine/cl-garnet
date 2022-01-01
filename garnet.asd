@@ -30,7 +30,8 @@
 	       cl-vectors
 	       trivial-features
 	       clx
-	       trivial-dump-core)
+	       trivial-dump-core
+           trivial-garbage)
   :license "MIT-ish (also public domain, see LICENSE)"
   :author "CMU Garnet Team (plus various others, see LICENSE)"
   :description " GUI toolkit (c. 1990 look/feel)"

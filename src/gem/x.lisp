@@ -140,10 +140,9 @@
 (defvar *function-alist*)
 (defvar *color-screen-p* nil)
 
-(defvar *read-write-colormap-cells-p*
+(defvar *read-write-colormap-cells-p* nil
   "This variable will be t if the screen type is :direct-color
-   or :pseudo-color."
-  nil)
+   or :pseudo-color.")
 
 (defparameter *exposure-event-mask* nil)
 
