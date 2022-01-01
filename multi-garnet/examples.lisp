@@ -7,7 +7,7 @@
 ;; load a few auxiliary functions), and then select and execute the
 ;; examples below.
 
-(in-package :multi-garnet)
+(in-package #:multi-garnet)
 
 ;; If the Garnet background process for updating windows is not
 ;; reliable, the following advice can be used to update the window

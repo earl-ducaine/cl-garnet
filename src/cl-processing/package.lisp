@@ -1,5 +1,5 @@
-(defpackage :cl-processing
-  (:use :common-lisp :kr)
+(defpackage #:cl-processing
+  (:use :common-lisp #:kr)
   (:export size
 	   background
 	   no-stroke

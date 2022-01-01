@@ -1,5 +1,5 @@
 
-(in-package :xomax)
+(in-package #:xomax)
 
 (defvar *current-buffer* nil)
 (defvar *buffers* '())

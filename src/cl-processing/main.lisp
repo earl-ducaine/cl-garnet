@@ -1,4 +1,4 @@
-(in-package :cl-processing)
+(in-package #:cl-processing)
 
 (defparameter *width* nil)
 (defparameter *height* nil)

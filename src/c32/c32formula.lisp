@@ -16,7 +16,7 @@
 ;;; Designed and implemented by Brad Myers
 
 
-(in-package :c32)
+(in-package "C32")
 
 (defparameter Formula-Win-Width 440)
 (defparameter Formula-Win-Height 300)

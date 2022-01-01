@@ -1,20 +1,23 @@
 ;;; -*- Mode: LISP; Syntax: Common-Lisp; Package: C32; Base: 10 -*-
 ;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;         The Garnet User Interface Development Environment.      ;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; This code was written as part of the Garnet project at          ;;;
+;;; Carnegie Mellon University, and has been placed in the public   ;;;
+;;; domain.  If you are using this code or any part of Garnet,      ;;;
+;;; please contact garnet@cs.cmu.edu to be put on the mailing list. ;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; The Garnet User Interface Development Environment.
-;;;
-;;; This code was written as part of the Garnet project at Carnegie
-;;; Mellon University, and has been placed in the public domain.  If
-;;; you are using this code or any part of Garnet, please contact
-;;; garnet@cs.cmu.edu to be put on the mailing list.
-;;;
-;;;
-;;; This file contains a few interface functions that are needed for
-;;; Lapidary.
+;;; $Id:: c32-lapidary.lisp 114 2017-03-23 17:07:47Z rotgut           $
+
+;;; This file contains a few interface functions that are needed for Lapidary.
 
 
-(in-package :c32)
+(in-package "C32")
 
+
+;;;
 (defun c32-ok-function ()
   ;; allow no windows to be selected by the obj-find interactor
   (s-value (g-value c32::ask-object :obj-find) :window nil)
@@ -46,6 +49,7 @@
      (setf link (read-from-string (format nil ":link-~A" counter))))
     link))
 
+
 (defun Get-Reference-For (to-obj to-slot from-obj from-slot)
   (declare (ignore from-slot))
   (let ((win *current-formula-win*)
@@ -64,11 +68,13 @@
 	     (when (eq to-obj (g-value from-obj slot))
 	       (setf link slot)
 	       (return)))
+
 	   ;; also check the links generated for this formula.
 	   ;; the links are in a list of the form ((link obj) ... (link obj))
 	   (unless link
 	     (setf link (member to-obj (g-value win :links) :key #'cdr))
 	     (if link (setf link (caar link))))
+
 	   ;; if a link couldn't be found, generate a new link. Start
 	   ;; generating link names and see if they're already in use.
 	   ;; Start with :link-0 and work up. Since there are unlikely
@@ -80,10 +86,12 @@
 	     ;; appropriate path later
 	     (s-value from-obj link to-obj)
 	     (push (cons link to-obj) (g-value win :links)))
+
 	   ;; create the reference that will be returned
 	   (if (or (null to-slot) (eq to-slot T)) ; reference to the object itself
 	     (setf ref (prin1-to-string `(gvl ,link)))
 	     (setf ref (prin1-to-string `(gvl ,link ,to-slot))))))
+
     ref))
 
 
@@ -143,25 +151,24 @@
     ((listp expr)
      (dolist (element expr)
        (if (string-equal (check-for-direct-ref element) "YES")
-	   (return-from check-for-direct-ref t)))
+           (return-from check-for-direct-ref t)))
      nil)
-    (t
-     (if (and (symbolp expr) (boundp expr)
-	      (is-a-p (symbol-value expr) opal:view-object))
-	 (garnet-gadgets:display-query-and-wait
-	  direct-ref-query-gadget
-	  (format nil
-		  (str "The formula contains a direct reference to ~S. "
-		       "Lapidary may not be able to generalize this "
-		       "formula properly if the direct reference "
-		       "should be a parameter. If the direct reference "
-		       "should be a parameter, please edit the "
-		       "formula and use either 'Insert Ref From Spread...' "
-		       "or 'Insert Ref from Mouse' to insert the reference. "
-		       "Do you want to edit the formula?"
-		  expr))
-	 ;; else the expr is not a view-object, so return nil
-	 nil)))))
+    ((and (symbolp expr) (boundp expr)
+          (is-a-p (symbol-value expr) opal:view-object))
+     (garnet-gadgets:display-query-and-wait
+      direct-ref-query-gadget
+      (format nil
+              (str "The formula contains a direct reference to ~S. "
+                   "Lapidary may not be able to generalize this "
+                   "formula properly if the direct reference "
+                   "should be a parameter. If the direct reference "
+                   "should be a parameter, please edit the "
+                   "formula and use either 'Insert Ref From Spread...' "
+                   "or 'Insert Ref from Mouse' to insert the reference. "
+                   "Do you want to edit the formula?"
+                   (string expr)))))
+      ;; else the expr is not a view-object, so return nil
+    (t nil)))
 
 (defun lapidary-do-form-cancel (gadget item)
   (declare (ignore item))

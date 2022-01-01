@@ -28,8 +28,8 @@
 ;;      another is around, second is used
 
 
-(in-package :c32)
 
+(in-package "C32")
 
 ;; (eval-when (:execute :load-toplevel :compile-toplevel)
 ;;   (export '()))
@@ -143,7 +143,7 @@
 			   (<= index max-val)))))
   (:value (o-formula (let ((obj (gvl :obj))
 			   (slot (gvl :slot)))
-		       (if slot (gv obj slot)))))
+		       (when slot (gv obj slot)))))
   (:formula-p (o-formula (let ((obj (gvl :obj))
 			       (slot (gvl :slot)))
 			   (when slot
@@ -693,7 +693,7 @@
 						:feedback-obj :obj-to-change :cursor-where-press
 						:running-where :final-function :active :is-a))
 
-(defvar *lapidary-p* nil
+(defvar lapidary-p nil
   "this variable is t when c32 is being run as part of lapidary.  in that
    case, several functions in the user interface are somewhat different.")
 
@@ -921,7 +921,7 @@
   (setf *extra-c32-items* nil))
 
 (defun quitfunc (gadget sel)
-  (if *lapidary-p*
+  (if lapidary-p
       ;; run the specialized version.
       (lapidary-quitfunc gadget sel)
       ;; just get out of the whole thing.

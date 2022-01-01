@@ -1,0 +1,113 @@
+;; $Id: ChangeLog 69 2015-03-18 22:52:47Z rotgut $
+
+;;;; c32.lisp
+;;; Change log:
+;;  2/11/93 Dario Giuse - added code to coerce string name (such as "left")
+;; 		       into keyword (such as :LEFT) when reading a new slot
+;; 		       name.
+;; 12/16/92 Giuse/Mickish - Careful-Read-From-String --> C32-Careful-String-Eval
+;;  9/01/92 Andrew Mickish - Commented out declaration of aggrel in HIDESLOT
+;;            because its use is commented out; ignore objects(pl.) in Create-New-
+;;            Panel-Object; commented out start-event-loop-p in do-go for CMUCL;
+;;            moved defparameter of *c32-package* here from c32formula.lisp;
+;;            locally bound panels in ShowAllSlots
+;;
+;;  7/23/92 Dario Giuse - Catching all kinds of errors when a value is being
+;; 		       entered.
+;;  7/23/92 Dario Giuse - Turned off automatic insertion into the formula window
+;; 		       of the reference from the spreadsheet window when
+;; 		       the secondary selection is set (with MiddleDown).
+;;  7/20/92 Dario Giuse - Made parameters to DO-GO into &key parameters; added
+;; 		       the new parameter start-event-loop-p (default T) to
+;; 		       determine whether the main event loop should be started.
+;; 		       Moved the three commands "Insert Function",
+;; 		       "Insert From Spread", and "Insert From Mouse" from the
+;; 		       main menu to individual Formula Windows.  This makes
+;; 		       it possible to tell which formula they will affect.
+;; 		       Changed the "Function:" menu so that clicking on an
+;; 		       item selects it, but does nothing.  Then, the command
+;; 		       "Insert Function" from a formula window can be used
+;; 		       to insert the selected function.
+;;  7/17/92 Dario Giuse - Eliminated the "new panel" string object.  Its function
+;; 		       is now served by an empty panel, whose title reads
+;; 		       "name".  Editing the title creates a
+;; 		       new panel for the named object, and moves the empty
+;; 		       panel to the right.
+;; 		       Editing the title of a panel and specifying a non-
+;; 		       existent object name causes C32 to prompt the user.  If
+;; 		       the user says OK, the schema is created.  Otherwise,
+;; 		       nothing happens.
+;;  6/23/92 Dario Giuse - Eliminated :raw-value, which was a dangerous idea
+;; 		       that could lead to the same formula being installed
+;; 		       on two separate objects.
+;;  6/22/92 Dario Giuse - Changed DO-GO so all extra stuff is done by optional
+;; 		       parameters.  With the default setting, no test window
+;; 		       is created and the panel window starts out empty.
+;;  6/15/92 Dario Giuse - Converted formula windows to use multifont objects.
+;;  6/12/92 Dario Giuse - Using gg:error-gadget for all error messages.
+;; 		       It is now possible to create new objects, by typing
+;; 		       their name in the "new-panel" string.  This creates
+;; 		       objects that are initially empty.
+;;  6/11/92 Dario Giuse - Added a string that allows new panels to be created;
+;; 		       the string is to the right of the rightmost panel.
+;; 		       Eliminated all scrolling-text interactors; there is
+;; 		       now only one per panel.
+;;  6/10/92 Dario Giuse - It is now possible to type "<slot> <value>" on the last
+;; 		       (empty) slot of a panel, thus specifying both a slot
+;; 		       name and a value.
+;;  6/08/92 Dario Giuse - Moved empty name for adding new slots to the left.
+;; 		       "Add Slot" inherits a value, if any; if not, uses NIL.
+;; 		       The secondary selection can now be toggled.
+;; 		       Selection bars are kept inside objects when editing
+;; 		       the header to switch to another object.
+;; 		       Made subwindow wide enough to show right vert. line.
+;; 		       Using Update type checking before installing formulas.
+;;  6/02/92 Dario Giuse - Added a new "Hide Slot" command.
+;;  6/01/92 Dario Giuse - Changed "Delete Slot" to actually eliminate the slot,
+;; 		       rather than inheriting a value.
+;; 		       Fixed the code so you can type a value which
+;; 		       is a list without any extra quotes.  This allows the
+;; 		       user to type (:BLUE :GREEN) as a value, for example,
+;; 		       rather than (list :BLUE :GREEN) or '(:BLUE :GREEN).
+;; 		       Fixed Careful-Read-From-String to detect incorrect
+;; 		       formulas (without actually installing them) and give
+;; 		       an error message.
+;; 		       Setting the package to "C32" when reading from strings
+;; 		       for formulas.  At least, this eliminates the need to
+;; 		       type things like "kr:gvl".  Is there a better solution,
+;; 		       such as setting some package in C32 for later use?
+;;  5/29/92 Dario Giuse - Added new mechanism to create new slots in objects:
+;; 		       editing the text in the last (empty) slot of a browser
+;; 		       shows the slot (if present), or creates it with a
+;; 		       NIL value if not present.
+;; 		       Improved error messages by using the error structure
+;; 		       returned by ignore-errors (in Allegro).
+;;  5/27/92 Dario Giuse - Fixed Careful-Get-Obj to work with lowercase names.
+;; 		       Fixed problem with careful-get-value.
+;; 		       Values are always printed without #k<...>
+;;  5/18/92 Dario Giuse - Converted to Garnet 2.0
+;;  3/29/91 Brad Myers  - Put on a user interface
+;;  9/11/90 Brad Myers  - Started
+
+
+;;;; c32formula.lisp
+#|
+============================================================
+Change log:
+  07/22/93 Dario Giuse - added Lisp Mode to formula window
+  07/15/93 Andrew Mickish - #+lcl3.0 ---> #+lucid
+  07/09/93 Andrew Mickish - Condition type is undefined for Lucid
+  03/11/93 Dario Giuse - fixed C32-Careful-String-Eval to work properly
+	   when *current-formula-obj* is nil.  This happens, for example,
+	   when editing a new slot name in a panel.
+  03/02/93 Andrew Mickish - Removed superfluous quote from :items list in
+             Form-Win-Header.
+  02/02/93 Andrew Mickish - opal:set-strings ---> opal:set-text
+  12/16/92 Giuse/Mickish - Careful-Read-From-String --> C32-Careful-String-Eval
+  10/01/92 Andrew Mickish - Only call Slot-Value if #+(or allegro-v4.0
+             allegro-v4.1)
+   9/01/92 Andrew Mickish - Moved defparameter of *c32-package* to c32.lisp;
+             for CMUCL, ext:ignore-errors ---> ignore-errors;
+   9/11/90 Brad Myers - Started
+============================================================
+|#

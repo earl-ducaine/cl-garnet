@@ -1,6 +1,6 @@
 ;;;-*- Mode: COMMON-LISP; Package: COMMON-LISP-USER -*-
 
-(in-package :multi-garnet)
+(in-package #:multi-garnet)
 
 
 ;; This file contains code for a large Multi-Garnet example: a scatterplot

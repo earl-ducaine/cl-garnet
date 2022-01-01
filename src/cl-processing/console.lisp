@@ -17,7 +17,7 @@
 ;;; Designed by Brad A. Myers
 ;;; Implemented by Richard McDaniel
 
-(in-package :cl-processing)
+(in-package #:cl-processing)
 
 ;; (defun read-stream-into-string (stream)
 ;;   (let ((scratch (make-string 4096)))

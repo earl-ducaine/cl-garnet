@@ -1,6 +1,6 @@
 ;;;-*- Mode: COMMON-LISP; Package: MULTI-GARNET -*-
 
-(in-package :multi-garnet)
+(in-package "MULTI-GARNET")
 
 (eval-when (:load-toplevel :execute)
   (when (fboundp 'disable-multi-garnet)

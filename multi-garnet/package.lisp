@@ -85,7 +85,7 @@
 	   ))
 
 
-(defpackage :multi-garnet
+(defpackage "MULTI-GARNET"
   (:nicknames :mg)
   (:use :common-lisp :kr)
   (:import-from "SKY-BLUE"

@@ -202,6 +202,7 @@
 	    (if (>= (length old-browser-items) (g-value browser :num-menus))
 		(cons 0 (g-value browser :starts))
 		(cons 0 (butlast (g-value browser :starts))))))
+
       (when old-browser-items
 	(s-value browser :selected-ranks (cons (list item-rank)
 					 (g-value browser :selected-ranks))))
@@ -216,18 +217,18 @@
 (defun promote-item (browser coordinate)
   (let* ((real-menu-rank (car coordinate))
 	 (real-obj-rank (cadr coordinate))
-	 ;; keep-p is t if the item is both gray-selected and
-	 ;; highlighted; used to decide whether to retain all of the
-	 ;; items in the scrolling-menus to the right of item
+	 ;; KEEP-P is T if the item is both gray-selected and highlighted;
+	 ;;   Used to decide whether to retain all of the items in the
+	 ;;   scrolling-menus to the right of ITEM
 	 (keep-p (equal (list real-obj-rank)
 			(nth real-menu-rank (g-value browser :selected-ranks))))
 	 (item (nth real-obj-rank
 		    (nth real-menu-rank (g-value browser :all-items)))))
     (s-value (g-value browser :scroll-bar) :value 0)
     (if keep-p
-	;; Retain items in scrolling menus to the right: chop off the
-	;; left side of the :items, :starts, and :selected-ranks lists and
-	;; add fillers if necessary
+	; Retain items in scrolling menus to the right: chop off the
+	; left side of the :items, :starts, and :selected-ranks lists and
+	; add fillers if necessary
 	(let* ((rank+1 (1+ real-menu-rank))
 	       (new-items (if item (nthcdr rank+1 (g-value browser :items))))
 	       (new-all-items
@@ -247,7 +248,8 @@
 	  (s-value browser
 		   :selected-ranks
 		   (nthcdr rank+1 (g-value browser :selected-ranks))))
-	;; Don't keep any of the current items -- zero out the lists
+
+	; Don't keep any of the current items -- zero out the lists
 	(progn
 	  (s-value browser :items (if item (list item)))
 	  (s-value browser
@@ -384,6 +386,7 @@ slot of your instance of the BROWSER-GADGET")))
    (:items NIL)
    (:starts (o-formula (make-list (gvl-fixnum :num-menus) :initial-element 0)))
    (:start (o-formula (if (gvl :scroll-p) (gvl :scroll-bar :value) 0)))
+   ;(:scroll-p (o-formula (> (the fixnum (length (gvl :items))) (gvl-fixnum :num-menus))))
    (:scroll-p (o-formula (> (length (gvl :items))
 			    (gvl-fixnum :num-menus))))
    (:end (o-formula (+ (gvl-fixnum :start) (gvl-fixnum :num-menus))))
@@ -496,6 +499,7 @@ slot of your instance of the BROWSER-GADGET")))
 	(:top ,(o-formula (+ (gvl-fixnum :parent :top)
 			     (gvl-fixnum :parent :menu-list :height) 10)))
 	(:width 380)
+	;(:val-2 ,(o-formula (opal:q-MAX (- (the fixnum (length (gvl :parent :items)))
 	(:val-2 ,(o-formula (opal:q-MAX (- (length (gvl :parent :items))
 					   (gvl-fixnum :parent :num-menus))
 					1)))

@@ -1,4 +1,4 @@
-(in-package :cl-processing)
+(in-package #:cl-processing)
 
 ;; p32
 (defun create-processing-window ()
