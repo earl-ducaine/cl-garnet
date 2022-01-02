@@ -218,14 +218,14 @@
 
 (defvar *formula-pool* nil)
 
-(defvar *formula-lock* (bordeaux-threads:make-lock))
+(defvar *formula-lock* (bordeaux-threads-2:make-lock))
 
 (defun formula-push (f)
-  (bordeaux-threads:with-lock-held  (*formula-lock*)
+  (bordeaux-threads-2:with-lock-held  (*formula-lock*)
     (push f *formula-pool*)))
 
 (defun formula-pop ()
-  (bordeaux-threads:with-lock-held (*formula-lock*)
+  (bordeaux-threads-2:with-lock-held (*formula-lock*)
     (and *formula-pool* (pop *formula-pool*))))
 
 (defvar *schema-is-new* nil

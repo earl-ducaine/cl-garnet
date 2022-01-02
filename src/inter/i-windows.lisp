@@ -611,7 +611,7 @@
   "Event handler for the interactor windows"
   ;; defined in inter:animation-process.lisp
   (setq *process-with-main-event-loop*
-	(bordeaux-threads:current-thread))
+	(bordeaux-threads-2:current-thread))
   (gem:event-handler root-window NIL))
 
 ;;; launch-process-p used to be defined for non-CMUCL

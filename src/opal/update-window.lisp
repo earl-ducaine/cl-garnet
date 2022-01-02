@@ -520,7 +520,7 @@ This is done to avoid unnecessary total updates."
 
 (define-method :update opal::window (a-window &optional (total-p NIL))
   (declare (optimize (speed 3) (safety 1)))
-  (bordeaux-threads:with-recursive-lock-held  (gem:*update-lock*)
+  (bordeaux-threads-2:with-recursive-lock-held  (gem:*update-lock*)
     (let* ((win-info (g-local-value a-window :win-update-info))
 	   (drawable (g-local-value a-window :drawable))
 	   (window-agg (g-local-value a-window :aggregate))

@@ -56,7 +56,7 @@
   (if opal::*main-event-loop-process*
       ;; if the current process is the same as the m-e-l process
       (when (eq opal::*main-event-loop-process*
-		(bordeaux-threads:current-thread))
+		(bordeaux-threads-2:current-thread))
 	;; and if it is in the debugger...
 	;; the allegro code supplied by georgej@Franz.COM (George Jacob)
 
@@ -64,7 +64,7 @@
 	;; sb-debug:*debug-condition* whereas in a running thread it
 	;; will be unbound.
 	;;
-	;; maybe bordeaux-threads:*default-special-bindings* could be
+	;; maybe bordeaux-threads-2:*default-special-bindings* could be
 	;; used to handle this some day.
 	;;
 	;; (ignore-errors

@@ -41,31 +41,31 @@
 (defun launch-main-event-loop-process ()
   "Spawn a process which is doing Garnet interaction all of the time.
    RETURN the process."
-  (when (and (bordeaux-threads:threadp  *main-event-loop-process*)
-	     (bordeaux-threads:thread-alive-p *main-event-loop-process*))
-    (bordeaux-threads::destroy-thread *main-event-loop-process*))
+  (when (and (bordeaux-threads-2:threadp  *main-event-loop-process*)
+	     (bordeaux-threads-2:thread-alive-p *main-event-loop-process*))
+    (bordeaux-threads-2::destroy-thread *main-event-loop-process*))
   (setf *main-event-loop-process*
-	(bordeaux-threads:make-thread #'process-m-e-l :name "Garnet event loop"))
+	(bordeaux-threads-2:make-thread #'process-m-e-l :name "Garnet event loop"))
   *main-event-loop-process*)
 
 ;;;  Define opal:kill-main-event-loop-process
 (defun kill-main-event-loop-process ()
   "Kill the current main-event-loop process."
   (let ((p *main-event-loop-process*))
-    (when (and (bordeaux-threads:threadp p)
-	       (bordeaux-threads:thread-alive-p p))
+    (when (and (bordeaux-threads-2:threadp p)
+	       (bordeaux-threads-2:thread-alive-p p))
       (setf *main-event-loop-process* nil)
-      (bordeaux-threads:destroy-thread p))))
+      (bordeaux-threads-2:destroy-thread p))))
 
 ;;; Define running-p functions
 (defun main-event-loop-process-running-p ()
   (and *main-event-loop-process*
-       (bordeaux-threads:thread-alive-p *main-event-loop-process*)))
+       (bordeaux-threads-2:thread-alive-p *main-event-loop-process*)))
 
 (defun running-main-event-loop-process-elsewhere-p ()
   (and *main-event-loop-process*
        (not (eq *main-event-loop-process*
-		(bordeaux-threads:current-thread)))))
+		(bordeaux-threads-2:current-thread)))))
 ;; because
 ;; (defmacro with-update-lock-held (&body body)
 ;;   `(unwind-protect

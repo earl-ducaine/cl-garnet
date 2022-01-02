@@ -405,21 +405,21 @@
       (sb-thread:condition-wait wait-queue wait-mutex :timeout seconds))))
 
 
-(defparameter *recursive-lock* (bt:make-recursive-lock "time-lock"))
+(defparameter *recursive-lock* (bt2:make-recursive-lock "time-lock"))
 
 ;; (defun wait (seconds lock)
 ;;   (let ((wait-mutex ))
-;;     (bt::condition-wait *wait-queue* wait-mutex :timeout seconds)))
+;;     (bt2::condition-wait *wait-queue* wait-mutex :timeout seconds)))
 
-(defparameter *timeout-condition-variable* (bt:make-condition-variable))
-(defparameter *timeout-condition-lock* (bt:make-lock))
+(defparameter *timeout-condition-variable* (bt2:make-condition-variable))
+(defparameter *timeout-condition-lock* (bt2:make-lock))
 (defparameter *stop-p* nil)
 (defparameter *timeout-thread* nil)
 
 (defun run-make-thread ()
   (setf *stop-p* nil)
   (setf *timeout-thread*
-	(bt:make-thread (lambda ()
+	(bt2:make-thread (lambda ()
 			  (condition-wait
 			   *timeout-condition-variable*
 			   *timeout-condition-lock*))
@@ -428,8 +428,8 @@
 (defun condition-wait (timeout-condition-variable timeout-condition-lock)
   (iter:iter
     (iter:until *stop-p*)
-    (bt:with-lock-held (timeout-condition-lock)
-      (bt:condition-wait timeout-condition-variable timeout-condition-lock :timeout 5))
+    (bt2:with-lock-held (timeout-condition-lock)
+      (bt2:condition-wait timeout-condition-variable timeout-condition-lock :timeout 5))
     (setf *stop-p* t)))
 
 

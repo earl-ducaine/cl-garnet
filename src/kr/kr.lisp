@@ -475,19 +475,19 @@ an inherited formula."
 	       (formula-p (a-formula-is-a (sl-value entry))))))))
 
 (defun formula-push (f)
-  (bordeaux-threads:with-lock-held  (*formula-lock*)
+  (bordeaux-threads-2:with-lock-held  (*formula-lock*)
     (push f *formula-pool*)))
 
 ;;; encode types
 (defparameter *types-table* (make-hash-table :test #'equal)
   "Hash table used to look up a Lisp type and returns its code")
 
-(defparameter *types-table-lock* (bordeaux-threads:make-recursive-lock)
+(defparameter *types-table-lock* (bordeaux-threads-2:make-recursive-lock)
   "Lock to synchonize access to *types-table*")
 
 (defmacro with-types-table-lock-held ((table) &body body)
   `(let ((,table *types-table*))
-     (bordeaux-threads:with-recursive-lock-held (*types-table-lock*)
+     (bordeaux-threads-2:with-recursive-lock-held (*types-table-lock*)
      ,@body)))
 
 (declaim (fixnum *types-array-inc*))

@@ -47,7 +47,7 @@ event so that we will know which interactor to wake up.")
     ;; sb-debug:*debug-condition* whereas in a running thread it will
     ;; be unbound.
     ;;
-    ;; Maybe bordeaux-threads:*default-special-bindings* could be used
+    ;; Maybe bordeaux-threads-2:*default-special-bindings* could be used
     ;; for this?
     ;;
     ;; (ignore-errors
@@ -89,12 +89,7 @@ event so that we will know which interactor to wake up.")
      (send-timer-event inter)
      (when once (return))
      ;; now, make sure other processes run
-     #+allegro      (mp:process-allow-schedule)
-     #+ccl          (ccl:process-allow-schedule)
-     #+sb-thread    (sb-thread:thread-yield)
-     ;; This causes CMUCL to give an error when it kills the main
-     ;; event loop process.
-     #+(and nil cmu mp) (mp:process-yield)
+     (bt2:thread-yield)
      ))
 
 (defun kill-timer-process (inter)
@@ -110,7 +105,7 @@ event so that we will know which interactor to wake up.")
     (when timer-process (internal-kill-timer-process timer-process))
     ;;; DZG (xlib:intern-atom opal::*default-x-display* ':TIMER_EVENT)
     (setf timer-process
-	  (bordeaux-threads:make-thread
+	  (bordeaux-threads-2:make-thread
 	   #'(lambda ()
 	       (Timer-Process-Main-Loop inter time once))
 	   :name "Garnet Timer")
@@ -136,36 +131,9 @@ event so that we will know which interactor to wake up.")
 
 ;;;-------------------------------------------------------------------------
 
-#+allegro
 (defun internal-kill-timer-process (timer-process)
-  (when (eq (type-of timer-process) 'mp:process)
-    (mp:process-kill timer-process)
+  (when (and (eq (type-of timer-process) 'bt2:thread)
+             (bt2:thread-alive-p timer-process))
     (deleteplace timer-process *All-Timer-Processes*)
-    ))
+    (bt2:destroy-thread timer-process)))
 
-#+(and cmu mp)
-(defun internal-kill-timer-process (timer-process)
-  (when (mp:processp timer-process)
-    (mp:destroy-process timer-process)
-    (deleteplace timer-process *All-Timer-Processes*)
-    (mp:process-yield)))
-
-
-#+ccl
-(defun internal-kill-timer-process (timer-process)
-  (when (eq (type-of timer-process) 'ccl:process)
-    (ccl:process-kill timer-process)
-    (deleteplace timer-process *All-Timer-Processes*)
-    ))
-
-#+sb-thread
-(defun internal-kill-timer-process (timer-process)
-  (when (and (typep timer-process 'sb-thread:thread)
-	     (sb-thread:thread-alive-p timer-process))
-    (deleteplace timer-process *All-Timer-Processes*)
-    (sb-thread:terminate-thread timer-process)))
-
-#-(or allegro sb-thread ccl (and cmu mp))
-(defun internal-kill-timer-process (timer-process)
-  (declare (ignore timer-process))
-  )

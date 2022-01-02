@@ -1997,7 +1997,7 @@ this display."
                      :data (list index))))
 
 (defparameter *update-lock*
-  (bordeaux-threads:make-recursive-lock "UPDATE-LOCK"))
+  (bordeaux-threads-2:make-recursive-lock :name "UPDATE-LOCK"))
 
 ;;; Does a map-window, and then waits for it to actually appear on the
 ;;; screen.  The waiting is necessary, because otherwise objects in
@@ -2006,7 +2006,7 @@ this display."
 (defun x-map-and-wait (a-window drawable)
   (let ((display (the-display a-window)))
     (when (eq (xlib:window-map-state drawable) :unmapped)
-      (bordeaux-threads:with-recursive-lock-held (*update-lock*)
+      (bordeaux-threads-2:with-recursive-lock-held (*update-lock*)
         (xlib:map-window drawable)
         (xlib:display-force-output display))
       (loop

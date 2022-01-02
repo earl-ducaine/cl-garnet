@@ -69,8 +69,8 @@
 
 (defun disable-event-loop-process (display)
   (let ((display-process (assoc display *event-loop-display-list*)))
-    (when (bordeaux-threads:threadp (cdr display-process))
-      (bordeaux-threads:destroy-thread (cdr display-process)))
+    (when (bordeaux-threads-2:threadp (cdr display-process))
+      (bordeaux-threads-2:destroy-thread (cdr display-process)))
     (setq *event-loop-display-list* (remove display-process
 					    *event-loop-display-list*))))
 
