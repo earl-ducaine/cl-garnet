@@ -114,7 +114,7 @@
   (setf garnet-image-date (time-to-string))
   (when gc
     (when verbose (format t "Garbage collecting..."))
-    (sb-ext:gc :full t)
+    (trivial-garbage:gc :full t)
     (when verbose (format t "collected.~%")))
 
   (setf garnet-user::*herald-items* nil)
@@ -122,8 +122,8 @@
 	`("    Garnet Version " ,common-lisp-user::garnet-version-number))
 
   (when verbose (format t "Saving image..."))
-  (setf sb-ext:*init-hooks*
-	(append sb-ext:*init-hooks* (list #'garnet-restart-function)))
+  ;; (setf sb-ext:*init-hooks*
+  ;;   (append sb-ext:*init-hooks* (list #'garnet-restart-function)))
   (trivial-dump-core:dump-image filename)
   (when verbose
     (format t "saved.~%"))))

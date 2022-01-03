@@ -483,56 +483,57 @@ determine when to use each of the feedback objects."))
   ;; call angle-inter-do-go the first time the text interactor menu is
   ;; requested
   (when (or (not (boundp 'angle-inter-win)) 
-	    (null angle-inter-win))
+            (null angle-inter-win))
     (angle-inter-do-go))
   (let ((agg (g-value angle-inter-win :aggregate)))
     (dolist (slot '(:known-as :start-where :final-function
-		    :feedback-obj :attach-point :obj-to-change :start-event))
-	(case slot
-	  ((:known-as :final-function)
-	   (initialize-inter-db-string inter agg slot))
-	  (:start-where
-	   (initialize-start-where inter agg :in-box "Object to Press Over"
-				   t "Start Anywhere in Window"))
-	  (:feedback-obj
-	   (if (g-value inter :feedback-obj)
-	       (progn
-		 (set-db-value agg :feedback-obj "Interim Feedback")
-		 (set-db-string agg :feedback-obj 
-				(name-for-schema (g-value inter :feedback-obj))))
-	       (set-db-value agg :feedback-obj "None")))
-	  (:center-of-rotation
-	   (let* ((rotation-agg (g-value agg :lapidary-rotation :contents))
-		  (feedback-obj (g-value rotation-agg :feedback))
-		  (attach-point (get-value inter :attach-point)))
-	     (cond ((eq attach-point :formula)
-		    (s-value feedback-obj :obj-over 
-			     (g-value rotation-agg :formula)))
-		   ((eq attach-point :pair)
-		    (s-value (ANGLE-CENTER-OF-ROTATION) :x 
-			     (prin1-to-string (car attach-point)))
-		    (s-value (ANGLE-CENTER-OF-ROTATION) :y 
-			     (prin1-to-string (second attach-point))))
-		   ((dolist (obj (g-value rotation-agg :box-buttons
-				  :components))
-			    (when (eq (g-value obj :attach-point) attach-point)
-				  (s-value feedback-obj :obj-over obj)
-				  (s-value (Angle-Center-of-Rotation) :value
-					   obj)
-				  (return obj))))
-		   (t
-		    (dolist (obj (g-value rotation-agg :line-buttons
-				   :components))
-			     (when (eq (g-value obj :attach-point) 
-				       attach-point)
-				   (s-value feedback-obj :obj-over obj)
-				   (s-value (Angle-Center-of-Rotation) :value
-					   obj)
-				   (return obj)))))))
-	  (:obj-to-change
-	   (if (get-value inter :obj-to-change)
-	       (set-db-value agg :obj-to-change "<Formula>")
-	       (set-db-value agg :obj-to-change "Result of :start-where")))
-))
+                    :feedback-obj :center-of-rotation :obj-to-change))
+      (case slot
+        ((:known-as :final-function)
+         (initialize-inter-db-string inter agg slot))
+        (:start-where
+         (initialize-start-where inter agg :in-box "Object to Press Over"
+                                 t "Start Anywhere in Window"))
+        (:feedback-obj
+         (if (g-value inter :feedback-obj)
+             (progn
+               (set-db-value agg :feedback-obj "Interim Feedback")
+               (set-db-string agg :feedback-obj 
+                              (name-for-schema (g-value inter :feedback-obj))))
+             (set-db-value agg :feedback-obj "None")))
+        (:center-of-rotation
+         (let* ((rotation-agg (g-value agg :lapidary-rotation :contents))
+                (feedback-obj (g-value rotation-agg :feedback))
+                (attach-point (g-value inter :attach-point))
+                (attach-points (get-value inter :attach-points)))
+           (cond ((eq attach-point :formula)
+                  (s-value feedback-obj :obj-over 
+                           (g-value rotation-agg :formula)))
+                 ((eq attach-point :pair)
+                  (s-value (ANGLE-CENTER-OF-ROTATION) :x 
+                           (prin1-to-string (car attach-points)))
+                  (s-value (ANGLE-CENTER-OF-ROTATION) :y 
+                           (prin1-to-string (second attach-points))))
+                 ((dolist (obj (g-value rotation-agg :box-buttons
+                                        :components))
+                    (when (eq (g-value obj :attach-point) attach-point)
+                      (s-value feedback-obj :obj-over obj)
+                      (s-value (Angle-Center-of-Rotation) :value
+                               obj)
+                      (return obj))))
+                 (t
+                  (dolist (obj (g-value rotation-agg :line-buttons
+                                        :components))
+                    (when (eq (g-value obj :attach-point) 
+                              attach-point)
+                      (s-value feedback-obj :obj-over obj)
+                      (s-value (Angle-Center-of-Rotation) :value
+                               obj)
+                      (return obj)))))))
+        (:obj-to-change
+         (if (get-value inter :obj-to-change)
+             (set-db-value agg :obj-to-change "<Formula>")
+             (set-db-value agg :obj-to-change "Result of :start-where")))
+        ))
     (s-value angle-inter-win :inter inter)))
 
