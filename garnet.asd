@@ -30,7 +30,8 @@
 	       cl-vectors
 	       trivial-features
 	       clx
-	       trivial-dump-core)
+	       trivial-dump-core
+           trivial-garbage)
   :license "MIT-ish (also public domain, see LICENSE)"
   :author "CMU Garnet Team (plus various others, see LICENSE)"
   :description " GUI toolkit (c. 1990 look/feel)"
@@ -41,10 +42,10 @@
 		gesture demos garnet-desktop-lab lapidary c32 gilt
 		multi-garnet lapidary cl-processing))
    (:file "package")
-   (:file "clx-compatability" :depends-on (package))
+;   (:file "clx-compatability" :depends-on (package))
    (:module utils
 	    :pathname ""
-	    :depends-on (package clx-compatability)
+	    :depends-on (package #-(and)clx-compatability)
 	    :components
 	    ((:file "garnet-loader")
 	     (:file "src/utils/general")

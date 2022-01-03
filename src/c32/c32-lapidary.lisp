@@ -143,25 +143,24 @@
     ((listp expr)
      (dolist (element expr)
        (if (string-equal (check-for-direct-ref element) "YES")
-	   (return-from check-for-direct-ref t)))
+           (return-from check-for-direct-ref t)))
      nil)
-    (t
-     (if (and (symbolp expr) (boundp expr)
-	      (is-a-p (symbol-value expr) opal:view-object))
-	 (garnet-gadgets:display-query-and-wait
-	  direct-ref-query-gadget
-	  (format nil
-		  (str "The formula contains a direct reference to ~S. "
-		       "Lapidary may not be able to generalize this "
-		       "formula properly if the direct reference "
-		       "should be a parameter. If the direct reference "
-		       "should be a parameter, please edit the "
-		       "formula and use either 'Insert Ref From Spread...' "
-		       "or 'Insert Ref from Mouse' to insert the reference. "
-		       "Do you want to edit the formula?"
-		  expr))
-	 ;; else the expr is not a view-object, so return nil
-	 nil)))))
+    ((and (symbolp expr) (boundp expr)
+          (is-a-p (symbol-value expr) opal:view-object))
+     (garnet-gadgets:display-query-and-wait
+      direct-ref-query-gadget
+      (format nil
+              (str "The formula contains a direct reference to ~S. "
+                   "Lapidary may not be able to generalize this "
+                   "formula properly if the direct reference "
+                   "should be a parameter. If the direct reference "
+                   "should be a parameter, please edit the "
+                   "formula and use either 'Insert Ref From Spread...' "
+                   "or 'Insert Ref from Mouse' to insert the reference. "
+                   "Do you want to edit the formula?"
+                   (string expr)))))
+      ;; else the expr is not a view-object, so return nil
+    (t nil)))
 
 (defun lapidary-do-form-cancel (gadget item)
   (declare (ignore item))
