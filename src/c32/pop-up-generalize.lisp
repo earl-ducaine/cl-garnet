@@ -83,9 +83,19 @@
 		 (:HEIGHT ,(o-formula (gvl :parent :string-val :height)))))))
        
 (create-instance 'c32-bold-font OPAL:FONT
+  (:FAMILY :SANS-SERIF)
 		 (:FACE :BOLD))
 
+(create-instance 'c32-button-font OPAL:FONT
+  (:FAMILY :SANS-SERIF)
+  (:FACE :BOLD)
+  (:SIZE :small))
+
+(create-instance 'c32-font OPAL:FONT
+  (:FAMILY :SANS-SERIF))
+
 (create-instance 'c32-title-font OPAL:FONT
+  (:FAMILY :SANS-SERIF)
 		 (:SIZE :LARGE)
 		 (:FACE :BOLD-ITALIC))
 
